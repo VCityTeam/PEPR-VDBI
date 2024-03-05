@@ -1,4 +1,5 @@
 ---
+title: Example landing page
 toc: false
 ---
 
