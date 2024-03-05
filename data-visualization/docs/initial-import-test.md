@@ -14,18 +14,21 @@ Then the data should be transformed into an array using a [component](./componen
 Columns with obviously identical entities are combined.
 E.g. `Etablissement`, `Etablissement 2`, ... `Etablissement n` are merged into the same column.
 
+**Input:** Workbook 1 - "240117 consortium laboratoire, établissement CNRS-SHS_Stat"
+
 ```mermaid
-flowchart LR
-    subgraph Excel workbook
-        AA[Sheet 1]
+flowchart TD
+    subgraph "Workbook 1"
+        AA[Sheet: 240117 consortium laboratoire^J]
         AB[Sheet ...]
         AC[Sheet n]
     end
     AA -->|Load| C
-    AB -->|Load| C
-    AC -->|Load| C
     subgraph Web Application
-        C("Array (of objects)")
+        C["Array (of objects)"] -->|Load| D(Simple Table)
+        C -->|Load| E(Searchable Table)
+        C -->|Transform| F[2D Array]
+        F -->|Transform| G[Searchable Table]
     end
 ```
 
