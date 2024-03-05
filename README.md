@@ -1,3 +1,3 @@
-# SYNBOLIZE
+# PEPR-VDBI
 
-SYmbolic and coNnectionist Ontology-Based data Integration, Linking, visualiZation and Exploration
+- [Data visualizations tests with observable](./data-visualization)
