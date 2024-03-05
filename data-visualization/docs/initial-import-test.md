@@ -41,7 +41,7 @@ import { mapPhase1 } from "./components/map-phase-1.js";
 ```
 
 ```js
-const workbook = FileAttachment("./data/phase_1_workbook.xlsx").xlsx();
+const workbook = FileAttachment("./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx").xlsx();
 ```
 
 ```js
