@@ -1,4 +1,4 @@
-import { map } from "npm:d3-array";
+import { map } from "npm:d3";
 
 export function countPhase1(sheet) {
   return map(sheet, (d) => {

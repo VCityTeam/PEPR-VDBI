@@ -1,5 +1,3 @@
-import { map, filter } from "npm:d3-array";
-
 export function mapProductsToGraph(data) {
   // create triples for each project and add them to an array (representing the graph)
   const projectGraph = [];

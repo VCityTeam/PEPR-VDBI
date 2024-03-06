@@ -1,4 +1,4 @@
-import { map, filter } from "npm:d3-array";
+import { map, filter } from "npm:d3";
 
 export function getProductSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[1], {
