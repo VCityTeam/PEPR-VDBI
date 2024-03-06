@@ -1,4 +1,4 @@
-import { map, filter } from "npm:d3-array";
+import { map, filter } from "npm:d3";
 
 export function mapPhase1(sheet) {
   // Map raw project data to a simple array of strings and objects

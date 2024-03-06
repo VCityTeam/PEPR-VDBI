@@ -51,7 +51,7 @@ Once integrated the following information is desired for visualization:
 ```js
 import { getProductSheet, resolveKnownEntities } from "./components/import-products.js";
 import { mapProductsToGraph } from "./components/force-graph.js";
-import { mapProductsToTree, radialDendrogram } from "./components/radial-dendrogramv2.js";
+import { mapProductsToTree, collapsableRadialDendrogram } from "./components/radial-dendrogram.js";
 ```
 
 ```js
@@ -89,12 +89,23 @@ display(productTree);
 ## Collapsable Dendrogram of themes and projects
 
 ```js
-display(radialDendrogram(productTree, {
+const radialProducts = view(collapsableRadialDendrogram(productTree, {
     label: d => d.name,
-    title: (d, n) => n.ancestors().reverse().map(d => d.name).join("."), // hover text
     width: 1152,
     height: 1152,
     margin: 100,
     limit: 10
-}));
+}))
+```
+
+```js
+display(radialProducts);
+```
+
+```js
+console.debug(radialProducts);
+```
+
+```js
+radialProducts
 ```
