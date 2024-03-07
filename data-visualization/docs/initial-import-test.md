@@ -36,11 +36,10 @@ flowchart TD
 
 Once integrated the following data visualizations are tested using components.
 
-```js
-import { mapPhase1 } from "./components/map-phase-1.js";
-```
+First a component for transforming the Workbook data is imported, followed by the reading and storing of the Workbook itself.
 
-```js
+```js echo
+import { mapPhase1 } from "./components/map-phase-1.js";
 const workbook = FileAttachment("./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx").xlsx();
 ```
 
@@ -48,14 +47,15 @@ const workbook = FileAttachment("./data/240117 consortium laboratoire, établis
 display(workbook);
 ```
 
-```js
+A function is used to extract the relevant cells from the 1st sheet of the workbook.
+
+```js echo
 function getProjectSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[0], {
     range: "A1:DR78",
     headers: true,
   });
 }
-
 const projects_phase_1 = getProjectSheet(workbook);
 ```
 
@@ -65,7 +65,8 @@ display(projects_phase_1);
 
 ## Simple table
 
-```js
+A function is proposed to display a simple table.
+```js echo
 function simpleTable(sheet, { height } = { height: 300 }) {
   return Inputs.table(sheet, {
     width: 800,
@@ -74,21 +75,27 @@ function simpleTable(sheet, { height } = { height: 300 }) {
 }
 ```
 
-```js
+The function is called with the raw extracted data
+
+```js echo
 display(simpleTable(projects_phase_1, { height: 400 }));
 ```
 
 ## Search table
 
-```js
+A searchable table can also be created.
+
+```js echo
 const search = view(
   Inputs.search(projects_phase_1, { placeholder: "Search projects..." })
 );
 ```
 
-```js
+```js echo
 display(Inputs.table(search));
 ```
+
+Note how the data in the changes in real-time, based on our search query. 
 
 ```js
 search
@@ -96,17 +103,18 @@ search
 
 ## Table with 2D arrays and search
 
-```js
-const mappedData = mapPhase1(projects_phase_1);
-```
+Using the proposed transformation from the component, we can map the extracted data to a more compact table.
 
-```js
+This is a basic example of manual entity linking.
+
+```js echo
+const mappedData = mapPhase1(projects_phase_1);
 const searchMapped = view(
   Inputs.search(mappedData, { placeholder: "Search mapped projects..." })
 );
 ```
 
-```js
+```js echo
 display(Inputs.table(searchMapped));
 ```
 
