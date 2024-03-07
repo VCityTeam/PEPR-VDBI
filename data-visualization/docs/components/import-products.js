@@ -11,7 +11,6 @@ export function resolveKnownEntities(sheet) {
   // Map raw project data to a simple 2D array
   const projectMap = map(sheet, (d, i) => {
     return {
-      id: [i],
       acronyme: [d["Acronyme"]],
       nom: [d["NOM et prénom"]],
       titre: [d["Titre complet"]],
