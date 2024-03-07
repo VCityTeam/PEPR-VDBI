@@ -1,85 +1,81 @@
 ---
-title: Initial graph test
+title: Initial tree test
 ---
 
 # Visualize Workbook data using Graphs and Trees
 
-Visualize the first sheet from the phase 1 Excel document as a graph.
+Visualize the first sheet from the phase 1 Excel document using trees and dendrogram diagrams.
 
-```js
+```js echo
 import { getProductSheet, resolveKnownEntities } from "./components/import-products.js";
 import { mapProductsToGraph } from "./components/force-graph.js";
 import { mapProductsToTree, radialDendrogram } from "./components/radial-dendrogram.js";
 import { collapsableRadialDendrogram } from "./components/collapsable-radial-dendrogram.js";
-```
 
-```js
 const workbook1 = FileAttachment("./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx").xlsx();
 const workbook2 = FileAttachment("./data/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx").xlsx();
 ```
 
-```js
-let productData = d3.filter(resolveKnownEntities(getProductSheet(workbook2)), (_d, i) => {
-    return i < 10;
-});
-```
-
 **Input data:**
-```js
+
+Using the transformation proposed in the imported components we can extract the tabular workbook data and resolve known entities.
+This transformation produces the following hierarchy: `root -> Project Acronym -> Project attribute (keywords, titles, etc.) -> ...`
+```js echo
+const productData = resolveKnownEntities(getProductSheet(workbook2));
 display(productData);
 ```
 
-```js
-const productGraph = mapProductsToGraph(productData);
-```
+**Sheet mapped to tree:**
 
-**Sheet mapped to graph:**
-```js
-display(productGraph);
-```
+We can map this dataset to a tree hierarchy...
 
 ```js
 const productTree = mapProductsToTree(productData);
+display(productTree);
 ```
 
-**Sheet mapped to tree:**
-```js
-display(productTree);
+**Sheet mapped to graph:**
+
+... and a graph hierarchy
+
+```js echo
+const productGraph = mapProductsToGraph(productData);
+display(productGraph);
 ```
 
 ## Collapsable Radial Dendrogram
 
-```js
-const collapsableRadialProducts = view(collapsableRadialDendrogram(productTree, {
+We can display our tree dataset using a dendrogram. This dendrogram implements the following features:
+* Radial structure
+* Collapsable nodes
+  * TODO: Fix label animation updates
+* TODO: Zoom
+* TODO: Pan
+
+```js echo
+const collapsableRadialProducts = collapsableRadialDendrogram(productTree, {
     label: d => d.name,
     width: 1600,
     height: 1600,
-    margin: 50,
+    margin: 80,
     r: 3,
     fontsize: 15,
     depth: 150,
     duration: 500
-}));
-```
-
-```js
-collapsableRadialProducts;
-```
-
-```js
-console.debug(collapsableRadialProducts);
+});
+display(collapsableRadialProducts);
 ```
 
 ## Visualization information
 
 Once integrated the following information is desired for visualization:
-- [ ] lab names
-- [ ] ERC disciplines
-- [ ] show missing information
-- [x] show graphs over charts
-  - [ ] theme -> projet (in other workbook ANRT)
-  - [ ] col I : produit (ou resultats) de la recherche (primaire), J : secondaire, H : Quelles actions pour quelles solutions, A : acronyme
-- [x] Root node: PEPR VDBI
+- lab names
+- ERC disciplines
+- show missing information
+- ~~show graphs over charts~~
+  - theme -> projet (in other workbook ANRT)
+  - col I : produit (ou resultats) de la recherche (primaire) -> J : secondaire -> H : Quelles actions pour quelles solutions -> A : acronyme
+- ~~Root node: PEPR VDBI~~
 
 ## Data integration process
 
@@ -105,8 +101,9 @@ flowchart TD
     AA -->|Load| C
     BA -->|Load| C
     subgraph Web Application
-        C["Array (of objects)"] -->|Transform| F[Graph formalism]
-        F -->|Load| G(Collapsable Dendrogram)
-        F -->|Load| D(Collapsable Graph)
+        C["Array (of objects)"] -->|Transform| TF[Tree formalism]
+        C["Array (of objects)"] -->|Transform| GF[Graph formalism]
+        TF -->|Load| T(Collapsable Radial Dendrogram)
+        GF -->|Load| G(Collapsable Force-directed Graph)
     end
 ```
