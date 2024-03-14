@@ -168,11 +168,10 @@ export function collapsableRadialDendrogram(
     nodeUpdate
       .select("text")
       .style("fill-opacity", fillOpacity)
-      .attr("transform", function (d) {
-        return d.x < 180
-          ? "translate(0)"
-          : "rotate(180)translate(-" + (d.name.length + 50) + ")";
-      });
+      .attr("x", (d) => (d.x < Math.PI === !d.children ? 6 : -6))
+      .attr("text-anchor", (d) =>
+        d.x < Math.PI === !d.children ? "start" : "end"
+      );
 
     // Transition exiting nodes to the parent's new position.
     const nodeExit = node
