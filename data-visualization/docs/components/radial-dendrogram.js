@@ -8,7 +8,7 @@ import {
   linkRadial,
 } from "npm:d3";
 
-export function mapProductsToTree(projects) {
+export function mapToProjectTree(projects) {
   // map graph to d3 hierarchy format
   const projectTree = {
     name: "PEPR VDBI",
@@ -38,6 +38,39 @@ export function mapProductsToTree(projects) {
 
   return projectTree;
 }
+
+// col I : produit (ou resultats) de la recherche (primaire) -> J : secondaire -> H : Quelles actions pour quelles solutions -> A : acronyme
+export function mapProductToProjectTree(projects) {
+  // map graph to d3 hierarchy format
+  const projectTree = {
+    name: "PEPR VDBI",
+    children: map(projects, (project) => {
+      const projectChildren = filter(
+        Object.entries(project),
+        ([key, _values]) => {
+          return key != "id" && key != "acronyme";
+        }
+      ).map(([key, values]) => {
+        return {
+          name: key,
+          children: values.map((d) => {
+            return {
+              name: d,
+            };
+          }),
+        };
+      });
+      return {
+        name: project.acronyme[0],
+        // map datum values to children
+        children: projectChildren,
+      };
+    }),
+  };
+
+  return projectTree;
+}
+
 
 export function radialDendrogram(
   data,
