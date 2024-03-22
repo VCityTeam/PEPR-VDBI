@@ -9,7 +9,7 @@ export function getProductSheet(workbook) {
 
 export function resolveKnownEntities(sheet) {
   // Map raw project data to a simple 2D array
-  const projectMap = map(sheet, (d, i) => {
+  const projectMap = map(sheet, (d) => {
     return {
       acronyme: [d["Acronyme"]],
       nom: [d["NOM et prénom"]],
