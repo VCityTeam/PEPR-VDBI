@@ -7,9 +7,9 @@ title: Initial graph/tree test
 Visualize the first sheet from the phase 1 Excel document using trees and dendrogram diagrams.
 
 ```js echo
-import { getProductSheet, resolveKnownEntities } from "./components/import-products.js";
+import { getProductSheet, resolveKnownEntities, mapEntitesToProjectTree, mapEntitesToProductToProjectTree } from "./components/import-products.js";
 import { mapProductsToGraph } from "./components/force-graph.js";
-import { mapToProjectTree, mapProductToProjectTree, radialDendrogram } from "./components/radial-dendrogram.js";
+import { radialDendrogram } from "./components/radial-dendrogram.js";
 import { collapsableRadialDendrogram } from "./components/collapsable-radial-dendrogram.js";
 
 const workbook1 = FileAttachment("./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx").xlsx();
@@ -32,7 +32,7 @@ display(productData);
 We can map the dataset to a tree hierarchy...
 
 ```js echo
-const productTree = mapToProjectTree(productData);
+const productTree = mapEntitesToProjectTree(productData);
 display(productTree);
 ```
 
@@ -46,8 +46,8 @@ We can display our tree dataset using a dendrogram. This dendrogram implements t
 ```js echo
 const collapsableRadialProducts = collapsableRadialDendrogram(productTree, {
     label: d => d.name,
-    width: 1600,
-    height: 1600,
+    width: 1400,
+    height: 1400,
     margin: 80,
     r: 3,
     fontsize: 15,
@@ -57,7 +57,7 @@ const collapsableRadialProducts = collapsableRadialDendrogram(productTree, {
 display(collapsableRadialProducts);
 ```
 
-### Dendrogram: Products/results -> Actions and solutions -> Project acronym
+### Dendrogram: Products/results → Actions and solutions → Project acronym
 
 A different mapping showing the relationships between the identified products and results and each project:
 
@@ -70,15 +70,15 @@ flowchart LR
 ```
 
 ```js echo
-const productProjectTree = mapProductToProjectTree(productData);
-display(productProjectTree);
+const productProjectTree = mapEntitesToProductToProjectTree(productData);
+//display(productProjectTree);
 ```
 
-```js echo
+<!-- ```js echo
 const collapsableRadialProducts = collapsableRadialDendrogram(productProjectTree, {
     label: d => d.name,
-    width: 1600,
-    height: 1600,
+    width: 1400,
+    height: 1400,
     margin: 80,
     r: 3,
     fontsize: 15,
@@ -86,7 +86,7 @@ const collapsableRadialProducts = collapsableRadialDendrogram(productProjectTree
     duration: 500
 });
 display(collapsableRadialProducts);
-```
+``` -->
 
 ## Force Directed Graph
 
@@ -108,8 +108,8 @@ Once integrated the following information is desired for visualization:
 - ERC disciplines
 - show missing information
 - show graphs over charts
-  - theme -> projet (in other workbook ANRT)
-  - col I : produit (ou resultats) de la recherche (primaire) -> J : secondaire -> H : Quelles actions pour quelles solutions -> A : acronyme
+  - theme → projet (in other workbook ANRT)
+  - col I : produit (ou resultats) de la recherche (primaire) → J : secondaire → H : Quelles actions pour quelles solutions → A : acronyme
 - Root node: PEPR VDBI
 
 ## Data integration process
