@@ -112,58 +112,64 @@ export function mapEntitesToProjectTree(projects) {
 
 // col I : produit (ou resultats) de la recherche (primaire) -> J : secondaire -> H : Quelles actions pour quelles solutions -> A : acronyme
 export function mapEntitesToProductToProjectTree(projects) {
-  // Create project acronyme nodes
-  const project_names = projects.map((project) => {
-    return {
-      name: project.acronyme[0],
-    };
-  });
-
-  // Create action/solution nodes
-  const actions = projects.map((project, i) => {
-    return {
-      name: project.action[0],
-      children: project_names[i],
-    };
-  });
-
-  // Group projects by primary,secondary products/results
-  const projectByProduct =  //TODO: finish me
-
-  // Create secondary products/results nodes
-  const secondary_products = map(
-    group(
-      projects,
-      (project) => project.produit[1] // group by secondary product name
-    ),
-    (product) => {
-      return {
-        name: product[1],
-        children: actions, // filter by primary product name
-      };
-    }
+  // Group projects by primary, secondary products/results, then actions
+  const projectByProduct = group(
+    projects,
+    (project) => project.produit[0],
+    (project) => project.produit[1],
+    (project) => project.action[0]
   );
+  console.debug("projectByProduct", projectByProduct);
 
-  // Create primary products/result nodes
-  const primary_products = map(
-    group(
-      projects,
-      (project) => project.produit[0] // group by primary product name
-    ),
-    (product) => {
+  // this will be added to the project leaves to map all info
+  const projectTree = mapEntitesToProjectTree(projects).children;
+
+  console.log("projectTree", projectTree);
+
+  // this code could/should be made generic to work with any length of grouping ?
+  const projectToProductTree = map(
+    projectByProduct.entries(),
+    ([key, value]) => {
       return {
-        name: product[0],
-        children: projects.filter((project) => {
-          project.produit[0] == product[0] // filter by primary product name
+        // primary product name
+        name: key,
+        // secondary product children
+        children: map(value.entries(), ([key, value]) => {
+          return {
+            // secondary product name
+            name: key,
+            // action children
+            children: map(value.entries(), ([key, value]) => {
+              return {
+                // action name
+                name: key,
+                // project children
+                children: map(value, (project) => {
+                  return {
+                    // project name
+                    name: project.acronyme[0],
+                    children: Object.entries( // TODO: add a map here
+                      // get this project with its descendants
+                      projectTree.find((d) => d.name == project.acronyme[0])
+                      // filter out acronyme, actions, and products (we already added them to the tree as ancestors)
+                    ).filter(
+                      ([key, _value]) =>
+                        key != "action" && key != "produit" && "acronyme"
+                    ),
+                  };
+                }),
+              };
+            }),
+          };
         }),
       };
     }
   );
-  console.log(primary_products);
+  console.debug("projectToProductTree", projectToProductTree);
 
-  // // put the cherry on top before returning
-  // return {
-  //   name: "PEPR VDBI",
-  //   children: primary_products
-  // };
+  // put the cherry on top before returning
+  return {
+    name: "PEPR VDBI",
+    children: projectToProductTree,
+  };
 }

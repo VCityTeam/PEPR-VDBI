@@ -19,6 +19,7 @@ export function collapsableRadialDendrogram(
     marginRight = margin, // right margin, in pixels
     marginBottom = margin, // bottom margin, in pixels
     marginLeft = margin, // left margin, in pixels
+    textLength = 15, // max text length before cropping
     radius = Math.min(
       width - marginLeft - marginRight,
       height - marginTop - marginBottom
@@ -35,7 +36,7 @@ export function collapsableRadialDendrogram(
     strokeLinecap, // stroke line cap for links
     halo = "#fff", // color of label halo
     haloWidth = 3, // padding around the labels
-    dynamicPositioning = true // recalculate positions according to radius on update 
+    dynamicPositioning = true, // recalculate positions according to radius on update
   } = {}
 ) {
   // If id and parentId options are specified, or the path option, use d3.stratify
@@ -138,7 +139,12 @@ export function collapsableRadialDendrogram(
       .attr("text-anchor", (d) =>
         d.x < Math.PI === !d.children ? "start" : "end"
       )
-      .text((d) => d.data.name)
+      // crop node names longer than 20 characters
+      .text((d) => {
+        return d.data.name.length > textLength
+          ? d.data.name.slice(0, textLength).concat("...")
+          : d.data.name;
+      })
       .attr("stroke-linejoin", "round") // needed?
       .attr("stroke-width", haloWidth)
       .attr("stroke", halo)
@@ -247,3 +253,4 @@ export function collapsableRadialDendrogram(
     update(d);
   }
 }
+

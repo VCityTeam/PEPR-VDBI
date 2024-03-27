@@ -71,10 +71,10 @@ flowchart LR
 
 ```js echo
 const productProjectTree = mapEntitesToProductToProjectTree(productData);
-//display(productProjectTree);
+display(productProjectTree);
 ```
 
-<!-- ```js echo
+```js echo
 const collapsableRadialProducts = collapsableRadialDendrogram(productProjectTree, {
     label: d => d.name,
     width: 1400,
@@ -86,7 +86,7 @@ const collapsableRadialProducts = collapsableRadialDendrogram(productProjectTree
     duration: 500
 });
 display(collapsableRadialProducts);
-``` -->
+```
 
 ## Force Directed Graph
 
