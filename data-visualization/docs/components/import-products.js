@@ -1,4 +1,4 @@
-import { map, filter } from "npm:d3";
+import { map, filter, group } from "npm:d3";
 
 export function getProductSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[1], {
@@ -76,4 +76,94 @@ export function resolveKnownEntities(sheet) {
   });
 
   return projectMap;
+}
+
+export function mapEntitesToProjectTree(projects) {
+  // map graph to d3 hierarchy format
+  const projectTree = {
+    name: "PEPR VDBI",
+    children: map(projects, (project) => {
+      const projectChildren = filter(
+        // filter out project ids and acronymes
+        Object.entries(project),
+        ([key, _values]) => {
+          return key != "id" && key != "acronyme";
+        }
+      ).map(([key, values]) => {
+        return {
+          name: key,
+          children: values.map((d) => {
+            return {
+              name: d,
+            };
+          }),
+        };
+      });
+      return {
+        name: project.acronyme[0],
+        // map datum values to children
+        children: projectChildren,
+      };
+    }),
+  };
+
+  return projectTree;
+}
+
+// col I : produit (ou resultats) de la recherche (primaire) -> J : secondaire -> H : Quelles actions pour quelles solutions -> A : acronyme
+export function mapEntitesToProductToProjectTree(projects) {
+  // Create project acronyme nodes
+  const project_names = projects.map((project) => {
+    return {
+      name: project.acronyme[0],
+    };
+  });
+
+  // Create action/solution nodes
+  const actions = projects.map((project, i) => {
+    return {
+      name: project.action[0],
+      children: project_names[i],
+    };
+  });
+
+  // Group projects by primary,secondary products/results
+  const projectByProduct =  //TODO: finish me
+
+  // Create secondary products/results nodes
+  const secondary_products = map(
+    group(
+      projects,
+      (project) => project.produit[1] // group by secondary product name
+    ),
+    (product) => {
+      return {
+        name: product[1],
+        children: actions, // filter by primary product name
+      };
+    }
+  );
+
+  // Create primary products/result nodes
+  const primary_products = map(
+    group(
+      projects,
+      (project) => project.produit[0] // group by primary product name
+    ),
+    (product) => {
+      return {
+        name: product[0],
+        children: projects.filter((project) => {
+          project.produit[0] == product[0] // filter by primary product name
+        }),
+      };
+    }
+  );
+  console.log(primary_products);
+
+  // // put the cherry on top before returning
+  // return {
+  //   name: "PEPR VDBI",
+  //   children: primary_products
+  // };
 }

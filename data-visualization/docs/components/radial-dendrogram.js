@@ -8,70 +8,6 @@ import {
   linkRadial,
 } from "npm:d3";
 
-export function mapToProjectTree(projects) {
-  // map graph to d3 hierarchy format
-  const projectTree = {
-    name: "PEPR VDBI",
-    children: map(projects, (project) => {
-      const projectChildren = filter(
-        Object.entries(project),
-        ([key, _values]) => {
-          return key != "id" && key != "acronyme";
-        }
-      ).map(([key, values]) => {
-        return {
-          name: key,
-          children: values.map((d) => {
-            return {
-              name: d,
-            };
-          }),
-        };
-      });
-      return {
-        name: project.acronyme[0],
-        // map datum values to children
-        children: projectChildren,
-      };
-    }),
-  };
-
-  return projectTree;
-}
-
-// col I : produit (ou resultats) de la recherche (primaire) -> J : secondaire -> H : Quelles actions pour quelles solutions -> A : acronyme
-export function mapProductToProjectTree(projects) {
-  // map graph to d3 hierarchy format
-  const projectTree = {
-    name: "PEPR VDBI",
-    children: map(projects, (project) => {
-      const projectChildren = filter(
-        Object.entries(project),
-        ([key, _values]) => {
-          return key != "id" && key != "acronyme";
-        }
-      ).map(([key, values]) => {
-        return {
-          name: key,
-          children: values.map((d) => {
-            return {
-              name: d,
-            };
-          }),
-        };
-      });
-      return {
-        name: project.acronyme[0],
-        // map datum values to children
-        children: projectChildren,
-      };
-    }),
-  };
-
-  return projectTree;
-}
-
-
 export function radialDendrogram(
   data,
   {
@@ -82,7 +18,6 @@ export function radialDendrogram(
     children, // if hierarchical data, given a d in data, returns its children
     separation = (a, b) => (a.parent == b.parent ? 1 : 2) / a.depth,
     sort, // how to sort nodes prior to layout (e.g., (a, b) => d3.descending(a.height, b.height))
-    duration = 500, // transition duration
     width = 640, // outer width, in pixels
     height = 400, // outer height, in pixels
     margin = 60, // shorthand for margins
@@ -94,15 +29,13 @@ export function radialDendrogram(
       width - marginLeft - marginRight,
       height - marginTop - marginBottom
     ) / 2, // outer radius
-    r = 3, // radius of nodes
-    padding = 1, // horizontal padding for first and last column
+    r = 2.5, // radius of nodes
     fill = "#999", // fill for nodes
+    fillEmpty = "#555", // fill for nodes without children
     fillOpacity, // fill opacity for nodes
     stroke = "#555", // stroke for links
     strokeWidth = 1.5, // stroke width for links
     strokeOpacity = 0.4, // stroke opacity for links
-    strokeLinejoin, // stroke line join for links
-    strokeLinecap, // stroke line cap for links
     halo = "#fff", // color of label halo
     haloWidth = 3, // padding around the labels
   } = {}
@@ -136,9 +69,9 @@ export function radialDendrogram(
   const links = svg
     .append("g")
     .attr("fill", "none")
-    .attr("stroke", "#555")
-    .attr("stroke-opacity", 0.4)
-    .attr("stroke-width", 1.5)
+    .attr("stroke", stroke)
+    .attr("stroke-opacity", strokeOpacity)
+    .attr("stroke-width", strokeWidth)
     .selectAll("path")
     .data(root.links())
     .join("path")
@@ -161,8 +94,8 @@ export function radialDendrogram(
           translate(${d.y},0)
         `
     )
-    .attr("fill", (d) => (d.children ? "#555" : "#999"))
-    .attr("r", 2.5);
+    .attr("fill", (d) => (d.children ? fillEmpty : fill))
+    .attr("r", r);
 
   svg
     .append("g")
@@ -193,3 +126,4 @@ export function radialDendrogram(
 
   return svg.node();
 }
+
