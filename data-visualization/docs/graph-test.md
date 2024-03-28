@@ -52,6 +52,18 @@ const productForceGraph = forceGraph(productGraph, {
 display(productForceGraph);
 ```
 
+TODO:
+- select node:
+  - center node
+  - use force for readability
+  - or display additional info
+    - in another vis e.g. plot, etc...
+    - e.g. num of occurences 
+- example "query/viz" by product 1, 2
+- keep in mind generic functions that allow to group by some keyword with a "query" 
+  - search func
+- keep in mind query SPARQL/RDF
+
 ## Visualization information
 
 Once integrated the following information is desired for visualization:
