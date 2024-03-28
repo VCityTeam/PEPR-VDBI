@@ -52,9 +52,9 @@ export function forceGraph(
     strokeOpacity = 0.4, // stroke opacity for links
     textColor = "black", // label color
     halo = "#fff", // color of label halo
-    haloWidth = 3, // padding around the labels
+    haloWidth = 1, // padding around the labels
     labelOpacity = 0.2, // default label opacity
-    highlightOpacity = 0.8, // mouseover label opacity
+    highlightOpacity = 0.9, // mouseover label opacity
   }
 ) {
   const svg = d3
@@ -100,12 +100,13 @@ export function forceGraph(
     .attr("stroke", stroke)
     .attr("fill", (d) => colorScale(d.color))
     .on("click", (event, datum) => {
-      console.debug("event", event);
-      console.debug("datum", datum);
+      // console.debug("event", event);
+      // console.debug("datum", datum);
     })
     .on("mouseover", (event, datum) => {
-      event.target.style["stroke"] = "white";
-      event.target.style["fill"] = colorScale(nodes[datum.index].color);
+      event.target.style["strokeOpacity"] = highlightOpacity;
+      // event.target.style["stroke"] = "white";
+      // event.target.style["fill"] = colorScale(nodes[datum.index].color);
       node_label
         .filter((_e, j) => {
           return datum.index == j;
@@ -118,12 +119,13 @@ export function forceGraph(
         })
         // .style("fill", "white")
         .style("opacity", highlightOpacity);
-      console.debug("event", event);
-      console.debug("datum", datum);
+      // console.debug("event", event);
+      // console.debug("datum", datum);
     })
     .on("mouseout", (event, datum) => {
-      event.target.style["stroke"] = stroke;
-      event.target.style["fill"] = colorScale(nodes[datum.index].color);
+      event.target.style["strokeOpacity"] = strokeOpacity;
+      // event.target.style["stroke"] = stroke;
+      // event.target.style["fill"] = colorScale(nodes[datum.index].color);
       node_label
         .filter((_e, j) => {
           return datum.index == j;
@@ -136,8 +138,8 @@ export function forceGraph(
         })
         // .style("fill", "grey")
         .style("opacity", labelOpacity);
-      console.debug("event", event);
-      console.debug("datum", datum);
+      // console.debug("event", event);
+      // console.debug("datum", datum);
     })
     .call(drag(simulation));
 
@@ -233,7 +235,7 @@ export function forceGraph(
     .data(typeList)
     .join("rect")
     .attr("x", 12)
-    .attr("y", (d, i) => 32 + i * 16)
+    .attr("y", (_d, i) => 32 + i * 16)
     .attr("width", 10)
     .attr("height", 10)
     .style("fill", (d, i) => {
@@ -249,7 +251,7 @@ export function forceGraph(
     .data(typeList)
     .join("text")
     .attr("x", 26)
-    .attr("y", (d, i) => 41 + i * 16)
+    .attr("y", (_d, i) => 41 + i * 16)
     .text((d) => d)
     .style("fill", "FloralWhite")
     .style("font-size", "14px");
@@ -308,7 +310,7 @@ export function forceGraph(
    */
   function handleZoom(event) {
     d3.selectAll("svg g")
-      .filter((d, i) => i < 2)
+      .filter((_d, i) => i < 2)
       .attr("height", "100%")
       .attr("width", "100%")
       // .attr('transform', event.transform)
