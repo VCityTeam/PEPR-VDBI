@@ -37,12 +37,17 @@ TODO:
 Once integrated the following data visualizations are tested using components.
 
 ```js
-import { resolvePhase1Entities, getPhase1Sheet } from "./components/240117-proposals-labs-establishments.js";
+import {
+  resolvePhase1Entities,
+  getPhase1Sheet,
+  countPhase1
+} from "./components/240117-proposals-labs-establishments.js";
 import {
   getProductSheet,
   resolveProjectEntities,
-} from "./components/240108-proposals-keyworks.js";
-import { countPhase1 } from "./components/reduce-phase-1.js";
+  // countKeywords
+  test
+} from "./components/240108-proposals-keywords.js";
 ```
 
 ```js
@@ -55,28 +60,93 @@ const projects_product = resolveProjectEntities(getProductSheet(workbook1));
 const projects_phase_1 = resolvePhase1Entities(getPhase1Sheet(workbook2));
 ```
 
-## Simple plot
+```js echo
+display(projects_product);
+```
+
+```js echo
+display(projects_phase_1);
+```
+
+## Simple plot - count keywords
+
+```js echo
+function countKeywords(projects) {
+  const keyWords = d3.merge(d3.map(projects, (project) => project.motClef));
+  const keyWordCount = new Map(); 
+  keyWords.forEach((word) => {
+    if (keyWordCount.has(word)) {
+      keyWordCount.set(word, keyWordCount.get(word) + 1);
+    } else {
+      keyWordCount.set(word, 1);
+    }
+  });
+  return d3.map(keyWordCount.entries(), ([key, value], i) => {
+    return {
+      keyword: key,
+      count: value
+    };
+  });
+  // return d3.rollup(sheet, ,(project) => project.motClef.);
+}
+
+const reducedKeywords = d3.sort(countKeywords(projects_product), (d) => d.keyword);
+display(reducedKeywords);
+```
+
+```js echo
+// Since Xbar is horizontal instead of vertical, the x and y axes are inversed
+function simpleBarXPlot(columns, {
+    height,
+    marginLeft = 60, // space for labels
+    fill,
+    color = {},
+    x = "x",
+    xOptions,
+    y = "y",
+    yOptions,
+    ySort = "ascending",
+    title = "y",
+  }) {
+  return Plot.plot({
+    height: height,
+    marginLeft: marginLeft,
+    color: color,
+    sort: { y: y, order: ySort },
+    x: xOptions,
+    y: yOptions,
+    marks: [
+      Plot.barX(columns, {
+        x: x,
+        y: y,
+        title: title,
+        fill: fill,
+      }),
+    ],
+  });
+  
+}
+
+display(
+  simpleBarXPlot(reducedKeywords, {
+    height: reducedKeywords.length * 20, // assure adequate horizontal space for each line
+    marginLeft: 150,
+    fill: d3.map(reducedKeywords, (d) => d.count + 2),
+    color: {
+      scheme: "YlGn",
+    },
+    x: "count",
+    y: "keyword",
+    yOptions: {
+      tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat("...") : d),
+      fontSize: 20,
+    },
+    title: "keyword",
+  })
+);
+```
 
 ```js echo
 const reducedSheet = countPhase1(projects_phase_1);
 display(reducedSheet)
-```
-
-```js echo
-function simplePlot(columns, {height} = {}) {
-  return Plot.plot({
-    width: 1200,
-    height,
-    marginTop: 30,
-    x: {nice: true, label: null, tickFormat: ""},
-    y: {axis: null},
-    marks: [
-      Plot.ruleX(columns, {x: "etablissements", y: "y", markerEnd: "dot", strokeWidth: 2.5}),
-      Plot.ruleY([0]),
-      Plot.text(columns, {x: "etablissements", y: "y", text: "name", lineAnchor: "bottom", dy: -10, lineWidth: 10, fontSize: 12})
-    ]
-  });
-}
-
-display(simplePlot(reducedSheet));
 ```

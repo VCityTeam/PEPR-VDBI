@@ -53,7 +53,7 @@ flowchart TD
 import {
   getProductSheet,
   resolveProjectEntities,
-} from "./components/240108-proposals-keyworks.js";
+} from "./components/240108-proposals-keywords.js";
 import { mapEntitiesToGraph, forceGraph } from "./components/force-graph.js";
 
 const workbook1 = FileAttachment(
