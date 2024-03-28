@@ -30,6 +30,10 @@ flowchart LR
 
 # Visualization result
 
+TODO:
+- simple plots and analysis
+- reproduce excel plots, graphs
+- don't correct, just align
 Once integrated the following data visualizations are tested using components.
 
 ```js
