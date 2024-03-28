@@ -1,4 +1,5 @@
 import {
+  selectAll,
   map,
   filter,
   group,
@@ -7,6 +8,7 @@ import {
   stratify,
   create,
   linkRadial,
+  zoom
 } from "npm:d3";
 
 export function mapEntitesToProjectTree(projects) {
@@ -189,6 +191,11 @@ export function collapsableRadialDendrogram(
     }
   });
   console.debug(root.descendants());
+
+  const zoomF = zoom().on("zoom", handleZoom);
+
+  svg.call(zoomF);
+
   update(root);
   return svg.node();
 
@@ -250,7 +257,8 @@ export function collapsableRadialDendrogram(
       .attr("stroke-linejoin", "round")
       .attr("stroke-width", haloWidth)
       .attr("stroke", halo)
-      .attr("paint-order", "stroke");
+      .attr("paint-order", "stroke")
+      .attr("class", "node_label");
 
     // Transition nodes to their new position.
     const nodeUpdate = node
@@ -353,5 +361,40 @@ export function collapsableRadialDendrogram(
       d._children = null;
     }
     update(d);
+  }
+
+  /**
+   * A handler function for selecting elements to transform during a zoom event
+   *
+   * @param {D3ZoomEvent} event the zoom event containing information on how the svg canvas is being translated and scaled
+   */
+  function handleZoom(event) {
+    selectAll("svg g")
+      .filter((_d, i) => i < 2)
+      .attr("height", "100%")
+      .attr("width", "100%")
+      .attr('transform', event.transform)
+      .attr(
+        "transform",
+        "translate(" +
+          event.transform.x +
+          "," +
+          event.transform.y +
+          ") scale(" +
+          event.transform.k +
+          ")"
+      );
+    selectAll("text.node_label")
+      // .style("font-size", fontSize / event.transform.k + "px")
+      .attr(
+        "transform",
+        "translate(" +
+          event.transform.x +
+          "," +
+          event.transform.y +
+          ") scale(" +
+          event.transform.k +
+          ")"
+      );
   }
 }
