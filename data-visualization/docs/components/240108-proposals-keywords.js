@@ -1,4 +1,4 @@
-import { map, merge, filter } from "npm:d3";
+import { map, filter } from "npm:d3";
 
 export function getProductSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[1], {
@@ -38,7 +38,7 @@ export function resolveProjectEntities(sheet) {
           return typeof d !== "undefined";
         }
       ),
-      motClef: filter(
+      motClefs: filter(
         [
           d["Mot clef 1"],
           d["Mot clef 2"],
