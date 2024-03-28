@@ -1,4 +1,4 @@
-import { map, filter } from "npm:d3";
+import { map, merge, filter } from "npm:d3";
 
 export function getProductSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[1], {
@@ -76,4 +76,8 @@ export function resolveProjectEntities(sheet) {
   });
 
   return projectMap;
+}
+
+export function test(reducedKeywords) {
+
 }
