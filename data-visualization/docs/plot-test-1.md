@@ -37,31 +37,35 @@ TODO:
 Once integrated the following data visualizations are tested using components.
 
 ```js
-import { mapPhase1 } from "./components/map-phase-1.js";
+import { resolvePhase1Entities, getPhase1Sheet } from "./components/240117-proposals-labs-establishments.js";
+import {
+  getProductSheet,
+  resolveProjectEntities,
+} from "./components/240108-proposals-keyworks.js";
 import { countPhase1 } from "./components/reduce-phase-1.js";
 ```
 
 ```js
-const workbook = FileAttachment("./data/phase_1_workbook.xlsx").xlsx();
+const workbook1 = FileAttachment("./data/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx").xlsx();
+const workbook2 = FileAttachment("./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx").xlsx();
 ```
 
 ```js
-function getProjectSheet(workbook) {
-  return workbook.sheet(workbook.sheetNames[0], {
-    range: "A1:DR78",
-    headers: true,
-  });
-}
-
-const projects_phase_1 = getProjectSheet(workbook);
+const projects_product = resolveProjectEntities(getProductSheet(workbook1));
+const projects_phase_1 = resolvePhase1Entities(getPhase1Sheet(workbook2));
 ```
 
 ## Simple plot
 
-```js
+```js echo
+const reducedSheet = countPhase1(projects_phase_1);
+display(reducedSheet)
+```
+
+```js echo
 function simplePlot(columns, {height} = {}) {
   return Plot.plot({
-    width: 800,
+    width: 1200,
     height,
     marginTop: 30,
     x: {nice: true, label: null, tickFormat: ""},
@@ -74,13 +78,5 @@ function simplePlot(columns, {height} = {}) {
   });
 }
 
-const reducedSheet = countPhase1(projects_phase_1);
-```
-
-```js
-display(reducedSheet)
-```
-
-```js
 display(simplePlot(reducedSheet));
 ```

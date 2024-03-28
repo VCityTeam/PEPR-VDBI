@@ -1,6 +1,13 @@
 import { map, filter } from "npm:d3";
 
-export function mapPhase1(sheet) {
+export function getPhase1Sheet(workbook) {
+  return workbook.sheet(workbook.sheetNames[0], {
+    range: "A1:DR78",
+    headers: true,
+  });
+}
+
+export function resolvePhase1Entities(sheet) {
   // Map raw project data to a simple array of strings and objects
   const projectMap = map(sheet, (d, i) => {
     return {

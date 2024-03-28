@@ -192,9 +192,9 @@ export function collapsableRadialDendrogram(
   });
   console.debug(root.descendants());
 
-  const zoomF = zoom().on("zoom", handleZoom);
+  // const zoomF = zoom().on("zoom", handleZoom);
 
-  svg.call(zoomF);
+  // svg.call(zoomF);
 
   update(root);
   return svg.node();

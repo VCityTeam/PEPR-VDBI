@@ -6,64 +6,6 @@ title: Initial graph test
 
 Visualize the first sheet from the phase 1 Excel document using graphs.
 
-```js echo
-import {
-  getProductSheet,
-  resolveKnownEntities,
-} from "./components/import-products.js";
-import { mapEntitiesToGraph, forceGraph } from "./components/force-graph.js";
-
-const workbook1 = FileAttachment(
-  "./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
-).xlsx();
-const workbook2 = FileAttachment(
-  "./data/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx"
-).xlsx();
-```
-
-**Input data:**
-
-Using the transformation proposed in the imported components we can extract the tabular workbook data and resolve known entities.
-This transformation produces the following hierarchy: `root -> Project Acronym -> Project attribute (keywords, titles, etc.) -> ...`
-
-```js echo
-const productData = resolveKnownEntities(getProductSheet(workbook2));
-display(productData);
-```
-
-## Force Directed Graph
-
-**Sheet mapped to graph:**
-
-... We can also map the data to a graph hierarchy
-
-```js echo
-const productGraph = mapEntitiesToGraph(productData);
-display(productGraph);
-```
-
-```js echo
-const productForceGraph = forceGraph(productGraph, {
-  width: 1400,
-  height: 1400,
-  r: 3,
-  fontsize: 12,
-});
-display(productForceGraph);
-```
-
-TODO:
-- select node:
-  - center node
-  - use force for readability
-  - or display additional info
-    - in another vis e.g. plot, etc...
-    - e.g. num of occurences 
-- example "query/viz" by product 1, 2
-- keep in mind generic functions that allow to group by some keyword with a "query" 
-  - search func
-- keep in mind query SPARQL/RDF
-
 ## Visualization information
 
 Once integrated the following information is desired for visualization:
@@ -105,3 +47,62 @@ flowchart TD
         GF -->|Load| G(Collapsable Force-directed Graph)
     end
 ```
+
+
+```js echo
+import {
+  getProductSheet,
+  resolveProjectEntities,
+} from "./components/240108-proposals-keyworks.js";
+import { mapEntitiesToGraph, forceGraph } from "./components/force-graph.js";
+
+const workbook1 = FileAttachment(
+  "./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
+).xlsx();
+const workbook2 = FileAttachment(
+  "./data/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx"
+).xlsx();
+```
+
+**Input data:**
+
+Using the transformation proposed in the imported components we can extract the tabular workbook data and resolve known entities.
+This transformation produces the following hierarchy: `root -> Project Acronym -> Project attribute (keywords, titles, etc.) -> ...`
+
+```js echo
+const productData = resolveProjectEntities(getProductSheet(workbook2));
+display(productData);
+```
+
+## Force Directed Graph
+
+**Sheet mapped to graph:**
+
+... We can also map the data to a graph hierarchy
+
+```js echo
+const productGraph = mapEntitiesToGraph(productData);
+display(productGraph);
+```
+
+```js echo
+const productForceGraph = forceGraph(productGraph, {
+  width: 1400,
+  height: 1400,
+  r: 3,
+  fontsize: 12,
+});
+display(productForceGraph);
+```
+
+TODO:
+- select node:
+  - center node
+  - use force for readability
+  - or display additional info
+    - in another vis e.g. plot, etc...
+    - e.g. num of occurences 
+- example "query/viz" by product 1, 2
+- keep in mind generic functions that allow to group by some keyword with a "query" 
+  - search func
+- keep in mind query SPARQL/RDF
