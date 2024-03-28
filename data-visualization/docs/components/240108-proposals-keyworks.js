@@ -1,4 +1,4 @@
-import { map, filter, group } from "npm:d3";
+import { map, filter } from "npm:d3";
 
 export function getProductSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[1], {
@@ -7,7 +7,7 @@ export function getProductSheet(workbook) {
   });
 }
 
-export function resolveKnownEntities(sheet) {
+export function resolveProjectEntities(sheet) {
   // Map raw project data to a simple 2D array
   const projectMap = map(sheet, (d) => {
     return {

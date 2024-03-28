@@ -10,7 +10,7 @@ Import and visualize the first sheet from the phase 1 Excel document.
 ## Integration process
 
 D3 and the Observable framework can import [`.xlsx` files](https://observablehq.com/framework/lib/xlsx).
-Then the data should be transformed into an array using a [component](./components/map-phase-1.js).
+Then the data should be transformed into an array using a [component](./components/240117-proposals-labs-establishments.js).
 Columns with obviously identical entities are combined.
 E.g. `Etablissement`, `Etablissement 2`, ... `Etablissement n` are merged into the same column.
 
@@ -39,7 +39,7 @@ Once integrated the following data visualizations are tested using components.
 First a component for transforming the Workbook data is imported, followed by the reading and storing of the Workbook itself.
 
 ```js echo
-import { mapPhase1 } from "./components/map-phase-1.js";
+import { resolvePhase1Entities } from "./components/240117-proposals-labs-establishments.js";
 const workbook = FileAttachment("./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx").xlsx();
 ```
 
@@ -108,7 +108,7 @@ Using the proposed transformation from the component, we can map the extracted d
 This is a basic example of manual entity linking.
 
 ```js echo
-const mappedData = mapPhase1(projects_phase_1);
+const mappedData = resolvePhase1Entities(projects_phase_1);
 const searchMapped = view(
   Inputs.search(mappedData, { placeholder: "Search mapped projects..." })
 );
