@@ -31,9 +31,10 @@ flowchart LR
 # Visualization result
 
 TODO:
-- simple plots and analysis
+- ~~simple plots and analysis~~
 - reproduce excel plots, graphs
 - don't correct, just align
+
 Once integrated the following data visualizations are tested using components.
 
 ```js
@@ -60,15 +61,22 @@ const projects_product = resolveProjectEntities(getProductSheet(workbook1));
 const projects_phase_1 = resolvePhase1Entities(getPhase1Sheet(workbook2));
 ```
 
+Project with product workbook:
+
 ```js echo
 display(projects_product);
 ```
+
+Project with laboratory workbook:
 
 ```js echo
 display(projects_phase_1);
 ```
 
 ## Simple plot - count keywords
+
+Map the keywords of each project to an array and count the occurences of each word
+TODO: implement as map-reduce (or even better d3.rollup()) 
 
 ```js echo
 function countKeywords(projects) {
@@ -93,6 +101,12 @@ function countKeywords(projects) {
 const reducedKeywords = d3.sort(countKeywords(projects_product), (d) => d.keyword);
 display(reducedKeywords);
 ```
+
+Plot the occurrences to a simple bar chart with the following features:
+- horizontal bars
+- coloring by count number
+- longer keyword (y) axis labels are truncated
+- hover over bar to see full keyword
 
 ```js echo
 // Since Xbar is horizontal instead of vertical, the x and y axes are inversed
