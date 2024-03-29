@@ -77,7 +77,3 @@ export function resolveProjectEntities(sheet) {
 
   return projectMap;
 }
-
-export function test(reducedKeywords) {
-
-}
