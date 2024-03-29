@@ -61,10 +61,6 @@ const projects_product = resolveProjectEntities(getProductSheet(workbook1));
 const projects_phase_1 = resolvePhase1Entities(getPhase1Sheet(workbook2));
 ```
 
-```js
-const phase_1_graph = mapEntitiesToGraph(projects_phase_1);
-```
-
 Projects from product workbook:
 
 ```js echo
@@ -123,7 +119,7 @@ display(
     height: sortedKeywordCounts.length * 20, // assure adequate horizontal space for each line
     marginLeft: 150,
     color: {
-      scheme: "YlGn",
+      scheme: "Spectral",
     },
     x: {
       grid: true,
@@ -147,45 +143,65 @@ display(
 ```
 
 ## Simple plot - count project universities and partners 
-
+<!-- 
 Map table to graph first
 ```js echo
 const phase_1_graph = mapEntitiesToGraph(projects_phase_1);
-```
+display(phase_1_graph);
+``` -->
 
-A count of establishments (or a count of projects per establishment)
-
-```js echo
-const sortedEstablishmentCounts = countEntities(projects_phase_1, (project) => project.etablissements);
-display(sortedEstablishmentCounts);
-```
-
-A count of partners (or a count of projects per partner)
+A count of establishment owners (or a count of projects per establishment owner)
 
 ```js echo
-const sortedPartnerCounts = countEntities(projects_phase_1, (project) => project.partenaires);
-display(sortedPartnerCounts);
+const sortedEstablishmentOwnerCounts = countEntities(projects_phase_1, (project) => project.etablissements.slice(0, 1));
+display(sortedEstablishmentOwnerCounts);
 ```
 
-A count of partners per establishment (from graph)
+A count of establishment partners (or a count of projects per establishment partner)
 
 ```js echo
-const establishments = d3.group(d3.filter(phase_1_graph.links, (link) => link.label == "etablissements"), (link) => );
-display(establishments); // TODO FINISH ME
-// display(d3.group(d3.map(projects_phase_1, (project) => project.etablissements), ));
-// const sortedPartnerCounts = countEntities(projects_phase_1, (project) => {
-//   const project 
-// });
-// display(sortedPartnerCounts);
+const sortedEstablishmentPartnerCounts = countEntities(projects_phase_1, (project) => project.etablissements.slice(1));
+display(sortedEstablishmentPartnerCounts);
 ```
 
+<!-- A count of partners per establishment (using the graph).
+Note that this "query" could work (should be) better with node types (either as attributes of a node or in the graph). 
+
 ```js echo
+// establishment count by project
+const establishmentCounts = d3.rollup(d3.filter(phase_1_graph.links, (link) => link.label == "etablissements"), (D) => D.length, (link) => link.target);
+display(establishmentCounts);
+``` -->
+
+Combine counts to one array
+
+```js echo
+// This could be generalized to work for 2, 3, ... n counts
+function zipCounts(data1, data2) {
+  // turn the .count of data1 into an array of counts
+  const mappedData = d3.map(data1, (d) => {
+    return {
+      entity: d.entity,
+      count: [d.count],
+    };
+  });
+  // push the count of data2 onto the array of each count
+  data2.forEach((datum) => {
+    // get matching count from data2
+    mappedData.find((d) => d.entity == datum.entity).count.push(datum.count);
+  });
+  return mappedData;
+}
+
+display(zipCounts(sortedEstablishmentOwnerCounts, sortedEstablishmentPartnerCounts));
+
+const bar_width = 20;
 display(
   Plot.plot({
-    height: sortedEstablishmentCounts.length * 40, // assure adequate horizontal space for each line
+    height: (sortedEstablishmentOwnerCounts.length + sortedEstablishmentPartnerCounts.length) * bar_width * 2, // assure adequate horizontal space for each line
     marginLeft: 150,
     color: {
-      scheme: "YlGn",
+      scheme: "Plasma",
     },
     x: {
       grid: true,
@@ -197,17 +213,19 @@ display(
       fontSize: 20,
     },
     marks: [
-      Plot.barX(sortedEstablishmentCounts, {
+      Plot.barX(sortedEstablishmentOwnerCounts, {
         x: "count",
         y: "entity",
         title: "entity",
         fill: "count",
+        dy: -2,
       }),
-      Plot.barX(sortedPartnerCounts, {
+      Plot.barX(sortedEstablishmentPartnerCounts, {
         x: "count",
         y: "entity",
         title: "entity",
         fill: "count",
+        dy: +2,
       }),
     ],
   })
