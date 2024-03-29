@@ -40,8 +40,7 @@ Once integrated the following data visualizations are tested using components.
 ```js
 import {
   resolvePhase1Entities,
-  getPhase1Sheet,
-  countPhase1
+  getPhase1Sheet
 } from "./components/240117-proposals-labs-establishments.js";
 import {
   getProductSheet,
@@ -49,6 +48,7 @@ import {
   // countKeywords
   test
 } from "./components/240108-proposals-keywords.js";
+import { mapEntitiesToGraph } from "./components/force-graph.js";
 ```
 
 ```js
@@ -59,6 +59,10 @@ const workbook2 = FileAttachment("./data/240117 consortium laboratoire, établi
 ```js
 const projects_product = resolveProjectEntities(getProductSheet(workbook1));
 const projects_phase_1 = resolvePhase1Entities(getPhase1Sheet(workbook2));
+```
+
+```js
+const phase_1_graph = mapEntitiesToGraph(projects_phase_1);
 ```
 
 Projects from product workbook:
@@ -144,20 +148,41 @@ display(
 
 ## Simple plot - count project universities and partners 
 
+Map table to graph first
 ```js echo
-const sortedUniversityCounts = countEntities(projects_phase_1, (project) => project.etablissements);
-display(sortedUniversityCounts);
+const phase_1_graph = mapEntitiesToGraph(projects_phase_1);
 ```
+
+A count of establishments (or a count of projects per establishment)
+
+```js echo
+const sortedEstablishmentCounts = countEntities(projects_phase_1, (project) => project.etablissements);
+display(sortedEstablishmentCounts);
+```
+
+A count of partners (or a count of projects per partner)
 
 ```js echo
 const sortedPartnerCounts = countEntities(projects_phase_1, (project) => project.partenaires);
 display(sortedPartnerCounts);
 ```
 
+A count of partners per establishment (from graph)
+
+```js echo
+const establishments = d3.group(d3.filter(phase_1_graph.links, (link) => link.label == "etablissements"), (link) => );
+display(establishments); // TODO FINISH ME
+// display(d3.group(d3.map(projects_phase_1, (project) => project.etablissements), ));
+// const sortedPartnerCounts = countEntities(projects_phase_1, (project) => {
+//   const project 
+// });
+// display(sortedPartnerCounts);
+```
+
 ```js echo
 display(
   Plot.plot({
-    height: sortedUniversityCounts.length * 40, // assure adequate horizontal space for each line
+    height: sortedEstablishmentCounts.length * 40, // assure adequate horizontal space for each line
     marginLeft: 150,
     color: {
       scheme: "YlGn",
@@ -172,7 +197,7 @@ display(
       fontSize: 20,
     },
     marks: [
-      Plot.barX(sortedUniversityCounts, {
+      Plot.barX(sortedEstablishmentCounts, {
         x: "count",
         y: "entity",
         title: "entity",
