@@ -9,11 +9,13 @@ export function getPhase1Sheet(workbook) {
 
 export function resolvePhase1Entities(sheet) {
   // Map raw project data to a simple array of strings and objects
-  const projectMap = map(sheet, (d, i) => {
+  const projectMap = map(sheet, (d) => {
     return {
-      id: i,
-      acronyme: d["Acronyme"],
-      changements: d["changements à préciser depuis le 16-17 octobre 2023"],
+      acronyme: filter([d["Acronyme"]], (d) => typeof d !== "undefined"),
+      changements: filter(
+        [d["changements à préciser depuis le 16-17 octobre 2023"]],
+        (d) => typeof d !== "undefined"
+      ),
       noms: filter(
         [
           d["NOM et prénom"],
@@ -63,7 +65,7 @@ export function resolvePhase1Entities(sheet) {
           d["Etablissement 10"],
           d["Etablissement 11"],
         ],
-        (d) => typeof d !== "undefined"
+        (d) => typeof d !== "undefined" && d !== 0
       ),
       partenaires: filter(
         [
@@ -125,7 +127,7 @@ export function resolvePhase1Entities(sheet) {
         ],
         (d) => typeof d !== "undefined"
       ),
-      erc: d["ERC"],
+      erc: filter([d["ERC"]], (d) => typeof d !== "undefined"),
       mot_clefs: filter(
         [
           d["Mot clef 1"],
@@ -172,8 +174,8 @@ export function resolvePhase1Entities(sheet) {
         ],
         (d) => typeof d !== "undefined"
       ),
-      nom_complet: d["Nom complet"],
-      notes: d["Notes"],
+      nom_complet: filter([d["Nom complet"]], (d) => typeof d !== "undefined"),
+      notes: filter([d["Notes"]], (d) => typeof d !== "undefined"),
     };
   });
 

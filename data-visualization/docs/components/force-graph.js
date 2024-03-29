@@ -22,8 +22,11 @@ export function mapEntitiesToGraph(projects) {
         // push value of project properties to graph
         for (let index = 0; index < value.length; index++) {
           const element = value[index];
+          if (!element) {
+            console.warn("No element found", index, key, value);
+          }
           if (!nodes.find((d) => d.id == element)) {
-            nodes.push({ id: element, color: index });
+            nodes.push({ id: element, color: index + 1 });
           }
           links.push({
             source: project.acronyme[0], // project id
