@@ -7,6 +7,13 @@ export function getPhase1Sheet(workbook) {
   });
 }
 
+export function getVillesSheet(workbook) {
+  return workbook.sheet(workbook.sheetNames[1], {
+    range: "A1:E69",
+    headers: true,
+  });
+}
+
 export function resolvePhase1Entities(sheet) {
   // Map raw project data to a simple array of strings and objects
   const projectMap = map(sheet, (d) => {
