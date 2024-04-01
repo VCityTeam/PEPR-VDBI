@@ -40,18 +40,18 @@ Once integrated the following data visualizations are tested using components.
 
 ```js
 import {
-  resolvePhase1Entities,
   getPhase1Sheet,
   getVillesSheet,
+  getLabSheet,
+  resolvePhase1Entities,
+  resolveLaboEntities,
 } from "./components/240117-proposals-labs-establishments.js";
 import {
   getProductSheet,
   resolveProjectEntities,
-  // countKeywords
-  test,
 } from "./components/240108-proposals-keywords.js";
 import { mapEntitiesToGraph } from "./components/force-graph.js";
-import { mapCounts } from "./components/utilities.js";
+import { mapCounts, mergeCounts } from "./components/utilities.js";
 ```
 
 ```js
@@ -87,15 +87,15 @@ Map-group-reduce-sort the keywords of each project to an array and count the occ
 ```js echo
 function countEntities(data, mapFunction) {
   // flatten (map to array then merge) entities
-  const entityList = d3.merge(d3.map(data, (d) => mapFunction(d)));
+  const entity_list = d3.merge(d3.map(data, (d) => mapFunction(d)));
   // group by entity then reduce to a count with d3.rollup()
   const entityCounts = d3.rollup(
-    entityList,
+    entity_list,
     (D) => D.length,
     (d) => d
   );
   // map entityCounts to a [{x: entity, y: count}] data structure
-  const formattedEntityCounts = d3.map(
+  const formatted_entity_counts = d3.map(
     entityCounts.entries(),
     ([key, value], i) => {
       return {
@@ -105,14 +105,14 @@ function countEntities(data, mapFunction) {
     }
   );
   // sort by entity and return
-  return d3.sort(formattedEntityCounts, (d) => d.entity);
+  return d3.sort(formatted_entity_counts, (d) => d.entity);
 }
 
-const sortedKeywordCounts = countEntities(
+const sorted_keyword_counts = countEntities(
   projects_product,
   (project) => project.motClefs
 );
-display(sortedKeywordCounts);
+display(sorted_keyword_counts);
 ```
 
 Plot the occurrences to a simple bar chart with the following features:
@@ -125,7 +125,7 @@ Plot the occurrences to a simple bar chart with the following features:
 ```js echo
 display(
   Plot.plot({
-    height: sortedKeywordCounts.length * 20, // assure adequate horizontal space for each line
+    height: sorted_keyword_counts.length * 15, // assure adequate horizontal space for each line
     marginLeft: 150,
     color: {
       scheme: "Spectral",
@@ -140,11 +140,11 @@ display(
       fontSize: 20,
     },
     marks: [
-      Plot.barX(sortedKeywordCounts, {
+      Plot.barX(sorted_keyword_counts, {
         x: "count",
         y: "entity",
         title: "entity",
-        fill: d3.map(sortedKeywordCounts, (d) => d.count + 2), // shift up the color values to be more visible
+        fill: d3.map(sorted_keyword_counts, (d) => d.count + 2), // shift up the color values to be more visible
       }),
     ],
   })
@@ -163,21 +163,21 @@ display(phase_1_graph);
 A count of establishment owners (or a count of projects per establishment owner)
 
 ```js echo
-const sortedEstablishmentOwnerCounts = countEntities(
+const sorted_establishment_owner_counts = countEntities(
   projects_phase_1,
   (project) => project.etablissements.slice(0, 1)
 );
-display(sortedEstablishmentOwnerCounts);
+display(sorted_establishment_owner_counts);
 ```
 
 A count of establishment partners (or a count of projects per establishment partner)
 
 ```js echo
-const sortedEstablishmentPartnerCounts = countEntities(
+const sorted_establishment_partner_counts = countEntities(
   projects_phase_1,
   (project) => project.etablissements.slice(1)
 );
-display(sortedEstablishmentPartnerCounts);
+display(sorted_establishment_partner_counts);
 ```
 
 <!-- A count of partners per establishment (using the graph).
@@ -185,23 +185,22 @@ Note that this "query" could work (should be) better with node types (either as 
 
 ```js echo
 // establishment count by project
-const establishmentCounts = d3.rollup(d3.filter(phase_1_graph.links, (link) => link.label == "etablissements"), (D) => D.length, (link) => link.target);
-display(establishmentCounts);
+const establishment_counts = d3.rollup(d3.filter(phase_1_graph.links, (link) => link.label == "etablissements"), (D) => D.length, (link) => link.target);
+display(establishment_counts);
 ``` -->
 
 Combine counts to one array and calculate count totals
 
 ```js echo
-const establishmentCounts = mapCounts(
-  [sortedEstablishmentOwnerCounts, sortedEstablishmentPartnerCounts],
+const establishment_counts = mapCounts(
+  [sorted_establishment_owner_counts, sorted_establishment_partner_counts],
   ["owner", "partner"]
 );
-display(establishmentCounts);
 
-const totalEstablishmentCounts = d3.sort(
+const total_establishment_counts = d3.sort(
   d3
     .rollup(
-      establishmentCounts,
+      establishment_counts,
       (D) => {
         let count = 0;
         D.forEach((d) => {
@@ -209,8 +208,8 @@ const totalEstablishmentCounts = d3.sort(
         });
         return {
           entity: D[0].entity,
-          type: "total",
           count: count,
+          type: "total",
         };
       },
       (d) => d.entity
@@ -218,14 +217,17 @@ const totalEstablishmentCounts = d3.sort(
     .values(),
   (d) => d.entity
 );
-display(totalEstablishmentCounts);
+```
 
-const sortedEstablishmentCounts = d3.sort(
-  establishmentCounts.concat(totalEstablishmentCounts),
+Merge counts into one dataset
+
+```js echo
+const sorted_establishment_counts = d3.sort(
+  establishment_counts.concat(total_establishment_counts),
   (d) => d.count,
   (d) => d.entity
 );
-display(sortedEstablishmentCounts);
+display(sorted_establishment_counts);
 ```
 
 ... and plot data
@@ -233,7 +235,7 @@ display(sortedEstablishmentCounts);
 ```js
 display(
   Plot.plot({
-    height: sortedEstablishmentCounts.length * 20, // assure adequate horizontal space for each line
+    height: sorted_establishment_counts.length * 20, // assure adequate horizontal space for each line
     width: 1000,
     marginLeft: 60,
     marginRight: 150,
@@ -249,7 +251,7 @@ display(
       tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat("...") : d), // cut off long tick labels
     },
     marks: [
-      Plot.barX(sortedEstablishmentCounts, {
+      Plot.barX(sorted_establishment_counts, {
         x: "count",
         y: "type",
         fy: "entity",
@@ -267,23 +269,23 @@ display(
 Get lab cities (from workbook for now)
 
 ```js echo
-const citiesSheet = getVillesSheet(workbook2).map((d) => {
+const city_data = getVillesSheet(workbook2).map((d) => {
   return {
     etablissement: [d["Etablissements"]],
     lieu: [d["Lieu"]],
   };
 });
-display(citiesSheet);
+display(city_data);
 ```
 
 A count of project cities
 
 ```js echo
-const cityCount = countEntities(
-  citiesSheet,
+const city_count = countEntities(
+  city_data,
   (establishment) => establishment.lieu
 );
-display(cityCount);
+display(city_count);
 ```
 
 Plot data
@@ -292,19 +294,153 @@ Plot data
 display(
   Plot.plot({
     width: 1000,
+    height: 600,
     marginBottom: 60,
     color: {
       scheme: "Turbo",
     },
     x: {
-      tickRotate: 30
+      tickRotate: 30,
+    },
+    y: {
+      grid: true,
     },
     marks: [
-      Plot.barY(cityCount, {
+      Plot.barY(city_count, {
         x: "entity",
         y: "count",
         fill: "count",
-        sort: { x: "-y" },
+        sort: { x: "y" },
+      }),
+    ],
+  })
+);
+```
+
+## Sorted YLine plot - count project laboratories (project owners and partners)
+
+<!--
+Get lab data (from workbook for now)
+
+```js echo
+const lab_data = resolveLaboEntities(getLabSheet(workbook2));
+display(lab_data);
+```
+-->
+
+A count of lab project owners
+
+```js echo
+const lab_owner_count = countEntities(projects_phase_1, (project) =>
+  project.laboratoires.slice(0, 1)
+);
+display(lab_owner_count);
+```
+
+A count of lab project partners
+
+```js echo
+const lab_partner_count = countEntities(projects_phase_1, (project) =>
+  project.laboratoires.slice(1)
+);
+display(lab_partner_count);
+```
+
+Combine counts to one array and calculate count totals
+
+```js echo
+const lab_counts = mapCounts(
+  [lab_owner_count, lab_partner_count],
+  ["owner", "partner"]
+);
+
+const total_lab_counts = d3.sort(
+  d3
+    .rollup(
+      lab_counts,
+      (D) => {
+        let count = 0;
+        D.forEach((d) => {
+          count = count + d.count;
+        });
+        return {
+          entity: D[0].entity,
+          count: count,
+          type: "total",
+        };
+      },
+      (d) => d.entity
+    )
+    .values(),
+  (d) => d.entity
+);
+```
+
+Group counts together
+
+```js echo
+// const sorted_lab_counts = d3.sort(
+//   lab_counts.concat(total_lab_counts),
+//   (d) => d.entity
+//   // (d) => d.count,
+// );
+
+const sorted_lab_counts = [];
+
+d3.sort(
+  mergeCounts(
+    [lab_owner_count, lab_partner_count, total_lab_counts],
+    ["owner_count", "partner_count", "total_count"]
+  ).values(),
+  (d) => d.entity
+).forEach((d) => {
+  sorted_lab_counts.push({
+    entity: d.entity,
+    count: d.owner_count,
+    type: "owner",
+  });
+  sorted_lab_counts.push({
+    entity: d.entity,
+    count: d.partner_count,
+    type: "partner",
+  });
+  sorted_lab_counts.push({
+    entity: d.entity,
+    count: d.total_count,
+    type: "total",
+  });
+});
+display(sorted_lab_counts);
+```
+
+... and plot data
+
+```js
+display(
+  Plot.plot({
+    height: sorted_lab_counts.length * 7, // assure adequate horizontal space for each line
+    width: 1000,
+    marginLeft: 150,
+    color: {
+      legend: true,
+    },
+    x: {
+      grid: true,
+      axis: "both",
+    },
+    y: {
+      grid: true,
+      tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat("...") : d), // cut off long tick labels
+      ticks: 10,
+    },
+    marks: [
+      Plot.lineY(sorted_lab_counts, {
+        x: "count",
+        y: "entity",
+        z: "type",
+        title: "entity",
+        stroke: "type",
+        marker: true,
       }),
     ],
   })

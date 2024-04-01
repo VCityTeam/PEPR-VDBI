@@ -14,6 +14,13 @@ export function getVillesSheet(workbook) {
   });
 }
 
+export function getLabSheet(workbook) {
+  return workbook.sheet(workbook.sheetNames[4], {
+    range: "A1:AK252",
+    headers: true,
+  });
+}
+
 export function resolvePhase1Entities(sheet) {
   // Map raw project data to a simple array of strings and objects
   const projectMap = map(sheet, (d) => {
@@ -187,4 +194,69 @@ export function resolvePhase1Entities(sheet) {
   });
 
   return projectMap;
+}
+
+export function resolveLaboEntities(sheet) {
+  // Map raw project data to a simple array of strings and objects
+  const labMap = map(sheet, (d) => {
+    return {
+      label: filter([d["Libellé"]], (d) => typeof d !== "undefined"),
+      type: filter(
+        [d["Labo/ stuctures autres"]],
+        (d) => typeof d !== "undefined" && d !== 0
+      ),
+      nom: filter([d["Nom"]], (d) => typeof d !== "undefined" && d !== 0),
+      numero: filter([d["numéro"]], (d) => typeof d !== "undefined"),
+      nin: filter(
+        [d["Numéro identifiant National"]],
+        (d) => typeof d !== "undefined"
+      ),
+      classement_erc: filter(
+        [
+          d["Classement scientifique ERC"],
+          d["ERC 1"],
+          d["ERC 2"],
+          d["ERC 3"],
+          d["ERC 4"],
+          d["ERC 5"],
+          d["ERC 6"],
+          d["ERC 7"],
+          d["ERC 8"],
+          d["ERC 9"],
+        ],
+        (d) => typeof d !== "undefined"
+      ),
+      domaine: filter(
+        [
+          d["Domaine scientifique 1"],
+          d["Domaine scientifique 2"],
+          d["Domaine scientifique 3"],
+          d["Domaine scientifique 4"],
+          d["Domaine scientifique 5"],
+          d["Domaine scientifique 6"],
+          d["Domaine scientifique 7"],
+          d["Domaine scientifique 8"],
+        ],
+        (d) => typeof d !== "undefined" && d !== 0
+      ),
+      etablissements: filter(
+        [
+          d["Etablissements A"],
+          d["Etablissements B"],
+          d["Etablissements C"],
+          d["Etablissements D"],
+          d["Etablissements E"],
+          d["Etablissements F"],
+          d["Etablissements G"],
+          d["Etablissements H"],
+          d["Etablissements I"],
+          d["Etablissements J"],
+          d["Etablissements K"],
+        ],
+        (d) => typeof d !== "undefined" && d !== 0
+      ),
+    };
+  });
+
+  return labMap;
 }
