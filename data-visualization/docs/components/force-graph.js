@@ -109,15 +109,13 @@ export function forceGraph(
       // event.target.style["stroke"] = "white";
       // event.target.style["fill"] = colorScale(nodes[datum.index].color);
       node_label
-        .filter((_d, i) => {
-          return datum.index == i;
-        })
+        .filter((_d, i) => datum.index == i)
         // .style("fill", "white")
         .style("opacity", highlightOpacity);
       link_label
-        .filter((d) => {
-          return datum.index == d.source.index || datum.index == d.target.index;
-        })
+        .filter(
+          (d) => datum.index == d.source.index || datum.index == d.target.index
+        )
         // .style("fill", "white")
         .style("opacity", highlightOpacity);
       // console.debug("event", event);
@@ -128,15 +126,13 @@ export function forceGraph(
       // event.target.style["stroke"] = stroke;
       // event.target.style["fill"] = colorScale(nodes[datum.index].color);
       node_label
-        .filter((_e, j) => {
-          return datum.index == j;
-        })
+        .filter((_d, i) => datum.index == i)
         // .style("fill", "grey")
         .style("opacity", labelOpacity);
       link_label
-        .filter((e) => {
-          return datum.index == e.source.index || datum.index == e.target.index;
-        })
+        .filter(
+          (e) => datum.index == e.source.index || datum.index == e.target.index
+        )
         // .style("fill", "grey")
         .style("opacity", labelOpacity);
       // console.debug("event", event);
@@ -151,11 +147,9 @@ export function forceGraph(
     .data(nodes)
     .enter()
     .append("text")
-    .text((d) => {
-      return d.id.length > textLength
-        ? d.id.slice(0, textLength).concat("...")
-        : d.id;
-    })
+    .text((d) =>
+      d.id.length > textLength ? d.id.slice(0, textLength).concat("...") : d.id
+    )
     .style("text-anchor", "middle")
     .style("font-family", "Arial")
     .style("font-size", fontSize)
@@ -175,11 +169,11 @@ export function forceGraph(
     .data(links)
     .enter()
     .append("text")
-    .text((d) => {
-      return d.label.length > textLength
+    .text((d) =>
+      d.label.length > textLength
         ? d.label.slice(0, textLength).concat("...")
-        : d.label;
-    })
+        : d.label
+    )
     .style("text-anchor", "middle")
     .style("font-family", "Arial")
     .style("font-size", fontSize)
@@ -195,25 +189,15 @@ export function forceGraph(
     .attr("class", "link_label");
 
   simulation.on("tick", () => {
-    node_label
-      .attr("x", function (d) {
-        return d.x;
-      })
-      .attr("y", function (d) {
-        return d.y - 10;
-      });
+    node_label.attr("x", (d) => d.x).attr("y", (d) => d.y - 10);
     link
       .attr("x1", (d) => d.source.x)
       .attr("y1", (d) => d.source.y)
       .attr("x2", (d) => d.target.x)
       .attr("y2", (d) => d.target.y);
     link_label
-      .attr("x", function (d) {
-        return (d.source.x + d.target.x) / 2;
-      })
-      .attr("y", function (d) {
-        return (d.source.y + d.target.y) / 2;
-      });
+      .attr("x", (d) => (d.source.x + d.target.x) / 2)
+      .attr("y", (d) => (d.source.y + d.target.y) / 2);
     node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
   });
 
@@ -239,7 +223,7 @@ export function forceGraph(
     .attr("y", (_d, i) => 32 + i * 16)
     .attr("width", 10)
     .attr("height", 10)
-    .style("fill", (d, i) => {
+    .style("fill", (_d, i) => {
       return setColor(i, "#000");
     })
     .append("title")
@@ -313,7 +297,7 @@ export function forceGraph(
     d3.selectAll("svg g")
       .attr("height", "100%")
       .attr("width", "100%")
-      .attr('transform', event.transform);
+      .attr("transform", event.transform);
 
     d3.selectAll("text.node_label")
       // .style("font-size", fontSize / event.transform.k + "px")
