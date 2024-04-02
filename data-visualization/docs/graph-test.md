@@ -54,7 +54,7 @@ import {
   getProductSheet,
   resolveProjectEntities,
 } from "./components/240108-proposals-keywords.js";
-import { mapEntitiesToGraph, forceGraph } from "./components/force-graph.js";
+import { mapEntitiesToGraph, filterLinks, forceGraph } from "./components/force-graph.js";
 
 const workbook1 = FileAttachment(
   "./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
@@ -74,7 +74,7 @@ const productData = resolveProjectEntities(getProductSheet(workbook2));
 display(productData);
 ```
 
-## Force Directed Graph
+## Force Directed Graph - all project data
 
 **Sheet mapped to graph:**
 
@@ -93,6 +93,25 @@ const productForceGraph = forceGraph(productGraph, {
   fontsize: 12,
 });
 display(productForceGraph);
+```
+
+## Force Directed Graph - projects and keywords
+
+**Filtered graph nodes and links:**
+
+```js echo
+const filteredProductGraph = filterLinks(productGraph, (d) => d.label == "motClefs");
+display(filteredProductGraph);
+```
+
+```js echo
+const filteredProductForceGraph = forceGraph(filteredProductGraph, {
+  width: 1400,
+  height: 1400,
+  r: 3,
+  fontsize: 12,
+});
+display(filteredProductForceGraph);
 ```
 
 TODO:
