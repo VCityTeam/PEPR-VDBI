@@ -125,3 +125,8 @@ TODO:
 - keep in mind generic functions that allow to group by some keyword with a "query" 
   - search func
 - keep in mind query SPARQL/RDF
+- 50/50 work AI text mining
+  - how to have private instances?
+  - that work on private data?
+  - Gemini, GPT-4, Perplexity?
+  - How to connect to API?
