@@ -79,9 +79,7 @@ export function forceGraph(
     .force("charge", d3.forceManyBody().strength(-60))
     .force("center", d3.forceCenter(width / 2, height / 2));
 
-  const zoom = d3.zoom().on("zoom", handleZoom);
-
-  svg.call(zoom);
+  svg.call(d3.zoom().on("zoom", handleZoom));
 
   const link = svg
     .append("g")
@@ -102,23 +100,23 @@ export function forceGraph(
     .attr("stroke-width", strokeWidth)
     .attr("stroke", stroke)
     .attr("fill", (d) => colorScale(d.color))
-    .on("click", (event, datum) => {
-      // console.debug("event", event);
-      // console.debug("datum", datum);
-    })
+    // .on("click", (event, datum) => {
+    //   console.debug("event", event);
+    //   console.debug("datum", datum);
+    // })
     .on("mouseover", (event, datum) => {
       event.target.style["strokeOpacity"] = highlightOpacity;
       // event.target.style["stroke"] = "white";
       // event.target.style["fill"] = colorScale(nodes[datum.index].color);
       node_label
-        .filter((_e, j) => {
-          return datum.index == j;
+        .filter((_d, i) => {
+          return datum.index == i;
         })
         // .style("fill", "white")
         .style("opacity", highlightOpacity);
       link_label
-        .filter((e) => {
-          return datum.index == e.source.index || datum.index == e.target.index;
+        .filter((d) => {
+          return datum.index == d.source.index || datum.index == d.target.index;
         })
         // .style("fill", "white")
         .style("opacity", highlightOpacity);
@@ -313,20 +311,10 @@ export function forceGraph(
    */
   function handleZoom(event) {
     d3.selectAll("svg g")
-      .filter((_d, i) => i < 2)
       .attr("height", "100%")
       .attr("width", "100%")
-      // .attr('transform', event.transform)
-      .attr(
-        "transform",
-        "translate(" +
-          event.transform.x +
-          "," +
-          event.transform.y +
-          ") scale(" +
-          event.transform.k +
-          ")"
-      );
+      .attr('transform', event.transform);
+
     d3.selectAll("text.node_label")
       // .style("font-size", fontSize / event.transform.k + "px")
       .attr(
@@ -339,6 +327,7 @@ export function forceGraph(
           event.transform.k +
           ")"
       );
+
     d3.selectAll("text.link_label")
       // .style("font-size", fontSize / event.transform.k + "px")
       .attr(
