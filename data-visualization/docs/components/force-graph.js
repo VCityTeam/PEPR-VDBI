@@ -16,7 +16,8 @@ export function mapEntitiesToGraph(projects) {
     //   target: project.acronyme[0],
     // });
     // iterate though every entry of each project
-    for (const [key, value] of Object.entries(project)) { // TODO: minor optimization, use a while loop+stack to get nodes+links from values 
+    for (const [key, value] of Object.entries(project)) {
+      // TODO: minor optimization, use a while loop+stack to get nodes+links from values
       // skip id cells
       if (key != "acronyme") {
         // push value of project properties to graph
@@ -352,4 +353,19 @@ export function forceGraph(
           ")"
       );
   }
+}
+
+export function filterLinks(graph, filterFunction) {
+  const filteredGraph = {
+    nodes: graph.nodes,
+    links: d3.filter(graph.links, filterFunction),
+  };
+
+  filteredGraph.nodes = d3.filter(graph.nodes, (node) =>
+    filteredGraph.links.find(
+      (link) => link.source == node.id || link.target == node.id
+    )
+  );
+
+  return filteredGraph;
 }
