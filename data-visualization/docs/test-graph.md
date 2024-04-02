@@ -120,7 +120,7 @@ const productForceGraph = forceGraph(productGraph, {
   width: 1400,
   height: 1400,
   r: 3,
-  fontsize: 12,
+  fontSize: 8,
 });
 display(productForceGraph);
 ```
@@ -141,8 +141,8 @@ display(filteredProductGraph);
 const filteredProductForceGraph = forceGraph(filteredProductGraph, {
   width: 1400,
   height: 1400,
-  r: 3,
-  fontsize: 12,
+  r: 2,
+  fontSize: 8,
 });
 display(filteredProductForceGraph);
 ```

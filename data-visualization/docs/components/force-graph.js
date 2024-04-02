@@ -66,11 +66,11 @@ export function forceGraph(
     r = 3, // node radius
     textLength = 15, // label cutoff length
     stroke = "#111", // stroke for links
-    strokeWidth = 1.5, // stroke width for links
+    strokeWidth = 0.5, // stroke width for links
     strokeOpacity = 0.4, // stroke opacity for links
     textColor = "black", // label color
     halo = "#fff", // color of label halo
-    haloWidth = 1, // padding around the labels
+    haloWidth = 0.25, // padding around the labels
     labelOpacity = 0.2, // default label opacity
     highlightOpacity = 0.9, // mouseover label opacity
   }
@@ -121,7 +121,7 @@ export function forceGraph(
     //   console.debug("datum", datum);
     // })
     .on("mouseover", (event, datum) => {
-      event.target.style["strokeOpacity"] = highlightOpacity;
+      event.target.style["stroke-opacity"] = highlightOpacity;
       // event.target.style["stroke"] = "white";
       // event.target.style["fill"] = colorScale(nodes[datum.index].color);
       links
@@ -129,37 +129,39 @@ export function forceGraph(
           // get node links
           (d) => datum.index == d.source.index || datum.index == d.target.index
         )
-        .forEach((d, i) => {
+        .forEach((d) => {
           // update node highlight
           node
-            .filter((_, j) => j == d.source.index)
-            .style("strokeOpacity", highlightOpacity);
-          node
-            .filter((_, j) => j == d.target.index)
-            .style("strokeOpacity", highlightOpacity);
+            .filter(
+              (_, j) =>
+                datum.index != j && (j == d.source.index || j == d.target.index)
+            )
+            .nodes()
+            .forEach((d) => {
+              d.style["stroke-opacity"] = highlightOpacity;
+            });
           node_label
-            .filter((_, j) => j == d.source.index)
-            // .style("fill", "grey")
-            .style("opacity", highlightOpacity);
-          node_label
-            .filter((_, j) => j == d.target.index)
-            // .style("fill", "grey")
-            .style("opacity", highlightOpacity);
+            .filter((_, j) => j == d.source.index || j == d.target.index)
+            .nodes()
+            .forEach((d) => {
+              d.style["opacity"] = highlightOpacity;
+            });
           link
-            .filter((_, j) => j == i)
-            .style("strokeOpacity", highlightOpacity);
+            .filter((_, j) => j == d.index)
+            .nodes()
+            .forEach((d) => {
+              d.style["stroke-opacity"] = highlightOpacity;
+            });
+          link_label
+            .filter((_, j) => j == d.index)
+            .nodes()
+            .forEach((d) => {
+              d.style["opacity"] = highlightOpacity;
+            });
         });
-      link_label
-        .filter(
-          (d) => datum.index == d.source.index || datum.index == d.target.index
-        )
-        // .style("fill", "white")
-        .style("opacity", highlightOpacity);
-      // console.debug("event", event);
-      // console.debug("datum", datum);
     })
     .on("mouseout", (event, datum) => {
-      event.target.style["strokeOpacity"] = strokeOpacity;
+      event.target.style["stroke-opacity"] = strokeOpacity;
       // event.target.style["stroke"] = stroke;
       // event.target.style["fill"] = colorScale(nodes[datum.index].color);
       links
@@ -167,34 +169,33 @@ export function forceGraph(
           // get node links
           (d) => datum.index == d.source.index || datum.index == d.target.index
         )
-        .forEach((d, i) => {
+        .forEach((d) => {
           // update node highlight
           node
-            .filter((_, j) => j == d.source.index)
-            .style("strokeOpacity", strokeOpacity);
-          node
-            .filter((_, j) => j == d.target.index)
-            .style("strokeOpacity", strokeOpacity);
+            .filter((_, j) => j == d.source.index || j == d.target.index)
+            .nodes()
+            .forEach((d) => {
+              d.style["stroke-opacity"] = strokeOpacity;
+            });
           node_label
-            .filter((_, j) => j == d.source.index)
-            // .style("fill", "grey")
-            .style("opacity", labelOpacity);
-          node_label
-            .filter((_, j) => j == d.target.index)
-            // .style("fill", "grey")
-            .style("opacity", labelOpacity);
+            .filter((_, j) => j == d.source.index || j == d.target.index)
+            .nodes()
+            .forEach((d) => {
+              d.style["opacity"] = labelOpacity;
+            });
           link
-            .filter((_, j) => j == i)
-            .style("strokeOpacity", strokeOpacity);
+            .filter((_, j) => j == d.index)
+            .nodes()
+            .forEach((d) => {
+              d.style["stroke-opacity"] = strokeOpacity;
+            });
+          link_label
+            .filter((_, j) => j == d.index)
+            .nodes()
+            .forEach((d) => {
+              d.style["opacity"] = labelOpacity;
+            });
         });
-      link_label
-        .filter(
-          (d) => datum.index == d.source.index || datum.index == d.target.index
-        )
-        // .style("fill", "grey")
-        .style("opacity", labelOpacity);
-      // console.debug("event", event);
-      // console.debug("datum", datum);
     })
     .call(drag(simulation));
 
