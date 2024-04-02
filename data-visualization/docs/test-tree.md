@@ -18,7 +18,6 @@ Once integrated the following information is desired for visualization:
   - theme → projet (in other workbook ANRT)
   - col I : produit (ou resultats) de la recherche (primaire) → J : secondaire → H : Quelles actions pour quelles solutions → A : acronyme
 - Root node: PEPR VDBI
-- Propose flat and hierarchichal defi
 
 ## Data integration process
 
@@ -94,9 +93,7 @@ We can display our tree dataset using a dendrogram. This dendrogram implements t
 
 - Radial structure
 - Collapsable nodes
-  - TODO: Fix label animation updates
-- TODO: Zoom
-- TODO: Pan
+- Zoom + Pan
 
 ```js echo
 const collapsableRadialProducts = collapsableRadialDendrogram(productTree, {
