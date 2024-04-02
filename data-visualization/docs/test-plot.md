@@ -28,13 +28,8 @@ flowchart LR
     end
 ```
 
-# Visualization result
+# Visualization results
 
-TODO:
-
-- ~~simple plots and analysis~~
-- reproduce excel plots, graphs
-- don't correct, just align
 - idea: calculate # of reserachers by etablissement
   - plot sorted graph with data divided by # of reserchers
   - look up a source

@@ -7,18 +7,6 @@ title: Initial tree test
 Visualize the first sheet from the phase 1 Excel document using trees and dendrogram diagrams.
 
 
-## Visualization information
-
-Once integrated the following information is desired for visualization:
-
-- lab names
-- ERC disciplines
-- show missing information
-- show trees/graphs over charts
-  - theme → projet (in other workbook ANRT)
-  - col I : produit (ou resultats) de la recherche (primaire) → J : secondaire → H : Quelles actions pour quelles solutions → A : acronyme
-- Root node: PEPR VDBI
-
 ## Data integration process
 
 Take the data imported from the [initial-import-test](./initial-import-test) and transform the table into a tree formalism.
@@ -77,6 +65,18 @@ This transformation produces the following hierarchy: `root -> Project Acronym -
 const productData = resolveProjectEntities(getProductSheet(workbook2));
 display(productData);
 ```
+
+# Visualization results
+
+Once integrated the following information is desired for visualization:
+
+- lab names
+- ERC disciplines
+- show missing information
+- show trees/graphs over charts
+  - theme → projet (in other workbook ANRT)
+  - col I : produit (ou resultats) de la recherche (primaire) → J : secondaire → H : Quelles actions pour quelles solutions → A : acronyme
+- Root node: PEPR VDBI
 
 ## Collapsable Radial Dendrogram
 

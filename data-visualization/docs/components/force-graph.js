@@ -17,7 +17,6 @@ export function mapEntitiesToGraph(projects) {
     // });
     // iterate though every entry of each project
     for (const [key, value] of Object.entries(project)) {
-      // TODO: minor optimization, use a while loop+stack to get nodes+links from values
       // skip id cells
       if (key != "acronyme") {
         // push value of project properties to graph
