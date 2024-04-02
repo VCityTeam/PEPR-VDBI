@@ -82,6 +82,25 @@ display(productData);
 
 ```js echo
 const productGraph = mapEntitiesToGraph(productData);
+// add "root" node
+productGraph.nodes.push({
+  id: "Projet PEPR",
+  color: 0
+});
+// add root to project links
+productGraph.links.concat(
+  d3.rollup(
+    productGraph.links,
+    (D) => {
+      return {
+        source: "Projet PEPR",
+        label: "hasProject",
+        target: D[0].source,
+      };
+    },
+    (d) => d.source
+  )
+);
 display(productGraph);
 ```
 
@@ -100,7 +119,7 @@ display(productForceGraph);
 **Filtered graph nodes and links:**
 
 ```js echo
-const filteredProductGraph = filterLinks(productGraph, (d) => d.label == "motClefs");
+const filteredProductGraph = filterLinks(productGraph, (d) => d.label == "action" || d.label == "hasProject");
 display(filteredProductGraph);
 ```
 
