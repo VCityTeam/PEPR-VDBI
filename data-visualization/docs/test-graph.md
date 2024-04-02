@@ -36,13 +36,16 @@ flowchart TD
     end
 ```
 
-
 ```js echo
 import {
   getProductSheet,
   resolveProjectEntities,
 } from "./components/240108-proposals-keywords.js";
-import { mapEntitiesToGraph, filterLinks, forceGraph } from "./components/force-graph.js";
+import {
+  mapEntitiesToGraph,
+  filterLinks,
+  forceGraph,
+} from "./components/force-graph.js";
 
 const workbook1 = FileAttachment(
   "./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
@@ -82,26 +85,34 @@ Once integrated the following information is desired for visualization:
 
 ```js echo
 const productGraph = mapEntitiesToGraph(productData);
+display(productGraph);
+```
+
+Another graph is proposed with a "central" `Project PEPR` node connected to each project
+
+```js echo
+const productGraphWithPEPR = { ...productGraph };
+
 // add "root" node
-productGraph.nodes.push({
+productGraphWithPEPR.nodes.push({
   id: "Projet PEPR",
-  color: 0
+  color: 0,
 });
 // add root to project links
-productGraph.links.concat(
-  d3.rollup(
-    productGraph.links,
-    (D) => {
-      return {
-        source: "Projet PEPR",
-        label: "hasProject",
-        target: D[0].source,
-      };
-    },
-    (d) => d.source
-  )
-);
-display(productGraph);
+d3.rollup(
+  productGraphWithPEPR.links,
+  (D) => {
+    return {
+      source: "Projet PEPR",
+      label: "hasProject",
+      target: D[0].source,
+    };
+  },
+  (d) => d.source
+)
+  .values()
+  .forEach((d) => productGraphWithPEPR.links.push(d));
+display(productGraphWithPEPR);
 ```
 
 ```js echo
@@ -119,7 +130,10 @@ display(productForceGraph);
 **Filtered graph nodes and links:**
 
 ```js echo
-const filteredProductGraph = filterLinks(productGraph, (d) => d.label == "action" || d.label == "hasProject");
+const filteredProductGraph = filterLinks(
+  productGraph,
+  (d) => d.label == "action"
+);
 display(filteredProductGraph);
 ```
 
