@@ -42,12 +42,27 @@ export function mapEntitiesToGraph(projects) {
 }
 
 export function forceGraph(
-  data = {}, // { nodes: array<{ id: string, color: number }>, links: array<{ source: string, label: string, target: string }> }
+  data = {
+    /**
+     *  {
+     *    nodes: array<{
+     *      id:    string,
+     *      color: number
+     *    }>,
+     *    links: array<{
+     *      source: string,
+     *      label:  string,
+     *      target: string
+     *    }>
+     *  }
+     **/
+  },
   {
     typeList = [], // list of color lables for legend
     width = 500, // canvas width
     height = 500, // canvas height
-    fontSize = 12, // label font size
+    colorScale = d3.scaleOrdinal(d3.schemeCategory10), // color scheme
+    fontSize = 10, // label font size
     r = 3, // node radius
     textLength = 15, // label cutoff length
     stroke = "#111", // stroke for links
@@ -63,12 +78,11 @@ export function forceGraph(
   const svg = d3
     .create("svg")
     .attr("class", "d3_graph")
-    .attr("viewBox", [0, 0, width, height])
+    .attr("viewBox", [-width / 2, -height / 2, width, height])
     .style("display", "hidden");
 
   const links = data.links.map((d) => Object.create(d));
   const nodes = data.nodes.map((d) => Object.create(d));
-  const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
   const simulation = d3
     .forceSimulation(nodes)
@@ -76,8 +90,10 @@ export function forceGraph(
       "link",
       d3.forceLink(links).id((d) => d.id)
     )
-    .force("charge", d3.forceManyBody().strength(-60))
-    .force("center", d3.forceCenter(width / 2, height / 2));
+    .force("charge", d3.forceManyBody())
+    // .force("center", d3.forceCenter(width / 2, height / 2));
+    .force("x", d3.forceX())
+    .force("y", d3.forceY());
 
   svg.call(d3.zoom().on("zoom", handleZoom));
 
@@ -108,10 +124,31 @@ export function forceGraph(
       event.target.style["strokeOpacity"] = highlightOpacity;
       // event.target.style["stroke"] = "white";
       // event.target.style["fill"] = colorScale(nodes[datum.index].color);
-      node_label
-        .filter((_d, i) => datum.index == i)
-        // .style("fill", "white")
-        .style("opacity", highlightOpacity);
+      links
+        .filter(
+          // get node links
+          (d) => datum.index == d.source.index || datum.index == d.target.index
+        )
+        .forEach((d, i) => {
+          // update node highlight
+          node
+            .filter((_, j) => j == d.source.index)
+            .style("strokeOpacity", highlightOpacity);
+          node
+            .filter((_, j) => j == d.target.index)
+            .style("strokeOpacity", highlightOpacity);
+          node_label
+            .filter((_, j) => j == d.source.index)
+            // .style("fill", "grey")
+            .style("opacity", highlightOpacity);
+          node_label
+            .filter((_, j) => j == d.target.index)
+            // .style("fill", "grey")
+            .style("opacity", highlightOpacity);
+          link
+            .filter((_, j) => j == i)
+            .style("strokeOpacity", highlightOpacity);
+        });
       link_label
         .filter(
           (d) => datum.index == d.source.index || datum.index == d.target.index
@@ -125,13 +162,34 @@ export function forceGraph(
       event.target.style["strokeOpacity"] = strokeOpacity;
       // event.target.style["stroke"] = stroke;
       // event.target.style["fill"] = colorScale(nodes[datum.index].color);
-      node_label
-        .filter((_d, i) => datum.index == i)
-        // .style("fill", "grey")
-        .style("opacity", labelOpacity);
+      links
+        .filter(
+          // get node links
+          (d) => datum.index == d.source.index || datum.index == d.target.index
+        )
+        .forEach((d, i) => {
+          // update node highlight
+          node
+            .filter((_, j) => j == d.source.index)
+            .style("strokeOpacity", strokeOpacity);
+          node
+            .filter((_, j) => j == d.target.index)
+            .style("strokeOpacity", strokeOpacity);
+          node_label
+            .filter((_, j) => j == d.source.index)
+            // .style("fill", "grey")
+            .style("opacity", labelOpacity);
+          node_label
+            .filter((_, j) => j == d.target.index)
+            // .style("fill", "grey")
+            .style("opacity", labelOpacity);
+          link
+            .filter((_, j) => j == i)
+            .style("strokeOpacity", strokeOpacity);
+        });
       link_label
         .filter(
-          (e) => datum.index == e.source.index || datum.index == e.target.index
+          (d) => datum.index == d.source.index || datum.index == d.target.index
         )
         // .style("fill", "grey")
         .style("opacity", labelOpacity);
@@ -220,10 +278,10 @@ export function forceGraph(
     .data(typeList)
     .join("rect")
     .attr("x", 12)
-    .attr("y", (_d, i) => 32 + i * 16)
+    .attr("y", (_, i) => 32 + i * 16)
     .attr("width", 10)
     .attr("height", 10)
-    .style("fill", (_d, i) => {
+    .style("fill", (_, i) => {
       return setColor(i, "#000");
     })
     .append("title")
@@ -236,7 +294,7 @@ export function forceGraph(
     .data(typeList)
     .join("text")
     .attr("x", 26)
-    .attr("y", (_d, i) => 41 + i * 16)
+    .attr("y", (_, i) => 41 + i * 16)
     .text((d) => d)
     .style("fill", "FloralWhite")
     .style("font-size", "14px");
