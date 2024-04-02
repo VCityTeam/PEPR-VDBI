@@ -18,6 +18,7 @@ Once integrated the following information is desired for visualization:
   - theme → projet (in other workbook ANRT)
   - col I : produit (ou resultats) de la recherche (primaire) → J : secondaire → H : Quelles actions pour quelles solutions → A : acronyme
 - Root node: PEPR VDBI
+- Propose flat and hierarchichal defi
 
 ## Data integration process
 
