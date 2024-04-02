@@ -132,7 +132,7 @@ display(productForceGraph);
 ```js echo
 const filteredProductGraph = filterLinks(
   productGraph,
-  (d) => d.label == "action"
+  (d) => d.label == "motClefs"
 );
 display(filteredProductGraph);
 ```
