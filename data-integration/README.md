@@ -18,15 +18,19 @@ flowchart LR
 ```
 
 ### Test 1 - PDF to unstructured text
+
 **Research question:** What is the best open source PDF to text tool or library for transforming pdf files to text?
 
-Requirements:
+**Requirements:**
+
 1. Open source license
 2. Source available on github or library available on packaging repository (Pypi, npm, etc.)
 3. Must run locally
 
-Initial candidates:
-1. [Unstructured](https://github.com/Unstructured-IO/unstructured) Python Library
-2. [RAGFlow](https://github.com/infiniflow/ragflow) CLI (Command line interface) tool
-3. [pd3f](https://github.com/pd3f/pd3f) CLI tool
-4. [pypdf](https://github.com/py-pdf/pypdf) Python Library
+**Initial candidates:**
+
+| Tool/library                                                    | Type                              |
+| --------------------------------------------------------------- | --------------------------------- |
+| [RAGFlow](https://github.com/infiniflow/ragflow)                | CLI (Command line interface) tool |
+| [pd3f](https://github.com/pd3f/pd3f)                            | CLI tool                          |
+| [pypdf](https://github.com/py-pdf/pypdf)                        | Python Library                    |
