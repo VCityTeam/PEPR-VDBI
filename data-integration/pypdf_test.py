@@ -22,7 +22,7 @@ def main():
         text += page.extract_text()
 
     print(f"writing output to {output_path}")
-    with open(output_path, 'w') as file:
+    with open(output_path, 'w', encoding="UTF-8") as file:
         file.write(text)
 
 
