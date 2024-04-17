@@ -5,8 +5,9 @@ Tests for converting unstructured text to structured text
 - [AI-based Automated Data Integration Experiments](#ai-based-automated-data-integration-experiments)
   - [Step 1 - PDF to unstructured text](#step-1---pdf-to-unstructured-text)
     - [pypdf tests](#pypdf-tests)
-      - [Test 1: simple pdf to text conversion](#test-1-simple-pdf-to-text-conversion)
-      - [Test 2: pdf with table to text conversion](#test-2-pdf-with-table-to-text-conversion)
+      - [Test 1.1: simple pdf to text conversion](#test-11-simple-pdf-to-text-conversion)
+      - [Test 1.2: pdf with table to text conversion](#test-12-pdf-with-table-to-text-conversion)
+      - [Test 2.1: Convert PEPR Résumés des lettres d’intention](#test-21-convert-pepr-résumés-des-lettres-dintention)
   - [Step 2 - unstructured text to structured text via GPT](#step-2---unstructured-text-to-structured-text-via-gpt)
     - [Mistral](#mistral)
       - [Test 1.1: simple keyword extraction in french](#test-11-simple-keyword-extraction-in-french)
@@ -53,17 +54,22 @@ inspired from [GGE perplexity tests](./Tests_IA.md)
 4. Must support french
 5. It would be nice if information from tables could be supported
 
-**Initial candidates:**
+**Tentative candidates:**
 
-| Tool/library                                     | Type                              | Comment                          |
-| ------------------------------------------------ | --------------------------------- | -------------------------------- |
-| [pypdf](https://github.com/py-pdf/pypdf)         | Python Library                    |                                  |
-| [RAGFlow](https://github.com/infiniflow/ragflow) | CLI (Command line interface) tool |                                  |
-| [pd3f](https://github.com/pd3f/pd3f)             | CLI tool                          | no french support? Is it mature? |
+| Tool/library                                       | Type                              | Comment                            |
+| -------------------------------------------------- | --------------------------------- | ---------------------------------- |
+| [pypdf](https://github.com/py-pdf/pypdf)           | Python Library                    |                                    |
+| [RAGFlow](https://github.com/infiniflow/ragflow)   | CLI (Command line interface) tool |                                    |
+| [marker-pdf](https://pypi.org/project/marker-pdf/) | Python Library                    | a pipeline of deep-learning models |
+| [pd3f](https://github.com/pd3f/pd3f)               | CLI tool                          | no french support? Is it mature?   |
 
 ### pypdf tests
 
-#### Test 1: simple pdf to text conversion
+Dependencies:
+- [Python](https://www.python.org/downloads/) v3.8+
+- [pypdf](https://github.com/py-pdf/pypdf)
+
+#### Test 1.1: simple pdf to text conversion
 ```bash
 python pypdf_test.py test-data/résumé-thèse-fr.pdf test-data/pypdf_test.txt
 ```
@@ -73,7 +79,7 @@ Notes:
 - no formatting is retained (i.e., headers, bold, color, etc.)
 - perhaps markdown would be better if possible to retain some semi-structured text?
 
-#### Test 2: pdf with table to text conversion
+#### Test 1.2: pdf with table to text conversion
 ```bash
 python pypdf_test.py test-data/résumé-thèse-tableau-fr.pdf test-data/pypdf_table_test.txt
 ```
@@ -84,6 +90,19 @@ Notes:
   - separation between consecutive cells is represented by just a space
 - this causes structure of table to be lost
 - again perhaps markdown is better?
+
+#### Test 2.1: Convert PEPR Résumés des lettres d’intention
+Download and transform the PDF of project motivation letters.
+
+```bash
+curl https://pepr-vdbi.fr/fileadmin/contributeurs/PEPR_Ville_durable/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf > test-data/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf
+python pypdf_test.py test-data/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf test-data/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt
+```
+
+Notes:
+- formatting for headers, footers, and tables is lost (as expected)
+- conversion is relatively fast for such a long pdf
+- it will be interesting to see how these formatting issues  
 
 ## Step 2 - unstructured text to structured text via GPT
 **RQ2:** What prompts provide the best results for answering the natural language questions posed in the [proposed method](#unstructured-text-to-structured-text-tests)
@@ -185,8 +204,9 @@ python pypdf_test.py test-data/résumé-thèse-tableau-fr.pdf test-data/pypdf_ta
 - [AI-based Automated Data Integration Experiments](#ai-based-automated-data-integration-experiments)
   - [Step 1 - PDF to unstructured text](#step-1---pdf-to-unstructured-text)
     - [pypdf tests](#pypdf-tests)
-      - [Test 1: simple pdf to text conversion](#test-1-simple-pdf-to-text-conversion)
-      - [Test 2: pdf with table to text conversion](#test-2-pdf-with-table-to-text-conversion)
+      - [Test 1.1: simple pdf to text conversion](#test-11-simple-pdf-to-text-conversion)
+      - [Test 1.2: pdf with table to text conversion](#test-12-pdf-with-table-to-text-conversion)
+      - [Test 2.1: Convert PEPR Résumés des lettres d’intention](#test-21-convert-pepr-résumés-des-lettres-dintention)
   - [Step 2 - unstructured text to structured text via GPT](#step-2---unstructured-text-to-structured-text-via-gpt)
     - [Mistral](#mistral)
       - [Test 1.1: simple keyword extraction in french](#test-11-simple-keyword-extraction-in-french)
@@ -219,7 +239,7 @@ How to leverage AI in:
 ## Private instances
 | Model                                               | Company                                             | Pricing                                                                                                                                                                                                          |
 | --------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ChatGPT                                             | OpenAI (Microsoft)                                  | [pricing](https://openai.com/chatgpt/pricing) starts at 25$ / month                                                                                                                                                     |
+| ChatGPT                                             | OpenAI (Microsoft)                                  | [pricing](https://openai.com/chatgpt/pricing) starts at 25$ / month                                                                                                                                              |
 | [OLLaMa](https://github.com/ollama/ollama-python)   | <li>Open source project<li>Based on LLaMa from Meta | A **free** version of LLaMa                                                                                                                                                                                      |
 | Gemini                                              | Google                                              | [pay as you go](https://ai.google.dev/pricing)<li>5 RPM (requests per minute)<li>10 million TPM (tokens per minute)<li>2,000 RPD (requests per day)<li>[API TOS](https://ai.google.dev/terms) (terms of service) |
 | Claude                                              | Anthropic                                           | No official private servers<li>[Consumer TOS](https://www.anthropic.com/legal/consumer-terms)<li>[Commercial TOS](https://www.anthropic.com/legal/commercial-terms)                                              |
