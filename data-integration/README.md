@@ -68,11 +68,17 @@ inspired from [GGE perplexity tests](./Tests_IA.md)
 Dependencies:
 - [Python](https://www.python.org/downloads/) v3.8+
 - [pypdf](https://github.com/py-pdf/pypdf)
+  - ```bash
+    pip install pypdf
+    ```
 
 #### Test 1.1: simple pdf to text conversion
 ```bash
 python pypdf_test.py test-data/résumé-thèse-fr.pdf test-data/pypdf_test.txt
 ```
+
+> [!NOTE]
+> To customize the test script use `python pypdf_test.py -h` to see the documentation.
 
 Notes:
 - seems to have a good output
@@ -113,10 +119,10 @@ Proposed model: **Mistral**
 - seems to have decent French language (and multi-language) support (also produced by a French company based in Paris, so I would hope so)
 - seems to have a [good balance](https://medium.com/@periphanos.a/mistral-vs-gpt-4-a-comparative-analysis-in-size-cost-and-mmlu-performance-de320060388d) of resource usage vs performance compared to larger models like chatGPT
 
-Dependency: **[Ollama](https://github.com/ollama/ollama)** (Open LLaMa) which supports local Mistral and Mixtral models
+New dependency: **[Ollama](https://github.com/ollama/ollama)** (Open LLaMa) which supports local Mistral and Mixtral models
 
 Start Ollama with the mistral model and no history to run tests
-```baSh
+```bash
 ollama run mistral
 >>> /set nohistory
 ```
@@ -190,11 +196,21 @@ Notes:
 This test will examine how we can call prompts and extract their output programatically with python.
 This requires launching Ollama on a local server.
 
-Dependency: [Ollama python](https://github.com/ollama/ollama-python)
+New dependency: [Ollama python](https://github.com/ollama/ollama-python)
+- ```bash
+  pip install ollama
+  ```
 
 ```bash
-python pypdf_test.py test-data/résumé-thèse-tableau-fr.pdf test-data/pypdf_table_test.txt
+ollama serve &
+python ollama_test.py test-data/résumé-thèse-tableau-fr.pdf test-data/pypdf_table_test.txt
 ```
+
+> [!NOTE]
+> To customize the test script use `python ollama_test.py -h` to see the documentation.
+
+> [!TIP] 
+> use just `ollama serve` (without the `&`) in another terminal session to be able to view ollama API calls in realtime
 
 
 # Notes for AI assisted data integration
@@ -249,7 +265,9 @@ How to leverage AI in:
 ## Further reading
 
 ### [JSA's AI and Deep learning courses](https://johnsamuel.info/fr/enseignement/cours/2023/IA-DeepLearning/)
-![deep learning position](https://johnsamuel.info/images/art/courses/deeplearningposition.svg)
+
+<img src="https://johnsamuel.info/images/art/courses/deeplearningposition.svg" width="600px">
+
 
 ### [Connectivist AI](https://en.wikipedia.org/wiki/Connectionism)
 > "Connectionism... is the name of an approach to the study of human mental processes and cognition that utilizes mathematical models known as connectionist networks or **artificial neural networks**."
