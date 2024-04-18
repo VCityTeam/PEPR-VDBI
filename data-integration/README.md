@@ -78,7 +78,7 @@ python pypdf_test.py test-data/résumé-thèse-fr.pdf test-data/pypdf_test.txt
 ```
 
 > [!NOTE]
-> To customize the test script use `python pypdf_test.py -h` to see the documentation.
+> The test script can be customized. Use `python pypdf_test.py -h` to see the documentation.
 
 Notes:
 - seems to have a good output
@@ -202,12 +202,15 @@ New dependency: [Ollama python](https://github.com/ollama/ollama-python)
   ```
 
 ```bash
-ollama serve &
-python ollama_test.py test-data/résumé-thèse-tableau-fr.pdf test-data/pypdf_table_test.txt
+ollama serve & # launch ollama server in the background
+python ollama_test.py python \
+  ollama_test.py test-data/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt \
+  test-data/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe_out.txt \
+  "Donner le liste des projets décrits" \
 ```
 
 > [!NOTE]
-> To customize the test script use `python ollama_test.py -h` to see the documentation.
+> The test script can be customized. Use `python ollama_test.py -h` to see the documentation.
 
 > [!TIP] 
 > use just `ollama serve` (without the `&`) in another terminal session to be able to view ollama API calls in realtime
