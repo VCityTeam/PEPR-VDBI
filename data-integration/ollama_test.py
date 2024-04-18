@@ -23,6 +23,7 @@ def main():
     print(f"reading {input_path}")
     text = readFile(input_path)
     print("sending prompt")
+    response = ""
     try:
         response = ollama.generate(model=args.model,
                                    prompt=args.prompt +
