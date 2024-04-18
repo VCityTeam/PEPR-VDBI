@@ -63,6 +63,10 @@ inspired from [GGE perplexity tests](./Tests_IA.md)
 | [marker-pdf](https://pypi.org/project/marker-pdf/) | Python Library                    | a pipeline of deep-learning models |
 | [pd3f](https://github.com/pd3f/pd3f)               | CLI tool                          | no french support? Is it mature?   |
 
+> [!NOTE]
+> On **Windows**, when exporting text files from other programs or writing to files from python, keep in mind that the **UTF-8** encoding is not always used.
+> When visualizing the content of these files in vscode or in terminals, accent characers may be replaced by unknown symbols.
+
 ### pypdf tests
 
 Dependencies:
@@ -77,7 +81,7 @@ Dependencies:
 python pypdf_test.py test-data/résumé-thèse-fr.pdf test-data/pypdf_test.txt
 ```
 
-> [!NOTE]
+> [!TIP]
 > The test script can be customized. Use `python pypdf_test.py -h` to see the documentation.
 
 Notes:
@@ -209,7 +213,7 @@ python ollama_test.py python \
   "Donner le liste des projets décrits" \
 ```
 
-> [!NOTE]
+> [!TIP]
 > The test script can be customized. Use `python ollama_test.py -h` to see the documentation.
 
 > [!TIP] 
