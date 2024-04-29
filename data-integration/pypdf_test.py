@@ -1,6 +1,7 @@
 import os
 import argparse
 from pypdf import PdfReader
+from utils import writeToFile
 
 
 def main():
@@ -26,11 +27,6 @@ def pdf2txt(input_path: str) -> str:
     for page in reader.pages:
         text += page.extract_text()
     return text
-
-
-def writeToFile(output_path: str, text: str) -> None:
-    with open(output_path, 'w', encoding="UTF-8") as file:
-        file.write(text)
 
 
 if __name__ == "__main__":
