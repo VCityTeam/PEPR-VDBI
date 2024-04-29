@@ -2,5 +2,6 @@
 
 Data integration, visualization, and analysis tests for the PEPR project proposals
 
-## Data visualization tests
+## Tests
 - [Data visualizations tests with observable](./data-visualization)
+- [Data integration tests with GPTs](./data-integration)
