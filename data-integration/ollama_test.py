@@ -12,8 +12,8 @@ def main():
     parser.add_argument("prompt", help="Specify the prompt")
     parser.add_argument("-s", "--separator", default=" : ", help="""Specify the
                         separator between the prompt and the text file""")
-    parser.add_argument("-m", "--model", default="mistral:text", help="""
-                        Specify the ollama model tag""")
+    parser.add_argument("-m", "--model", default="mistral", help="""Specify the
+                        ollama model tag""")
 
     args = parser.parse_args()
 
@@ -34,8 +34,21 @@ def main():
         if e.status_code == 404:
             print(f'Attempting to pull {args.model}')
             ollama.pull(args.model)
-    print(f"writing response to {output_path}")
-    writeToFile(output_path, response)
+
+            print("resending prompt")
+            response = ollama.generate(model=args.model,
+                                       prompt=args.prompt +
+                                       args.separator +
+                                       text)
+
+    if response != "":
+        print(f"writing response to {output_path}")
+        writeToFile(output_path, response)
+        return 0
+    else:
+        raise (
+            "No response (or an empty response) was received from Ollama " +
+            "service...")
 
 
 def readFile(file_path: str, encoding="UTF-8") -> str:

@@ -13,6 +13,7 @@ Tests for converting unstructured text to structured text
       - [Test 1.1: simple keyword extraction in french](#test-11-simple-keyword-extraction-in-french)
       - [Test 1.2: simple keyword extraction in english](#test-12-simple-keyword-extraction-in-english)
       - [Test 2.1: Ollama server+python](#test-21-ollama-serverpython)
+      - [Test 3.1: Python data pipeline](#test-31-python-data-pipeline)
 - [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
   - [Links](#links)
   - [Research interests](#research-interests)
@@ -207,18 +208,17 @@ New dependency: [Ollama python](https://github.com/ollama/ollama-python)
 
 ```bash
 ollama serve & # launch ollama server in the background
-python ollama_test.py python \
-  ollama_test.py test-data/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt \
+python ollama_test.py \
+  test-data/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt \
   test-data/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe_out.txt \
   "Donner le liste des projets décrits" \
 ```
 
 > [!TIP]
-> The test script can be customized. Use `python ollama_test.py -h` to see the documentation.
+> - The test script can be customized. Use `python ollama_test.py -h` to see the documentation. 
+> - Also, you can use just `ollama serve` (without the `&`) in another terminal session to be able to view ollama API calls in real time
 
-> [!TIP] 
-> use just `ollama serve` (without the `&`) in another terminal session to be able to view ollama API calls in realtime
-
+#### Test 3.1: Python data pipeline
 
 # Notes for AI assisted data integration
 
@@ -235,6 +235,7 @@ python ollama_test.py python \
       - [Test 1.1: simple keyword extraction in french](#test-11-simple-keyword-extraction-in-french)
       - [Test 1.2: simple keyword extraction in english](#test-12-simple-keyword-extraction-in-english)
       - [Test 2.1: Ollama server+python](#test-21-ollama-serverpython)
+      - [Test 3.1: Python data pipeline](#test-31-python-data-pipeline)
 - [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
   - [Links](#links)
   - [Research interests](#research-interests)
