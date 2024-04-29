@@ -1,7 +1,7 @@
 import os
 import json
 import argparse
-from time import process_time
+from datetime import timedelta
 from utils import readFile, writeToFile
 from ollama_test import sendPrompt
 from pypdf_test import pdf2txt
@@ -9,22 +9,27 @@ from pypdf_test import pdf2txt
 
 def main():
     parser = argparse.ArgumentParser(
-        description="""TODO define me""")
+        description="""Launch a series of workflows (or data pipelines) based
+            on a configuration"""
+    )
     parser.add_argument("configuration", help="Specify the configuration file")
-    parser.add_argument("output", help="Specify the output text file")
+    parser.add_argument(
+        "-o", "--output", default="test-data", help="Specify the output folder"
+    )
 
     args = parser.parse_args()
     runWorkflows(args.configuration, args.output)
 
 
-def runWorkflows(configuration: str, output) -> None:
+def runWorkflows(configuration: str, output: str) -> None:
     """Run a series of workflows based on a configuration file in JSON."""
 
-    config = json.load(readFile(configuration))
-
+    config = json.loads(readFile(configuration))
     for workflow in config:
-        output_path = os.path.join(output, workflow.output)
-        runWorkflow(workflow.input, output_path, workflow.prompts)
+        output_path = os.path.join(output, workflow["workflow_name"])
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
+        runWorkflow(workflow["input"], output_path, workflow["prompts"])
 
 
 def runWorkflow(input: str, output: str, prompts: list) -> None:
@@ -41,25 +46,36 @@ def runWorkflow(input: str, output: str, prompts: list) -> None:
     The output of all of these steps is written to an output folder"""
 
     # step 1
-    print(f"converting to text: {input}")
-    input_path = os.path.normpath(input)
-    text = pdf2txt(input_path)
-
-    output_path = os.path.join(output, "output_1.txt")
-    print(f"writing text to {output_path}")
-    writeToFile(output_path, text)
+    output_path = os.path.join(output, "input.txt")
+    text = ""
+    if os.path.exists(output_path):
+        print(f"{output_path} exists, reading file")
+        text = readFile(output_path)
+    else:
+        print(f"converting to text: {input}")
+        input_path = os.path.normpath(input)
+        text = pdf2txt(input_path)
+        print(f"writing text to {output_path}")
+        writeToFile(output_path, text)
 
     # step 2
     i = 0
     for prompt in prompts:
-        timer = process_time()
-        print(f"sending prompt: {input}")
-        response = sendPrompt(prompt.model, prompt.prompt + text)
-        print("elapsed time:", process_time() - timer)
+        print(f"sending prompt: {prompt['prompt']}[text]")
+        response = sendPrompt(prompt["model"], prompt["prompt"] + text)
+        # print response key/value pair as a deltatime if key has "duration"
+        for key, value in [
+            (key, value)
+            for (key, value) in response.items()  # type: ignore
+            if "duration" in key
+        ]:
+            elapsed_time = timedelta(microseconds=value // 1000)
+            print(f"    {key}: {elapsed_time}{value % 1000}")
 
-        output_path = os.path.join(output, f"output_2_{i}.txt")
+        # print(response)
+        output_path = os.path.join(output, f"output_p{i}.json")
         print(f"writing response to {output_path}")
-        writeToFile(output_path, response)
+        writeToFile(output_path, json.dumps(response, indent=2))
 
         i += 1
 
