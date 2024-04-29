@@ -1,6 +1,6 @@
 import os
 import argparse
-from pypdf_test import writeToFile
+from utils import readFile, writeToFile
 import ollama
 
 
@@ -23,39 +23,32 @@ def main():
     print(f"reading {input_path}")
     text = readFile(input_path)
     print("sending prompt")
+    prompt = args.prompt + args.separator + text
+    response = sendPrompt(args.model, prompt)
+
+    print(f"writing response to {output_path}")
+    writeToFile(output_path, response)
+
+
+def sendPrompt(model: str, prompt: str) -> str:
     response = ""
     try:
-        response = ollama.generate(model=args.model,
-                                   prompt=args.prompt +
-                                   args.separator +
-                                   text)
+        response = ollama.generate(model=model,
+                                   prompt=prompt)
     except ollama.ResponseError as e:
         print('Error:', e.error)
         if e.status_code == 404:
-            print(f'Attempting to pull {args.model}')
-            ollama.pull(args.model)
+            print(f'Attempting to pull {model}')
+            ollama.pull(model)
 
             print("resending prompt")
-            response = ollama.generate(model=args.model,
-                                       prompt=args.prompt +
-                                       args.separator +
-                                       text)
-
-    if response != "":
-        print(f"writing response to {output_path}")
-        writeToFile(output_path, response)
-        return 0
-    else:
+            response = ollama.generate(model=model,
+                                       prompt=prompt)
+    if response == "":
         raise (
             "No response (or an empty response) was received from Ollama " +
             "service...")
-
-
-def readFile(file_path: str, encoding="UTF-8") -> str:
-    text = ""
-    with open(file_path, 'r', encoding=encoding) as file:
-        text = file.read()
-    return text
+    return response
 
 
 if __name__ == "__main__":

@@ -1,0 +1,16 @@
+[
+    {
+        "input": "test-data/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf",
+        "output": "test-data/workflow/",
+        "prompts": [
+            {
+                "prompt": "Provide 10 keywords from the following text? : ",
+                "model": "llama3"
+            },
+            {
+                "prompt": "Write a short description of the following text? : ",
+                "model": "llama3"
+            }
+        ]
+    }
+]
