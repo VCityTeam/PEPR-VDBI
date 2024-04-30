@@ -67,7 +67,8 @@ def runWorkflows(configuration: str) -> None:
         os.makedirs(output_path)
 
     for input in config["inputs"]:
-        logging.info(f"running workflow on {input} ")
+        logging.info(f"running workflow on {input}")
+        print(f"running workflow on {input}")
         runWorkflow(input, output_path, config["prompts"])
 
 
@@ -98,6 +99,7 @@ def runWorkflow(input: str, output: str, prompts: list) -> None:
     i = 0
     for prompt in prompts:
         logging.info(f"\nsending prompt: {prompt['prompt']}[text]")
+        print(f"sending prompt: {prompt['prompt']}[text]")
 
         response = sendPrompt(
             prompt["model"], prompt["prompt"] + text, prompt["format"]
@@ -130,7 +132,8 @@ def runWorkflow(input: str, output: str, prompts: list) -> None:
             message = response["response"]  # type: ignore
         logging.info(f"writing response message to {output_path}")
         writeToFile(output_path, message)  # type: ignore
-
+        print("done!")
+        
         i += 1
 
 
