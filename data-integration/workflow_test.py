@@ -11,6 +11,11 @@ from pypdf_test import pdf2txt
 # - tester formattage des prompts pour:
 #   - sortie structure pour data viz
 #   - impact de structure des prompts
+# - customize pdf page ranges per query
+# - how to chain contexts?
+# - ollama modelfile:
+#   - model parameters
+#   - templates
 
 
 def main():
@@ -133,7 +138,7 @@ def runWorkflow(input: str, output: str, prompts: list) -> None:
         logging.info(f"writing response message to {output_path}")
         writeToFile(output_path, message)  # type: ignore
         print("done!")
-        
+
         i += 1
 
 
