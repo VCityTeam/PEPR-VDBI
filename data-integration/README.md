@@ -106,8 +106,8 @@ Notes:
 Download and transform the PDF of project motivation letters.
 
 ```bash
-curl https://pepr-vdbi.fr/fileadmin/contributeurs/PEPR_Ville_durable/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf > test-data/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf
-python pypdf_test.py test-data/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf test-data/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt
+curl https://pepr-vdbi.fr/fileadmin/contributeurs/PEPR_Ville_durable/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf > test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf
+python pypdf_test.py test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt
 ```
 
 Notes:
@@ -209,8 +209,8 @@ New dependency: [Ollama python](https://github.com/ollama/ollama-python)
 ```bash
 ollama serve & # launch ollama server in the background
 python ollama_test.py \
-  test-data/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt \
-  test-data/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe_out.txt \
+  test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt \
+  test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe_out.txt \
   "Donner le liste des projets décrits" \
 ```
 
