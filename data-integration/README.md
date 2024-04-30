@@ -223,7 +223,7 @@ python ollama_test.py \
 
 This test will examine how we can set up initial data workflows (or data pipelines) for extracting knowledge from multiple pdfs using python.
 
-The proposed workflow does the following:
+The proposed workflow does the following for each input file:
 - step 1: Read a project proposal (PDF), transform its contents to text
 - step 2: excecute a chain of GPT prompts on the text.
 The following script can be used to run a series of ollama prompts based on a configuration file.
@@ -238,12 +238,12 @@ python workflow_test.py test-data/workflow_0_config.json
 > This configuration requires a PDF not provided in the repository
 
 This test uses the configuration file [test-data/workflow_0_config.json](test-data/workflow_0_config.json) which features several prompts:
-- prompt 0: extract keywords
-- prompt 1: extract short abstract
-- prompt 2: extract partner
-- prompt 3: (not yet implemented) extract exterior partners 
-- prompt 4: extract laboratories
-- prompt 5: extract disciplines
+1. extract keywords
+2. extract short abstract
+3. extract partner
+4. (not yet implemented) extract external partners 
+5. extract laboratories
+6. extract disciplines
 
 The configuration will output to the `test-data/workflow-test/VILLEGARDEN` folder
 
