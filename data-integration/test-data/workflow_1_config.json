@@ -1,0 +1,34 @@
+
+{
+  "output": "test-data/workflow-test/VILLEGARDEN_JSON",
+  "inputs": [
+    "test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf"
+  ],
+  "prompts": [
+    {
+      "prompt": "Provide 10 keywords from the text below. Respond using JSON\n",
+      "model": "llama3",
+      "format": "json"
+    },
+    {
+      "prompt": "Write a short description of the text below. Respond using JSON\n",
+      "model": "llama3",
+      "format": "json"
+    },
+    {
+      "prompt": "What are the partner organizations in the text below? Respond using JSON\n",
+      "model": "llama3",
+      "format": "json"
+    },
+    {
+      "prompt": "What are the partnered laboratories in the text below? Respond using JSON\n",
+      "model": "llama3",
+      "format": "json"
+    },
+    {
+      "prompt": "What are the relevant disciplines in the text below? Respond using JSON\n",
+      "model": "llama3",
+      "format": "json"
+    }
+  ]
+}

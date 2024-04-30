@@ -1,10 +1,16 @@
 import os
 import json
 import argparse
+import logging
 from datetime import timedelta
 from utils import readFile, writeToFile
 from ollama_test import sendPrompt
 from pypdf_test import pdf2txt
+
+# TODO:
+# - tester formattage des prompts pour:
+#   - sortie structure pour data viz
+#   - impact de structure des prompts
 
 
 def main():
@@ -12,57 +18,94 @@ def main():
         description="""Launch a series of workflows (or data pipelines) based
             on a configuration"""
     )
-    parser.add_argument("configuration", help="Specify the configuration file")
     parser.add_argument(
-        "-o", "--output", default="test-data", help="Specify the output folder"
+        "configuration",
+        help="""Specify the configuration JSON file. File must be structured as
+        follows:
+            {
+                "output": string,
+                "inputs": [
+                    string
+                ],
+                "prompts": [
+                    {
+                        "prompt": string,
+                        "model": string,
+                        "format": string
+                    }
+                ]
+            }""",
+    )
+    parser.add_argument(
+        "-l",
+        "--log",
+        default="workflow-test.log",
+        help="Specify the logging file",
     )
 
     args = parser.parse_args()
-    runWorkflows(args.configuration, args.output)
+
+    logging.basicConfig(
+        format="%(asctime)s %(levelname)-8s %(message)s",
+        filename=args.log,
+        # level=logging.DEBUG,
+        level=logging.INFO,
+    )
+    print(f"Initialized, see {args.log} for execution information...")
+    logging.info("=== initialized ===")
+
+    runWorkflows(args.configuration)
 
 
-def runWorkflows(configuration: str, output: str) -> None:
+def runWorkflows(configuration: str) -> None:
     """Run a series of workflows based on a configuration file in JSON."""
 
     config = json.loads(readFile(configuration))
-    for workflow in config:
-        output_path = os.path.join(output, workflow["workflow_name"])
-        if not os.path.exists(output_path):
-            os.makedirs(output_path)
-        runWorkflow(workflow["input"], output_path, workflow["prompts"])
+    output_path = os.path.normpath(config["output"])
+    logging.info(f"output: {output_path}")
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+
+    for input in config["inputs"]:
+        logging.info(f"running workflow on {input} ")
+        runWorkflow(input, output_path, config["prompts"])
 
 
 def runWorkflow(input: str, output: str, prompts: list) -> None:
-    """Run a workflow on a set of input files. Each workflow will execute the
-    following:
-    - step 1: Read a project proposal (PDF), transform its contents to text
-    - step 2: excecute a chain of GPT prompts to extract the following info:
-      - step 2.1 keywords
-      - step 2.2 short abstract
-      - step 2.3 partners
-      - step 2.4 exterior something
-      - step 2.5 laboratories
-      - step 2.6 disciplines
-    The output of all of these steps is written to an output folder"""
+    """Run a workflow on a set of input files. Each workflow will transform the
+    input into a txt (unless the text file already exists). Then a given list
+    of prompts is executed using Ollama python. The output of all of these
+    steps is written to an output folder"""
 
     # step 1
-    output_path = os.path.join(output, "input.txt")
+    input_basepath = os.path.basename(input)
+    if not input_basepath.endswith(".pdf"):
+        logging.warning(f"is input {input} a PDF?")
+    output_path = os.path.join(output, input_basepath[:-3] + "txt")
+
     text = ""
     if os.path.exists(output_path):
-        print(f"{output_path} exists, reading file")
+        logging.info(f"{output_path} exists, reading file")
         text = readFile(output_path)
     else:
-        print(f"converting to text: {input}")
+        logging.info(f"converting to text: {input}")
         input_path = os.path.normpath(input)
         text = pdf2txt(input_path)
-        print(f"writing text to {output_path}")
+        logging.info(f"writing text to {output_path}")
         writeToFile(output_path, text)
 
     # step 2
     i = 0
     for prompt in prompts:
-        print(f"sending prompt: {prompt['prompt']}[text]")
-        response = sendPrompt(prompt["model"], prompt["prompt"] + text)
+        logging.info(f"\nsending prompt: {prompt['prompt']}[text]")
+
+        response = sendPrompt(
+            prompt["model"], prompt["prompt"] + text, prompt["format"]
+        )
+        logging.debug(f"response: {response}")
+        if not response["done"]:  # type: ignore
+            logging.warning('response returned "done"=false')
+
         # print response key/value pair as a deltatime if key has "duration"
         for key, value in [
             (key, value)
@@ -70,12 +113,23 @@ def runWorkflow(input: str, output: str, prompts: list) -> None:
             if "duration" in key
         ]:
             elapsed_time = timedelta(microseconds=value // 1000)
-            print(f"    {key}: {elapsed_time}{value % 1000}")
+            logging.info(f"{key}: {elapsed_time}{value % 1000}")
 
-        # print(response)
-        output_path = os.path.join(output, f"output_p{i}.json")
-        print(f"writing response to {output_path}")
+        output_path = os.path.join(output, f"p{i}_response.json")
+        logging.info(f"writing response body to {output_path}")
         writeToFile(output_path, json.dumps(response, indent=2))
+
+        message = ""
+        if prompt["format"] == "json":
+            output_path = os.path.join(output, f"p{i}_message.json")
+            message = json.dumps(
+                json.loads(response["response"]), indent=2  # type: ignore
+            )
+        else:
+            output_path = os.path.join(output, f"p{i}_message.md")
+            message = response["response"]  # type: ignore
+        logging.info(f"writing response message to {output_path}")
+        writeToFile(output_path, message)  # type: ignore
 
         i += 1
 

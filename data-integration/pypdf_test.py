@@ -6,7 +6,8 @@ from utils import writeToFile
 
 def main():
     parser = argparse.ArgumentParser(
-        description="""Extract text from a pdf file""")
+        description="""Extract text from a pdf file"""
+    )
     parser.add_argument("input", help="Specify the input PDF")
     parser.add_argument("output", help="Specify the output text file")
 
@@ -18,7 +19,7 @@ def main():
     print(f"reading pdf {input_path}")
     text = pdf2txt(input_path)
     print(f"writing output to {output_path}")
-    writeToFile(text)
+    writeToFile(output_path, text)
 
 
 def pdf2txt(input_path: str) -> str:

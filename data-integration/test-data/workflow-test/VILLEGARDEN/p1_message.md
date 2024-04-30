@@ -1,0 +1,3 @@
+Here is a short description of the text:
+
+The text appears to be a list of scientific publications and research projects conducted by various authors in the fields of environmental science, ecology, and agriculture. The titles of the papers and projects include keywords such as "pedo-geochemical background", "ecosystem engineer concept", "heavy metal toxicity", "foliar uptake", "biotransformation", "concentrations and transportation of pollutants", "pedological characteristics of artificialized soils", and "spatio-temporal modelling of organic carbon content". The text also mentions several research institutions, journals, and conferences.

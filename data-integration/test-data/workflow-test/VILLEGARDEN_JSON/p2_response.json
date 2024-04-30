@@ -1,0 +1,6 @@
+{
+  "model": "llama3",
+  "created_at": "2024-04-30T12:54:19.121714086Z",
+  "response": "{\n\"PEPR\": null,\n\"DYNAFOR\": null,\n\"CEREGE\": [\n\"Austruy, A., M. Roulier, B. Angeletti, J. Dron, C. -E. Dauphin, J. -P. Ambrosi, C. Keller, P. Chamaret (20),\n\" ,\n\"Capowiez, Y., L\u00e9v\u00e8que, T., Pelosi, C., Capowiez, L., Mazzia, C., Schreck, E., Dumat, C. (20,\n\"  ,\n\"Cornu, S., C. Keller, B. B\u00e9chet, C. Delolme, C. Schwartz, L. Vidal -Beaudet (20),\n\"  ,\n\"Criquet, S., M. Clouard, D. Borschneck, F. Ziarelli, C. Keller (20,\n\"  ,\n\"Gadal, S., M. Oukhattar, C. Keller, I. Han ad\u00e9 Houmma (20,\n\"  ,\n\"Rabot, E., M. Guiresse, Y. Pittatore, M. Angelini, C. Keller, P. Lagacherie (20,\n\"],\n\"LPED\": [\n\"Deschamps -Cottin, M., Jacek, G., Seguinel, L., Le Champion, C., Robles, C., Ternisien, M., ... Vila, B. (20,\n\"  ,\n\"Marco A., Bertaudi\u00e8re -Mont\u00e8s V., Deschamps -Cottin M., Robles C., Laffont -Schwob I. Vila B. (20,\n\"  ,\n\"Ternisien M.; Deschamps -Cottin M.; Liz\u00e9e M. -H.; March L.; Robles C.; Vila (20,\n\"]\n} \n\n  \t   \n    \t   \n   \t   \n     \t   \n    \t   \n   \t   \n    \t   \n      \t   \n        \t   \n         \t   \n",
+  "done": false
+}

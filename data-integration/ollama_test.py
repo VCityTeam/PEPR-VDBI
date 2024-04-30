@@ -41,14 +41,16 @@ def main():
     writeToFile(output_path, response["response"])  # type: ignore
 
 
-def sendPrompt(model: str, prompt: str, format="json"):
+def sendPrompt(model: str, prompt: str, format=""):
     response = {}
     try:
-        response = ollama.generate(model=model, prompt=prompt)
+        response = ollama.generate(
+            model=model, prompt=prompt, format=format  # type: ignore
+        )
     except ollama.ResponseError as e:
         print("Error:", e.error)
         if e.status_code == 404:
-            print(f"Attempting to pull {model}")
+            print(f"pulling {model}")
             ollama.pull(model)
 
             print("resending prompt")
@@ -58,9 +60,10 @@ def sendPrompt(model: str, prompt: str, format="json"):
 
     if response == {}:
         raise Exception(
-            "No response (or an empty response) was received from Ollama service"
+            """No response (or an empty response) was received from Ollama
+            service"""
         )
-    return response  # type: ignore
+    return response
 
 
 if __name__ == "__main__":

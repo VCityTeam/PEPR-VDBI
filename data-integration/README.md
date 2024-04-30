@@ -13,7 +13,8 @@ Tests for converting unstructured text to structured text
       - [Test 1.1: simple keyword extraction in french](#test-11-simple-keyword-extraction-in-french)
       - [Test 1.2: simple keyword extraction in english](#test-12-simple-keyword-extraction-in-english)
       - [Test 2.1: Ollama server+python](#test-21-ollama-serverpython)
-      - [Test 3.1: Python data pipeline](#test-31-python-data-pipeline)
+      - [Test 3.1: Initial Python data workflow](#test-31-initial-python-data-workflow)
+      - [Test 3.2 Structured Python data workflow](#test-32-structured-python-data-workflow)
 - [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
   - [Links](#links)
   - [Research interests](#research-interests)
@@ -218,7 +219,40 @@ python ollama_test.py \
 > - The test script can be customized. Use `python ollama_test.py -h` to see the documentation. 
 > - Also, you can use just `ollama serve` (without the `&`) in another terminal session to be able to view ollama API calls in real time
 
-#### Test 3.1: Python data pipeline
+#### Test 3.1: Initial Python data workflow
+
+This test will examine how we can set up initial data workflows (or data pipelines) for extracting knowledge from multiple pdfs using python.
+
+The proposed workflow does the following:
+- step 1: Read a project proposal (PDF), transform its contents to text
+- step 2: excecute a chain of GPT prompts on the text.
+The following script can be used to run a series of ollama prompts based on a configuration file.
+```bash
+python workflow_test.py test-data/workflow_0_config.json
+```
+> [!TIP]
+> - The test script can be customized. Use `python workflow_test.py -h` to see the documentation.
+> - Check the logs when running to see progress in real time (located in `workflow-test.log` by default) 
+
+> [!WARNING]
+> This configuration requires a PDF not provided in the repository
+
+This test uses the configuration file [test-data/workflow_0_config.json](test-data/workflow_0_config.json) which features several prompts:
+- prompt 0: extract keywords
+- prompt 1: extract short abstract
+- prompt 2: extract partner
+- prompt 3: (not yet implemented) extract exterior partners 
+- prompt 4: extract laboratories
+- prompt 5: extract disciplines
+
+The configuration will output to the `test-data/workflow-test/VILLEGARDEN` folder
+
+#### Test 3.2 Structured Python data workflow
+
+Same test as above but using the configuration file [test-data/workflow_1_config.json](test-data/workflow_1_config.json) which proposes structuring prompt outputs as JSON. 
+```bash
+python workflow_test.py test-data/workflow_1_config.json
+```
 
 # Notes for AI assisted data integration
 
@@ -235,7 +269,8 @@ python ollama_test.py \
       - [Test 1.1: simple keyword extraction in french](#test-11-simple-keyword-extraction-in-french)
       - [Test 1.2: simple keyword extraction in english](#test-12-simple-keyword-extraction-in-english)
       - [Test 2.1: Ollama server+python](#test-21-ollama-serverpython)
-      - [Test 3.1: Python data pipeline](#test-31-python-data-pipeline)
+      - [Test 3.1: Initial Python data workflow](#test-31-initial-python-data-workflow)
+      - [Test 3.2 Structured Python data workflow](#test-32-structured-python-data-workflow)
 - [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
   - [Links](#links)
   - [Research interests](#research-interests)
