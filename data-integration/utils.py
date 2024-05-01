@@ -5,6 +5,6 @@ def readFile(file_path: str, encoding="UTF-8") -> str:
     return text
 
 
-def writeToFile(output_path: str, text: str) -> None:
-    with open(output_path, 'w', encoding="UTF-8") as file:
+def writeToFile(output_path: str, text: str, encoding="UTF-8") -> None:
+    with open(output_path, 'w', encoding=encoding) as file:
         file.write(text)
