@@ -5,13 +5,12 @@ import logging
 from datetime import timedelta
 from utils import readFile, writeToFile
 from ollama_test import sendPrompt
-from pypdf_test import pdf2txt
+from pypdf_test import pdf2list
 
 # TODO:
 # - tester formattage des prompts pour:
 #   - sortie structure pour data viz
 #   - impact de structure des prompts
-# - customize pdf page ranges per query
 # - how to chain contexts?
 # - ollama modelfile:
 #   - model parameters
@@ -36,7 +35,9 @@ def main():
                     {
                         "prompt": string,
                         "model": string,
-                        "format": string
+                        "format": string,
+                        "page_ranges": string,
+                        "run": boolean
                     }
                 ]
             }""",
@@ -53,8 +54,8 @@ def main():
     logging.basicConfig(
         format="%(asctime)s %(levelname)-8s %(message)s",
         filename=args.log,
-        # level=logging.DEBUG,
-        level=logging.INFO,
+        level=logging.DEBUG,
+        # level=logging.INFO,
     )
     print(f"Initialized, see {args.log} for execution information...")
     logging.info("=== initialized ===")
@@ -79,7 +80,7 @@ def runWorkflows(configuration: str) -> None:
 
 def runWorkflow(input: str, output: str, prompts: list) -> None:
     """Run a workflow on a set of input files. Each workflow will transform the
-    input into a txt (unless the text file already exists). Then a given list
+    input into a json file (unless the file already exists). Then a given list
     of prompts is executed using Ollama python. The output of all of these
     steps is written to an output folder"""
 
@@ -87,27 +88,38 @@ def runWorkflow(input: str, output: str, prompts: list) -> None:
     input_basepath = os.path.basename(input)
     if not input_basepath.endswith(".pdf"):
         logging.warning(f"is input {input} a PDF?")
-    output_path = os.path.join(output, input_basepath[:-3] + "txt")
+    output_path = os.path.join(output, input_basepath[:-3] + "json")
 
-    text = ""
+    text = []
     if os.path.exists(output_path):
         logging.info(f"{output_path} exists, reading file")
-        text = readFile(output_path)
+        text = json.loads(readFile(output_path))
     else:
-        logging.info(f"converting to text: {input}")
+        logging.info(f"converting to json: {input}")
         input_path = os.path.normpath(input)
-        text = pdf2txt(input_path)
-        logging.info(f"writing text to {output_path}")
-        writeToFile(output_path, text)
+        text = pdf2list(input_path)
+        logging.info(f"writing to {output_path}")
+        writeToFile(output_path, json.dumps(text, indent=2))
 
     # step 2
     i = 0
     for prompt in prompts:
-        logging.info(f"\nsending prompt: {prompt['prompt']}[text]")
-        print(f"sending prompt: {prompt['prompt']}[text]")
+        if not prompt["run"]:
+            logging.info(f"\nskipping prompt {i}: {prompt['prompt']}[text]")
+            print(f"skipping prompt {i}: {prompt['prompt']}[text]")
+            continue
+
+        logging.info(f"\nsending prompt {i}: {prompt['prompt']}[text]")
+        print(f"sending prompt {i}: {prompt['prompt']}[text]")
+
+        reduced_text = ""
+        ranges = parsePageRanges(prompt["page_ranges"])
+        logging.debug(f"page ranges: {ranges}")
+        for page_number in parsePageRanges(prompt["page_ranges"]):
+            reduced_text += text[page_number]
 
         response = sendPrompt(
-            prompt["model"], prompt["prompt"] + text, prompt["format"]
+            prompt["model"], prompt["prompt"] + reduced_text, prompt["format"]
         )
         logging.debug(f"response: {response}")
         if not response["done"]:  # type: ignore
@@ -140,6 +152,20 @@ def runWorkflow(input: str, output: str, prompts: list) -> None:
         print("done!")
 
         i += 1
+
+
+def parsePageRanges(ranges: str) -> list[int]:
+    pages = []
+    for _range in ranges.replace(" ", "").split(","):
+        if "-" in _range:
+            split_range = _range.split("-")
+            pages += [
+                page for page in range(int(split_range[0]) - 1, int(split_range[-1]))
+            ]
+        else:
+            pages.append(int(_range) - 1)
+    pages.sort()
+    return pages
 
 
 if __name__ == "__main__":

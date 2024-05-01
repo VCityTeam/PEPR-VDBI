@@ -7,27 +7,32 @@
     {
       "prompt": "You are the scientific project manager of the project proposal below. Provide several keywords from the proposal. Search only in the sections 1 'Context' and section 2 'Detailed project description'. Formulate your response as a bulleted list:\n",
       "model": "llama3",
-      "format": ""
+      "format": "",
+      "run": true
     },
     {
       "prompt": "You are the scientific project manager of the project proposal below. Write a short description as a paragrah of the scientific project proposal: \n",
       "model": "llama3",
-      "format": ""
+      "format": "",
+      "run": true
     },
     {
       "prompt": "You are the scientific project manager of the project proposal below. What are the problem statements in the scientific project proposal? Formulate your response as a bulleted list:\n",
       "model": "llama3",
-      "format": ""
+      "format": "",
+      "run": true
     },
     {
       "prompt": "You are the scientific project manager of the project proposal below. What are the scientific goals in the scientific project proposal? Formulate your response as a bulleted list:\n",
       "model": "llama3",
-      "format": ""
+      "format": "",
+      "run": true
     },
     {
       "prompt": "You are the scientific project manager of the project proposal below. What are the proposed methods? Formulate your response as a bulleted list:\n",
       "model": "llama3",
-      "format": ""
+      "format": "",
+      "run": true
     }
   ]
 }
