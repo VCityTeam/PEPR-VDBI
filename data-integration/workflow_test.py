@@ -94,7 +94,10 @@ def runWorkflows(configuration: str, format: str, delimeter=",") -> None:
             config = csv.reader(file, delimiter=delimeter)
             for row in config:
                 if config.line_num > 1:  # skip header
-                    logging.info(f"running workflow on line {config.line_num} {str(row[0])} {str(row[1])}")
+                    logging.info(
+                        f"running workflow on line {config.line_num} "
+                        + f"{str(row[0])} {str(row[1])}"
+                    )
                     print(f"running workflow on {str(row[0])} {str(row[1])}")
                     print(row)
                     runWorkflow(
