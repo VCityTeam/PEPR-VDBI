@@ -1,4 +1,5 @@
 from os import path, makedirs
+import csv
 import json
 import argparse
 import logging
@@ -24,8 +25,8 @@ def main():
     )
     parser.add_argument(
         "configuration",
-        help="""Specify the configuration JSON file. File must be structured as
-        follows:
+        help="""Specify the configuration file. File must be structured as
+        follows for JSON:
             {
                 "output": string,
                 "inputs": {
@@ -39,7 +40,23 @@ def main():
                         "run": boolean          # optional
                     }
                 ]
-            }""",
+            }
+        Or as follows for CSV:
+        input,page_ranges,output,prompt,model""",
+    )
+    parser.add_argument(
+        "-f",
+        "--format",
+        choices=["csv", "json"],
+        default="csv",
+        help="Specify the configuration format",
+    )
+    parser.add_argument(
+        "-d",
+        "--delimeter",
+        choices=[",", ";", "\t"],
+        default=",",
+        help="Specify the csv delimeter (only used for 'csv' format)",
     )
     parser.add_argument(
         "-l",
@@ -59,10 +76,10 @@ def main():
     print(f"Initialized, see {args.log} for execution information...")
     logging.info("=== initialized ===")
 
-    runWorkflows(args.configuration)
+    runWorkflows(args.configuration, args.format, args.delimeter)
 
 
-def runWorkflows(configuration: str) -> None:
+def runWorkflows(configuration: str, format: str, delimeter=",") -> None:
     """Run a series of workflows based on a configuration file in JSON.
     A configuration file must contain an object with the following keys:
     "output": a string containing the path to output workflow results.
@@ -72,35 +89,46 @@ def runWorkflows(configuration: str) -> None:
     "prompts": an object containing the information required to run a workflow.
         See runWorkflow() for more information.
     """
-
-    config = json.loads(readFile(configuration))
-    output_path = path.normpath(config["output"])
-    logging.info(f"output directory: {output_path}")
-    if not path.exists(output_path):
-        makedirs(output_path)
-
-    for input, ranges in config["inputs"].items():
-        logging.info(f"running workflow on {input} {ranges}")
-        print(f"running workflow on {input} {ranges}")
-
-        # step 1
-        input_filename = path.basename(input)
-        input_text_path = path.join(output_path, input_filename[:-3] + "json")
-        if not input_text_path.endswith(".pdf"):
-            logging.warning(f"is input {input} a PDF?")
-
-        if not path.exists(input_text_path):
-            logging.info(
-                f"converting {input} to json. writing to {input_text_path}"
-            )
-            writeToFile(
-                input_text_path, json.dumps(pdf2list(input), indent=2)
-            )
-        runWorkflow(input_text_path, ranges, output_path, config["prompts"])
+    if format == "csv":
+        with open(configuration) as file:
+            config = csv.reader(file, delimiter=delimeter)
+            for row in config:
+                if config.line_num > 1:  # skip header
+                    logging.info(f"running workflow on line {config.line_num} {str(row[0])} {str(row[1])}")
+                    print(f"running workflow on {str(row[0])} {str(row[1])}")
+                    print(row)
+                    runWorkflow(
+                        str(row[0]),
+                        str(row[1]),
+                        str(row[2]),
+                        str(row[3]),
+                        str(row[4]),
+                        str(row[5]),
+                    )
+    elif format == "json":
+        config = json.loads(readFile(configuration))
+        for input, ranges in config["inputs"].items():
+            logging.info(f"running workflow on {input} {ranges}")
+            print(f"running workflow on {input} {ranges}")
+            for prompt in config["prompts"]:
+                if prompt.get("run"):
+                    runWorkflow(
+                        input,
+                        ranges,
+                        config["output"],
+                        prompt["prompt"],
+                        prompt["model"],
+                        prompt.get("format"),
+                    )
 
 
 def runWorkflow(
-    input: str, page_ranges: str, output: str, prompts: list[dict]
+    input: str,
+    page_ranges: str,
+    output: str,
+    prompt: str,
+    model: str,
+    format: str,
 ) -> None:
     """Run a workflow on a set of input files. Each workflow will transform the
     input into a json file (unless the file already exists). Then a given list
@@ -111,60 +139,63 @@ def runWorkflow(
             string corresponds to a page of text.
         page_ranges: a string containing the relevant page ranges from the text.
         output: the output directory path.
-        prompts: a list of dictionaries with the following key/value pairs:
-            "prompt": a string containing the prompt to execute over the text.
-            "model": a string containing the Ollama model tag to use.
-            "format": an optional string containing the Ollama response format.
-            "run": an optional boolean specifying if the prompt should be
-                skipped.
+        prompt: a string containing the prompt to execute over the text.
+        model: the ollama model tag to use for the prompt
     """
+    # step 0
+    output_path = path.normpath(output)
+    logging.info(f"output directory: {output_path}")
+    if not path.exists(output_path):
+        makedirs(output_path)
+
+    # step 1
+    input_filename = path.basename(input)
+    input_text_path = path.join(output_path, input_filename[:-3] + "json")
+    if not input_text_path.endswith(".pdf"):
+        logging.warning(f"is input {input} a PDF?")
+
+    if not path.exists(input_text_path):
+        logging.info(
+            f"converting {input} to json. writing to {input_text_path}"
+        )
+        writeToFile(input_text_path, json.dumps(pdf2list(input), indent=2))
 
     # step 2
-    text = compilePages(input, page_ranges)
-    i = 0
-    for prompt in prompts:
-        if not prompt.get("run", True):
-            logging.info(f"\nskipping prompt {i}: {prompt['prompt']}[text]")
-            print(f"skipping prompt {i}: {prompt['prompt']}[text]")
-            continue
+    text = compilePages(input_text_path, page_ranges)
 
-        logging.info(f"\nsending prompt {i}: {prompt['prompt']}[text]")
-        print(f"sending prompt {i}: {prompt['prompt']}[text]")
+    logging.info(f"\nsending prompt: {prompt}[text]")
+    print(f"sending prompt: {prompt}[text]")
 
-        response = sendPrompt(
-            prompt["model"], prompt["prompt"] + text, prompt.get("format", "")
+    response = sendPrompt(model, prompt + text, format)
+    logging.debug(f"response: {response}")
+    if not response["done"]:  # type: ignore
+        logging.warning('response returned "done"=false')
+
+    # print response key/value pair as a deltatime if key has "duration"
+    for key, value in [
+        (key, value)
+        for (key, value) in response.items()  # type: ignore
+        if "duration" in key
+    ]:
+        elapsed_time = timedelta(microseconds=value // 1000)
+        logging.info(f"{key}: {elapsed_time}{value % 1000}")
+
+    output_path = path.join(output, "response.json")
+    logging.info(f"writing response body to {output_path}")
+    writeToFile(output_path, json.dumps(response, indent=2))
+
+    message = ""
+    if format == "json":
+        output_path = path.join(output, "message.json")
+        message = json.dumps(
+            json.loads(response["response"]), indent=2  # type: ignore
         )
-        logging.debug(f"response: {response}")
-        if not response["done"]:  # type: ignore
-            logging.warning('response returned "done"=false')
-
-        # print response key/value pair as a deltatime if key has "duration"
-        for key, value in [
-            (key, value)
-            for (key, value) in response.items()  # type: ignore
-            if "duration" in key
-        ]:
-            elapsed_time = timedelta(microseconds=value // 1000)
-            logging.info(f"{key}: {elapsed_time}{value % 1000}")
-
-        output_path = path.join(output, f"p{i}_response.json")
-        logging.info(f"writing response body to {output_path}")
-        writeToFile(output_path, json.dumps(response, indent=2))
-
-        message = ""
-        if prompt.get("format") == "json":
-            output_path = path.join(output, f"p{i}_message.json")
-            message = json.dumps(
-                json.loads(response["response"]), indent=2  # type: ignore
-            )
-        else:
-            output_path = path.join(output, f"p{i}_message.md")
-            message = response["response"]  # type: ignore
-        logging.info(f"writing response message to {output_path}")
-        writeToFile(output_path, message)  # type: ignore
-        print("done!")
-
-        i += 1
+    else:
+        output_path = path.join(output, "message.md")
+        message = response["response"]  # type: ignore
+    logging.info(f"writing response message to {output_path}")
+    writeToFile(output_path, message)  # type: ignore
+    print("done!")
 
 
 def parsePageRanges(ranges: str) -> list[int]:

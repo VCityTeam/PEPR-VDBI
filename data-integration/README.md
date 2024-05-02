@@ -15,6 +15,8 @@ Tests for converting unstructured text to structured text
       - [Test 2.1: Ollama server+python](#test-21-ollama-serverpython)
       - [Test 3.1: Initial Python data workflow](#test-31-initial-python-data-workflow)
       - [Test 3.2 Structured Python data workflow](#test-32-structured-python-data-workflow)
+      - [Test 3.3 Initial prompt optimization test](#test-33-initial-prompt-optimization-test)
+      - [Test 3.4 Page range test](#test-34-page-range-test)
 - [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
   - [Links](#links)
   - [Research interests](#research-interests)
@@ -254,6 +256,28 @@ Same test as above but using the configuration file [test-data/workflow_1_config
 python workflow_test.py test-data/workflow_1_config.json
 ```
 
+#### Test 3.3 Initial prompt optimization test
+
+Same test as above but using the configuration file [test-data/workflow_2_config.json](test-data/workflow_2_config.json) which proposes a more developed prompt featuring:
+- Setting a context for the GPT i.e., *"You are the scientific project manager of the project proposal below"*
+- Clarifying a search perimeter i.e., *"Search only in the sections 1 'Context' and section 2 'Detailed project description'."*
+- Asking for a formatted output i.e., *"Formulate your response as a bulleted list"*
+
+```bash
+python workflow_test.py test-data/workflow_2_config.json
+```
+
+#### Test 3.4 Page range test
+
+Same test as above but using the configuration file [test-data/workflow_3_config.json](test-data/workflow_3_config.json) which defines a page range to be searched in:
+Page ranges should be a comma separated string e.g., `1, 2, 5-7` (spaces are allowed)
+
+```bash
+python workflow_test.py test-data/workflow_3_config.json
+```
+
+
+
 # Notes for AI assisted data integration
 
 **Context:** In the context of the PEPR-tests project, we would like to use AI to integrate non-structured data (from PDF documents) to visualize and analyse their underlying knowledge.
@@ -271,6 +295,8 @@ python workflow_test.py test-data/workflow_1_config.json
       - [Test 2.1: Ollama server+python](#test-21-ollama-serverpython)
       - [Test 3.1: Initial Python data workflow](#test-31-initial-python-data-workflow)
       - [Test 3.2 Structured Python data workflow](#test-32-structured-python-data-workflow)
+      - [Test 3.3 Initial prompt optimization test](#test-33-initial-prompt-optimization-test)
+      - [Test 3.4 Page range test](#test-34-page-range-test)
 - [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
   - [Links](#links)
   - [Research interests](#research-interests)
