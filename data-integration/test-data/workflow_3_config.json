@@ -1,0 +1,28 @@
+{
+  "output": "test-data/workflow-test/VILLEGARDEN_70b",
+  "inputs": {
+    "test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf": "9-18"
+  },
+  "prompts": [
+    {
+      "prompt": "Provide several keywords from the scientific project proposal below. Search only in the sections 1 'Context' and section 2 'Detailed project description'. Please formulate your response as a bulleted list:\n",
+      "model": "llama3:70b"
+    },
+    {
+      "prompt": "Please write a short description of 3 lines of the scientific project proposal below:\n",
+      "model": "llama3:70b"
+    },
+    {
+      "prompt": "What are the problem statements in the scientific project proposal below? Please formulate your response as a bulleted list:\n",
+      "model": "llama3:70b"
+    },
+    {
+      "prompt": "What are the scientific goals in the scientific project proposal below? Please formulate your response as a bulleted list:\n",
+      "model": "llama3:70b"
+    },
+    {
+      "prompt": "What are the proposed methods in the scientific project proposal below? Please formulate your response as a bulleted list:\n",
+      "model": "llama3:70b"
+    }
+  ]
+}

@@ -6,7 +6,7 @@ from utils import writeToFile
 
 
 def main():
-    parser = argparse.ArgumentParser(description="""Extract text from a pdf file""")
+    parser = argparse.ArgumentParser(description="Extract text from a pdf file")
     parser.add_argument("input", help="Specify the input PDF")
     parser.add_argument("output", help="Specify the output text file")
     parser.add_argument(
