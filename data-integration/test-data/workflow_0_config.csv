@@ -1,0 +1,2 @@
+input,page_ranges,output,prompt,model,format
+test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf,9-18,test-data/workflow-test/VILLEGARDEN_CSV,Provide several keywords from the scientific project proposal below. Search only in the sections 1 'Context' and section 2 'Detailed project description'. Please formulate your response as a bulleted list:\n,mistral,
