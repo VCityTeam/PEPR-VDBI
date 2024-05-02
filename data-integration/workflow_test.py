@@ -41,8 +41,8 @@ def main():
                     }
                 ]
             }
-        Or as follows for CSV:
-        input,page_ranges,output,prompt,model""",
+        Or with the following header for CSV:
+        input,page_ranges,output,prompt,model,format""",
     )
     parser.add_argument(
         "-f",
@@ -121,7 +121,7 @@ def runWorkflows(configuration: str, format: str, delimeter=",") -> None:
                         config["output"],
                         prompt["prompt"],
                         prompt["model"],
-                        prompt.get("format"),
+                        prompt.get("format", ""),
                     )
 
 
@@ -143,7 +143,8 @@ def runWorkflow(
         page_ranges: a string containing the relevant page ranges from the text.
         output: the output directory path.
         prompt: a string containing the prompt to execute over the text.
-        model: the ollama model tag to use for the prompt
+        model: a string of the ollama model tag to use for the prompt.
+        format: a string of the ollama response format
     """
     # step 0
     output_path = path.normpath(output)
