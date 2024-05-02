@@ -103,13 +103,14 @@ def runWorkflows(configuration: str, format: str, delimeter=",") -> None:
                     runWorkflow(
                         str(row[0]),
                         str(row[1]),
-                        str(row[2]),
+                        path.join(str(row[2]), f"p{config.line_num - 2}"),
                         str(row[3]),
                         str(row[4]),
                         str(row[5]),
                     )
     elif format == "json":
         config = json.loads(readFile(configuration))
+        i = 0
         for input, ranges in config["inputs"].items():
             logging.info(f"running workflow on {input} {ranges}")
             print(f"running workflow on {input} {ranges}")
@@ -118,11 +119,12 @@ def runWorkflows(configuration: str, format: str, delimeter=",") -> None:
                     runWorkflow(
                         input,
                         ranges,
-                        config["output"],
+                        path.join(config["output"], f"p{i}"),
                         prompt["prompt"],
                         prompt["model"],
                         prompt.get("format", ""),
                     )
+                    i += 1
 
 
 def runWorkflow(
