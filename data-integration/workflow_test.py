@@ -90,24 +90,27 @@ def runWorkflows(configuration: str, format: str, delimeter=",") -> None:
         See runWorkflow() for more information.
     """
     if format == "csv":
+        config = []
         with open(configuration) as file:
-            config = csv.reader(file, delimiter=delimeter)
-            for row in config:
-                if config.line_num > 1:  # skip header
-                    logging.info(
-                        f"running workflow on line {config.line_num} "
-                        + f"{str(row[0])} {str(row[1])}"
-                    )
-                    print(f"running workflow on {str(row[0])} {str(row[1])}")
-                    print(row)
-                    runWorkflow(
-                        str(row[0]),
-                        str(row[1]),
-                        path.join(str(row[2]), f"p{config.line_num - 2}"),
-                        str(row[3]),
-                        str(row[4]),
-                        str(row[5]),
-                    )
+            csv_file = csv.reader(file, delimiter=delimeter)
+            for row in csv_file:
+                config.append(row)
+        i = 0
+        for row in config[1:]:
+            logging.info(
+                f"running workflow on line {i}"
+                + f"{str(row[0])} {str(row[1])}"
+            )
+            print(f"running workflow on {str(row[0])} {str(row[1])}")
+            runWorkflow(
+                str(row[0]),
+                str(row[1]),
+                path.join(str(row[2]), f"p{i}"),
+                str(row[3]),
+                str(row[4]),
+                str(row[5]),
+            )
+            i += 1
     elif format == "json":
         config = json.loads(readFile(configuration))
         i = 0
@@ -155,11 +158,10 @@ def runWorkflow(
         makedirs(output_path)
 
     # step 1
-    input_filename = path.basename(input)
-    input_text_path = path.join(output_path, input_filename[:-3] + "json")
-    if not input_text_path.endswith(".pdf"):
+    if not input.endswith(".pdf"):
         logging.warning(f"is input {input} a PDF?")
 
+    input_text_path = path.normpath(input[:-3] + "json")
     if not path.exists(input_text_path):
         logging.info(
             f"converting {input} to json. writing to {input_text_path}"
