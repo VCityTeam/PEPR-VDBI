@@ -70,8 +70,8 @@ def main():
     logging.basicConfig(
         format="%(asctime)s %(levelname)-8s %(message)s",
         filename=args.log,
-        level=logging.DEBUG,
-        # level=logging.INFO,
+        # level=logging.DEBUG,
+        level=logging.INFO,
     )
     print(f"Initialized, see {args.log} for execution information...")
     logging.info("=== initialized ===")
