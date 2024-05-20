@@ -109,6 +109,7 @@ def runWorkflows(configuration: str, format: str, delimeter=",") -> None:
                 str(row[3]),
                 str(row[4]),
                 str(row[5]),
+                str(row[6]),
             )
             i += 1
     elif format == "json":
@@ -125,6 +126,7 @@ def runWorkflows(configuration: str, format: str, delimeter=",") -> None:
                         path.join(config["output"], f"p{i}"),
                         prompt["prompt"],
                         prompt["model"],
+                        prompt.get("modelfile"),
                         prompt.get("format", ""),
                     )
                     i += 1
@@ -136,6 +138,7 @@ def runWorkflow(
     output: str,
     prompt: str,
     model: str,
+    modelfile: str,
     format: str,
 ) -> None:
     """Run a workflow on a set of input files. Each workflow will transform the
@@ -174,7 +177,7 @@ def runWorkflow(
     logging.info(f"\nsending prompt: {prompt}[text]")
     print(f"sending prompt: {prompt}[text]")
 
-    response = sendPrompt(model, prompt + text, format)
+    response = sendPrompt(model, prompt + text, modelfile, format)
     logging.debug(f"response: {response}")
     if not response["done"]:  # type: ignore
         logging.warning('response returned "done"=false')

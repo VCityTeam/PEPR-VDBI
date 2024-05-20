@@ -1,0 +1,26 @@
+{
+  "output": "test-data/workflow-test/VILLEGARDEN_TEMP",
+  "inputs": {
+    "test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf": ""
+  },
+  "prompts": [
+    {
+      "prompt": "Provide several keywords from the text below:\n",
+      "model": "llama3-test",
+      "modelfile": "test-data/modelfiles/llama3-simple",
+      "run": true
+    },
+    {
+      "prompt": "Write a short description of the text below: \n",
+      "model": "llama3-test",
+      "modelfile": "test-data/modelfiles/llama3-simple",
+      "run": false
+    },
+    {
+      "prompt": "What are the partner organizations in the text below?\n",
+      "model": "llama3-test",
+      "modelfile": "test-data/modelfiles/llama3-simple",
+      "run": false
+    }
+  ]
+}
