@@ -17,6 +17,8 @@ Tests for converting unstructured text to structured text
       - [Test 3.2 Structured Python data workflow](#test-32-structured-python-data-workflow)
       - [Test 3.3 Initial prompt optimization test](#test-33-initial-prompt-optimization-test)
       - [Test 3.4 Page range test](#test-34-page-range-test)
+      - [Test 3.5 Add csv config to workflow](#test-35-add-csv-config-to-workflow)
+      - [Test 4.1 Modelfile test](#test-41-modelfile-test)
 - [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
   - [Links](#links)
   - [Research interests](#research-interests)
@@ -230,7 +232,7 @@ The proposed workflow does the following for each input file:
 - step 2: excecute a chain of GPT prompts on the text.
 The following script can be used to run a series of ollama prompts based on a configuration file.
 ```bash
-python workflow_test.py test-data/workflow_0_config.json
+python workflow_test.py -f json test-data/workflow_0_config.json
 ```
 > [!TIP]
 > - The test script can be customized. Use `python workflow_test.py -h` to see the documentation.
@@ -253,7 +255,7 @@ The configuration will output to the `test-data/workflow-test/VILLEGARDEN` folde
 
 Same test as above but using the configuration file [test-data/workflow_1_config.json](test-data/workflow_1_config.json) which proposes structuring prompt outputs as JSON. 
 ```bash
-python workflow_test.py test-data/workflow_1_config.json
+python workflow_test.py -f json test-data/workflow_1_config.json
 ```
 
 #### Test 3.3 Initial prompt optimization test
@@ -264,7 +266,7 @@ Same test as above but using the configuration file [test-data/workflow_2_config
 - Asking for a formatted output i.e., *"Formulate your response as a bulleted list"*
 
 ```bash
-python workflow_test.py test-data/workflow_2_config.json
+python workflow_test.py -f json test-data/workflow_2_config.json
 ```
 
 #### Test 3.4 Page range test
@@ -273,10 +275,24 @@ Same test as above but using the configuration file [test-data/workflow_3_config
 Page ranges should be a comma separated string e.g., `1, 2, 5-7` (spaces are allowed)
 
 ```bash
-python workflow_test.py test-data/workflow_3_config.json
+python workflow_test.py -f json test-data/workflow_3_config.json
 ```
 
+#### Test 3.5 Add csv config to workflow
 
+Use a csv file to configure workflow instead of a json file.
+
+```bash
+python workflow_test.py -f csv test-data/workflow_0_config.csv
+```
+
+#### Test 4.1 Modelfile test
+
+Added modelfile functionality to ollama and workflow test scripts.
+
+```bash
+python workflow_test.py -f json test-data/workflow_4_config.json
+```
 
 # Notes for AI assisted data integration
 
@@ -297,6 +313,8 @@ python workflow_test.py test-data/workflow_3_config.json
       - [Test 3.2 Structured Python data workflow](#test-32-structured-python-data-workflow)
       - [Test 3.3 Initial prompt optimization test](#test-33-initial-prompt-optimization-test)
       - [Test 3.4 Page range test](#test-34-page-range-test)
+      - [Test 3.5 Add csv config to workflow](#test-35-add-csv-config-to-workflow)
+      - [Test 4.1 Modelfile test](#test-41-modelfile-test)
 - [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
   - [Links](#links)
   - [Research interests](#research-interests)
