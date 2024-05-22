@@ -1,0 +1,4 @@
+FROM llama3
+# sets the temperature [higher is more creative, lower is more coherent]
+PARAMETER top_k 10
+PARAMETER top_p 0.1
