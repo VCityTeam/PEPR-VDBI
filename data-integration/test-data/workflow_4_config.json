@@ -1,26 +1,39 @@
 {
   "output": "test-data/workflow-test/VILLEGARDEN_TEMP",
   "inputs": {
-    "test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf": ""
+    "test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_noheader.pdf": "1"
   },
   "prompts": [
     {
       "prompt": "Provide several keywords from the text below:\n",
-      "model": "llama3-test",
-      "modelfile": "test-data/modelfiles/llama3-simple",
-      "run": true
+      "model": "llama3-t0.9",
+      "modelfile": "test-data/modelfiles/llama3-t0.9",
+      "run": false
     },
     {
       "prompt": "Write a short description of the text below: \n",
-      "model": "llama3-test",
-      "modelfile": "test-data/modelfiles/llama3-simple",
+      "model": "llama3-t0.5",
+      "modelfile": "test-data/modelfiles/llama3-t0.5",
       "run": false
     },
     {
-      "prompt": "What are the partner organizations in the text below?\n",
-      "model": "llama3-test",
-      "modelfile": "test-data/modelfiles/llama3-simple",
+      "prompt": "Write a short description of the text below: \n",
+      "model": "llama3-t0.1",
+      "modelfile": "test-data/modelfiles/llama3-t0.1",
       "run": false
+    },
+    {
+      "prompt": "Provide the name of the scientific coordinator. Formulate your response in JSON: \n",
+      "model": "llama3-n10",
+      "modelfile": "test-data/modelfiles/llama3-n10",
+      "format": "json",
+      "run": false
+    },
+    {
+      "prompt": "Provide only the name of the scientific coordinator: \n",
+      "model": "llama3-n10",
+      "modelfile": "test-data/modelfiles/llama3-n10",
+      "run": true
     }
   ]
 }

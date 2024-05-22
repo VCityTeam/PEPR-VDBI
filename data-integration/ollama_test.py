@@ -27,8 +27,8 @@ def main():
         "-m",
         "--model",
         default="mistral",
-        help="""Specify the ollama model tag. If a modelfile is given, this parameter is
-                used as the model name.""",
+        help="""Specify the ollama model tag. If a modelfile is given, this
+            parameter is used as the model name.""",
     )
     parser.add_argument(
         "--modelfile",
@@ -76,7 +76,9 @@ def sendPrompt(model: str, prompt: str, modelfile_path=None, format=""):
             else:
                 print(f"creating {model} based on {modelfile_path}")
                 modelfile = readFile(modelfile_path)
-                for server_response in ollama.create(model=model, modelfile=modelfile):
+                for server_response in ollama.create(
+                    model=model, modelfile=modelfile
+                ):
                     print(server_response)
                     # if type(server_response) is str:
                     #     print(server_response)
