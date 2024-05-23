@@ -1,5 +1,5 @@
 ---
-title: Overview Dashboard
+title: Phase 1 Dashboard
 theme: dashboard
 ---
 
@@ -25,6 +25,7 @@ import { mapCounts, mergeCounts } from "./components/utilities.js";
 const workbook1 = FileAttachment(
   "./data/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx"
 ).xlsx();
+
 const workbook2 = FileAttachment(
   "./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
 ).xlsx();
@@ -70,7 +71,8 @@ const sorted_partner_counts = countEntities(
   projects_phase_1,
   (project) => project.partenaires
 );
-
+display(projects_phase_1)
+display(sorted_partner_counts)
 const sorted_keyword_counts = countEntities(
   projects_product,
   (project) => project.motClefs
