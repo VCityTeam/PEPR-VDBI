@@ -6,8 +6,12 @@ theme: dashboard
 # PEPR Dashboard
 
 ```js
-import { mapEntitiesToGraph } from "./components/force-graph.js";
-import { mapCounts, mergeCounts, countEntities } from "./components/utilities.js";
+import { mapEntitiesToGraph } from './components/force-graph.js';
+import {
+  mapCounts,
+  mergeCounts,
+  countEntities,
+} from './components/utilities.js';
 import {
   getGeneraliteSheet,
   getChercheurSheet,
@@ -17,20 +21,40 @@ import {
   resolveChercheursEntities,
   resolveLaboratoireEntities,
   resolveEtablissementEntities,
-} from "./components/phase2-dashboard.js";
+} from './components/phase2-dashboard.js';
 ```
 
 ```js
 const workbook1 = FileAttachment(
-  "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
+  './data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx'
 ).xlsx();
 ```
 
 ```js
 const project_data = resolveGeneraliteEntities(getGeneraliteSheet(workbook1));
+// resolveGeneraliteEntities -> @return:
+// {
+//   acronyme: [],
+//   auditionne: boolean,
+//   finance: boolean,
+//   budget: [],
+//   note: [],
+//   defi: [],
+//   nom_fr: [],
+//   nom_en: [],
+//   etablissements: [],
+//   laboratoires: [],
+//   partenaires: [],
+//   action: [],
+//   comment: [],
+//   pourquoi: [],
+//   notes: []
+// }
 const researcher_data = resolveChercheursEntities(getChercheurSheet(workbook1));
 const laboratory_data = resolveLaboratoireEntities(getLaboSheet(workbook1));
-const university_data = resolveEtablissementEntities(getEtablissementSheet(workbook1));
+const university_data = resolveEtablissementEntities(
+  getEtablissementSheet(workbook1)
+);
 display(project_data);
 // display(researcher_data);
 // display(laboratory_data);
@@ -38,8 +62,16 @@ display(project_data);
 ```
 
 ```js
-const auditioned_project_count = d3.reduce(project_data, (p, v) => p + (v.auditionne ? 1 : 0), 0);
-const financed_project_count = d3.reduce(project_data, (p, v) => p + (v.finance ? 1 : 0), 0);
+const auditioned_project_count = d3.reduce(
+  project_data,
+  (p, v) => p + (v.auditionne ? 1 : 0),
+  0
+);
+const financed_project_count = d3.reduce(
+  project_data,
+  (p, v) => p + (v.finance ? 1 : 0),
+  0
+);
 
 const partner_count = countEntities(project_data, (d) => d.partenaires);
 // display(partner_count);
@@ -68,87 +100,222 @@ const total_partner_count = d3.reduce(partner_count, (p, v) => p + v.count, 0);
 </div>
 
 ```js
-const projects_by_university_project_owner_by_auditioned_by_financed = d3.group(
-  project_data,
-  (d) => d.etablissements[0],
-  (d) => d.auditionne,
-  (d) => d.finance
+// university by project filter checkboxes
+// const university_project_stage_input = Inputs.checkbox(['Auditioned', 'Financed']);
+// const university_project_stage = Generators.input(university_project_stage_input);
+
+// university by project filter radio buttons
+// const university_project_stage_input = Inputs.radio(['All', 'Auditioned', 'Financed'], {value: 'All',});
+// const university_project_stage = Generators.input(university_project_stage_input);
+
+// university by project filter select inputs
+const university_auditioned_input = Inputs.select(
+  new Map([['All', 0], ['Yes', 1], ['No', 2]]),
+  {
+    value: 'All',
+    label: 'Auditioned?',
+  },
 );
-display(projects_by_university_project_owner_by_auditioned_by_financed);
-const auditioned_input = html`<input type="checkbox">`;
-const auditioned = Generators.input(auditioned_input);
-const financed_input = html`<input type="checkbox">`;
-const financed = Generators.input(financed_input);
+const university_financed_input = Inputs.select(
+  new Map([['All', 0], ['Yes', 1], ['No', 2]]),
+  {
+    value: 'All',
+    label: 'Financed?',
+  },
+);
+const university_auditioned = Generators.input(university_auditioned_input);
+const university_financed = Generators.input(university_financed_input);
+
+// laboratory by project filter select inputs
+const laboratory_auditioned_input = Inputs.select(
+  new Map([['All', 0], ['Yes', 1], ['No', 2]]),
+  {
+    value: 'All',
+    label: 'Auditioned?',
+  },
+);
+const laboratory_financed_input = Inputs.select(
+  new Map([['All', 0], ['Yes', 1], ['No', 2]]),
+  {
+    value: 'All',
+    label: 'Financed?',
+  },
+);
+const laboratory_auditioned = Generators.input(laboratory_auditioned_input);
+const laboratory_financed = Generators.input(laboratory_financed_input);
 ```
 
-```js echo
-const watching = view(Inputs.checkbox(project_data, {label: "Projects", format: (d) => d.auditionne}));
-```
+```js
+// group by university project owner
+const projects_by_university_project_owner = d3.groups(
+  project_data,
+  (d) => d.etablissements[0]
+);
+// display(projects_by_university_project_owner);
 
-```js echo
-watching
-```
-
-<div class="grid grid-cols-3">
-  <div class="card grid-colspan-2">
-    <h2>Projects by University</h2>
-    <div>${auditioned_input}: Auditioned</div>
-    <div>${financed_input}: Financed</div>
-    <div style="overflow: auto;">
-      ${
-        Plot.plot({
-          width: 1000,
-          marginBottom: 60,
-          color: {
-            scheme: "Plasma",
-          },
-          x: {
-            tickRotate: 30,
-            label: "City",
-          },
-          y: {
-            grid: true,
-            label: "Occurences",
-          },
-          marks: [
-            Plot.barY(projects_by_university_project_owner_by_auditioned_by_financed, {
-              x: "entity",
-              y: "count",
-              fill: "count",
-              sort: { x: "-y" },
-            }),
-          ],
-        })//$
+// for every group of projects by university map...
+const filtered_projects_by_university_project_owner = d3.map(
+  projects_by_university_project_owner,
+  (D) => {
+    // ... a filter on the auditionne and finance fields iff specified in the university_project_stage input
+    const filtered_projects = d3.filter( 
+      D[1],
+      (d) => {
+        let auditioned_filter = false;
+        switch (university_auditioned) {
+          case 0: // All
+            auditioned_filter = true;
+            break;
+          case 1: // Yes
+            auditioned_filter = d.auditionne;
+            break;
+          case 2: // No
+            auditioned_filter = !d.auditionne;
+            break;
+          default:
+            console.error(`Invalid university_auditioned value: ${university_auditioned}`);
+            auditioned_filter = false;
+            break;
+        }
+        console.debug('auditioned_filter', auditioned_filter);
+        let financed_filter = false;
+        switch (university_financed) {
+          case 0: // All
+            financed_filter = true;
+            break;
+          case 1: // Yes
+            financed_filter = d.finance;
+            break;
+          case 2: // No
+            financed_filter = !d.finance;
+            break;
+          default:
+            console.error(`Invalid university_financed value: ${university_financed}`);
+            financed_filter = false;
+            break;
+        }
+        console.debug('financed_filter', financed_filter);
+        return auditioned_filter && financed_filter;
       }
-    </div>
-  </div>
-              <!-- 
+    );
+    // ... and reformat for plot
+    return {
+      university: D[0],
+      projects: filtered_projects,
+      project_count: filtered_projects.length,
+    };
+  }
+);
+// display(filtered_projects_by_university_project_owner);
+```
+
+```js
+// group by laboratory project owner
+const projects_by_laboratory_project_owner = d3.groups(
+  project_data,
+  (d) => d.laboratoires[0]
+);
+// display(projects_by_laboratory_project_owner);
+
+// for every group of projects by laboratory map...
+const filtered_projects_by_laboratory_project_owner = d3.map(
+  projects_by_laboratory_project_owner,
+  (D) => {
+    // ... a filter on the auditionne and finance fields iff specified in the laboratory_project_stage input
+    const filtered_projects = d3.filter( 
+      D[1],
+      (d) => {
+        let auditioned_filter = false;
+        switch (laboratory_auditioned) {
+          case 0: // All
+            auditioned_filter = true;
+            break;
+          case 1: // Yes
+            auditioned_filter = d.auditionne;
+            break;
+          case 2: // No
+            auditioned_filter = !d.auditionne;
+            break;
+          default:
+            console.error(`Invalid laboratory_auditioned value: ${laboratory_auditioned}`);
+            auditioned_filter = false;
+            break;
+        }
+        console.debug('auditioned_filter', auditioned_filter);
+        let financed_filter = false;
+        switch (laboratory_financed) {
+          case 0: // All
+            financed_filter = true;
+            break;
+          case 1: // Yes
+            financed_filter = d.finance;
+            break;
+          case 2: // No
+            financed_filter = !d.finance;
+            break;
+          default:
+            console.error(`Invalid laboratory_financed value: ${laboratory_financed}`);
+            financed_filter = false;
+            break;
+        }
+        console.debug('financed_filter', financed_filter);
+        return auditioned_filter && financed_filter;
+      }
+    );
+    // ... and reformat for plot
+    return {
+      laboratory: D[0],
+      projects: filtered_projects,
+      project_count: filtered_projects.length,
+    };
+  }
+);
+// display(filtered_projects_by_laboratory_project_owner);
+```
+
+```js
+// materialize lab count
+const project_data_with_lab_count = d3.map(
+  project_data,
+  (d) => {
+    const copy = {...d};
+    copy.lab_count = copy.laboratoires.length;
+    copy.name = copy.acronyme[0];
+    return copy;
+  }
+)
+display(project_data_with_lab_count);
+
+```
+
+<div class="grid grid-cols-2">
   <div class="card">
-    <h2>Keyword occurrences</h2>
+    <h2>Projects by University Project Owners</h2>
+    <div>${university_auditioned_input}</div>
+    <div>${university_financed_input}</div>
     <div style="max-height: 400px; overflow: auto;">
       ${
         Plot.plot({
-          height: sorted_keyword_counts.length * 20, // assure adequate horizontal space for each line
-          width: 450,
-          marginLeft: 140,
+          height: filtered_projects_by_university_project_owner.length * 20, // assure adequate horizontal space for each line
+          width: 600,
+          marginLeft: 250,
           color: {
             scheme: "Plasma",
           },
           x: {
             grid: true,
             axis: "top",
-            ticks: 5,
-            label: "Occurrences",
+            label: "Project count",
           },
           y: {
-            tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat("...") : d), // cut off long tick labels
-            label: "Keyword",
+            tickFormat: (d) => d.length > 50 ? d.slice(0, 48).concat("...") : d, // cut off long tick labels
+            label: "University",
           },
           marks: [
-            Plot.barX(sorted_keyword_counts, {
-              x: "count",
-              y: "entity",
-              fill: d3.map(sorted_keyword_counts, (d) => d.count + 2), // shift up the color values to be more visible
+            Plot.barX(filtered_projects_by_university_project_owner, {
+              x: "project_count",
+              y: "university",
+              fill: d3.map(filtered_projects_by_university_project_owner, (d) => d.project_count + 2), // shift up the color values to be more visible
               sort: {y: "-x"},
             }),
           ],
@@ -156,75 +323,71 @@ watching
       }
     </div>
   </div>
-  <div class="card grid-colspan-3">
-    <h2>Establishment occurrences</h2>
+  <div class="card">
+    <h2>Projects by Laboratory Project Owners</h2>
+    <div>${laboratory_auditioned_input}</div>
+    <div>${laboratory_financed_input}</div>
     <div style="max-height: 400px; overflow: auto;">
       ${
         Plot.plot({
-          height: sorted_establishment_counts.length * 25, // assure adequate horizontal space for each line
-          width: 1500,
-          marginLeft: 60,
-          marginRight: 140,
+          height: filtered_projects_by_laboratory_project_owner.length * 20, // assure adequate horizontal space for each line
+          width: 600,
+          marginLeft: 400,
           color: {
             scheme: "Plasma",
           },
           x: {
             grid: true,
             axis: "top",
-            ticks: 20,
-            label: "Occurrences",
+            label: "Project count",
           },
-          fy: {
-            tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat("...") : d), // cut off long tick labels
-            label: "Establishment",
-          },
-          marks: [
-            Plot.barX(sorted_establishment_counts, {
-              x: "count",
-              y: "type",
-              fy: "entity",
-              fill: "count",
-              sort: { fy: "-x" },
-            }),
-          ],
-        })//$
-      }
-    </div>
-  </div>
-  <div class="card grid-colspan-3">
-    <h2>Establishment occurrences</h2>
-    <div style="max-height: 400px; overflow: auto;">
-      ${
-        Plot.plot({
-          height: sorted_lab_counts.length * 17, // assure adequate horizontal space for each line
-          width: 1500,
-          marginLeft: 60,
-          marginRight: 140,
-          color: {
-            scheme: "Plasma",
-          },
-          x: {
-            grid: true,
-            axis: "top",
-            ticks: 12,
-            label: "Occurrences",
-          },
-          fy: {
-            tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat("...") : d), // cut off long tick labels
+          y: {
+            tickFormat: (d) => d.length > 65 ? d.slice(0, 63).concat("...") : d, // cut off long tick labels
             label: "Laboratory",
           },
           marks: [
-            Plot.barX(sorted_lab_counts, {
-              x: "count",
-              y: "type",
-              fy: "entity",
-              fill: "count",
-              sort: { fy: "-x" },
+            Plot.barX(filtered_projects_by_laboratory_project_owner, {
+              x: "project_count",
+              y: "laboratory",
+              fill: d3.map(filtered_projects_by_laboratory_project_owner, (d) => d.project_count + 2), // shift up the color values to be more visible
+              sort: {y: "-x"},
             }),
           ],
         })//$
       }
     </div>
   </div>
- -->
+  <div class="card">
+    <h2>Laboratories by Projects</h2>
+    <div style="max-height: 400px; overflow: auto;">
+      ${
+        Plot.plot({
+          height: project_data_with_lab_count.length * 20, // assure adequate horizontal space for each line
+          width: 600,
+          marginLeft: 100,
+          color: {
+            scheme: "Plasma",
+          },
+          x: {
+            grid: true,
+            axis: "top",
+            label: "Laboratory count",
+          },
+          y: {
+            tickFormat: (d) => d.length > 65 ? d.slice(0, 63).concat("...") : d, // cut off long tick labels
+            label: "Project",
+          },
+          marks: [
+            Plot.barX(project_data_with_lab_count, {
+              x: "lab_count",
+              y: "name",
+              fill: d3.map(project_data_with_lab_count, (d) => d.lab_count + 2), // shift up the color values to be more visible
+              sort: {y: "-x"},
+            }),
+          ],
+        })//$
+      }
+    </div>
+  </div>
 </div>
+
