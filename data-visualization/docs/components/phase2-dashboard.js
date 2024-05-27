@@ -59,21 +59,24 @@ export function getEtablissementSheet(workbook) {
 /**
  * Format known entities from the GÉNÉRALITÉ sheet as:
  *  {
- *    acronyme: [],
+ *    acronyme: string,
  *    auditionne: boolean,
  *    finance: boolean,
- *    budget: [],
- *    note: [],
- *    defi: [],
- *    nom_fr: [],
- *    nom_en: [],
+ *    budget: string,
+ *    note: string,
+ *    defi: string,
+ *    nom_fr: string,
+ *    nom_en: string,
  *    etablissements: [],
+ *    etablissements_count: number
  *    laboratoires: [],
+ *    laboratoires_count: number
  *    partenaires: [],
- *    action: [],
- *    comment: [],
- *    pourquoi: [],
- *    notes: []
+ *    partenaires_count: number
+ *    action: string,
+ *    comment: string,
+ *    pourquoi: string,
+ *    notes: string
  *  }
  *
  * @param {Array<Object>} sheet - Extracted sheet data
@@ -81,16 +84,16 @@ export function getEtablissementSheet(workbook) {
  */
 export function resolveGeneraliteEntities(sheet) {
   return map(sheet, (d) => {
-    return {
-      acronyme: d['ACRONYME'] ? [d['ACRONYME']] : [],
+    const mapped_entities = {
+      acronyme: d['ACRONYME'] ? d['ACRONYME'] : null,
       // present: d['Présent aux journées'] ? [d['Présent aux journées']] : [], // GGE: not needed
       auditionne: d['AUDITIONNÉ'] == 'OUI', // not a list, will this cause a problem with generic map reduce functions looking for lists?
       finance: d['Financé'] == 'OUI', // not a list, will this cause a problem with generic map reduce functions looking for lists?
-      budget: d['Budget (demandé) en M€'] ? [d['Budget (demandé) en M€']] : [],
-      note: d['Note du jury'] ? [d['Note du jury']] : [],
-      defi: d['Défi'] ? [d['Défi']] : [],
-      nom_fr: d['NOM COMPLET FR'] ? [d['NOM COMPLET FR']] : [],
-      nom_en: d['NOM COMPLET ANGLAIS'] ? [d['NOM COMPLET ANGLAIS']] : [],
+      budget: d['Budget (demandé) en M€'] ? d['Budget (demandé) en M€'] : null,
+      note: d['Note du jury'] ? d['Note du jury'] : null,
+      defi: d['Défi'] ? d['Défi'] : null,
+      nom_fr: d['NOM COMPLET FR'] ? d['NOM COMPLET FR'] : null,
+      nom_en: d['NOM COMPLET ANGLAIS'] ? d['NOM COMPLET ANGLAIS'] : null,
       etablissements: filter(
         [
           d['Établissement porteur'],
@@ -162,11 +165,15 @@ export function resolveGeneraliteEntities(sheet) {
         ],
         (d) => typeof d !== 'undefined' && d !== 0
       ),
-      action: d['ACTION (de recherche)'] ? [d['ACTION (de recherche)']] : [], // empty column?
-      comment: d['COMMENT'] ? [d['COMMENT']] : [], // empty column?
-      pourquoi: d['POUR QUOI FAIRE'] ? [d['POUR QUOI FAIRE']] : [], // empty column?
-      notes: d['Notes'] ? [d['Notes']] : [], // not empty but almost?
+      action: d['ACTION (de recherche)'] ? d['ACTION (de recherche)'] : null, // empty column?
+      comment: d['COMMENT'] ? d['COMMENT'] : null, // empty column?
+      pourquoi: d['POUR QUOI FAIRE'] ? d['POUR QUOI FAIRE'] : null, // empty column?
+      notes: d['Notes'] ? d['Notes'] : null, // not empty but almost?
     };
+    mapped_entities.etablissements_count = mapped_entities.etablissements.length;
+    mapped_entities.laboratoires_count = mapped_entities.laboratoires.length;
+    mapped_entities.partenaires_count = mapped_entities.partenaires.length;
+    return mapped_entities;
   });
 }
 
@@ -207,9 +214,9 @@ export function resolveLaboratoireEntities(sheet) {
   return map(sheet, (d) => {
     return {
       laboratoire: d['Identifiant Laboratoire']
-        ? [d['Identifiant Laboratoire']]
-        : [],
-      nom: d['Nom Laboratoire'] ? [d['Nom Laboratoire']] : [],
+        ? d['Identifiant Laboratoire']
+        : null,
+      nom: d['Nom Laboratoire'] ? d['Nom Laboratoire'] : null,
       etablissements: filter(
         [
           d['Etablissement1'],
@@ -236,155 +243,7 @@ export function resolveLaboratoireEntities(sheet) {
 export function resolveEtablissementEntities(sheet) {
   return map(sheet, (d) => {
     return {
-      nom: d['Nom des établissements'] ? [d['Nom des établissements']] : [], // just 1 column for the moment
+      nom: d['Nom des établissements'] ? d['Nom des établissements'] : null, // just 1 column for the moment
     };
   });
 }
-
-// const city_data = getVillesSheet(workbook2).map((d) => {
-//   return {
-//     etablissement: [d['Etablissements']],
-//     lieu: [d['Lieu']],
-//   };
-// });
-
-// function countEntities(data, mapFunction) {
-//   // flatten (map to array then merge) entities
-//   const entity_list = d3.merge(d3.map(data, (d) => mapFunction(d)));
-//   // group by entity then reduce to a count with d3.rollup()
-//   const entityCounts = d3.rollup(
-//     entity_list,
-//     (D) => D.length,
-//     (d) => d
-//   );
-//   // map entityCounts to a [{x: entity, y: count}] data structure
-//   const formatted_entity_counts = d3.map(
-//     entityCounts.entries(),
-//     ([key, value], i) => {
-//       return {
-//         entity: key,
-//         count: value,
-//       };
-//     }
-//   );
-//   // sort by entity and return
-//   return d3.sort(formatted_entity_counts, (d) => d.entity);
-// }
-
-// const sorted_partner_counts = countEntities(
-//   projects_phase_1,
-//   (project) => project.partenaires
-// );
-
-// const sorted_keyword_counts = countEntities(
-//   projects_product,
-//   (project) => project.motClefs
-// );
-
-// const sorted_establishment_owner_counts = countEntities(
-//   projects_phase_1,
-//   (project) => project.etablissements.slice(0, 1)
-// );
-
-// const sorted_establishment_partner_counts = countEntities(
-//   projects_phase_1,
-//   (project) => project.etablissements.slice(1)
-// );
-
-// const establishment_counts = mapCounts(
-//   [sorted_establishment_owner_counts, sorted_establishment_partner_counts],
-//   ['owner', 'partner']
-// );
-
-// const total_establishment_counts = d3.sort(
-//   d3
-//     .rollup(
-//       establishment_counts,
-//       (D) => {
-//         let count = 0;
-//         D.forEach((d) => {
-//           count = count + d.count;
-//         });
-//         return {
-//           entity: D[0].entity,
-//           count: count,
-//           type: 'total',
-//         };
-//       },
-//       (d) => d.entity
-//     )
-//     .values(),
-//   (d) => d.entity
-// );
-
-// const sorted_establishment_counts = d3.sort(
-//   establishment_counts.concat(total_establishment_counts),
-//   (d) => d.count,
-//   (d) => d.entity
-// );
-
-// const city_count = countEntities(
-//   city_data,
-//   (establishment) => establishment.lieu
-// );
-
-// const lab_owner_count = countEntities(projects_phase_1, (project) =>
-//   project.laboratoires.slice(0, 1)
-// );
-
-// const lab_partner_count = countEntities(projects_phase_1, (project) =>
-//   project.laboratoires.slice(1)
-// );
-
-// const lab_counts = mapCounts(
-//   [lab_owner_count, lab_partner_count],
-//   ['owner', 'partner']
-// );
-
-// const total_lab_counts = d3.sort(
-//   d3
-//     .rollup(
-//       lab_counts,
-//       (D) => {
-//         let count = 0;
-//         D.forEach((d) => {
-//           count = count + d.count;
-//         });
-//         return {
-//           entity: D[0].entity,
-//           count: count,
-//           type: 'total',
-//         };
-//       },
-//       (d) => d.entity
-//     )
-//     .values(),
-//   (d) => d.entity
-// );
-
-// const sorted_lab_counts = [];
-
-// d3.sort(
-//   mergeCounts(
-//     [lab_owner_count, lab_partner_count, total_lab_counts],
-//     ['owner_count', 'partner_count', 'total_count']
-//   ).values(),
-//   (d) => d.entity
-// ).forEach((d) => {
-//   sorted_lab_counts.push({
-//     entity: d.entity,
-//     count: d.owner_count,
-//     type: 'owner',
-//   });
-//   sorted_lab_counts.push({
-//     entity: d.entity,
-//     count: d.partner_count,
-//     type: 'partner',
-//   });
-//   sorted_lab_counts.push({
-//     entity: d.entity,
-//     count: d.total_count,
-//     type: 'total',
-//   });
-// });
-
