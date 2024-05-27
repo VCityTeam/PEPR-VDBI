@@ -6,12 +6,12 @@ theme: dashboard
 # PEPR Dashboard
 
 ```js
-import { mapEntitiesToGraph } from './components/force-graph.js';
+import { mapEntitiesToGraph } from "./components/force-graph.js";
 import {
   mapCounts,
   mergeCounts,
   countEntities,
-} from './components/utilities.js';
+} from "./components/utilities.js";
 import {
   getGeneraliteSheet,
   getChercheurSheet,
@@ -21,12 +21,12 @@ import {
   resolveChercheursEntities,
   resolveLaboratoireEntities,
   resolveEtablissementEntities,
-} from './components/phase2-dashboard.js';
+} from "./components/phase2-dashboard.js";
 ```
 
 ```js
 const workbook1 = FileAttachment(
-  './data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx'
+  "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
 ).xlsx();
 ```
 
@@ -34,21 +34,24 @@ const workbook1 = FileAttachment(
 const project_data = resolveGeneraliteEntities(getGeneraliteSheet(workbook1));
 // resolveGeneraliteEntities -> @return:
 // {
-//   acronyme: [],
-//   auditionne: boolean,
-//   finance: boolean,
-//   budget: [],
-//   note: [],
-//   defi: [],
-//   nom_fr: [],
-//   nom_en: [],
-//   etablissements: [],
-//   laboratoires: [],
-//   partenaires: [],
-//   action: [],
-//   comment: [],
-//   pourquoi: [],
-//   notes: []
+//    acronyme: string,
+//    auditionne: boolean,
+//    finance: boolean,
+//    budget: string,
+//    note: string,
+//    defi: string,
+//    nom_fr: string,
+//    nom_en: string,
+//    etablissements: [],
+//    etablissements_count: number
+//    laboratoires: [],
+//    laboratoires_count: number
+//    partenaires: [],
+//    partenaires_count: number
+//    action: string,
+//    comment: string,
+//    pourquoi: string,
+//    notes: string
 // }
 const researcher_data = resolveChercheursEntities(getChercheurSheet(workbook1));
 const laboratory_data = resolveLaboratoireEntities(getLaboSheet(workbook1));
@@ -100,6 +103,58 @@ const total_partner_count = d3.reduce(partner_count, (p, v) => p + v.count, 0);
 </div>
 
 ```js
+// filtering helper functions
+
+function createInputMap() {
+  return new Map([
+    ["All", 0],
+    ["Yes", 1],
+    ["No", 2],
+  ]);
+}
+
+function filterOnInput(data, auditioned_input, financed_input) {
+  return d3.filter(data, (d) => {
+    let auditioned_filter = false;
+    switch (auditioned_input) {
+      case 0: // All
+        auditioned_filter = true;
+        break;
+      case 1: // Yes
+        auditioned_filter = d.auditionne;
+        break;
+      case 2: // No
+        auditioned_filter = !d.auditionne;
+        break;
+      default:
+        console.error(`Invalid auditioned_input value: ${auditioned_input}`);
+        auditioned_filter = false;
+        break;
+    }
+    console.debug("auditioned_filter", auditioned_filter);
+    let financed_filter = false;
+    switch (financed_input) {
+      case 0: // All
+        financed_filter = true;
+        break;
+      case 1: // Yes
+        financed_filter = d.finance;
+        break;
+      case 2: // No
+        financed_filter = !d.finance;
+        break;
+      default:
+        console.error(`Invalid financed_input value: ${financed_input}`);
+        financed_filter = false;
+        break;
+    }
+    console.debug("financed_filter", financed_filter);
+    return auditioned_filter && financed_filter;
+  });
+}
+```
+
+```js
 // university by project filter checkboxes
 // const university_project_stage_input = Inputs.checkbox(['Auditioned', 'Financed']);
 // const university_project_stage = Generators.input(university_project_stage_input);
@@ -109,40 +164,45 @@ const total_partner_count = d3.reduce(partner_count, (p, v) => p + v.count, 0);
 // const university_project_stage = Generators.input(university_project_stage_input);
 
 // university by project filter select inputs
-const university_auditioned_input = Inputs.select(
-  new Map([['All', 0], ['Yes', 1], ['No', 2]]),
-  {
-    value: 'All',
-    label: 'Auditioned?',
-  },
-);
-const university_financed_input = Inputs.select(
-  new Map([['All', 0], ['Yes', 1], ['No', 2]]),
-  {
-    value: 'All',
-    label: 'Financed?',
-  },
-);
+const university_auditioned_input = Inputs.select(createInputMap(), {
+  value: "All",
+  label: "Auditioned?",
+});
+const university_financed_input = Inputs.select(createInputMap(), {
+  value: "All",
+  label: "Financed?",
+});
 const university_auditioned = Generators.input(university_auditioned_input);
 const university_financed = Generators.input(university_financed_input);
 
 // laboratory by project filter select inputs
-const laboratory_auditioned_input = Inputs.select(
-  new Map([['All', 0], ['Yes', 1], ['No', 2]]),
-  {
-    value: 'All',
-    label: 'Auditioned?',
-  },
-);
-const laboratory_financed_input = Inputs.select(
-  new Map([['All', 0], ['Yes', 1], ['No', 2]]),
-  {
-    value: 'All',
-    label: 'Financed?',
-  },
-);
+const laboratory_auditioned_input = Inputs.select(createInputMap(), {
+  value: "All",
+  label: "Auditioned?",
+});
+const laboratory_financed_input = Inputs.select(createInputMap(), {
+  value: "All",
+  label: "Financed?",
+});
 const laboratory_auditioned = Generators.input(laboratory_auditioned_input);
 const laboratory_financed = Generators.input(laboratory_financed_input);
+
+// project_laboratories by project filter select inputs
+const project_laboratories_auditioned_input = Inputs.select(createInputMap(), {
+  value: "All",
+  label: "Auditioned?",
+});
+const project_laboratories_financed_input = Inputs.select(createInputMap(), {
+  value: "All",
+  label: "Financed?",
+});
+
+const project_laboratories_auditioned = Generators.input(
+  project_laboratories_auditioned_input
+);
+const project_laboratories_financed = Generators.input(
+  project_laboratories_financed_input
+);
 ```
 
 ```js
@@ -158,49 +218,14 @@ const filtered_projects_by_university_project_owner = d3.map(
   projects_by_university_project_owner,
   (D) => {
     // ... a filter on the auditionne and finance fields iff specified in the university_project_stage input
-    const filtered_projects = d3.filter( 
+    const filtered_projects = filterOnInput(
       D[1],
-      (d) => {
-        let auditioned_filter = false;
-        switch (university_auditioned) {
-          case 0: // All
-            auditioned_filter = true;
-            break;
-          case 1: // Yes
-            auditioned_filter = d.auditionne;
-            break;
-          case 2: // No
-            auditioned_filter = !d.auditionne;
-            break;
-          default:
-            console.error(`Invalid university_auditioned value: ${university_auditioned}`);
-            auditioned_filter = false;
-            break;
-        }
-        console.debug('auditioned_filter', auditioned_filter);
-        let financed_filter = false;
-        switch (university_financed) {
-          case 0: // All
-            financed_filter = true;
-            break;
-          case 1: // Yes
-            financed_filter = d.finance;
-            break;
-          case 2: // No
-            financed_filter = !d.finance;
-            break;
-          default:
-            console.error(`Invalid university_financed value: ${university_financed}`);
-            financed_filter = false;
-            break;
-        }
-        console.debug('financed_filter', financed_filter);
-        return auditioned_filter && financed_filter;
-      }
+      university_auditioned,
+      university_financed
     );
     // ... and reformat for plot
     return {
-      university: D[0],
+      entity: D[0],
       projects: filtered_projects,
       project_count: filtered_projects.length,
     };
@@ -221,50 +246,15 @@ const projects_by_laboratory_project_owner = d3.groups(
 const filtered_projects_by_laboratory_project_owner = d3.map(
   projects_by_laboratory_project_owner,
   (D) => {
-    // ... a filter on the auditionne and finance fields iff specified in the laboratory_project_stage input
-    const filtered_projects = d3.filter( 
+    // ... a filter on the auditionne and finance fields iff specified in the university_project_stage input
+    const filtered_projects = filterOnInput(
       D[1],
-      (d) => {
-        let auditioned_filter = false;
-        switch (laboratory_auditioned) {
-          case 0: // All
-            auditioned_filter = true;
-            break;
-          case 1: // Yes
-            auditioned_filter = d.auditionne;
-            break;
-          case 2: // No
-            auditioned_filter = !d.auditionne;
-            break;
-          default:
-            console.error(`Invalid laboratory_auditioned value: ${laboratory_auditioned}`);
-            auditioned_filter = false;
-            break;
-        }
-        console.debug('auditioned_filter', auditioned_filter);
-        let financed_filter = false;
-        switch (laboratory_financed) {
-          case 0: // All
-            financed_filter = true;
-            break;
-          case 1: // Yes
-            financed_filter = d.finance;
-            break;
-          case 2: // No
-            financed_filter = !d.finance;
-            break;
-          default:
-            console.error(`Invalid laboratory_financed value: ${laboratory_financed}`);
-            financed_filter = false;
-            break;
-        }
-        console.debug('financed_filter', financed_filter);
-        return auditioned_filter && financed_filter;
-      }
+      laboratory_auditioned,
+      laboratory_financed
     );
     // ... and reformat for plot
     return {
-      laboratory: D[0],
+      entity: D[0],
       projects: filtered_projects,
       project_count: filtered_projects.length,
     };
@@ -274,18 +264,12 @@ const filtered_projects_by_laboratory_project_owner = d3.map(
 ```
 
 ```js
-// materialize lab count
-const project_data_with_lab_count = d3.map(
+const filtered_projects_laboratories = filterOnInput(
   project_data,
-  (d) => {
-    const copy = {...d};
-    copy.lab_count = copy.laboratoires.length;
-    copy.name = copy.acronyme[0];
-    return copy;
-  }
-)
-display(project_data_with_lab_count);
-
+  project_laboratories_auditioned,
+  project_laboratories_financed
+);
+display(filtered_projects_laboratories);
 ```
 
 <div class="grid grid-cols-2">
@@ -314,7 +298,7 @@ display(project_data_with_lab_count);
           marks: [
             Plot.barX(filtered_projects_by_university_project_owner, {
               x: "project_count",
-              y: "university",
+              y: "entity",
               fill: d3.map(filtered_projects_by_university_project_owner, (d) => d.project_count + 2), // shift up the color values to be more visible
               sort: {y: "-x"},
             }),
@@ -348,7 +332,7 @@ display(project_data_with_lab_count);
           marks: [
             Plot.barX(filtered_projects_by_laboratory_project_owner, {
               x: "project_count",
-              y: "laboratory",
+              y: "entity",
               fill: d3.map(filtered_projects_by_laboratory_project_owner, (d) => d.project_count + 2), // shift up the color values to be more visible
               sort: {y: "-x"},
             }),
@@ -359,10 +343,12 @@ display(project_data_with_lab_count);
   </div>
   <div class="card">
     <h2>Laboratories by Projects</h2>
+    <div>${project_laboratories_auditioned_input}</div>
+    <div>${project_laboratories_financed_input}</div>
     <div style="max-height: 400px; overflow: auto;">
       ${
         Plot.plot({
-          height: project_data_with_lab_count.length * 20, // assure adequate horizontal space for each line
+          height: filtered_projects_laboratories.length * 20, // assure adequate horizontal space for each line
           width: 600,
           marginLeft: 100,
           color: {
@@ -378,10 +364,10 @@ display(project_data_with_lab_count);
             label: "Project",
           },
           marks: [
-            Plot.barX(project_data_with_lab_count, {
-              x: "lab_count",
-              y: "name",
-              fill: d3.map(project_data_with_lab_count, (d) => d.lab_count + 2), // shift up the color values to be more visible
+            Plot.barX(filtered_projects_laboratories, {
+              x: "laboratoires_count",
+              y: "acronyme",
+              fill: d3.map(filtered_projects_laboratories, (d) => d.laboratoires_count + 2), // shift up the color values to be more visible
               sort: {y: "-x"},
             }),
           ],
@@ -390,4 +376,3 @@ display(project_data_with_lab_count);
     </div>
   </div>
 </div>
-
