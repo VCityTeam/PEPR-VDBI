@@ -1,6 +1,6 @@
 ---
 title: Phase 2 Dashboard
-theme: dashboard
+theme: [light, alt]
 ---
 
 # PEPR Dashboard
@@ -55,7 +55,7 @@ const laboratory_data = resolveLaboratoireEntities(getLaboSheet(workbook1));
 const university_data = resolveEtablissementEntities(
   getEtablissementSheet(workbook1)
 );
-display(project_data);
+// display(project_data);
 // display(researcher_data);
 // display(laboratory_data);
 // display(university_data);
@@ -284,8 +284,7 @@ const project_data_with_lab_count = d3.map(
     return copy;
   }
 )
-display(project_data_with_lab_count);
-
+// display(project_data_with_lab_count);
 ```
 
 <div class="grid grid-cols-2">
@@ -300,7 +299,8 @@ display(project_data_with_lab_count);
           width: 600,
           marginLeft: 250,
           color: {
-            scheme: "Plasma",
+            // scheme: "Plasma",
+            scheme: "Cool",
           },
           x: {
             grid: true,
@@ -334,7 +334,8 @@ display(project_data_with_lab_count);
           width: 600,
           marginLeft: 400,
           color: {
-            scheme: "Plasma",
+            // scheme: "Plasma",
+            scheme: "Cool",
           },
           x: {
             grid: true,
@@ -366,7 +367,8 @@ display(project_data_with_lab_count);
           width: 600,
           marginLeft: 100,
           color: {
-            scheme: "Plasma",
+            // scheme: "Plasma",
+            scheme: "Cool",
           },
           x: {
             grid: true,
