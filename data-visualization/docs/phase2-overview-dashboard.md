@@ -1,6 +1,6 @@
 ---
 title: Phase 2 Overview Dashboard
-theme: dashboard
+theme: [light, alt]
 ---
 
 # PEPR Dashboard
