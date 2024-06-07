@@ -1,5 +1,5 @@
 ---
-title: Phase 2 Dashboard
+title: Phase 2 Financing Dashboard
 theme: dashboard
 ---
 
@@ -65,47 +65,9 @@ display(project_data);
 ```
 
 ```js
-const auditioned_project_count = d3.reduce(
-  project_data,
-  (p, v) => p + (v.auditionne ? 1 : 0),
-  0
-);
-const financed_project_count = d3.reduce(
-  project_data,
-  (p, v) => p + (v.finance ? 1 : 0),
-  0
-);
-
-const partner_count = countEntities(project_data, (d) => d.partenaires);
-// display(partner_count);
-const total_partner_count = d3.reduce(partner_count, (p, v) => p + v.count, 0);
-```
-
-<div class="grid grid-cols-4">
-  <div class="card">
-    <h2>Project count (Total / Auditioned / Financed)</h2>
-    <span class="big">${project_data.length.toLocaleString("en-US")} / 
-    ${auditioned_project_count.toLocaleString("en-US")} / 
-    ${financed_project_count.toLocaleString("en-US")}</span>
-  </div>
-  <div class="card">
-    <h2>University count</h2>
-    <span class="big">${university_data.length.toLocaleString("en-US")}</span>
-  </div>
-  <div class="card">
-    <h2>Laboratory count</h2>
-    <span class="big">${laboratory_data.length.toLocaleString("en-US")}</span>
-  </div>
-  <div class="card">
-    <h2>Partner count</h2>
-    <span class="big">${total_partner_count.toLocaleString("en-US")}</span>
-  </div>
-</div>
-
-```js
 // filtering helper functions
 
-function createInputMap() {
+function createStageInputMap() {
   return new Map([
     ["All", 0],
     ["Yes", 1],
@@ -164,11 +126,11 @@ function filterOnInput(data, auditioned_input, financed_input) {
 // const university_project_stage = Generators.input(university_project_stage_input);
 
 // university by project filter select inputs
-const university_auditioned_input = Inputs.select(createInputMap(), {
+const university_auditioned_input = Inputs.select(createStageInputMap(), {
   value: "All",
   label: "Auditioned?",
 });
-const university_financed_input = Inputs.select(createInputMap(), {
+const university_financed_input = Inputs.select(createStageInputMap(), {
   value: "All",
   label: "Financed?",
 });
@@ -176,11 +138,11 @@ const university_auditioned = Generators.input(university_auditioned_input);
 const university_financed = Generators.input(university_financed_input);
 
 // laboratory by project filter select inputs
-const laboratory_auditioned_input = Inputs.select(createInputMap(), {
+const laboratory_auditioned_input = Inputs.select(createStageInputMap(), {
   value: "All",
   label: "Auditioned?",
 });
-const laboratory_financed_input = Inputs.select(createInputMap(), {
+const laboratory_financed_input = Inputs.select(createStageInputMap(), {
   value: "All",
   label: "Financed?",
 });
@@ -188,11 +150,11 @@ const laboratory_auditioned = Generators.input(laboratory_auditioned_input);
 const laboratory_financed = Generators.input(laboratory_financed_input);
 
 // project_laboratories by project filter select inputs
-const project_laboratories_auditioned_input = Inputs.select(createInputMap(), {
+const project_laboratories_auditioned_input = Inputs.select(createStageInputMap(), {
   value: "All",
   label: "Auditioned?",
 });
-const project_laboratories_financed_input = Inputs.select(createInputMap(), {
+const project_laboratories_financed_input = Inputs.select(createStageInputMap(), {
   value: "All",
   label: "Financed?",
 });
@@ -341,34 +303,33 @@ display(filtered_projects_laboratories);
       }
     </div>
   </div>
-  <div class="card">
+  <div class="card grid-colspan-2">
     <h2>Laboratories by Projects</h2>
     <div>${project_laboratories_auditioned_input}</div>
     <div>${project_laboratories_financed_input}</div>
-    <div style="max-height: 400px; overflow: auto;">
+    <div style="max-height: 400px">
       ${
         Plot.plot({
-          height: filtered_projects_laboratories.length * 20, // assure adequate horizontal space for each line
-          width: 600,
-          marginLeft: 100,
+          width: 1500,
+          height: 460,
+          marginBottom: 70,
           color: {
             scheme: "Plasma",
           },
           x: {
-            grid: true,
-            axis: "top",
-            label: "Laboratory count",
-          },
-          y: {
-            tickFormat: (d) => d.length > 65 ? d.slice(0, 63).concat("...") : d, // cut off long tick labels
+            tickRotate: 30,
             label: "Project",
           },
+          y: {
+            grid: true,
+            label: "Occurences",
+          },
           marks: [
-            Plot.barX(filtered_projects_laboratories, {
-              x: "laboratoires_count",
-              y: "acronyme",
-              fill: d3.map(filtered_projects_laboratories, (d) => d.laboratoires_count + 2), // shift up the color values to be more visible
-              sort: {y: "-x"},
+            Plot.barY(filtered_projects_laboratories, {
+              x: "acronyme",
+              y: "laboratoires_count",
+              fill: "laboratoires_count",
+              sort: { x: "-y" },
             }),
           ],
         })//$

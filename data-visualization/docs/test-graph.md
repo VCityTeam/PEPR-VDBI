@@ -1,5 +1,6 @@
 ---
 title: Initial graph test
+toc: false
 ---
 
 # Visualize Workbook data using Graphs

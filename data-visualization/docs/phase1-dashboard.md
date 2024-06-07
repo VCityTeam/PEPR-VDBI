@@ -305,7 +305,7 @@ d3.sort(
     </div>
   </div>
   <div class="card grid-colspan-3">
-    <h2>Establishment occurrences</h2>
+    <h2>Laboratory occurrences</h2>
     <div style="max-height: 400px; overflow: auto;">
       ${
         Plot.plot({
