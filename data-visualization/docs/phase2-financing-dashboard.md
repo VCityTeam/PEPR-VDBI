@@ -1,6 +1,6 @@
 ---
 title: Phase 2 Financing Dashboard
-theme: dashboard
+theme: [light, alt]
 ---
 
 # PEPR Dashboard
@@ -58,7 +58,7 @@ const laboratory_data = resolveLaboratoireEntities(getLaboSheet(workbook1));
 const university_data = resolveEtablissementEntities(
   getEtablissementSheet(workbook1)
 );
-display(project_data);
+// display(project_data);
 // display(researcher_data);
 // display(laboratory_data);
 // display(university_data);
@@ -246,7 +246,8 @@ display(filtered_projects_laboratories);
           width: 600,
           marginLeft: 250,
           color: {
-            scheme: "Plasma",
+            // scheme: "Plasma",
+            scheme: "Cool",
           },
           x: {
             grid: true,
@@ -280,7 +281,8 @@ display(filtered_projects_laboratories);
           width: 600,
           marginLeft: 400,
           color: {
-            scheme: "Plasma",
+            // scheme: "Plasma",
+            scheme: "Cool",
           },
           x: {
             grid: true,
@@ -314,7 +316,8 @@ display(filtered_projects_laboratories);
           height: 460,
           marginBottom: 70,
           color: {
-            scheme: "Plasma",
+            // scheme: "Plasma",
+            scheme: "Cool",
           },
           x: {
             tickRotate: 30,
