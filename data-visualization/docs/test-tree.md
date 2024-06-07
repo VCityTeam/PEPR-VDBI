@@ -1,5 +1,6 @@
 ---
 title: Initial tree test
+toc: false
 ---
 
 # Visualize Workbook data using Trees
