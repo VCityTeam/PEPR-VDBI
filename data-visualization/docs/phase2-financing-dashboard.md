@@ -1,26 +1,16 @@
 ---
 title: Phase 2 Financing Dashboard
-theme: [light, alt]
+theme: dashboard
 ---
 
-# PEPR Dashboard
+# PEPR Projects Financing
 
 ```js
-import { mapEntitiesToGraph } from "./components/force-graph.js";
-import {
-  mapCounts,
-  mergeCounts,
-  countEntities,
-} from "./components/utilities.js";
 import {
   getGeneraliteSheet,
-  getChercheurSheet,
-  getLaboSheet,
-  getEtablissementSheet,
   resolveGeneraliteEntities,
-  resolveChercheursEntities,
-  resolveLaboratoireEntities,
-  resolveEtablissementEntities,
+  filterOnInput,
+  getColumnOptions,
 } from "./components/phase2-dashboard.js";
 ```
 
@@ -53,290 +43,132 @@ const project_data = resolveGeneraliteEntities(getGeneraliteSheet(workbook1));
 //    pourquoi: string,
 //    notes: string
 // }
-const researcher_data = resolveChercheursEntities(getChercheurSheet(workbook1));
-const laboratory_data = resolveLaboratoireEntities(getLaboSheet(workbook1));
-const university_data = resolveEtablissementEntities(
-  getEtablissementSheet(workbook1)
-);
 // display(project_data);
-// display(researcher_data);
-// display(laboratory_data);
-// display(university_data);
 ```
 
 ```js
-// filtering helper functions
-
-function createStageInputMap() {
-  return new Map([
-    ["All", 0],
-    ["Yes", 1],
-    ["No", 2],
-  ]);
-}
-
-function filterOnInput(data, auditioned_input, financed_input) {
-  return d3.filter(data, (d) => {
-    let auditioned_filter = false;
-    switch (auditioned_input) {
-      case 0: // All
-        auditioned_filter = true;
-        break;
-      case 1: // Yes
-        auditioned_filter = d.auditionne;
-        break;
-      case 2: // No
-        auditioned_filter = !d.auditionne;
-        break;
-      default:
-        console.error(`Invalid auditioned_input value: ${auditioned_input}`);
-        auditioned_filter = false;
-        break;
-    }
-    console.debug("auditioned_filter", auditioned_filter);
-    let financed_filter = false;
-    switch (financed_input) {
-      case 0: // All
-        financed_filter = true;
-        break;
-      case 1: // Yes
-        financed_filter = d.finance;
-        break;
-      case 2: // No
-        financed_filter = !d.finance;
-        break;
-      default:
-        console.error(`Invalid financed_input value: ${financed_input}`);
-        financed_filter = false;
-        break;
-    }
-    console.debug("financed_filter", financed_filter);
-    return auditioned_filter && financed_filter;
-  });
-}
-```
-
-```js
-// university by project filter checkboxes
-// const university_project_stage_input = Inputs.checkbox(['Auditioned', 'Financed']);
-// const university_project_stage = Generators.input(university_project_stage_input);
-
-// university by project filter radio buttons
-// const university_project_stage_input = Inputs.radio(['All', 'Auditioned', 'Financed'], {value: 'All',});
-// const university_project_stage = Generators.input(university_project_stage_input);
-
-// university by project filter select inputs
-const university_auditioned_input = Inputs.select(createStageInputMap(), {
-  value: "All",
-  label: "Auditioned?",
-});
-const university_financed_input = Inputs.select(createStageInputMap(), {
-  value: "All",
-  label: "Financed?",
-});
-const university_auditioned = Generators.input(university_auditioned_input);
-const university_financed = Generators.input(university_financed_input);
-
-// laboratory by project filter select inputs
-const laboratory_auditioned_input = Inputs.select(createStageInputMap(), {
-  value: "All",
-  label: "Auditioned?",
-});
-const laboratory_financed_input = Inputs.select(createStageInputMap(), {
-  value: "All",
-  label: "Financed?",
-});
-const laboratory_auditioned = Generators.input(laboratory_auditioned_input);
-const laboratory_financed = Generators.input(laboratory_financed_input);
-
-// project_laboratories by project filter select inputs
-const project_laboratories_auditioned_input = Inputs.select(createStageInputMap(), {
-  value: "All",
-  label: "Auditioned?",
-});
-const project_laboratories_financed_input = Inputs.select(createStageInputMap(), {
-  value: "All",
-  label: "Financed?",
-});
-
-const project_laboratories_auditioned = Generators.input(
-  project_laboratories_auditioned_input
-);
-const project_laboratories_financed = Generators.input(
-  project_laboratories_financed_input
-);
-```
-
-```js
-// group by university project owner
-const projects_by_university_project_owner = d3.groups(
-  project_data,
-  (d) => d.etablissements[0]
-);
-// display(projects_by_university_project_owner);
-
-// for every group of projects by university map...
-const filtered_projects_by_university_project_owner = d3.map(
-  projects_by_university_project_owner,
-  (D) => {
-    // ... a filter on the auditionne and finance fields iff specified in the university_project_stage input
-    const filtered_projects = filterOnInput(
-      D[1],
-      university_auditioned,
-      university_financed
-    );
-    // ... and reformat for plot
-    return {
-      entity: D[0],
-      projects: filtered_projects,
-      project_count: filtered_projects.length,
-    };
+// create auditioned filter input
+const project_auditioned_input = Inputs.select(
+  getColumnOptions(project_data, "auditionne"),
+  {
+    value: "All",
+    label: "Auditioned?",
   }
 );
-// display(filtered_projects_by_university_project_owner);
-```
-
-```js
-// group by laboratory project owner
-const projects_by_laboratory_project_owner = d3.groups(
-  project_data,
-  (d) => d.laboratoires[0]
+const projects_auditioned = Generators.input(
+  project_auditioned_input
 );
-// display(projects_by_laboratory_project_owner);
 
-// for every group of projects by laboratory map...
-const filtered_projects_by_laboratory_project_owner = d3.map(
-  projects_by_laboratory_project_owner,
-  (D) => {
-    // ... a filter on the auditionne and finance fields iff specified in the university_project_stage input
-    const filtered_projects = filterOnInput(
-      D[1],
-      laboratory_auditioned,
-      laboratory_financed
-    );
-    // ... and reformat for plot
-    return {
-      entity: D[0],
-      projects: filtered_projects,
-      project_count: filtered_projects.length,
-    };
+// create financed filter input
+const project_financed_input = Inputs.select(
+  getColumnOptions(project_data, "finance"),
+  {
+    value: "All",
+    label: "Financed?",
   }
 );
-// display(filtered_projects_by_laboratory_project_owner);
+const projects_financed = Generators.input(
+  project_financed_input
+);
+
+// create note filter input
+const project_note_input = Inputs.select(
+  getColumnOptions(project_data, "note"),
+  {
+    value: "All",
+    label: "Grade?",
+  }
+);
+const project_notes = Generators.input(
+  project_note_input
+);
+
+// create defi filter input
+const project_defi_input = Inputs.select(
+  getColumnOptions(project_data, "defi"),
+  {
+    value: "All",
+    label: "Challenge?",
+  }
+);
+const project_defis = Generators.input(
+  project_defi_input
+);
 ```
 
 ```js
-const filtered_projects_laboratories = filterOnInput(
+// filter project data based on input fields
+const filtered_project_data = filterOnInput(
   project_data,
-  project_laboratories_auditioned,
-  project_laboratories_financed
+  [projects_auditioned, projects_financed, project_notes, project_defis],
+  [(d) => d.auditionne, (d) => d.finance, (d) => d.note, (d) => d.defi]
 );
-display(filtered_projects_laboratories);
+// display(projects_auditioned);
+// display(projects_financed);
+// display(project_notes);
+// display(filtered_project_data);
 ```
 
-<div class="grid grid-cols-2">
-  <div class="card">
-    <h2>Projects by University Project Owners</h2>
-    <div>${university_auditioned_input}</div>
-    <div>${university_financed_input}</div>
-    <div style="max-height: 400px; overflow: auto;">
-      ${
-        Plot.plot({
-          height: filtered_projects_by_university_project_owner.length * 20, // assure adequate horizontal space for each line
-          width: 600,
-          marginLeft: 250,
-          color: {
-            // scheme: "Plasma",
-            scheme: "Cool",
-          },
-          x: {
-            grid: true,
-            axis: "top",
-            label: "Project count",
-          },
-          y: {
-            tickFormat: (d) => d.length > 50 ? d.slice(0, 48).concat("...") : d, // cut off long tick labels
-            label: "University",
-          },
-          marks: [
-            Plot.barX(filtered_projects_by_university_project_owner, {
-              x: "project_count",
-              y: "entity",
-              fill: d3.map(filtered_projects_by_university_project_owner, (d) => d.project_count + 2), // shift up the color values to be more visible
-              sort: {y: "-x"},
-            }),
-          ],
-        })//$
-      }
-    </div>
-  </div>
-  <div class="card">
-    <h2>Projects by Laboratory Project Owners</h2>
-    <div>${laboratory_auditioned_input}</div>
-    <div>${laboratory_financed_input}</div>
-    <div style="max-height: 400px; overflow: auto;">
-      ${
-        Plot.plot({
-          height: filtered_projects_by_laboratory_project_owner.length * 20, // assure adequate horizontal space for each line
-          width: 600,
-          marginLeft: 400,
-          color: {
-            // scheme: "Plasma",
-            scheme: "Cool",
-          },
-          x: {
-            grid: true,
-            axis: "top",
-            label: "Project count",
-          },
-          y: {
-            tickFormat: (d) => d.length > 65 ? d.slice(0, 63).concat("...") : d, // cut off long tick labels
-            label: "Laboratory",
-          },
-          marks: [
-            Plot.barX(filtered_projects_by_laboratory_project_owner, {
-              x: "project_count",
-              y: "entity",
-              fill: d3.map(filtered_projects_by_laboratory_project_owner, (d) => d.project_count + 2), // shift up the color values to be more visible
-              sort: {y: "-x"},
-            }),
-          ],
-        })//$
-      }
-    </div>
-  </div>
-  <div class="card grid-colspan-2">
-    <h2>Laboratories by Projects</h2>
-    <div>${project_laboratories_auditioned_input}</div>
-    <div>${project_laboratories_financed_input}</div>
-    <div style="max-height: 400px">
-      ${
-        Plot.plot({
-          width: 1500,
-          height: 460,
-          marginBottom: 70,
-          color: {
-            // scheme: "Plasma",
-            scheme: "Cool",
-          },
-          x: {
-            tickRotate: 30,
-            label: "Project",
-          },
-          y: {
-            grid: true,
-            label: "Occurences",
-          },
-          marks: [
-            Plot.barY(filtered_projects_laboratories, {
-              x: "acronyme",
-              y: "laboratoires_count",
-              fill: "laboratoires_count",
-              sort: { x: "-y" },
-            }),
-          ],
-        })//$
-      }
-    </div>
+```js
+// create search input
+const project_search_input = Inputs.search(filtered_project_data, { placeholder: "Search projects..." })
+const projects_search = Generators.input(project_search_input);
+// display(projects_search);
+```
+
+```js
+function sparkbar(max) {
+  // code source: https://observablehq.com/framework/inputs/table
+  return (x) => htl.html`<div style="
+    background: var(--theme-green);
+    color: black;
+    width: ${100 * x / max}%;
+    float: left;
+    padding-right: 3px;
+    box-sizing: border-box;
+    overflow: visible;
+    display: flex;
+    justify-content: end;">${x.toLocaleString("en-US")}`
+}
+
+const project_table = Inputs.table(projects_search, {
+  rows: 25,
+  columns: [
+    "acronyme",
+    "note",
+    "defi",
+    "budget",
+  ],
+  header: {
+    acronyme: "Project Acronyme",
+    budget: "Budget (M)",
+    note: "Jury grade",
+    defi: "Challenge",
+  },
+  width: {
+    acronyme: 120,
+    note: 80,
+    defi: 80,
+  },
+  align: {
+    note: "center",
+    defi: "center",
+    budget: "left",
+  },
+  format: {
+    budget: sparkbar(d3.max(projects_search, d => d.budget)),
+  },
+});
+```
+
+<div class="grid grid-cols-4">
+  <div class="card grid-colspan-4">
+    <h2>PEPR Projects</h2>
+    <div>${project_search_input}</div>
+    <div>${project_auditioned_input}</div>
+    <div>${project_financed_input}</div>
+    <div>${project_note_input}</div>
+    <div>${project_defi_input}</div>
+    <div>${project_table}</div>
   </div>
 </div>

@@ -1,15 +1,12 @@
 ---
 title: Phase 2 Overview Dashboard
-theme: [light, alt]
+theme: dashboard
 ---
 
-# PEPR Dashboard
+# PEPR Projects Overview
 
 ```js
-import { mapEntitiesToGraph } from "./components/force-graph.js";
 import {
-  mapCounts,
-  mergeCounts,
   countEntities,
 } from "./components/utilities.js";
 import {
@@ -21,6 +18,7 @@ import {
   resolveChercheursEntities,
   resolveLaboratoireEntities,
   resolveEtablissementEntities,
+  getColumnOptions,
   filterOnInput,
 } from "./components/phase2-dashboard.js";
 ```
@@ -59,7 +57,7 @@ const laboratory_data = resolveLaboratoireEntities(getLaboSheet(workbook1));
 const university_data = resolveEtablissementEntities(
   getEtablissementSheet(workbook1)
 );
-display(project_data);
+// display(project_data);
 // display(researcher_data);
 // display(laboratory_data);
 // display(university_data);
@@ -104,24 +102,6 @@ const total_partner_count = d3.reduce(partner_count, (p, v) => p + v.count, 0);
 </div>
 
 ```js
-// citeria filter functions
-function inputFilterFunctions(d) {
-  return [
-    {
-      All: (d) => true,
-      Yes: (d) => d.auditionne,
-      No: (d) => !d.auditionne,
-    },
-    {
-      All: (d) => true,
-      Yes: (d) => d.finance,
-      No: (d) => !d.finance,
-    },
-  ];
-}
-```
-
-```js
 // university by project filter checkboxes
 // const university_project_stage_input = Inputs.checkbox(['Auditioned', 'Financed']);
 // const university_project_stage = Generators.input(university_project_stage_input);
@@ -131,14 +111,20 @@ function inputFilterFunctions(d) {
 // const university_project_stage = Generators.input(university_project_stage_input);
 
 // university by project filter select inputs
-const university_auditioned_input = Inputs.select(["All", "Yes", "No"], {
-  value: "All",
-  label: "Auditioned?",
-});
-const university_financed_input = Inputs.select(["All", "Yes", "No"], {
-  value: "All",
-  label: "Financed?",
-});
+const university_auditioned_input = Inputs.select(
+  getColumnOptions(project_data, "auditionne"),
+  {
+    value: "All",
+    label: "Auditioned?",
+  }
+);
+const university_financed_input = Inputs.select(
+  getColumnOptions(project_data, "finance"),
+  {
+    value: "All",
+    label: "Financed?",
+  }
+);
 const university_auditioned = Generators.input(university_auditioned_input);
 const university_financed = Generators.input(university_financed_input);
 
@@ -156,14 +142,20 @@ const university_sort_input = Inputs.select(
 const university_sort = Generators.input(university_sort_input);
 
 // laboratory by project filter select inputs
-const laboratory_auditioned_input = Inputs.select(["All", "Yes", "No"], {
-  value: "All",
-  label: "Auditioned?",
-});
-const laboratory_financed_input = Inputs.select(["All", "Yes", "No"], {
-  value: "All",
-  label: "Financed?",
-});
+const laboratory_auditioned_input = Inputs.select(
+  getColumnOptions(project_data, "auditionne"),
+  {
+    value: "All",
+    label: "Auditioned?",
+  }
+);
+const laboratory_financed_input = Inputs.select(
+  getColumnOptions(project_data, "finance"),
+  {
+    value: "All",
+    label: "Financed?",
+  }
+);
 const laboratory_auditioned = Generators.input(laboratory_auditioned_input);
 const laboratory_financed = Generators.input(laboratory_financed_input);
 
@@ -182,14 +174,14 @@ const laboratory_sort = Generators.input(laboratory_sort_input);
 
 // project_laboratories by project filter select inputs
 const project_laboratories_auditioned_input = Inputs.select(
-  ["All", "Yes", "No"],
+  getColumnOptions(project_data, "auditionne"),
   {
     value: "All",
     label: "Auditioned?",
   }
 );
 const project_laboratories_financed_input = Inputs.select(
-  ["All", "Yes", "No"],
+  getColumnOptions(project_data, "finance"),
   {
     value: "All",
     label: "Financed?",
@@ -218,6 +210,9 @@ const project_laboratories_sort = Generators.input(project_laboratories_sort_inp
 ```
 
 ```js
+// helper functions to access input field criteria
+const critera_functions = [d => d.auditionne, d => d.finance];
+
 // group by university project owner
 const projects_by_university_project_owner = d3.groups(
   project_data,
@@ -233,7 +228,7 @@ const filtered_projects_by_university_project_owner = d3.map(
     const filtered_projects = filterOnInput(
       D[1],
       [university_auditioned, university_financed],
-      inputFilterFunctions()
+      critera_functions
     );
     // ... and reformat for plot
     return {
@@ -262,7 +257,7 @@ const filtered_projects_by_laboratory_project_owner = d3.map(
     const filtered_projects = filterOnInput(
       D[1],
       [laboratory_auditioned, laboratory_financed],
-      inputFilterFunctions()
+      critera_functions
     );
     // ... and reformat for plot
     return {
@@ -279,7 +274,7 @@ const filtered_projects_by_laboratory_project_owner = d3.map(
 const filtered_projects_laboratories = filterOnInput(
   project_data,
   [project_laboratories_auditioned, project_laboratories_financed],
-  inputFilterFunctions()
+  critera_functions
 );
 // display(filtered_projects_laboratories);
 ```
@@ -303,6 +298,7 @@ const filtered_projects_laboratories = filterOnInput(
             grid: true,
             axis: "top",
             label: "Project count",
+            domain: [0, Math.max(...filtered_projects_by_university_project_owner.map((d) => d.project_count)) + 1], // set domain from 0 to max project count value + 1
           },
           y: {
             tickFormat: (d) => d.length > 50 ? d.slice(0, 48).concat("...") : d, // cut off long tick labels
@@ -314,6 +310,7 @@ const filtered_projects_laboratories = filterOnInput(
               y: "entity",
               fill: d3.map(filtered_projects_by_university_project_owner, (d) => d.project_count + 2), // shift up the color values to be more visible
               sort: {y: university_sort ? "y" : "-x"},
+              tip: true,
             }),
           ],
         })//$
@@ -338,6 +335,7 @@ const filtered_projects_laboratories = filterOnInput(
             grid: true,
             axis: "top",
             label: "Project count",
+            domain: [0, Math.max(...filtered_projects_by_laboratory_project_owner.map((d) => d.project_count)) + 1], // set domain from 0 to max project count value + 1
           },
           y: {
             tickFormat: (d) => d.length > 65 ? d.slice(0, 63).concat("...") : d, // cut off long tick labels
@@ -349,6 +347,7 @@ const filtered_projects_laboratories = filterOnInput(
               y: "entity",
               fill: d3.map(filtered_projects_by_laboratory_project_owner, (d) => d.project_count + 2), // shift up the color values to be more visible
               sort: {y: laboratory_sort ? "y" : "-x"},
+              tip: true,
             }),
           ],
         })//$
@@ -360,11 +359,11 @@ const filtered_projects_laboratories = filterOnInput(
     <div>${project_laboratories_auditioned_input}</div>
     <div>${project_laboratories_financed_input}</div>
     <div>${project_laboratories_sort_input}</div>
-    <div style="max-height: 400px">
+    <div style="max-height: 450px">
       ${
         Plot.plot({
-          width: filtered_projects_laboratories.length * 40,
-          height: 460,
+          width,
+          height: 450,
           marginBottom: 70,
           color: {
             scheme: "Plasma",
@@ -376,6 +375,7 @@ const filtered_projects_laboratories = filterOnInput(
           y: {
             grid: true,
             label: "Laboratory count",
+            domain: [0, Math.max(...filtered_projects_laboratories.map((d) => d.laboratoires_count)) + 1],
           },
           marks: [
             Plot.barY(filtered_projects_laboratories, {
@@ -383,6 +383,7 @@ const filtered_projects_laboratories = filterOnInput(
               y: "laboratoires_count",
               fill: "laboratoires_count",
               sort: {x: project_laboratories_sort ? "x" : "-y"},
+              tip: true,
             }),
           ],
         })//$
