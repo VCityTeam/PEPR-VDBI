@@ -57,7 +57,7 @@ export function getEtablissementSheet(workbook) {
 }
 
 /**
- * Format known entities from the GÉNÉRALITÉ sheet as:
+ * Format known project entities from the GÉNÉRALITÉ sheet as:
  *  {
  *    acronyme: string,
  *    auditionne: boolean,
@@ -190,9 +190,41 @@ export function resolveChercheursEntities(sheet) {
       sheet,
       (D) => {
         const chercheur = {
-          nom: [D[0]['NOM et Prénom']],
+          nom: D[0]['NOM et Prénom'],
+          sexe: D[0]['sexe'],
+          discipline_a: D[0]['discipline a'],
+          discipline_erc: D[0]['discipline ERC chercheur'],
+          position: D[0]['position statutaire'],
+          cnu: D[0]['CNU'],
+          domaine_erc_labo: D[0]['DOMAINES ERC LABO'],
+          disciplines_erc_labo: filter(
+            [
+              D[0]['Discipline ERC 1 LABO'],
+              D[0]['Discipline ERC 2 LABO'],
+              D[0]['Discipline ERC 3 LABO'],
+              D[0]['Discipline ERC 4 LABO'],
+              D[0]['Discipline ERC 5 LABO'],
+              D[0]['Discipline ERC 6 LABO'],
+              D[0]['Discipline ERC 7 LABO'],
+              D[0]['Discipline ERC 8 LABO'],
+              D[0]['Discipline ERC 9 LABO'],
+            ],
+            (d) => typeof d !== 'undefined' && d !== 0
+          ),
+          domaine_hceres: D[0]['Domaines scientifique HCERES 1'],
+          disciplines_hceres: filter(
+            [
+              D[0]['Sous-domaines scientifique HCERES 1'],
+              D[0]['Sous-Domaines scientifique HCERES 2'],
+              D[0]['Sous-Domaine Scientifique HCERES 3'],
+              D[0]['sous-domaine scientifique HCERES 4'],
+              D[0]['sous-domaine scientifique HCERES 5'],
+              D[0]['sous-domaine scientifique HCERES 6'],
+            ],
+            (d) => typeof d !== 'undefined' && d !== 0
+          ),
           projet: [],
-          laboratoire: [D[0]['labo (acronyme)']],
+          laboratoire: D[0]['labo (acronyme)'],
         };
         D.forEach((row) => {
           chercheur.projet.push(row['Projet 1']); // every row in group should corresopond to a project the researcher is in, so add every project
@@ -250,6 +282,43 @@ export function resolveEtablissementEntities(sheet) {
 }
 
 /**
+ * Extract and format data from the phase 2 excel.
+ * 
+ * @param {Workbook} workbook - The workbook to extract
+ * @returns {Object<Array<Object>>} An object containing 3 Plot formatted tables
+ */
+export function extractPhase2Workbook(workbook) {
+  const project_data = resolveGeneraliteEntities(getGeneraliteSheet(workbook));
+  const researcher_data = resolveChercheursEntities(getChercheurSheet(workbook));
+  const laboratory_data = resolveLaboratoireEntities(getLaboSheet(workbook));
+  const university_data = resolveEtablissementEntities(getEtablissementSheet(workbook));
+
+  // Move laboratory information from researcher_data to laboratory_data
+  researcher_data.forEach(researcher => {
+    const lab = laboratory_data.find(lab => lab.laboratoire == researcher.laboratoire);
+    if (typeof lab !== 'undefined') {
+      lab.domaine_erc = researcher.domaine_erc_labo;
+      lab.disciplines_erc = [...researcher.disciplines_erc_labo];
+      lab.domaine_hceres = researcher.domaine_hceres;
+      lab.disciplines_hceres = [...researcher.disciplines_hceres];
+      delete researcher.domaine_erc_labo;
+      delete researcher.disciplines_erc_labo;
+      delete researcher.domaine_hceres;
+      delete researcher.disciplines_hceres;
+    } else {
+      console.log('laboratory not found:', researcher.laboratoire);
+    }
+  });
+
+  return {
+    projects: project_data,
+    researchers: researcher_data,
+    laboratories: laboratory_data,
+    universities: university_data,
+  };
+}
+
+/**
  * Create a filtered dataset, that filters based on 2 input criteria
  *
  * @param {Array} data - dataset to filter
@@ -257,7 +326,7 @@ export function resolveEtablissementEntities(sheet) {
  * @param {Array<Function>} criteria_functions - functions to use for each critereon.
  *    Keys contain the critereon to meet and the values contain the function to
  *    execute if a critereon is met. Functions should return true or false. If 'All'
- *    is passed in as criterion, the criterion is ignored (and accepted) 
+ *    is passed in as criterion, the criterion is ignored (and accepted)
  * @returns {Array} filtered dataset
  */
 export function filterOnInput(data, input_criteria, criteria_functions) {
