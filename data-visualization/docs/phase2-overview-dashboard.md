@@ -279,115 +279,111 @@ const filtered_projects_laboratories = filterOnInput(
 // display(filtered_projects_laboratories);
 ```
 
+```js
+const filtered_projects_by_university_project_owner_plot = Plot.plot({
+  height: filtered_projects_by_university_project_owner.length * 20, // assure adequate horizontal space for each line
+  width: 600,
+  marginLeft: 250,
+  color: {
+    scheme: "Plasma",
+  },
+  x: {
+    grid: true,
+    axis: "top",
+    label: "Project count",
+    domain: [0, Math.max(...filtered_projects_by_university_project_owner.map((d) => d.project_count)) + 1], // set domain from 0 to max project count value + 1
+  },
+  y: {
+    tickFormat: (d) => d.length > 50 ? d.slice(0, 48).concat("...") : d, // cut off long tick labels
+    label: "University",
+  },
+  marks: [
+    Plot.barX(filtered_projects_by_university_project_owner, {
+      x: "project_count",
+      y: "entity",
+      fill: d3.map(filtered_projects_by_university_project_owner, (d) => d.project_count + 2), // shift up the color values to be more visible
+      sort: {y: university_sort ? "y" : "-x"},
+      tip: true,
+    }),
+  ],
+});
+
+const filtered_projects_by_laboratory_project_owner_plot = Plot.plot({
+  height: filtered_projects_by_laboratory_project_owner.length * 20, // assure adequate horizontal space for each line
+  width: 600,
+  marginLeft: 400,
+  color: {
+    scheme: "Plasma",
+  },
+  x: {
+    grid: true,
+    axis: "top",
+    label: "Project count",
+    domain: [0, Math.max(...filtered_projects_by_laboratory_project_owner.map((d) => d.project_count)) + 1], // set domain from 0 to max project count value + 1
+  },
+  y: {
+    tickFormat: (d) => d.length > 65 ? d.slice(0, 63).concat("...") : d, // cut off long tick labels
+    label: "Laboratory",
+  },
+  marks: [
+    Plot.barX(filtered_projects_by_laboratory_project_owner, {
+      x: "project_count",
+      y: "entity",
+      fill: d3.map(filtered_projects_by_laboratory_project_owner, (d) => d.project_count + 2), // shift up the color values to be more visible
+      sort: {y: laboratory_sort ? "y" : "-x"},
+      tip: true,
+    }),
+  ],
+});
+
+const filtered_projects_laboratories_plot = Plot.plot({
+  width,
+  height: 450,
+  marginBottom: 70,
+  color: {
+    scheme: "Plasma",
+  },
+  x: {
+    tickRotate: 30,
+    label: "Project",
+  },
+  y: {
+    grid: true,
+    label: "Laboratory count",
+    domain: [0, Math.max(...filtered_projects_laboratories.map((d) => d.laboratoires_count)) + 1],
+  },
+  marks: [
+    Plot.barY(filtered_projects_laboratories, {
+      x: "acronyme",
+      y: "laboratoires_count",
+      fill: "laboratoires_count",
+      sort: {x: project_laboratories_sort ? "x" : "-y"},
+      tip: true,
+    }),
+  ],
+});
+```
+
 <div class="grid grid-cols-2">
   <div class="card">
     <h2>Projects by University Project Owners</h2>
     <div>${university_auditioned_input}</div>
     <div>${university_financed_input}</div>
     <div>${university_sort_input}</div>
-    <div style="max-height: 400px; overflow: auto;">
-      ${
-        Plot.plot({
-          height: filtered_projects_by_university_project_owner.length * 20, // assure adequate horizontal space for each line
-          width: 600,
-          marginLeft: 250,
-          color: {
-            scheme: "Plasma",
-          },
-          x: {
-            grid: true,
-            axis: "top",
-            label: "Project count",
-            domain: [0, Math.max(...filtered_projects_by_university_project_owner.map((d) => d.project_count)) + 1], // set domain from 0 to max project count value + 1
-          },
-          y: {
-            tickFormat: (d) => d.length > 50 ? d.slice(0, 48).concat("...") : d, // cut off long tick labels
-            label: "University",
-          },
-          marks: [
-            Plot.barX(filtered_projects_by_university_project_owner, {
-              x: "project_count",
-              y: "entity",
-              fill: d3.map(filtered_projects_by_university_project_owner, (d) => d.project_count + 2), // shift up the color values to be more visible
-              sort: {y: university_sort ? "y" : "-x"},
-              tip: true,
-            }),
-          ],
-        })//$
-      }
-    </div>
+    <div style="max-height: 400px; overflow: auto;">${filtered_projects_by_university_project_owner_plot}</div>
   </div>
   <div class="card">
     <h2>Projects by Laboratory Project Owners</h2>
     <div>${laboratory_auditioned_input}</div>
     <div>${laboratory_financed_input}</div>
     <div>${laboratory_sort_input}</div>
-    <div style="max-height: 400px; overflow: auto;">
-      ${
-        Plot.plot({
-          height: filtered_projects_by_laboratory_project_owner.length * 20, // assure adequate horizontal space for each line
-          width: 600,
-          marginLeft: 400,
-          color: {
-            scheme: "Plasma",
-          },
-          x: {
-            grid: true,
-            axis: "top",
-            label: "Project count",
-            domain: [0, Math.max(...filtered_projects_by_laboratory_project_owner.map((d) => d.project_count)) + 1], // set domain from 0 to max project count value + 1
-          },
-          y: {
-            tickFormat: (d) => d.length > 65 ? d.slice(0, 63).concat("...") : d, // cut off long tick labels
-            label: "Laboratory",
-          },
-          marks: [
-            Plot.barX(filtered_projects_by_laboratory_project_owner, {
-              x: "project_count",
-              y: "entity",
-              fill: d3.map(filtered_projects_by_laboratory_project_owner, (d) => d.project_count + 2), // shift up the color values to be more visible
-              sort: {y: laboratory_sort ? "y" : "-x"},
-              tip: true,
-            }),
-          ],
-        })//$
-      }
-    </div>
+    <div style="max-height: 400px; overflow: auto;">${filtered_projects_by_laboratory_project_owner_plot}</div>
   </div>
   <div class="card grid-colspan-2">
     <h2>Laboratories by Projects</h2>
     <div>${project_laboratories_auditioned_input}</div>
     <div>${project_laboratories_financed_input}</div>
     <div>${project_laboratories_sort_input}</div>
-    <div style="max-height: 450px">
-      ${
-        Plot.plot({
-          width,
-          height: 450,
-          marginBottom: 70,
-          color: {
-            scheme: "Plasma",
-          },
-          x: {
-            tickRotate: 30,
-            label: "Project",
-          },
-          y: {
-            grid: true,
-            label: "Laboratory count",
-            domain: [0, Math.max(...filtered_projects_laboratories.map((d) => d.laboratoires_count)) + 1],
-          },
-          marks: [
-            Plot.barY(filtered_projects_laboratories, {
-              x: "acronyme",
-              y: "laboratoires_count",
-              fill: "laboratoires_count",
-              sort: {x: project_laboratories_sort ? "x" : "-y"},
-              tip: true,
-            }),
-          ],
-        })//$
-      }
-    </div>
+    <div style="max-height: 450px">${filtered_projects_laboratories_plot}</div>
   </div>
 </div>

@@ -13,6 +13,10 @@ export default {
       path: "phase2-overview-dashboard"
     },
     {
+      name: "Phase 2 Data Dashboard",
+      path: "phase2-stats-dashboard"
+    },
+    {
       name: "Phase 2 Financing Dashboard",
       path: "phase2-financing-dashboard"
     },
