@@ -1,8 +1,60 @@
 // See https://observablehq.com/framework/config for documentation.
 export default {
   // The project’s title; used in the sidebar and webpage titles.
-  title: "Data Visualization",
-  theme: "light"
+  title: "PEPR Dashboards",
+  theme: "dark",
+  pages: [
+    {
+      name: "Phase 1 Dashboard",
+      path: "phase1-dashboard"
+    },
+    {
+      name: "Phase 2 Overview Dashboard",
+      path: "phase2-overview-dashboard"
+    },
+    {
+      name: "Phase 2 Financing Dashboard",
+      path: "phase2-financing-dashboard"
+    },
+    {
+      name: "Tests",
+      pages: [
+        {
+          name: "Import Tests",
+          path: "/test-import"
+        },
+        {
+          name: "Plot Tests",
+          path: "/test-plot"
+        },
+        {
+          name: "Tree Tests",
+          path: "/test-tree"
+        },
+        {
+          name: "Graph Tests",
+          path: "/test-graph"
+        },
+      ]
+    },
+    {
+      name: "Examples",
+      pages: [
+        {
+          name: "Example Index",
+          path: "/example-index"
+        },
+        {
+          name: "Example Report",
+          path: "/example-report"
+        },
+        {
+          name: "Example Dashboard",
+          path: "/example-dashboard"
+        },
+      ]
+    },
+  ]
   // The pages and sections in the sidebar. If you don’t specify this option,
   // all pages will be listed in alphabetical order. Listing pages explicitly
   // lets you organize them into sections and have unlisted pages.
