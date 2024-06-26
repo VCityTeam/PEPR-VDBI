@@ -30,7 +30,13 @@ const workbook1 = FileAttachment(
 ```
 
 ```js
-const project_data = resolveGeneraliteEntities(getGeneraliteSheet(workbook1));
+const anonymize = false;
+const anonymizeDict = new Map();
+const project_data = resolveGeneraliteEntities(
+  getGeneraliteSheet(workbook1),
+  anonymize,
+  anonymizeDict
+);
 // resolveGeneraliteEntities -> @return:
 // {
 //    acronyme: string,
@@ -52,10 +58,20 @@ const project_data = resolveGeneraliteEntities(getGeneraliteSheet(workbook1));
 //    pourquoi: string,
 //    notes: string
 // }
-const researcher_data = resolveChercheursEntities(getChercheurSheet(workbook1));
-const laboratory_data = resolveLaboratoireEntities(getLaboSheet(workbook1));
+const researcher_data = resolveChercheursEntities(
+  getChercheurSheet(workbook1),
+  anonymize,
+  anonymizeDict
+);
+const laboratory_data = resolveLaboratoireEntities(
+  getLaboSheet(workbook1),
+  anonymize,
+  anonymizeDict
+);
 const university_data = resolveEtablissementEntities(
-  getEtablissementSheet(workbook1)
+  getEtablissementSheet(workbook1),
+  anonymize,
+  anonymizeDict
 );
 // display(project_data);
 // display(researcher_data);

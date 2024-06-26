@@ -1,4 +1,5 @@
-import { map, filter, rollup, reduce } from 'npm:d3';
+import { map, filter, rollup } from 'npm:d3';
+import { nameByRace } from 'npm:fantasy-name-generator';
 
 /**
  * Extract data from the GÉNÉRALITÉ sheet
@@ -80,9 +81,15 @@ export function getEtablissementSheet(workbook) {
  *  }
  *
  * @param {Array<Object>} sheet - Extracted sheet data
+ * @param {boolean} anonymize - Anonymize data or not
+ * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Array<Object.<Array<string>>} Formatted sheet data
  */
-export function resolveGeneraliteEntities(sheet) {
+export function resolveGeneraliteEntities(
+  sheet,
+  anonymize = false,
+  acronymousDict = new Map()
+) {
   return map(sheet, (d) => {
     const mapped_entities = {
       acronyme: d['ACRONYME'] ? d['ACRONYME'] : null,
@@ -174,6 +181,47 @@ export function resolveGeneraliteEntities(sheet) {
       mapped_entities.etablissements.length;
     mapped_entities.laboratoires_count = mapped_entities.laboratoires.length;
     mapped_entities.partenaires_count = mapped_entities.partenaires.length;
+
+    if (anonymize) {
+      mapped_entities.acronyme = anonymizeEntry(
+        mapped_entities.acronyme,
+        acronymousDict
+      );
+      mapped_entities.nom_fr = anonymizeEntry(
+        mapped_entities.nom_fr,
+        acronymousDict
+      );
+      mapped_entities.nom_en = anonymizeEntry(
+        mapped_entities.nom_en,
+        acronymousDict
+      );
+      for (
+        let index = 0;
+        index < mapped_entities.etablissements.length;
+        index++
+      ) {
+        mapped_entities.etablissements[index] = anonymizeEntry(
+          mapped_entities.etablissements[index],
+          acronymousDict
+        );
+      }
+      for (
+        let index = 0;
+        index < mapped_entities.laboratoires.length;
+        index++
+      ) {
+        mapped_entities.laboratoires[index] = anonymizeEntry(
+          mapped_entities.laboratoires[index],
+          acronymousDict
+        );
+      }
+      for (let index = 0; index < mapped_entities.partenaires.length; index++) {
+        mapped_entities.partenaires[index] = anonymizeEntry(
+          mapped_entities.partenaires[index],
+          acronymousDict
+        );
+      }
+    }
     return mapped_entities;
   });
 }
@@ -182,9 +230,15 @@ export function resolveGeneraliteEntities(sheet) {
  * Format known entities from the Liste chercheurs sheet
  *
  * @param {Array<Object>} sheet - Extracted sheet data
+ * @param {boolean} anonymize - Anonymize data or not
+ * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Array<Object.<Array<string>>} Formatted sheet data
  */
-export function resolveChercheursEntities(sheet) {
+export function resolveChercheursEntities(
+  sheet,
+  anonymize = false,
+  acronymousDict = new Map()
+) {
   return map(
     rollup(
       sheet,
@@ -229,6 +283,19 @@ export function resolveChercheursEntities(sheet) {
         D.forEach((row) => {
           chercheur.projet.push(row['Projet 1']); // every row in group should corresopond to a project the researcher is in, so add every project
         });
+        if (anonymize) {
+          chercheur.nom = anonymizeEntry(chercheur.nom, acronymousDict);
+          chercheur.laboratoire = anonymizeEntry(
+            chercheur.laboratoire,
+            acronymousDict
+          );
+          for (let index = 0; index < chercheur.projet.length; index++) {
+            chercheur.projet[index] = anonymizeEntry(
+              chercheur.projet[index],
+              acronymousDict
+            );
+          }
+        }
         return chercheur;
       },
       (d) => d['NOM et Prénom'] // group researcher by name
@@ -241,11 +308,17 @@ export function resolveChercheursEntities(sheet) {
  * Format known entities from the Liste des labo sheet
  *
  * @param {Array<Object>} sheet - Extracted sheet data
+ * @param {boolean} anonymize - Anonymize data or not
+ * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Array<Object.<Array<string>>} Formatted sheet data
  */
-export function resolveLaboratoireEntities(sheet) {
+export function resolveLaboratoireEntities(
+  sheet,
+  anonymize = false,
+  acronymousDict = new Map()
+) {
   return map(sheet, (d) => {
-    return {
+    const laboratoire = {
       laboratoire: d['Identifiant Laboratoire']
         ? d['Identifiant Laboratoire']
         : null,
@@ -264,6 +337,20 @@ export function resolveLaboratoireEntities(sheet) {
         (d) => typeof d !== 'undefined' && d !== 0
       ),
     };
+    if (anonymize) {
+      laboratoire.laboratoire = anonymizeEntry(
+        laboratoire.laboratoire,
+        acronymousDict
+      );
+      laboratoire.nom = anonymizeEntry(laboratoire.nom, acronymousDict);
+      for (let index = 0; index < laboratoire.etablissements.length; index++) {
+        laboratoire.etablissements[index] = anonymizeEntry(
+          laboratoire.etablissements[index],
+          acronymousDict
+        );
+      }
+    }
+    return laboratoire;
   });
 }
 
@@ -271,31 +358,65 @@ export function resolveLaboratoireEntities(sheet) {
  * Format known entities from the Liste des établissements sheet
  *
  * @param {Array<Object>} sheet - Extracted sheet data
+ * @param {boolean} anonymize - Anonymize data or not
+ * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Array<Object.<Array<string>>} Formatted sheet data
  */
-export function resolveEtablissementEntities(sheet) {
+export function resolveEtablissementEntities(
+  sheet,
+  anonymize = false,
+  acronymousDict = new Map()
+) {
   return map(sheet, (d) => {
-    return {
+    const etablissement = {
       nom: d['Nom des établissements'] ? d['Nom des établissements'] : null, // just 1 column for the moment
     };
+    if (anonymize) {
+      etablissement.nom = anonymizeEntry(etablissement.nom, acronymousDict);
+    }
+    return etablissement;
   });
 }
 
 /**
  * Extract and format data from the phase 2 excel.
- * 
+ *
  * @param {Workbook} workbook - The workbook to extract
+ * @param {boolean} anonymize - Anonymize data or not
+ * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Object<Array<Object>>} An object containing 3 Plot formatted tables
  */
-export function extractPhase2Workbook(workbook) {
-  const project_data = resolveGeneraliteEntities(getGeneraliteSheet(workbook));
-  const researcher_data = resolveChercheursEntities(getChercheurSheet(workbook));
-  const laboratory_data = resolveLaboratoireEntities(getLaboSheet(workbook));
-  const university_data = resolveEtablissementEntities(getEtablissementSheet(workbook));
+export function extractPhase2Workbook(
+  workbook,
+  anonymize = false,
+  acronymousDict = new Map()
+) {
+  const project_data = resolveGeneraliteEntities(
+    getGeneraliteSheet(workbook),
+    anonymize,
+    acronymousDict
+  );
+  const researcher_data = resolveChercheursEntities(
+    getChercheurSheet(workbook),
+    anonymize,
+    acronymousDict
+  );
+  const laboratory_data = resolveLaboratoireEntities(
+    getLaboSheet(workbook),
+    anonymize,
+    acronymousDict
+  );
+  const university_data = resolveEtablissementEntities(
+    getEtablissementSheet(workbook),
+    anonymize,
+    acronymousDict
+  );
 
   // Move laboratory information from researcher_data to laboratory_data
-  researcher_data.forEach(researcher => {
-    const lab = laboratory_data.find(lab => lab.laboratoire == researcher.laboratoire);
+  researcher_data.forEach((researcher) => {
+    const lab = laboratory_data.find(
+      (lab) => lab.laboratoire == researcher.laboratoire
+    );
     if (typeof lab !== 'undefined') {
       lab.domaine_erc = researcher.domaine_erc_labo;
       lab.disciplines_erc = [...researcher.disciplines_erc_labo];
@@ -316,6 +437,25 @@ export function extractPhase2Workbook(workbook) {
     laboratories: laboratory_data,
     universities: university_data,
   };
+}
+
+/**
+ * Anonymize a text entry based on existing dictionary values
+ *
+ * @param {string} entry - a text entry
+ * @param {Map} dictionary - a mapping of entries to anonymized entries
+ * @returns {string} anonymized entry
+ */
+export function anonymizeEntry(entry, dictionary) {
+  if (!dictionary.has(entry)) {
+    dictionary.set(
+      entry,
+      nameByRace('highelf', {
+        gender: Boolean(Math.floor(Math.random() * 2)) ? 'male' : 'female',
+      })
+    );
+  }
+  return dictionary.get(entry);
 }
 
 /**
@@ -354,3 +494,4 @@ export function getColumnOptions(data, key) {
   data.forEach((d) => options.add(d[key]));
   return options;
 }
+

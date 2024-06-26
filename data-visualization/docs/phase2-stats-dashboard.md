@@ -23,7 +23,7 @@ const workbook1 = FileAttachment(
 ```
 
 ```js echo
-const phase_2_data = extractPhase2Workbook(workbook1);
+const phase_2_data = extractPhase2Workbook(workbook1, false);
 display(phase_2_data);
 ```
 
