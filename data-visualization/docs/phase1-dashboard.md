@@ -18,7 +18,7 @@ import {
   resolveProjectEntities,
 } from "./components/240108-proposals-keywords.js";
 import { mapEntitiesToGraph } from "./components/force-graph.js";
-import { mapCounts, mergeCounts } from "./components/utilities.js";
+import { mapCounts, mergeCounts, countEntities } from "./components/utilities.js";
 ```
 
 ```js
@@ -41,29 +41,6 @@ const city_data = getVillesSheet(workbook2).map((d) => {
     lieu: [d["Lieu"]],
   };
 });
-
-function countEntities(data, mapFunction) {
-  // flatten (map to array then merge) entities
-  const entity_list = d3.merge(d3.map(data, (d) => mapFunction(d)));
-  // group by entity then reduce to a count with d3.rollup()
-  const entityCounts = d3.rollup(
-    entity_list,
-    (D) => D.length,
-    (d) => d
-  );
-  // map entityCounts to a [{x: entity, y: count}] data structure
-  const formatted_entity_counts = d3.map(
-    entityCounts.entries(),
-    ([key, value], i) => {
-      return {
-        entity: key,
-        count: value,
-      };
-    }
-  );
-  // sort by entity and return
-  return d3.sort(formatted_entity_counts, (d) => d.entity);
-}
 ```
 
 ```js
@@ -184,6 +161,7 @@ d3.sort(
     type: "total",
   });
 });
+display(sorted_lab_counts);
 ```
 
 <div class="grid grid-cols-4">

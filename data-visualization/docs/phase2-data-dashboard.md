@@ -1,5 +1,5 @@
 ---
-title: Phase 2 Overview Dashboard
+title: Phase 2 Raw Data Dashboard
 theme: dashboard
 ---
 
@@ -23,7 +23,7 @@ const workbook1 = FileAttachment(
 ```
 
 ```js echo
-const phase_2_data = extractPhase2Workbook(workbook1, false);
+const phase_2_data = extractPhase2Workbook(workbook1, true);
 display(phase_2_data);
 ```
 

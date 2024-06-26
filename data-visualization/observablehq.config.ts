@@ -1,64 +1,72 @@
 // See https://observablehq.com/framework/config for documentation.
 export default {
   // The project’s title; used in the sidebar and webpage titles.
-  title: "PEPR Dashboards",
-  theme: "dark",
+  title: 'PEPR Dashboards',
+  theme: 'dark',
   pages: [
     {
-      name: "Phase 1 Dashboard",
-      path: "phase1-dashboard"
+      name: 'Phase 1 Dashboard',
+      path: 'phase1-dashboard',
     },
     {
-      name: "Phase 2 Overview Dashboard",
-      path: "phase2-overview-dashboard"
+      name: 'Phase 2 Overview Dashboard',
+      path: 'phase2-overview-dashboard',
     },
     {
-      name: "Phase 2 Data Dashboard",
-      path: "phase2-stats-dashboard"
+      name: 'Phase 2 Project Dashboard',
+      path: 'phase2-project-dashboard',
     },
     {
-      name: "Phase 2 Financing Dashboard",
-      path: "phase2-financing-dashboard"
+      name: 'Phase 2 Laboratory Dashboard',
+      path: 'phase2-laboratory-dashboard',
     },
     {
-      name: "Tests",
+      name: 'Phase 2 Financing Dashboard',
+      path: 'phase2-financing-dashboard',
+    },
+    {
+      name: 'Phase 2 All Data Dashboard',
+      path: 'phase2-data-dashboard',
+    },
+    {
+      name: 'Tests',
       pages: [
         {
-          name: "Import Tests",
-          path: "/test-import"
+          name: 'Import Tests',
+          path: '/test-import',
         },
         {
-          name: "Plot Tests",
-          path: "/test-plot"
+          name: 'Plot Tests',
+          path: '/test-plot',
         },
         {
-          name: "Tree Tests",
-          path: "/test-tree"
+          name: 'Tree Tests',
+          path: '/test-tree',
         },
         {
-          name: "Graph Tests",
-          path: "/test-graph"
+          name: 'Graph Tests',
+          path: '/test-graph',
         },
-      ]
+      ],
     },
     {
-      name: "Examples",
+      name: 'Examples',
       pages: [
         {
-          name: "Example Index",
-          path: "/example-index"
+          name: 'Example Index',
+          path: '/example-index',
         },
         {
-          name: "Example Report",
-          path: "/example-report"
+          name: 'Example Report',
+          path: '/example-report',
         },
         {
-          name: "Example Dashboard",
-          path: "/example-dashboard"
+          name: 'Example Dashboard',
+          path: '/example-dashboard',
         },
-      ]
+      ],
     },
-  ]
+  ],
   // The pages and sections in the sidebar. If you don’t specify this option,
   // all pages will be listed in alphabetical order. Listing pages explicitly
   // lets you organize them into sections and have unlisted pages.
@@ -81,3 +89,4 @@ export default {
   // root: "docs", // path to the source root for preview
   // output: "dist", // path to the output root for build
 };
+
