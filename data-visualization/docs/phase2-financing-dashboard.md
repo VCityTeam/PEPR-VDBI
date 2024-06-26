@@ -21,7 +21,9 @@ const workbook1 = FileAttachment(
 ```
 
 ```js
-const project_data = resolveGeneraliteEntities(getGeneraliteSheet(workbook1));
+const anonymize = false;
+const anonymizeDict = new Map();
+const project_data = resolveGeneraliteEntities(getGeneraliteSheet(workbook1), anonymize, anonymizeDict);
 // resolveGeneraliteEntities -> @return:
 // {
 //    acronyme: string,
