@@ -1,5 +1,6 @@
 import { map, filter, rollup } from 'npm:d3';
-import { nameByRace } from 'npm:fantasy-name-generator';
+import { anonymizeEntry } from './utilities.js';
+import * as Plot from 'npm:@observablehq/plot';
 
 /**
  * Extract data from the GÉNÉRALITÉ sheet
@@ -185,15 +186,18 @@ export function resolveGeneraliteEntities(
     if (anonymize) {
       mapped_entities.acronyme = anonymizeEntry(
         mapped_entities.acronyme,
-        acronymousDict
+        acronymousDict,
+        'dragon'
       );
       mapped_entities.nom_fr = anonymizeEntry(
         mapped_entities.nom_fr,
-        acronymousDict
+        acronymousDict,
+        'darkelf'
       );
       mapped_entities.nom_en = anonymizeEntry(
         mapped_entities.nom_en,
-        acronymousDict
+        acronymousDict,
+        'drow'
       );
       for (
         let index = 0;
@@ -202,7 +206,8 @@ export function resolveGeneraliteEntities(
       ) {
         mapped_entities.etablissements[index] = anonymizeEntry(
           mapped_entities.etablissements[index],
-          acronymousDict
+          acronymousDict,
+          'dwarf'
         );
       }
       for (
@@ -212,13 +217,15 @@ export function resolveGeneraliteEntities(
       ) {
         mapped_entities.laboratoires[index] = anonymizeEntry(
           mapped_entities.laboratoires[index],
-          acronymousDict
+          acronymousDict,
+          'highelf'
         );
       }
       for (let index = 0; index < mapped_entities.partenaires.length; index++) {
         mapped_entities.partenaires[index] = anonymizeEntry(
           mapped_entities.partenaires[index],
-          acronymousDict
+          acronymousDict,
+          'goblin'
         );
       }
     }
@@ -284,15 +291,21 @@ export function resolveChercheursEntities(
           chercheur.projet.push(row['Projet 1']); // every row in group should corresopond to a project the researcher is in, so add every project
         });
         if (anonymize) {
-          chercheur.nom = anonymizeEntry(chercheur.nom, acronymousDict);
+          chercheur.nom = anonymizeEntry(
+            chercheur.nom,
+            acronymousDict,
+            'human'
+          );
           chercheur.laboratoire = anonymizeEntry(
             chercheur.laboratoire,
-            acronymousDict
+            acronymousDict,
+            'highelf'
           );
           for (let index = 0; index < chercheur.projet.length; index++) {
             chercheur.projet[index] = anonymizeEntry(
               chercheur.projet[index],
-              acronymousDict
+              acronymousDict,
+              'dragon'
             );
           }
         }
@@ -340,13 +353,19 @@ export function resolveLaboratoireEntities(
     if (anonymize) {
       laboratoire.laboratoire = anonymizeEntry(
         laboratoire.laboratoire,
-        acronymousDict
+        acronymousDict,
+        'highelf'
       );
-      laboratoire.nom = anonymizeEntry(laboratoire.nom, acronymousDict);
+      laboratoire.nom = anonymizeEntry(
+        laboratoire.nom,
+        acronymousDict,
+        'gnome'
+      );
       for (let index = 0; index < laboratoire.etablissements.length; index++) {
         laboratoire.etablissements[index] = anonymizeEntry(
           laboratoire.etablissements[index],
-          acronymousDict
+          acronymousDict,
+          'dwarf'
         );
       }
     }
@@ -372,7 +391,11 @@ export function resolveEtablissementEntities(
       nom: d['Nom des établissements'] ? d['Nom des établissements'] : null, // just 1 column for the moment
     };
     if (anonymize) {
-      etablissement.nom = anonymizeEntry(etablissement.nom, acronymousDict);
+      etablissement.nom = anonymizeEntry(
+        etablissement.nom,
+        acronymousDict,
+        'gnome'
+      );
     }
     return etablissement;
   });
@@ -440,25 +463,6 @@ export function extractPhase2Workbook(
 }
 
 /**
- * Anonymize a text entry based on existing dictionary values
- *
- * @param {string} entry - a text entry
- * @param {Map} dictionary - a mapping of entries to anonymized entries
- * @returns {string} anonymized entry
- */
-export function anonymizeEntry(entry, dictionary) {
-  if (!dictionary.has(entry)) {
-    dictionary.set(
-      entry,
-      nameByRace('highelf', {
-        gender: Boolean(Math.floor(Math.random() * 2)) ? 'male' : 'female',
-      })
-    );
-  }
-  return dictionary.get(entry);
-}
-
-/**
  * Create a filtered dataset, that filters based on 2 input criteria
  *
  * @param {Array} data - dataset to filter
@@ -493,5 +497,56 @@ export function getColumnOptions(data, key) {
   const options = new Set(['All']);
   data.forEach((d) => options.add(d[key]));
   return options;
+}
+
+export function getSortableCountPlot(
+  data,
+  x = 'count',
+  y = 'type',
+  fy = 'entity',
+  width = 1500,
+  row_height = 17,
+  margin_left = 60,
+  margin_right = 140,
+  color_scheme = 'Plasma',
+  x_label = 'Occurrences',
+  domain_min = 0,
+  domain_max = 1, // added to max occurrences to define the domain max
+  fy_tick_format_cuttoff = 25, // cut off label after this many characters
+  fy_label = 'Laboratory',
+  sort_criteria = '-x',
+  tip = true
+) {
+  return Plot.plot({
+    height: data.length * row_height, // assure adequate horizontal space for each line
+    width: width,
+    marginLeft: margin_left,
+    marginRight: margin_right,
+    color: {
+      scheme: color_scheme,
+    },
+    x: {
+      grid: true,
+      axis: 'top',
+      label: x_label,
+      // domain useful for constraining ticks between 0 and max occurrences + 1
+      domain: [domain_min, Math.max(...data.map((d) => d[x])) + domain_max],
+    },
+    fy: {
+      tickFormat: (d) =>
+        d.length > fy_tick_format_cuttoff ? d.slice(0, 23).concat('...') : d, // cut off long tick labels
+      label: fy_label,
+    },
+    marks: [
+      Plot.barX(data, {
+        x: x,
+        y: y,
+        fy: fy,
+        fill: x,
+        sort: { fy: sort_criteria },
+        tip: tip,
+      }),
+    ],
+  });
 }
 
