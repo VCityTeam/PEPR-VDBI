@@ -1,5 +1,5 @@
 import { map, filter, rollup } from 'npm:d3';
-import { nameByRace } from 'npm:fantasy-name-generator';
+import { anonymizeEntry } from './utilities.js';
 
 /**
  * Extract data from the GÉNÉRALITÉ sheet
@@ -437,25 +437,6 @@ export function extractPhase2Workbook(
     laboratories: laboratory_data,
     universities: university_data,
   };
-}
-
-/**
- * Anonymize a text entry based on existing dictionary values
- *
- * @param {string} entry - a text entry
- * @param {Map} dictionary - a mapping of entries to anonymized entries
- * @returns {string} anonymized entry
- */
-export function anonymizeEntry(entry, dictionary) {
-  if (!dictionary.has(entry)) {
-    dictionary.set(
-      entry,
-      nameByRace('highelf', {
-        gender: Boolean(Math.floor(Math.random() * 2)) ? 'male' : 'female',
-      })
-    );
-  }
-  return dictionary.get(entry);
 }
 
 /**

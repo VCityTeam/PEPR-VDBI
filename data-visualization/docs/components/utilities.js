@@ -1,4 +1,5 @@
 import { map, merge, rollup } from 'npm:d3';
+import { nameByRace } from 'npm:fantasy-name-generator';
 
 /**
  * Map a type attribute to each datum of a count dataset
@@ -72,4 +73,25 @@ export function countEntities(data, mapFunction) {
       count: d[1],
     };
   });
+}
+
+
+
+/**
+ * Anonymize a text entry based on existing dictionary values
+ *
+ * @param {string} entry - a text entry
+ * @param {Map} dictionary - a mapping of entries to anonymized entries
+ * @returns {string} anonymized entry
+ */
+export function anonymizeEntry(entry, dictionary) {
+  if (!dictionary.has(entry)) {
+    dictionary.set(
+      entry,
+      nameByRace('highelf', {
+        gender: Boolean(Math.floor(Math.random() * 2)) ? 'male' : 'female',
+      })
+    );
+  }
+  return dictionary.get(entry);
 }

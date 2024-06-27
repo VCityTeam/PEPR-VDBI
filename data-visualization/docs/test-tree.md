@@ -1,6 +1,6 @@
 ---
 title: Initial tree test
-toc: false
+theme: light
 ---
 
 # Visualize Workbook data using Trees
