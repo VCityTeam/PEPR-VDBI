@@ -1,6 +1,6 @@
 ---
 title: Initial graph test
-toc: false
+theme: light
 ---
 
 # Visualize Workbook data using Graphs
@@ -62,7 +62,13 @@ Using the transformation proposed in the imported components we can extract the 
 This transformation produces the following hierarchy: `root -> Project Acronym -> Project attribute (keywords, titles, etc.) -> ...`
 
 ```js echo
-const productData = resolveProjectEntities(getProductSheet(workbook2));
+const anonymize = true;
+const anonymizeDict = new Map();
+const productData = resolveProjectEntities(
+  getProductSheet(workbook2),
+  anonymize,
+  anonymizeDict
+);
 display(productData);
 ```
 
