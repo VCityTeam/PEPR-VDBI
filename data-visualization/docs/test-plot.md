@@ -63,7 +63,7 @@ const workbook2 = FileAttachment(
 ```
 
 ```js
-const anonymize = true;
+const anonymize = false;
 const acronymousDict = new Map();
 const projects_product = resolveProjectEntities(
   getProductSheet(workbook1),

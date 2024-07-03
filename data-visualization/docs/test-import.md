@@ -57,7 +57,7 @@ function getProjectSheet(workbook) {
     headers: true,
   });
 }
-const anonymize = true;
+const anonymize = false;
 const acronymousDict = new Map();
 const projects_phase_1 =  resolvePhase1Entities(
   getProjectSheet(workbook),

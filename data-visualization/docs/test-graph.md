@@ -62,7 +62,7 @@ Using the transformation proposed in the imported components we can extract the 
 This transformation produces the following hierarchy: `root -> Project Acronym -> Project attribute (keywords, titles, etc.) -> ...`
 
 ```js echo
-const anonymize = true;
+const anonymize = false;
 const anonymizeDict = new Map();
 const productData = resolveProjectEntities(
   getProductSheet(workbook2),
