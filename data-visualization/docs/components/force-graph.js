@@ -8,7 +8,7 @@ export function mapEntitiesToGraph(projects) {
   // nodes.push({ id: "PEPR VDBI", color: 0 });
 
   projects.forEach((project) => {
-    nodes.push({ id: project.acronyme[0], color: 0 });
+    nodes.push({ id: project.acronyme, color: 0 });
     // link to root node
     // links.push({
     //   source: "PEPR VDBI",
@@ -29,7 +29,7 @@ export function mapEntitiesToGraph(projects) {
             nodes.push({ id: element, color: index + 1 });
           }
           links.push({
-            source: project.acronyme[0], // project id
+            source: project.acronyme, // project id
             label: key, // property name
             target: element, // unique value
           });
