@@ -32,7 +32,7 @@ const workbook2 = FileAttachment(
 ```
 
 ```js
-const anonymize = true;
+const anonymize = false;
 const anonymizeDict = new Map();
 const projects_product = resolveProjectEntities(
   getProductSheet(workbook1),
