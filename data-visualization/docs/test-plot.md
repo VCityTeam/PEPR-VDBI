@@ -1,6 +1,6 @@
 ---
 title: Initial plot test
-toc: false
+theme: light
 ---
 
 # Import 240117 consortium laboratoire^J
@@ -63,8 +63,18 @@ const workbook2 = FileAttachment(
 ```
 
 ```js
-const projects_product = resolveProjectEntities(getProductSheet(workbook1));
-const projects_phase_1 = resolvePhase1Entities(getPhase1Sheet(workbook2));
+const anonymize = true;
+const acronymousDict = new Map();
+const projects_product = resolveProjectEntities(
+  getProductSheet(workbook1),
+  anonymize,
+  acronymousDict
+);
+const projects_phase_1 = resolvePhase1Entities(
+  getPhase1Sheet(workbook2),
+  anonymize,  
+  acronymousDict
+);
 ```
 
 Projects from product workbook:
@@ -86,7 +96,12 @@ Map-group-reduce-sort the keywords of each project to an array and count the occ
 ```js echo
 function countEntities(data, mapFunction) {
   // flatten (map to array then merge) entities
-  const entity_list = d3.merge(d3.map(data, (d) => mapFunction(d)));
+  const entity_list = d3.merge(
+    d3.map(
+      data,
+      (d) => mapFunction(d)
+    )
+  );
   // group by entity then reduce to a count with d3.rollup()
   const entityCounts = d3.rollup(
     entity_list,

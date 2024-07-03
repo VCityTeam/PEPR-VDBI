@@ -32,8 +32,18 @@ const workbook2 = FileAttachment(
 ```
 
 ```js
-const projects_product = resolveProjectEntities(getProductSheet(workbook1));
-const projects_phase_1 = resolvePhase1Entities(getPhase1Sheet(workbook2));
+const anonymize = true;
+const anonymizeDict = new Map();
+const projects_product = resolveProjectEntities(
+  getProductSheet(workbook1),
+  anonymize,
+  anonymizeDict
+);
+const projects_phase_1 = resolvePhase1Entities(
+  getPhase1Sheet(workbook2),
+  anonymize,
+  anonymizeDict
+);
 
 const city_data = getVillesSheet(workbook2).map((d) => {
   return {

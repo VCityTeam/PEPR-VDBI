@@ -1,6 +1,6 @@
 ---
 title: Initial import test
-toc: false
+theme: light
 ---
 
 # Import and visualize sheet "240117 consortium laboratoire^J"
@@ -40,6 +40,7 @@ First a component for transforming the Workbook data is imported, followed by th
 
 ```js echo
 import { resolvePhase1Entities } from "./components/240117-proposals-labs-establishments.js";
+import { anonymizeEntry } from "./components/utilities.js";
 const workbook = FileAttachment("./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx").xlsx();
 ```
 
@@ -56,7 +57,13 @@ function getProjectSheet(workbook) {
     headers: true,
   });
 }
-const projects_phase_1 = getProjectSheet(workbook);
+const anonymize = true;
+const acronymousDict = new Map();
+const projects_phase_1 =  resolvePhase1Entities(
+  getProjectSheet(workbook),
+  anonymize,
+  acronymousDict
+);
 ```
 
 ```js
@@ -100,15 +107,12 @@ Note how the data in the changes in real-time, based on our search query.
 ```js
 search
 ```
-
+<!-- 
 ## Table with 2D arrays and search
 
 Using the proposed transformation from the component, we can map the extracted data to a more compact table.
 
-This is a basic example of manual entity linking.
-
 ```js echo
-const mappedData = resolvePhase1Entities(projects_phase_1);
 const searchMapped = view(
   Inputs.search(mappedData, { placeholder: "Search mapped projects..." })
 );
@@ -120,4 +124,4 @@ display(Inputs.table(searchMapped));
 
 ```js
 searchMapped
-```
+``` -->
