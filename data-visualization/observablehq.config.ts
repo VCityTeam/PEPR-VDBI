@@ -32,8 +32,12 @@ export default {
       name: 'Tests',
       pages: [
         {
-          name: 'Import Tests',
-          path: '/test-import',
+          name: 'Import Excel Tests',
+          path: '/test-excel-import',
+        },
+        {
+          name: 'Import dataESR Tests',
+          path: '/test-esr-import',
         },
         {
           name: 'Plot Tests',
