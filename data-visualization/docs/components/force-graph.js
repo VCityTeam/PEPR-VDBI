@@ -1,6 +1,6 @@
-import * as d3 from "npm:d3";
+import * as d3 from 'npm:d3';
 
-export function mapEntitiesToGraph(projects) {
+export function mapEntitiesToGraph(projects, colorMap = {}) {
   // create triples for each project and add them to an array (representing the graph)
   const nodes = [];
   const links = [];
@@ -8,7 +8,6 @@ export function mapEntitiesToGraph(projects) {
   // nodes.push({ id: "PEPR VDBI", color: 0 });
 
   projects.forEach((project) => {
-    nodes.push({ id: project.acronyme, color: 0 });
     // link to root node
     // links.push({
     //   source: "PEPR VDBI",
@@ -17,16 +16,22 @@ export function mapEntitiesToGraph(projects) {
     // });
     // iterate though every entry of each project
     for (const [key, value] of Object.entries(project)) {
-      // skip id cells
-      if (key != "acronyme") {
+      if (key == 'acronyme') {
+        nodes.push({ id: project.acronyme, color: colorMap.acronyme });
+      } else if (typeof value == 'string') {
+        if (!nodes.find((d) => d.id == value)) {
+          nodes.push({ id: value, color: colorMap[key] });
+        }
+        links.push({ source: project.acronyme, label: key, target: value });
+      } else {
         // push value of project properties to graph
         for (let index = 0; index < value.length; index++) {
           const element = value[index];
           if (!element) {
-            console.warn("No element found", index, key, value);
+            console.warn('No element found', index, key, value);
           }
           if (!nodes.find((d) => d.id == element)) {
-            nodes.push({ id: element, color: index + 1 });
+            nodes.push({ id: element, color: colorMap[key] });
           }
           links.push({
             source: project.acronyme, // project id
@@ -58,28 +63,30 @@ export function forceGraph(
      **/
   },
   {
-    typeList = [], // list of color lables for legend
+    id = 'd3_graph_' + Math.random().toString(36).substring(7),
+    typeList = {}, // list of color lables for legend
     width = 500, // canvas width
     height = 500, // canvas height
     colorScale = d3.scaleOrdinal(d3.schemeCategory10), // color scheme
     fontSize = 10, // label font size
     r = 3, // node radius
     textLength = 15, // label cutoff length
-    stroke = "#111", // stroke for links
+    stroke = '#111', // stroke for links
     strokeWidth = 0.5, // stroke width for links
     strokeOpacity = 0.4, // stroke opacity for links
-    textColor = "black", // label color
-    halo = "#fff", // color of label halo
+    textColor = 'black', // label color
+    halo = '#fff', // color of label halo
     haloWidth = 0.25, // padding around the labels
     labelOpacity = 0.2, // default label opacity
     highlightOpacity = 0.9, // mouseover label opacity
   }
 ) {
   const svg = d3
-    .create("svg")
-    .attr("class", "d3_graph")
-    .attr("viewBox", [-width / 2, -height / 2, width, height])
-    .style("display", "hidden");
+    .create('svg')
+    .attr('id', id)
+    .attr('class', 'd3_graph')
+    .attr('viewBox', [-width / 2, -height / 2, width, height])
+    .style('display', 'hidden');
 
   const links = data.links.map((d) => Object.create(d));
   const nodes = data.nodes.map((d) => Object.create(d));
@@ -87,41 +94,43 @@ export function forceGraph(
   const simulation = d3
     .forceSimulation(nodes)
     .force(
-      "link",
+      'link',
       d3.forceLink(links).id((d) => d.id)
     )
-    .force("charge", d3.forceManyBody())
+    .force('charge', d3.forceManyBody())
     // .force("center", d3.forceCenter(width / 2, height / 2));
-    .force("x", d3.forceX())
-    .force("y", d3.forceY());
+    .force('x', d3.forceX())
+    .force('y', d3.forceY());
 
-  svg.call(d3.zoom().on("zoom", handleZoom));
+  svg.call(d3.zoom().on('zoom', handleZoom));
 
   const link = svg
-    .append("g")
-    .attr("stroke", stroke)
-    .attr("stroke-opacity", strokeOpacity)
-    .selectAll("line")
+    .append('g')
+    .attr('class', 'links')
+    .attr('stroke', stroke)
+    .attr('stroke-opacity', strokeOpacity)
+    .selectAll('line')
     .data(links)
-    .join("line")
-    .attr("stroke-width", strokeWidth);
+    .join('line')
+    .attr('stroke-width', strokeWidth);
 
   const node = svg
-    .append("g")
-    .selectAll("circle")
+    .append('g')
+    .attr('class', 'nodes')
+    .selectAll('circle')
     .data(nodes)
-    .join("circle")
-    .attr("r", r)
-    .attr("stroke-opacity", strokeOpacity)
-    .attr("stroke-width", strokeWidth)
-    .attr("stroke", stroke)
-    .attr("fill", (d) => colorScale(d.color))
+    .join('circle')
+    .attr('r', r)
+    .attr('stroke-opacity', strokeOpacity)
+    .attr('stroke-width', strokeWidth)
+    .attr('stroke', stroke)
+    .attr('fill', (d) => colorScale(d.color))
     // .on("click", (event, datum) => {
     //   console.debug("event", event);
     //   console.debug("datum", datum);
     // })
-    .on("mouseover", (event, datum) => {
-      event.target.style["stroke-opacity"] = highlightOpacity;
+    .on('mouseover', (event, datum) => {
+      event.target.style['stroke-opacity'] = highlightOpacity;
       // event.target.style["stroke"] = "white";
       // event.target.style["fill"] = colorScale(nodes[datum.index].color);
       links
@@ -138,30 +147,30 @@ export function forceGraph(
             )
             .nodes()
             .forEach((d) => {
-              d.style["stroke-opacity"] = highlightOpacity;
+              d.style['stroke-opacity'] = highlightOpacity;
             });
           node_label
             .filter((_, j) => j == d.source.index || j == d.target.index)
             .nodes()
             .forEach((d) => {
-              d.style["opacity"] = highlightOpacity;
+              d.style['opacity'] = highlightOpacity;
             });
           link
             .filter((_, j) => j == d.index)
             .nodes()
             .forEach((d) => {
-              d.style["stroke-opacity"] = highlightOpacity;
+              d.style['stroke-opacity'] = highlightOpacity;
             });
           link_label
             .filter((_, j) => j == d.index)
             .nodes()
             .forEach((d) => {
-              d.style["opacity"] = highlightOpacity;
+              d.style['opacity'] = highlightOpacity;
             });
         });
     })
-    .on("mouseout", (event, datum) => {
-      event.target.style["stroke-opacity"] = strokeOpacity;
+    .on('mouseout', (event, datum) => {
+      event.target.style['stroke-opacity'] = strokeOpacity;
       // event.target.style["stroke"] = stroke;
       // event.target.style["fill"] = colorScale(nodes[datum.index].color);
       links
@@ -175,130 +184,128 @@ export function forceGraph(
             .filter((_, j) => j == d.source.index || j == d.target.index)
             .nodes()
             .forEach((d) => {
-              d.style["stroke-opacity"] = strokeOpacity;
+              d.style['stroke-opacity'] = strokeOpacity;
             });
           node_label
             .filter((_, j) => j == d.source.index || j == d.target.index)
             .nodes()
             .forEach((d) => {
-              d.style["opacity"] = labelOpacity;
+              d.style['opacity'] = labelOpacity;
             });
           link
             .filter((_, j) => j == d.index)
             .nodes()
             .forEach((d) => {
-              d.style["stroke-opacity"] = strokeOpacity;
+              d.style['stroke-opacity'] = strokeOpacity;
             });
           link_label
             .filter((_, j) => j == d.index)
             .nodes()
             .forEach((d) => {
-              d.style["opacity"] = labelOpacity;
+              d.style['opacity'] = labelOpacity;
             });
         });
     })
     .call(drag(simulation));
 
-  node.append("title").text((d) => d.id);
+  node.append('title').text((d) => d.id);
 
   const node_label = svg
-    .selectAll(".node_label")
+    .selectAll('.node_label')
     .data(nodes)
     .enter()
-    .append("text")
+    .append('text')
     .text((d) =>
-      d.id.length > textLength ? d.id.slice(0, textLength).concat("...") : d.id
+      d.id.length > textLength ? d.id.slice(0, textLength).concat('...') : d.id
     )
-    .style("text-anchor", "middle")
-    .style("font-family", "Arial")
-    .style("font-size", fontSize)
-    .style("fill", textColor)
-    .style("opacity", labelOpacity)
+    .style('text-anchor', 'middle')
+    .style('font-family', 'Arial')
+    .style('font-size', fontSize)
+    .style('fill', textColor)
+    .style('opacity', labelOpacity)
     // .style('fill', 'white')
     // .style('visibility', 'hidden')
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-width", haloWidth)
-    .attr("stroke", halo)
-    .attr("paint-order", "stroke")
-    .style("pointer-events", "none")
-    .attr("class", "node_label");
+    .attr('stroke-linejoin', 'round')
+    .attr('stroke-width', haloWidth)
+    .attr('stroke', halo)
+    .attr('paint-order', 'stroke')
+    .style('pointer-events', 'none')
+    .attr('class', 'node_label');
 
   const link_label = svg
-    .selectAll(".link_label")
+    .selectAll('.link_label')
     .data(links)
     .enter()
-    .append("text")
+    .append('text')
     .text((d) =>
       d.label.length > textLength
-        ? d.label.slice(0, textLength).concat("...")
+        ? d.label.slice(0, textLength).concat('...')
         : d.label
     )
-    .style("text-anchor", "middle")
-    .style("font-family", "Arial")
-    .style("font-size", fontSize)
-    .style("fill", textColor)
+    .style('text-anchor', 'middle')
+    .style('font-family', 'Arial')
+    .style('font-size', fontSize)
+    .style('fill', textColor)
     // .style('fill', 'white')
     // .style('visibility', 'hidden')
-    .style("opacity", labelOpacity)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-width", haloWidth)
-    .attr("stroke", halo)
-    .attr("paint-order", "stroke")
-    .style("pointer-events", "none")
-    .attr("class", "link_label");
+    .style('opacity', labelOpacity)
+    .attr('stroke-linejoin', 'round')
+    .attr('stroke-width', haloWidth)
+    .attr('stroke', halo)
+    .attr('paint-order', 'stroke')
+    .style('pointer-events', 'none')
+    .attr('class', 'link_label');
 
-  simulation.on("tick", () => {
-    node_label.attr("x", (d) => d.x).attr("y", (d) => d.y - 10);
+  simulation.on('tick', () => {
+    node_label.attr('x', (d) => d.x).attr('y', (d) => d.y - 10);
     link
-      .attr("x1", (d) => d.source.x)
-      .attr("y1", (d) => d.source.y)
-      .attr("x2", (d) => d.target.x)
-      .attr("y2", (d) => d.target.y);
+      .attr('x1', (d) => d.source.x)
+      .attr('y1', (d) => d.source.y)
+      .attr('x2', (d) => d.target.x)
+      .attr('y2', (d) => d.target.y);
     link_label
-      .attr("x", (d) => (d.source.x + d.target.x) / 2)
-      .attr("y", (d) => (d.source.y + d.target.y) / 2);
-    node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
+      .attr('x', (d) => (d.source.x + d.target.x) / 2)
+      .attr('y', (d) => (d.source.y + d.target.y) / 2);
+    node.attr('cx', (d) => d.x).attr('cy', (d) => d.y);
   });
 
   // Create legend
   svg
-    .append("text")
-    .attr("x", 12)
-    .attr("y", 24)
-    .style("font-size", "18px")
-    .style("text-decoration", "underline")
-    .text("Legend")
-    .style("fill", "FloralWhite");
+    .append('text')
+    .attr('x', -width / 2 + 12)
+    .attr('y', -height / 2 + 24)
+    .style('font-size', '18px')
+    .style('text-decoration', 'underline')
+    .text('Legend')
+    .style('fill', 'black');
 
   // legend colors
   svg
-    .append("g")
-    .attr("stroke", "#111")
-    .attr("stroke-width", 1)
-    .selectAll("rect")
-    .data(typeList)
-    .join("rect")
-    .attr("x", 12)
-    .attr("y", (_, i) => 32 + i * 16)
-    .attr("width", 10)
-    .attr("height", 10)
-    .style("fill", (_, i) => {
-      return setColor(i, "#000");
-    })
-    .append("title")
+    .append('g')
+    .attr('stroke', '#111')
+    .attr('stroke-width', 1)
+    .selectAll('rect')
+    .data(Object.values(typeList))
+    .join('rect')
+    .attr('x', -width / 2 + 12)
+    .attr('y', (_, i) => -height / 2 + 32 + i * 16)
+    .attr('width', 10)
+    .attr('height', 10)
+    .style('fill', colorScale)
+    .append('title')
     .text((d) => d);
 
   // legend text
   svg
-    .append("g")
-    .selectAll("text")
-    .data(typeList)
-    .join("text")
-    .attr("x", 26)
-    .attr("y", (_, i) => 41 + i * 16)
+    .append('g')
+    .selectAll('text')
+    .data(Object.keys(typeList))
+    .join('text')
+    .attr('x', -width / 2 + 26)
+    .attr('y', (_, i) => -height / 2 + 41 + i * 16)
     .text((d) => d)
-    .style("fill", "FloralWhite")
-    .style("font-size", "14px");
+    .style('fill', 'black')
+    .style('font-size', '14px');
 
   return svg.node();
 
@@ -342,9 +349,9 @@ export function forceGraph(
 
     return d3
       .drag()
-      .on("start", dragstarted)
-      .on("drag", dragged)
-      .on("end", dragended);
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended);
   }
 
   /**
@@ -353,35 +360,40 @@ export function forceGraph(
    * @param {d3.D3ZoomEvent} event the zoom event containing information on how the svg canvas is being translated and scaled
    */
   function handleZoom(event) {
-    d3.selectAll("svg g")
-      .attr("height", "100%")
-      .attr("width", "100%")
-      .attr("transform", event.transform);
+    d3.selectAll(`#${id} g.nodes`)
+      .attr('height', '100%')
+      .attr('width', '100%')
+      .attr('transform', event.transform);
 
-    d3.selectAll("text.node_label")
+    d3.selectAll(`#${id} g.links`)
+      .attr('height', '100%')
+      .attr('width', '100%')
+      .attr('transform', event.transform);
+
+    d3.selectAll(`#${id} text.node_label`)
       // .style("font-size", fontSize / event.transform.k + "px")
       .attr(
-        "transform",
-        "translate(" +
+        'transform',
+        'translate(' +
           event.transform.x +
-          "," +
+          ',' +
           event.transform.y +
-          ") scale(" +
+          ') scale(' +
           event.transform.k +
-          ")"
+          ')'
       );
 
-    d3.selectAll("text.link_label")
+    d3.selectAll(`#${id} text.link_label`)
       // .style("font-size", fontSize / event.transform.k + "px")
       .attr(
-        "transform",
-        "translate(" +
+        'transform',
+        'translate(' +
           event.transform.x +
-          "," +
+          ',' +
           event.transform.y +
-          ") scale(" +
+          ') scale(' +
           event.transform.k +
-          ")"
+          ')'
       );
   }
 }

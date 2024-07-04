@@ -8,6 +8,22 @@ export function getProductSheet(workbook) {
   });
 }
 
+export const projectColorMap = {
+  acronyme: 0,
+  nom: 1,
+  titre: 2,
+  action: 3,
+  comment: 4,
+  pourquoi: 5,
+  proposition: 6,
+  actionPourSolutions: 7,
+  produit: 8,
+  objetOuDispositifImplique: 9,
+  motClefs: 10,
+  defi: 11,
+
+};
+
 export function resolveProjectEntities(
   sheet,
   anonymize = false,
@@ -16,14 +32,14 @@ export function resolveProjectEntities(
   // Map raw project data to a simple 2D array
   return map(sheet, (d) => {
     const projectMap = {
-      acronyme: [d['Acronyme']],
-      nom: [d['NOM et prénom']],
-      titre: [d['Titre complet']],
-      action: [d['ACTION (de recherche)']],
-      comment: [d['COMMENT']],
-      pourquoi: [d['POUR QUOI FAIRE']],
-      proposition: [d['proposition de recherche (format synthétique)']],
-      actionPourSolutions: [d['Quels actions POUR quelles solutions ?']],
+      acronyme: d['Acronyme'],
+      nom: d['NOM et prénom'],
+      titre: d['Titre complet'],
+      action: d['ACTION (de recherche)'],
+      comment: d['COMMENT'],
+      pourquoi: d['POUR QUOI FAIRE'],
+      proposition: d['proposition de recherche (format synthétique)'],
+      actionPourSolutions: d['Quels actions POUR quelles solutions ?'],
       produit: filter(
         [
           d['Produit (ou résultat) de la recherche (primaire)'],
