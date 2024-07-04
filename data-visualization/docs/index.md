@@ -47,13 +47,6 @@ toc: false
 <div class="hero">
   <h1>PEPR Data Visualization Tests</h1>
   <h2>Welcome to the data visualization tests for PEPR Ville Durable & Bâtiment Innovant project! Use the menu on the left to explore each Dashboard. Edit&nbsp;<code style="font-size: 90%;">docs/index.md</code> to change this page.</h2>
-  <h2>The following Observable tests are also available</h2>
-  <ul>
-    <li><a href="./test-import">Excel data import tests<span style="display: inline-block; margin-left: 0.25rem;">↗︎</span></a></li>
-    <li><a href="./test-plot">Plot visualization tests<span style="display: inline-block; margin-left: 0.25rem;">↗︎</span></a></li>
-    <li><a href="./test-tree">Tree visualization tests<span style="display: inline-block; margin-left: 0.25rem;">↗︎</span></a></li>
-    <li><a href="./test-graph">Graph visualization tests<span style="display: inline-block; margin-left: 0.25rem;">↗︎</span></a></li>
-  </ul>
   <a href="https://github.com/VCityTeam/PEPR-VDBI" target="_blank">Github<span style="display: inline-block; margin-left: 0.25rem;">↗︎</span></a>
 </div>
 
