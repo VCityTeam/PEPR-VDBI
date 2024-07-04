@@ -41,6 +41,7 @@ flowchart TD
 import {
   getProductSheet,
   resolveProjectEntities,
+  projectColorMap,
 } from "./components/240108-proposals-keywords.js";
 import {
   mapEntitiesToGraph,
@@ -91,35 +92,8 @@ Once integrated the following information is desired for visualization:
 ... We can also map the data to a graph hierarchy
 
 ```js echo
-const productGraph = mapEntitiesToGraph(productData);
+const productGraph = mapEntitiesToGraph(productData, projectColorMap);
 display(productGraph);
-```
-
-Another graph is proposed with a "central" `Project PEPR` node connected to each project
-
-```js echo
-const productGraphWithPEPR = { ...productGraph };
-
-// add "root" node
-productGraphWithPEPR.nodes.push({
-  id: "Projet PEPR",
-  color: 0,
-});
-// add root to project links
-d3.rollup(
-  productGraphWithPEPR.links,
-  (D) => {
-    return {
-      source: "Projet PEPR",
-      label: "hasProject",
-      target: D[0].source,
-    };
-  },
-  (d) => d.source
-)
-  .values()
-  .forEach((d) => productGraphWithPEPR.links.push(d));
-display(productGraphWithPEPR);
 ```
 
 ```js echo
@@ -128,6 +102,7 @@ const productForceGraph = forceGraph(productGraph, {
   height: 1400,
   r: 3,
   fontSize: 8,
+  typeList: projectColorMap,
 });
 display(productForceGraph);
 ```
@@ -150,6 +125,7 @@ const filteredProductForceGraph = forceGraph(filteredProductGraph, {
   height: 1400,
   r: 2,
   fontSize: 8,
+  typeList: projectColorMap,
 });
 display(filteredProductForceGraph);
 ```
