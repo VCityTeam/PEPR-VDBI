@@ -68,19 +68,6 @@ display(project_data);
 ```
 
 ```js
-// laboratory by project sort select inputs
-const laboratory_sort_input = Inputs.select(
-  new Map([
-    ["Laboratory name", true],
-    ["Project count", false],
-  ]),
-  {
-    value: false,
-    label: "Sort by",
-  }
-);
-const laboratory_sort = Generators.input(laboratory_sort_input);
-
 // project_laboratories by project filter select inputs
 const project_laboratories_auditioned_input = Inputs.select(
   getColumnOptions(project_data, "auditionne"),

@@ -12,18 +12,22 @@ export default {
       name: 'Phase 2 Overview Dashboard',
       path: 'phase2-overview-dashboard',
     },
-    {
-      name: 'Phase 2 Project Dashboard',
-      path: 'phase2-project-dashboard',
-    },
-    {
-      name: 'Phase 2 Laboratory Dashboard',
-      path: 'phase2-laboratory-dashboard',
-    },
-    {
-      name: 'Phase 2 Financing Dashboard',
-      path: 'phase2-financing-dashboard',
-    },
+    // {
+    //   name: 'Phase 2 Project Dashboard',
+    //   path: 'phase2-project-dashboard',
+    // },
+    // {
+    //   name: 'Phase 2 Laboratory Dashboard',
+    //   path: 'phase2-laboratory-dashboard',
+    // },
+    // {
+    //   name: 'Phase 2 University Dashboard',
+    //   path: 'phase2-university-dashboard',
+    // },
+    // {
+    //   name: 'Phase 2 Financing Dashboard',
+    //   path: 'phase2-financing-dashboard',
+    // },
     {
       name: 'Phase 2 All Data Dashboard',
       path: 'phase2-data-dashboard',

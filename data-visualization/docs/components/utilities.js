@@ -60,7 +60,7 @@ export function mergeCounts(datasets, count_types) {
 export function countEntities(data, mapFunction) {
   // extract the entity from the dataset as an array and merge all entites
   const entity_list = merge(map(data, (d) => mapFunction(d)));
-
+  console.log("entity_list", entity_list);
   // rollup to a count of each unique entity,
   const entity_count = rollup(
     entity_list,
@@ -132,42 +132,68 @@ export function joinOnKey(source_data, target_data, foreign_key, primary_key) {
   source_data[foreign_key] = target_data.find(
     (d) => d[primary_key] === foreign_key
   );
+  // TODO add join from target to source
 }
 
 export function joinOnKeys(
   source_data,
-  source_key,
-  foreign_keys,
+  source_foreign_keys,
   target_data,
-  primary_key
+  target_primary_key,
+  target_foreign_key
 ) {
   source_data.forEach((source_d) => {
-    for (let index = 0; index < source_d[foreign_keys].length; index++) {
-      const foreign_key = source_d[foreign_keys][index];
-      source_d[foreign_keys][index] = target_data.find(
-        (target_d) => target_d[primary_key] === foreign_key
+    for (let index = 0; index < source_d[source_foreign_keys].length; index++) {
+      const foreign_key = source_d[source_foreign_keys][index];
+      source_d[source_foreign_keys][index] = target_data.find(
+        (target_d) => target_d[target_primary_key] === foreign_key
       );
     }
   });
 
   target_data.forEach((target_d) => {
-    target_d['owner_' + source_key] = filter(
-      source_data,
-      (source_d) => source_d[foreign_keys][0] === target_d
+    target_d[target_foreign_key] = filter(source_data, (source_d) =>
+      source_d[source_foreign_keys].includes(target_d)
     );
-    target_d['owner_' + source_key + '_count'] =
-      target_d['owner_' + source_key].length;
-
-    target_d['partner_' + source_key] = filter(source_data, (source_d) =>
-      source_d[foreign_keys].slice(1).includes(target_d)
-    );
-    target_d['partner_' + source_key + '_count'] =
-      target_d['partner_' + source_key].length;
-
-    target_d['total_' + source_key + '_count'] =
-      target_d['owner_' + source_key + '_count'] +
-      target_d['partner_' + source_key + '_count'];
   });
+}
+
+export function joinOnOwnerPartnerKeys(
+  source_data,
+  source_foreign_keys,
+  target_data,
+  target_foreign_key,
+  target_primary_key,
+  target_foreign_key_filter = null
+) {
+  source_data.forEach((source_d) => {
+    for (let index = 0; index < source_d[source_foreign_keys].length; index++) {
+      const foreign_key = source_d[source_foreign_keys][index];
+      const foreign_entity = target_data.find(
+        (target_d) => target_d[target_primary_key] === foreign_key
+      );
+      source_d[source_foreign_keys][index] = foreign_entity
+        ? foreign_entity
+        : source_d[source_foreign_keys][index];
+    }
+  });
+
+  for (let index = 0; index < target_data.length; index++) {
+    if (target_foreign_key_filter) {
+      target_foreign_key_filter(target_data[index]);
+    } else {
+      target_data[index]['owner_' + target_foreign_key] = filter(
+        source_data,
+        (source_d) => source_d[source_foreign_keys][0] === target_data[index]
+      );
+
+      target_data[index]['partner_' + target_foreign_key] = filter(
+        source_data,
+        (source_d) =>
+          source_d[source_foreign_keys].slice(1).includes(target_data[index])
+      );
+    }
+  }
 }
 
 /**
