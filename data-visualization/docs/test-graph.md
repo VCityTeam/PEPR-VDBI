@@ -111,12 +111,18 @@ display(productForceGraph);
 
 **Filtered graph nodes and links:**
 
+```js
+const filter_input = Inputs.select(
+  Object.keys(productData[0]).slice(1)
+);
+const filter_value = Generators.input(filter_input);
+```
+
 ```js echo
 const filteredProductGraph = filterLinks(
   productGraph,
-  (d) => d.label == "motClefs"
+  (d) => d.label == filter_value
 );
-display(filteredProductGraph);
 ```
 
 ```js echo
@@ -127,5 +133,7 @@ const filteredProductForceGraph = forceGraph(filteredProductGraph, {
   fontSize: 8,
   typeList: projectColorMap,
 });
-display(filteredProductForceGraph);
 ```
+
+<div>${filter_input}</div>
+<div>${filteredProductForceGraph}</div>
