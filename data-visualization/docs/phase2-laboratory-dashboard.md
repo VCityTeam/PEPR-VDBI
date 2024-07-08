@@ -10,6 +10,7 @@ import {
   countEntities,
   addEntityProjectOwnerAndPartnerCounts,
   joinOnKeys,
+  joinOnOwnerPartnerKeys,
 } from "./components/utilities.js";
 import {
   getGeneraliteSheet,
@@ -87,13 +88,13 @@ display(laboratory_data);
 ```
 
 ```js
-joinOnKeys(
-  project_data,
-  "projects",
-  "laboratoires",
-  laboratory_data,
-  "laboratoire"
-);
+// joinOnOwnerPartnerKeys(
+//   project_data,
+//   "laboratoires",
+//   laboratory_data,
+//   "projects",
+//   "laboratoire",
+// );
 ```
 
 ```js
@@ -135,13 +136,51 @@ const critera_functions = [d => d.auditionne, d => d.finance];
 
 // format laboratory project owner data
 
-// group by laboratory project owner
+// group by laboratory
+// const filtered_projects = filterOnInput(
+//   project_data,
+//   [laboratory_auditioned, laboratory_financed],
+//   critera_functions
+// );
+
+joinOnOwnerPartnerKeys(
+  project_data,
+  "laboratoires",
+  laboratory_data,
+  "projects",
+  "laboratoire",
+  // (di) => {
+  //   const filtered_owner_projects = filterOnInput(
+  //     project_data,
+  //     [laboratory_auditioned, laboratory_financed, true],
+  //     [
+  //       d => d.auditionne,
+  //       d => d.finance,
+  //       dj => dj.laboratoires[0] == di,
+  //     ]
+  //   );
+  //   di.owner_projects = filtered_owner_projects;
+  //   const filtered_partner_projects = filterOnInput(
+  //     project_data,
+  //     [laboratory_auditioned, laboratory_financed, true],
+  //     [
+  //       d => d.auditionne,
+  //       d => d.finance,
+  //       dj => dj.laboratoires.slice(1).some((dk) => dk == di),
+  //     ]
+  //   );
+  //   di.partner_projects = filtered_partner_projects;
+  // }
+);
+
+// group by laboratory project
 const projects_by_laboratory_project_owner = d3.groups(
   project_data,
   (d) => d.laboratoires[0]
 );
-display("projects_by_laboratory_project_owner");
-display(projects_by_laboratory_project_owner);
+
+// const labcounts = countEntities(project_data, (d) => d.laboratoires.slice(1));
+// display(labcounts);
 
 // for every group of project owner by laboratory map...
 const filtered_projects_by_laboratory_project_owner = d3.map(
@@ -160,29 +199,48 @@ const filtered_projects_by_laboratory_project_owner = d3.map(
     };
   }
 );
+
 display("filtered_projects_by_laboratory_project_owner");
 display(filtered_projects_by_laboratory_project_owner);
+
+// for every group of project owner by laboratory map...
+laboratory_data.forEach(
+  (d) => {
+    // ... a filter on the auditionne and finance fields iff specified in the university_project_stage input
+    const filtered_projects = filterOnInput(
+      d.projects,
+      [laboratory_auditioned, laboratory_financed],
+      critera_functions
+    );
+    // ... and reformat for plot
+    d.projects = filtered_projects;
+  }
+);
+display("laboratory_data");
+display(laboratory_data);
 ```
 
 ```js
-export function getSortable2MarkCountPlot(
+function getSortable2MarkCountPlot(
   data,
-  x1 = 'count',
-  y1 = 'type',
-  x2 = 'count',
-  y2 = 'type',
-  width = 1500,
-  row_height = 17,
-  margin_left = 60,
-  margin_right = 140,
-  color_scheme = 'Plasma',
-  x_label = 'Occurrences',
-  domain_min = 0,
-  domain_max = 1, // added to max occurrences to define the domain max
-  y_tick_format_cuttoff = 25, // cut off label after this many characters
-  y_label = 'Entity',
-  sort_criteria = '-x',
-  tip = true
+  {
+    x1 = 'count',
+    y1 = 'type',
+    x2 = 'count',
+    y2 = 'type',
+    width = 1500,
+    row_height = 17,
+    margin_left = 60,
+    margin_right = 140,
+    color_scheme = 'Plasma',
+    x_label = 'Occurrences',
+    domain_min = 0,
+    domain_max = Math.max(...data.map((d) => d[x1])) + 1,
+    y_tick_format_cuttoff = 25, // cut off label after this many characters
+    y_label = 'Entity',
+    sort_criteria = '-x',
+    tip = true
+  }
 ) {
   return Plot.plot({
     height: data.length * row_height, // assure adequate horizontal space for each line
@@ -197,43 +255,62 @@ export function getSortable2MarkCountPlot(
       axis: 'top',
       label: x_label,
       // domain useful for constraining ticks between 0 and max occurrences + 1
-      domain: [domain_min, Math.max(...data.map((d) => d[x1])) + domain_max],
+      domain: [domain_min, domain_max],
     },
-    y: {
-      tickFormat: (d) =>
-        d.length > y_tick_format_cuttoff ? d.slice(0, 23).concat('...') : d, // cut off long tick labels
-      label: y_label,
-    },
+    // y: {
+    //   tickFormat: (d) =>
+    //     d.length > y_tick_format_cuttoff ? d.slice(0, 23).concat('...') : d, // cut off long tick labels
+    //   label: y_label,
+    // },
     marks: [
       Plot.barX(data, {
         x: x1,
         y: y1,
         fill: x1,
-        sort: { y1: sort_criteria },
+        // sort: { y1: sort_criteria },
         tip: tip,
       }),
     ],
-    marks: [
-      Plot.barX(data, {
-        x: x2,
-        y: y2,
-        fill: x2,
-        sort: { y2: sort_criteria },
-        tip: tip,
-      }),
-    ],
+    // marks: [
+    //   Plot.barX(data, {
+    //     x: x2,
+    //     y: y2,
+    //     fill: x2,
+    //     sort: { y2: sort_criteria },
+    //     tip: tip,
+    //   }),
+    // ],
   });
 }
-const filtered_projects_by_laboratory_project_owner_plot = getSortable2MarkCountPlot(
-  filtered_projects_by_laboratory_project_owner,
-  {
-    x1: (d) => d.entity ? d.entity.laboratoire : d.entity,
-    y1: (d) => d.projects.length,
-    x2: (d) => d.projects ? d.entity.laboratoire : d.entity,
-    y2: (d) => d.entity ? d.entity.laboratoire : d.entity,
-  }
-);
+// const filtered_projects_by_laboratory_project_owner_plot = getSortable2MarkCountPlot(
+//   filtered_projects_by_laboratory_project_owner,
+//   {
+//     x1: (d) => d.projects.length,
+//     y1: (d) => d.entity ? d.entity.laboratoire : 'Undefined',
+//     // x2: (d) => d.projects ? d.entity.laboratoire : d.entity,
+//     // y2: (d) => d.entity ? d.entity.laboratoire : d.entity,
+//     margin_left: 200,
+//     domain_max: Math.max(...filtered_projects_by_laboratory_project_owner.map((d) => d.projects.length)) + 1,
+//   }
+// );
 
+// const filtered_projects_by_laboratory_project_owner_plot = Plot.plot({
+//   height: filtered_projects_by_laboratory_project_owner.length * 20, // assure adequate horizontal space for each line
+//   width: 800,
+//   marginLeft: 0,
+//   marginRight: 0,
+//   color: {
+//     scheme: 'Plasma',
+//   },
+//   marks: [
+//     Plot.barX(filtered_projects_by_laboratory_project_owner, {
+//       x: (d) => d.projects.length,
+//       y: (d) => d.entity ? d.entity.laboratoire : 'undefined',
+//       fill: (d) => d.projects.length,
+//       tip: true,
+//     }),
+//   ],
+// });
 ```
 
 <div class="grid grid-cols-2">
