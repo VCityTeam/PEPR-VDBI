@@ -96,6 +96,8 @@ const partner_count = countEntities(project_data, (d) => d.partenaires);
 const total_partner_count = d3.reduce(partner_count, (p, v) => p + v.count, 0);
 ```
 
+<!-- LABORATORY COUNT -->
+
 ```js
 // project_laboratories by project filter select inputs
 const project_laboratories_auditioned_input = Inputs.select(
@@ -123,11 +125,13 @@ const project_laboratories_financed = Generators.input(
 // project_laboratories by project sort select inputs
 const project_laboratories_sort_input = Inputs.select(
   new Map([
-    ["Project name", true],
-    ["Laboratory count", false],
+    ["Project name ⇧", "x"],
+    ["Project name ⇩", "-x"],
+    ["Laboratory count ⇧", "y"],
+    ["Laboratory count ⇩", "-y"],
   ]),
   {
-    value: false,
+    value: "x",
     label: "Sort by",
   }
 );
@@ -143,7 +147,8 @@ const filtered_projects_laboratories = filterOnInput(
   [project_laboratories_auditioned, project_laboratories_financed],
   critera_functions
 );
-// display(filtered_projects_laboratories);
+display("filtered_projects_laboratories");
+display(filtered_projects_laboratories);
 ```
 
 ```js
@@ -161,20 +166,103 @@ const filtered_projects_laboratories_plot = Plot.plot({
   y: {
     grid: true,
     label: "Laboratory count",
-    domain: [0, Math.max(...filtered_projects_laboratories.map((d) => d.laboratoires_count)) + 1],
+    // domain: [0, 20],
+    domain: [0, Math.max(...filtered_projects_laboratories.map((d) => d.laboratoires.length)) + 1],
   },
   marks: [
     Plot.barY(filtered_projects_laboratories, {
       x: "acronyme",
-      y: "laboratoires_count",
-      fill: "laboratoires_count",
-      sort: {x: project_laboratories_sort ? "x" : "-y"},
+      y: d => d.laboratoires.length,
+      fill: d => d.laboratoires.length,
+      sort: {x: project_laboratories_sort},
       tip: true,
     }),
   ],
 });
 ```
 
+<!-- UNIVERSITY COUNT -->
+
+```js
+// project_universities by project filter select inputs
+const project_universities_auditioned_input = Inputs.select(
+  getColumnOptions(project_data, "auditionne"),
+  {
+    value: "All",
+    label: "Auditioned?",
+  }
+);
+const project_universities_financed_input = Inputs.select(
+  getColumnOptions(project_data, "finance"),
+  {
+    value: "All",
+    label: "Financed?",
+  }
+);
+
+const project_universities_auditioned = Generators.input(
+  project_universities_auditioned_input
+);
+const project_universities_financed = Generators.input(
+  project_universities_financed_input
+);
+
+// project_universities by project sort select inputs
+const project_universities_sort_input = Inputs.select(
+  new Map([
+    ["Project name ⇧", "x"],
+    ["Project name ⇩", "-x"],
+    ["University count ⇧", "y"],
+    ["University count ⇩", "-y"],
+  ]),
+  {
+    value: "x",
+    label: "Sort by",
+  }
+);
+const project_universities_sort = Generators.input(project_universities_sort_input);
+```
+
+```js
+const filtered_projects_universities = filterOnInput(
+  project_data,
+  [project_universities_auditioned, project_universities_financed],
+  critera_functions
+);
+display("filtered_projects_universities");
+display(filtered_projects_universities);
+```
+
+```js
+const filtered_projects_universities_plot = Plot.plot({
+  width,
+  height: 450,
+  marginBottom: 70,
+  color: {
+    scheme: "Plasma",
+  },
+  x: {
+    tickRotate: 30,
+    label: "Project",
+  },
+  y: {
+    grid: true,
+    label: "Laboratory count",
+    domain: [0, Math.max(...filtered_projects_universities.map((d) => d.etablissements.length)) + 1],
+  },
+  marks: [
+    Plot.barY(filtered_projects_universities, {
+      x: "acronyme",
+      y: d => d.etablissements.length,
+      fill: d => d.etablissements.length,
+      sort: {x: project_universities_sort},
+      tip: true,
+    }),
+  ],
+});
+```
+
+<!-- PROJECT FINANCING -->
 
 ```js
 // create auditioned filter input
@@ -319,10 +407,17 @@ const project_table = Inputs.table(projects_search, {
     <div>${project_laboratories_sort_input}</div>
     <div style="max-height: 450px">${filtered_projects_laboratories_plot}</div>
   </div>
+  <div class="card grid-colspan-2">
+    <h2>University count by Project</h2>
+    <div>${project_universities_auditioned_input}</div>
+    <div>${project_universities_financed_input}</div>
+    <div>${project_universities_sort_input}</div>
+    <div style="max-height: 450px">${filtered_projects_universities_plot}</div>
+  </div>
 </div>
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-2">
-    <h2>PEPR Projects</h2>
+    <h2>Project Financing</h2>
     <div>${project_search_input}</div>
     <div>${project_auditioned_input}</div>
     <div>${project_financed_input}</div>
