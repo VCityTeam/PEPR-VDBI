@@ -123,11 +123,11 @@ const dots = Plot.dot(
 
 // modified from https://observablehq.com/framework/loaders
 const globe_plot = Plot.plot({
-  height: 800,
+  height: 400,
   width: 800,
   projection: {
-    type: "orthographic",
-    rotate: [-globe_lat, -globe_lon],
+    type: "equal-earth",
+    // rotate: [-globe_lat, -globe_lon],
   },
   marks: [
     Plot.graticule(),
@@ -203,9 +203,9 @@ const france_city_plot = Plot.plot({
 ```
 
 ## Globe view
-
+<!-- 
 <div>Latitude: ${globe_lat_input}</div>
-<div>Longitude: ${globe_lon_input}</div>
+<div>Longitude: ${globe_lon_input}</div> -->
 <div>${globe_plot}</div>
 
 

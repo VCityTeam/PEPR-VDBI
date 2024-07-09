@@ -166,7 +166,6 @@ const filtered_projects_laboratories_plot = Plot.plot({
   y: {
     grid: true,
     label: "Laboratory count",
-    // domain: [0, 20],
     domain: [0, Math.max(...filtered_projects_laboratories.map((d) => d.laboratoires.length)) + 1],
   },
   marks: [
