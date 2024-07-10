@@ -59,7 +59,7 @@ const university_table = Inputs.table(phase_2_data.universities);
   - +1 column per projet/labo (not ideal but intuitive)
   - Move `DOMAINES ERC LABO` and related columns (HCERES) to `liste des labo`
 - `liste des établissements` sheet
-  - Add code UQA? (often used by [ESR Open Data](data.enseignementsup-recherche.gouv.fr))
+  - Add code uai? (often used by [ESR Open Data](data.enseignementsup-recherche.gouv.fr))
 - `liste des labo` sheet
   - Separate `Identifiant Laboratoire` into two columns
     - `Identifiant Laboratoire`
