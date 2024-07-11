@@ -207,7 +207,7 @@ This test will examine how we can call prompts and extract their output programa
 This requires launching Ollama on a local server.
 
 > [!NOTE]
-> Why Ollama? See [these notes](#notes-for-ai-assisted-data-integration)
+> Why Ollama? See [these notes]([./feasability-notes-GPT-data-integration.md))
 
 New dependency: [Ollama python](https://github.com/ollama/ollama-python)
 - ```bash
