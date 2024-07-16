@@ -1,9 +1,12 @@
 FROM llama3
+# The temperature of the model. Increasing the temperature will make the model
+# answer more creatively. (Default: 0.8)
+PARAMETER temperature 0.6
 # top_k reduces the probability of generating nonsense. A higher value
 # (e.g. 100) will give more diverse answers, while a lower value (e.g. 10) will
 # be more conservative. (Default: 40)
-PARAMETER top_k 10
+# PARAMETER top_k 10
 # top_p works together with top-k. A higher value (e.g., 0.95) will lead to more
 # diverse text, while a lower value (e.g., 0.5) will generate more focused and
 # conservative text. (Default: 0.9)
-PARAMETER top_p 0.1
+# PARAMETER top_p 0.5
