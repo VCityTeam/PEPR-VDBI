@@ -6,31 +6,35 @@ from langchain.llms import Ollama
 from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain.chains import RetrievalQA
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 import sys
 import os
+
 
 class SuppressStdout:
     def __enter__(self):
         self._original_stdout = sys.stdout
         self._original_stderr = sys.stderr
-        sys.stdout = open(os.devnull, 'w')
-        sys.stderr = open(os.devnull, 'w')
+        sys.stdout = open(os.devnull, "w")
+        sys.stderr = open(os.devnull, "w")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         sys.stdout.close()
         sys.stdout = self._original_stdout
         sys.stderr = self._original_stderr
 
+
 # load the pdf and split it into chunks
 loader = OnlinePDFLoader("test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf")
 data = loader.load()
 
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=0)
 all_splits = text_splitter.split_documents(data)
 
 with SuppressStdout():
-    vectorstore = Chroma.from_documents(documents=all_splits, embedding=GPT4AllEmbeddings())
+    vectorstore = Chroma.from_documents(
+        documents=all_splits, embedding=GPT4AllEmbeddings()  # type: ignore
+    )
 
 while True:
     query = input("\nQuery: ")
@@ -41,8 +45,8 @@ while True:
 
     # Prompt
     template = """Use the following pieces of context to answer the question at the end.
-    If you don't know the answer, just say that you don't know, don't try to make up an answer.
-    Use three sentences maximum and keep the answer as concise as possible.
+    If you don't know the answer, just say that you don't know, don't try to make up an
+    answer. Use three sentences maximum and keep the answer as concise as possible.
     {context}
     Question: {question}
     Helpful Answer:"""
@@ -51,7 +55,10 @@ while True:
         template=template,
     )
 
-    llm = Ollama(model="llama3:8b", callback_manager=CallbackManager([StreamingStdOutCallbackHandler()]))
+    llm = Ollama(
+        model="llama3:8b",
+        callback_manager=CallbackManager([StreamingStdOutCallbackHandler()]),
+    )  # type: ignore
     qa_chain = RetrievalQA.from_chain_type(
         llm,
         retriever=vectorstore.as_retriever(),
