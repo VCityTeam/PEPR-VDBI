@@ -7,20 +7,21 @@ Tests for converting unstructured text to structured text
     - [pypdf tests](#pypdf-tests)
       - [Test 1.1: simple pdf to text conversion](#test-11-simple-pdf-to-text-conversion)
       - [Test 1.2: pdf with table to text conversion](#test-12-pdf-with-table-to-text-conversion)
-      - [Test 2.1: Convert PEPR Résumés des lettres d’intention](#test-21-convert-pepr-résumés-des-lettres-dintention)
+      - [Test 1.3: Convert PEPR Résumés des lettres d’intention](#test-13-convert-pepr-résumés-des-lettres-dintention)
   - [Step 2 - unstructured text to structured text via GPT](#step-2---unstructured-text-to-structured-text-via-gpt)
     - [Mistral](#mistral)
-      - [Test 1.1: simple keyword extraction in french](#test-11-simple-keyword-extraction-in-french)
-      - [Test 1.2: simple keyword extraction in english](#test-12-simple-keyword-extraction-in-english)
-      - [Test 2.1: Ollama server+python](#test-21-ollama-serverpython)
+      - [Test 2.1: simple keyword extraction in french](#test-21-simple-keyword-extraction-in-french)
+      - [Test 2.2: simple keyword extraction in english](#test-22-simple-keyword-extraction-in-english)
+      - [Test 2.3: Ollama server+python](#test-23-ollama-serverpython)
     - [Workflow](#workflow)
       - [Test 3.1: Initial Python data workflow](#test-31-initial-python-data-workflow)
       - [Test 3.2 Structured Python data workflow](#test-32-structured-python-data-workflow)
       - [Test 3.3 Initial prompt optimization test](#test-33-initial-prompt-optimization-test)
       - [Test 3.4 Page range test](#test-34-page-range-test)
       - [Test 3.5 Add csv config to workflow](#test-35-add-csv-config-to-workflow)
-      - [Test 4.1 Modelfile test](#test-41-modelfile-test)
-      - [Test 4.1 TEMPERATURE and top parameters](#test-41-temperature-and-top-parameters)
+      - [Test 3.6 Modelfile test](#test-36-modelfile-test)
+      - [Test 3.7 TEMPERATURE and top parameters test](#test-37-temperature-and-top-parameters-test)
+      - [Test 3.8 Langchain RAG local document test](#test-38-langchain-rag-local-document-test)
 - [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
   - [Links](#links)
   - [Research interests](#research-interests)
@@ -39,10 +40,10 @@ title: Proposed method (steps 1-4)
 flowchart LR
     A(PDF) -->|1. Transform| B(Unstructured Text)
     B --> C{Large Language\n Model query}
-    C -->|2. Create a list of the\n given projects| X(''Structured'' text)
-    C -->|3. Create 4 keywords\n per project| Y(''Structured'' text)
-    C -->|4. Fuse these keywords\n into 1 list| Z(''Structured'' text)
-    C -->|... ?| AA(''Structured'' text)
+    C -->|2. Create a list of the\n given projects| X(Structured text)
+    C -->|3. Create 4 keywords\n per project| Y(Structured text)
+    C -->|4. Fuse these keywords\n into 1 list| Z(Structured text)
+    C -->|... ?| AA(Structured text)
     X --> C
     Y --> C
     Z --> C
@@ -109,7 +110,7 @@ Notes:
 - this causes structure of table to be lost
 - again perhaps markdown is better?
 
-#### Test 2.1: Convert PEPR Résumés des lettres d’intention
+#### Test 1.3: Convert PEPR Résumés des lettres d’intention
 Download and transform the PDF of project motivation letters.
 
 ```bash
@@ -139,7 +140,7 @@ ollama run mistral
 >>> /set nohistory
 ```
 
-#### Test 1.1: simple keyword extraction in french
+#### Test 2.1: simple keyword extraction in french
 
 Note that [deepl.com](https://www.deepl.com/) translates the keywords listed in the top of the documents as :
 > 3D data, spatio-temporal data, urban data, data integration, data transformation, ontologies, knowledge graphs, conceptual models, model-based, data standards
@@ -170,7 +171,7 @@ Notes:
   - in french
   - without the explanation, just the keywords
 
-#### Test 1.2: simple keyword extraction in english
+#### Test 2.2: simple keyword extraction in english
 
 For this prompt replace the occurrence of `[text]` with the contents of [pypdf_test.txt](./test-data/pypdf_test.txt)
 
@@ -203,7 +204,7 @@ Notes:
   - with this size of Mistral, do english prompts work better than french ones?
   - how do other models like `llama2` or models with larger parameters like `mixtral:8x22b` perform?
 
-#### Test 2.1: Ollama server+python
+#### Test 2.3: Ollama server+python
 
 This test will examine how we can call prompts and extract their output programatically with python.
 This requires launching Ollama on a local server.
@@ -213,7 +214,7 @@ This requires launching Ollama on a local server.
 
 New dependency: [Ollama python](https://github.com/ollama/ollama-python)
 - ```bash
-  pip install ollama
+  pip install -r src/requirements.txt
   ```
 
 ```bash
@@ -293,7 +294,7 @@ Use a csv file to configure workflow instead of a json file.
 python src/workflow_test.py -f csv test-data/workflow_0_config.csv
 ```
 
-#### Test 4.1 Modelfile test
+#### Test 3.6 Modelfile test
 
 Added modelfile functionality to ollama and workflow test scripts.
 
@@ -301,7 +302,7 @@ Added modelfile functionality to ollama and workflow test scripts.
 python src/workflow_test.py -f json test-data/workflow_4_config.json
 ```
 
-#### Test 4.1 TEMPERATURE and top parameters
+#### Test 3.7 TEMPERATURE and top parameters test
 
 Test ORCID and IdHAL extraction of the following modelfiles:
 - [llama3-json1-creative-default](test-data/modelfiles/llama3-json1-creative-default)
@@ -314,12 +315,35 @@ Test ORCID and IdHAL extraction of the following modelfiles:
 - [llama3-json1-unoriginal-diverse](test-data/modelfiles/llama3-json1-unoriginal-diverse)
 - [llama3-json1-unoriginal-focused](test-data/modelfiles/llama3-json1-unoriginal-focused)
 
-These modelfiles use differente `temperature`, `top_k`, `top_p` to change see how these parameters effect the generation of JSON.
-Additionally, conversation templates are used to provide examples to the model of how it should respond.
+These modelfiles use differente `temperature`, `top_k`, `top_p` to change see how these parameters effect the generation of JSON:
+- 'creative' models use a `temperature` of *0.9*
+- 'unoriginal' models use a `temperature` of *0.6*
+- 'diverse' models use a `top_k` and `top_p` of *100* and *0.95* respectively 
+- 'focused' models use a `top_k` and `top_p` of *10* and *0.5* respectively 
+
+Additionally, conversation examples are used to provided to the model of how it should respond. The user prompt features a page of text from VILLEGARDEN project containing resercher names and their ORCIDs/IdHal. The assistant response features an example of what the expected corresponding JSON output should be.
 
 ```bash
 python src/workflow_test.py -f json test-data/workflow_5_config.json
 ```
+
+TODO: run test and add notes
+
+#### Test 3.8 Langchain RAG local document test
+
+Code adapted from the ollama [langchain-python-rag-document](https://github.com/ollama/ollama/tree/main/examples/langchain-python-rag-document) example.
+Test Langchain for RAG ollama queries with workspace configuration.
+
+```bash
+python src/workflow_test.py -f json test-data/workflow_6_config.json
+```
+
+> [!NOTE]
+> RAG (Retrieval-Augmented Generation) is an approach to allowing sources of new
+> information to be provided to an LLM from outside of its training data.
+> See [here](https://en.wikipedia.org/wiki/Retrieval-augmented_generation) for more
+> information
+
 
 # Notes for AI assisted data integration
 
@@ -330,20 +354,21 @@ python src/workflow_test.py -f json test-data/workflow_5_config.json
     - [pypdf tests](#pypdf-tests)
       - [Test 1.1: simple pdf to text conversion](#test-11-simple-pdf-to-text-conversion)
       - [Test 1.2: pdf with table to text conversion](#test-12-pdf-with-table-to-text-conversion)
-      - [Test 2.1: Convert PEPR Résumés des lettres d’intention](#test-21-convert-pepr-résumés-des-lettres-dintention)
+      - [Test 1.3: Convert PEPR Résumés des lettres d’intention](#test-13-convert-pepr-résumés-des-lettres-dintention)
   - [Step 2 - unstructured text to structured text via GPT](#step-2---unstructured-text-to-structured-text-via-gpt)
     - [Mistral](#mistral)
-      - [Test 1.1: simple keyword extraction in french](#test-11-simple-keyword-extraction-in-french)
-      - [Test 1.2: simple keyword extraction in english](#test-12-simple-keyword-extraction-in-english)
-      - [Test 2.1: Ollama server+python](#test-21-ollama-serverpython)
+      - [Test 2.1: simple keyword extraction in french](#test-21-simple-keyword-extraction-in-french)
+      - [Test 2.2: simple keyword extraction in english](#test-22-simple-keyword-extraction-in-english)
+      - [Test 2.3: Ollama server+python](#test-23-ollama-serverpython)
     - [Workflow](#workflow)
       - [Test 3.1: Initial Python data workflow](#test-31-initial-python-data-workflow)
       - [Test 3.2 Structured Python data workflow](#test-32-structured-python-data-workflow)
       - [Test 3.3 Initial prompt optimization test](#test-33-initial-prompt-optimization-test)
       - [Test 3.4 Page range test](#test-34-page-range-test)
       - [Test 3.5 Add csv config to workflow](#test-35-add-csv-config-to-workflow)
-      - [Test 4.1 Modelfile test](#test-41-modelfile-test)
-      - [Test 4.1 TEMPERATURE and top parameters](#test-41-temperature-and-top-parameters)
+      - [Test 3.6 Modelfile test](#test-36-modelfile-test)
+      - [Test 3.7 TEMPERATURE and top parameters test](#test-37-temperature-and-top-parameters-test)
+      - [Test 3.8 Langchain RAG local document test](#test-38-langchain-rag-local-document-test)
 - [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
   - [Links](#links)
   - [Research interests](#research-interests)
