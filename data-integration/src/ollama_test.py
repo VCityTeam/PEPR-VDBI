@@ -1,5 +1,6 @@
 import os
 import argparse
+from tqdm import tqdm
 from utils import readFile, writeToFile
 import ollama
 
@@ -95,6 +96,37 @@ def sendPrompt(model: str, prompt: str, modelfile_path=None, format=""):
             service"""
         )
     return response
+
+
+def pullShowProgress(model: str, stream=True):
+    """
+    Show the progress of an Ollama model pull in the console. Code adapted from
+    https://github.com/ollama/ollama-python/blob/main/examples/pull-progress
+    """
+    current_digest, bars = "", {}
+    for progress in ollama.pull(model, stream):
+        digest = progress.get("digest", "")  # type: ignore
+        if digest != current_digest and current_digest in bars:
+            bars[current_digest].close()
+
+        if not digest:
+            print(progress.get("status"))  # type: ignore
+            continue
+
+        if digest not in bars and (
+            total := progress.get("total")  # type: ignore
+        ):
+            bars[digest] = tqdm(
+                total=total,
+                desc=f"pulling {digest[7:19]}",
+                unit="B",
+                unit_scale=True,
+            )
+
+        if completed := progress.get("completed"):  # type: ignore
+            bars[digest].update(completed - bars[digest].n)
+
+        current_digest = digest
 
 
 if __name__ == "__main__":

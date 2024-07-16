@@ -13,6 +13,7 @@ Tests for converting unstructured text to structured text
       - [Test 1.1: simple keyword extraction in french](#test-11-simple-keyword-extraction-in-french)
       - [Test 1.2: simple keyword extraction in english](#test-12-simple-keyword-extraction-in-english)
       - [Test 2.1: Ollama server+python](#test-21-ollama-serverpython)
+    - [Workflow](#workflow)
       - [Test 3.1: Initial Python data workflow](#test-31-initial-python-data-workflow)
       - [Test 3.2 Structured Python data workflow](#test-32-structured-python-data-workflow)
       - [Test 3.3 Initial prompt optimization test](#test-33-initial-prompt-optimization-test)
@@ -84,11 +85,11 @@ Dependencies:
 
 #### Test 1.1: simple pdf to text conversion
 ```bash
-python pypdf_test.py test-data/résumé-thèse-fr.pdf test-data/pypdf_test.txt
+python src/pypdf_test.py test-data/résumé-thèse-fr.pdf test-data/pypdf_test.txt
 ```
 
 > [!TIP]
-> The test script can be customized. Use `python pypdf_test.py -h` to see the documentation.
+> The test script can be customized. Use `python src/pypdf_test.py -h` to see the documentation.
 
 Notes:
 - seems to have a good output
@@ -97,7 +98,7 @@ Notes:
 
 #### Test 1.2: pdf with table to text conversion
 ```bash
-python pypdf_test.py test-data/résumé-thèse-tableau-fr.pdf test-data/pypdf_table_test.txt
+python src/pypdf_test.py test-data/résumé-thèse-tableau-fr.pdf test-data/pypdf_table_test.txt
 ```
 
 Notes:
@@ -112,7 +113,7 @@ Download and transform the PDF of project motivation letters.
 
 ```bash
 curl https://pepr-vdbi.fr/fileadmin/contributeurs/PEPR_Ville_durable/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf > test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf
-python pypdf_test.py test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt
+python src/pypdf_test.py test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt
 ```
 
 Notes:
@@ -213,15 +214,17 @@ New dependency: [Ollama python](https://github.com/ollama/ollama-python)
 
 ```bash
 ollama serve & # launch ollama server in the background
-python ollama_test.py \
+python src/ollama_test.py \
   test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt \
   test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe_out.txt \
   "Donner le liste des projets décrits" \
 ```
 
 > [!TIP]
-> - The test script can be customized. Use `python ollama_test.py -h` to see the documentation. 
+> - The test script can be customized. Use `python src/ollama_test.py -h` to see the documentation. 
 > - Also, you can use just `ollama serve` (without the `&`) in another terminal session to be able to view ollama API calls in real time
+
+### Workflow
 
 #### Test 3.1: Initial Python data workflow
 
@@ -232,10 +235,10 @@ The proposed workflow does the following for each input file:
 - step 2: excecute a chain of GPT prompts on the text.
 The following script can be used to run a series of ollama prompts based on a configuration file.
 ```bash
-python workflow_test.py -f json test-data/workflow_0_config.json
+python src/workflow_test.py -f json test-data/workflow_0_config.json
 ```
 > [!TIP]
-> - The test script can be customized. Use `python workflow_test.py -h` to see the documentation.
+> - The test script can be customized. Use `python src/workflow_test.py -h` to see the documentation.
 > - Check the logs when running to see progress in real time (located in `workflow-test.log` by default) 
 
 > [!WARNING]
@@ -255,7 +258,7 @@ The configuration will output to the `test-data/workflow-test/VILLEGARDEN` folde
 
 Same test as above but using the configuration file [test-data/workflow_1_config.json](test-data/workflow_1_config.json) which proposes structuring prompt outputs as JSON. 
 ```bash
-python workflow_test.py -f json test-data/workflow_1_config.json
+python src/workflow_test.py -f json test-data/workflow_1_config.json
 ```
 
 #### Test 3.3 Initial prompt optimization test
@@ -266,7 +269,7 @@ Same test as above but using the configuration file [test-data/workflow_2_config
 - Asking for a formatted output i.e., *"Formulate your response as a bulleted list"*
 
 ```bash
-python workflow_test.py -f json test-data/workflow_2_config.json
+python src/workflow_test.py -f json test-data/workflow_2_config.json
 ```
 
 #### Test 3.4 Page range test
@@ -275,7 +278,7 @@ Same test as above but using the configuration file [test-data/workflow_3_config
 Page ranges should be a comma separated string e.g., `1, 2, 5-7` (spaces are allowed)
 
 ```bash
-python workflow_test.py -f json test-data/workflow_3_config.json
+python src/workflow_test.py -f json test-data/workflow_3_config.json
 ```
 
 #### Test 3.5 Add csv config to workflow
@@ -283,7 +286,7 @@ python workflow_test.py -f json test-data/workflow_3_config.json
 Use a csv file to configure workflow instead of a json file.
 
 ```bash
-python workflow_test.py -f csv test-data/workflow_0_config.csv
+python src/workflow_test.py -f csv test-data/workflow_0_config.csv
 ```
 
 #### Test 4.1 Modelfile test
@@ -291,7 +294,7 @@ python workflow_test.py -f csv test-data/workflow_0_config.csv
 Added modelfile functionality to ollama and workflow test scripts.
 
 ```bash
-python workflow_test.py -f json test-data/workflow_4_config.json
+python src/workflow_test.py -f json test-data/workflow_4_config.json
 ```
 
 # Notes for AI assisted data integration
@@ -309,6 +312,7 @@ python workflow_test.py -f json test-data/workflow_4_config.json
       - [Test 1.1: simple keyword extraction in french](#test-11-simple-keyword-extraction-in-french)
       - [Test 1.2: simple keyword extraction in english](#test-12-simple-keyword-extraction-in-english)
       - [Test 2.1: Ollama server+python](#test-21-ollama-serverpython)
+    - [Workflow](#workflow)
       - [Test 3.1: Initial Python data workflow](#test-31-initial-python-data-workflow)
       - [Test 3.2 Structured Python data workflow](#test-32-structured-python-data-workflow)
       - [Test 3.3 Initial prompt optimization test](#test-33-initial-prompt-optimization-test)
