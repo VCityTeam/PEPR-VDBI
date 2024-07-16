@@ -20,6 +20,7 @@ Tests for converting unstructured text to structured text
       - [Test 3.4 Page range test](#test-34-page-range-test)
       - [Test 3.5 Add csv config to workflow](#test-35-add-csv-config-to-workflow)
       - [Test 4.1 Modelfile test](#test-41-modelfile-test)
+      - [Test 4.1 TEMPERATURE and top parameters](#test-41-temperature-and-top-parameters)
 - [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
   - [Links](#links)
   - [Research interests](#research-interests)
@@ -297,6 +298,26 @@ Added modelfile functionality to ollama and workflow test scripts.
 python src/workflow_test.py -f json test-data/workflow_4_config.json
 ```
 
+#### Test 4.1 TEMPERATURE and top parameters
+
+Test ORCID and IdHAL extraction of the following modelfiles:
+- [llama3-json1-creative-default](test-data/modelfiles/llama3-json1-creative-default)
+- [llama3-json1-creative-diverse](test-data/modelfiles/llama3-json1-creative-diverse)
+- [llama3-json1-creative-focused](test-data/modelfiles/llama3-json1-creative-focused)
+- [llama3-json1-default-default](test-data/modelfiles/llama3-json1-default-default)
+- [llama3-json1-default-diverse](test-data/modelfiles/llama3-json1-default-diverse)
+- [llama3-json1-default-focused](test-data/modelfiles/llama3-json1-default-focused)
+- [llama3-json1-unoriginal-default](test-data/modelfiles/llama3-json1-unoriginal-default)
+- [llama3-json1-unoriginal-diverse](test-data/modelfiles/llama3-json1-unoriginal-diverse)
+- [llama3-json1-unoriginal-focused](test-data/modelfiles/llama3-json1-unoriginal-focused)
+
+These modelfiles use differente `temperature`, `top_k`, `top_p` to change see how these parameters effect the generation of JSON.
+Additionally, conversation templates are used to provide examples to the model of how it should respond.
+
+```bash
+python src/workflow_test.py -f json test-data/workflow_5_config.json
+```
+
 # Notes for AI assisted data integration
 
 **Context:** In the context of the PEPR-tests project, we would like to use AI to integrate non-structured data (from PDF documents) to visualize and analyse their underlying knowledge.
@@ -319,6 +340,7 @@ python src/workflow_test.py -f json test-data/workflow_4_config.json
       - [Test 3.4 Page range test](#test-34-page-range-test)
       - [Test 3.5 Add csv config to workflow](#test-35-add-csv-config-to-workflow)
       - [Test 4.1 Modelfile test](#test-41-modelfile-test)
+      - [Test 4.1 TEMPERATURE and top parameters](#test-41-temperature-and-top-parameters)
 - [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
   - [Links](#links)
   - [Research interests](#research-interests)
