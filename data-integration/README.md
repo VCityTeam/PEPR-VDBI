@@ -4,6 +4,7 @@ Tests for converting unstructured text to structured text
 
 - [AI-based Automated Data Integration Experiments](#ai-based-automated-data-integration-experiments)
   - [Step 1 - PDF to unstructured text](#step-1---pdf-to-unstructured-text)
+    - [Dependencies](#dependencies)
     - [pypdf tests](#pypdf-tests)
       - [Test 1.1: simple pdf to text conversion](#test-11-simple-pdf-to-text-conversion)
       - [Test 1.2: pdf with table to text conversion](#test-12-pdf-with-table-to-text-conversion)
@@ -21,7 +22,8 @@ Tests for converting unstructured text to structured text
       - [Test 3.5 Add csv config to workflow](#test-35-add-csv-config-to-workflow)
       - [Test 3.6 Modelfile test](#test-36-modelfile-test)
       - [Test 3.7 TEMPERATURE and top parameters test](#test-37-temperature-and-top-parameters-test)
-      - [Test 3.8 Langchain RAG local document test](#test-38-langchain-rag-local-document-test)
+    - [RAG tests](#rag-tests)
+      - [Test 4.1 Langchain RAG local document test](#test-41-langchain-rag-local-document-test)
 - [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
   - [Links](#links)
   - [Research interests](#research-interests)
@@ -65,25 +67,36 @@ inspired from [GGE perplexity tests](./Tests_IA.md)
 
 **Tentative candidates:**
 
-| Tool/library                                       | Type                              | Comment                            |
-| -------------------------------------------------- | --------------------------------- | ---------------------------------- |
-| [pypdf](https://github.com/py-pdf/pypdf)           | Python Library                    |                                    |
-| [RAGFlow](https://github.com/infiniflow/ragflow)   | CLI (Command line interface) tool |                                    |
-| [marker-pdf](https://pypi.org/project/marker-pdf/) | Python Library                    | a pipeline of deep-learning models |
-| [pd3f](https://github.com/pd3f/pd3f)               | CLI tool                          | no french support? Is it mature?   |
+| Tool/library                                                                                          | Type                              | Comment                            |
+| ----------------------------------------------------------------------------------------------------- | --------------------------------- | ---------------------------------- |
+| [pypdf](https://github.com/py-pdf/pypdf)                                                              | Python Library                    |                                    |
+| [Langchain+Ollama](https://github.com/ollama/ollama/tree/main/examples/langchain-python-rag-document) | Python Library                    |                                    |
+| [RAGFlow](https://github.com/infiniflow/ragflow)                                                      | CLI (Command line interface) tool |                                    |
+| [marker-pdf](https://pypi.org/project/marker-pdf/)                                                    | Python Library                    | a pipeline of deep-learning models |
+| [pd3f](https://github.com/pd3f/pd3f)                                                                  | CLI tool                          | no french support? Is it mature?   |
 
 > [!NOTE]
 > On **Windows**, when exporting text files from other programs or writing to files from python, keep in mind that the **UTF-8** encoding is not always used.
 > When visualizing the content of these files in vscode or in terminals, accent characers may be replaced by unknown symbols.
 
+### Dependencies
+- [Python](https://www.python.org/downloads/) v3.8+
+It is recommended to use a virtual python environment. See [here](https://docs.python.org/3/library/venv.html#how-venvs-work) for more information on how to manage a python venv
+```bash
+python -m venv venv
+```
+
+After installing python, (and optionally activating a venv) install required python libraries
+```bash
+pip install -r src/requirements.txt
+```
+
+
 ### pypdf tests
 
-Dependencies:
-- [Python](https://www.python.org/downloads/) v3.8+
+Dependency:
 - [pypdf](https://github.com/py-pdf/pypdf)
-  - ```bash
-    pip install pypdf
-    ```
+
 
 #### Test 1.1: simple pdf to text conversion
 ```bash
@@ -210,12 +223,7 @@ This test will examine how we can call prompts and extract their output programa
 This requires launching Ollama on a local server.
 
 > [!NOTE]
-> Why Ollama? See [these notes]([./feasability-notes-GPT-data-integration.md))
-
-New dependency: [Ollama python](https://github.com/ollama/ollama-python)
-- ```bash
-  pip install -r src/requirements.txt
-  ```
+> Why Ollama? See [these notes]([./feasability-notes-GPT-data-integration.md)
 
 ```bash
 ollama serve & # launch ollama server in the background
@@ -329,7 +337,15 @@ python src/workflow_test.py -f json test-data/workflow_5_config.json
 
 TODO: run test and add notes
 
-#### Test 3.8 Langchain RAG local document test
+### RAG tests
+
+> [!NOTE]
+> RAG (Retrieval-Augmented Generation) is an approach to allowing sources of new
+> information to be provided to an LLM from outside of its training data. E.g. perplexity
+> See [here](#retrieval-augmented-generation-for-knowledge-intensive-nlp-tasks) for more
+> information
+
+#### Test 4.1 Langchain RAG local document test
 
 Code adapted from the ollama [langchain-python-rag-document](https://github.com/ollama/ollama/tree/main/examples/langchain-python-rag-document) example.
 Test Langchain for RAG ollama queries with workspace configuration.
@@ -338,11 +354,6 @@ Test Langchain for RAG ollama queries with workspace configuration.
 python src/workflow_test.py -f json test-data/workflow_6_config.json
 ```
 
-> [!NOTE]
-> RAG (Retrieval-Augmented Generation) is an approach to allowing sources of new
-> information to be provided to an LLM from outside of its training data.
-> See [here](https://en.wikipedia.org/wiki/Retrieval-augmented_generation) for more
-> information
 
 
 # Notes for AI assisted data integration
@@ -351,6 +362,7 @@ python src/workflow_test.py -f json test-data/workflow_6_config.json
 
 - [AI-based Automated Data Integration Experiments](#ai-based-automated-data-integration-experiments)
   - [Step 1 - PDF to unstructured text](#step-1---pdf-to-unstructured-text)
+    - [Dependencies](#dependencies)
     - [pypdf tests](#pypdf-tests)
       - [Test 1.1: simple pdf to text conversion](#test-11-simple-pdf-to-text-conversion)
       - [Test 1.2: pdf with table to text conversion](#test-12-pdf-with-table-to-text-conversion)
@@ -368,7 +380,8 @@ python src/workflow_test.py -f json test-data/workflow_6_config.json
       - [Test 3.5 Add csv config to workflow](#test-35-add-csv-config-to-workflow)
       - [Test 3.6 Modelfile test](#test-36-modelfile-test)
       - [Test 3.7 TEMPERATURE and top parameters test](#test-37-temperature-and-top-parameters-test)
-      - [Test 3.8 Langchain RAG local document test](#test-38-langchain-rag-local-document-test)
+    - [RAG tests](#rag-tests)
+      - [Test 4.1 Langchain RAG local document test](#test-41-langchain-rag-local-document-test)
 - [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
   - [Links](#links)
   - [Research interests](#research-interests)
