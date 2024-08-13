@@ -1,4 +1,4 @@
-async function searchOrcid(
+export async function searchOrcid(
   query,
   token,
   fields = [
@@ -13,19 +13,21 @@ async function searchOrcid(
     "past-institution-affiliation-name",
   ]
 ) {
-  const url = "https://api.orcid.org/v3.0/csv-search/";
-  let data = {
-    q: query,
-    fl: fields.join(","),
-  };
+  const url = `https://pub.orcid.org/v3.0/search/?q=${query}`;
+  // const url = "https://api.orcid.org/v3.0/csv-search/";
+  // const data = {
+  //   q: query,
+  //   fl: fields.join(","),
+  // };
   let options = {
     method: "GET",
+    mode: "cors",
     headers: {
-      "Content-Type": "text/csv",
-      "Authorization type": "Bearer",
-      "Access token": token,
+      // "Content-Type": "text/csv",
+      "Accept": "application/json",
+      "Authorization": `Bearer ${token}`,
     },
-    body: JSON.stringify(data),
+    // body: JSON.stringify(data),
   };
 
   const response = await fetch(url, options);
