@@ -65,8 +65,8 @@ def main():
         if response is not None:
             researcher_data.loc[names.index, "orcids"] = response
 
-    # stdout.write(json.dumps(response, indent=2) + "\n")
-    # stdout.flush()
+    # write data to stdout as csv
+    # stdout.write(researcher_data.to_csv())
 
 
 def getAccessToken(
