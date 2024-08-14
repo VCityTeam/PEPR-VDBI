@@ -1,8 +1,9 @@
 import os
-from sys import stdout
 import json
+import logging
 import requests
 import pandas as pd
+from time import sleep
 
 
 def main():
@@ -12,10 +13,20 @@ def main():
     WORKBOOK_PATH = "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
     WORKBOOK_SHEET = "Liste chercheurs"
     SHEET_COLUMNS = "A"
+    EXPANDED_SEARCH = True
+
+    logging.basicConfig(
+        format="%(asctime)s %(levelname)-8s %(message)s",
+        filename="orcids.log",
+        level=logging.DEBUG,
+        # level=logging.INFO
+    )
+    logging.info("=================")
 
     # Generate or retrieve access token
     token = getAccessToken(CLIENT_ID, CLIENT_SECRET)
     if token is None:
+        logging.critical("Access token could not be retrieved or generated")
         exit(1)
 
     # get researcher names
@@ -45,12 +56,13 @@ def main():
     researcher_data["lastname"] = (
         researcher_data.loc[:, "NOM et Prénom"].copy().map(getLastname)
     )
-    researcher_data.insert(3, "orcids", [dict()]*len(researcher_data.index))
-    print(researcher_data)
+    researcher_data.insert(3, "orcids", [""] * len(researcher_data.index))
+    logging.debug(f"researcher_data: {researcher_data}")
 
     # query ORCiD to using name data
     for names in researcher_data.itertuples():
-        firstname_query, lastname_query = ""
+        firstname_query = ""
+        lastname_query = ""
         if len(names[2]) > 0:
             firstname_query = f"given-names:{names[2]}"
         if len(names[3]) > 0:
@@ -61,12 +73,22 @@ def main():
         else:
             query = f"{firstname_query}{lastname_query}"
 
-        response = queryOrcid(query, token)
+        response = queryOrcid(query, token, expanded=EXPANDED_SEARCH)
+        logging.debug(f"ORCiD query response: {response}")
         if response is not None:
-            researcher_data.loc[names.index, "orcids"] = response
+            result_key = "expanded-result" if EXPANDED_SEARCH else "result"
+            researcher_data.loc[names.Index, "orcids"] = json.dumps(
+                response[result_key]
+            )
+
+        # throttle requests
+        # input()
+        sleep(0.0001)
 
     # write data to stdout as csv
-    # stdout.write(researcher_data.to_csv())
+    # with open("test.csv", "w") as file:
+    #     file.write(researcher_data.to_csv())
+    print(researcher_data.to_csv())
 
 
 def getAccessToken(
@@ -76,7 +98,7 @@ def getAccessToken(
     Request response is stored in a local file.
     client_id and client_secret are strings used to authenticate an ORCID app.
     -----------
-    Returns token if successfull or None."""
+    Returns token if successful or None."""
     # if no api access token is stored in TOKEN_PATH, generate and store a new one
     if not os.path.exists(os.path.normpath(token_path)):
         # error checking adapted from https://realpython.com/python-requests/
@@ -93,43 +115,41 @@ def getAccessToken(
             )
             access_token_response.raise_for_status()
         except requests.exceptions.HTTPError as http_err:
-            print(f"HTTP error occurred: {http_err}")
+            logging.error(
+                f"HTTP error occurred when generating access token: {http_err}"
+            )
         except Exception as err:
-            print(f"Other error occurred: {err}")
+            logging.error(f"Other error occurred when generating access token: {err}")
         else:
-            print("Generating and storing new token:", access_token_response.json())
+            logging.info("Generating and storing new token")
             with open(token_path, "w") as file:
                 file.write(json.dumps(access_token_response.json(), indent=2))
 
     with open(token_path, "r") as file:
         token = json.loads(file.read())["access_token"]
-        # print(token)
+        logging.debug(f"token: {token}")
     return token
 
 
-def queryOrcid(query: str, token: str, rows=10) -> dict[str, str] | None:
+def queryOrcid(query: str, token: str, rows=10, expanded=False) -> dict | None:
     """Send a basic query to the ORCID Public API using an access token. Params:
     query: the query to be sent
     token: the access token to authenticate the query with
     rows: max number of results to return
+    expanded: use ORCiD expanded search (returns more info per result)
     -----------
-    returns a dictionary of the request response if successfull or None."""
+    returns a dictionary of the request response if successful or None."""
+    search_api = "expanded-search" if expanded else "search"
     try:
         query_response = requests.get(
-            url="https://pub.orcid.org/v3.0/search/",
-            params={
-                "q": query,
-                "rows": rows,
-            },
+            url=f"https://pub.orcid.org/v3.0/{search_api}/?q={query}&rows={rows}",
             headers={"Accept": "application/json", "Authorization": f"Bearer {token}"},
         )
         query_response.raise_for_status()
     except requests.exceptions.HTTPError as http_err:
-        print(f"HTTP error occurred: {http_err}")
-        exit(1)
+        logging.error(f"HTTP error occurred when querying ORCid: {http_err}")
     except Exception as err:
-        print(f"Other error occurred: {err}")
-        exit(1)
+        logging.error(f"Other error occurred when querying ORCid: {err}")
     else:
         return query_response.json()
 
@@ -139,7 +159,7 @@ def getFirstname(fullname: str) -> str:
     names = str(fullname).split(" ")
     firstnames = " ".join([name for name in names if not name.isupper()])
     if firstnames == "":
-        print(f"Could not find firstnames of {fullname}")
+        logging.warning(f"Could not find firstnames of {fullname}")
     return firstnames
 
 
@@ -148,7 +168,7 @@ def getLastname(fullname: str) -> str:
     names = str(fullname).split(" ")
     lastnames = " ".join([name for name in names if name.isupper()])
     if lastnames == "":
-        print(f"Could not find lastnames of {fullname}")
+        logging.warning(f"Could not find lastnames of {fullname}")
     return lastnames
 
 
