@@ -1,0 +1,799 @@
+0	0	UK
+0	1	UK
+1	0	UK
+1	1	UK
+1	2	Australia
+2	0	Canada
+3	0	USA
+3	1	Netherlands
+3	2	Brazil
+4	0	Norway
+4	1	Norway
+5	0	Italy
+6	0	UK
+6	1	Saudi Arabia
+7	0	Italy
+8	0	South Africa
+9	0	UK
+9	1	UK
+9	2	UK
+10	0	Peoples R China
+10	1	Germany
+10	2	Peoples R China
+10	3	Germany
+11	0	Romania
+12	0	Poland
+12	1	Poland
+13	0	Canada
+13	1	Canada
+13	2	Canada
+13	3	Canada
+13	4	Canada
+13	5	Canada
+13	6	Canada
+14	0	Japan
+15	0	Peoples R China
+16	0	Italy
+16	1	Italy
+16	2	Spain
+17	0	USA
+17	1	USA
+17	2	USA
+17	3	USA
+17	4	USA
+17	5	USA
+17	6	USA
+18	0	Peoples R China
+18	1	Peoples R China
+18	2	Peoples R China
+18	3	Peoples R China
+18	4	Peoples R China
+18	5	Peoples R China
+18	6	Peoples R China
+18	7	Peoples R China
+19	0	Austria
+19	1	USA
+20	0	UK
+20	1	Canada
+21	0	South Korea
+21	1	South Korea
+22	0	Peoples R China
+22	1	Peoples R China
+22	2	Peoples R China
+23	0	Estonia
+23	1	Bulgaria
+23	2	Spain
+23	3	Spain
+23	4	France
+23	5	Hungary
+23	6	Italy
+23	7	Netherlands
+23	8	Sweden
+23	9	Romania
+23	10	Finland
+23	11	Estonia
+24	0	Canada
+24	1	Canada
+24	2	Canada
+24	3	Canada
+24	4	Canada
+24	5	Canada
+24	6	South Africa
+24	7	South Africa
+24	8	Australia
+24	9	Australia
+24	10	Australia
+24	11	Australia
+24	12	Australia
+24	13	Canada
+25	0	Peoples R China
+25	1	Peoples R China
+26	0	Spain
+26	1	Spain
+26	2	Spain
+26	3	Senegal
+26	4	Senegal
+27	0	France
+27	1	France
+28	0	Denmark
+28	1	UK
+29	0	USA
+30	0	Peoples R China
+30	1	Peoples R China
+30	2	Peoples R China
+30	3	Peoples R China
+30	4	Peoples R China
+31	0	Peoples R China
+32	0	USA
+32	1	Japan
+32	2	UK
+32	3	USA
+32	4	USA
+32	5	Canada
+32	6	Canada
+32	7	USA
+32	8	USA
+32	9	USA
+32	10	Israel
+32	11	Canada
+32	12	USA
+32	13	USA
+32	14	USA
+32	15	USA
+32	16	Taiwan
+32	17	USA
+32	18	South Africa
+32	19	South Africa
+32	20	Australia
+32	21	USA
+32	22	USA
+32	23	USA
+32	24	USA
+32	25	Germany
+32	26	Germany
+32	27	USA
+32	28	UK
+32	29	Canada
+32	30	Canada
+32	31	USA
+32	32	France
+32	33	Japan
+32	34	Thailand
+32	35	Singapore
+32	36	Singapore
+32	37	Australia
+32	38	Australia
+32	39	USA
+32	40	USA
+32	41	Canada
+32	42	Taiwan
+33	0	Peoples R China
+33	1	Peoples R China
+33	2	Peoples R China
+33	3	USA
+33	4	Peoples R China
+33	5	Peoples R China
+34	0	Italy
+34	1	Italy
+35	0	Peoples R China
+35	1	Peoples R China
+35	2	Peoples R China
+36	0	UK
+36	1	UK
+36	2	UK
+36	3	UK
+37	0	Peoples R China
+38	0	Peoples R China
+38	1	Peoples R China
+38	2	Italy
+38	3	Peoples R China
+39	0	UK
+39	1	UK
+39	2	UK
+39	3	Peoples R China
+40	0	South Korea
+40	1	South Korea
+40	2	Vietnam
+41	0	Peoples R China
+41	1	Peoples R China
+41	2	Peoples R China
+42	0	Peoples R China
+42	1	Peoples R China
+42	2	Peoples R China
+42	3	Peoples R China
+42	4	Peoples R China
+42	5	USA
+42	6	USA
+42	7	Peoples R China
+42	8	USA
+43	0	Peoples R China
+43	1	USA
+44	0	Canada
+44	1	Canada
+45	0	Canada
+45	1	Italy
+45	2	Germany
+45	3	USA
+45	4	France
+45	5	Germany
+45	6	Germany
+45	7	India
+45	8	USA
+45	9	South Korea
+45	10	Sweden
+45	11	Thailand
+45	12	India
+46	0	Canada
+46	1	Canada
+46	2	Canada
+46	3	Canada
+46	4	Canada
+47	0	Pakistan
+47	1	UK
+48	0	Peoples R China
+48	1	Peoples R China
+48	2	Peoples R China
+48	3	Peoples R China
+48	4	Denmark
+48	5	India
+48	6	South Korea
+49	0	USA
+49	1	USA
+49	2	USA
+49	3	USA
+49	4	USA
+49	5	Peoples R China
+49	6	Peoples R China
+49	7	USA
+49	8	UK
+49	9	USA
+49	10	USA
+49	11	USA
+49	12	UK
+49	13	USA
+49	14	USA
+49	15	USA
+49	16	USA
+49	17	USA
+49	18	USA
+49	19	Japan
+49	20	USA
+50	0	USA
+50	1	USA
+50	2	USA
+50	3	USA
+50	4	USA
+50	5	USA
+50	6	USA
+50	7	USA
+50	8	USA
+50	9	USA
+50	10	USA
+50	11	USA
+50	12	USA
+50	13	USA
+50	14	USA
+50	15	USA
+50	16	USA
+50	17	USA
+51	0	USA
+52	0	UK
+52	1	Thailand
+52	2	Thailand
+52	3	Vietnam
+52	4	UK
+52	5	UK
+52	6	Thailand
+52	7	Thailand
+52	8	Thailand
+53	0	Australia
+53	1	Vietnam
+53	2	Thailand
+53	3	Thailand
+53	4	Thailand
+53	5	Cambodia
+53	6	Thailand
+53	7	Thailand
+53	8	Thailand
+53	9	Vietnam
+53	10	Vietnam
+53	11	India
+53	12	Malaysia
+53	13	Indonesia
+53	14	Malaysia
+53	15	Indonesia
+53	16	Malaysia
+53	17	Thailand
+53	18	Malaysia
+54	0	Armenia
+54	1	Turkey
+54	2	France
+54	3	France
+54	4	Turkey
+54	5	Spain
+54	6	Germany
+54	7	Russia
+54	8	Turkey
+54	9	USA
+54	10	USA
+54	11	Austria
+54	12	India
+54	13	USA
+54	14	Mexico
+54	15	Russia
+54	16	Russia
+54	17	USA
+54	18	Turkey
+54	19	USA
+54	20	USA
+54	21	Germany
+54	22	Russia
+54	23	South Korea
+54	24	France
+54	25	France
+54	26	France
+54	27	Italy
+54	28	France
+54	29	France
+54	30	France
+54	31	France
+54	32	Brazil
+54	33	Spain
+54	34	Mexico
+54	35	UK
+54	36	UK
+54	37	Slovakia
+54	38	France
+54	39	France
+54	40	Italy
+54	41	Italy
+54	42	Italy
+54	43	USA
+54	44	Spain
+54	45	Spain
+54	46	Spain
+54	47	USA
+54	48	Iran
+54	49	Germany
+54	50	Germany
+54	51	Costa Rica
+54	52	Italy
+54	53	USA
+54	54	UK
+54	55	Russia
+54	56	Switzerland
+54	57	Switzerland
+54	58	Turkey
+54	59	Switzerland
+54	60	Netherlands
+54	61	Italy
+54	62	Turkey
+54	63	Germany
+54	64	Switzerland
+54	65	France
+54	66	Sweden
+54	67	Germany
+54	68	Czech Republic
+54	69	Egypt
+54	70	USA
+54	71	Germany
+54	72	Russia
+54	73	Japan
+54	74	South Korea
+54	75	Turkey
+54	76	Belarus
+54	77	Germany
+54	78	Turkey
+54	79	USA
+54	80	Germany
+54	81	Japan
+54	82	Turkey
+54	83	France
+54	84	Germany
+54	85	Switzerland
+54	86	India
+54	87	India
+54	88	Spain
+54	89	France
+54	90	USA
+54	91	Germany
+54	92	Austria
+54	93	Russia
+54	94	Netherlands
+54	95	Belarus
+54	96	USA
+54	97	Peoples R China
+54	98	Germany
+54	99	Poland
+54	100	Taiwan
+54	101	Slovenia
+54	102	Spain
+54	103	Spain
+54	104	Spain
+54	105	Spain
+54	106	Spain
+54	107	Argentina
+54	108	Spain
+54	109	Argentina
+54	110	USA
+54	111	Turkey
+54	112	Turkey
+54	113	Italy
+54	114	Italy
+54	115	Italy
+54	116	Italy
+54	117	Italy
+54	118	Italy
+54	119	Italy
+54	120	Italy
+54	121	Italy
+54	122	Italy
+54	123	Italy
+54	124	Italy
+54	125	Italy
+54	126	Italy
+54	127	Italy
+54	128	Italy
+54	129	Italy
+54	130	Italy
+54	131	Italy
+54	132	Italy
+54	133	Italy
+54	134	Italy
+54	135	Italy
+54	136	Italy
+54	137	Italy
+54	138	France
+54	139	Georgia
+54	140	Turkey
+54	141	Germany
+54	142	UK
+54	143	UK
+54	144	Russia
+54	145	Germany
+54	146	Turkey
+54	147	Germany
+54	148	Belgium
+54	149	Peoples R China
+54	150	UK
+54	151	Japan
+54	152	South Korea
+54	153	France
+54	154	France
+54	155	France
+54	156	France
+54	157	France
+54	158	France
+54	159	Portugal
+54	160	Switzerland
+54	161	USA
+54	162	Switzerland
+54	163	UK
+54	164	Germany
+54	165	Finland
+54	166	Switzerland
+54	167	Poland
+54	168	USA
+54	169	Germany
+54	170	Germany
+54	171	France
+54	172	Australia
+54	173	Hungary
+54	174	Turkey
+54	175	Peoples R China
+54	176	Netherlands
+54	177	Greece
+54	178	USA
+54	179	Estonia
+54	180	Russia
+54	181	Russia
+54	182	Ukraine
+54	183	Greece
+54	184	Austria
+54	185	Denmark
+54	186	Turkey
+54	187	USA
+54	188	USA
+54	189	Russia
+54	190	Germany
+54	191	UK
+54	192	Switzerland
+54	193	Peoples R China
+54	194	Canada
+54	195	Russia
+54	196	Turkey
+54	197	USA
+54	198	USA
+54	199	USA
+54	200	Germany
+54	201	South Korea
+54	202	Canada
+54	203	Finland
+54	204	Germany
+54	205	Latvia
+54	206	UK
+54	207	Croatia
+54	208	Germany
+54	209	USA
+54	210	Italy
+54	211	Iran
+54	212	UK
+54	213	UK
+54	214	UK
+54	215	Switzerland
+54	216	Italy
+54	217	Italy
+54	218	South Korea
+54	219	Switzerland
+54	220	Iran
+54	221	Peoples R China
+54	222	Switzerland
+54	223	Russia
+54	224	Russia
+54	225	USA
+54	226	India
+54	227	USA
+54	228	USA
+54	229	USA
+54	230	Germany
+54	231	Germany
+54	232	Germany
+54	233	Austria
+54	234	Austria
+54	235	Israel
+54	236	USA
+54	237	USA
+54	238	Japan
+54	239	USA
+54	240	Turkey
+54	241	Japan
+54	242	Ireland
+54	243	Canada
+54	244	Peoples R China
+54	245	Peoples R China
+54	246	Turkey
+54	247	Mexico
+54	248	Mexico
+54	249	Spain
+54	250	Uruguay
+54	251	Colombia
+54	252	Brazil
+54	253	Brazil
+54	254	Brazil
+54	255	Brazil
+54	256	Italy
+54	257	Italy
+54	258	Italy
+54	259	Italy
+54	260	Italy
+54	261	Italy
+54	262	Italy
+54	263	Italy
+54	264	Italy
+54	265	Italy
+54	266	Italy
+54	267	Italy
+54	268	Italy
+54	269	Italy
+54	270	Italy
+54	271	Italy
+54	272	Italy
+54	273	Italy
+54	274	Italy
+54	275	Italy
+54	276	Italy
+54	277	Italy
+54	278	Germany
+54	279	Germany
+54	280	Spain
+54	281	Germany
+54	282	Germany
+54	283	France
+54	284	France
+54	285	UK
+54	286	Austria
+54	287	USA
+54	288	Switzerland
+54	289	Serbia
+54	290	Norway
+54	291	Switzerland
+54	292	UK
+54	293	UK
+54	294	USA
+54	295	USA
+54	296	USA
+54	297	USA
+54	298	USA
+54	299	USA
+54	300	UK
+54	301	USA
+54	302	USA
+54	303	UK
+54	304	USA
+54	305	Switzerland
+54	306	USA
+54	307	USA
+54	308	Finland
+54	309	USA
+54	310	UK
+54	311	Sweden
+54	312	Malta
+54	313	UK
+54	314	USA
+54	315	USA
+54	316	Australia
+54	317	USA
+54	318	USA
+54	319	USA
+54	320	USA
+54	321	USA
+54	322	Germany
+54	323	Canada
+54	324	Peoples R China
+54	325	Iran
+54	326	Poland
+54	327	Norway
+54	328	Germany
+54	329	UK
+54	330	South Africa
+54	331	Canada
+54	332	Poland
+54	333	USA
+54	334	Germany
+54	335	Switzerland
+54	336	Spain
+54	337	France
+54	338	Sweden
+54	339	Turkey
+54	340	Austria
+54	341	Serbia
+54	342	Belgium
+54	343	USA
+54	344	Israel
+54	345	Germany
+54	346	Germany
+54	347	Poland
+54	348	Poland
+54	349	Peoples R China
+54	350	Peoples R China
+54	351	Peoples R China
+54	352	USA
+54	353	USA
+55	0	Germany
+55	1	Germany
+55	2	Canada
+55	3	USA
+55	4	USA
+55	5	USA
+55	6	Brazil
+55	7	Portugal
+55	8	Germany
+55	9	Australia
+55	10	Spain
+55	11	Brazil
+55	12	Russia
+55	13	Russia
+55	14	Germany
+55	15	Italy
+55	16	Netherlands
+55	17	Germany
+55	18	Germany
+55	19	Germany
+55	20	France
+55	21	France
+55	22	France
+55	23	France
+55	24	France
+55	25	Italy
+55	26	Netherlands
+55	27	Germany
+55	28	Netherlands
+55	29	Singapore
+55	30	Germany
+55	31	Germany
+55	32	Germany
+55	33	Japan
+55	34	Kenya
+55	35	Rwanda
+55	36	Australia
+55	37	Brazil
+55	38	Germany
+55	39	Canada
+55	40	Argentina
+55	41	Germany
+55	42	France
+55	43	USA
+55	44	Ireland
+55	45	Ireland
+55	46	USA
+55	47	France
+55	48	Australia
+55	49	Canada
+55	50	France
+55	51	France
+55	52	Germany
+55	53	UK
+55	54	UK
+55	55	USA
+55	56	USA
+55	57	Spain
+55	58	USA
+55	59	Argentina
+55	60	Netherlands
+55	61	Germany
+55	62	Argentina
+55	63	Spain
+55	64	USA
+55	65	Mexico
+55	66	USA
+55	67	Philippines
+55	68	Belgium
+55	69	Russia
+55	70	Iran
+55	71	USA
+55	72	Sweden
+55	73	Croatia
+55	74	Brazil
+55	75	Australia
+55	76	Japan
+55	77	USA
+55	78	Denmark
+55	79	USA
+55	80	Mexico
+55	81	Netherlands
+55	82	Finland
+55	83	USA
+55	84	USA
+55	85	Romania
+55	86	Germany
+55	87	Estonia
+55	88	USA
+55	89	Japan
+55	90	Slovakia
+55	91	UK
+55	92	Germany
+55	93	Cote Ivoire
+55	94	Iran
+55	95	Finland
+55	96	India
+55	97	Russia
+55	98	France
+55	99	USA
+55	100	Venezuela
+55	101	USA
+55	102	France
+55	103	Czech Republic
+55	104	Japan
+55	105	Germany
+55	106	Germany
+55	107	Spain
+55	108	Mexico
+55	109	Japan
+55	110	Belgium
+55	111	Belgium
+55	112	Switzerland
+55	113	Finland
+55	114	USA
+55	115	India
+55	116	Australia
+55	117	France
+55	118	USA
+55	119	France
+55	120	Spain
+55	121	France
+55	122	Germany
+55	123	Russia
+55	124	Saudi Arabia
+55	125	Spain
+55	126	USA
+55	127	USA
+55	128	Brazil
+55	129	Poland
+55	130	USA
+55	131	USA
+55	132	Germany
+55	133	Ireland
+55	134	Ireland
+55	135	Germany
+55	136	Austria
+55	137	Italy
+55	138	Russia
+55	139	Russia
+55	140	India
+55	141	USA
+55	142	Spain
+55	143	Japan
+55	144	Mexico
+55	145	Netherlands
+55	146	Spain
+55	147	USA
+55	148	USA
+55	149	USA
+55	150	USA
+55	151	Canada
+55	152	USA
+55	153	Germany
+55	154	Peoples R China
+55	155	Russia
+55	156	Peoples R China
+55	157	Finland

@@ -1,0 +1,2327 @@
+0	Henderson JV	Univ London London Sch Econ & Polit Sci, Houghton St, London WC2A 2AE, England
+0	Venables AJ	Univ London London Sch Econ & Polit Sci, Houghton St, London WC2A 2AE, England
+0	Regan T	Univ London London Sch Econ & Polit Sci, Houghton St, London WC2A 2AE, England
+0	Samsonov I	Univ London London Sch Econ & Polit Sci, Houghton St, London WC2A 2AE, England
+0	Venables AJ	Univ Oxford, Dept Econ, Oxford OX1 3UQ, England
+1	Henderson JV	London Sch Econ & Polit Sci, London, England
+1	Regan T	London Sch Econ & Polit Sci, London, England
+1	Venables AJ	London Sch Econ & Polit Sci, London, England
+1	Venables AJ	Univ Oxford, Oxford, England
+1	Venables AJ	Monash Univ, Clayton, Vic, Australia
+3	Gruca TS	Univ Iowa, Tippie Coll Business, Iowa City, IA 52242 USA
+3	Liberali G	Erasmus Univ, Erasmus Sch Econ, NL-3000 DR Rotterdam, Netherlands
+3	Nique WM	Univ Fed Rio Grande do Sul, BR-90010460 Porto Alegre, RS, Brazil
+4	Lillevold K	Univ Bergen, Ctr Climate & Energy Transformat, Bergen, Norway
+4	Haarstad H	Univ Bergen, Ctr Climate & Energy Transformat, Bergen, Norway
+4	Lillevold K	Univ Bergen, Dept Geog, POB 7802, Bergen, Norway
+4	Haarstad H	Univ Bergen, Dept Geog, POB 7802, Bergen, Norway
+5	Faroldi E	Politecn Milan, Milan, Italy
+6	Dominguez MFO	Queen Mary Univ London, Sch Business & Management, London E1 4NS, England
+6	Bhatti YA	King Abdullah Econ City, MBS Coll Business & Entrepreneurship, Jeddah 239652609, Saudi Arabia
+7	Squassina A	Univ IUAV Venice, DCP Dept Architecture & Arts, San Polo 2468, I-30125 Venice, Italy
+8	Abrahams C	Univ Witwatersrand, 1 Jan Smuts Ave, ZA-2000 Johannesburg, South Africa
+8	Everatt D	Univ Witwatersrand, 1 Jan Smuts Ave, ZA-2000 Johannesburg, South Africa
+9	Chatterton P	Univ Leeds, Sch Geog, Leeds LS2 9JT, W Yorkshire, England
+9	Unsworth R	Univ Leeds, Sch Geog, Leeds LS2 9JT, W Yorkshire, England
+9	Owen A	Univ Leeds, Sch Earth & Environm, Maths Earth & Environm Bldg, Leeds LS2 9JT, W Yorkshire, England
+9	Cutter J	Univ Leeds, Sch Business, Maurice Keyworth Bldg,Moorland Rd, Leeds LS6 1AN, W Yorkshire, England
+9	Dymski G	Univ Leeds, Sch Business, Maurice Keyworth Bldg,Moorland Rd, Leeds LS6 1AN, W Yorkshire, England
+10	Cai C	Nanjing Forestry Univ, Coinnovat Ctr Efficient Proc & Utilizat Forest Res, Sch Mat Sci & Engn, Nanjing 210037, Jiangsu, Peoples R China
+10	Wei Z	Nanjing Forestry Univ, Coinnovat Ctr Efficient Proc & Utilizat Forest Res, Sch Mat Sci & Engn, Nanjing 210037, Jiangsu, Peoples R China
+10	Ding C	Nanjing Forestry Univ, Coinnovat Ctr Efficient Proc & Utilizat Forest Res, Sch Mat Sci & Engn, Nanjing 210037, Jiangsu, Peoples R China
+10	Fu Y	Nanjing Forestry Univ, Coinnovat Ctr Efficient Proc & Utilizat Forest Res, Sch Mat Sci & Engn, Nanjing 210037, Jiangsu, Peoples R China
+10	Cai C	Georg August Univ Gottingen, Dept Wood Technol & Wood Based Composites, Sustainable Mat & Chem, Busgenweg 4, D-37077 Gottingen, Germany
+10	Chen W	Georg August Univ Gottingen, Dept Wood Technol & Wood Based Composites, Sustainable Mat & Chem, Busgenweg 4, D-37077 Gottingen, Germany
+10	Zhang K	Georg August Univ Gottingen, Dept Wood Technol & Wood Based Composites, Sustainable Mat & Chem, Busgenweg 4, D-37077 Gottingen, Germany
+10	Sun B	Nanjing Univ Sci & Technol, Inst Chemicobiol & Funct Mat, Sch Chem & Chem Engn, Nanjing 210094, Peoples R China
+10	Gerhard C	Univ Appl Sci & Arts, Fac Engn & Hlth, D-37085 Gottingen, Germany
+11	Radoslav R	Politehn Univ Timisoara, Fac Architecture, Timisoara, Romania
+11	Branea AM	Politehn Univ Timisoara, Fac Architecture, Timisoara, Romania
+11	Gaman MS	Politehn Univ Timisoara, Fac Architecture, Timisoara, Romania
+12	Zielinska M	Gdansk Univ Technol, Fac Architecture, Ul Narutowicza 11-12, PL-80233 Gdansk, Poland
+12	Ciesielski A	Gdansk Univ Technol, Fac Architecture, Ul Narutowicza 11-12, PL-80233 Gdansk, Poland
+12	Zielinska M	Gdansk Univ Technol, Fac Civil & Environm Engn, Ul Narutowicza 11-12, PL-80233 Gdansk, Poland
+13	Gartner JB	Univ Laval, Fac Sci Adm, Dept Management, Quebec City, PQ, Canada
+13	Cote A	Univ Laval, Fac Sci Adm, Dept Management, Quebec City, PQ, Canada
+13	Gartner JB	Univ Laval, Ctr Rech Gest Serv Sante, Quebec City, PQ, Canada
+13	Cote A	Univ Laval, Ctr Rech Gest Serv Sante, Quebec City, PQ, Canada
+13	Gartner JB	Univ Laval, CHU Quebec, Ctr Rech, Quebec City, PQ, Canada
+13	Cote A	Univ Laval, CHU Quebec, Ctr Rech, Quebec City, PQ, Canada
+13	Gartner JB	CISSS Chaudiere Appalaches, Ctr Rech, Quebec City, PQ, Canada
+13	Cote A	CISSS Chaudiere Appalaches, Ctr Rech, Quebec City, PQ, Canada
+13	Gartner JB	Univ Laval, Ctr Rech Sante Durable, VITAM, Quebec City, PQ, Canada
+13	Cote A	Univ Laval, Ctr Rech Sante Durable, VITAM, Quebec City, PQ, Canada
+13	Gartner JB	Univ Laval, Inst Univ Cardio Pneumol Quebec, Ctr Rech, Quebec City, PQ, Canada
+13	Cote A	Univ Laval, Inst Univ Cardio Pneumol Quebec, Ctr Rech, Quebec City, PQ, Canada
+13	Gartner JB	Univ Laval, Fac Sci Adm, Dept Management, 2325 Rue Terrasse, Quebec City, PQ G1V 0A6, Canada
+15	Weng M	South China Univ Technol, Natl Engn Res Ctr Novel Equipment Polymer Proc, Dept Mech & Automot Engn, Key Lab Polymer Proc Engn,Minist Educ,Guangdong Pr, Guangzhou 510641, Peoples R China
+15	Huang ZX	South China Univ Technol, Natl Engn Res Ctr Novel Equipment Polymer Proc, Dept Mech & Automot Engn, Key Lab Polymer Proc Engn,Minist Educ,Guangdong Pr, Guangzhou 510641, Peoples R China
+15	Yuan QW	South China Univ Technol, Natl Engn Res Ctr Novel Equipment Polymer Proc, Dept Mech & Automot Engn, Key Lab Polymer Proc Engn,Minist Educ,Guangdong Pr, Guangzhou 510641, Peoples R China
+15	Liu ZH	South China Univ Technol, Natl Engn Res Ctr Novel Equipment Polymer Proc, Dept Mech & Automot Engn, Key Lab Polymer Proc Engn,Minist Educ,Guangdong Pr, Guangzhou 510641, Peoples R China
+15	Qu JP	South China Univ Technol, Natl Engn Res Ctr Novel Equipment Polymer Proc, Dept Mech & Automot Engn, Key Lab Polymer Proc Engn,Minist Educ,Guangdong Pr, Guangzhou 510641, Peoples R China
+16	Perez-Monserrat EM	Univ Padua, Dept Geosci, Via G Gradenigo 6, I-35131 Padua, Italy
+16	Maritan L	Univ Padua, Dept Geosci, Via G Gradenigo 6, I-35131 Padua, Italy
+16	Causarano MA	Univ Padua, Dept Cultural Heritage, Piazza Capitaniato 7, I-35139 Padua, Italy
+16	Chavarria A	Univ Padua, Dept Cultural Heritage, Piazza Capitaniato 7, I-35139 Padua, Italy
+16	Brogiolo GP	Univ Padua, Dept Cultural Heritage, Piazza Capitaniato 7, I-35139 Padua, Italy
+16	Cultrone G	Univ Granada, Fac Sci, Dept Mineral & Petrol, Ave Fuente Nueva S-N, Granada 18002, Spain
+17	Collinson R	Univ Notre Dame, Notre Dame, IN 46556 USA Yale Univ, New Haven, CT USA Univ Chicago, Chicago, IL USA Fed Reserve Bank Philadelphia, Philadelphia, PA USA Univ Nebraska, Lincoln, NE USA Harvard Univ, Cambridge, MA USA Natl Bur Econ Res, Cambridge, MA USA
+18	Liu S	City Univ Hong Kong, Sch Energy & Environm, Kowloon Tong, Tat Chee Ave, Hong Kong, Peoples R China
+18	Du Y	City Univ Hong Kong, Sch Energy & Environm, Kowloon Tong, Tat Chee Ave, Hong Kong, Peoples R China
+18	Yip HL	City Univ Hong Kong, Sch Energy & Environm, Kowloon Tong, Tat Chee Ave, Hong Kong, Peoples R China
+18	Tso CY	City Univ Hong Kong, Sch Energy & Environm, Kowloon Tong, Tat Chee Ave, Hong Kong, Peoples R China
+18	Li Y	Zhejiang Univ, Sch Mech Engn, State Key Lab Fluid Power & Mechatron Syst, Hangzhou, Peoples R China
+18	Li Y	Zhejiang Univ, Sch Mech Engn, Key Lab Adv Mfg Technol Zhejiang Prov, Hangzhou, Peoples R China
+18	Li Y	Hong Kong Univ Sci & Technol, Dept Mech & Aerosp Engn, Kowloon, Clear Water Bay, Hong Kong, Peoples R China
+18	Huang B	Hong Kong Univ Sci & Technol, Dept Mech & Aerosp Engn, Kowloon, Clear Water Bay, Hong Kong, Peoples R China
+18	Wang Y	City Univ Hong Kong, Dept Phys, Kowloon Tong, Tat Chee Ave, Hong Kong, Peoples R China
+18	Yu KM	City Univ Hong Kong, Dept Phys, Kowloon Tong, Tat Chee Ave, Hong Kong, Peoples R China
+18	Yip HL	City Univ Hong Kong, Dept Mat Sci & Engn, Kowloon Tong, Tat Chee Ave, Hong Kong, Peoples R China
+18	Jen AKY	City Univ Hong Kong, Dept Mat Sci & Engn, Kowloon Tong, Tat Chee Ave, Hong Kong, Peoples R China
+18	Yip HL	City Univ Hong Kong, Hong Kong Inst Clean Energy, Kowloon Tong, Tat Chee Ave, Hong Kong, Peoples R China
+18	Jen AKY	City Univ Hong Kong, Hong Kong Inst Clean Energy, Kowloon Tong, Tat Chee Ave, Hong Kong, Peoples R China
+18	Jen AKY	City Univ Hong Kong, Dept Chem, Kowloon Tong, Tat Chee Ave, Hong Kong, Peoples R China
+19	Mastrucci A	Int Inst Appl Syst Anal IIASA, Energy Climate & Environm ECE Program, Schlosspl 1, A-2361 Laxenburg, Austria
+19	Byers E	Int Inst Appl Syst Anal IIASA, Energy Climate & Environm ECE Program, Schlosspl 1, A-2361 Laxenburg, Austria
+19	Pachauri S	Int Inst Appl Syst Anal IIASA, Energy Climate & Environm ECE Program, Schlosspl 1, A-2361 Laxenburg, Austria
+19	Rao N	Int Inst Appl Syst Anal IIASA, Energy Climate & Environm ECE Program, Schlosspl 1, A-2361 Laxenburg, Austria
+19	Van Ruijven B	Int Inst Appl Syst Anal IIASA, Energy Climate & Environm ECE Program, Schlosspl 1, A-2361 Laxenburg, Austria
+19	Rao N	Yale Univ, Yale Sch Environm, New Haven, CT USA
+20	Hussain A	Univ Bath, Dept Architecture & Civil Engn, BRE Ctr Innovat Construct Mat, Bath BA2 7AY, Avon, England
+20	Calabria-Holley J	Univ Bath, Dept Architecture & Civil Engn, BRE Ctr Innovat Construct Mat, Bath BA2 7AY, Avon, England
+20	Lawrence M	Univ Bath, Dept Architecture & Civil Engn, BRE Ctr Innovat Construct Mat, Bath BA2 7AY, Avon, England
+20	Ansell MP	Univ Bath, Dept Architecture & Civil Engn, BRE Ctr Innovat Construct Mat, Bath BA2 7AY, Avon, England
+20	Jiang Y	Univ Bath, Dept Architecture & Civil Engn, BRE Ctr Innovat Construct Mat, Bath BA2 7AY, Avon, England
+20	Hussain A	Univ Laval, Dept Wood & Forest Sci, Quebec City, PQ G1V 0A6, Canada
+20	Schorr D	Univ Laval, Dept Wood & Forest Sci, Quebec City, PQ G1V 0A6, Canada
+20	Blanchet P	Univ Laval, Dept Wood & Forest Sci, Quebec City, PQ G1V 0A6, Canada
+21	Lee JW	Seoul Metropolitan Govt, 131 Taebong Ro, Seoul 06763, South Korea
+21	Lee KH	Korea Inst Civil Engn & Bldg Technol, 283 Goyangdae Ro, Goyang Si 411712, Gyeonggi Do, South Korea
+21	Kim YJ	Korea Inst Civil Engn & Bldg Technol, 283 Goyangdae Ro, Goyang Si 411712, Gyeonggi Do, South Korea
+21	Kwon SA	Korea Inst Civil Engn & Bldg Technol, 283 Goyangdae Ro, Goyang Si 411712, Gyeonggi Do, South Korea
+22	Li LG	Guangdong Univ Technol, Sch Civil & Transportat Engn, Guangzhou, Peoples R China
+22	Lin ZH	Guangdong Univ Technol, Sch Civil & Transportat Engn, Guangzhou, Peoples R China
+22	Chen GM	South China Univ Technol, State Key Lab Subtrop Bldg Sci, Guangzhou, Peoples R China
+22	Kwan AKH	Univ Hong Kong, Dept Civil Engn, Hong Kong, Peoples R China
+23	Vosa KV	Tallinn Univ Technol, Dept Civil Engn & Architecture, EE-19086 Tallinn, Estonia
+23	Ferrantelli A	Tallinn Univ Technol, Dept Civil Engn & Architecture, EE-19086 Tallinn, Estonia
+23	Kurnitski J	Tallinn Univ Technol, Dept Civil Engn & Architecture, EE-19086 Tallinn, Estonia
+23	Tzanev D	Ctr Energy Efficiency EnEffect, Sofia 1164, Bulgaria
+23	Simeonov K	Ctr Energy Efficiency EnEffect, Sofia 1164, Bulgaria
+23	Carnero P	Valencia Inst Bldg, Valencia 46018, Spain
+23	Espigares C	Valencia Inst Bldg, Valencia 46018, Spain
+23	Navarro Escudero M	Valencia Inst Bldg, Valencia 46018, Spain
+23	Vicente Quiles P	Spanish Tech Assoc Air Conditioning & Refrigerat, Madrid 28043, Spain
+23	Andrieu T	SAS TIPEE Plateforme Technol Batiment Durable, F-17140 Lagord, France
+23	Battezzati F	SAS TIPEE Plateforme Technol Batiment Durable, F-17140 Lagord, France
+23	Cordeiro K	SAS TIPEE Plateforme Technol Batiment Durable, F-17140 Lagord, France
+23	Allard F	SAS TIPEE Plateforme Technol Batiment Durable, F-17140 Lagord, France
+23	Magyar Z	Comfort Consulting Ltd, H-2310 Szigetszentmiklos, Hungary
+23	Turturiello G	AiCARR Assoc Italiana Condizionamento Aria Riscal, I-20125 Milan, Italy
+23	D'oca S	HIA Huygen Engineers & Consultants, NL-6167 Sittard Geleen, Netherlands
+23	Willems E	HIA Huygen Engineers & Consultants, NL-6167 Sittard Geleen, Netherlands
+23	Veld PO	HIA Huygen Engineers & Consultants, NL-6167 Sittard Geleen, Netherlands
+23	Litiu AV	KTH Royal Inst Technol, Div Bldg Serv & Energy Syst, S-10044 Stockholm, Sweden
+23	Lungu C	AIIR Asociatia Inginerilor Instalatii Filiala Val, Bucharest 021414, Romania
+23	Catalina T	Aalto Univ, Dept Civil Engn, Aalto 00076, Finland
+23	Kurnitski J	Aalto Univ, Dept Civil Engn, Aalto 00076, Finland
+23	Kurnitski J	Tallinn Univ Technol, Smart City Ctr Excellence, EE-19086 Tallinn, Estonia
+24	Coroa RDC	Univ Laval, Ctr Integre Univ Desante & Serv Sociaux Capitale N, VITAM Ctr Rech Sante Durable, Quebec City, PQ, Canada
+24	Gogovor A	Univ Laval, Ctr Integre Univ Desante & Serv Sociaux Capitale N, VITAM Ctr Rech Sante Durable, Quebec City, PQ, Canada
+24	Ben Hassine A	Univ Laval, Ctr Integre Univ Desante & Serv Sociaux Capitale N, VITAM Ctr Rech Sante Durable, Quebec City, PQ, Canada
+24	Plourde KV	Univ Laval, Ctr Integre Univ Desante & Serv Sociaux Capitale N, VITAM Ctr Rech Sante Durable, Quebec City, PQ, Canada
+24	Rheault N	Univ Laval, Ctr Integre Univ Desante & Serv Sociaux Capitale N, VITAM Ctr Rech Sante Durable, Quebec City, PQ, Canada
+24	Legare F	Univ Laval, Ctr Integre Univ Desante & Serv Sociaux Capitale N, VITAM Ctr Rech Sante Durable, Quebec City, PQ, Canada
+24	Coroa RDC	Univ Laval, Unite Soutien Syst Sante Apprenant Quebec, Quebec City, PQ, Canada
+24	Gogovor A	Univ Laval, Unite Soutien Syst Sante Apprenant Quebec, Quebec City, PQ, Canada
+24	Rheault N	Univ Laval, Unite Soutien Syst Sante Apprenant Quebec, Quebec City, PQ, Canada
+24	Legare F	Univ Laval, Unite Soutien Syst Sante Apprenant Quebec, Quebec City, PQ, Canada
+24	Coroa RDC	Univ Laval, Fac Med, Quebec City, PQ, Canada
+24	Gogovor A	Univ Laval, Fac Med, Quebec City, PQ, Canada
+24	Zomahoun HTV	Univ Laval, Fac Med, Quebec City, PQ, Canada
+24	Legare F	Univ Laval, Fac Med, Quebec City, PQ, Canada
+24	Ben Charif A	Univ Laval, CubecXpert, Quebec City, PQ, Canada
+24	Ben Hassine A	Univ Laval, Fac Nursing, Quebec City, PQ, Canada
+24	Zomahoun HTV	McGill Univ, Fac Med & Hlth Sci, Sch Phys & Occupat Therapy, Montreal, PQ, Canada
+24	Mclean RKD	Stellenbosch Univ, Int Dev Res Ctr, Stellenbosch, South Africa
+24	Mclean RKD	Stellenbosch Univ, Fac Med & Hlth Sci, Stellenbosch, South Africa
+24	Milat A	Univ Sydney, Sch Publ Hlth, Sydney, Australia
+24	Milat A	NSW Minist Hlth, Ctr Epidemiol & Evidence, St Leonards, Australia
+24	Wolfenden L	Univ Newcastle, Sch Med & Publ Hlth, Newcastle, Australia
+24	Wolfenden L	Univ Newcastle, Natl Ctr Implementat Sci, Newcastle, Australia
+24	Legare F	Hunter New England Populat Hlth, Callaghan, Australia
+24	Legare F	VITAM Ctr Rech Sante Durable, 2480 Chemin Canardiere, Quebec City, PQ G1G 2G1, Canada
+25	Fu C	Beijing Normal Univ, Sch Environm, State Key Lab Water Environm Simulat, Beijing 100875, Peoples R China
+25	Zhang Y	Beijing Normal Univ, Sch Environm, State Key Lab Water Environm Simulat, Beijing 100875, Peoples R China
+25	Yu X	Minist Ecol & Environm Peoples Republ China, Solid Waste & Chem Management Ctr, Yuhuinanlu 1, Beijing 100029, Peoples R China
+26	Torrens A	Univ Barcelona, Fac Pharm & Food Sci, Dept Biol Hlth & Environm, Av Joan XXIII S-N, Barcelona 08012, Spain
+26	Torrens A	Univ Barcelona, Solidar Fdn Univ Barcelona, Nat Based Solut Sustainable Dev Area, Melcior Palau 140, Barcelona 08014, Spain
+26	Folch M	Univ Barcelona, Solidar Fdn Univ Barcelona, Nat Based Solut Sustainable Dev Area, Melcior Palau 140, Barcelona 08014, Spain
+26	De La Varga D	Univ A Coruna, SEDAQUA, Lab Chem Phys & Chem Engn, Campus A Zapateira S-N, La Coruna 15008, Spain
+26	Ndiaye AK	Gaston Berger Univ St Louis, Appl Sci & Technol Training & Res Unit, Lab Atmospher & Ocean Sci, BP 234, St Louis, Senegal
+26	Coly A	Gaston Berger Univ St Louis, Geog Dept, BP 234, St Louis, Senegal
+27	Rochard H	Univ Paris Cite, Ladyss, UMR 533, Paris, France
+27	Rochard H	LabEx DynamiTe, Paris, France
+28	Lanau M	Univ Southern Denmark, Dept Green Technol, SDU Life Cycle Engn, DK-5230 Odense, Denmark
+28	Herbert L	Univ Southern Denmark, Dept Green Technol, SDU Life Cycle Engn, DK-5230 Odense, Denmark
+28	Liu G	Univ Southern Denmark, Dept Green Technol, SDU Life Cycle Engn, DK-5230 Odense, Denmark
+28	Lanau M	Univ Sheffield, Dept Civil & Struct Engn, Sheffield, S Yorkshire, England
+30	Wang L	Huazhong Univ Sci & Technol, Wuhan Natl Lab Optoelect, Wuhan 430074, Hubei, Peoples R China
+30	Li X	Huazhong Univ Sci & Technol, Wuhan Natl Lab Optoelect, Wuhan 430074, Hubei, Peoples R China
+30	Ren X	Huazhong Univ Sci & Technol, Wuhan Natl Lab Optoelect, Wuhan 430074, Hubei, Peoples R China
+30	Huo K	Huazhong Univ Sci & Technol, Wuhan Natl Lab Optoelect, Wuhan 430074, Hubei, Peoples R China
+30	Jin Z	Huazhong Univ Sci & Technol, Sch Chem & Chem Engn, Wuhan 430074, Hubei, Peoples R China
+30	Liang Z	Huazhong Univ Sci & Technol, Sch Energy & Power Engn, Wuhan 430074, Hubei, Peoples R China
+30	Feng G	Huazhong Univ Sci & Technol, Sch Energy & Power Engn, Wuhan 430074, Hubei, Peoples R China
+30	Peng X	City Univ Hong Kong, Dept Mat Sci & Engn, Dept Phys, Kowloon, Tat Chee Ave, Hong Kong, Peoples R China
+30	Gao B	City Univ Hong Kong, Dept Mat Sci & Engn, Dept Phys, Kowloon, Tat Chee Ave, Hong Kong, Peoples R China
+30	Chu PK	City Univ Hong Kong, Dept Mat Sci & Engn, Dept Phys, Kowloon, Tat Chee Ave, Hong Kong, Peoples R China
+30	Gao B	Wuhan Univ Sci & Technol, Inst Adv Mat & Nanotechnol, State Key Lab Refractories & Met, Wuhan 430081, Hubei, Peoples R China
+31	Tian J	Yibin Univ, Dept Mat & Chem Engn, Yibin 644007, Peoples R China
+31	Jin C	Yibin Univ, Dept Mat & Chem Engn, Yibin 644007, Peoples R China
+31	Wu X	Yibin Univ, Dept Mat & Chem Engn, Yibin 644007, Peoples R China
+31	Liao C	Yibin Univ, Dept Mat & Chem Engn, Yibin 644007, Peoples R China
+31	Xie J	Yibin Univ, Dept Mat & Chem Engn, Yibin 644007, Peoples R China
+31	Luo Y	Yibin Univ, Dept Mat & Chem Engn, Yibin 644007, Peoples R China
+32	White KD	Vanderbilt Univ, Med Ctr, 1161-21st Ave South,A-2200 Med Ctr North, Nashville, TN USA
+32	Denny JC	Vanderbilt Univ, Med Ctr, 1161-21st Ave South,A-2200 Med Ctr North, Nashville, TN USA
+32	Mallal S	Vanderbilt Univ, Med Ctr, 1161-21st Ave South,A-2200 Med Ctr North, Nashville, TN USA
+32	Williams KB	Vanderbilt Univ, Med Ctr, 1161-21st Ave South,A-2200 Med Ctr North, Nashville, TN USA
+32	Shear NH	Vanderbilt Univ, Med Ctr, 1161-21st Ave South,A-2200 Med Ctr North, Nashville, TN USA
+32	Phillips EJ	Vanderbilt Univ, Med Ctr, 1161-21st Ave South,A-2200 Med Ctr North, Nashville, TN USA
+32	Abe R	Niigata Univ, Grad Sch Med & Dent Sci, Niigata, Japan
+32	Ardern-Jones M	Univ Southampton, Southampton, Hants, England
+32	Beachkofsky T	Lackland AFB, Wilford Hall Ambulatory Surg Ctr, San Antonio, TX USA
+32	Bouchard C	Loyola Univ Med Ctr, Chicago, IL USA
+32	Carleton B	Univ British Columbia, Vancouver, BC, Canada
+32	Carleton B	BC Childrens Hosp, Vancouver, BC, Canada
+32	Chodosh J	Harvard Med Sch, Massachusetts Eye & Ear, Boston, MA USA
+32	Saeed HN	Harvard Med Sch, Massachusetts Eye & Ear, Boston, MA USA
+32	Cibotti R	NIAMSD, NIH, Bethesda, MD 20892 USA
+32	Davis R	Univ Tennessee Hlth Sci, Memphis, TN USA
+32	Dodiuk-Gad RP	Technion Israel Inst Technol, Emek Med Ctr, Afula, Israel
+32	Dodiuk-Gad RP	Univ Toronto, Sunnybrook Hlth Sci Ctr, Toronto, ON, Canada
+32	Ergen EN	Univ Alabama Birmingham, Birmingham, AL USA
+32	Goldman JL	Childrens Mercy Hosp, Kansas City, MO 64108 USA
+32	Holmes JH	Wake Forest Baptist Med Ctr, Winston Salem, NC USA
+32	Holmes JH	Wake Forest Univ, Sch Med, Winston Salem, NC 27109 USA
+32	Hung SI	Natl Yang Ming Univ, Taipei, Taiwan
+32	Lacouture ME	Mem Sloan Kettering Canc Ctr, 1275 York Ave, New York, NY 10021 USA
+32	Lehloenya RJ	Univ Cape Town, Cape Town, South Africa
+32	Lehloenya RJ	Groote Schuur Hosp, Cape Town, South Africa
+32	Mallal S	Murdoch Univ, Inst Immunol & Infect Dis, Murdoch, WA, Australia
+32	Pavlos R	Murdoch Univ, Inst Immunol & Infect Dis, Murdoch, WA, Australia
+32	Redwood A	Murdoch Univ, Inst Immunol & Infect Dis, Murdoch, WA, Australia
+32	Phillips EJ	Murdoch Univ, Inst Immunol & Infect Dis, Murdoch, WA, Australia
+32	Manolio TA	NHGRI, NIH, Bethesda, MD 20892 USA
+32	Struewing JP	NHGRI, NIH, Bethesda, MD 20892 USA
+32	Manolio TA	Uniformed Serv Univ Hlth Sci, F Edward Hebert Sch Med, Bethesda, MD 20814 USA
+32	Micheletti RG	Univ Penn, Philadelphia, PA 19104 USA
+32	Rosenbach M	Univ Penn, Philadelphia, PA 19104 USA
+32	Mitchell CM	Massachusetts Gen Hosp, Boston, MA 02114 USA
+32	Saavedra AP	Massachusetts Gen Hosp, Boston, MA 02114 USA
+32	Mockenhaupt M	Univ Freiburg, Med Ctr, Freiburg, Germany
+32	Mockenhaupt M	Univ Freiburg, Med Fac, Freiburg, Germany
+32	Ostrov DA	Univ Florida, Gainesville, FL USA
+32	Pirmohamed M	Univ Liverpool, Liverpool, Merseyside, England
+32	Pope E	Univ Toronto, Toronto, ON, Canada
+32	Pope E	Hosp Sick Children, Toronto, ON, Canada
+32	Rosenblum MD	Univ Calif San Francisco, San Francisco, CA 94143 USA
+32	Roujeau JC	Univ Paris Est Creteil, Creteil, France
+32	Sueki H	Showa Univ, Sch Med, Tokyo, Japan
+32	Sukasem C	Mahidol Univ, Ramathibodi Hosp, Bangkok, Thailand
+32	Sung C	Duke NUS Med Sch, Singapore, Singapore
+32	Sung C	Hlth Sci Author, Singapore, Singapore
+32	Trubiano JA	Austin Hlth, Heidelberg, Vic, Australia
+32	Trubiano JA	Univ Melbourne, Melbourne, Vic, Australia
+32	Weintraub J	US FDA, Silver Spring, MD USA
+32	Wheatley LM	NIAID, NIH, 9000 Rockville Pike, Bethesda, MD 20892 USA
+32	Worley B	Univ Ottawa, Ottawa, ON, Canada
+32	Chung WH	Chang Gung Mem Hosp, Taipei, Taiwan
+33	Guo S	Wuhan Univ Sci & Technol, Inst Adv Mat & Nanotechnol, State Key Lab Refractories & Met, Wuhan 430081, Peoples R China
+33	Liu Y	Wuhan Univ Sci & Technol, Inst Adv Mat & Nanotechnol, State Key Lab Refractories & Met, Wuhan 430081, Peoples R China
+33	Guo X	Wuhan Univ Sci & Technol, Inst Adv Mat & Nanotechnol, State Key Lab Refractories & Met, Wuhan 430081, Peoples R China
+33	Feng H	Wuhan Univ Sci & Technol, Inst Adv Mat & Nanotechnol, State Key Lab Refractories & Met, Wuhan 430081, Peoples R China
+33	Luo S	Wuhan Univ Sci & Technol, Inst Adv Mat & Nanotechnol, State Key Lab Refractories & Met, Wuhan 430081, Peoples R China
+33	Wei C	Wuhan Univ Sci & Technol, Inst Adv Mat & Nanotechnol, State Key Lab Refractories & Met, Wuhan 430081, Peoples R China
+33	Zheng Y	Wuhan Univ Sci & Technol, Inst Adv Mat & Nanotechnol, State Key Lab Refractories & Met, Wuhan 430081, Peoples R China
+33	Zhang X	Wuhan Univ Sci & Technol, Inst Adv Mat & Nanotechnol, State Key Lab Refractories & Met, Wuhan 430081, Peoples R China
+33	Gao B	Wuhan Univ Sci & Technol, Inst Adv Mat & Nanotechnol, State Key Lab Refractories & Met, Wuhan 430081, Peoples R China
+33	Sun Z	Xiamen Univ, Coll Mat, State Key Lab Phys Chem Solid Surfaces, Xiamen 361005, Peoples R China
+33	Zhang Q	Xiamen Univ, Coll Mat, State Key Lab Phys Chem Solid Surfaces, Xiamen 361005, Peoples R China
+33	Feng H	Huazhong Univ Sci & Technol, Sch Opt & Elect Informat, Wuhan Natl Lab Optoelect WNLO, Wuhan 430074, Peoples R China
+33	Huo K	Huazhong Univ Sci & Technol, Sch Opt & Elect Informat, Wuhan Natl Lab Optoelect WNLO, Wuhan 430074, Peoples R China
+33	Kim K	Univ Calif San Diego, Ctr Memory & Recording Res Bldg, San Diego, CA 92093 USA
+33	Liu H	Univ Calif San Diego, Ctr Memory & Recording Res Bldg, San Diego, CA 92093 USA
+33	Chu PK	City Univ Hong Kong, Dept Phys, Dept Mat Sci & Engn, Kowloon, Tat Chee Ave, Hong Kong 518057, Peoples R China
+33	Chu PK	City Univ Hong Kong, Dept Biomed Engn, Kowloon, Tat Chee Ave, Hong Kong 518057, Peoples R China
+34	Enea D	Univ Palermo, Dipartimento Progetto & Costruz Edilizia, I-90100 Palermo, Italy
+34	Guerrini GL	CTG Italcementi Grp, I-24121 Bergamo, Italy
+35	Yang X	Yangzhou Univ, Coll Phys Sci & Technol, Yangzhou 225002, Peoples R China
+35	Cui J	Yangzhou Univ, Coll Phys Sci & Technol, Yangzhou 225002, Peoples R China
+35	Lin L	Yangzhou Univ, Coll Phys Sci & Technol, Yangzhou 225002, Peoples R China
+35	Du W	Yangzhou Univ, Coll Phys Sci & Technol, Yangzhou 225002, Peoples R China
+35	Guo S	Yangzhou Univ, Coll Phys Sci & Technol, Yangzhou 225002, Peoples R China
+35	Hu J	Yangzhou Univ, Coll Phys Sci & Technol, Yangzhou 225002, Peoples R China
+35	Xu X	Yangzhou Univ, Coll Phys Sci & Technol, Yangzhou 225002, Peoples R China
+35	Yang X	Yangzhou Univ, Interdisciplinary Res Ctr, Yangzhou 225002, Peoples R China
+35	Cui J	Yangzhou Univ, Interdisciplinary Res Ctr, Yangzhou 225002, Peoples R China
+35	Lin L	Yangzhou Univ, Interdisciplinary Res Ctr, Yangzhou 225002, Peoples R China
+35	Du W	Yangzhou Univ, Interdisciplinary Res Ctr, Yangzhou 225002, Peoples R China
+35	Guo S	Yangzhou Univ, Interdisciplinary Res Ctr, Yangzhou 225002, Peoples R China
+35	Hu J	Yangzhou Univ, Interdisciplinary Res Ctr, Yangzhou 225002, Peoples R China
+35	Xu X	Yangzhou Univ, Interdisciplinary Res Ctr, Yangzhou 225002, Peoples R China
+35	Bian A	Jiangsu Univ Sci & Technol, Sch Sci, Zhenjiang 212100, Peoples R China
+35	Dai J	Jiangsu Univ Sci & Technol, Sch Sci, Zhenjiang 212100, Peoples R China
+36	Connelly A	Univ Manchester, Manchester Architecture Res Ctr, Manchester, Lancs, England
+36	Guy SC	Univ Lancaster, Fac Arts & Social Sci, Lancaster, England
+36	Wainwright E	Newcastle Univ, Sch Architecture Planning & Landscape, Newcastle Upon Tyne, Tyne & Wear, England
+36	Weileder W	Newcastle Univ, Sch Arts & Cultures, Fine Art, Newcastle Upon Tyne, Tyne & Wear, England
+36	Wilde M	Newcastle Univ, Sch Arts & Cultures, Fine Art, Newcastle Upon Tyne, Tyne & Wear, England
+37	Li CD	Nanjing Univ Aeronaut & Astronaut, Super Insuat Composites Lab, Nanjing 210016, Jiangsu, Peoples R China
+37	Chen ZF	Nanjing Univ Aeronaut & Astronaut, Super Insuat Composites Lab, Nanjing 210016, Jiangsu, Peoples R China
+37	Boafo FE	Nanjing Univ Aeronaut & Astronaut, Super Insuat Composites Lab, Nanjing 210016, Jiangsu, Peoples R China
+37	Xu TZ	Nanjing Univ Aeronaut & Astronaut, Super Insuat Composites Lab, Nanjing 210016, Jiangsu, Peoples R China
+37	Wang L	Nanjing Univ Aeronaut & Astronaut, Super Insuat Composites Lab, Nanjing 210016, Jiangsu, Peoples R China
+38	Zhai T	Guiyang Univ, Coll Chem & Mat Engn, Guiyang 550005, Peoples R China
+38	Li J	Guiyang Univ, Coll Chem & Mat Engn, Guiyang 550005, Peoples R China
+38	Wang X	Guiyang Univ, Coll Chem & Mat Engn, Guiyang 550005, Peoples R China
+38	Yan W	Guiyang Univ, Coll Chem & Mat Engn, Guiyang 550005, Peoples R China
+38	Zhang C	Guiyang Univ, Coll Chem & Mat Engn, Guiyang 550005, Peoples R China
+38	Zhai T	Guizhou Educ Univ, Sch Chem & Mat Sci, Guiyang 550018, Peoples R China
+38	Verdolotti L	Natl Res Council Italy, Inst Polymers Composites & Biomat, Ple E Fermi 1, I-80055 Portici, Italy
+38	Lavorgna M	Natl Res Council Italy, Inst Polymers Composites & Biomat, Ple E Fermi 1, I-80055 Portici, Italy
+38	Xia H	Natl Res Council Italy, Inst Polymers Composites & Biomat, Ple E Fermi 1, I-80055 Portici, Italy
+38	Xia H	Sichuan Univ, State Key Lab Polymer Mat Engn, Polymer Res Inst, Chengdu 610065, Peoples R China
+39	Li M	Imperial Coll London, Ctr Adv Struct Ceram, Dept Mat, London SW7 2AZ, England
+39	Zhou S	Imperial Coll London, Ctr Adv Struct Ceram, Dept Mat, London SW7 2AZ, England
+39	Bouville F	Imperial Coll London, Ctr Adv Struct Ceram, Dept Mat, London SW7 2AZ, England
+39	Saiz E	Imperial Coll London, Ctr Adv Struct Ceram, Dept Mat, London SW7 2AZ, England
+39	Guan Q	Univ Glasgow, Sch Chem, Glasgow G12 8QQ, Scotland
+39	Li C	Imperial Coll London, Dept Mech Engn, City & Guilds Bldg, London SW7 2AZ, England
+39	Li W	Xiamen Univ, State Key Lab Phys Chem Solid Surfaces, Coll Chem & Chem Engn, Xiamen 361005, Peoples R China
+39	Bai H	Xiamen Univ, State Key Lab Phys Chem Solid Surfaces, Coll Chem & Chem Engn, Xiamen 361005, Peoples R China
+40	Lee SY	Induk Univ, Fac Civil Engn, 12 Choansan ro, Seoul 01878, South Korea
+40	Yun YM	Suwon Sci Coll, Fac Civil Engn, 288 Seja Ro, Seja ro 18516, Gyeonggi Do, South Korea
+40	Le THM	Nguyen Tat Thanh Univ, Fac Civil Engn, 300A Nguyen Tat Thanh St,Dist 4, Ho Chi Minh City, Vietnam
+41	Fan W	City Univ Hong Kong, Sch Energy & Environm, Abil R&D Energy Res Ctr, Tat Chee Ave, Kowloon, Hong Kong, Peoples R China
+41	Chan KY	City Univ Hong Kong, Sch Energy & Environm, Abil R&D Energy Res Ctr, Tat Chee Ave, Kowloon, Hong Kong, Peoples R China
+41	Zhang C	City Univ Hong Kong, Sch Energy & Environm, Abil R&D Energy Res Ctr, Tat Chee Ave, Kowloon, Hong Kong, Peoples R China
+41	Leung MKH	City Univ Hong Kong, Sch Energy & Environm, Abil R&D Energy Res Ctr, Tat Chee Ave, Kowloon, Hong Kong, Peoples R China
+41	Fan W	City Univ Hong Kong, Shenzhen Res Inst, Shenzhen, Guangdong, Peoples R China
+41	Zhang C	City Univ Hong Kong, Shenzhen Res Inst, Shenzhen, Guangdong, Peoples R China
+41	Zhang K	City Univ Hong Kong, Sch Energy & Environm, Hong Kong, Hong Kong, Peoples R China
+41	Ning Z	City Univ Hong Kong, Sch Energy & Environm, Hong Kong, Hong Kong, Peoples R China
+41	Leung MKH	City Univ Hong Kong, Sch Energy & Environm, Hong Kong, Hong Kong, Peoples R China
+42	Cheung AKL	Hong Kong Baptist Univ, Fac Sci, Dept Biol, Hong Kong, Peoples R China
+42	Fung TY	Hong Kong Baptist Univ, Fac Sci, Dept Biol, Hong Kong, Peoples R China
+42	Lu Y	Sun Yat Sen Univ, Affiliated Hosp 7, Sch Med, Dept Nephrol, Shenzhen, Guangdong, Peoples R China
+42	Zheng Z	Sun Yat Sen Univ, Affiliated Hosp 7, Sch Med, Dept Nephrol, Shenzhen, Guangdong, Peoples R China
+42	Hong P	Sun Yat Sen Univ, Affiliated Hosp 7, Sch Med, Dept Nephrol, Shenzhen, Guangdong, Peoples R China
+42	Lu Y	City Univ Hong Kong, Shenzhen Res Inst, Dept Biomed Sci, Hong Kong, Peoples R China
+42	Zhu Y	Hubei Univ Arts & Sci, Xiangyang Cent Hosp, Affiliated Hosp, Div Lab Med,Lab Clin Immunol, Xiangyang, Hubei, Peoples R China
+42	Zheng Y	Hubei Univ Arts & Sci, Xiangyang Cent Hosp, Affiliated Hosp, Dept Resp & Crit Care Med, Xiangyang, Hubei, Peoples R China
+42	Hong P	US Dept Vet Affairs New York Harbor Healthcare Sys, Div Res & Dev, Brooklyn, NY USA
+42	Hong P	SUNY Downstate Hlth Sci Univ, Dept Cell Biol, Brooklyn, NY USA
+42	Cheung AKL	Hong Kong Baptist Univ, Fac Sci, Dept Biol, Rm 833, Run Run Shaw Bldg, Ho Sin hang Campus,224, Hong Kong, Peoples R China
+42	Hong P	US Dept Vet Affairs New York Harbor Healthcare Sys, Div Res & Dev, Main Bldg Room 3-201, 800 Poly Pl, Brooklyn, NY 11209 USA
+43	Zhao H	Tongji Univ, Minist Educ, Key Lab Rd & Traff Engn, 4800 Caoan Rd, Shanghai 201804, Peoples R China
+43	Ling J	Tongji Univ, Minist Educ, Key Lab Rd & Traff Engn, 4800 Caoan Rd, Shanghai 201804, Peoples R China
+43	Fu P	Lawrence Livermore Natl Lab, Livermore, CA 94551 USA
+44	Tanguy A	Univ Sherbrooke, Dept Civil & Bldg Engn, LIRIDE, Sherbrooke, PQ, Canada
+44	Amor B	Univ Sherbrooke, Dept Civil & Bldg Engn, LIRIDE, Sherbrooke, PQ, Canada
+44	Breton C	Univ Laval, Dept Wood & Forest Sci, CIRCERB, Quebec City, PQ, Canada
+44	Blanchet P	Univ Laval, Dept Wood & Forest Sci, CIRCERB, Quebec City, PQ, Canada
+45	Haites E	Margaree Consultants Inc, Toronto, ON, Canada
+45	Bertoldi P	European Commiss, Joint Res Ctr, Directorate Energy Transport & Climate, Ispra, Italy
+45	Koenig M	Frankfurt Sch Finance & Management, Frankfurt, Germany
+45	Bataille C	Columbia Univ, SIPA Ctr Global Energy Policy CGEP, New York, NY USA
+45	Bataille C	Inst Dev Durable & Relat Int, Paris, France
+45	Creutzig F	Tech Univ Berlin, Berlin, Germany
+45	Creutzig F	Mercator Res Inst Global Commons & Climate Change, Berlin, Germany
+45	Dasgupta D	Energy & Resources Inst TERI, New Delhi, India
+45	Du Can SDLR	Lawrence Berkeley Natl Lab, Berkeley, CA USA
+45	Kim YG	Korea Environm Inst, Sejong City, South Korea
+45	Nilsson LJ	Lund Univ, Lund, Sweden
+45	Roy J	Asian Inst Technol AIT, SMARTS Ctr, Pathum Thani, Thailand
+45	Roy J	Jadavpur Univ, Global Change Programme, Kolkata, India
+46	Laberge M	Univ Laval, Fac Med, Dept Social & Prevent Med, 1050 Av Med, Quebec City, PQ G1V 0A6, Canada
+46	Brundisini F	Univ Laval, Fac Med, Dept Social & Prevent Med, 1050 Av Med, Quebec City, PQ G1V 0A6, Canada
+46	Moya MEE	Univ Laval, Fac Med, Dept Social & Prevent Med, 1050 Av Med, Quebec City, PQ G1V 0A6, Canada
+46	Laberge M	Univ Laval, Hop St Sacrement, Ctr Rech CHU Quebec, 1050 Chemin Ste Foy, Quebec City, PQ G1S 4L8, Canada
+46	Moya MEE	Univ Laval, Hop St Sacrement, Ctr Rech CHU Quebec, 1050 Chemin Ste Foy, Quebec City, PQ G1S 4L8, Canada
+46	Laberge M	Univ Laval, Ctr Rech Sante Durable, Vitam, Quebec City, PQ, Canada
+46	Brundisini F	Univ Laval, Ctr Rech Sante Durable, Vitam, Quebec City, PQ, Canada
+46	Daniel I	Univ Toronto, Inst Hlth Policy Management & Evaluat, Hlth Sci Bldg,155 Coll St,Suite 425, Toronto, ON M5T 3M6, Canada
+46	Daniel I	Ontario Hosp Assoc, Toronto, ON, Canada
+47	Batool I	Univ Punjab, Coll Earth & Environm Sci, Lahore, Pakistan
+47	Qadir A	Univ Punjab, Coll Earth & Environm Sci, Lahore, Pakistan
+47	Levermore JM	Imperial Coll London, Sch Publ Hlth, 10th Floor,Michael Uren Bldg,White City Campus, London W12 0BZ, England
+47	Kelly FJ	Imperial Coll London, Sch Publ Hlth, 10th Floor,Michael Uren Bldg,White City Campus, London W12 0BZ, England
+48	Ahmad M	City Univ Hong Kong, Dept Mech Engn, Kowloon, 83 Tat Chee Ave, Hong Kong 999077, Peoples R China
+48	Hussain I	City Univ Hong Kong, Dept Mech Engn, Kowloon, 83 Tat Chee Ave, Hong Kong 999077, Peoples R China
+48	Chen X	City Univ Hong Kong, Dept Mech Engn, Kowloon, 83 Tat Chee Ave, Hong Kong 999077, Peoples R China
+48	Khan SA	City Univ Hong Kong, Dept Mech Engn, Kowloon, 83 Tat Chee Ave, Hong Kong 999077, Peoples R China
+48	Zhang K	City Univ Hong Kong, Dept Mech Engn, Kowloon, 83 Tat Chee Ave, Hong Kong 999077, Peoples R China
+48	Nawaz T	Univ Hong Kong, Dept Chem, Pokfulam Rd, Hong Kong, Peoples R China
+48	Hussain I	Chinese Natl Engn Res Ctr CNERC, Hong Kong Branch, Natl Precious Met Mat NPMM, Kowloon, Hong Kong 999077, Peoples R China
+48	Zhang K	Chinese Natl Engn Res Ctr CNERC, Hong Kong Branch, Natl Precious Met Mat NPMM, Kowloon, Hong Kong 999077, Peoples R China
+48	Meharban F	Donghua Univ, Mat Coll, 2999 Renmin North Rd, Shanghai, Peoples R China
+48	Iqbal S	Tech Univ Denmark DTU, Dept Energy Convers & Storage, Bldg 310, DK-2800 Lyngby, Denmark
+48	Rosaiah P	Saveetha Inst Med & Tech Sci SIMATS, Saveetha Sch Engn, Dept Phys, Chennai 602105, India
+48	Ansari MZ	Yeungnam Univ, Sch Mat Sci & Engn, Gyongsan 38541, South Korea
+48	Al Zoubi W	Yeungnam Univ, Sch Mat Sci & Engn, Gyongsan 38541, South Korea
+49	Li BT	Mem Sloan Kettering Canc Ctr, Dept Med, New York, NY 10065 USA
+49	Tu HY	Mem Sloan Kettering Canc Ctr, Dept Med, New York, NY 10065 USA
+49	Myers ML	Mem Sloan Kettering Canc Ctr, Dept Med, New York, NY 10065 USA
+49	Xu C	Mem Sloan Kettering Canc Ctr, Dept Med, New York, NY 10065 USA
+49	Wilhem CJ	Mem Sloan Kettering Canc Ctr, Dept Med, New York, NY 10065 USA
+49	Solit DB	Mem Sloan Kettering Canc Ctr, Dept Med, New York, NY 10065 USA
+49	Offin M	Mem Sloan Kettering Canc Ctr, Dept Med, New York, NY 10065 USA
+49	Yu HA	Mem Sloan Kettering Canc Ctr, Dept Med, New York, NY 10065 USA
+49	Hyman DM	Mem Sloan Kettering Canc Ctr, Dept Med, New York, NY 10065 USA
+49	Ho AL	Mem Sloan Kettering Canc Ctr, Dept Med, New York, NY 10065 USA
+49	Makker V	Mem Sloan Kettering Canc Ctr, Dept Med, New York, NY 10065 USA
+49	Razavi P	Mem Sloan Kettering Canc Ctr, Dept Med, New York, NY 10065 USA
+49	Kris MG	Mem Sloan Kettering Canc Ctr, Dept Med, New York, NY 10065 USA
+49	Poirier JT	Mem Sloan Kettering Canc Ctr, Dept Med, New York, NY 10065 USA
+49	Rudin CM	Mem Sloan Kettering Canc Ctr, Dept Med, New York, NY 10065 USA
+49	Li BT	Weill Cornell Med Coll, New York, NY USA
+49	Solit DB	Weill Cornell Med Coll, New York, NY USA
+49	Offin M	Weill Cornell Med Coll, New York, NY USA
+49	Isbell JM	Weill Cornell Med Coll, New York, NY USA
+49	Jones DR	Weill Cornell Med Coll, New York, NY USA
+49	Yu HA	Weill Cornell Med Coll, New York, NY USA
+49	Hyman DM	Weill Cornell Med Coll, New York, NY USA
+49	Lewis JS	Weill Cornell Med Coll, New York, NY USA
+49	Ho AL	Weill Cornell Med Coll, New York, NY USA
+49	Makker V	Weill Cornell Med Coll, New York, NY USA
+49	Razavi P	Weill Cornell Med Coll, New York, NY USA
+49	Kris MG	Weill Cornell Med Coll, New York, NY USA
+49	Ulaner GA	Weill Cornell Med Coll, New York, NY USA
+49	Rudin CM	Weill Cornell Med Coll, New York, NY USA
+49	Michelini F	Mem Sloan Kettering Canc Ctr, Dept Pathol, New York, NY 10065 USA
+49	Baldino L	Mem Sloan Kettering Canc Ctr, Dept Pathol, New York, NY 10065 USA
+49	Cai Y	Mem Sloan Kettering Canc Ctr, Dept Pathol, New York, NY 10065 USA
+49	Berger MF	Mem Sloan Kettering Canc Ctr, Dept Pathol, New York, NY 10065 USA
+49	Buonocore DJ	Mem Sloan Kettering Canc Ctr, Dept Pathol, New York, NY 10065 USA
+49	Reis-Filho JS	Mem Sloan Kettering Canc Ctr, Dept Pathol, New York, NY 10065 USA
+49	Arcila ME	Mem Sloan Kettering Canc Ctr, Dept Pathol, New York, NY 10065 USA
+49	Scaltriti M	Mem Sloan Kettering Canc Ctr, Dept Pathol, New York, NY 10065 USA
+49	Michelini F	Mem Sloan Kettering Canc Ctr, Human Oncol & Pathogenesis Program, New York, NY 10065 USA
+49	Cocco E	Mem Sloan Kettering Canc Ctr, Human Oncol & Pathogenesis Program, New York, NY 10065 USA
+49	Baldino L	Mem Sloan Kettering Canc Ctr, Human Oncol & Pathogenesis Program, New York, NY 10065 USA
+49	Cai Y	Mem Sloan Kettering Canc Ctr, Human Oncol & Pathogenesis Program, New York, NY 10065 USA
+49	Shifman S	Mem Sloan Kettering Canc Ctr, Human Oncol & Pathogenesis Program, New York, NY 10065 USA
+49	Solit DB	Mem Sloan Kettering Canc Ctr, Human Oncol & Pathogenesis Program, New York, NY 10065 USA
+49	Berger MF	Mem Sloan Kettering Canc Ctr, Human Oncol & Pathogenesis Program, New York, NY 10065 USA
+49	Reis-Filho JS	Mem Sloan Kettering Canc Ctr, Human Oncol & Pathogenesis Program, New York, NY 10065 USA
+49	Scaltriti M	Mem Sloan Kettering Canc Ctr, Human Oncol & Pathogenesis Program, New York, NY 10065 USA
+49	Misale S	Mem Sloan Kettering Canc Ctr, Mol Pharmacol Program, New York, NY 10065 USA
+49	Mattar M	Mem Sloan Kettering Canc Ctr, Mol Pharmacol Program, New York, NY 10065 USA
+49	Khodos I	Mem Sloan Kettering Canc Ctr, Mol Pharmacol Program, New York, NY 10065 USA
+49	Little M	Mem Sloan Kettering Canc Ctr, Mol Pharmacol Program, New York, NY 10065 USA
+49	Qeriqi B	Mem Sloan Kettering Canc Ctr, Mol Pharmacol Program, New York, NY 10065 USA
+49	Poirier JT	Mem Sloan Kettering Canc Ctr, Mol Pharmacol Program, New York, NY 10065 USA
+49	Ulaner GA	Mem Sloan Kettering Canc Ctr, Mol Pharmacol Program, New York, NY 10065 USA
+49	De Stanchina E	Mem Sloan Kettering Canc Ctr, Mol Pharmacol Program, New York, NY 10065 USA
+49	Rosen N	Mem Sloan Kettering Canc Ctr, Mol Pharmacol Program, New York, NY 10065 USA
+49	Tu HY	Guangdong Prov Peoples Hosp, Guangdong Lung Canc Inst, Guangzhou, Peoples R China
+49	Xu C	Guangdong Prov Peoples Hosp, Guangdong Lung Canc Inst, Guangzhou, Peoples R China
+49	Tu HY	Guangdong Acad Med Sci, Guangzhou, Peoples R China
+49	Xu C	Guangdong Acad Med Sci, Guangzhou, Peoples R China
+49	Mattar M	Mem Sloan Kettering Canc Ctr, Antitumor Assessment Core Facil, New York, NY 10065 USA
+49	Khodos I	Mem Sloan Kettering Canc Ctr, Antitumor Assessment Core Facil, New York, NY 10065 USA
+49	Little M	Mem Sloan Kettering Canc Ctr, Antitumor Assessment Core Facil, New York, NY 10065 USA
+49	Qeriqi B	Mem Sloan Kettering Canc Ctr, Antitumor Assessment Core Facil, New York, NY 10065 USA
+49	De Stanchina E	Mem Sloan Kettering Canc Ctr, Antitumor Assessment Core Facil, New York, NY 10065 USA
+49	Weitsman G	Kings Coll London, Richard Dimbleby Dept Canc Res, London, England
+49	Barber PR	Kings Coll London, Richard Dimbleby Dept Canc Res, London, England
+49	Ng T	Kings Coll London, Richard Dimbleby Dept Canc Res, London, England
+49	Lalani AS	Puma Biotechnol, Los Angeles, CA USA
+49	Diala I	Puma Biotechnol, Los Angeles, CA USA
+49	Freedman RA	Dana Farber Canc Inst, Dept Med Oncol, Boston, MA 02115 USA
+49	Lin NU	Dana Farber Canc Inst, Dept Med Oncol, Boston, MA 02115 USA
+49	Solit DB	Mem Sloan Kettering Canc Ctr, Ctr Mol Oncol, New York, NY 10065 USA
+49	Berger MF	Mem Sloan Kettering Canc Ctr, Ctr Mol Oncol, New York, NY 10065 USA
+49	Barber PR	UCL, UCL Canc Inst, Paul OGorman Bldg, London, England
+49	Ng T	UCL, UCL Canc Inst, Paul OGorman Bldg, London, England
+49	Isbell JM	Mem Sloan Kettering Canc Ctr, Dept Surg, New York, NY 10065 USA
+49	Jones DR	Mem Sloan Kettering Canc Ctr, Dept Surg, New York, NY 10065 USA
+49	Thyparambil S	mProbe Inc, Rockville, MD USA
+49	Liao WL	mProbe Inc, Rockville, MD USA
+49	Bhalkikar A	mProbe Inc, Rockville, MD USA
+49	Ulaner GA	mProbe Inc, Rockville, MD USA
+49	Cecchi F	AstraZeneca, Gaithersburg, MD USA
+49	Lewis JS	Mem Sloan Kettering Canc Ctr, Dept Radiol, New York, NY 10065 USA
+49	Lewis JS	Mem Sloan Kettering Canc Ctr, Radiochem & Mol Imaging Probe Core, New York, NY 10065 USA
+49	Shen R	Mem Sloan Kettering Canc Ctr, Dept Epidemiol & Biostat, New York, NY 10065 USA
+49	Tsurutani J	Showa Univ, Adv Canc Translat Res Inst, Dept Med Oncol, Tokyo, Japan
+49	Rosen N	Mem Sloan Kettering Canc Ctr, Ctr Mol Based Therapy, New York, NY 10065 USA
+49	Scaltriti M	Mem Sloan Kettering Canc Ctr, Ctr Mol Based Therapy, New York, NY 10065 USA
+50	Klebanoff LE	Sandia Natl Labs, Livermore, CA 94551 USA
+50	Johnson TA	Sandia Natl Labs, Livermore, CA 94551 USA
+50	Breit J	Boeing Commercial Airplanes, Syst Concept Ctr, Everett, WA 98203 USA
+50	Roe GS	Boeing Commercial Airplanes, Syst Concept Ctr, Everett, WA 98203 USA
+50	Damberger T	Golden State Energy, Carson City, NV 89703 USA
+50	Erbel T	Multiquip Inc, Carson, CA 90746 USA
+50	Wingert S	Multiquip Inc, Carson, CA 90746 USA
+50	Coleman B	Multiquip Inc, Carson, CA 90746 USA
+50	Radley CJ	Altergy Syst, Folsom, CA 95630 USA
+50	Oros JM	Altergy Syst, Folsom, CA 95630 USA
+50	Schuttinger P	Altergy Syst, Folsom, CA 95630 USA
+50	Woolley R	Caltrans Div Res, Innovat & Syst Informat Technol Applicat Off, Irvine, CA 92612 USA
+50	Ghotb H	Caltrans Div Res, Innovat & Syst Informat Technol Applicat Off, Irvine, CA 92612 USA
+50	Prey S	Caltrans Div Res, Innovat & Syst Informat Technol Applicat Off, Irvine, CA 92612 USA
+50	Velinsky S	Univ Calif Davis, Dept Mech & Aerosp Engn, Davis, CA 95616 USA
+50	White W	Univ Calif Davis, Dept Mech & Aerosp Engn, Davis, CA 95616 USA
+50	Saunders R	Saunders Elect Inc, Arleta, CA 91331 USA
+50	Saunders C	Saunders Elect Inc, Arleta, CA 91331 USA
+50	Drake R	Stray Light Opt Technol Inc, Scottsburg, IN 47170 USA
+50	Rea G	Stray Light Opt Technol Inc, Scottsburg, IN 47170 USA
+50	Fliess D	San Francisco Int Airport, City & Cty San Francisco, San Francisco, CA 94128 USA
+50	Hooson R	San Francisco Int Airport, City & Cty San Francisco, San Francisco, CA 94128 USA
+50	Elrick WT	Calif Fuel Cell Partnership, West Sacramento, CA 95691 USA
+50	Hamilton J	Calif Fuel Cell Partnership, West Sacramento, CA 95691 USA
+50	Skradski T	Lumenworks, Oakland, CA 94610 USA
+50	Brown G	Luxirn Corp, Santa Clara, CA 95054 USA
+50	Chao B	Ovon Hydrogen Syst, Rochester Hills, MI 48309 USA
+50	Zelinsky M	Ovon Hydrogen Syst, Rochester Hills, MI 48309 USA
+50	Sorkin A	NASA, TEERM Principal Ctr, Kennedy Space Ctr, FL 32899 USA
+50	Mcglaughlin R	NASA, TEERM Principal Ctr, Kennedy Space Ctr, FL 32899 USA
+50	Moreland G	SRA Int, Latham, NY USA
+50	Hanley RC	Connecticut Dept Transportat, Newington, CT 06131 USA
+50	Koonce M	IGX Grp Inc, San Francisco, CA 94102 USA
+51	Eckenwiler L	George Mason Univ, Dept Philosophy, 4400 Univ Dr, Fairfax, VA 22030 USA
+52	Midgley CM	Univ London Imperial Coll Sci Technol & Med, Dept Med, London W12 0NN, England
+52	Bajwa-Joseph M	Univ London Imperial Coll Sci Technol & Med, Dept Med, London W12 0NN, England
+52	Waiyaiya E	Univ London Imperial Coll Sci Technol & Med, Dept Med, London W12 0NN, England
+52	Tran HB	Univ London Imperial Coll Sci Technol & Med, Dept Med, London W12 0NN, England
+52	Cowper AE	Univ London Imperial Coll Sci Technol & Med, Dept Med, London W12 0NN, England
+52	Chotiyarnwon P	Univ London Imperial Coll Sci Technol & Med, Dept Med, London W12 0NN, England
+52	Mongkolsapaya J	Univ London Imperial Coll Sci Technol & Med, Dept Med, London W12 0NN, England
+52	Screaton GR	Univ London Imperial Coll Sci Technol & Med, Dept Med, London W12 0NN, England
+52	Vasanawathana S	Khon Kaen Hosp, Minist Publ Hlth, Dept Paediat, Khon Kaen, Thailand
+52	Limpitikul W	Songkhla Hosp, Minist Publ Hlth, Dept Paediat, Songkhla, Thailand
+52	Wills B	Univ Oxford, Clin Res Unit, Wellcome Trust Major Overseas Program, Hosp Trop Dis, Ho Chi Minh City, Vietnam
+52	Simmons CP	Univ Oxford, Clin Res Unit, Wellcome Trust Major Overseas Program, Hosp Trop Dis, Ho Chi Minh City, Vietnam
+52	Flanagan A	Univ Oxford, Wellcome Trust Ctr Human Genet, Div Struct Biol, Oxford, England
+52	Grimes JM	Univ Oxford, Wellcome Trust Ctr Human Genet, Div Struct Biol, Oxford, England
+52	Flanagan A	Univ Oxford, Wellcome Trust Ctr Human Genet, Oxford Prot Prod Facil, Oxford, England
+52	Grimes JM	Univ Oxford, Wellcome Trust Ctr Human Genet, Oxford Prot Prod Facil, Oxford, England
+52	Yoksan S	Mahidol Univ, Ctr Vaccine Dev, Inst Mol Biosci, Salaya, Nakhon Pathom, Thailand
+52	Chotiyarnwon P	Mahidol Univ, Siriraj Hosp, Fac Med, Med Mol Biol Unit, Bangkok 10700, Thailand
+52	Malasit P	Mahidol Univ, Siriraj Hosp, Fac Med, Med Mol Biol Unit, Bangkok 10700, Thailand
+52	Mongkolsapaya J	Mahidol Univ, Siriraj Hosp, Fac Med, Med Mol Biol Unit, Bangkok 10700, Thailand
+52	Malasit P	Natl Sci & Technol Dev Agcy, Natl Ctr Genet Engn & Biotechnol, Med Biotechnol Unit, Pathum Thani, Thailand
+53	Bartlett AW	UNSW Australia, Kirby Inst, Sydney, NSW, Australia
+53	Law MG	UNSW Australia, Kirby Inst, Sydney, NSW, Australia
+53	Khan Huu Truong	Childrens Hosp 1, Ho Chi Minh City, Vietnam
+53	Songtaweesin WN	Chulalongkorn Univ, Ctr Excellence Pediat Infect Dis & Vaccines, Bangkok, Thailand
+53	Chokephaibulkit K	Mahidol Univ, Siriraj Hosp, Fac Med, Dept Pediat, Bangkok, Thailand
+53	Hansudewechakul R	Chiangrai Prachanukroh Hosp, Chiang Rai, Thailand
+53	Ly PS	Natl Ctr HIV AIDS Dermatol & STDs, Phnom Penh, Cambodia
+53	Lumbiganon P	Khon Kaen Univ, Dept Pediat, Fac Med, Khon Kaen, Thailand
+53	Sudjaritruk T	Chiang Mai Univ, Fac Med, Dept Pediat, Chiang Mai, Thailand
+53	Sudjaritruk T	Chiang Mai Univ, Res Inst Hlth Sci, Chiang Mai, Thailand
+53	Lam Van Nguyen	Natl Hosp Pediat, Hanoi, Vietnam
+53	Viet Chau Do	Childrens Hosp 2, Ho Chi Minh City, Vietnam
+53	Kumarasamy N	CART CRS, YRGCARE Med Ctr, Madras, Tamil Nadu, India
+53	Yusoff NKN	Hosp Raja Perempuan Zainab II, Kelantan, Malaysia
+53	Kurniati N	Univ Indonesia, Cipto Mangunkusumo Fac Med, Jakarta, Indonesia
+53	Fong MS	Hosp Likas, Kota Kinabalu, Malaysia
+53	Wati DK	Udayana Univ, Sanglah Hosp, Bali, Indonesia
+53	Nallusamy R	Penang Hosp, George Town, Malaysia
+53	Sohn AH	TREAT Asia AmfAR Fdn AIDS Res, Bangkok, Thailand
+53	Mohamed TJ	Hosp Kuala Lumpur, Inst Pediat, Kuala Lumpur, Malaysia
+54	Apyan A	AI Alikhanyan Natl Sci Lab YerPhi, Yerevan, Armenia
+54	Denizli H	AIBU, Bolu, Turkey
+54	Oyulmaz KY	AIBU, Bolu, Turkey
+54	Senol A	AIBU, Bolu, Turkey
+54	Barjhoux P	ALAT, Sassenage, France
+54	Bernhardt JM	ALAT, Sassenage, France
+54	Roig M	ALAT, Sassenage, France
+54	Zick G	ALAT, Sassenage, France
+54	Coadou Y	Aix Marseille Univ, Marseille, France
+54	Sarpun IH	Akdeniz Univ UAKDENIZ, Antalya, Turkey
+54	Bellafont I	Lab Luz Sincrotron Cerdanyola Valles CELLS ALBA, Consorcio Construcci Equipamiento & Explotac, ALBA Synchrotron, Cerdanyola Del Valles, Spain
+54	Biscari C	Lab Luz Sincrotron Cerdanyola Valles CELLS ALBA, Consorcio Construcci Equipamiento & Explotac, ALBA Synchrotron, Cerdanyola Del Valles, Spain
+54	Casas J	Lab Luz Sincrotron Cerdanyola Valles CELLS ALBA, Consorcio Construcci Equipamiento & Explotac, ALBA Synchrotron, Cerdanyola Del Valles, Spain
+54	Colldelram C	Lab Luz Sincrotron Cerdanyola Valles CELLS ALBA, Consorcio Construcci Equipamiento & Explotac, ALBA Synchrotron, Cerdanyola Del Valles, Spain
+54	Krkotic P	Lab Luz Sincrotron Cerdanyola Valles CELLS ALBA, Consorcio Construcci Equipamiento & Explotac, ALBA Synchrotron, Cerdanyola Del Valles, Spain
+54	Monge R	Lab Luz Sincrotron Cerdanyola Valles CELLS ALBA, Consorcio Construcci Equipamiento & Explotac, ALBA Synchrotron, Cerdanyola Del Valles, Spain
+54	Perez F	Lab Luz Sincrotron Cerdanyola Valles CELLS ALBA, Consorcio Construcci Equipamiento & Explotac, ALBA Synchrotron, Cerdanyola Del Valles, Spain
+54	Pont M	Lab Luz Sincrotron Cerdanyola Valles CELLS ALBA, Consorcio Construcci Equipamiento & Explotac, ALBA Synchrotron, Cerdanyola Del Valles, Spain
+54	Quispe M	Lab Luz Sincrotron Cerdanyola Valles CELLS ALBA, Consorcio Construcci Equipamiento & Explotac, ALBA Synchrotron, Cerdanyola Del Valles, Spain
+54	Ita H	Albert Ludwigs Univ Freiburg UFreiburg, Freiburg, Germany
+54	Prausa M	Albert Ludwigs Univ Freiburg UFreiburg, Freiburg, Germany
+54	Vysotsky V	All Russian Sci Res & Dev Cable Inst VNIIKP, Moscow, Russia
+54	Ari V	Ankara Univ, Ankara, Turkey
+54	Cakir O	Ankara Univ, Ankara, Turkey
+54	Canbay AC	Ankara Univ, Ankara, Turkey
+54	Yildiz HD	Ankara Univ, Ankara, Turkey
+54	Etisken O	Ankara Univ, Ankara, Turkey
+54	Kara SO	Ankara Univ, Ankara, Turkey
+54	Kaya U	Ankara Univ, Ankara, Turkey
+54	Ozansoy A	Ankara Univ, Ankara, Turkey
+54	Cooley L	ASC, Tallahassee, FL USA
+54	Boughezal R	Argonne Natl Lab, 9700 S Cass Ave, Argonne, IL 60439 USA
+54	Chekanov SV	Argonne Natl Lab, 9700 S Cass Ave, Argonne, IL 60439 USA
+54	Childers JT	Argonne Natl Lab, 9700 S Cass Ave, Argonne, IL 60439 USA
+54	Demarteau M	Argonne Natl Lab, 9700 S Cass Ave, Argonne, IL 60439 USA
+54	Low I	Argonne Natl Lab, 9700 S Cass Ave, Argonne, IL 60439 USA
+54	Proudfoot J	Argonne Natl Lab, 9700 S Cass Ave, Argonne, IL 60439 USA
+54	Wang R	Argonne Natl Lab, 9700 S Cass Ave, Argonne, IL 60439 USA
+54	Wienands HU	Argonne Natl Lab, 9700 S Cass Ave, Argonne, IL 60439 USA
+54	Humer H	Austrian Inst Technol, Vienna, Austria
+54	Preinerstorfer A	Austrian Inst Technol, Vienna, Austria
+54	Singh BK	Banaras Hindu Univ, Varanasi, Uttar Pradesh, India
+54	Ward BFL	Baylor Univ, Waco, TX 76798 USA
+54	Bautista-Guzman I	BUAP, Puebla, Mexico
+54	Fernandez-Tellez A	BUAP, Puebla, Mexico
+54	Hernandez-Sanchez J	BUAP, Puebla, Mexico
+54	Honorato CG	BUAP, Puebla, Mexico
+54	Martinez-Hernandez MI	BUAP, Puebla, Mexico
+54	Rodriguez-Cahuantzi M	BUAP, Puebla, Mexico
+54	Rosado Sanchez A	BUAP, Puebla, Mexico
+54	Tejeda-Munoz G	BUAP, Puebla, Mexico
+54	Abdyukhanov I	Bochvar Inst Inorgan Mat VNIINM, Moscow, Russia
+54	Pantsyrny V	Bochvar Inst Inorgan Mat VNIINM, Moscow, Russia
+54	Arbuzov A	BLTP JINR, Dubna, Russia
+54	Bondarenko S	BLTP JINR, Dubna, Russia
+54	Sulak L	Boston Univ, Boston, MA 02215 USA
+54	Zhong YM	Boston Univ, Boston, MA 02215 USA
+54	Bayindir C	Bogazici Univ BOUN, Istanbul, Turkey
+54	Ogur S	Bogazici Univ BOUN, Istanbul, Turkey
+54	Ozcan V	Bogazici Univ BOUN, Istanbul, Turkey
+54	Chamizo-Llatas M	Brookhaven Natl Lab, Upton, NY 11973 USA
+54	Gupta R	Brookhaven Natl Lab, Upton, NY 11973 USA
+54	Hegner B	Brookhaven Natl Lab, Upton, NY 11973 USA
+54	Lancon E	Brookhaven Natl Lab, Upton, NY 11973 USA
+54	Lissauer DA	Brookhaven Natl Lab, Upton, NY 11973 USA
+54	Montag C	Brookhaven Natl Lab, Upton, NY 11973 USA
+54	Mueller B	Brookhaven Natl Lab, Upton, NY 11973 USA
+54	Peggs S	Brookhaven Natl Lab, Upton, NY 11973 USA
+54	Pleier MA	Brookhaven Natl Lab, Upton, NY 11973 USA
+54	Smaluk V	Brookhaven Natl Lab, Upton, NY 11973 USA
+54	Tricoli A	Brookhaven Natl Lab, Upton, NY 11973 USA
+54	Fan J	Brown Univ, Providence, RI 02912 USA
+54	Landsberg G	Brown Univ, Providence, RI 02912 USA
+54	Sailer B	BRUKER EST Bruker, Hanau, Germany
+54	Schlenga K	BRUKER EST Bruker, Hanau, Germany
+54	Bogomyagkov A	Budker Inst Nucl Phys, Novosibirsk, Russia
+54	Glukhov S	Budker Inst Nucl Phys, Novosibirsk, Russia
+54	Koop I	Budker Inst Nucl Phys, Novosibirsk, Russia
+54	Krasnov AA	Budker Inst Nucl Phys, Novosibirsk, Russia
+54	Lee R	Budker Inst Nucl Phys, Novosibirsk, Russia
+54	Levichev E	Budker Inst Nucl Phys, Novosibirsk, Russia
+54	Morozov I	Budker Inst Nucl Phys, Novosibirsk, Russia
+54	Muchnoi N	Budker Inst Nucl Phys, Novosibirsk, Russia
+54	Nikitin SA	Budker Inst Nucl Phys, Novosibirsk, Russia
+54	Piminov P	Budker Inst Nucl Phys, Novosibirsk, Russia
+54	Shatilov D	Budker Inst Nucl Phys, Novosibirsk, Russia
+54	Shwartz D	Budker Inst Nucl Phys, Novosibirsk, Russia
+54	Telnov VI	Budker Inst Nucl Phys, Novosibirsk, Russia
+54	Lee S	CHEP, Daegu, South Korea
+54	Coadou Y	CPPM, Marseille, France
+54	Schwartzentruber LD	Ctr Etudes Tunnels CETU, Bron, France
+54	Premat E	Ctr Etudes Tunnels CETU, Bron, France
+54	Robert F	Ctr Etudes Tunnels CETU, Bron, France
+54	Chevalier AB	CEREMA, Lyon, France
+54	Chanal D	CEREMA, Lyon, France
+54	Maitre J	CEREMA, Lyon, France
+54	Menez F	CEREMA, Lyon, France
+54	Simand N	CEREMA, Lyon, France
+54	Tetrel C	CEREMA, Lyon, France
+54	Valet JM	CEREMA, Lyon, France
+54	Giffoni F	Ctr Ind Studies CSIL, Milan, Italy
+54	Sirtori E	Ctr Ind Studies CSIL, Milan, Italy
+54	Cogneras E	CNRS, Aubiere, France
+54	Calvet D	CNRS, IN2P3, Clermont Ferrand, France
+54	Chanal H	CNRS, IN2P3, Clermont Ferrand, France
+54	Gay P	CNRS, IN2P3, Clermont Ferrand, France
+54	Hati C	CNRS, IN2P3, Clermont Ferrand, France
+54	Monteil S	CNRS, IN2P3, Clermont Ferrand, France
+54	Teixeira AM	CNRS, IN2P3, Clermont Ferrand, France
+54	Tisserand V	CNRS, IN2P3, Clermont Ferrand, France
+54	Aslanides E	CNRS, Marseille, France
+54	Charles J	CNRS, Marseille, France
+54	Coadou Y	CNRS, Marseille, France
+54	Cogan J	CNRS, Marseille, France
+54	Knecht M	CNRS, Marseille, France
+54	Leroy O	CNRS, Marseille, France
+54	Mancinelli G	CNRS, Marseille, France
+54	Muanza S	CNRS, Marseille, France
+54	Abada A	CNRS, Paris, France
+54	Beaudette F	CNRS, Paris, France
+54	Bernardi G	CNRS, Paris, France
+54	Bernet C	CNRS, Paris, France
+54	Biarrotte JL	CNRS, Paris, France
+54	Bomben M	CNRS, Paris, France
+54	Bossu F	CNRS, Paris, France
+54	Calderini G	CNRS, Paris, France
+54	Chaikovska I	CNRS, Paris, France
+54	Chance S	CNRS, Paris, France
+54	Cogan J	CNRS, Paris, France
+54	Collot J	CNRS, Paris, France
+54	Costanza F	CNRS, Paris, France
+54	Da Silva W	CNRS, Paris, France
+54	Deandrea A	CNRS, Paris, France
+54	Derue F	CNRS, Paris, France
+54	Deschamps O	CNRS, Paris, France
+54	Descotes-Genon S	CNRS, Paris, France
+54	De Regie JBDV	CNRS, Paris, France
+54	Falkowski A	CNRS, Paris, France
+54	Faus-Golfe A	CNRS, Paris, France
+54	Fournier D	CNRS, Paris, France
+54	Gascon-Shotkin SM	CNRS, Paris, France
+54	Gay P	CNRS, Paris, France
+54	Genest MH	CNRS, Paris, France
+54	Iconomidou-Fayard L	CNRS, Paris, France
+54	Kaabi W	CNRS, Paris, France
+54	Knecht M	CNRS, Paris, France
+54	Lansberg JP	CNRS, Paris, France
+54	Leroy O	CNRS, Paris, France
+54	Mahmoudi F	CNRS, Paris, France
+54	Mancinelli G	CNRS, Paris, France
+54	Marchiori G	CNRS, Paris, France
+54	Marquet C	CNRS, Paris, France
+54	Monteil S	CNRS, Paris, France
+54	Muanza S	CNRS, Paris, France
+54	Poggioli L	CNRS, Paris, France
+54	Schaffer A	CNRS, Paris, France
+54	Serin L	CNRS, Paris, France
+54	Sirois Y	CNRS, Paris, France
+54	Teixeira AM	CNRS, Paris, France
+54	Tisserand V	CNRS, Paris, France
+54	Zhang Z	CNRS, Paris, France
+54	Rebello Teles P	CBPF, Rio De Janeiro, Brazil
+54	Fernandez Navarro AM	CIEMAT, Madrid, Spain
+54	Garcia Tabares L	CIEMAT, Madrid, Spain
+54	Costa MG	CIEMAT, Madrid, Spain
+54	Martinez T	CIEMAT, Madrid, Spain
+54	Munilla J	CIEMAT, Madrid, Spain
+54	Perez Morales J	CIEMAT, Madrid, Spain
+54	Toral F	CIEMAT, Madrid, Spain
+54	Corral GH	Ctr Invest & Estudios Avanzados CINVESTAV, Merdia, Mexico
+54	Canton GG	Ctr Invest & Estudios Avanzados CINVESTAV, Merdia, Mexico
+54	Jeff A	CI Daresbury, Daresbury, England
+54	Ratoff P	CI Lancaster, Lancaster, England
+54	Sitar B	Comenius Univ, Bratislava, Slovakia
+54	Aleksan R	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Attie D	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Aune S	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Bachacou H	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Baudouy B	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Bauer F	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Berriaud C	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Besancon M	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Boutin D	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Chance A	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Chevalier L	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Chomaz P	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Couderc F	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Dalena B	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Deliot F	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Denegri D	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Durante M	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Ganjour S	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Guyot C	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Jarry P	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Locci E	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Lorin C	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Malcles J	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Mallon PJ	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Manil P	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Pes C	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Pugnat T	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Rifflet JM	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Rochepault E	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Ruhlmann-Kleider V	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Schwemling P	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Segreti M	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Tuchming B	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Vedrine P	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Vitrano A	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Zinn-Justin J	CEA, Irfu Saclay, DSM, Commissariat Energie Atom & Energies AlteAlternat, Gif Sur Yvette, France
+54	Duval JM	CEA, Inst Nanosci Cryogenie, Commissariat Energie Atom & Energies Alternat, Grenoble, France
+54	Rousset B	CEA, Inst Nanosci Cryogenie, Commissariat Energie Atom & Energies Alternat, Grenoble, France
+54	Tkaczuk J	CEA, Inst Nanosci Cryogenie, Commissariat Energie Atom & Energies Alternat, Grenoble, France
+54	Liberati D	CNR, Milan, Italy
+54	Bellingeri E	CNR, Superconducting & Innovat Mat & Devices Inst, SPIN, Genoa, Italy
+54	Ferdeghini C	CNR, Superconducting & Innovat Mat & Devices Inst, SPIN, Genoa, Italy
+54	Bernini C	CNR, Superconducting & Innovat Mat & Devices Inst, SPIN, Naples, Italy
+54	Bovone G	CNR, Superconducting & Innovat Mat & Devices Inst, SPIN, Naples, Italy
+54	Braccini V	CNR, Superconducting & Innovat Mat & Devices Inst, SPIN, Naples, Italy
+54	Leveratto A	CNR, Superconducting & Innovat Mat & Devices Inst, SPIN, Naples, Italy
+54	Malagoli A	CNR, Superconducting & Innovat Mat & Devices Inst, SPIN, Naples, Italy
+54	Manfrinetti P	CNR, Superconducting & Innovat Mat & Devices Inst, SPIN, Naples, Italy
+54	Provino A	CNR, Superconducting & Innovat Mat & Devices Inst, SPIN, Naples, Italy
+54	Saba A	CNR, Superconducting & Innovat Mat & Devices Inst, SPIN, Naples, Italy
+54	Sylva G	CNR, Superconducting & Innovat Mat & Devices Inst, SPIN, Naples, Italy
+54	Vaglio R	CNR, Superconducting & Innovat Mat & Devices Inst, SPIN, Naples, Italy
+54	Vignolo M	CNR, Superconducting & Innovat Mat & Devices Inst, SPIN, Naples, Italy
+54	Liepe M	Cornell Univ, Ithaca, NY USA
+54	Patterson R	Cornell Univ, Ithaca, NY USA
+54	Soffi L	Cornell Univ, Ithaca, NY USA
+54	Akhundov A	Univ Valencia, Dept Fis Teor, Valencia, Spain
+54	Sborlini GFR	Univ Valencia, Dept Fis Teor, Valencia, Spain
+54	Aguilar-Saavedra JA	Univ Granada UGR, Dept Fis Teor Cosmos, Granada, Spain
+54	Albacete JL	Univ Granada UGR, Dept Fis Teor Cosmos, Granada, Spain
+54	Pittau R	Univ Granada UGR, Dept Fis Teor Cosmos, Granada, Spain
+54	Santiago J	Univ Granada UGR, Dept Fis Teor Cosmos, Granada, Spain
+54	Aguilar-Saavedra JA	Univ Granada UGR, CAFPE, Granada, Spain
+54	Albacete JL	Univ Granada UGR, CAFPE, Granada, Spain
+54	Pittau R	Univ Granada UGR, CAFPE, Granada, Spain
+54	Santiago J	Univ Granada UGR, CAFPE, Granada, Spain
+54	Strauss B	Dept Energy DoE, Washington, DC USA
+54	Khatibi S	Univ Tehran, Dept Phys, Tehran, Iran
+54	Assmann RW	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Barber DP	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Bishara F	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Bluemlein J	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Gallo E	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Grojean C	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Behr JK	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Mnich J	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Neundorf J	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Peters K	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Potamianos K	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Reuter J	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Rossmanith R	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Sala F	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Schoeerner-Sadenius T	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Schwanenberger C	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Von Ahnen J	Deutsch Elektronen Synchrotron DESY, Hamburg, Germany
+54	Marquard P	Deutsch Elektronen Synchrotron DESY ZEU, Zeuthen, Germany
+54	Riemann S	Deutsch Elektronen Synchrotron DESY ZEU, Zeuthen, Germany
+54	Teytelman D	Dimtel Inc, San Jose, Costa Rica
+54	Pagliarone CE	Univ Cassino & Lazio Meridionale DICEM, Dipartimento Ingn Civile & Meccan, Cassino, Italy
+54	Bass SA	Duke Univ, Durham, NC USA
+54	Kotwal AV	Duke Univ, Durham, NC USA
+54	Mueller B	Duke Univ, Durham, NC USA
+54	Banerjee S	Univ Durham, IPPP, Durham, England
+54	Bauer M	Univ Durham, IPPP, Durham, England
+54	Chala M	Univ Durham, IPPP, Durham, England
+54	Gupta RS	Univ Durham, IPPP, Durham, England
+54	Khoze VV	Univ Durham, IPPP, Durham, England
+54	Krauss F	Univ Durham, IPPP, Durham, England
+54	Ruiz R	Univ Durham, IPPP, Durham, England
+54	Spannowsky M	Univ Durham, IPPP, Durham, England
+54	Dydyshka Y	DLNP JINR, Dubna, Russia
+54	Kalinovskaya L	DLNP JINR, Dubna, Russia
+54	Rumyantsev L	DLNP JINR, Dubna, Russia
+54	Sadykov R	DLNP JINR, Dubna, Russia
+54	Garcia JB	Ecole Polytech Fed Lausanne, Lausanne, Switzerland
+54	Bruzzone P	Ecole Polytech Fed Lausanne, Lausanne, Switzerland
+54	Chmielinska A	Ecole Polytech Fed Lausanne, Lausanne, Switzerland
+54	D'auria V	Ecole Polytech Fed Lausanne, Lausanne, Switzerland
+54	Furuseth SV	Ecole Polytech Fed Lausanne, Lausanne, Switzerland
+54	Gorine G	Ecole Polytech Fed Lausanne, Lausanne, Switzerland
+54	Kumar M	Ecole Polytech Fed Lausanne, Lausanne, Switzerland
+54	Mether L	Ecole Polytech Fed Lausanne, Lausanne, Switzerland
+54	Pieloni T	Ecole Polytech Fed Lausanne, Lausanne, Switzerland
+54	Sallese JM	Ecole Polytech Fed Lausanne, Lausanne, Switzerland
+54	Shaposhnikov M	Ecole Polytech Fed Lausanne, Lausanne, Switzerland
+54	Tambasco C	Ecole Polytech Fed Lausanne, Lausanne, Switzerland
+54	Vecchi L	Ecole Polytech Fed Lausanne, Lausanne, Switzerland
+54	Poiron A	Ecotec Environm SA Ecotec, Geneva, Switzerland
+54	Zahnd M	Ecotec Environm SA Ecotec, Geneva, Switzerland
+54	Ciftci R	Ege Univ, Izmir, Turkey
+54	Grimm O	ETHZ, Zurich, Switzerland
+54	Pauss F	ETHZ, Zurich, Switzerland
+54	Portaluri T	ETHZ, Zurich, Switzerland
+54	Wallny R	ETHZ, Zurich, Switzerland
+54	Sanz Ull A	Eindhoven Univ Technol TUE, Eindhoven, Netherlands
+54	Luciani A	Elle Marmi SARL EM, Carrara, Italy
+54	Altinli M	Eskisehir Tech Univ ESTU, Istanbul, Turkey
+54	Zeiler P	Esslingen Univ Appl Sci HS Esslingen, Goppingen, Germany
+54	Aichinger I	European Org Nucl Res CERN, Geneva, Switzerland
+54	Aleksa M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Fernandez RMA	European Org Nucl Res CERN, Geneva, Switzerland
+54	Alia RG	European Org Nucl Res CERN, Geneva, Switzerland
+54	Tehrani NA	European Org Nucl Res CERN, Geneva, Switzerland
+54	Amorim D	European Org Nucl Res CERN, Geneva, Switzerland
+54	Andreini M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Antipov SA	European Org Nucl Res CERN, Geneva, Switzerland
+54	Apollonio A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Arduini G	European Org Nucl Res CERN, Geneva, Switzerland
+54	Arsenyev SA	European Org Nucl Res CERN, Geneva, Switzerland
+54	Arzeo M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Atanasov M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Atieh S	European Org Nucl Res CERN, Geneva, Switzerland
+54	Auchmann B	European Org Nucl Res CERN, Geneva, Switzerland
+54	Aull S	European Org Nucl Res CERN, Geneva, Switzerland
+54	Aumon S	European Org Nucl Res CERN, Geneva, Switzerland
+54	Avino F	European Org Nucl Res CERN, Geneva, Switzerland
+54	Baglin V	European Org Nucl Res CERN, Geneva, Switzerland
+54	Baird S	European Org Nucl Res CERN, Geneva, Switzerland
+54	Ball AH	European Org Nucl Res CERN, Geneva, Switzerland
+54	Ballarino A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Barnes MJ	European Org Nucl Res CERN, Geneva, Switzerland
+54	Bartmann W	European Org Nucl Res CERN, Geneva, Switzerland
+54	Beguin M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Bellegarde N	European Org Nucl Res CERN, Geneva, Switzerland
+54	Bellini F	European Org Nucl Res CERN, Geneva, Switzerland
+54	Benedikt M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Bertarelli A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Blanquez FR	European Org Nucl Res CERN, Geneva, Switzerland
+54	Bordini B	European Org Nucl Res CERN, Geneva, Switzerland
+54	Bordry F	European Org Nucl Res CERN, Geneva, Switzerland
+54	Borghello G	European Org Nucl Res CERN, Geneva, Switzerland
+54	Borowka S	European Org Nucl Res CERN, Geneva, Switzerland
+54	Botta C	European Org Nucl Res CERN, Geneva, Switzerland
+54	Bottura L	European Org Nucl Res CERN, Geneva, Switzerland
+54	Bozzini D	European Org Nucl Res CERN, Geneva, Switzerland
+54	Bruce R	European Org Nucl Res CERN, Geneva, Switzerland
+54	Bruning O	European Org Nucl Res CERN, Geneva, Switzerland
+54	Brunner O	European Org Nucl Res CERN, Geneva, Switzerland
+54	Buffat X	European Org Nucl Res CERN, Geneva, Switzerland
+54	Burkart F	European Org Nucl Res CERN, Geneva, Switzerland
+54	Burkhardt H	European Org Nucl Res CERN, Geneva, Switzerland
+54	Burnet JP	European Org Nucl Res CERN, Geneva, Switzerland
+54	Butin F	European Org Nucl Res CERN, Geneva, Switzerland
+54	Butterworth A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Calaga R	European Org Nucl Res CERN, Geneva, Switzerland
+54	Calatroni S	European Org Nucl Res CERN, Geneva, Switzerland
+54	Calviani M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Camporesi T	European Org Nucl Res CERN, Geneva, Switzerland
+54	Capeans M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Carra F	European Org Nucl Res CERN, Geneva, Switzerland
+54	Cennini E	European Org Nucl Res CERN, Geneva, Switzerland
+54	Cerutti F	European Org Nucl Res CERN, Geneva, Switzerland
+54	Cervantes J	European Org Nucl Res CERN, Geneva, Switzerland
+54	Charitos P	European Org Nucl Res CERN, Geneva, Switzerland
+54	Chiggiato P	European Org Nucl Res CERN, Geneva, Switzerland
+54	Chmielinska A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Collier P	European Org Nucl Res CERN, Geneva, Switzerland
+54	Cook CTA	European Org Nucl Res CERN, Geneva, Switzerland
+54	Correia-Rodrigues H	European Org Nucl Res CERN, Geneva, Switzerland
+54	Pinto PC	European Org Nucl Res CERN, Geneva, Switzerland
+54	Coupard J	European Org Nucl Res CERN, Geneva, Switzerland
+54	Crouch M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Cure B	European Org Nucl Res CERN, Geneva, Switzerland
+54	Czech M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Daljevec A	European Org Nucl Res CERN, Geneva, Switzerland
+54	David A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Deghaye S	European Org Nucl Res CERN, Geneva, Switzerland
+54	Delikaris D	European Org Nucl Res CERN, Geneva, Switzerland
+54	Dell'acqua A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Deniau L	European Org Nucl Res CERN, Geneva, Switzerland
+54	D'enterria D	European Org Nucl Res CERN, Geneva, Switzerland
+54	De Rijk G	European Org Nucl Res CERN, Geneva, Switzerland
+54	De Roeck A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Dordei F	European Org Nucl Res CERN, Geneva, Switzerland
+54	Dudarev A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Duellmann D	European Org Nucl Res CERN, Geneva, Switzerland
+54	Duenser M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Duval F	European Org Nucl Res CERN, Geneva, Switzerland
+54	El Khechen D	European Org Nucl Res CERN, Geneva, Switzerland
+54	Elsener K	European Org Nucl Res CERN, Geneva, Switzerland
+54	Elsing M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Esposito LS	European Org Nucl Res CERN, Geneva, Switzerland
+54	Fartoukh SD	European Org Nucl Res CERN, Geneva, Switzerland
+54	Troitino JF	European Org Nucl Res CERN, Geneva, Switzerland
+54	Ferreira L	European Org Nucl Res CERN, Geneva, Switzerland
+54	Da Silva PF	European Org Nucl Res CERN, Geneva, Switzerland
+54	Fiascaris M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Fonnesu D	European Org Nucl Res CERN, Geneva, Switzerland
+54	Foraz K	European Org Nucl Res CERN, Geneva, Switzerland
+54	Forkel-Wirth D	European Org Nucl Res CERN, Geneva, Switzerland
+54	Fowler T	European Org Nucl Res CERN, Geneva, Switzerland
+54	Gaddi A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Perez MG	European Org Nucl Res CERN, Geneva, Switzerland
+54	Garion C	European Org Nucl Res CERN, Geneva, Switzerland
+54	Gerard R	European Org Nucl Res CERN, Geneva, Switzerland
+54	Gerigk F	European Org Nucl Res CERN, Geneva, Switzerland
+54	Gerwig H	European Org Nucl Res CERN, Geneva, Switzerland
+54	Gianotti F	European Org Nucl Res CERN, Geneva, Switzerland
+54	Gilardoni SS	European Org Nucl Res CERN, Geneva, Switzerland
+54	Giovannozzi M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Giudice GF	European Org Nucl Res CERN, Geneva, Switzerland
+54	Gobbi G	European Org Nucl Res CERN, Geneva, Switzerland
+54	Goddard B	European Org Nucl Res CERN, Geneva, Switzerland
+54	Grenard JL	European Org Nucl Res CERN, Geneva, Switzerland
+54	Grosse-Oetringhaus JF	European Org Nucl Res CERN, Geneva, Switzerland
+54	Grudiev A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Gutleber J	European Org Nucl Res CERN, Geneva, Switzerland
+54	Haerer B	European Org Nucl Res CERN, Geneva, Switzerland
+54	Helsens C	European Org Nucl Res CERN, Geneva, Switzerland
+54	Henriques A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Henriques A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Hofle W	European Org Nucl Res CERN, Geneva, Switzerland
+54	Holzer B	European Org Nucl Res CERN, Geneva, Switzerland
+54	Hopkins SC	European Org Nucl Res CERN, Geneva, Switzerland
+54	Hrdinka J	European Org Nucl Res CERN, Geneva, Switzerland
+54	Ibarrola N	European Org Nucl Res CERN, Geneva, Switzerland
+54	Ilyina-Brunner K	European Org Nucl Res CERN, Geneva, Switzerland
+54	Infantino A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Bermudez SI	European Org Nucl Res CERN, Geneva, Switzerland
+54	Janot P	European Org Nucl Res CERN, Geneva, Switzerland
+54	Jeff A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Jensen E	European Org Nucl Res CERN, Geneva, Switzerland
+54	Jimenez JM	European Org Nucl Res CERN, Geneva, Switzerland
+54	Jones MA	European Org Nucl Res CERN, Geneva, Switzerland
+54	Jones OR	European Org Nucl Res CERN, Geneva, Switzerland
+54	Jowett JM	European Org Nucl Res CERN, Geneva, Switzerland
+54	Kado M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Kahle K	European Org Nucl Res CERN, Geneva, Switzerland
+54	Karaventzas V	European Org Nucl Res CERN, Geneva, Switzerland
+54	Karpov I	European Org Nucl Res CERN, Geneva, Switzerland
+54	Kersevan R	European Org Nucl Res CERN, Geneva, Switzerland
+54	Kershaw K	European Org Nucl Res CERN, Geneva, Switzerland
+54	Kieseler J	European Org Nucl Res CERN, Geneva, Switzerland
+54	Klinkenberg N	European Org Nucl Res CERN, Geneva, Switzerland
+54	Kolano AM	European Org Nucl Res CERN, Geneva, Switzerland
+54	Komppula J	European Org Nucl Res CERN, Geneva, Switzerland
+54	Kotnig C	European Org Nucl Res CERN, Geneva, Switzerland
+54	Kottig T	European Org Nucl Res CERN, Geneva, Switzerland
+54	Krainer AM	European Org Nucl Res CERN, Geneva, Switzerland
+54	Kramer T	European Org Nucl Res CERN, Geneva, Switzerland
+54	Krammer M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Lackner F	European Org Nucl Res CERN, Geneva, Switzerland
+54	La Mendola S	European Org Nucl Res CERN, Geneva, Switzerland
+54	Lange C	European Org Nucl Res CERN, Geneva, Switzerland
+54	Langner A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Lechner A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Lefevre T	European Org Nucl Res CERN, Geneva, Switzerland
+54	Le Guen P	European Org Nucl Res CERN, Geneva, Switzerland
+54	Leogrande E	European Org Nucl Res CERN, Geneva, Switzerland
+54	Lerner G	European Org Nucl Res CERN, Geneva, Switzerland
+54	Agaliotis EL	European Org Nucl Res CERN, Geneva, Switzerland
+54	Losito R	European Org Nucl Res CERN, Geneva, Switzerland
+54	Louzguiti A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Lunt AJG	European Org Nucl Res CERN, Geneva, Switzerland
+54	Magnin N	European Org Nucl Res CERN, Geneva, Switzerland
+54	Malgeri L	European Org Nucl Res CERN, Geneva, Switzerland
+54	Mangano M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Mannelli M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Marriott-Dodington T	European Org Nucl Res CERN, Geneva, Switzerland
+54	Martin R	European Org Nucl Res CERN, Geneva, Switzerland
+54	Massironi A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Mccullough M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Meignan J	European Org Nucl Res CERN, Geneva, Switzerland
+54	Mentink M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Mertens V	European Org Nucl Res CERN, Geneva, Switzerland
+54	Metral E	European Org Nucl Res CERN, Geneva, Switzerland
+54	Milanese A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Miralles LS	European Org Nucl Res CERN, Geneva, Switzerland
+54	Mirarchi D	European Org Nucl Res CERN, Geneva, Switzerland
+54	Missiaen DP	European Org Nucl Res CERN, Geneva, Switzerland
+54	Molson JG	European Org Nucl Res CERN, Geneva, Switzerland
+54	Montesinos E	European Org Nucl Res CERN, Geneva, Switzerland
+54	Moortgat F	European Org Nucl Res CERN, Geneva, Switzerland
+54	Llacer MM	European Org Nucl Res CERN, Geneva, Switzerland
+54	Morley AK	European Org Nucl Res CERN, Geneva, Switzerland
+54	Morrone M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Mulders M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Muttoni Y	European Org Nucl Res CERN, Geneva, Switzerland
+54	Myers S	European Org Nucl Res CERN, Geneva, Switzerland
+54	Mylona M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Nardecchia M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Neubuser C	European Org Nucl Res CERN, Geneva, Switzerland
+54	Niccoli F	European Org Nucl Res CERN, Geneva, Switzerland
+54	Nie Y	European Org Nucl Res CERN, Geneva, Switzerland
+54	Niedziela J	European Org Nucl Res CERN, Geneva, Switzerland
+54	Niemi A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Nonis M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Oide K	European Org Nucl Res CERN, Geneva, Switzerland
+54	Osborne J	European Org Nucl Res CERN, Geneva, Switzerland
+54	Otto T	European Org Nucl Res CERN, Geneva, Switzerland
+54	Da Silva HFP	European Org Nucl Res CERN, Geneva, Switzerland
+54	Papaphilippou Y	European Org Nucl Res CERN, Geneva, Switzerland
+54	Parma V	European Org Nucl Res CERN, Geneva, Switzerland
+54	Pasquali M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Peon G	European Org Nucl Res CERN, Geneva, Switzerland
+54	Perez E	European Org Nucl Res CERN, Geneva, Switzerland
+54	Perez JC	European Org Nucl Res CERN, Geneva, Switzerland
+54	Codina EP	European Org Nucl Res CERN, Geneva, Switzerland
+54	Pernegger H	European Org Nucl Res CERN, Geneva, Switzerland
+54	Peruzzi M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Pierini M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Plagge M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Podzorny T	European Org Nucl Res CERN, Geneva, Switzerland
+54	Ponce L	European Org Nucl Res CERN, Geneva, Switzerland
+54	Pulikowski D	European Org Nucl Res CERN, Geneva, Switzerland
+54	Rata R	European Org Nucl Res CERN, Geneva, Switzerland
+54	Ravotti F	European Org Nucl Res CERN, Geneva, Switzerland
+54	Redaelli S	European Org Nucl Res CERN, Geneva, Switzerland
+54	Ribon A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Riegler W	European Org Nucl Res CERN, Geneva, Switzerland
+54	Rinaldesi R	European Org Nucl Res CERN, Geneva, Switzerland
+54	Rinolfi L	European Org Nucl Res CERN, Geneva, Switzerland
+54	Rubiras OR	European Org Nucl Res CERN, Geneva, Switzerland
+54	Risselada T	European Org Nucl Res CERN, Geneva, Switzerland
+54	Rolando G	European Org Nucl Res CERN, Geneva, Switzerland
+54	Roloff P	European Org Nucl Res CERN, Geneva, Switzerland
+54	Roncarolo F	European Org Nucl Res CERN, Geneva, Switzerland
+54	Rosaz G	European Org Nucl Res CERN, Geneva, Switzerland
+54	Rossi L	European Org Nucl Res CERN, Geneva, Switzerland
+54	Ruehl I	European Org Nucl Res CERN, Geneva, Switzerland
+54	Salzburger A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Schaumann M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Schenk M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Scheuerlein C	European Org Nucl Res CERN, Geneva, Switzerland
+54	Schmickler H	European Org Nucl Res CERN, Geneva, Switzerland
+54	Schmidt R	European Org Nucl Res CERN, Geneva, Switzerland
+54	Schoerling D	European Org Nucl Res CERN, Geneva, Switzerland
+54	Schulte D	European Org Nucl Res CERN, Geneva, Switzerland
+54	Schwerg N	European Org Nucl Res CERN, Geneva, Switzerland
+54	Scibile L	European Org Nucl Res CERN, Geneva, Switzerland
+54	Selvaggi M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Shaposhnikova E	European Org Nucl Res CERN, Geneva, Switzerland
+54	Skordis E	European Org Nucl Res CERN, Geneva, Switzerland
+54	Snoeys W	European Org Nucl Res CERN, Geneva, Switzerland
+54	Sollander P	European Org Nucl Res CERN, Geneva, Switzerland
+54	Sphicas P	European Org Nucl Res CERN, Geneva, Switzerland
+54	Stakia A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Stanyard JL	European Org Nucl Res CERN, Geneva, Switzerland
+54	Steerenberg R	European Org Nucl Res CERN, Geneva, Switzerland
+54	Steggemann J	European Org Nucl Res CERN, Geneva, Switzerland
+54	Stoel LS	European Org Nucl Res CERN, Geneva, Switzerland
+54	Stuart M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Sublet A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Taborelli M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Tavian L	European Org Nucl Res CERN, Geneva, Switzerland
+54	Taylor TM	European Org Nucl Res CERN, Geneva, Switzerland
+54	Ten Kate HHJ	European Org Nucl Res CERN, Geneva, Switzerland
+54	Thamm A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Tiirakari MT	European Org Nucl Res CERN, Geneva, Switzerland
+54	Timko H	European Org Nucl Res CERN, Geneva, Switzerland
+54	Tock JP	European Org Nucl Res CERN, Geneva, Switzerland
+54	Todd B	European Org Nucl Res CERN, Geneva, Switzerland
+54	Todesco E	European Org Nucl Res CERN, Geneva, Switzerland
+54	Garcia RT	European Org Nucl Res CERN, Geneva, Switzerland
+54	Tommasini D	European Org Nucl Res CERN, Geneva, Switzerland
+54	Torre R	European Org Nucl Res CERN, Geneva, Switzerland
+54	Townsend Z	European Org Nucl Res CERN, Geneva, Switzerland
+54	Trant R	European Org Nucl Res CERN, Geneva, Switzerland
+54	Treille D	European Org Nucl Res CERN, Geneva, Switzerland
+54	Tudora AA	European Org Nucl Res CERN, Geneva, Switzerland
+54	Tydecks T	European Org Nucl Res CERN, Geneva, Switzerland
+54	Uythoven J	European Org Nucl Res CERN, Geneva, Switzerland
+54	Valassi A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Valchkova F	European Org Nucl Res CERN, Geneva, Switzerland
+54	Varasteh M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Veness R	European Org Nucl Res CERN, Geneva, Switzerland
+54	Delsolaro WV	European Org Nucl Res CERN, Geneva, Switzerland
+54	Verweij AP	European Org Nucl Res CERN, Geneva, Switzerland
+54	Viazlo O	European Org Nucl Res CERN, Geneva, Switzerland
+54	Voutsinas GG	European Org Nucl Res CERN, Geneva, Switzerland
+54	Wagner U	European Org Nucl Res CERN, Geneva, Switzerland
+54	Wenninger J	European Org Nucl Res CERN, Geneva, Switzerland
+54	Widorski M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Wiedemann UA	European Org Nucl Res CERN, Geneva, Switzerland
+54	Wollmann D	European Org Nucl Res CERN, Geneva, Switzerland
+54	Woog D	European Org Nucl Res CERN, Geneva, Switzerland
+54	Zaborowska A	European Org Nucl Res CERN, Geneva, Switzerland
+54	Zerlauth M	European Org Nucl Res CERN, Geneva, Switzerland
+54	Zimmermann F	European Org Nucl Res CERN, Geneva, Switzerland
+54	Lebrun P	ESI, Archamps, France
+54	Arias S	ESS, Lund, Sweden
+54	Jensen M	ESS, Lund, Sweden
+54	Womersley J	ESS, Lund, Sweden
+54	Klinkenberg N	FH SWF, Gelsenkirchen, Germany
+54	Davidek T	Charles Univ Prague, Fac Math & Phys, Prague, Czech Republic
+54	Drasal Z	Charles Univ Prague, Fac Math & Phys, Prague, Czech Republic
+54	Faltova J	Charles Univ Prague, Fac Math & Phys, Prague, Czech Republic
+54	Slovak R	Charles Univ Prague, Fac Math & Phys, Prague, Czech Republic
+54	Mahmoud MA	Fayoum Univ, Al Fayyum, Egypt
+54	Alexahin Y	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Ambrosio G	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Apollinari G	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Apyan A	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Barzi E	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Belomestnykh S	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Bhat P	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Bhat C	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Canepa A	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Denisov D	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Gianfelice-Wendt E	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Grassellino A	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Kashikhin V	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Mokhov N	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Romanenko A	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Shiltsev V	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Tropin IS	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Velev G	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Vernieri C	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Zlobin AV	Fermilab Natl Accelerator Lab, POB 500, Batavia, IL 60510 USA
+54	Kuhlmann G	FIML, Dortmund, Germany
+54	Nettstraeter A	FIML, Dortmund, Germany
+54	Prasse C	FIML, Dortmund, Germany
+54	Wohlfahrt A	FIML, Dortmund, Germany
+54	Zernov SM	Fuel Co Rosatom TVEL, Moscow, Russia
+54	Daibo M	Fujikura Ltd, Sakura, Chiba, Japan
+54	Baek YW	GWNU, Kangnung, South Korea
+54	Kim DW	GWNU, Kangnung, South Korea
+54	Vallecorsa S	GWNU, Kangnung, South Korea
+54	Karadeniz H	Giresun Univ, Giresun, Turkey
+54	Cakir IT	Giresun Univ, Giresun, Turkey
+54	Yilmaz A	Giresun Univ, Giresun, Turkey
+54	Pankov AA	GSTU, Gomel, BELARUS
+54	Braun-Munzinger P	GSI Helmholtz Zentrum Schwerionenforsch GSI, Darmstadt, Germany
+54	Chetvertkova V	GSI Helmholtz Zentrum Schwerionenforsch GSI, Darmstadt, Germany
+54	Fischer E	GSI Helmholtz Zentrum Schwerionenforsch GSI, Darmstadt, Germany
+54	Giubellino P	GSI Helmholtz Zentrum Schwerionenforsch GSI, Darmstadt, Germany
+54	Masciocchi S	GSI Helmholtz Zentrum Schwerionenforsch GSI, Darmstadt, Germany
+54	Raginel V	GSI Helmholtz Zentrum Schwerionenforsch GSI, Darmstadt, Germany
+54	Spiller P	GSI Helmholtz Zentrum Schwerionenforsch GSI, Darmstadt, Germany
+54	Sugita K	GSI Helmholtz Zentrum Schwerionenforsch GSI, Darmstadt, Germany
+54	Tahir NA	GSI Helmholtz Zentrum Schwerionenforsch GSI, Darmstadt, Germany
+54	Caliskan A	Gumushane Univ, Gumushane, Turkey
+54	Agrawal P	Harvard Univ, Cambridge, MA 02138 USA
+54	Cholakian A	Harvard Univ, Cambridge, MA 02138 USA
+54	Foppiani N	Harvard Univ, Cambridge, MA 02138 USA
+54	Tikhonov D	Helmholtz Zentrum Berlin, Berlin, Germany
+54	Furukawa K	High Energy Accelerator Res Org KEK, Tsukuba, Ibaraki, Japan
+54	Mishima S	High Energy Accelerator Res Org KEK, Tsukuba, Ibaraki, Japan
+54	Mitsuhashi T	High Energy Accelerator Res Org KEK, Tsukuba, Ibaraki, Japan
+54	Nakamoto T	High Energy Accelerator Res Org KEK, Tsukuba, Ibaraki, Japan
+54	Ohmi K	High Energy Accelerator Res Org KEK, Tsukuba, Ibaraki, Japan
+54	Suzuki K	High Energy Accelerator Res Org KEK, Tsukuba, Ibaraki, Japan
+54	Zhou D	High Energy Accelerator Res Org KEK, Tsukuba, Ibaraki, Japan
+54	Bayindir C	Isik Univ Isikun, Istanbul, Turkey
+54	Avrillaud G	I Cube Res, Toulouse, France
+54	Cantergiani E	I Cube Res, Toulouse, France
+54	Croteau JF	I Cube Res, Toulouse, France
+54	Boels R	Univ Hamburg UNITH, Inst Theoret Phys 2, Hamburg, Germany
+54	Dubovyk I	Univ Hamburg UNITH, Inst Theoret Phys 2, Hamburg, Germany
+54	Kniehl B	Univ Hamburg UNITH, Inst Theoret Phys 2, Hamburg, Germany
+54	Dallapiazza W	ILF Consulting Engineers, Zurich, Switzerland
+54	Islam R	IITG, Gauhati, India
+54	Chakrabortty J	IITK, Kanpur, Uttar Pradesh, India
+54	Dasbakshi S	IITK, Kanpur, Uttar Pradesh, India
+54	Patra SK	IITK, Kanpur, Uttar Pradesh, India
+54	Srivastava T	IITK, Kanpur, Uttar Pradesh, India
+54	Gutierrez J	CSIC, Inst Ciencia Mat Barcelona ICMAB, Barcelona, Spain
+54	Romanov A	CSIC, Inst Ciencia Mat Barcelona ICMAB, Barcelona, Spain
+54	Fouaidy M	IPNO, IN2P3, CNRS, Orsay, France
+54	Langacker P	Inst Adv Study, Princeton, NJ USA
+54	Podlech H	Goethe Univ, Inst Appl Phys, Frankfurt, Germany
+54	Voelkl V	Univ Innsbruck UIBK, Inst Astro & Particle Phys, Innsbruck, Austria
+54	Karyukhin A	Inst High Energy Phys NRC Kurchatov Inst IHEP, Protvino, Russia
+54	Mandrik P	Inst High Energy Phys NRC Kurchatov Inst IHEP, Protvino, Russia
+54	Solovyanov O	Inst High Energy Phys NRC Kurchatov Inst IHEP, Protvino, Russia
+54	De Jong SJ	Radboud Univ IMAPP, Inst Math Astrophys & Particle Phys, Nijmegen, Netherlands
+54	Baryshevsky V	Belarusian State Univ, Inst Nucl Problems, Minsk, BELARUS
+54	Haurylavets V	Belarusian State Univ, Inst Nucl Problems, Minsk, BELARUS
+54	Korjik M	Belarusian State Univ, Inst Nucl Problems, Minsk, BELARUS
+54	Lobko A	Belarusian State Univ, Inst Nucl Problems, Minsk, BELARUS
+54	Makarenko V	Belarusian State Univ, Inst Nucl Problems, Minsk, BELARUS
+54	Tikhomirov V	Belarusian State Univ, Inst Nucl Problems, Minsk, BELARUS
+54	Yermolchik V	Belarusian State Univ, Inst Nucl Problems, Minsk, BELARUS
+54	Strauss B	IEEE, Piscataway, NJ USA
+54	Da Costa JBG	Chinese Acad Sci, Inst High Energy Phys, Beijing, Peoples R China
+54	Chou W	Chinese Acad Sci, Inst High Energy Phys, Beijing, Peoples R China
+54	Gao J	Chinese Acad Sci, Inst High Energy Phys, Beijing, Peoples R China
+54	Li G	Chinese Acad Sci, Inst High Energy Phys, Beijing, Peoples R China
+54	Yazgan E	Chinese Acad Sci, Inst High Energy Phys, Beijing, Peoples R China
+54	Zhang H	Chinese Acad Sci, Inst High Energy Phys, Beijing, Peoples R China
+54	Herzig T	Univ Stuttgart IMA, Inst Machine Components, Stuttgart, Germany
+54	Mueller F	Univ Stuttgart IMA, Inst Machine Components, Stuttgart, Germany
+54	De Renstrom PB	Polish Acad Sci, Inst Nucl Phys, IFJ, Krakow, Poland
+54	Chrzaszcz M	Polish Acad Sci, Inst Nucl Phys, IFJ, Krakow, Poland
+54	Jadach S	Polish Acad Sci, Inst Nucl Phys, IFJ, Krakow, Poland
+54	Kucharczyk M	Polish Acad Sci, Inst Nucl Phys, IFJ, Krakow, Poland
+54	Kusina A	Polish Acad Sci, Inst Nucl Phys, IFJ, Krakow, Poland
+54	Lesiak T	Polish Acad Sci, Inst Nucl Phys, IFJ, Krakow, Poland
+54	Siodmok A	Polish Acad Sci, Inst Nucl Phys, IFJ, Krakow, Poland
+54	Skrzypek M	Polish Acad Sci, Inst Nucl Phys, IFJ, Krakow, Poland
+54	Sopicki P	Polish Acad Sci, Inst Nucl Phys, IFJ, Krakow, Poland
+54	Turbiarz B	Polish Acad Sci, Inst Nucl Phys, IFJ, Krakow, Poland
+54	Was Z	Polish Acad Sci, Inst Nucl Phys, IFJ, Krakow, Poland
+54	Wojton T	Polish Acad Sci, Inst Nucl Phys, IFJ, Krakow, Poland
+54	Zawiejski L	Polish Acad Sci, Inst Nucl Phys, IFJ, Krakow, Poland
+54	Jamin DO	Acad Sinica, Inst Phys, Taipei, Taiwan
+54	Dillon BM	IJS, Ljubljana, Slovenia
+54	Faroughy DA	IJS, Ljubljana, Slovenia
+54	Kamenik JF	IJS, Ljubljana, Slovenia
+54	Camalich JM	IAC, San Cristobal la Laguna, Spain
+54	Camalich JM	IAC, San Cristobal la Laguna, Spain
+54	Ramirez-Uribe NS	UV, CSIC, Inst Fis Corpuscular, Paterna, Spain
+54	Hernandez P	UV, CSIC, Inst Fis Corpuscular, Valencia, Spain
+54	Renteria-Olivo AE	UV, CSIC, Inst Fis Corpuscular, Valencia, Spain
+54	Heinemeyer S	Univ Autonoma Madrid, IFT, Madrid, Spain
+54	No JM	Univ Autonoma Madrid, IFT, Madrid, Spain
+54	Aguilera-Verdugo JJ	Univ Valencia, Inst Fis, CSIC, Valencia, Spain
+54	Rodrigo G	Univ Valencia, Inst Fis, CSIC, Valencia, Spain
+54	Valle JWF	Univ Valencia, Inst Fis, CSIC, Valencia, Spain
+54	Sampayo OA	Inst Invest Fisicas Mar Plata IFIMAR, Mar Del Plata, Argentina
+54	Armesto N	Univ Santiago de Compostela, IGFAE, Santiago De Compostela, Spain
+54	Salgado CA	Univ Santiago de Compostela, IGFAE, Santiago De Compostela, Spain
+54	De Florian D	Univ Nacl San Martin, ICAS, San Martin, Argentina
+54	Sborlini GFR	Univ Nacl San Martin, ICAS, San Martin, Argentina
+54	Hauptman J	Iowa State Univ, Ames, IA USA
+54	Kuday S	Istanbul Aydin Univ, Istanbul, Turkey
+54	Altinli M	Istanbul Univ, Istanbul, Turkey
+54	Bolukbasi O	Istanbul Univ, Istanbul, Turkey
+54	Hacisahinoglu B	Istanbul Univ, Istanbul, Turkey
+54	Kartal S	Istanbul Univ, Istanbul, Turkey
+54	Pagliarone CE	Istanbul Univ, Istanbul, Turkey
+54	Yilmaz A	Istanbul Univ, Istanbul, Turkey
+54	Petracca S	INFN, Grp Collegato Salerno, Sez Napoli, SA, Salerno, Italy
+54	Pagliarone CE	INFN, LNGS, Laquila, Italy
+54	Angelucci M	INFN, LNF, Frascati, Italy
+54	Antonelli M	INFN, LNF, Frascati, Italy
+54	Bencivenni G	INFN, LNF, Frascati, Italy
+54	Biagini ME	INFN, LNF, Frascati, Italy
+54	Blanco-Garcia OR	INFN, LNF, Frascati, Italy
+54	Boscolo M	INFN, LNF, Frascati, Italy
+54	Cimino R	INFN, LNF, Frascati, Italy
+54	Corcella G	INFN, LNF, Frascati, Italy
+54	De Lucia E	INFN, LNF, Frascati, Italy
+54	Di Cicco A	INFN, LNF, Frascati, Italy
+54	Di Nezza P	INFN, LNF, Frascati, Italy
+54	Drago A	INFN, LNF, Frascati, Italy
+54	Felici G	INFN, LNF, Frascati, Italy
+54	Giovannetti M	INFN, LNF, Frascati, Italy
+54	Gomez LAG	INFN, LNF, Frascati, Italy
+54	Guiducci S	INFN, LNF, Frascati, Italy
+54	La Francesca E	INFN, LNF, Frascati, Italy
+54	Milardi C	INFN, LNF, Frascati, Italy
+54	Morello G	INFN, LNF, Frascati, Italy
+54	Lener MP	INFN, LNF, Frascati, Italy
+54	Spallino L	INFN, LNF, Frascati, Italy
+54	Testa M	INFN, LNF, Frascati, Italy
+54	Zobov M	INFN, LNF, Frascati, Italy
+54	Azzolini O	INFN, LNLN, Legnaro, Italy
+54	Calderola G	INFN, LNLN, Legnaro, Italy
+54	Chyhyrynets E	INFN, LNLN, Legnaro, Italy
+54	Corcella G	INFN, LNLN, Legnaro, Italy
+54	Diaz VG	INFN, LNLN, Legnaro, Italy
+54	Keppel K	INFN, LNLN, Legnaro, Italy
+54	Palmieri E	INFN, LNLN, Legnaro, Italy
+54	Pira C	INFN, LNLN, Legnaro, Italy
+54	Stivanello F	INFN, LNLN, Legnaro, Italy
+54	Zanotto L	INFN, LNLN, Legnaro, Italy
+54	Abbrescia M	INFN, BA, Sez Bari, Bari, Italy
+54	De Filippis N	INFN, BA, Sez Bari, Bari, Italy
+54	Verwilligen O	INFN, BA, Sez Bari, Bari, Italy
+54	Antonioli P	INFN, Sez Bologna, BO, Bologna, Italy
+54	Bellagamba L	INFN, Sez Bologna, BO, Bologna, Italy
+54	Bertolucci S	INFN, Sez Bologna, BO, Bologna, Italy
+54	Borgonovi L	INFN, Sez Bologna, BO, Bologna, Italy
+54	Boscherini D	INFN, Sez Bologna, BO, Bologna, Italy
+54	Braibant-Giacomelli S	INFN, Sez Bologna, BO, Bologna, Italy
+54	Fontanesi E	INFN, Sez Bologna, BO, Bologna, Italy
+54	Giacomelli P	INFN, Sez Bologna, BO, Bologna, Italy
+54	Polini A	INFN, Sez Bologna, BO, Bologna, Italy
+54	Audurier A	INFN, CA, Sez Cagliari, Cagliari, Italy
+54	Cardini A	INFN, CA, Sez Cagliari, Cagliari, Italy
+54	Albergo S	INFN, Sez Catania, CT, Catania, Italy
+54	Sciuto A	INFN, Sez Catania, CT, Catania, Italy
+54	Tricomi A	INFN, Sez Catania, CT, Catania, Italy
+54	Meoni E	INFN, Sez Cosenza, CS, Cosenza, Italy
+54	Bozzi C	INFN, Sez Ferrara, FE, Ferrara, Italy
+54	Cibinetto G	INFN, Sez Ferrara, FE, Ferrara, Italy
+54	Farinelli R	INFN, Sez Ferrara, FE, Ferrara, Italy
+54	Garzia I	INFN, Sez Ferrara, FE, Ferrara, Italy
+54	Guidi V	INFN, Sez Ferrara, FE, Ferrara, Italy
+54	Masina I	INFN, Sez Ferrara, FE, Ferrara, Italy
+54	Moretti M	INFN, Sez Ferrara, FE, Ferrara, Italy
+54	Anderlini L	INFN, Sez Firenze, FI, Florence, Italy
+54	De Curtis S	INFN, Sez Firenze, FI, Florence, Italy
+54	Delle Rose L	INFN, Sez Firenze, FI, Florence, Italy
+54	Lenzi P	INFN, Sez Firenze, FI, Florence, Italy
+54	Lombardo MP	INFN, Sez Firenze, FI, Florence, Italy
+54	Tesi A	INFN, Sez Firenze, FI, Florence, Italy
+54	Caiffi B	INFN, Sez Genova, GE, Genoa, Italy
+54	Coccaro A	INFN, Sez Genova, GE, Genoa, Italy
+54	Fabbricatore P	INFN, Sez Genova, GE, Genoa, Italy
+54	Farinon S	INFN, Sez Genova, GE, Genoa, Italy
+54	Ferro F	INFN, Sez Genova, GE, Genoa, Italy
+54	Marzani S	INFN, Sez Genova, GE, Genoa, Italy
+54	Pampaloni A	INFN, Sez Genova, GE, Genoa, Italy
+54	Ricci AM	INFN, Sez Genova, GE, Genoa, Italy
+54	Santopinto E	INFN, Sez Genova, GE, Genoa, Italy
+54	Gorini E	INFN, Sez Lecce, LE, Lecce, Italy
+54	Grancagnolo F	INFN, Sez Lecce, LE, Lecce, Italy
+54	Panareo M	INFN, Sez Lecce, LE, Lecce, Italy
+54	Primavera M	INFN, Sez Lecce, LE, Lecce, Italy
+54	Tassielli G	INFN, Sez Lecce, LE, Lecce, Italy
+54	Ventura A	INFN, Sez Lecce, LE, Lecce, Italy
+54	Alioli S	INFN, Sez Milano Bicocca, MIB, Milan, Italy
+54	Ferrera G	INFN, Sez Milano Bicocca, MIB, Milan, Italy
+54	Fiorendi S	INFN, Sez Milano Bicocca, MIB, Milan, Italy
+54	Lari T	INFN, Sez Milano Bicocca, MIB, Milan, Italy
+54	Malvezzi S	INFN, Sez Milano Bicocca, MIB, Milan, Italy
+54	Nason P	INFN, Sez Milano Bicocca, MIB, Milan, Italy
+54	Oleari C	INFN, Sez Milano Bicocca, MIB, Milan, Italy
+54	Trentadue L	INFN, Sez Milano Bicocca, MIB, Milan, Italy
+54	Andreazza A	INFN, Sez Milano, MI, Milan, Italy
+54	Antonello M	INFN, Sez Milano, MI, Milan, Italy
+54	Bellomo G	INFN, Sez Milano, MI, Milan, Italy
+54	Caccia M	INFN, Sez Milano, MI, Milan, Italy
+54	Cantore-Cavalli D	INFN, Sez Milano, MI, Milan, Italy
+54	Carra S	INFN, Sez Milano, MI, Milan, Italy
+54	Di Vita S	INFN, Sez Milano, MI, Milan, Italy
+54	Ferrara G	INFN, Sez Milano, MI, Milan, Italy
+54	Marinozzi V	INFN, Sez Milano, MI, Milan, Italy
+54	Mariotto S	INFN, Sez Milano, MI, Milan, Italy
+54	Massimiliano A	INFN, Sez Milano, MI, Milan, Italy
+54	Meridiani P	INFN, Sez Milano, MI, Milan, Italy
+54	Prioli M	INFN, Sez Milano, MI, Milan, Italy
+54	Santoro R	INFN, Sez Milano, MI, Milan, Italy
+54	Sorbi M	INFN, Sez Milano, MI, Milan, Italy
+54	Statera M	INFN, Sez Milano, MI, Milan, Italy
+54	Tartarelli GF	INFN, Sez Milano, MI, Milan, Italy
+54	Valente P	INFN, Sez Milano, MI, Milan, Italy
+54	Vicini A	INFN, Sez Milano, MI, Milan, Italy
+54	Volpini G	INFN, Sez Milano, MI, Milan, Italy
+54	Conventi F	INFN, Sez Napoli, NA, Naples, Italy
+54	D'ambrosio G	INFN, Sez Napoli, NA, Naples, Italy
+54	Iyer A	INFN, Sez Napoli, NA, Naples, Italy
+54	Antinori F	INFN, Sez Padova, PD, Padua, Italy
+54	Azzi P	INFN, Sez Padova, PD, Padua, Italy
+54	Bacchetta N	INFN, Sez Padova, PD, Padua, Italy
+54	Dainese A	INFN, Sez Padova, PD, Padua, Italy
+54	De Blas J	INFN, Sez Padova, PD, Padua, Italy
+54	Lucchesi D	INFN, Sez Padova, PD, Padua, Italy
+54	Sestini L	INFN, Sez Padova, PD, Padua, Italy
+54	Vignaroli N	INFN, Sez Padova, PD, Padua, Italy
+54	Wulzer A	INFN, Sez Padova, PD, Padua, Italy
+54	Zanetti M	INFN, Sez Padova, PD, Padua, Italy
+54	Boselli S	INFN, Sez Pavia, PV, Pavia, Italy
+54	Calame CMC	INFN, Sez Pavia, PV, Pavia, Italy
+54	Ferrari R	INFN, Sez Pavia, PV, Pavia, Italy
+54	Gaudio G	INFN, Sez Pavia, PV, Pavia, Italy
+54	Bruzual HM	INFN, Sez Pavia, PV, Pavia, Italy
+54	Montagna G	INFN, Sez Pavia, PV, Pavia, Italy
+54	Nicrosini O	INFN, Sez Pavia, PV, Pavia, Italy
+54	Pezzotti L	INFN, Sez Pavia, PV, Pavia, Italy
+54	Piccinini F	INFN, Sez Pavia, PV, Pavia, Italy
+54	Polesello G	INFN, Sez Pavia, PV, Pavia, Italy
+54	Shivaji A	INFN, Sez Pavia, PV, Pavia, Italy
+54	Zhou J	INFN, Sez Pavia, PV, Pavia, Italy
+54	Bilei GM	INFN, Sez Perugia, PG, Perugia, Italy
+54	Fano L	INFN, Sez Perugia, PG, Perugia, Italy
+54	Mariani V	INFN, Sez Perugia, PG, Perugia, Italy
+54	Panella O	INFN, Sez Perugia, PG, Perugia, Italy
+54	Rossi A	INFN, Sez Perugia, PG, Perugia, Italy
+54	Azzurri P	Univ Pisa, INFN, Sez Pisa, PI, Pisa, Italy
+54	Bedeschi F	Univ Pisa, INFN, Sez Pisa, PI, Pisa, Italy
+54	Boccali T	Univ Pisa, INFN, Sez Pisa, PI, Pisa, Italy
+54	Buttazzo D	Univ Pisa, INFN, Sez Pisa, PI, Pisa, Italy
+54	Cavasinni V	Univ Pisa, INFN, Sez Pisa, PI, Pisa, Italy
+54	Chiarelli G	Univ Pisa, INFN, Sez Pisa, PI, Pisa, Italy
+54	Francavilla P	Univ Pisa, INFN, Sez Pisa, PI, Pisa, Italy
+54	Punzi G	Univ Pisa, INFN, Sez Pisa, PI, Pisa, Italy
+54	Roda C	Univ Pisa, INFN, Sez Pisa, PI, Pisa, Italy
+54	Rolandi G	Univ Pisa, INFN, Sez Pisa, PI, Pisa, Italy
+54	Tenchini R	Univ Pisa, INFN, Sez Pisa, PI, Pisa, Italy
+54	Tonelli G	Univ Pisa, INFN, Sez Pisa, PI, Pisa, Italy
+54	Anulli F	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Belli E	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Bonvini M	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Castorina G	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Chiarello G	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Collamati F	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Franco E	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Giagu S	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Ippolito V	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Kado M	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Mazzoni MA	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Mele B	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Migliorati M	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Mostacci A	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Nisati A	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Palumbo L	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Pontecorvo L	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Rescigno M	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Sebastiani C	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Silvestrini L	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Spataro B	INFN Roma 1, Sez Roma 1, Ist Nazl Fis Nucl, Rome, Italy
+54	Aielli G	INFN Roma 2, Sez Roma Tor Vergata, Ist Nazl Fis Nucl, Rome, Italy
+54	Camarri P	INFN Roma 2, Sez Roma Tor Vergata, Ist Nazl Fis Nucl, Rome, Italy
+54	Cardarelli R	INFN Roma 2, Sez Roma Tor Vergata, Ist Nazl Fis Nucl, Rome, Italy
+54	Di Ciaccio A	INFN Roma 2, Sez Roma Tor Vergata, Ist Nazl Fis Nucl, Rome, Italy
+54	Biglietti M	INFN Roma 3, Sez Roma Tre, Ist Nazl Fis Nucl, Rome, Italy
+54	Ciuchini M	INFN Roma 3, Sez Roma Tre, Ist Nazl Fis Nucl, Rome, Italy
+54	Di Micco B	INFN Roma 3, Sez Roma Tre, Ist Nazl Fis Nucl, Rome, Italy
+54	Farilla A	INFN Roma 3, Sez Roma Tre, Ist Nazl Fis Nucl, Rome, Italy
+54	Franceschini R	INFN Roma 3, Sez Roma Tre, Ist Nazl Fis Nucl, Rome, Italy
+54	Greco M	INFN Roma 3, Sez Roma Tre, Ist Nazl Fis Nucl, Rome, Italy
+54	Greco M	INFN Roma 3, Sez Roma Tre, Ist Nazl Fis Nucl, Rome, Italy
+54	Verducci M	INFN Roma 3, Sez Roma Tre, Ist Nazl Fis Nucl, Rome, Italy
+54	Arnaldi R	INFN, Sez Torino, TO, Turin, Italy
+54	Bruna E	INFN, Sez Torino, TO, Turin, Italy
+54	Del Duca V	INFN, Sez Torino, TO, Turin, Italy
+54	Giubellino P	INFN, Sez Torino, TO, Turin, Italy
+54	Maggiora M	INFN, Sez Torino, TO, Turin, Italy
+54	Prino F	INFN, Sez Torino, TO, Turin, Italy
+54	Rivetti A	INFN, Sez Torino, TO, Turin, Italy
+54	Scomparin E	INFN, Sez Torino, TO, Turin, Italy
+54	Azatov A	INFN, Sez Trieste, TS, Trieste, Italy
+54	Barducci D	INFN, Sez Trieste, TS, Trieste, Italy
+54	Cobal M	INFN, Sez Trieste, TS, Trieste, Italy
+54	Gabrielli E	INFN, Sez Trieste, TS, Trieste, Italy
+54	Marzocca D	INFN, Sez Trieste, TS, Trieste, Italy
+54	Panizzo G	INFN, Sez Trieste, TS, Trieste, Italy
+54	Watson TP	ITER, Cadarache, France
+54	Minashvili I	Ivane Javakhishvili Tbilisi State Univ TSU, Tbilisi, Georgia
+54	Ciftci AK	IUE, Izmir, Turkey
+54	Gu J	JGU, Mainz, Germany
+54	Hug F	JGU, Mainz, Germany
+54	Hurth T	JGU, Mainz, Germany
+54	Schwaller P	JGU, Mainz, Germany
+54	Yu F	JGU, Mainz, Germany
+54	Fernandez JA	John Adams Inst Accelerator Sci, Oxford, England
+54	Alaniz EC	John Adams Inst Accelerator Sci, Oxford, England
+54	Seryi A	John Adams Inst Accelerator Sci, Oxford, England
+54	Van Riesen-Haupt L	John Adams Inst Accelerator Sci, Oxford, England
+54	Fernandez JA	Univ Oxford JAI, Oxford, England
+54	Alaniz EC	Univ Oxford JAI, Oxford, England
+54	Seryi A	Univ Oxford JAI, Oxford, England
+54	Van Riesen-Haupt L	Univ Oxford JAI, Oxford, England
+54	Gromov VA	JINR, Dubna, Russia
+54	Kolomiets AA	JINR, Dubna, Russia
+54	Kovalenko AD	JINR, Dubna, Russia
+54	Kozlov GA	JINR, Dubna, Russia
+54	Kozub SS	JINR, Dubna, Russia
+54	Lyubimtsev DA	JINR, Dubna, Russia
+54	Matveev VA	JINR, Dubna, Russia
+54	Minashvili I	JINR, Dubna, Russia
+54	Nesterenko AV	JINR, Dubna, Russia
+54	Perepelkin EE	JINR, Dubna, Russia
+54	Pukhaeva N	JINR, Dubna, Russia
+54	Sharkov BY	JINR, Dubna, Russia
+54	Shirkov GD	JINR, Dubna, Russia
+54	Starikov AY	JINR, Dubna, Russia
+54	Tkachenko LM	JINR, Dubna, Russia
+54	Chiesa M	Julius Maximilians Univ Wurzburg UWUERZBURG, Wurzburg, Germany
+54	Aksakal H	Kahramanmaras Sutcu Imam Univ KSU, Kahramanmaras, Turkey
+54	Gunaydin YO	Kahramanmaras Sutcu Imam Univ KSU, Kahramanmaras, Turkey
+54	Casalbuoni S	Karlsruher Inst Technol, Karlsruhe, Germany
+54	Fischer O	Karlsruher Inst Technol, Karlsruhe, Germany
+54	Grau A	Karlsruher Inst Technol, Karlsruhe, Germany
+54	Mueller AS	Karlsruher Inst Technol, Karlsruhe, Germany
+54	Rossmanith R	Karlsruher Inst Technol, Karlsruhe, Germany
+54	Ruprecht R	Karlsruher Inst Technol, Karlsruhe, Germany
+54	De Jauregui DS	Karlsruher Inst Technol, Karlsruhe, Germany
+54	Zurita J	Karlsruher Inst Technol, Karlsruhe, Germany
+54	Drewes M	Katholieke Univ Leuven Res & Dev LRD, Louvain, Belgium
+54	Maltoni F	Katholieke Univ Leuven Res & Dev LRD, Louvain, Belgium
+54	Yang G	Chinese Acad Sci, Key Lab Theoret Phys, SKLTP, ITP, Beijing, Peoples R China
+54	Ellis J	Kings Coll London, London, England
+54	Sumida T	Kyoto Univ Kyodai, Kyoto, Japan
+54	Lee S	Kyungpook Natl Univ, Sankyuk Dong, South Korea
+54	Delmastro M	IN2P3, CNRS, LAPP, Annecy, France
+54	Dominjon A	IN2P3, CNRS, LAPP, Annecy, France
+54	Guadagnoli D	IN2P3, CNRS, LAPP, Annecy, France
+54	Lamanna G	IN2P3, CNRS, LAPP, Annecy, France
+54	Reboud M	IN2P3, CNRS, LAPP, Annecy, France
+54	Serluca M	IN2P3, CNRS, LAPP, Annecy, France
+54	Chehab R	Univ Paris Sud, CNRS, IN2P3, UPSUD, Orsay, France
+54	Falou A	Univ Paris Sud, CNRS, IN2P3, UPSUD, Orsay, France
+54	Morange N	Univ Paris Sud, CNRS, IN2P3, UPSUD, Orsay, France
+54	Marchiori G	LPNHE, Paris, France
+54	Schienbein I	LPSC, Grenoble, France
+54	Fuks B	CNRS, Sorbonne, LPTHE, Paris, France
+54	Slavich P	CNRS, Sorbonne, LPTHE, Paris, France
+54	Ochando C	Ecole Polytech, LLR, Palaiseau, France
+54	Apolinario L	Lab Instrumentacao & Fis Expt Particulas LIP, Lisbon, Portugal
+54	Carvalho A	Lab Instrumentacao & Fis Expt Particulas LIP, Lisbon, Portugal
+54	Goncalo R	Lab Instrumentacao & Fis Expt Particulas LIP, Lisbon, Portugal
+54	Mendes Saraiva JG	Lab Instrumentacao & Fis Expt Particulas LIP, Lisbon, Portugal
+54	Milhano G	Lab Instrumentacao & Fis Expt Particulas LIP, Lisbon, Portugal
+54	Sauvain M	Latitude Durable, Geneva, Switzerland
+54	Gourlay SA	Lawrence Berkeley Natl Lab, Berkeley, CA USA
+54	Gray HM	Lawrence Berkeley Natl Lab, Berkeley, CA USA
+54	Ploskon M	Lawrence Berkeley Natl Lab, Berkeley, CA USA
+54	Vallone G	Lawrence Berkeley Natl Lab, Berkeley, CA USA
+54	Yao WM	Lawrence Berkeley Natl Lab, Berkeley, CA USA
+54	Amstutz O	Linde Kryotech AG, Pfungen, Switzerland
+54	Cardella U	Linde Kryotech AG, Pfungen, Switzerland
+54	Dachauer C	Linde Kryotech AG, Pfungen, Switzerland
+54	Kuendig A	Linde Kryotech AG, Pfungen, Switzerland
+54	Meier A	Linde Kryotech AG, Pfungen, Switzerland
+54	Muehlegger M	Linde Kryotech AG, Pfungen, Switzerland
+54	Selva P	Linde Kryotech AG, Pfungen, Switzerland
+54	Sirvinskaite R	Loughborough Univ LBoro, Loughborough, Leics, England
+54	Felsberger L	Ludwig Maximilians Univ Munich LMU, Munich, Germany
+54	Eriksson H	Luvata Pori Oy, Pori, Finland
+54	Hiekkanen I	Luvata Pori Oy, Pori, Finland
+54	Kilpinen A	Luvata Pori Oy, Pori, Finland
+54	Andris C	MAN Energy Solut Schweiz AG MAN ES, Zurich, Switzerland
+54	Jenny P	MAN Energy Solut Schweiz AG MAN ES, Zurich, Switzerland
+54	Placzek W	Jagiellonian Univ UJ, Marian Smoluchowski Inst Phys, Krakow, Poland
+54	Andriatis A	MIT, 77 Massachusetts Ave, Cambridge, MA 02139 USA
+54	Baldwin MJ	MIT, 77 Massachusetts Ave, Cambridge, MA 02139 USA
+54	Cholakian A	MIT, 77 Massachusetts Ave, Cambridge, MA 02139 USA
+54	Curti J	MIT, 77 Massachusetts Ave, Cambridge, MA 02139 USA
+54	Harris PC	MIT, 77 Massachusetts Ave, Cambridge, MA 02139 USA
+54	Klute M	MIT, 77 Massachusetts Ave, Cambridge, MA 02139 USA
+54	Koratzinos M	MIT, 77 Massachusetts Ave, Cambridge, MA 02139 USA
+54	Kriske RM	MIT, 77 Massachusetts Ave, Cambridge, MA 02139 USA
+54	Minervini JV	MIT, 77 Massachusetts Ave, Cambridge, MA 02139 USA
+54	Tang K	MIT, 77 Massachusetts Ave, Cambridge, MA 02139 USA
+54	Thaler J	MIT, 77 Massachusetts Ave, Cambridge, MA 02139 USA
+54	Goertz F	MPIK, Heidelberg, Germany
+54	Britzger D	Max Planck Inst Phys MPP, Munich, Germany
+54	Kroha H	Max Planck Inst Phys MPP, Munich, Germany
+54	Simon F	Max Planck Inst Phys MPP, Munich, Germany
+54	Martin O	MEAE, Paris, France
+54	Skands P	Monash Univ, Melbourne, Vic, Australia
+54	Barna D	MTA Wigner Res Ctr Phys Wigner, Budapest, Hungary
+54	Barnafoldi GG	MTA Wigner Res Ctr Phys Wigner, Budapest, Hungary
+54	Brunner K	MTA Wigner Res Ctr Phys Wigner, Budapest, Hungary
+54	Levai P	MTA Wigner Res Ctr Phys Wigner, Budapest, Hungary
+54	Novak M	MTA Wigner Res Ctr Phys Wigner, Budapest, Hungary
+54	Aydin G	MKU, Antakya, Turkey
+54	Chen N	Nankai Univ, Tianjin, Peoples R China
+54	De Jong SJ	Nationaal Inst Subatomaire Fys NIKHEF, Amsterdam, Netherlands
+54	Du Pree T	Nationaal Inst Subatomaire Fys NIKHEF, Amsterdam, Netherlands
+54	Koppenburg P	Nationaal Inst Subatomaire Fys NIKHEF, Amsterdam, Netherlands
+54	Merk M	Nationaal Inst Subatomaire Fys NIKHEF, Amsterdam, Netherlands
+54	Mulder M	Nationaal Inst Subatomaire Fys NIKHEF, Amsterdam, Netherlands
+54	Papaefstathiou A	Nationaal Inst Subatomaire Fys NIKHEF, Amsterdam, Netherlands
+54	Rojo J	Nationaal Inst Subatomaire Fys NIKHEF, Amsterdam, Netherlands
+54	Van Leeuwen M	Nationaal Inst Subatomaire Fys NIKHEF, Amsterdam, Netherlands
+54	Papadopoulos CG	NCSRD, Athens, Greece
+54	Cooley L	Florida State Univ, Natl High Magnet Field Lab, MagLab, Tallahassee, FL 32306 USA
+54	Dewanjee RK	NICPB, Tallinn, Estonia
+54	Kannike K	NICPB, Tallinn, Estonia
+54	Marzola L	NICPB, Tallinn, Estonia
+54	Racioppi A	NICPB, Tallinn, Estonia
+54	Raidal M	NICPB, Tallinn, Estonia
+54	Ryazanov AI	NRCKI, Moscow, Russia
+54	Starchenko E	NRCKI, Moscow, Russia
+54	Okorokov VA	Natl Res Nucl Univ MEPhI, Moscow, Russia
+54	Polozov SM	Natl Res Nucl Univ MEPhI, Moscow, Russia
+54	Bulyak E	KIPT, Natl Sci Ctr, Kharkov, Ukraine
+54	Agaliotis EL	NTUA, Athens, Greece
+54	Vlachos S	NTUA, Athens, Greece
+54	Koeberl C	Nat Hist Museum Wien NHM, Vienna, Austria
+54	Kritscher H	Nat Hist Museum Wien NHM, Vienna, Austria
+54	Dam M	Univ Copenhagen, NBI, Copenhagen, Denmark
+54	Kara SO	Nigde Omer Halisdemir Univ OHU, Nigde, Turkey
+54	Chattopadhyay S	NIU, De Kalb, IL USA
+54	Syphers MJ	NIU, De Kalb, IL USA
+54	Hahn K	Northwestern Univ, Evanston, IL USA
+54	Petriello F	Northwestern Univ, Evanston, IL USA
+54	Telnov VI	Novosibirsk State Univ, Novosibirsk, Russia
+54	Plagge M	Otto von Guericke Univ Magdeburg OVGU, Magdeburg, Germany
+54	Barr A	Oxford Univ UOXF, Oxford, England
+54	Bishara F	Oxford Univ UOXF, Oxford, England
+54	Bortoletto D	Oxford Univ UOXF, Oxford, England
+54	Gwenlan C	Oxford Univ UOXF, Oxford, England
+54	Salam GP	Oxford Univ UOXF, Oxford, England
+54	Shipsey IP	Oxford Univ UOXF, Oxford, England
+54	Slade E	Oxford Univ UOXF, Oxford, England
+54	Viehhauser G	Oxford Univ UOXF, Oxford, England
+54	Wilkinson G	Oxford Univ UOXF, Oxford, England
+54	Aiba M	PSI, Villigen, Switzerland
+54	Besana MI	PSI, Villigen, Switzerland
+54	Crivellin A	PSI, Villigen, Switzerland
+54	Gao J	PSI, Villigen, Switzerland
+54	Montenero G	PSI, Villigen, Switzerland
+54	Rivkin L	PSI, Villigen, Switzerland
+54	Rolando G	PSI, Villigen, Switzerland
+54	Sanfilippo S	PSI, Villigen, Switzerland
+54	Sarasola X	PSI, Villigen, Switzerland
+54	Sidorov S	PSI, Villigen, Switzerland
+54	Spira M	PSI, Villigen, Switzerland
+54	Zhang C	Peking Univ, Beijing, Peoples R China
+54	Bramante J	Perimeter Inst Theoret Phys PI, Watterloo, AB, Canada
+54	Guzey V	NRC Kurchatov Inst PNPI, PNPI, Gatchina, Russia
+54	Ozdemir K	Piri Reis Univ, Istanbul, Turkey
+54	Freitas A	Univ Pittsburgh, PITT, PACC, Pittsburgh Particle Phys Astrophys & Cosmol Ctr, Pittsburgh, PA USA
+54	Weiland C	Univ Pittsburgh, PITT, PACC, Pittsburgh Particle Phys Astrophys & Cosmol Ctr, Pittsburgh, PA USA
+54	Freitas A	Univ Pittsburgh, Dept Phys & Astron, PACC, PITT, Pittsburgh, PA 15260 USA
+54	Weiland C	Univ Pittsburgh, Dept Phys & Astron, PACC, PITT, Pittsburgh, PA 15260 USA
+54	Lucchini MT	Princeton Univ, Princeton, NJ 08544 USA
+54	Salfeld-Nebgen J	Princeton Univ, Princeton, NJ 08544 USA
+54	Schott M	Johannes Gutenberg Univ PRISMA, PRISMA Cluster Excellence, Inst Phys, Mainz, Germany
+54	Spiesberger H	Johannes Gutenberg Univ PRISMA, PRISMA Cluster Excellence, Inst Phys, Mainz, Germany
+54	Weinzierl S	Johannes Gutenberg Univ PRISMA, PRISMA Cluster Excellence, Inst Phys, Mainz, Germany
+54	Hong DK	Pusan Natl Univ, Busan, South Korea
+54	Bramante J	Queens Univ, Kingston, ON, Canada
+54	Lehtinen T	RAMENTOR Oy, Tampere, Finland
+54	Penttinen JP	RAMENTOR Oy, Tampere, Finland
+54	Salmi T	RAMENTOR Oy, Tampere, Finland
+54	Stenvall A	RAMENTOR Oy, Tampere, Finland
+54	Kraemer M	Rheinisch Westfalische Tech Hsch Aachen, Aachen, Germany
+54	Ivanovs A	Riga Tech Univ, Riga, Latvia
+54	Kravalis K	Riga Tech Univ, Riga, Latvia
+54	Pikurs G	Riga Tech Univ, Riga, Latvia
+54	Torims T	Riga Tech Univ, Riga, Latvia
+54	Abramov A	Royal Holloway Univ RHUL, London, England
+54	Pikhartova H	Royal Holloway Univ RHUL, London, England
+54	Robens T	Rudjer Boskovic Inst, Zagreb, Croatia
+54	Schoning A	Ruprecht Karls Univ Heidelberg RKU, Heidelberg, Germany
+54	Thomas S	Rutgers State Univ New Jersey RU, Piscataway, NJ USA
+54	Belli E	Sapienza Univ Roma UNIROMA1, Rome, Italy
+54	Chiarello G	Sapienza Univ Roma UNIROMA1, Rome, Italy
+54	Khanpour H	Inst Res Fundamental Sci IPM, Sch Particles & Accelerators, Tehran, Iran
+54	Khatibi S	Inst Res Fundamental Sci IPM, Sch Particles & Accelerators, Tehran, Iran
+54	Yanehsari MK	Inst Res Fundamental Sci IPM, Sch Particles & Accelerators, Tehran, Iran
+54	Najafabadi MM	Inst Res Fundamental Sci IPM, Sch Particles & Accelerators, Tehran, Iran
+54	Yanehsari MK	Inst Res Fundamental Sci IPM, Sch Particles & Accelerators, Tehran, Iran
+54	Englert C	Univ Glasgow SUPA, Sch Phys & Astron, Glasgow, Lanark, Scotland
+54	Hannah A	STFC, DL, Warrington, Cheshire, England
+54	Malyshev OB	STFC, DL, Warrington, Cheshire, England
+54	Mcintosh PA	STFC, DL, Warrington, Cheshire, England
+54	Militsyn BL	STFC, DL, Warrington, Cheshire, England
+54	Sian T	STFC, DL, Warrington, Cheshire, England
+54	Sirvinskaite R	STFC, DL, Warrington, Cheshire, England
+54	Valizadeh R	STFC, DL, Warrington, Cheshire, England
+54	Williams PH	STFC, DL, Warrington, Cheshire, England
+54	Moretti S	STFC, Appleton Lab, RAL, Didcot, Oxon, England
+54	Seeber B	scMetrol SARL, Geneva, Switzerland
+54	Azatov A	Scuola Int Super Studi Avanzati Trieste SISSA, Trieste, Italy
+54	Barducci D	Scuola Int Super Studi Avanzati Trieste SISSA, Trieste, Italy
+54	Azzurri P	SNS, Pisa, Italy
+54	Bedeschi F	SNS, Pisa, Italy
+54	Boccali T	SNS, Pisa, Italy
+54	Buttazzo D	SNS, Pisa, Italy
+54	Cavasinni V	SNS, Pisa, Italy
+54	Chiarelli G	SNS, Pisa, Italy
+54	Contino R	SNS, Pisa, Italy
+54	Francavilla P	SNS, Pisa, Italy
+54	Punzi G	SNS, Pisa, Italy
+54	Roda C	SNS, Pisa, Italy
+54	Rolandi G	SNS, Pisa, Italy
+54	Tenchini R	SNS, Pisa, Italy
+54	Tonelli G	SNS, Pisa, Italy
+54	Jung S	SNU, Seoul, South Korea
+54	Kwon T	SNU, Seoul, South Korea
+54	Lee K	SNU, Seoul, South Korea
+54	Yoo HD	SNU, Seoul, South Korea
+54	Hegglin A	Sevaplan & Wurm Schweiz AG WURM, Winterthur, Switzerland
+54	Abdussalam SS	Shahid Beheshti Univ SBUT, Tehran, Iran
+54	He HJ	Shanghai Jiao Tong Univ, Shanghai, Peoples R China
+54	Li S	Shanghai Jiao Tong Univ, Shanghai, Peoples R China
+54	Yang HJ	Shanghai Jiao Tong Univ, Shanghai, Peoples R China
+54	Hegglin A	Shirokuma GmbH Shirokuma, Wetzikon, Switzerland
+54	Holdener F	Shirokuma GmbH Shirokuma, Wetzikon, Switzerland
+54	Boos E	Lomonosov Moscow State Univ, SINP, MSU, Moscow, Russia
+54	Chernoded A	Lomonosov Moscow State Univ, SINP, MSU, Moscow, Russia
+54	Dudko L	Lomonosov Moscow State Univ, SINP, MSU, Moscow, Russia
+54	Gladilin LK	Lomonosov Moscow State Univ, SINP, MSU, Moscow, Russia
+54	Klyukhin VI	Lomonosov Moscow State Univ, SINP, MSU, Moscow, Russia
+54	Perfilov M	Lomonosov Moscow State Univ, SINP, MSU, Moscow, Russia
+54	Smirnov V	Lomonosov Moscow State Univ, SINP, MSU, Moscow, Russia
+54	Volkov P	Lomonosov Moscow State Univ, SINP, MSU, Moscow, Russia
+54	Vorotnikov G	Lomonosov Moscow State Univ, SINP, MSU, Moscow, Russia
+54	Rumyantsev L	SFU, Rostov Na Donu, Russia
+54	Olness FI	SMU, Dallas, TX USA
+54	Dutta S	Univ Delhi, SGTB Khalsa Coll, New Delhi, India
+54	Brodsky SJ	Stanford Natl Accelerator Ctr SLAC, Menlo Pk, CA USA
+54	Cai Y	Stanford Natl Accelerator Ctr SLAC, Menlo Pk, CA USA
+54	Cairo V	Stanford Natl Accelerator Ctr SLAC, Menlo Pk, CA USA
+54	D'agnolo RT	Stanford Natl Accelerator Ctr SLAC, Menlo Pk, CA USA
+54	Ellis SA	Stanford Natl Accelerator Ctr SLAC, Menlo Pk, CA USA
+54	Kuttimalai S	Stanford Natl Accelerator Ctr SLAC, Menlo Pk, CA USA
+54	Nosochkov Y	Stanford Natl Accelerator Ctr SLAC, Menlo Pk, CA USA
+54	Novokhatski A	Stanford Natl Accelerator Ctr SLAC, Menlo Pk, CA USA
+54	Rizzo T	Stanford Natl Accelerator Ctr SLAC, Menlo Pk, CA USA
+54	Stupakov G	Stanford Natl Accelerator Ctr SLAC, Menlo Pk, CA USA
+54	Sullivan MK	Stanford Natl Accelerator Ctr SLAC, Menlo Pk, CA USA
+54	Young C	Stanford Natl Accelerator Ctr SLAC, Menlo Pk, CA USA
+54	Fox J	Stanford Univ, Stanford, CA 94305 USA
+54	Meade P	SUNY Stony Brook, Stony Brook, NY 11794 USA
+54	Astapovych D	Tech Univ Darmstadt, Darmstadt, Germany
+54	Boine-Frankenheim O	Tech Univ Darmstadt, Darmstadt, Germany
+54	Niedermayer U	Tech Univ Darmstadt, Darmstadt, Germany
+54	Schmidt R	Tech Univ Darmstadt, Darmstadt, Germany
+54	Riemann B	TU Dortmund, Dortmund, Germany
+54	Haberstroh C	Tech Univ Dresden, Dresden, Germany
+54	Kloeppel S	Tech Univ Dresden, Dresden, Germany
+54	Kotlarski W	Tech Univ Dresden, Dresden, Germany
+54	Quack H	Tech Univ Dresden, Dresden, Germany
+54	Savelyeva S	Tech Univ Dresden, Dresden, Germany
+54	Stockinger D	Tech Univ Dresden, Dresden, Germany
+54	Hoehn T	Graz Univ Technol, Graz, Austria
+54	Baumgartner T	TU Wien, Vienna, Austria
+54	Bernardi J	TU Wien, Vienna, Austria
+54	Doblhammer A	TU Wien, Vienna, Austria
+54	Eisterer M	TU Wien, Vienna, Austria
+54	Hofer M	TU Wien, Vienna, Austria
+54	Holleis S	TU Wien, Vienna, Austria
+54	Humann B	TU Wien, Vienna, Austria
+54	Keintzel J	TU Wien, Vienna, Austria
+54	Moros A	TU Wien, Vienna, Austria
+54	Ortino M	TU Wien, Vienna, Austria
+54	Pfeiffer S	TU Wien, Vienna, Austria
+54	Renner E	TU Wien, Vienna, Austria
+54	Stoeger-Pollach M	TU Wien, Vienna, Austria
+54	Etzion E	Tel Aviv Univ, Tel Aviv, Israel
+54	Tal Hod E	Tel Aviv Univ, Tel Aviv, Israel
+54	Yost SA	Mil Coll South Carolina Citadel, Charleston, SC USA
+54	Stasto AM	Penn State Univ, University Pk, PA 16802 USA
+54	Asai S	Univ Tokyo Todai, Tokyo, Japan
+54	Enari Y	Univ Tokyo Todai, Tokyo, Japan
+54	Ge SF	Univ Tokyo Todai, Tokyo, Japan
+54	Han C	Univ Tokyo Todai, Tokyo, Japan
+54	Ishino M	Univ Tokyo Todai, Tokyo, Japan
+54	Masubuchi T	Univ Tokyo Todai, Tokyo, Japan
+54	Okumura Y	Univ Tokyo Todai, Tokyo, Japan
+54	Saito M	Univ Tokyo Todai, Tokyo, Japan
+54	Sawada R	Univ Tokyo Todai, Tokyo, Japan
+54	Takeuchi M	Univ Tokyo Todai, Tokyo, Japan
+54	Tanaka J	Univ Tokyo Todai, Tokyo, Japan
+54	Terashi K	Univ Tokyo Todai, Tokyo, Japan
+54	Bogacz SA	Thomas Jefferson Natl Accelerator Facil JLab, Newport News, VA USA
+54	Hutton A	Thomas Jefferson Natl Accelerator Facil JLab, Newport News, VA USA
+54	Marhauser F	Thomas Jefferson Natl Accelerator Facil JLab, Newport News, VA USA
+54	Rimmer RA	Thomas Jefferson Natl Accelerator Facil JLab, Newport News, VA USA
+54	Valente-Feliciano AM	Thomas Jefferson Natl Accelerator Facil JLab, Newport News, VA USA
+54	Acar AO	TOBB ETU, Ankara, Turkey
+54	Akay A	TOBB ETU, Ankara, Turkey
+54	Bozbey A	TOBB ETU, Ankara, Turkey
+54	Kaya U	TOBB ETU, Ankara, Turkey
+54	Nergiz Z	TOBB ETU, Ankara, Turkey
+54	Sultansoy S	TOBB ETU, Ankara, Turkey
+54	Kuze M	Tokyo Inst Technol Tokyo Tech, Tokyo, Japan
+54	Usovitsch J	TCD, Dublin, Ireland
+54	Azuelos G	Triuniv Meson Facil TRIUMF, Vancouver, BC, Canada
+54	Zhuang P	Tsinghua Univ THU, Beijing, Peoples R China
+54	Yang HJ	Tsung Dao Lee Inst, Shanghai, Peoples R China
+54	Kilic A	Uludag Univ ULUU, Bursa, Turkey
+54	Kocak F	Uludag Univ ULUU, Bursa, Turkey
+54	Pilicer E	Uludag Univ ULUU, Bursa, Turkey
+54	Tapan I	Uludag Univ ULUU, Bursa, Turkey
+54	Hernandez-Pinto RJ	UAS, Culiacan, Mexico
+54	Leon-Monzon I	UAS, Culiacan, Mexico
+54	Rojas-Torres S	UAS, Culiacan, Mexico
+54	Medina L	Univ Guanajuato UGTO, Guanajuato, Mexico
+54	Valdivia Garcia MA	Univ Guanajuato UGTO, Guanajuato, Mexico
+54	Camalich JM	Univ La Laguna, San Cristobal la Laguna, Spain
+54	Duarte L	Univ Republ Udelar, Montevideo, Uruguay
+54	Das SP	Univ Los Andes Uniandes, Bogota, Colombia
+54	Luzum M	Univ Sao Paulo, Sao Paulo, Brazil
+54	Da Silveira GG	Univ Estado Rio De Janeiro, Rio De Janeiro, Brazil
+54	Sznajder A	Univ Estado Rio De Janeiro, Rio De Janeiro, Brazil
+54	Goncalves VP	Univ Fed Pelotas UFPel, Pelotas, Brazil
+54	Martins DE	Univ Fed Rio de Janeiro, Rio de Janeiro, Brazil
+54	Giunta A	Univ Roma Tre, Ctr Ric Econ & Sociali Manlio Rossi Doria EDIRC, Rome, Italy
+54	Meoni E	Univ Calabria UNICAL, Arcavacata Di Rende, Italy
+54	Gorini E	Univ Salento UNISALENTO, Lecce, Italy
+54	Ventura A	Univ Salento UNISALENTO, Lecce, Italy
+54	Abbrescia M	Univ Bari UNIBA, Bari, Italy
+54	De Filippis N	Univ Bari UNIBA, Bari, Italy
+54	Verwilligen O	Univ Bari UNIBA, Bari, Italy
+54	Bellagamba L	Univ Bologna UNIBO, Bologna, Italy
+54	Bertolucci S	Univ Bologna UNIBO, Bologna, Italy
+54	Borgonovi L	Univ Bologna UNIBO, Bologna, Italy
+54	Boscherini D	Univ Bologna UNIBO, Bologna, Italy
+54	Braibant-Giacomelli S	Univ Bologna UNIBO, Bologna, Italy
+54	Fontanesi E	Univ Bologna UNIBO, Bologna, Italy
+54	Giacomelli P	Univ Bologna UNIBO, Bologna, Italy
+54	Polini A	Univ Bologna UNIBO, Bologna, Italy
+54	Audurier A	Univ Cagliari UNICA, Cagliari, Italy
+54	Albergo S	Univ Catania UNICT, Catania, Italy
+54	Sciuto A	Univ Catania UNICT, Catania, Italy
+54	Tricomi A	Univ Catania UNICT, Catania, Italy
+54	Bozzi C	Univ Ferrara UNIFE, Ferrara, Italy
+54	Cibinetto G	Univ Ferrara UNIFE, Ferrara, Italy
+54	Farinelli R	Univ Ferrara UNIFE, Ferrara, Italy
+54	Garzia I	Univ Ferrara UNIFE, Ferrara, Italy
+54	Guidi V	Univ Ferrara UNIFE, Ferrara, Italy
+54	Masina I	Univ Ferrara UNIFE, Ferrara, Italy
+54	Moretti M	Univ Ferrara UNIFE, Ferrara, Italy
+54	Anderlini L	Univ Firenze UNIFI, Florence, Italy
+54	De Curtis S	Univ Firenze UNIFI, Florence, Italy
+54	Delle Rose L	Univ Firenze UNIFI, Florence, Italy
+54	Lenzi P	Univ Firenze UNIFI, Florence, Italy
+54	Lombardo MP	Univ Firenze UNIFI, Florence, Italy
+54	Panico G	Univ Firenze UNIFI, Florence, Italy
+54	Tesi A	Univ Firenze UNIFI, Florence, Italy
+54	Caiffi B	Univ Genova UNIGE, Genoa, Italy
+54	Fabbricatore P	Univ Genova UNIGE, Genoa, Italy
+54	Farinon S	Univ Genova UNIGE, Genoa, Italy
+54	Ferro F	Univ Genova UNIGE, Genoa, Italy
+54	Manfrinetti P	Univ Genova UNIGE, Genoa, Italy
+54	Marzani S	Univ Genova UNIGE, Genoa, Italy
+54	Pampaloni A	Univ Genova UNIGE, Genoa, Italy
+54	Putti M	Univ Genova UNIGE, Genoa, Italy
+54	Ricci AM	Univ Genova UNIGE, Genoa, Italy
+54	Antonello M	Univ Insubria UNINSUBRIA, Milan, Italy
+54	Caccia M	Univ Insubria UNINSUBRIA, Milan, Italy
+54	Santoro R	Univ Insubria UNINSUBRIA, Milan, Italy
+54	Grancagnolo F	Univ Lecce UNILE, Lecce, Italy
+54	Panareo M	Univ Lecce UNILE, Lecce, Italy
+54	Tassielli G	Univ Lecce UNILE, Lecce, Italy
+54	Andreazza A	Univ Milano UNIMI, Milan, Italy
+54	Bacchiocchi E	Univ Milano UNIMI, Milan, Italy
+54	Bastianin A	Univ Milano UNIMI, Milan, Italy
+54	Bellomo G	Univ Milano UNIMI, Milan, Italy
+54	Cantore-Cavalli D	Univ Milano UNIMI, Milan, Italy
+54	Carra S	Univ Milano UNIMI, Milan, Italy
+54	Castelnovo P	Univ Milano UNIMI, Milan, Italy
+54	Catalano G	Univ Milano UNIMI, Milan, Italy
+54	D'auria S	Univ Milano UNIMI, Milan, Italy
+54	Del Bo C	Univ Milano UNIMI, Milan, Italy
+54	Di Vita S	Univ Milano UNIMI, Milan, Italy
+54	Ferrara G	Univ Milano UNIMI, Milan, Italy
+54	Ferrera G	Univ Milano UNIMI, Milan, Italy
+54	Fiorio C	Univ Milano UNIMI, Milan, Italy
+54	Florio M	Univ Milano UNIMI, Milan, Italy
+54	Forte S	Univ Milano UNIMI, Milan, Italy
+54	Giffoni F	Univ Milano UNIMI, Milan, Italy
+54	Marinozzi V	Univ Milano UNIMI, Milan, Italy
+54	Mariotto S	Univ Milano UNIMI, Milan, Italy
+54	Meridiani P	Univ Milano UNIMI, Milan, Italy
+54	Morretta V	Univ Milano UNIMI, Milan, Italy
+54	Rossi L	Univ Milano UNIMI, Milan, Italy
+54	Salini S	Univ Milano UNIMI, Milan, Italy
+54	Sorbi M	Univ Milano UNIMI, Milan, Italy
+54	Statera M	Univ Milano UNIMI, Milan, Italy
+54	Tartarelli GF	Univ Milano UNIMI, Milan, Italy
+54	Turri M	Univ Milano UNIMI, Milan, Italy
+54	Valente P	Univ Milano UNIMI, Milan, Italy
+54	Vicini A	Univ Milano UNIMI, Milan, Italy
+54	Volpini G	Univ Milano UNIMI, Milan, Italy
+54	Antinori F	Univ Padova UNIPD, Padua, Italy
+54	Azzi P	Univ Padova UNIPD, Padua, Italy
+54	Bacchetta N	Univ Padova UNIPD, Padua, Italy
+54	Dainese A	Univ Padova UNIPD, Padua, Italy
+54	De Blas J	Univ Padova UNIPD, Padua, Italy
+54	Iwamoto S	Univ Padova UNIPD, Padua, Italy
+54	Lucchesi D	Univ Padova UNIPD, Padua, Italy
+54	Sestini L	Univ Padova UNIPD, Padua, Italy
+54	Vignaroli N	Univ Padova UNIPD, Padua, Italy
+54	Wulzer A	Univ Padova UNIPD, Padua, Italy
+54	Zanetti M	Univ Padova UNIPD, Padua, Italy
+54	Trentadue L	Univ Parma UNIPR, Parma, Italy
+54	Boselli S	Univ Pavia UNIPV, Pavia, Italy
+54	Calame CMC	Univ Pavia UNIPV, Pavia, Italy
+54	Ferrari R	Univ Pavia UNIPV, Pavia, Italy
+54	Gaudio G	Univ Pavia UNIPV, Pavia, Italy
+54	Bruzual HM	Univ Pavia UNIPV, Pavia, Italy
+54	Montagna G	Univ Pavia UNIPV, Pavia, Italy
+54	Nicrosini O	Univ Pavia UNIPV, Pavia, Italy
+54	Pezzotti L	Univ Pavia UNIPV, Pavia, Italy
+54	Piccinini F	Univ Pavia UNIPV, Pavia, Italy
+54	Polesello G	Univ Pavia UNIPV, Pavia, Italy
+54	Shivaji A	Univ Pavia UNIPV, Pavia, Italy
+54	Zhou J	Univ Pavia UNIPV, Pavia, Italy
+54	Bilei GM	Univ Perugia UNIPG, Perugia, Italy
+54	Fano L	Univ Perugia UNIPG, Perugia, Italy
+54	Mariani V	Univ Perugia UNIPG, Perugia, Italy
+54	Panella O	Univ Perugia UNIPG, Perugia, Italy
+54	Rossi A	Univ Perugia UNIPG, Perugia, Italy
+54	Anulli F	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Belli E	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Bonvini M	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Castorina G	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Chiarello G	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Collamati F	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Franco E	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Giagu S	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Ippolito V	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Kado M	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	La Francesca E	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Mele B	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Migliorati M	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Mostacci A	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Nisati A	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Palumbo L	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Pontecorvo L	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Rescigno M	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Sebastiani C	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Silvestrini L	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Spataro B	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Valente RU	Univ Roma Sapienza UNIROMA1, Rome, Italy
+54	Aielli G	Univ Roma Tor Vergata UNIROMA2, Rome, Italy
+54	Camarri P	Univ Roma Tor Vergata UNIROMA2, Rome, Italy
+54	Cardarelli R	Univ Roma Tor Vergata UNIROMA2, Rome, Italy
+54	Di Ciaccio A	Univ Roma Tor Vergata UNIROMA2, Rome, Italy
+54	Biglietti M	Univ Roma Tre UNIROMA3, Rome, Italy
+54	Ciuchini M	Univ Roma Tre UNIROMA3, Rome, Italy
+54	Di Micco B	Univ Roma Tre UNIROMA3, Rome, Italy
+54	Farilla A	Univ Roma Tre UNIROMA3, Rome, Italy
+54	Franceschini R	Univ Roma Tre UNIROMA3, Rome, Italy
+54	Greco M	Univ Roma Tre UNIROMA3, Rome, Italy
+54	Greco M	Univ Roma Tre UNIROMA3, Rome, Italy
+54	Verducci M	Univ Roma Tre UNIROMA3, Rome, Italy
+54	Arnaldi R	Univ Torino UNITO, Turin, Italy
+54	Bruna E	Univ Torino UNITO, Turin, Italy
+54	Del Duca V	Univ Torino UNITO, Turin, Italy
+54	Maggiora M	Univ Torino UNITO, Turin, Italy
+54	Prino F	Univ Torino UNITO, Turin, Italy
+54	Rivetti A	Univ Torino UNITO, Turin, Italy
+54	Scomparin E	Univ Torino UNITO, Turin, Italy
+54	Borghello G	Univ Udine UNIUD, Udine, Italy
+54	Cobal M	Univ Udine UNIUD, Udine, Italy
+54	Gabrielli E	Univ Udine UNIUD, Udine, Italy
+54	Panizzo G	Univ Udine UNIUD, Udine, Italy
+54	Garzelli MV	Univ Hamburg UHH, Hamburg, Germany
+54	Hillert W	Univ Hamburg UHH, Hamburg, Germany
+54	Lueckhof M	Univ Hamburg UHH, Hamburg, Germany
+54	Franchino S	Univ Heidelberg HEI, Heidelberg, Germany
+54	Masciocchi S	Univ Heidelberg HEI, Heidelberg, Germany
+54	Plehn T	Univ Heidelberg HEI, Heidelberg, Germany
+54	Soltveit HK	Univ Heidelberg HEI, Heidelberg, Germany
+54	Stachel J	Univ Heidelberg HEI, Heidelberg, Germany
+54	O'callaghan JM	Univ Politecn Catalunya UPC, Barcelona, Spain
+54	Jiang X	Univ Siegen, Siegen, Germany
+54	Leith SB	Univ Siegen, Siegen, Germany
+54	Vogel M	Univ Siegen, Siegen, Germany
+54	Garzelli MV	Univ Tubingen, Tubingen, Germany
+54	Calvet D	UCA, Aubiere, France
+54	Hati C	UCA, Aubiere, France
+54	Collot J	Univ Grenoble Alpes, Grenoble, France
+54	Genest MH	Univ Grenoble Alpes, Grenoble, France
+54	Millet F	Univ Grenoble Alpes, Grenoble, France
+54	Tkaczuk J	Univ Grenoble Alpes, Grenoble, France
+54	Campanelli M	UCL, London, England
+54	Cascella M	UCL, London, England
+54	Aburaia M	UAS TW, Vienna, Austria
+54	Kollegger A	UAS TW, Vienna, Austria
+54	Lackner M	UAS TW, Vienna, Austria
+54	Pyarelal A	Univ Arizona, Tucson, AZ USA
+54	Song H	Univ Arizona, Tucson, AZ USA
+54	Su S	Univ Arizona, Tucson, AZ USA
+54	Antusch S	Univ Basel UNIBAS, Basel, Switzerland
+54	Cazzato E	Univ Basel UNIBAS, Basel, Switzerland
+54	Fischer O	Univ Basel UNIBAS, Basel, Switzerland
+54	Hammad A	Univ Basel UNIBAS, Basel, Switzerland
+54	Adzic PR	Univ Belgrade, Belgrade, Serbia
+54	Zivkovic L	Univ Belgrade, Belgrade, Serbia
+54	Osland P	Univ Bergen UiB, Bergen, Norway
+54	Haug S	Univ Bern UNIBE, Bern, Switzerland
+54	Laine M	Univ Bern UNIBE, Bern, Switzerland
+54	Allport PP	Univ Birmingham UBIRM, Birmingham, W Midlands, England
+54	Bosley RR	Univ Birmingham UBIRM, Birmingham, W Midlands, England
+54	Price T	Univ Birmingham UBIRM, Birmingham, W Midlands, England
+54	Watson NK	Univ Birmingham UBIRM, Birmingham, W Midlands, England
+54	Winter A	Univ Birmingham UBIRM, Birmingham, W Midlands, England
+54	Bologna S	Univ Bristol UOB, Bristol, Avon, England
+54	Brooke JJ	Univ Bristol UOB, Bristol, Avon, England
+54	Ge SF	Univ Calif Berkeley, Berkeley, CA 94720 USA
+54	Verhaaren CB	Univ Calif Davis, Davis, CA 95616 USA
+54	Kling F	Univ Calif Irvine, Irvine, CA USA
+54	Lankford AJ	Univ Calif Irvine, Irvine, CA USA
+54	Dell Porta GZ	Univ Calif San Diego, San Diego, CA 92103 USA
+54	Craig N	Univ Calif Santa Barbara, Santa Barbara, CA 93106 USA
+54	Gouskos L	Univ Calif Santa Barbara, Santa Barbara, CA 93106 USA
+54	Incandela J	Univ Calif Santa Barbara, Santa Barbara, CA 93106 USA
+54	Altmannshofer W	Univ Calif Santa Cruz, Santa Cruz, CA 95064 USA
+54	Hance M	Univ Calif Santa Cruz, Santa Cruz, CA 95064 USA
+54	Allanach BC	Univ Cambridge, Cambridge, England
+54	Fawcett WJ	Univ Cambridge, Cambridge, England
+54	Leonidopoulos C	Univ Cambridge, Cambridge, England
+54	Parker MA	Univ Cambridge, Cambridge, England
+54	You T	Univ Cambridge, Cambridge, England
+54	Kim YK	Univ Chicago UCHI, Chicago, IL USA
+54	Wang LT	Univ Chicago UCHI, Chicago, IL USA
+54	Zupan J	Univ Cincinnati, Cincinnati, OH USA
+54	Appleby RB	Univ Edinburgh, Edinburgh, Midlothian, Scotland
+54	Clark PJ	Univ Edinburgh, Edinburgh, Midlothian, Scotland
+54	Eisenhardt S	Univ Edinburgh, Edinburgh, Midlothian, Scotland
+54	Sian T	Univ Edinburgh, Edinburgh, Midlothian, Scotland
+54	Mitselmakher G	Univ Florida, Gainesville, FL USA
+54	Blondel A	Univ Geneva UniGE, Geneva, Switzerland
+54	Troitino JF	Univ Geneva UniGE, Geneva, Switzerland
+54	Golling T	Univ Geneva UniGE, Geneva, Switzerland
+54	Iacobucci G	Univ Geneva UniGE, Geneva, Switzerland
+54	Mermod P	Univ Geneva UniGE, Geneva, Switzerland
+54	Robson AJ	Univ Geneva UniGE, Geneva, Switzerland
+54	Seeber B	Univ Geneva UniGE, Geneva, Switzerland
+54	Senatore C	Univ Geneva UniGE, Geneva, Switzerland
+54	Sfyrla A	Univ Geneva UniGE, Geneva, Switzerland
+54	Wu X	Univ Geneva UniGE, Geneva, Switzerland
+54	Bielert ER	Univ Illinois, Urbana, IL USA
+54	Draper P	Univ Illinois, Urbana, IL USA
+54	Kozaczuk J	Univ Illinois, Urbana, IL USA
+54	Shelton J	Univ Illinois, Urbana, IL USA
+54	Bilki B	Univ Iowa, Iowa City, IA USA
+54	Nachtman J	Univ Iowa, Iowa City, IA USA
+54	Onel Y	Univ Iowa, Iowa City, IA USA
+54	Eskola KJ	Univ Jyvaskyla JYU, Jyvaskyla, Finland
+54	Paukkunen H	Univ Jyvaskyla JYU, Jyvaskyla, Finland
+54	Murray MJ	Univ Kansas, Lawrence, KS 66045 USA
+54	Rogan C	Univ Kansas, Lawrence, KS 66045 USA
+54	Royon C	Univ Kansas, Lawrence, KS 66045 USA
+54	D'onofrio M	Univ Liverpool ULIV, Liverpool, Merseyside, England
+54	Klein U	Univ Liverpool ULIV, Liverpool, Merseyside, England
+54	Klein M	Univ Liverpool ULIV, Liverpool, Merseyside, England
+54	Kostka P	Univ Liverpool ULIV, Liverpool, Merseyside, England
+54	Laycock PJ	Univ Liverpool ULIV, Liverpool, Merseyside, England
+54	Skordis E	Univ Liverpool ULIV, Liverpool, Merseyside, England
+54	Welsch CP	Univ Liverpool ULIV, Liverpool, Merseyside, England
+54	Arias S	Univ Lund ULU, Lund, Sweden
+54	Sjoestrand T	Univ Lund ULU, Lund, Sweden
+54	Briffa JA	Univ Malta, Msida, Malta
+54	Debono CJ	Univ Malta, Msida, Malta
+54	Valentino G	Univ Malta, Msida, Malta
+54	Alekou A	Univ Manchester UMAN, Manchester, Lancs, England
+54	Appleby RB	Univ Manchester UMAN, Manchester, Lancs, England
+54	Rafique H	Univ Manchester UMAN, Manchester, Lancs, England
+54	Sian T	Univ Manchester UMAN, Manchester, Lancs, England
+54	Liu Z	Univ Maryland UMD, College Pk, MD USA
+54	Mohapatra RN	Univ Maryland UMD, College Pk, MD USA
+54	Ramsey-Musolf MJ	Univ Massachusetts, Amherst, MA 01003 USA
+54	Charles TK	Univ Melbourne, Melbourne, Vic, Australia
+54	Taylor GN	Univ Melbourne, Melbourne, Vic, Australia
+54	Long AJ	Univ Michigan, Ann Arbor, MI 48109 USA
+54	Barber DP	Univ New Mexico, Albuquerque, NM 87131 USA
+54	Beznosov O	Univ New Mexico, Albuquerque, NM 87131 USA
+54	Ellison JA	Univ New Mexico, Albuquerque, NM 87131 USA
+54	Heinemann K	Univ New Mexico, Albuquerque, NM 87131 USA
+54	Taroni S	Univ Notre Dame du Lac ND, South Bend, IN USA
+54	Yu TT	Univ Oregon, Eugene, OR 97403 USA
+54	Galanti M	Univ Rochester, Rochester, NY USA
+54	Zadeh SG	Univ Rostock, Rostock, Germany
+54	Van Rienen UH	Univ Rostock, Rostock, Germany
+54	Zadeh SG	Univ Rostock, Rostock, Germany
+54	Boland MJ	Univ Saskatchewan USASK, Saskatoon, SK, Canada
+54	Zhao Z	Univ Sci & Technol China, Hefei, Anhui, Peoples R China
+54	Khanpour H	Univ Sci & Technol Mazandaran, Behshahr, Iran
+54	Dziewit B	Univ Silesia USKAT, Katowice, Poland
+54	Flieger W	Univ Silesia USKAT, Katowice, Poland
+54	Gluza J	Univ Silesia USKAT, Katowice, Poland
+54	Grzanka K	Univ Silesia USKAT, Katowice, Poland
+54	Kolodziej K	Univ Silesia USKAT, Katowice, Poland
+54	Kordiaczynska M	Univ Silesia USKAT, Katowice, Poland
+54	Kowalski S	Univ Silesia USKAT, Katowice, Poland
+54	Pulawski S	Univ Silesia USKAT, Katowice, Poland
+54	Riemann T	Univ Silesia USKAT, Katowice, Poland
+54	Nardini G	Univ Stavanger UiS, Stavanger, Norway
+54	Podeur M	Univ Stuttgart USTUTT, Stuttgart, Germany
+54	Vogt DM	Univ Stuttgart USTUTT, Stuttgart, Germany
+54	Cerri A	Univ Sussex, Brighton, E Sussex, England
+54	Silva LV	Univ Sussex, Brighton, E Sussex, England
+54	Vivarelli I	Univ Sussex, Brighton, E Sussex, England
+54	Cornell AS	Univ Witwatersrand WITS, Johannesburg, South Africa
+54	Kumar M	Univ Witwatersrand WITS, Johannesburg, South Africa
+54	Ruan X	Univ Witwatersrand WITS, Johannesburg, South Africa
+54	Curtin D	Univ Toronto, Toronto, ON, Canada
+54	Trischuk W	Univ Toronto, Toronto, ON, Canada
+54	Kalinowski J	Univ Warsaw, Warsaw, Poland
+54	Bai Y	Univ Wisconsin Madison WISC, Madison, WI USA
+54	Denner A	Univ Wurzburg, Wurzburg, Germany
+54	Baker MJ	Univ Zurich UZH, Zurich, Switzerland
+54	Gehrmann T	Univ Zurich UZH, Zurich, Switzerland
+54	Graverini E	Univ Zurich UZH, Zurich, Switzerland
+54	Serra N	Univ Zurich UZH, Zurich, Switzerland
+54	Crespo Garrido I	Univ Rey Juan Carlos, Madrid, Spain
+54	Arbey A	Univ Lyon 1, IPNL, CNRS, IN2P3, Lyon, France
+54	Bernet C	Univ Lyon 1, IPNL, CNRS, IN2P3, Lyon, France
+54	Deandrea A	Univ Lyon 1, IPNL, CNRS, IN2P3, Lyon, France
+54	Gascon-Shotkin SM	Univ Lyon 1, IPNL, CNRS, IN2P3, Lyon, France
+54	Mahmoudi F	Univ Lyon 1, IPNL, CNRS, IN2P3, Lyon, France
+54	Ekelof T	Uppsala Univ, Uppsala, Sweden
+54	Sahin M	Usak Univ, Usak, Turkey
+54	Keinz PA	Vienna Univ Econ & Business WU, Vienna, Austria
+54	Kretzschmar L	Vienna Univ Econ & Business WU, Vienna, Austria
+54	Jelisavic IB	Vinca Inst Nucl Sci, Belgrade, Serbia
+54	Blekman F	Vrije Univ Brussel, Brussels, Belgium
+54	Skovpen K	Vrije Univ Brussel, Brussels, Belgium
+54	Dev PSB	Washington Univ WUSTL, St Louis, MO USA
+54	Zhang Y	Washington Univ WUSTL, St Louis, MO USA
+54	Perez G	Weizmann Inst Sci, Rehovot, Israel
+54	Hahn T	Max Planck Inst Phys MPP, Werner Heisenberg Inst, Munich, Germany
+54	Kortner O	Max Planck Inst Phys MPP, Werner Heisenberg Inst, Munich, Germany
+54	Ward BFL	Max Planck Inst Phys MPP, Werner Heisenberg Inst, Munich, Germany
+54	Andronic A	Westfalische Wilhelms Univ Munster WWU, Munster, Germany
+54	Kulesza A	Westfalische Wilhelms Univ Munster WWU, Munster, Germany
+54	Pulikowski D	West Pomeranian Univ Technol ZUT, Szczecin, Poland
+54	Chorowski M	Wroclaw Univ Sci & Technol PWR, Wroclaw, Poland
+54	Duda P	Wroclaw Univ Sci & Technol PWR, Wroclaw, Poland
+54	Polinski J	Wroclaw Univ Sci & Technol PWR, Wroclaw, Poland
+54	Wang K	Wuhan Univ Technol WHUT, Wuhan, Hubei, Peoples R China
+54	Pan RQ	Zhejiang Inst Modern Phys, Dept Phys, Hangzhou, Zhejiang, Peoples R China
+54	Li R	Zhejiang Univ ZJU, Hangzhou, Zhejiang, Peoples R China
+54	Appelo D	Univ Colorado Boulder, Boulder, CO USA
+54	Netto DG	Pittsburgh Univ PITT, Pittsburgh, PA USA
+55	Phillips HRP	German Ctr Integrat Biodivers Res iDiv, Puschstr 4, D-04103 Leipzig, Germany
+55	Bennett JM	German Ctr Integrat Biodivers Res iDiv, Puschstr 4, D-04103 Leipzig, Germany
+55	Beugnon R	German Ctr Integrat Biodivers Res iDiv, Puschstr 4, D-04103 Leipzig, Germany
+55	Ferlian O	German Ctr Integrat Biodivers Res iDiv, Puschstr 4, D-04103 Leipzig, Germany
+55	Guerra CA	German Ctr Integrat Biodivers Res iDiv, Puschstr 4, D-04103 Leipzig, Germany
+55	Koenig-Ries B	German Ctr Integrat Biodivers Res iDiv, Puschstr 4, D-04103 Leipzig, Germany
+55	Krebs JJ	German Ctr Integrat Biodivers Res iDiv, Puschstr 4, D-04103 Leipzig, Germany
+55	Brose U	German Ctr Integrat Biodivers Res iDiv, Puschstr 4, D-04103 Leipzig, Germany
+55	Eisenhauer N	German Ctr Integrat Biodivers Res iDiv, Puschstr 4, D-04103 Leipzig, Germany
+55	Phillips HRP	Univ Leipzig, Inst Biol, Puschstr 4, D-04103 Leipzig, Germany
+55	Beugnon R	Univ Leipzig, Inst Biol, Puschstr 4, D-04103 Leipzig, Germany
+55	Ferlian O	Univ Leipzig, Inst Biol, Puschstr 4, D-04103 Leipzig, Germany
+55	Krebs JJ	Univ Leipzig, Inst Biol, Puschstr 4, D-04103 Leipzig, Germany
+55	Eisenhauer N	Univ Leipzig, Inst Biol, Puschstr 4, D-04103 Leipzig, Germany
+55	Phillips HRP	St Marys Univ, Dept Environm Sci, Halifax, NS, Canada
+55	Cameron EK	St Marys Univ, Dept Environm Sci, Halifax, NS, Canada
+55	Bach EM	Colorado State Univ, Global Soil Biodivers Initiat, Ft Collins, CO 80523 USA
+55	Wall DH	Colorado State Univ, Global Soil Biodivers Initiat, Ft Collins, CO 80523 USA
+55	Bach EM	Colorado State Univ, Sch Global Environm Sustainabil, Ft Collins, CO 80523 USA
+55	Wall DH	Colorado State Univ, Sch Global Environm Sustainabil, Ft Collins, CO 80523 USA
+55	Bach EM	Colorado State Univ, Dept Biol, Ft Collins, CO 80523 USA
+55	Wall DH	Colorado State Univ, Dept Biol, Ft Collins, CO 80523 USA
+55	Bartz MLC	Univ Positivo, Rua Prof Pedro Viriato Parigot de Souza 5300, BR-81280330 Curitiba, Parana, Brazil
+55	Bartz MLC	Univ Coimbra, Dept Life Sci, Ctr Funct Ecol, P-3000456 Coimbra, Portugal
+55	Bennett JM	Martin Luther Univ Halle Wittenberg, Inst Biol, Kirchtor 1, D-06108 Halle, Saale, Germany
+55	Guerra CA	Martin Luther Univ Halle Wittenberg, Inst Biol, Kirchtor 1, D-06108 Halle, Saale, Germany
+55	Bennett JM	Univ Canberra, Inst Appl Ecol, Fac Sci & Technol, Ctr Appl Water Sci, Canberra, ACT, Australia
+55	Briones MJI	Univ Vigo, Dept Ecol Biol Anim, Vigo 36310, Spain
+55	Brown GG	Embrapa Forestry, Estrada Ribeira,Km 111,CP 231, BR-83411000 Colombo, PR, Brazil
+55	Gongalsky KB	Russian Acad Sci, AN Severtsov Inst Ecol & Evolut, Leninsky Pr 33, Moscow 119071, Russia
+55	Lebedev IM	Russian Acad Sci, AN Severtsov Inst Ecol & Evolut, Leninsky Pr 33, Moscow 119071, Russia
+55	Gongalsky KB	Moscow MV Lomonosov State Univ, Leninskie Gory 1, Moscow 119991, Russia
+55	Lebedev IM	Moscow MV Lomonosov State Univ, Leninskie Gory 1, Moscow 119991, Russia
+55	Koenig-Ries B	Friedrich Schiller Univ Jena, Inst Comp Sci, Ernst Abbe Pl 2, D-07743 Jena, Germany
+55	Orgiazzi A	European Commiss, Joint Res Ctr JRC, Ispra, Italy
+55	Ramirez KS	Netherlands Inst Ecol NIOO KNAW, Dept Terr Ecol, NL-6700 AB Wageningen, Netherlands
+55	Van Der Putten WH	Netherlands Inst Ecol NIOO KNAW, Dept Terr Ecol, NL-6700 AB Wageningen, Netherlands
+55	Thakur MP	Netherlands Inst Ecol NIOO KNAW, Dept Terr Ecol, NL-6700 AB Wageningen, Netherlands
+55	Russell DJ	Senckenberg Museum Nat Hist Gorlitz, Dept Soil Zool, D-02826 Gorlitz, Germany
+55	Schwarz B	Univ Freiburg, Biometry & Environm Syst Anal, Tennenbacher Str 4, D-79106 Freiburg, Germany
+55	Brose U	Friedrich Schiller Univ Jena, Inst Biodivers, Dornburger Str 159, D-07743 Jena, Germany
+55	Decaens T	Univ Montpellier, CEFE, CNRS, EPHE,IRD, Univ Paul Valery Montpellier 3, Montpellier, France
+55	Lavelle P	Sorbonne Univ, Inst Ecol & Sci Environm, F-75005 Paris, France
+55	Loreau M	CNRS, Theoret & Expt Ecol Stn, Ctr Biodivers Theory & Modelling, F-09200 Moulis, France
+55	Mathieu J	UPMC, Sorbonne Univ, Inst Ecol & Environm Sci Paris UMR 7618 IEES Pari, CNRS,INRA,IRD,UPEC, 4 Pl Jussieu, F-75000 Paris, France
+55	Mathieu J	INRA, Inst Ecol & Sci Environm Paris, IRD, F-75005 Paris, France
+55	Mulder C	Univ Catania, Dept Biol Geol & Environm Sci, Via Androne 81, I-95124 Catania, Italy
+55	Van Der Putten WH	Wageningen Univ, Lab Nematol, POB 8123, NL-6700 ES Wageningen, Netherlands
+55	Rillig MC	Free Univ Berlin, Inst Biol, D-14195 Berlin, Germany
+55	Lammel DR	Free Univ Berlin, Inst Biol, D-14195 Berlin, Germany
+55	De Vries FT	Univ Amsterdam, Inst Biodivers & Ecosyst Dynam, Amsterdam, Netherlands
+55	Wardle DA	Nanyang Technol Univ, Asian Sch Environm, Singapore 639798, Singapore
+55	Ammer C	Univ Gottingen, Ctr Biodivers & Sustainable Landuse, Busgenweg 1, Gottingen, Germany
+55	Ammer C	Univ Gottingen, Silviculture & Forest Ecol Temperate Zones, Busgenweg 1, Gottingen, Germany
+55	Ammer S	Univ Gottingen, Forest Sci & Forest Ecol, Busgenweg 1, Gottingen, Germany
+55	Arai M	Natl Agr & Food Res Org, Inst Agroenvironm Sci, 3-1-3 Kan Nondai, Tsukuba, Ibaraki, Japan
+55	Ayuke FO	Univ Nairobi, Land Resource Management & Agr Technol, Kapenguria Rd,Naivasha Rd,POB 29053, Nairobi, Kenya
+55	Ayuke FO	Rwanda Inst Conservat Agr, KG 541, Kigali, Rwanda
+55	Baker GH	CSIRO, Hlth & Biosecur, POB 1700, Canberra, ACT, Australia
+55	Baretta D	Santa Catarina State Univ, Dept Anim Sci, BR-89815630 Chapeco, SC, Brazil
+55	Barkusky D	Leibniz Ctr Agr Landscape Res, Expt Infrastruct Platform EIP, Eberswalder Str 84, Muncheberg, Germany
+55	Joschko M	Leibniz Ctr Agr Landscape Res, Expt Infrastruct Platform EIP, Eberswalder Str 84, Muncheberg, Germany
+55	Beausejour R	Univ Sherbrooke, Dept Biol, Sherbrooke, PQ, Canada
+55	Bradley RL	Univ Sherbrooke, Dept Biol, Sherbrooke, PQ, Canada
+55	Bedano JC	Natl Univ Rio Cuarto, Dept Geol, FCEFQyN, ICBIA CONICET Natl Sci & Tech Res Council, Ruta 36 Km, RA-601 Rio Cuarto, Argentina
+55	Dominguez A	Natl Univ Rio Cuarto, Dept Geol, FCEFQyN, ICBIA CONICET Natl Sci & Tech Res Council, Ruta 36 Km, RA-601 Rio Cuarto, Argentina
+55	Birkhofer K	Brandenburg Tech Univ Cottbus, Dept Ecol, Konrad Wachsmann Allee 6, Cottbus, Germany
+55	Blanchart E	Univ Montpellier, Eco&Sols, Inst Agro, IRD,INRAE,CIRAD, Montpellier, France
+55	Brossard M	Univ Montpellier, Eco&Sols, Inst Agro, IRD,INRAE,CIRAD, Montpellier, France
+55	Blossey B	Cornell Univ, Nat Resources, Ithaca, NY USA
+55	Bolger T	Univ Coll Dublin, Earth Inst, Dublin 4, Ireland
+55	Bolger T	Univ Coll Dublin, Sch Biol & Environm Sci, Dublin, Ireland
+55	Burtis JC	Cornell Univ, Dept Entomol, 3132 Comstock Hall, Ithaca, NY 14853 USA
+55	Capowiez Y	INRA, EMMAH, UMR 1114, Site Agroparc, Avignon, France
+55	Cavagnaro TR	Univ Adelaide, Waite Res Inst, Sch Agr Food & Wine, PMB 1, Glen Osmond, SA, Australia
+55	Choi A	Univ Toronto, Fac Forestry, 33 Willcocks St, Toronto, ON, Canada
+55	Smith SM	Univ Toronto, Fac Forestry, 33 Willcocks St, Toronto, ON, Canada
+55	Clause J	Univ Poitiers, Lab Ecol & Biol Interact, Equipe EES, UMR CNRS 7267, 5 Rue Albert Turpain, Poitiers, France
+55	Cluzeau D	Univ Rennes, Stn Biol, UMR ECOBIO Ecosyst Biodivers Evolut, CNRS, F-35380 Paimpont, France
+55	Peres G	Univ Rennes, Stn Biol, UMR ECOBIO Ecosyst Biodivers Evolut, CNRS, F-35380 Paimpont, France
+55	Coors A	ECT Oekotoxikol GmbH, Boettgerstr 2-14, Floersheim, Germany
+55	Crotty FV	Aberystwyth Univ, Inst Biol Environm & Rural Sci, Aberystwyth SY24 3EE, Dyfed, Wales
+55	Crotty FV	Royal Agr Univ, Sch Agr Food & Environm, Stroud Rd, Cirencester GL7 6JS, England
+55	Crumsey JM	Univ Georgia, Odum Sch Ecol, 140 E Green St, Athens, GA 30602 USA
+55	Davalos A	SUNY Coll Cortland, Dept Biol Sci, 1215 Bowers Hall, Cortland, NY 13045 USA
+55	Diaz Cosin DJ	Univ Complutense Madrid, Biodivers Ecol & Evolut, Fac Biol, Jose Antonio Novais 12, Madrid, Spain
+55	Gutierrez Lopez M	Univ Complutense Madrid, Biodivers Ecol & Evolut, Fac Biol, Jose Antonio Novais 12, Madrid, Spain
+55	Jesus JB	Univ Complutense Madrid, Biodivers Ecol & Evolut, Fac Biol, Jose Antonio Novais 12, Madrid, Spain
+55	Novo M	Univ Complutense Madrid, Biodivers Ecol & Evolut, Fac Biol, Jose Antonio Novais 12, Madrid, Spain
+55	Trigo D	Univ Complutense Madrid, Biodivers Ecol & Evolut, Fac Biol, Jose Antonio Novais 12, Madrid, Spain
+55	Dobson AM	Yale Univ, Yale Sch Environm, 370 Prospect St, New Haven, CT USA
+55	Esteban Duhour A	Univ Nacl Lujan, Argentina INEDES, CONICET, Dept Ciencias Basicas, Lujan, Buenos Aires, Argentina
+55	Van Eekeren N	Louis Bolk Inst, Kosterijland 3-5, Bunnik, Netherlands
+55	Emmerling C	Univ Trier, Dept Soil Sci, Campus II,Behringstr 21, Trier, Germany
+55	Falco LB	Univ Nacl Lujan, Inst Ecol & Desarrollo Sustentable, Dept Ciencias Basicas, Ave Constituc & Ruta 5, Lujan, Buenos Aires, Argentina
+55	Fernandez R	Inst Evolutionary Biol, Anim Biodivers & Evolut, Passeig Maritim Barceloneta 37, Barcelona, Spain
+55	Fonte SJ	Colorado State Univ, Dept Soil & Crop Sci, 1170 Campus Delivery, Ft Collins, CO 80523 USA
+55	Hurisso TT	Colorado State Univ, Dept Soil & Crop Sci, 1170 Campus Delivery, Ft Collins, CO 80523 USA
+55	Fragoso C	Inst Ecol AC, Biodivers & Systemat Network, Xalapa 91070, Veracruz, Mexico
+55	Franco ALC	Colorado State Univ, Dept Biol, 200 West Lake St, Ft Collins, CO 80523 USA
+55	Fusilero A	Univ Philippines Mindanao, Dept Biol Sci & Environm Studies, Davao, Philippines
+55	Fusilero A	Univ Ghent, Lab Environm Toxicol & Aquat Ecol, Environm Toxicol Unit, GhEnToxLab, Campus Coupure,Coupure Links 653, Ghent, Belgium
+55	Geraskina AP	Ctr Forest Ecol & Prod RAS, Profsoyuznaya St 84-32 Bldg 14, Moscow, Russia
+55	Gholami S	Razi Univ, Kermanshah, Iran
+55	Sayad E	Razi Univ, Kermanshah, Iran
+55	Gonzalez G	USDA, Forest Serv, Int Inst Trop Forestry, 1201 Ceiba St, San Juan, PR USA
+55	Gundale MJ	Swedish Univ Agr Sci, Dept Forest Ecol & Management, Skogsmarksgrand 17, S-90183 Umea, Sweden
+55	Hackenberger BK	Univ Osijek, Dept Biol, Cara Hadrijana 8 A, Osijek, Croatia
+55	Hackenberger DK	Univ Osijek, Dept Biol, Cara Hadrijana 8 A, Osijek, Croatia
+55	Hernandez LM	Univ Estadual Maranhao, Agroecol Postgrad Program, Agr Engn, Ave Lourenco Vieira da Silva 1000, Sao Luis, Maranhao, Brazil
+55	Rousseau GX	Univ Estadual Maranhao, Agroecol Postgrad Program, Agr Engn, Ave Lourenco Vieira da Silva 1000, Sao Luis, Maranhao, Brazil
+55	Hirth JR	Agr Victoria, Dept Jobs Precincts & Reg, Chiltern Valley Rd, Rutherglen, Australia
+55	Hishi T	Kyushu Univ, Fac Agr, 394 Tsubakuro, Fukuoka 8112415, Japan
+55	Holdsworth AR	Minnesota Pollut Control Agcy, 520 Lafayette Rd, St Paul, MN USA
+55	Holmstrup M	Aarhus Univ, Dept Biosci, Vejlsovej 25, Aarhus, Denmark
+55	Hopfensperger KN	Northern Kentucky Univ, Dept Biol Sci, 1 Nunn Dr, Highland Hts, KY USA
+55	Huerta Lwanga E	Colegio Frontera Sur, Agr Sociedad & Ambiente, Ave Poligono S-N Cd Ind Lerma, Campeche, Campeche, Mexico
+55	Huerta Lwanga E	Wageningen Univ & Res, Soil Phys & Land Management Grp, Droevendaalsteeg 4, Wageningen, Netherlands
+55	Van Schaik L	Wageningen Univ & Res, Soil Phys & Land Management Grp, Droevendaalsteeg 4, Wageningen, Netherlands
+55	Huhta V	Univ Jyvaskyla, Dept Biol & Environm Sci, Box 35, Jyvaskyla, Finland
+55	Hurisso TT	Lincoln Univ Missouri, Coll Agr Environm & Human Sci, Jefferson City, MO 65101 USA
+55	Iannone BV	Univ Florida, Sch Forest Resources & Conservat, Gainesville, FL 32611 USA
+55	Iordache M	Univ Agr Sci & Vet Med Banat King Michael 1st Rom, Sustainable Dev & Environm Engn, Calea Aradului 119, Timisoara, Romania
+55	Irmler U	Univ Kiel, Inst Ecosyst Res, Olshausenstr 40, D-24098 Kiel, Germany
+55	Ivask M	Tallinn Univ Technol, Tartu Coll, Puiestee 78, Tartu, Estonia
+55	Johnson-Maynard JL	Univ Idaho, Dept Soil & Water Syst, 875 Perimeter Dr MS,2340, Moscow, ID USA
+55	Kaneko N	Fukushima Univ, Fac Food & Agr Sci, Kanayagawa 1, Fukushima, Japan
+55	Kanianska R	Matej Bel Univ, Dept Environm, Fac Nat Sci, Tajovskeho 40, Banska Bystrica, Slovakia
+55	Keith AM	UK Ctr Ecol & Hydrol, Lib Ave, Lancaster, England
+55	Kernecker ML	Leibniz Ctr Agr Landscape Res, Land Use & Governance, Eberswalder Str 84, Muncheberg, Germany
+55	Kone AW	Univ Nangui Abrogoua, UFR Sci Nat, UR Gest Durable Sols, Abidjan, Cote Ivoire
+55	Kooch Y	Tarbiat Modares Univ, Fac Nat Resources & Marine Sci, Noor 4641776489, Mazandaran, Iran
+55	Kukkonen ST	Nat Resources Inst Finland, Prod Syst, Survontie 9 A, Jyvaskyla, Finland
+55	Lalthanzara H	Pachhunga Univ Coll, Dept Zool, Aizawl, Mizoram, India
+55	Lebedev IM	Skolkovo Inst Sci & Technol, 30-1 Bolshoy Blvd, Moscow 121205, Russia
+55	Le Cadre E	INRAE, Inst Agro, SAS, F-35042 Rennes, France
+55	Lincoln NK	Univ Hawaii Manoa, Coll Trop Agr & Human Resources, Trop Plant & Soil Sci, 3190 Maile Way,St John 102, Honolulu, HI USA
+55	Lopez-Hernandez D	Univ Cent Venezuela, Inst Zool & Ecol Trop, Ecol Aplicada, Ciudad Univ, Caracas, Venezuela
+55	Loss SR	Oklahoma State Univ, Dept Nat Resource Ecol & Management, 008C Ag Hall, Stillwater, OK 74078 USA
+55	Paudel S	Oklahoma State Univ, Dept Nat Resource Ecol & Management, 008C Ag Hall, Stillwater, OK 74078 USA
+55	Marichal R	Univ Montpellier, UPR Syst Perennes, CIRAD, TA B-34-02 Ave Agropolis, Montpellier, France
+55	Matula R	Czech Univ Life Sci Prague, Fac Forestry & Wood Technol, Dept Forest Ecol, Kamycka 129, Prague, Czech Republic
+55	Minamiya Y	Tochigi Prefectural Museum, 2-2 Mutsumi Cho, Utsunomiya, Tochigi, Japan
+55	Moos JH	Thuenen Inst Biodivers, Bundesallee 65, Braunschweig, Germany
+55	Moos JH	Thuenen Inst Organ Farming, Trenthorst 32, Westerau, Germany
+55	Moreno G	Univ Extremadura, Plant Biol Ecol & Earth Sci, INDEHESA, Plasencia, Spain
+55	Moron-Rios A	Colegio Frontera Sur, Conservac Biodiversidad, Ave Rancho,Poligono 2 A, Campeche, Campeche, Mexico
+55	Motohiro H	Doshisha Univ, Dept Environm Syst Sci, Fac Sci & Engn, Kyoto 6028580, Japan
+55	Muys B	Katholieke Univ Leuven, Div Forest Nat & Landscape, Dept Earth & Environm Sci, Celestijnenlaan 200E Box, B-2411 Leuven, Belgium
+55	Neirynck J	Res Inst Nat & Forest, Gaverstr 35, B-9500 Geraardsbergen, Belgium
+55	Norgrove L	Bern Univ Appl Sci, Sch Agr Forest & Food Sci, Langgasse 85, Zollikofen, Switzerland
+55	Nuutinen V	Nat Resources Inst Finland Luke, Soil Ecosyst, Tietotie 4, Jokioinen, Finland
+55	Nuzzo V	Nat Area Consultants, 1 West Hill Sch Rd, Richford, NY USA
+55	Rahman PM	PSMO Coll, Dept Zool, Malappuram, Kerala, India
+55	Pansu J	CSIRO, CSIRO Ocean & Atmosphere, New Illawarra Rd, Lucas Heights, NSW, Australia
+55	Pansu J	Sorbonne Univ, CNRS, Stn Biol Roscoff, UMR7144 Adaptat & Diversite Milieu Marin, Pl Georges Teissier, Roscoff, France
+55	Paudel S	Phipps Conservatory & Bot Gardens, Pittsburgh, PA 15213 USA
+55	Peres G	Inst Agro Agrocampus Ouest, UMR SAS, INRAE, F-35000 Rennes, France
+55	Perez-Camacho L	Univ Alcala, Dept Life Sci, Forest Ecol & Restorat Grp, Alcala De Henares 28805, Spain
+55	Rebollo S	Univ Alcala, Dept Life Sci, Forest Ecol & Restorat Grp, Alcala De Henares 28805, Spain
+55	Ponge JF	CNRS, Museum Natl Hist Nat, UMR 7179, Adaptat Vivant, 4 Ave Petit Chateau, Brunoy, France
+55	Prietzel J	Tech Univ Munich, Dept Ecol & Ecosyst Management, Emil Ramann Str 2, D-85354 Freising Weihenstephan, Germany
+55	Rapoport IB	Russian Acad Sci, Tembotov Inst Ecol Mt Terr, I Armand 37a, Nalchik, Russia
+55	Rashid MI	King Abdulaziz Univ, Ctr Excellence Environm Studies, POB 80216, Jeddah 21589, Saudi Arabia
+55	Rodriguez MA	Univ Alcala, Dept Life Sci, Global Change Ecol & Evolut Res Grp GloCEE, Alcala De Henares 28805, Spain
+55	Roth AM	Univ Minnesota, Dept Forest Resources, 1530 Cleveland Ave N, St Paul, MN 55108 USA
+55	Roth AM	Friends Mississippi River, 101 E 5th St Suite 2000, St Paul, MN USA
+55	Rousseau GX	Univ Fed Maranhao, Biol Biodivers & Conservat Postgrad Program, Ave Portugueses 1966, Sao Luis, Maranhao, Brazil
+55	Rozen A	Jagiellonian Univ, Inst Environm Sci, Gronostajowa 7, Krakow, Poland
+55	Scharenbroch B	Univ Wisconsin, Coll Nat Resources, Stevens Point, WI 54481 USA
+55	Scharenbroch B	Morton Arboretum, 4100 Illinois Route 53, Lisle, IL 60532 USA
+55	Schirrmann M	Leibniz Inst Agr Engn & Bioecon ATB, Dept Engn Crop Prod, Max Eyth Allee 100, Potsdam, Germany
+55	Schmidt O	Univ Coll Dublin, Agr & Food Sci Ctr, Sch Agr & Food Sci, Dublin, Ireland
+55	Schmidt O	Univ Coll Dublin, UCD Earth Inst, Dublin, Ireland
+55	Schroeder B	Tech Univ Carolo Wilhelmina Braunschweig, Inst Geoecol, Landscape Ecol & Environm Syst Anal, Langer Kamp 19c, Braunschweig, Germany
+55	Seeber J	Univ Innsbruck, Dept Ecol, Technikerstr 25, Innsbruck, Austria
+55	Seeber J	Eurac Res, Inst Alpine Environm, Viale Druso 1, Bozen Bolzano, Italy
+55	Steinwandter M	Eurac Res, Inst Alpine Environm, Viale Druso 1, Bozen Bolzano, Italy
+55	Shashkov MP	Russian Acad Sci, Inst Physicochem & Biol Problems Soil Sci, Lab Ecosyst Modelling, Inst Skaya Str 2, Pushchino, Russia
+55	Shashkov MP	Russian Acad Sci, Lab Computat Ecol, Inst Math Problems Biol RAS, Branch Keldysh Inst Appl Math, Vitkevicha Str 1, Pushchino, Russia
+55	Singh J	Khalsa Coll Amritsar, Dept Zool, Amritsar, Punjab, India
+55	Szlavecz K	Johns Hopkins Univ, Dept Earth & Planetary Sci, 3400 N Charles St, Baltimore, MD 21218 USA
+55	Antonio Talavera J	Univ La Laguna, Fac Biol Sci, Dept Anim Biol Edaphol & Geol, San Cristobal la Laguna, Santa Cruz De T, Spain
+55	Tsukamoto J	Kochi Univ, Forest Sci, Monobe Otsu 200, Nankoku, Kochi, Japan
+55	Uribe-Lopez S	Juarez Autonomous Univ Tabasco, Multidisciplinary Acad Div Jalpa de Mendez, Nanotechnol Engn, Km 27 S-N,CP 86205 Jalpa de Mendez, Villahermosa 86205, Tabasco, Mexico
+55	De Valenca AW	WWF Netherlands, Unit Food & Agr, Driebergseweg 10, Zeist, Netherlands
+55	Virto I	Univ Publ Navarra, IS FOOD, Dpto Ciencias, Edificio Olivos Campus Arrosadia, Pamplona, Spain
+55	Wackett AA	Univ Minnesota, Dept Soil Water & Climate, 1991 Upper Buford Circle, St Paul, MN USA
+55	Warren MW	Earth Innovat Inst, 98 Battery St Suite 250, San Francisco, CA USA
+55	Webster ER	Univ Calif Davis, 1 Shields Ave, Davis, CA 95616 USA
+55	Wehr NH	Univ Hawaii Manoa, Nat Resources & Environm Management, 1910 East West Rd, Honolulu, HI 96822 USA
+55	Whalen JK	McGill Univ, Nat Resource Sci, 21111 Lakeshore Rd, Ste Anne De Bellevue, PQ, Canada
+55	Wironen MB	Nature Conservancy, 4245 Fairfax Dr, Arlington, VA USA
+55	Wolters V	Justus Liebig Univ, Anim Ecol, Heinrich Buff Ring 26, Giessen, Germany
+55	Wu P	Southwest Minzu Univ, Inst Qinghai Tibetan Plateau, Chengdu, Sichuan, Peoples R China
+55	Zenkova IV	Russian Acad Sci, Inst North Ind Ecol Problems INEP KSC RAS, Fed Res Ctr Kola Sci Ctr, Lab Terr Ecosyst, Akademgorodok 14a, Apatity, Murmansk, Russia
+55	Zhang W	Henan Univ, Coll Environm & Planning, Minist Educ, Key Lab Geospatial Technol Middle & Lower Yellow, Kaifeng, Peoples R China
+55	Cameron EK	Fac Biol & Environm Sci, POB 65, FI-00014 Helsinki, Finland
