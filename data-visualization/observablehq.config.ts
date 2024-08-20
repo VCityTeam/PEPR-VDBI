@@ -44,6 +44,10 @@ export default {
           path: '/test-esr-import',
         },
         {
+          name: 'Import ORCID Tests',
+          path: '/test-orcid-import',
+        },
+        {
           name: 'Plot Tests',
           path: '/test-plot',
         },
@@ -97,4 +101,3 @@ export default {
   // root: "docs", // path to the source root for preview
   // output: "dist", // path to the output root for build
 };
-
