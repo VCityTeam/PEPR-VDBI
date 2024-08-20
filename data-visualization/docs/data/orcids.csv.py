@@ -63,10 +63,10 @@ def main():
 
         response = queryOrcid(query, token)
         if response is not None:
-            researcher_data.loc[names.index, "orcids"] = response
+            researcher_data.loc[names.index, "orcids"] = response  # type: ignore
 
     # write data to stdout as csv
-    # stdout.write(researcher_data.to_csv())
+    stdout.write(researcher_data.to_csv())
 
 
 def getAccessToken(
