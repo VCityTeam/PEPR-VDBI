@@ -1,0 +1,799 @@
+0	0	London Wca Ae
+0	1	Oxford Ox Uq
+1	0	London
+1	1	Oxford
+1	2	Clayton
+2	0	Bc Vt Z
+3	0	Iowa City
+3	1	Dr Rotterdam
+3	2	Rs
+4	0	Bergen
+4	1	Bergen
+5	0	Milan
+6	0	London E Ns
+6	1	Jeddah 
+7	0	Venice
+8	0	Johannesburg
+9	0	W Yorkshire
+9	1	W Yorkshire
+9	2	W Yorkshire
+10	0	Jiangsu
+10	1	Gottingen
+10	2	Nanjing 
+10	3	Gottingen
+11	0	Timisoara
+12	0	Gdansk
+12	1	Gdansk
+13	0	Pq
+13	1	Pq
+13	2	Pq
+13	3	Pq
+13	4	Pq
+13	5	Pq
+13	6	Pq Gv A
+14	0	Saitama City 
+15	0	Guangzhou 
+16	0	Padua
+16	1	Padua
+16	2	Granada 
+17	0	Notre Dame
+17	1	New Haven
+17	2	Chicago
+17	3	Philadelphia
+17	4	Lincoln
+17	5	Cambridge
+17	6	Cambridge
+18	0	Hong Kong
+18	1	Hangzhou
+18	2	Hangzhou
+18	3	Hong Kong
+18	4	Hong Kong
+18	5	Hong Kong
+18	6	Hong Kong
+18	7	Hong Kong
+19	0	Laxenburg
+19	1	New Haven
+20	0	Avon
+20	1	Pq Gv A
+21	0	Seoul 
+21	1	Gyeonggi Do
+22	0	Guangzhou
+22	1	Guangzhou
+22	2	Hong Kong
+23	0	Tallinn
+23	1	Sofia 
+23	2	Valencia 
+23	3	Madrid 
+23	4	Lagord
+23	5	Szigetszentmiklos
+23	6	Milan
+23	7	Sittard Geleen
+23	8	Stockholm
+23	9	Bucharest 
+23	10	Aalto 
+23	11	Tallinn
+24	0	Pq
+24	1	Pq
+24	2	Pq
+24	3	Pq
+24	4	Pq
+24	5	Pq
+24	6	Stellenbosch
+24	7	Stellenbosch
+24	8	Sch Publ Hlth
+24	9	Ctr Epidemiol & Evidence
+24	10	Sch Med & Publ Hlth
+24	11	Natl Ctr Implementat Sci
+24	12	Hunter New England Populat Hlth
+24	13	Pq Gg G
+25	0	Beijing 
+25	1	Beijing 
+26	0	Barcelona 
+26	1	Barcelona 
+26	2	La Coruna 
+26	3	St Louis
+26	4	St Louis
+27	0	Paris
+27	1	Paris
+28	0	Odense
+28	1	S Yorkshire
+29	0	Iowa City
+30	0	Hubei
+30	1	Hubei
+30	2	Hubei
+30	3	Hong Kong
+30	4	Hubei
+31	0	Yibin 
+32	0	Nashville
+32	1	Niigata
+32	2	Hants
+32	3	San Antonio
+32	4	Chicago
+32	5	Bc
+32	6	Bc
+32	7	Boston
+32	8	Bethesda
+32	9	Memphis
+32	10	Afula
+32	11	On
+32	12	Birmingham
+32	13	Kansas City
+32	14	Winston Salem
+32	15	Winston Salem
+32	16	Taipei
+32	17	New York
+32	18	Cape Town
+32	19	Cape Town
+32	20	Murdoch
+32	21	Bethesda
+32	22	Bethesda
+32	23	Philadelphia
+32	24	Boston
+32	25	Freiburg
+32	26	Freiburg
+32	27	Gainesville
+32	28	Merseyside
+32	29	On
+32	30	On
+32	31	San Francisco
+32	32	Creteil
+32	33	Tokyo
+32	34	Bangkok
+32	35	Singapore
+32	36	Singapore
+32	37	Heidelberg
+32	38	Melbourne
+32	39	Silver Spring
+32	40	Bethesda
+32	41	On
+32	42	Taipei
+33	0	Wuhan 
+33	1	Xiamen 
+33	2	Wuhan 
+33	3	San Diego
+33	4	Hong Kong 
+33	5	Hong Kong 
+34	0	Palermo
+34	1	Bergamo
+35	0	Yangzhou 
+35	1	Yangzhou 
+35	2	Zhenjiang 
+36	0	Lancs
+36	1	Lancaster
+36	2	Tyne & Wear
+36	3	Tyne & Wear
+37	0	Jiangsu
+38	0	Guiyang 
+38	1	Guiyang 
+38	2	Portici
+38	3	Chengdu 
+39	0	London Sw Az
+39	1	Glasgow G Qq
+39	2	London Sw Az
+39	3	Xiamen 
+40	0	Seoul 
+40	1	Gyeonggi Do
+40	2	Ho Chi Minh City
+41	0	Hong Kong
+41	1	Guangdong
+41	2	Hong Kong
+42	0	Hong Kong
+42	1	Guangdong
+42	2	Hong Kong
+42	3	Hubei
+42	4	Hubei
+42	5	Brooklyn
+42	6	Brooklyn
+42	7	Hong Kong
+42	8	Brooklyn
+43	0	Shanghai 
+43	1	Livermore
+44	0	Pq
+44	1	Pq
+45	0	On
+45	1	Ispra
+45	2	Frankfurt
+45	3	New York
+45	4	Paris
+45	5	Berlin
+45	6	Berlin
+45	7	New Delhi
+45	8	Berkeley
+45	9	Sejong City
+45	10	Lund
+45	11	Pathum Thani
+45	12	Kolkata
+46	0	Pq Gv A
+46	1	Pq Gs L
+46	2	Pq
+46	3	On Mt M
+46	4	On
+47	0	Lahore
+47	1	London W Bz
+48	0	Hong Kong 
+48	1	Hong Kong
+48	2	Hong Kong 
+48	3	Shanghai
+48	4	Lyngby
+48	5	Chennai 
+48	6	Gyongsan 
+49	0	New York
+49	1	New York
+49	2	New York
+49	3	New York
+49	4	New York
+49	5	Guangzhou
+49	6	Guangzhou
+49	7	New York
+49	8	London
+49	9	Los Angeles
+49	10	Boston
+49	11	New York
+49	12	London
+49	13	New York
+49	14	Rockville
+49	15	Gaithersburg
+49	16	New York
+49	17	New York
+49	18	New York
+49	19	Tokyo
+49	20	New York
+50	0	Livermore
+50	1	Everett
+50	2	Carson City
+50	3	Carson
+50	4	Folsom
+50	5	Irvine
+50	6	Davis
+50	7	Arleta
+50	8	Scottsburg
+50	9	San Francisco
+50	10	West Sacramento
+50	11	Oakland
+50	12	Santa Clara
+50	13	Rochester Hills
+50	14	Kennedy Space Ctr
+50	15	Latham
+50	16	Newington
+50	17	San Francisco
+51	0	Fairfax
+52	0	London W Nn
+52	1	Khon Kaen
+52	2	Songkhla
+52	3	Ho Chi Minh City
+52	4	Oxford
+52	5	Oxford
+52	6	Nakhon Pathom
+52	7	Bangkok 
+52	8	Pathum Thani
+53	0	Sydney
+53	1	Ho Chi Minh City
+53	2	Bangkok
+53	3	Bangkok
+53	4	Chiang Rai
+53	5	Phnom Penh
+53	6	Khon Kaen
+53	7	Chiang Mai
+53	8	Chiang Mai
+53	9	Hanoi
+53	10	Ho Chi Minh City
+53	11	Tamil Nadu
+53	12	Kelantan
+53	13	Jakarta
+53	14	Kota Kinabalu
+53	15	Bali
+53	16	George Town
+53	17	Bangkok
+53	18	Kuala Lumpur
+54	0	Yerevan
+54	1	Bolu
+54	2	Sassenage
+54	3	Marseille
+54	4	Antalya
+54	5	Cerdanyola Del Valles
+54	6	Freiburg
+54	7	Moscow
+54	8	Ankara
+54	9	Tallahassee
+54	10	Argonne
+54	11	Vienna
+54	12	Uttar Pradesh
+54	13	Waco
+54	14	Puebla
+54	15	Moscow
+54	16	Dubna
+54	17	Boston
+54	18	Istanbul
+54	19	Upton
+54	20	Providence
+54	21	Hanau
+54	22	Novosibirsk
+54	23	Daegu
+54	24	Marseille
+54	25	Bron
+54	26	Lyon
+54	27	Milan
+54	28	Aubiere
+54	29	Clermont Ferrand
+54	30	Marseille
+54	31	Paris
+54	32	Rio De Janeiro
+54	33	Madrid
+54	34	Merdia
+54	35	Daresbury
+54	36	Lancaster
+54	37	Bratislava
+54	38	Gif Sur Yvette
+54	39	Grenoble
+54	40	Milan
+54	41	Genoa
+54	42	Naples
+54	43	Ithaca
+54	44	Valencia
+54	45	Granada
+54	46	Granada
+54	47	Washington
+54	48	Tehran
+54	49	Hamburg
+54	50	Zeuthen
+54	51	San Jose
+54	52	Cassino
+54	53	Durham
+54	54	Durham
+54	55	Dubna
+54	56	Lausanne
+54	57	Geneva
+54	58	Izmir
+54	59	Zurich
+54	60	Eindhoven
+54	61	Carrara
+54	62	Istanbul
+54	63	Goppingen
+54	64	Geneva
+54	65	Archamps
+54	66	Lund
+54	67	Gelsenkirchen
+54	68	Prague
+54	69	Al Fayyum
+54	70	Batavia
+54	71	Dortmund
+54	72	Moscow
+54	73	Chiba
+54	74	Kangnung
+54	75	Giresun
+54	76	Gomel
+54	77	Darmstadt
+54	78	Gumushane
+54	79	Cambridge
+54	80	Berlin
+54	81	Ibaraki
+54	82	Istanbul
+54	83	Toulouse
+54	84	Hamburg
+54	85	Zurich
+54	86	Gauhati
+54	87	Uttar Pradesh
+54	88	Barcelona
+54	89	Orsay
+54	90	Princeton
+54	91	Frankfurt
+54	92	Innsbruck
+54	93	Protvino
+54	94	Nijmegen
+54	95	Minsk
+54	96	Piscataway
+54	97	Beijing
+54	98	Stuttgart
+54	99	Krakow
+54	100	Taipei
+54	101	Ljubljana
+54	102	San Cristobal La Laguna
+54	103	Paterna
+54	104	Valencia
+54	105	Madrid
+54	106	Valencia
+54	107	Mar Del Plata
+54	108	Santiago De Compostela
+54	109	San Martin
+54	110	Ames
+54	111	Istanbul
+54	112	Istanbul
+54	113	Salerno
+54	114	Laquila
+54	115	Frascati
+54	116	Legnaro
+54	117	Bari
+54	118	Bologna
+54	119	Cagliari
+54	120	Catania
+54	121	Cosenza
+54	122	Ferrara
+54	123	Florence
+54	124	Genoa
+54	125	Lecce
+54	126	Milan
+54	127	Milan
+54	128	Naples
+54	129	Padua
+54	130	Pavia
+54	131	Perugia
+54	132	Pisa
+54	133	Rome
+54	134	Rome
+54	135	Rome
+54	136	Turin
+54	137	Trieste
+54	138	Cadarache
+54	139	Tbilisi
+54	140	Izmir
+54	141	Mainz
+54	142	Oxford
+54	143	Oxford
+54	144	Dubna
+54	145	Wurzburg
+54	146	Kahramanmaras
+54	147	Karlsruhe
+54	148	Louvain
+54	149	Beijing
+54	150	London
+54	151	Kyoto
+54	152	Sankyuk Dong
+54	153	Annecy
+54	154	Orsay
+54	155	Paris
+54	156	Grenoble
+54	157	Paris
+54	158	Palaiseau
+54	159	Lisbon
+54	160	Geneva
+54	161	Berkeley
+54	162	Pfungen
+54	163	Leics
+54	164	Munich
+54	165	Pori
+54	166	Zurich
+54	167	Krakow
+54	168	Cambridge
+54	169	Heidelberg
+54	170	Munich
+54	171	Paris
+54	172	Melbourne
+54	173	Budapest
+54	174	Antakya
+54	175	Tianjin
+54	176	Amsterdam
+54	177	Athens
+54	178	Tallahassee
+54	179	Tallinn
+54	180	Moscow
+54	181	Moscow
+54	182	Kharkov
+54	183	Athens
+54	184	Vienna
+54	185	Copenhagen
+54	186	Nigde
+54	187	De Kalb
+54	188	Evanston
+54	189	Novosibirsk
+54	190	Magdeburg
+54	191	Oxford
+54	192	Villigen
+54	193	Beijing
+54	194	Ab
+54	195	Gatchina
+54	196	Istanbul
+54	197	Pittsburgh
+54	198	Pittsburgh
+54	199	Princeton
+54	200	Mainz
+54	201	Busan
+54	202	On
+54	203	Tampere
+54	204	Aachen
+54	205	Riga
+54	206	London
+54	207	Zagreb
+54	208	Heidelberg
+54	209	Piscataway
+54	210	Rome
+54	211	Tehran
+54	212	Lanark
+54	213	Cheshire
+54	214	Oxon
+54	215	Geneva
+54	216	Trieste
+54	217	Pisa
+54	218	Seoul
+54	219	Winterthur
+54	220	Tehran
+54	221	Shanghai
+54	222	Wetzikon
+54	223	Moscow
+54	224	Rostov Na Donu
+54	225	Dallas
+54	226	New Delhi
+54	227	Menlo Pk
+54	228	Stanford
+54	229	Stony Brook
+54	230	Darmstadt
+54	231	Dortmund
+54	232	Dresden
+54	233	Graz
+54	234	Vienna
+54	235	Tel Aviv
+54	236	Charleston
+54	237	University Pk
+54	238	Tokyo
+54	239	Newport News
+54	240	Ankara
+54	241	Tokyo
+54	242	Dublin
+54	243	Bc
+54	244	Beijing
+54	245	Shanghai
+54	246	Bursa
+54	247	Culiacan
+54	248	Guanajuato
+54	249	San Cristobal La Laguna
+54	250	Montevideo
+54	251	Bogota
+54	252	Sao Paulo
+54	253	Rio De Janeiro
+54	254	Pelotas
+54	255	Rio De Janeiro
+54	256	Rome
+54	257	Arcavacata Di Rende
+54	258	Lecce
+54	259	Bari
+54	260	Bologna
+54	261	Cagliari
+54	262	Catania
+54	263	Ferrara
+54	264	Florence
+54	265	Genoa
+54	266	Milan
+54	267	Lecce
+54	268	Milan
+54	269	Padua
+54	270	Parma
+54	271	Pavia
+54	272	Perugia
+54	273	Rome
+54	274	Rome
+54	275	Rome
+54	276	Turin
+54	277	Udine
+54	278	Hamburg
+54	279	Heidelberg
+54	280	Barcelona
+54	281	Siegen
+54	282	Tubingen
+54	283	Aubiere
+54	284	Grenoble
+54	285	London
+54	286	Vienna
+54	287	Tucson
+54	288	Basel
+54	289	Belgrade
+54	290	Bergen
+54	291	Bern
+54	292	W Midlands
+54	293	Avon
+54	294	Berkeley
+54	295	Davis
+54	296	Irvine
+54	297	San Diego
+54	298	Santa Barbara
+54	299	Santa Cruz
+54	300	Cambridge
+54	301	Chicago
+54	302	Cincinnati
+54	303	Midlothian
+54	304	Gainesville
+54	305	Geneva
+54	306	Urbana
+54	307	Iowa City
+54	308	Jyvaskyla
+54	309	Lawrence
+54	310	Merseyside
+54	311	Lund
+54	312	Msida
+54	313	Lancs
+54	314	College Pk
+54	315	Amherst
+54	316	Melbourne
+54	317	Ann Arbor
+54	318	Albuquerque
+54	319	South Bend
+54	320	Eugene
+54	321	Rochester
+54	322	Rostock
+54	323	Sk
+54	324	Anhui
+54	325	Behshahr
+54	326	Katowice
+54	327	Stavanger
+54	328	Stuttgart
+54	329	E Sussex
+54	330	Johannesburg
+54	331	On
+54	332	Warsaw
+54	333	Madison
+54	334	Wurzburg
+54	335	Zurich
+54	336	Madrid
+54	337	Lyon
+54	338	Uppsala
+54	339	Usak
+54	340	Vienna
+54	341	Belgrade
+54	342	Brussels
+54	343	St Louis
+54	344	Rehovot
+54	345	Munich
+54	346	Munster
+54	347	Szczecin
+54	348	Wroclaw
+54	349	Hubei
+54	350	Zhejiang
+54	351	Zhejiang
+54	352	Boulder
+54	353	Pittsburgh
+55	0	Leipzig
+55	1	Leipzig
+55	2	Ns
+55	3	Ft Collins
+55	4	Ft Collins
+55	5	Ft Collins
+55	6	Parana
+55	7	Coimbra
+55	8	Saale
+55	9	Canberra
+55	10	Vigo 
+55	11	Pr
+55	12	Moscow 
+55	13	Moscow 
+55	14	Jena
+55	15	Ispra
+55	16	Ab Wageningen
+55	17	Gorlitz
+55	18	Freiburg
+55	19	Jena
+55	20	Montpellier
+55	21	Paris
+55	22	Moulis
+55	23	Paris
+55	24	Paris
+55	25	Catania
+55	26	Es Wageningen
+55	27	Berlin
+55	28	Amsterdam
+55	29	Singapore 
+55	30	Gottingen
+55	31	Gottingen
+55	32	Gottingen
+55	33	Ibaraki
+55	34	Nairobi
+55	35	Kigali
+55	36	Canberra
+55	37	Sc
+55	38	Muncheberg
+55	39	Pq
+55	40	Rio Cuarto
+55	41	Cottbus
+55	42	Montpellier
+55	43	Ithaca
+55	44	Dublin 
+55	45	Dublin
+55	46	Ithaca
+55	47	Avignon
+55	48	Glen Osmond
+55	49	On
+55	50	Poitiers
+55	51	Paimpont
+55	52	Floersheim
+55	53	Dyfed
+55	54	Cirencester Gl Js
+55	55	Athens
+55	56	Cortland
+55	57	Madrid
+55	58	New Haven
+55	59	Buenos Aires
+55	60	Bunnik
+55	61	Trier
+55	62	Buenos Aires
+55	63	Barcelona
+55	64	Ft Collins
+55	65	Veracruz
+55	66	Ft Collins
+55	67	Davao
+55	68	Ghent
+55	69	Moscow
+55	70	Kermanshah
+55	71	San Juan
+55	72	Umea
+55	73	Osijek
+55	74	Maranhao
+55	75	Chiltern Valley Rd
+55	76	Fukuoka 
+55	77	St Paul
+55	78	Aarhus
+55	79	Highland Hts
+55	80	Campeche
+55	81	Wageningen
+55	82	Jyvaskyla
+55	83	Jefferson City
+55	84	Gainesville
+55	85	Timisoara
+55	86	Kiel
+55	87	Tartu
+55	88	Moscow
+55	89	Fukushima
+55	90	Banska Bystrica
+55	91	Lancaster
+55	92	Muncheberg
+55	93	Abidjan
+55	94	Mazandaran
+55	95	Jyvaskyla
+55	96	Mizoram
+55	97	Moscow 
+55	98	Rennes
+55	99	Honolulu
+55	100	Caracas
+55	101	Stillwater
+55	102	Montpellier
+55	103	Prague
+55	104	Tochigi
+55	105	Braunschweig
+55	106	Westerau
+55	107	Plasencia
+55	108	Campeche
+55	109	Kyoto 
+55	110	Leuven
+55	111	Geraardsbergen
+55	112	Zollikofen
+55	113	Jokioinen
+55	114	Richford
+55	115	Kerala
+55	116	Lucas Heights
+55	117	Roscoff
+55	118	Pittsburgh
+55	119	Rennes
+55	120	Alcala De Henares 
+55	121	Brunoy
+55	122	Freising Weihenstephan
+55	123	Nalchik
+55	124	Jeddah 
+55	125	Alcala De Henares 
+55	126	St Paul
+55	127	St Paul
+55	128	Maranhao
+55	129	Krakow
+55	130	Stevens Point
+55	131	Lisle
+55	132	Potsdam
+55	133	Dublin
+55	134	Dublin
+55	135	Braunschweig
+55	136	Innsbruck
+55	137	Bozen Bolzano
+55	138	Pushchino
+55	139	Pushchino
+55	140	Punjab
+55	141	Baltimore
+55	142	Santa Cruz De T
+55	143	Kochi
+55	144	Tabasco
+55	145	Zeist
+55	146	Pamplona
+55	147	St Paul
+55	148	San Francisco
+55	149	Davis
+55	150	Honolulu
+55	151	Pq
+55	152	Arlington
+55	153	Giessen
+55	154	Sichuan
+55	155	Murmansk
+55	156	Kaifeng
+55	157	Helsinki
