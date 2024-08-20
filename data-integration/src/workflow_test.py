@@ -98,8 +98,7 @@ def runWorkflows(configuration: str, format: str, delimeter=",") -> None:
         i = 0
         for row in config[1:]:
             logging.info(
-                f"running workflow on line {i}"
-                + f"{str(row[0])} {str(row[1])}"
+                f"running workflow on line {i}" + f"{str(row[0])} {str(row[1])}"
             )
             print(f"running workflow on {str(row[0])} {str(row[1])}")
             runWorkflow(
@@ -198,9 +197,12 @@ def runWorkflow(
     message = ""
     if format == "json":
         output_path = path.join(output, "message.json")
-        message = json.dumps(
-            json.loads(response["response"]), indent=2  # type: ignore
-        )
+        try:
+            message = json.dumps(
+                json.loads(response["response"]), indent=2  # type: ignore
+            )
+        except json.decoder.JSONDecodeError:
+            message = response["response"]  # type: ignore
     else:
         output_path = path.join(output, "message.md")
         message = response["response"]  # type: ignore

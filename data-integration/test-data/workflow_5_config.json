@@ -1,5 +1,5 @@
 {
-  "output": "test-data/workflow-test/VILLEGARDEN_TEMP",
+  "output": "test-data/workflow-test/VILLEGARDEN_param_test",
   "description": "test model parameters for creativity and conciseness for extracting researcher orcids and/or HALids as structured JSON",
   "inputs": {
     "test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_noheader.pdf": "4"
@@ -9,32 +9,64 @@
       "prompt": "",
       "model": "llama3-json1-creative-default",
       "modelfile": "test-data/modelfiles/llama3-json1-creative-default",
-      "run": true
-    },
-    {
-      "prompt": "Write a short description of the text below: \n",
-      "model": "llama3-t0.5",
-      "modelfile": "test-data/modelfiles/llama3-t0.5",
-      "run": false
-    },
-    {
-      "prompt": "Write a short description of the text below: \n",
-      "model": "llama3-t0.1",
-      "modelfile": "test-data/modelfiles/llama3-t0.1",
-      "run": false
-    },
-    {
-      "prompt": "Provide the name of the scientific coordinator. Formulate your response in JSON: \n",
-      "model": "llama3-n10",
-      "modelfile": "test-data/modelfiles/llama3-n10",
       "format": "json",
       "run": false
     },
     {
-      "prompt": "Provide only the name of the scientific coordinator: \n",
-      "model": "llama3-n10",
-      "modelfile": "test-data/modelfiles/llama3-n10",
+      "prompt": "",
+      "model": "llama3-json1-creative-diverse",
+      "modelfile": "test-data/modelfiles/llama3-json1-creative-diverse",
+      "format": "json",
       "run": false
+    },
+    {
+      "prompt": "",
+      "model": "llama3-json1-creative-focused",
+      "modelfile": "test-data/modelfiles/llama3-json1-creative-focused",
+      "format": "json",
+      "run": false
+    },
+    {
+      "prompt": "",
+      "model": "llama3-json1-default-default",
+      "modelfile": "test-data/modelfiles/llama3-json1-default-default",
+      "format": "json",
+      "run": true
+    },
+    {
+      "prompt": "",
+      "model": "llama3-json1-default-diverse",
+      "modelfile": "test-data/modelfiles/llama3-json1-default-diverse",
+      "format": "json",
+      "run": true
+    },
+    {
+      "prompt": "",
+      "model": "llama3-json1-default-focused",
+      "modelfile": "test-data/modelfiles/llama3-json1-default-focused",
+      "format": "json",
+      "run": true
+    },
+    {
+      "prompt": "",
+      "model": "llama3-json1-unoriginal-default",
+      "modelfile": "test-data/modelfiles/llama3-json1-unoriginal-default",
+      "format": "json",
+      "run": true
+    },
+    {
+      "prompt": "",
+      "model": "llama3-json1-unoriginal-diverse",
+      "modelfile": "test-data/modelfiles/llama3-json1-unoriginal-diverse",
+      "format": "json",
+      "run": true
+    },
+    {
+      "prompt": "",
+      "model": "llama3-json1-unoriginal-focused",
+      "modelfile": "test-data/modelfiles/llama3-json1-unoriginal-focused",
+      "format": "json",
+      "run": true
     }
   ]
 }

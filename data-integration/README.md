@@ -84,6 +84,7 @@ inspired from [GGE perplexity tests](./Tests_IA.md)
 It is recommended to use a virtual python environment. See [here](https://docs.python.org/3/library/venv.html#how-venvs-work) for more information on how to manage a python venv
 ```bash
 python -m venv venv
+venv/Scripts/activate
 ```
 
 After installing python, (and optionally activating a venv) install required python libraries
@@ -349,6 +350,12 @@ TODO: run test and add notes
 
 Code adapted from the ollama [langchain-python-rag-document](https://github.com/ollama/ollama/tree/main/examples/langchain-python-rag-document) example.
 Test Langchain for RAG ollama queries with workspace configuration.
+
+First install dependencies. **Note that this only seems to work on macos and linux as of initial testing**
+```bash
+pip install -r src/langchain-requirements.txt
+```
+Additionally Chroma (a dependency) requires sqlite3 >= 3.35.0. Follow [these instructions](https://docs.trychroma.com/troubleshooting#sqlite) to fulfull this dependency 
 
 ```bash
 python src/workflow_test.py -f json test-data/workflow_6_config.json
