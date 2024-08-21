@@ -1,4 +1,0 @@
-nodedef>name VARCHAR,label VARCHAR,type VARCHAR,width DOUBLE,height DOUBLE,size DOUBLE,color VARCHAR
-0,'English',LA,7.416198,7.416198,55,'0,180,0'
-1,'French',LA,1.000000,1.000000,1,'0,180,0'
-edgedef>node1 VARCHAR,node2 VARCHAR,weight DOUBLE,nb_cooc DOUBLE

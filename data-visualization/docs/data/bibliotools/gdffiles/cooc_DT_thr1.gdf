@@ -1,9 +1,0 @@
-nodedef>name VARCHAR,label VARCHAR,type VARCHAR,width DOUBLE,height DOUBLE,size DOUBLE,color VARCHAR
-0,'Article',DT,6.480741,6.480741,42,'0,180,0'
-1,'Proceedings Paper',DT,2.645751,2.645751,7,'0,180,0'
-2,'Review',DT,1.732051,1.732051,3,'0,180,0'
-3,'Article; Data Paper',DT,1.000000,1.000000,1,'0,180,0'
-4,'Article; Early Access',DT,1.000000,1.000000,1,'0,180,0'
-5,'Article; Proceedings Paper',DT,1.000000,1.000000,1,'0,180,0'
-6,'Editorial Material',DT,1.000000,1.000000,1,'0,180,0'
-edgedef>node1 VARCHAR,node2 VARCHAR,weight DOUBLE,nb_cooc DOUBLE
