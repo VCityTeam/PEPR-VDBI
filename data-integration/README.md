@@ -1,37 +1,39 @@
-# AI-based Automated Data Integration Experiments
+# 1. AI-based Automated Data Integration Experiments
 
 Tests for converting unstructured text to structured text
 
-- [AI-based Automated Data Integration Experiments](#ai-based-automated-data-integration-experiments)
-  - [Step 1 - PDF to unstructured text](#step-1---pdf-to-unstructured-text)
-    - [pypdf tests](#pypdf-tests)
-      - [Test 1.1: simple pdf to text conversion](#test-11-simple-pdf-to-text-conversion)
-      - [Test 1.2: pdf with table to text conversion](#test-12-pdf-with-table-to-text-conversion)
-      - [Test 1.3: Convert PEPR Résumés des lettres d’intention](#test-13-convert-pepr-résumés-des-lettres-dintention)
-  - [Step 2 - unstructured text to structured text via GPT](#step-2---unstructured-text-to-structured-text-via-gpt)
-    - [Mistral](#mistral)
-      - [Test 2.1: simple keyword extraction in french](#test-21-simple-keyword-extraction-in-french)
-      - [Test 2.2: simple keyword extraction in english](#test-22-simple-keyword-extraction-in-english)
-      - [Test 2.3: Ollama server+python](#test-23-ollama-serverpython)
-    - [Workflow](#workflow)
-      - [Test 3.1: Initial Python data workflow](#test-31-initial-python-data-workflow)
-      - [Test 3.2 Structured Python data workflow](#test-32-structured-python-data-workflow)
-      - [Test 3.3 Initial prompt optimization test](#test-33-initial-prompt-optimization-test)
-      - [Test 3.4 Page range test](#test-34-page-range-test)
-      - [Test 3.5 Add csv config to workflow](#test-35-add-csv-config-to-workflow)
-      - [Test 3.6 Modelfile test](#test-36-modelfile-test)
-      - [Test 3.7 TEMPERATURE and top parameters test](#test-37-temperature-and-top-parameters-test)
-      - [Test 3.8 Langchain RAG local document test](#test-38-langchain-rag-local-document-test)
-- [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
-  - [Links](#links)
-  - [Research interests](#research-interests)
-  - [Text analysis](#text-analysis)
-  - [Private instances](#private-instances)
-  - [Further reading](#further-reading)
-    - [JSA's AI and Deep learning courses](#jsas-ai-and-deep-learning-courses)
-    - [Connectivist AI](#connectivist-ai)
-    - [Symbolic AI](#symbolic-ai)
-    - [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](#retrieval-augmented-generation-for-knowledge-intensive-nlp-tasks)
+- [1. AI-based Automated Data Integration Experiments](#1-ai-based-automated-data-integration-experiments)
+  - [1.1. Step 1 - PDF to unstructured text](#11-step-1---pdf-to-unstructured-text)
+    - [1.1.1. Dependencies](#111-dependencies)
+    - [1.1.2. pypdf tests](#112-pypdf-tests)
+      - [1.1.2.1. Test: simple pdf to text conversion](#1121-test-simple-pdf-to-text-conversion)
+      - [1.1.2.2. Test: pdf with table to text conversion](#1122-test-pdf-with-table-to-text-conversion)
+      - [1.1.2.3. Test: Convert PEPR Résumés des lettres d’intention](#1123-test-convert-pepr-résumés-des-lettres-dintention)
+  - [1.2. Step 2 - unstructured text to structured text via GPT](#12-step-2---unstructured-text-to-structured-text-via-gpt)
+    - [1.2.1. Mistral](#121-mistral)
+      - [1.2.1.1. Test: simple keyword extraction in french](#1211-test-simple-keyword-extraction-in-french)
+      - [1.2.1.2. Test: simple keyword extraction in english](#1212-test-simple-keyword-extraction-in-english)
+      - [1.2.1.3. Test: Ollama server+python](#1213-test-ollama-serverpython)
+    - [1.2.2. Workflow](#122-workflow)
+      - [1.2.2.1. Test: Initial Python data workflow](#1221-test-initial-python-data-workflow)
+      - [1.2.2.2. Test: Structured Python data workflow](#1222-test-structured-python-data-workflow)
+      - [1.2.2.3. Test: Initial prompt optimization test](#1223-test-initial-prompt-optimization-test)
+      - [1.2.2.4. Test: Page range test](#1224-test-page-range-test)
+      - [1.2.2.5. Test: Add csv config to workflow](#1225-test-add-csv-config-to-workflow)
+      - [1.2.2.6. Test: Modelfile test](#1226-test-modelfile-test)
+      - [1.2.2.7. Test: TEMPERATURE and top parameters test](#1227-test-temperature-and-top-parameters-test)
+    - [1.2.3. RAG tests](#123-rag-tests)
+      - [1.2.3.1. Test Langchain RAG local document test](#1231-test-langchain-rag-local-document-test)
+- [2. Notes for AI assisted data integration](#2-notes-for-ai-assisted-data-integration)
+  - [2.1. Links](#21-links)
+  - [2.2. Research interests](#22-research-interests)
+  - [2.3. Text analysis](#23-text-analysis)
+  - [2.4. Private instances](#24-private-instances)
+  - [2.5. Further reading](#25-further-reading)
+    - [2.5.1. JSA's AI and Deep learning courses](#251-jsas-ai-and-deep-learning-courses)
+    - [2.5.2. Connectivist AI](#252-connectivist-ai)
+    - [2.5.3. Symbolic AI](#253-symbolic-ai)
+    - [2.5.4. Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](#254-retrieval-augmented-generation-for-knowledge-intensive-nlp-tasks)
 
 ```mermaid
 ---
@@ -51,7 +53,7 @@ flowchart LR
 ```
 inspired from [GGE perplexity tests](./Tests_IA.md)
 
-## Step 1 - PDF to unstructured text
+## 1.1. Step 1 - PDF to unstructured text
 
 **RQ1 (Research question):** What is the best open source PDF to text tool or library for transforming pdf files to text?
 
@@ -65,27 +67,39 @@ inspired from [GGE perplexity tests](./Tests_IA.md)
 
 **Tentative candidates:**
 
-| Tool/library                                       | Type                              | Comment                            |
-| -------------------------------------------------- | --------------------------------- | ---------------------------------- |
-| [pypdf](https://github.com/py-pdf/pypdf)           | Python Library                    |                                    |
-| [RAGFlow](https://github.com/infiniflow/ragflow)   | CLI (Command line interface) tool |                                    |
-| [marker-pdf](https://pypi.org/project/marker-pdf/) | Python Library                    | a pipeline of deep-learning models |
-| [pd3f](https://github.com/pd3f/pd3f)               | CLI tool                          | no french support? Is it mature?   |
+| Tool/library                                                                                          | Type                              | Comment                            |
+| ----------------------------------------------------------------------------------------------------- | --------------------------------- | ---------------------------------- |
+| [pypdf](https://github.com/py-pdf/pypdf)                                                              | Python Library                    |                                    |
+| [Langchain+Ollama](https://github.com/ollama/ollama/tree/main/examples/langchain-python-rag-document) | Python Library                    |                                    |
+| [RAGFlow](https://github.com/infiniflow/ragflow)                                                      | CLI (Command line interface) tool |                                    |
+| [marker-pdf](https://pypi.org/project/marker-pdf/)                                                    | Python Library                    | a pipeline of deep-learning models |
+| [pd3f](https://github.com/pd3f/pd3f)                                                                  | CLI tool                          | no french support? Is it mature?   |
 
 > [!NOTE]
 > On **Windows**, when exporting text files from other programs or writing to files from python, keep in mind that the **UTF-8** encoding is not always used.
 > When visualizing the content of these files in vscode or in terminals, accent characers may be replaced by unknown symbols.
 
-### pypdf tests
-
-Dependencies:
+### 1.1.1. Dependencies
 - [Python](https://www.python.org/downloads/) v3.8+
-- [pypdf](https://github.com/py-pdf/pypdf)
-  - ```bash
-    pip install pypdf
-    ```
+It is recommended to use a virtual python environment. See [here](https://docs.python.org/3/library/venv.html#how-venvs-work) for more information on how to manage a python venv
+```bash
+python -m venv venv
+venv/Scripts/activate
+```
 
-#### Test 1.1: simple pdf to text conversion
+After installing python, (and optionally activating a venv) install required python libraries
+```bash
+pip install -r src/requirements.txt
+```
+
+
+### 1.1.2. pypdf tests
+
+Dependency:
+- [pypdf](https://github.com/py-pdf/pypdf)
+
+
+#### 1.1.2.1. Test: simple pdf to text conversion
 ```bash
 python src/pypdf_test.py test-data/résumé-thèse-fr.pdf test-data/pypdf_test.txt
 ```
@@ -98,7 +112,7 @@ Notes:
 - no formatting is retained (i.e., headers, bold, color, etc.)
 - perhaps markdown would be better if possible to retain some semi-structured text?
 
-#### Test 1.2: pdf with table to text conversion
+#### 1.1.2.2. Test: pdf with table to text conversion
 ```bash
 python src/pypdf_test.py test-data/résumé-thèse-tableau-fr.pdf test-data/pypdf_table_test.txt
 ```
@@ -110,7 +124,7 @@ Notes:
 - this causes structure of table to be lost
 - again perhaps markdown is better?
 
-#### Test 1.3: Convert PEPR Résumés des lettres d’intention
+#### 1.1.2.3. Test: Convert PEPR Résumés des lettres d’intention
 Download and transform the PDF of project motivation letters.
 
 ```bash
@@ -123,10 +137,10 @@ Notes:
 - conversion is relatively fast for such a long pdf
 - it will be interesting to see how these formatting issues  
 
-## Step 2 - unstructured text to structured text via GPT
+## 1.2. Step 2 - unstructured text to structured text via GPT
 **RQ2:** What prompts provide the best results for answering the natural language questions posed in the [proposed method](#unstructured-text-to-structured-text-tests)
 
-### Mistral
+### 1.2.1. Mistral
 Proposed model: **Mistral**
 - open source
 - seems to have decent French language (and multi-language) support (also produced by a French company based in Paris, so I would hope so)
@@ -140,7 +154,7 @@ ollama run mistral
 >>> /set nohistory
 ```
 
-#### Test 2.1: simple keyword extraction in french
+#### 1.2.1.1. Test: simple keyword extraction in french
 
 Note that [deepl.com](https://www.deepl.com/) translates the keywords listed in the top of the documents as :
 > 3D data, spatio-temporal data, urban data, data integration, data transformation, ontologies, knowledge graphs, conceptual models, model-based, data standards
@@ -171,7 +185,7 @@ Notes:
   - in french
   - without the explanation, just the keywords
 
-#### Test 2.2: simple keyword extraction in english
+#### 1.2.1.2. Test: simple keyword extraction in english
 
 For this prompt replace the occurrence of `[text]` with the contents of [pypdf_test.txt](./test-data/pypdf_test.txt)
 
@@ -204,18 +218,13 @@ Notes:
   - with this size of Mistral, do english prompts work better than french ones?
   - how do other models like `llama2` or models with larger parameters like `mixtral:8x22b` perform?
 
-#### Test 2.3: Ollama server+python
+#### 1.2.1.3. Test: Ollama server+python
 
 This test will examine how we can call prompts and extract their output programatically with python.
 This requires launching Ollama on a local server.
 
 > [!NOTE]
-> Why Ollama? See [these notes]([./feasability-notes-GPT-data-integration.md))
-
-New dependency: [Ollama python](https://github.com/ollama/ollama-python)
-- ```bash
-  pip install -r src/requirements.txt
-  ```
+> Why Ollama? See [these notes]([./feasability-notes-GPT-data-integration.md)
 
 ```bash
 ollama serve & # launch ollama server in the background
@@ -229,9 +238,9 @@ python src/ollama_test.py \
 > - The test script can be customized. Use `python src/ollama_test.py -h` to see the documentation. 
 > - Also, you can use just `ollama serve` (without the `&`) in another terminal session to be able to view ollama API calls in real time
 
-### Workflow
+### 1.2.2. Workflow
 
-#### Test 3.1: Initial Python data workflow
+#### 1.2.2.1. Test: Initial Python data workflow
 
 This test will examine how we can set up initial data workflows (or data pipelines) for extracting knowledge from multiple pdfs using python.
 
@@ -259,14 +268,14 @@ This test uses the configuration file [test-data/workflow_0_config.json](test-da
 
 The configuration will output to the `test-data/workflow-test/VILLEGARDEN` folder
 
-#### Test 3.2 Structured Python data workflow
+#### 1.2.2.2. Test: Structured Python data workflow
 
 Same test as above but using the configuration file [test-data/workflow_1_config.json](test-data/workflow_1_config.json) which proposes structuring prompt outputs as JSON. 
 ```bash
 python src/workflow_test.py -f json test-data/workflow_1_config.json
 ```
 
-#### Test 3.3 Initial prompt optimization test
+#### 1.2.2.3. Test: Initial prompt optimization test
 
 Same test as above but using the configuration file [test-data/workflow_2_config.json](test-data/workflow_2_config.json) which proposes a more developed prompt featuring:
 - Setting a context for the GPT i.e., *"You are the scientific project manager of the project proposal below"*
@@ -277,7 +286,7 @@ Same test as above but using the configuration file [test-data/workflow_2_config
 python src/workflow_test.py -f json test-data/workflow_2_config.json
 ```
 
-#### Test 3.4 Page range test
+#### 1.2.2.4. Test: Page range test
 
 Same test as above but using the configuration file [test-data/workflow_3_config.json](test-data/workflow_3_config.json) which defines a page range to be searched in:
 Page ranges should be a comma separated string e.g., `1, 2, 5-7` (spaces are allowed)
@@ -286,7 +295,7 @@ Page ranges should be a comma separated string e.g., `1, 2, 5-7` (spaces are all
 python src/workflow_test.py -f json test-data/workflow_3_config.json
 ```
 
-#### Test 3.5 Add csv config to workflow
+#### 1.2.2.5. Test: Add csv config to workflow
 
 Use a csv file to configure workflow instead of a json file.
 
@@ -294,7 +303,7 @@ Use a csv file to configure workflow instead of a json file.
 python src/workflow_test.py -f csv test-data/workflow_0_config.csv
 ```
 
-#### Test 3.6 Modelfile test
+#### 1.2.2.6. Test: Modelfile test
 
 Added modelfile functionality to ollama and workflow test scripts.
 
@@ -302,7 +311,7 @@ Added modelfile functionality to ollama and workflow test scripts.
 python src/workflow_test.py -f json test-data/workflow_4_config.json
 ```
 
-#### Test 3.7 TEMPERATURE and top parameters test
+#### 1.2.2.7. Test: TEMPERATURE and top parameters test
 
 Test ORCID and IdHAL extraction of the following modelfiles:
 - [llama3-json1-creative-default](test-data/modelfiles/llama3-json1-creative-default)
@@ -329,71 +338,82 @@ python src/workflow_test.py -f json test-data/workflow_5_config.json
 
 TODO: run test and add notes
 
-#### Test 3.8 Langchain RAG local document test
+### 1.2.3. RAG tests
+
+> [!NOTE]
+> RAG (Retrieval-Augmented Generation) is an approach to allowing sources of new
+> information to be provided to an LLM from outside of its training data. E.g. perplexity
+> See [here](#retrieval-augmented-generation-for-knowledge-intensive-nlp-tasks) for more
+> information
+
+#### 1.2.3.1. Test Langchain RAG local document test
 
 Code adapted from the ollama [langchain-python-rag-document](https://github.com/ollama/ollama/tree/main/examples/langchain-python-rag-document) example.
 Test Langchain for RAG ollama queries with workspace configuration.
+
+First install dependencies. **Note that this only seems to work on macos and linux as of initial testing**
+```bash
+pip install -r src/langchain-requirements.txt
+```
+Additionally Chroma (a dependency) requires sqlite3 >= 3.35.0. Follow [these instructions](https://docs.trychroma.com/troubleshooting#sqlite) to fulfull this dependency 
 
 ```bash
 python src/workflow_test.py -f json test-data/workflow_6_config.json
 ```
 
-> [!NOTE]
-> RAG (Retrieval-Augmented Generation) is an approach to allowing sources of new
-> information to be provided to an LLM from outside of its training data.
-> See [here](https://en.wikipedia.org/wiki/Retrieval-augmented_generation) for more
-> information
 
 
-# Notes for AI assisted data integration
+# 2. Notes for AI assisted data integration
 
 **Context:** In the context of the PEPR-tests project, we would like to use AI to integrate non-structured data (from PDF documents) to visualize and analyse their underlying knowledge.
 
-- [AI-based Automated Data Integration Experiments](#ai-based-automated-data-integration-experiments)
-  - [Step 1 - PDF to unstructured text](#step-1---pdf-to-unstructured-text)
-    - [pypdf tests](#pypdf-tests)
-      - [Test 1.1: simple pdf to text conversion](#test-11-simple-pdf-to-text-conversion)
-      - [Test 1.2: pdf with table to text conversion](#test-12-pdf-with-table-to-text-conversion)
-      - [Test 1.3: Convert PEPR Résumés des lettres d’intention](#test-13-convert-pepr-résumés-des-lettres-dintention)
-  - [Step 2 - unstructured text to structured text via GPT](#step-2---unstructured-text-to-structured-text-via-gpt)
-    - [Mistral](#mistral)
-      - [Test 2.1: simple keyword extraction in french](#test-21-simple-keyword-extraction-in-french)
-      - [Test 2.2: simple keyword extraction in english](#test-22-simple-keyword-extraction-in-english)
-      - [Test 2.3: Ollama server+python](#test-23-ollama-serverpython)
-    - [Workflow](#workflow)
-      - [Test 3.1: Initial Python data workflow](#test-31-initial-python-data-workflow)
-      - [Test 3.2 Structured Python data workflow](#test-32-structured-python-data-workflow)
-      - [Test 3.3 Initial prompt optimization test](#test-33-initial-prompt-optimization-test)
-      - [Test 3.4 Page range test](#test-34-page-range-test)
-      - [Test 3.5 Add csv config to workflow](#test-35-add-csv-config-to-workflow)
-      - [Test 3.6 Modelfile test](#test-36-modelfile-test)
-      - [Test 3.7 TEMPERATURE and top parameters test](#test-37-temperature-and-top-parameters-test)
-      - [Test 3.8 Langchain RAG local document test](#test-38-langchain-rag-local-document-test)
-- [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
-  - [Links](#links)
-  - [Research interests](#research-interests)
-  - [Text analysis](#text-analysis)
-  - [Private instances](#private-instances)
-  - [Further reading](#further-reading)
-    - [JSA's AI and Deep learning courses](#jsas-ai-and-deep-learning-courses)
-    - [Connectivist AI](#connectivist-ai)
-    - [Symbolic AI](#symbolic-ai)
-    - [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](#retrieval-augmented-generation-for-knowledge-intensive-nlp-tasks)
+- [1. AI-based Automated Data Integration Experiments](#1-ai-based-automated-data-integration-experiments)
+  - [1.1. Step 1 - PDF to unstructured text](#11-step-1---pdf-to-unstructured-text)
+    - [1.1.1. Dependencies](#111-dependencies)
+    - [1.1.2. pypdf tests](#112-pypdf-tests)
+      - [1.1.2.1. Test: simple pdf to text conversion](#1121-test-simple-pdf-to-text-conversion)
+      - [1.1.2.2. Test: pdf with table to text conversion](#1122-test-pdf-with-table-to-text-conversion)
+      - [1.1.2.3. Test: Convert PEPR Résumés des lettres d’intention](#1123-test-convert-pepr-résumés-des-lettres-dintention)
+  - [1.2. Step 2 - unstructured text to structured text via GPT](#12-step-2---unstructured-text-to-structured-text-via-gpt)
+    - [1.2.1. Mistral](#121-mistral)
+      - [1.2.1.1. Test: simple keyword extraction in french](#1211-test-simple-keyword-extraction-in-french)
+      - [1.2.1.2. Test: simple keyword extraction in english](#1212-test-simple-keyword-extraction-in-english)
+      - [1.2.1.3. Test: Ollama server+python](#1213-test-ollama-serverpython)
+    - [1.2.2. Workflow](#122-workflow)
+      - [1.2.2.1. Test: Initial Python data workflow](#1221-test-initial-python-data-workflow)
+      - [1.2.2.2. Test: Structured Python data workflow](#1222-test-structured-python-data-workflow)
+      - [1.2.2.3. Test: Initial prompt optimization test](#1223-test-initial-prompt-optimization-test)
+      - [1.2.2.4. Test: Page range test](#1224-test-page-range-test)
+      - [1.2.2.5. Test: Add csv config to workflow](#1225-test-add-csv-config-to-workflow)
+      - [1.2.2.6. Test: Modelfile test](#1226-test-modelfile-test)
+      - [1.2.2.7. Test: TEMPERATURE and top parameters test](#1227-test-temperature-and-top-parameters-test)
+    - [1.2.3. RAG tests](#123-rag-tests)
+      - [1.2.3.1. Test Langchain RAG local document test](#1231-test-langchain-rag-local-document-test)
+- [2. Notes for AI assisted data integration](#2-notes-for-ai-assisted-data-integration)
+  - [2.1. Links](#21-links)
+  - [2.2. Research interests](#22-research-interests)
+  - [2.3. Text analysis](#23-text-analysis)
+  - [2.4. Private instances](#24-private-instances)
+  - [2.5. Further reading](#25-further-reading)
+    - [2.5.1. JSA's AI and Deep learning courses](#251-jsas-ai-and-deep-learning-courses)
+    - [2.5.2. Connectivist AI](#252-connectivist-ai)
+    - [2.5.3. Symbolic AI](#253-symbolic-ai)
+    - [2.5.4. Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](#254-retrieval-augmented-generation-for-knowledge-intensive-nlp-tasks)
 
-## Links
+## 2.1. Links
 - [Project Repository](https://github.com/VCityTeam/PEPR-VDBI)
 - [Meeting JSA DVA](../../Topic_Meetings/2024/2024_04_11_DVA_JSA.md) 
 
-## Research interests
+## 2.2. Research interests
 How to leverage AI in:
 1. Extracting information from non-structured textual data sources (Natural Language Processing (NLP))
 2. Automated Entity Linking
 3. Data analysis
 
-## Text analysis
+## 2.3. Text analysis
 
 
-## Private instances
+## 2.4. Private instances
 | Model                                               | Company                                             | Pricing                                                                                                                                                                                                          |
 | --------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | ChatGPT                                             | OpenAI (Microsoft)                                  | [pricing](https://openai.com/chatgpt/pricing) starts at 25$ / month                                                                                                                                              |
@@ -403,21 +423,21 @@ How to leverage AI in:
 | Perplexity (based on ChatGPT/supports other models) | Perplexity                                          | No official private servers ([FAQ](https://docs.perplexity.ai/page/frequently-asked-questions), [TOS](https://www.perplexity.ai/hub/legal/perplexity-ai-api-privacy))                                            |
 | Grok                                                | xAI                                                 | Still in early access                                                                                                                                                                                            |
 
-## Further reading
+## 2.5. Further reading
 
-### [JSA's AI and Deep learning courses](https://johnsamuel.info/fr/enseignement/cours/2023/IA-DeepLearning/)
+### 2.5.1. [JSA's AI and Deep learning courses](https://johnsamuel.info/fr/enseignement/cours/2023/IA-DeepLearning/)
 
 <img src="https://johnsamuel.info/images/art/courses/deeplearningposition.svg" width="600px">
 
 
-### [Connectivist AI](https://en.wikipedia.org/wiki/Connectionism)
+### 2.5.2. [Connectivist AI](https://en.wikipedia.org/wiki/Connectionism)
 > "Connectionism... is the name of an approach to the study of human mental processes and cognition that utilizes mathematical models known as connectionist networks or **artificial neural networks**."
 Includes approaches such as [Artificial neural networks](https://en.wikipedia.org/wiki/Neural_network_(machine_learning)) and [Deep learning](https://en.wikipedia.org/wiki/Deep_learning)
 
-### [Symbolic AI](https://en.wikipedia.org/wiki/Symbolic_artificial_intelligence)
+### 2.5.3. [Symbolic AI](https://en.wikipedia.org/wiki/Symbolic_artificial_intelligence)
 A more "classical" approach to AI. Includes logic and search algorithms, ontologies, reasoning systems, etc.
 
-### [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)
+### 2.5.4. [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401)
 > Large pre-trained language models have been shown to store factual knowledge in their parameters, and achieve state-of-the-art results when fine-tuned on downstream NLP tasks.
 > However, their ability to access and precisely manipulate knowledge is still limited, and hence on knowledge-intensive tasks, their performance lags behind task-specific architectures.
 > Additionally, providing provenance for their decisions and updating their world knowledge remain open research problems.

@@ -92,7 +92,7 @@ tensorboard-data-server==0.7.1
 tensorflow==2.13.0
 tensorflow-estimator==2.13.0
 tensorflow-hub==0.14.0
-# tensorflow-macos==2.13.0  # this doesn't seem to work on python 3.10.11 (windows native and WSL)?
+# tensorflow-macos==2.13.0  # doesn't work on linux or Windows OS
 termcolor==2.3.0
 tokenizers==0.13.3
 tqdm==4.66.1
