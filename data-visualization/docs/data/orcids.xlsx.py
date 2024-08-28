@@ -3,7 +3,6 @@ import json
 import logging
 import requests
 import pandas as pd
-from time import sleep
 
 
 def main():
@@ -21,8 +20,12 @@ def main():
         level=logging.DEBUG,
         # level=logging.INFO
     )
-    logging.info("=================")
-
+    logging.info("          __                 __   ")
+    logging.info("  _______/  |______ ________/  |_ ")
+    logging.info(" /  ___/\\   __\\__  \\\\_  __ \\   __\\")
+    logging.info(" \\___ \\  |  |  / __ \\|  | \\/|  |  ")
+    logging.info("/____  > |__| (____  /__|   |__|  ")
+    logging.info("     \\/            \\/             ")
     # Generate or retrieve access token
     token = getAccessToken(CLIENT_ID, CLIENT_SECRET)
     if token is None:
@@ -62,7 +65,7 @@ def main():
     researcher_data["lastname"] = (
         researcher_data.loc[:, "NOM et Prénom"].copy().map(getLastname)
     )
-    # researcher_data.insert(3, "orcids", [""] * len(researcher_data.index))
+    researcher_data.insert(3, "orcids", [""] * len(researcher_data.index))
     logging.debug(f"researcher_data: {researcher_data}")
 
     # query ORCiD to using name data
@@ -120,12 +123,18 @@ def main():
                         response_data.loc[i, "institution-name"] = str(
                             result["institution-name"]
                         )
+                    # if one response found, assume it is correct
+                    if len(response[result_key]) > 0:
+                        researcher_data.loc[names[0], "orcids"] = str(
+                            response[result_key][0]["orcid-id"]
+                        )
+                        researcher_data.to_excel(writer, sheet_name="input_data")
 
-                response_data.to_excel(writer, sheet_name=f"{names[0]}. {names[1]}")
+                # sheet names cannot be longer than 31 chars
+                sheet_name = f"{names[0]}_{names[1]}"[:30]
+                logging.debug(f"added sheet {sheet_name}")
+                response_data.to_excel(writer, sheet_name=sheet_name)
 
-            # throttle requests
-            # input()
-            sleep(0.0001)
 
     # write data to stdout as csv
     # print(researcher_data.to_csv())

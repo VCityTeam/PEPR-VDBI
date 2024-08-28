@@ -3,7 +3,6 @@ import json
 import logging
 import requests
 import pandas as pd
-from time import sleep
 
 
 def main():
@@ -82,9 +81,6 @@ def main():
                 response[result_key]
             )
 
-        # throttle requests
-        # input()
-        sleep(0.0001)
 
     # write data to stdout as csv
     # with open("test.csv", "w") as file:
