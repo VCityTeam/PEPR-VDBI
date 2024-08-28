@@ -40,7 +40,8 @@ def main():
     # - Multple unhyphenated last names exist e.g. A522 "VAN DEN ENDE Martijn"
     # - Commas are sometimes used e.g. A508 "GRAMAGLIA, Christelle"
     # - Hyphenation errors exist e.g. A506 "GIORGIS- ALLEMAND Lise"
-    #   - These hyphenation errors are only preceded or followed by one space character
+    #   - These hyphenation errors are only preceded or followed by one space
+    #     character
     # - There are also weird edge cases
     #   - e.g. A244 "DECHAUME-MONCHARMONT F.-X" and A312 "DESROUSSEAUx Maylis"
 
@@ -48,7 +49,12 @@ def main():
     researcher_data["cleanname"] = (
         researcher_data.loc[:, "NOM et Prénom"]
         .copy()
-        .map(lambda x: str(x).replace(",", "").replace(" -", "-").replace("- ", "-"))
+        .map(
+            lambda x: str(x)
+            .replace(",", "")
+            .replace(" -", "-")
+            .replace("- ", "-")
+        )
     )
     researcher_data["firstname"] = (
         researcher_data.loc[:, "NOM et Prénom"].copy().map(getFirstname)
@@ -65,12 +71,12 @@ def main():
         for names in researcher_data.itertuples():
             firstname_query = ""
             lastname_query = ""
-            if len(names[2]) > 0:
-                firstname_query = f"given-names:{names[2]}"
             if len(names[3]) > 0:
-                lastname_query = f"family-name:{names[3]}"
+                firstname_query = f"given-names:{names[3]}"
+            if len(names[4]) > 0:
+                lastname_query = f"family-name:{names[4]}"
 
-            if len(names[2]) > 0 and len(names[3]) > 0:
+            if len(names[3]) > 0 and len(names[4]) > 0:
                 query = f"{firstname_query}+AND+{lastname_query}"
             else:
                 query = f"{firstname_query}{lastname_query}"
@@ -89,25 +95,33 @@ def main():
                 response_data.insert(3, "credit-name", pd.Series(dtype=str))
                 response_data.insert(4, "other-name", pd.Series(dtype=str))
                 response_data.insert(5, "email", pd.Series(dtype=str))
-                response_data.insert(6, "institution-name", pd.Series(dtype=str))
+                response_data.insert(
+                    6, "institution-name", pd.Series(dtype=str)
+                )
                 if response[result_key] is not None:
                     for i in range(len(response[result_key])):
                         result = response[result_key][i]
-                        response_data.loc[i, "orcid-id"] = str(result["orcid-id"])
-                        response_data.loc[i, "given-names"] = str(result["given-names"])
+                        response_data.loc[i, "orcid-id"] = str(
+                            result["orcid-id"]
+                        )
+                        response_data.loc[i, "given-names"] = str(
+                            result["given-names"]
+                        )
                         response_data.loc[i, "family-names"] = str(
                             result["family-names"]
                         )
                         response_data.loc[i, "credit-names"] = str(
                             result["credit-name"]
                         )
-                        response_data.loc[i, "other-names"] = str(result["other-name"])
+                        response_data.loc[i, "other-names"] = str(
+                            result["other-name"]
+                        )
                         response_data.loc[i, "email"] = str(result["email"])
                         response_data.loc[i, "institution-name"] = str(
                             result["institution-name"]
                         )
 
-                response_data.to_excel(writer, sheet_name=names[1])
+                response_data.to_excel(writer, sheet_name=f"{names[0]}. {names[1]}")
 
             # throttle requests
             # input()
@@ -120,12 +134,12 @@ def main():
 def getAccessToken(
     client_id: str, client_secret: str, token_path="./data/orcid_token"
 ) -> str | None:
-    """Get access token using an ORCID client app credentials using ORCID Public API.
-    Request response is stored in a local file.
+    """Get access token using an ORCID client app credentials using ORCID Public
+    API. Request response is stored in a local file.
     client_id and client_secret are strings used to authenticate an ORCID app.
     -----------
     Returns token if successful or None."""
-    # if no api access token is stored in TOKEN_PATH, generate and store a new one
+    # if no api access token is stored, generate and store a new one
     if not os.path.exists(os.path.normpath(token_path)):
         # error checking adapted from https://realpython.com/python-requests/
         try:
@@ -145,7 +159,9 @@ def getAccessToken(
                 f"HTTP error occurred when generating access token: {http_err}"
             )
         except Exception as err:
-            logging.error(f"Other error occurred when generating access token: {err}")
+            logging.error(
+                f"Other error occurred when generating access token: {err}"
+            )
         else:
             logging.info("Generating and storing new token")
             with open(token_path, "w") as file:
@@ -169,7 +185,10 @@ def queryOrcid(query: str, token: str, rows=10, expanded=False) -> dict | None:
     try:
         query_response = requests.get(
             url=f"https://pub.orcid.org/v3.0/{search_api}/?q={query}&rows={rows}",
-            headers={"Accept": "application/json", "Authorization": f"Bearer {token}"},
+            headers={
+                "Accept": "application/json",
+                "Authorization": f"Bearer {token}",
+            },
         )
         query_response.raise_for_status()
     except requests.exceptions.HTTPError as http_err:

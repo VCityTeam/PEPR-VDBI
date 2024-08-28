@@ -40,7 +40,8 @@ def main():
     # - Multple unhyphenated last names exist e.g. A522 "VAN DEN ENDE Martijn"
     # - Commas are sometimes used e.g. A508 "GRAMAGLIA, Christelle"
     # - Hyphenation errors exist e.g. A506 "GIORGIS- ALLEMAND Lise"
-    #   - These hyphenation errors are only preceded or followed by one space character
+    #   - These hyphenation errors are only preceded or followed by one space
+    #     character
     # - There are also weird edge cases
     #   - e.g. A244 "DECHAUME-MONCHARMONT F.-X" and A312 "DESROUSSEAUx Maylis"
 
@@ -63,12 +64,12 @@ def main():
     for names in researcher_data.itertuples():
         firstname_query = ""
         lastname_query = ""
-        if len(names[2]) > 0:
-            firstname_query = f"given-names:{names[2]}"
         if len(names[3]) > 0:
-            lastname_query = f"family-name:{names[3]}"
+            firstname_query = f"given-names:{names[3]}"
+        if len(names[4]) > 0:
+            lastname_query = f"family-name:{names[4]}"
 
-        if len(names[2]) > 0 and len(names[3]) > 0:
+        if len(names[3]) > 0 and len(names[4]) > 0:
             query = f"{firstname_query}+AND+{lastname_query}"
         else:
             query = f"{firstname_query}{lastname_query}"
@@ -119,7 +120,9 @@ def getAccessToken(
                 f"HTTP error occurred when generating access token: {http_err}"
             )
         except Exception as err:
-            logging.error(f"Other error occurred when generating access token: {err}")
+            logging.error(
+                f"Other error occurred when generating access token: {err}"
+            )
         else:
             logging.info("Generating and storing new token")
             with open(token_path, "w") as file:
@@ -143,7 +146,10 @@ def queryOrcid(query: str, token: str, rows=10, expanded=False) -> dict | None:
     try:
         query_response = requests.get(
             url=f"https://pub.orcid.org/v3.0/{search_api}/?q={query}&rows={rows}",
-            headers={"Accept": "application/json", "Authorization": f"Bearer {token}"},
+            headers={
+                "Accept": "application/json",
+                "Authorization": f"Bearer {token}",
+            },
         )
         query_response.raise_for_status()
     except requests.exceptions.HTTPError as http_err:
