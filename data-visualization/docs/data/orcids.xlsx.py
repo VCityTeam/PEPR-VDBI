@@ -135,7 +135,6 @@ def main():
                 logging.debug(f"added sheet {sheet_name}")
                 response_data.to_excel(writer, sheet_name=sheet_name)
 
-
     # write data to stdout as csv
     # print(researcher_data.to_csv())
 

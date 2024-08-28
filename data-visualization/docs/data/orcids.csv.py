@@ -81,7 +81,6 @@ def main():
                 response[result_key]
             )
 
-
     # write data to stdout as csv
     # with open("test.csv", "w") as file:
     #     file.write(researcher_data.to_csv())
