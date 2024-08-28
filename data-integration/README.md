@@ -351,7 +351,7 @@ TODO: run test and add notes
 Code adapted from the ollama [langchain-python-rag-document](https://github.com/ollama/ollama/tree/main/examples/langchain-python-rag-document) example.
 Test Langchain for RAG ollama queries with workspace configuration.
 
-First install dependencies. **Note that this only seems to work on macos and linux as of initial testing**
+First install dependencies. **Note that these dependencies do not seem to work on Windows as of initial testing**
 ```bash
 pip install -r src/langchain-requirements.txt
 ```
