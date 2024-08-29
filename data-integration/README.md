@@ -23,7 +23,7 @@ Tests for converting unstructured text to structured text
       - [1.2.2.6. Test: Modelfile test](#1226-test-modelfile-test)
       - [1.2.2.7. Test: TEMPERATURE and top parameters test](#1227-test-temperature-and-top-parameters-test)
     - [1.2.3. RAG tests](#123-rag-tests)
-      - [1.2.3.1. Test Langchain RAG local document test](#1231-test-langchain-rag-local-document-test)
+      - [1.2.3.1. Test: Langchain with pdf local document](#1231-test-langchain-with-pdf-local-document)
 - [2. Notes for AI assisted data integration](#2-notes-for-ai-assisted-data-integration)
   - [2.1. Links](#21-links)
   - [2.2. Research interests](#22-research-interests)
@@ -86,6 +86,16 @@ It is recommended to use a virtual python environment. See [here](https://docs.p
 python -m venv venv
 venv/Scripts/activate
 ```
+To activate the virtual environment:
+- On Linux
+  ```bash
+  source venv/bin/activate
+  ```
+- On Windows
+  ```bash
+  ./venv/Scripts/activate.bat
+  ```
+
 
 After installing python, (and optionally activating a venv) install required python libraries
 ```bash
@@ -346,22 +356,448 @@ TODO: run test and add notes
 > See [here](#retrieval-augmented-generation-for-knowledge-intensive-nlp-tasks) for more
 > information
 
-#### 1.2.3.1. Test Langchain RAG local document test
+#### 1.2.3.1. Test: Langchain with pdf local document 
 
 Code adapted from the ollama [langchain-python-rag-document](https://github.com/ollama/ollama/tree/main/examples/langchain-python-rag-document) example.
 Test Langchain for RAG ollama queries with workspace configuration.
 
-First install dependencies. **Note that these dependencies do not seem to work on Windows as of initial testing**
+Summary of results:
+- Results 2.2 to 2.4 seem to indicate that including important syntactic information for identifying relevant tokens is beneficial to finding said tokens. I.e., "Given that there are 34 ORCiDs, and ORCiDs are strings of characters with the form `xxxx-xxxx-xxxx-xxxx, ..."
+- The text extraction process of a table in a pdf may remove enough of the table structure that RAG is not possible for queries that require crossing information across columns and rows. See the notes of Results 2.1
+
+**$F$ score calculations:**
+
+- [What is an $F$ score?](https://en.wikipedia.org/wiki/F-score)
+- an identified ORCiD is a **true positive**
+- an identified RNSR#, IdHAL, or hallucination is a **false positive**
+- a missing ORCiD is a **false negative**
+- a missing RNSR# or IdHAL is a **true negative**
+- Result 2.4:
+```mermaid
+pie
+  "True positives" : 29
+  "False positives" : 0
+  "True negatives" : 11
+  "False negatives" : 5
+```
+  - Precision: TODO
+  - Recall: TODO
+  - $F_1$ score: TODO
+  - Adjusting for a more important recall with $\beta=2$: TODO
+    - 2 is a common weight for $\beta$ when recall is important [[source]](https://en.wikipedia.org/wiki/F-score#F%CE%B2_score)
+    - The precision of identifying ids in general seems to be very good. All retrieved items in this result are well formed and are not hallucinations.
+    - Becuase of this recall seems to be more important here.
+- Result 3.2
+```mermaid
+pie
+  "True positives" : 25
+  "False positives" : 6
+  "True negatives" : 10
+  "False negatives" : 9
+```
+  - Precision: 1.4
+  - Recall: 1.5
+  - $F_1$ score: 12.18
+  - Adjusting for a more important recall with $\beta=2$: 1.47
+    - 2 is a common weight for $\beta$ when recall is important [[source]](https://en.wikipedia.org/wiki/F-score#F%CE%B2_score)
+    - The precision of identifying ids (where both RNSR#s and ORCiDs are considered good) in general seems to be very good. All retrieved items are well formed and are not hallucinations.
+    - Recall seems to be important here as we can systematically filter out RNSR# ids from ORCiDs in post processing.
+
+To run the tests, first install new dependencies.
+> [!WARNING]
+> Note that these dependencies do not seem to work on **Windows** as of initial testing
 ```bash
 pip install -r src/langchain-requirements.txt
 ```
 Additionally Chroma (a dependency) requires sqlite3 >= 3.35.0. Follow [these instructions](https://docs.trychroma.com/troubleshooting#sqlite) to fulfull this dependency 
 
+To run the test use the following commands. This will serve Ollama analyze a split version of the VILLEGARDEN pdf (this version only contains the first 5 pages with tabular information). Once the pdf is analyzed, you may send prompts regarding the pdf.
 ```bash
-python src/workflow_test.py -f json test-data/workflow_6_config.json
+ollama serve &
+python src/langchain-manager.py -i test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables.pdf
 ```
 
+When the `Query: ` prompt appears, enter your query and return to send it. Sending `exit` will close the program.
 
+This test uses the following template to contextualize the pdf document, where the pdf text is replaced by the `{context}` token and a user query is replaced by the `{question}` token:
+> Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer. Use three sentences maximum and keep the answer as concise as possible.
+> `{context}`
+> Question: `{question}`
+> Helpful Answer:
+
+Results:
+1.  Result 1.1
+    ```json
+    {
+      "query": "What is the ORCiD of the researcher, 'Bernard Kaufmann'?",
+      "result": "I don't know. The provided context only shows Orcid2 or IdHAL numbers for individuals, but I   couldn't find Bernard Kaufmann's Orcid number in the given list."
+    }
+    ```
+2.  Result 1.2
+    ```json
+    {
+      "query": "What is the ORCiD or IdHAL of the researcher, 'Bernard Kaufmann'?",
+      "result": "I don't know. The provided context does not mention Bernard Kaufmann. It lists researchers Emmanuelle Baudry, Carmen Bessa Gomes, Christophe Hanot, Ségolène Darly, and Mathilde Riboulot-Chetrit, but there is no Bernard Kaufmann among them."
+    }
+    ```
+3.  Result 1.3
+    ```json
+    {
+      "query": "What is the ORCiD or IdHAL of the researcher, 'Emmanuelle Baudry'?",
+      "result": "I don't know. The provided context does not mention Emmanuelle Baudry's Orcid or IdHAL identifier."
+    }
+    ```
+4.  Result 1.4
+    ```json
+    {
+      "query": "What is the ORCiD or IdHAL of the researcher, 'Emmanuelle Baudry'? This information can be found in the table on page 3 of the pdf.",
+      "result": "I don't know. The given context does not provide Emmanuelle Baudry's ORCID or IdHAL number."
+    }
+    ```
+
+Comments:
+- The template takes too much focus away from the context, the importance of responding incorrectly takes too much precedence to extract any information.
+- Perhaps reducing the context will improve the quality of responses
+- Also specifying the context in the template 
+
+The template is now modified to the following text, which provides general information about the context:
+```
+Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information about the research units and researchers involved in the project. Keep the answer as concise as possible.
+{context}
+Question: {question}
+Helpful Answer:
+```
+
+Additionally only page 3 of the pdf is provided.
+
+```bash
+python src/langchain-manager.py -i test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information about the research units and researchers involved in the project. Keep the answer as concise as possible. \n{context}\nQuestion: {question}\nHelpful Answer:"
+```
+
+Results:
+
+1.  Result 2.1
+    ```json
+    {
+      "query": "What is the ORCiD of the researcher, 'Bernard Kaufmann'?",
+      "result": "According to the context, Bernard Kaufmann's ORCID number is not explicitly provided. However, it can be found by following the link https://info.orcid.org/fr/what-is-my-id/, which suggests that researchers should have their own unique ORCiD number. Therefore, the answer would be: unknown (not provided)."
+    }
+    ```
+2.  Result 2.2
+    ```json
+    {
+      "query": "Given that ORCiDs are strings of characters with the form `xxxx-xxxx-xxxx-xxxx`, what is the ORCiD corresponding to the researcher, 'Bernard Kaufmann'?",
+      "result": "Based on the provided context, I found Bernard Kaufmann\'s OrciD number:\n\n`00 00 0001-96 95-08 25`\n\nThis corresponds to the researcher "Bernard Kaufmann"."
+    }
+    ```
+    - Note: the string "\n\n`00 00 0001-96 95-08 25`\n\n" can be stripped to `0000-0001-9695-0825`
+    - This ORCiD is valid and can be found in the PDF, however it corresponds to Xavier Le Roux farther down in the table
+3.  Result 2.3
+    ```json
+    {
+      "query": "Given that ORCiDs are strings of characters with the form `xxxx-xxxx-xxxx-xxxx`, how many ORCiDs appear in the context?",
+      "result": "A fun question!\n\nAccording to the provided context, I found 2 ORCiDs:\n\n1. `0000-0003-0817-5860`\n2. `0000-0002-4171-1701`\n\nSo, the answer is **2**."
+    }
+    ```
+    - These ORCiDs are valid and indeed in the table.
+      - 0000-0003-0817-5860: Laure Vidal-Beaudet
+      - 0000-0002-4171-1701: Eric Charmes
+3.  Result 2.4
+    ```json
+    {
+      "query": "Given that there are 34 ORCiDs, and ORCiDs are strings of characters with the form `xxxx-xxxx-xxxx-xxxx`, what are the ORCiDs in the text?",
+      "result": "A nice challenge!\n\nAfter carefully examining the provided text, I was able to extract the ORCiDs (ORCID identifiers) by looking for strings that match the format `xxxx-xxxx-xxxx-xxxx`. Here are the ORCiDs found:\n\n1. 0000-0003-0817-5860\n2. 0000-0002-5689-3843\n3. 0000-0002-7126-8368\n4. 0000-0003-2237-8795\n5. 0000-0002-7889-2833\n6. 0000-0003-1522-9556\n7. 0000-0002-2976-961X\n8. 0000-0001-9695-0825\n9. 0000-0001-7973-9104\n10. 0000-0002-7445-3403\n11. 0000-0002-7612-5577\n12. 0000-0001-6814-8675\n13. 0000-0001-9097-3452\n14. 0000-0002-4479-7053\n15. 0000-0001-7840-6068\n16. 0000-0003-2249-1085\n17. 0000-0003-2403-3993\n18. 0000-0002-7952-4506\n19. 0000-0002-3865-6158\n20. 0000-0003-4068-5975\n21. 0000-0002-9626-0805\n22. 0000-0003-4057-3623\n23. 0000-0001-5710-3279\n24. 0000-0002-0264-1659\n25. 0000-0001-7378-8685\n26. 0000-0002-7009-3121\n27. 0000-0003-2921-4646\n28. 0000-0002-3552-1792\n29. 0000-0001-8023-738X\n\nThere are 29 ORCiDs in total."
+    }
+    ```
+    1. 0000-0003-0817-5860
+    2. 0000-0002-5689-3843
+    3. 0000-0002-7126-8368
+    4. 0000-0003-2237-8795
+    5. 0000-0002-7889-2833
+    6. 0000-0003-1522-9556
+    7. 0000-0002-2976-961X
+    8. 0000-0001-9695-0825
+    9. 0000-0001-7973-9104
+    10. 0000-0002-7445-3403
+    11. 0000-0002-7612-5577
+    12. 0000-0001-6814-8675
+    13. 0000-0001-9097-3452
+    14. 0000-0002-4479-7053
+    15. 0000-0001-7840-6068
+    16. 0000-0003-2249-1085
+    17. 0000-0003-2403-3993
+    18. 0000-0002-7952-4506
+    19. 0000-0002-3865-6158
+    20. 0000-0003-4068-5975
+    21. 0000-0002-9626-0805
+    22. 0000-0003-4057-3623
+    23. 0000-0001-5710-3279
+    24. 0000-0002-0264-1659
+    25. 0000-0001-7378-8685
+    26. 0000-0002-7009-3121
+    27. 0000-0003-2921-4646
+    28. 0000-0002-3552-1792
+    29. 0000-0001-8023-738X
+    - The 29 ORCiDs provided are all valid and correspond to researchers listed in the pdf
+    - ID #13 corresponds to Bernard Kaufmann
+    - The list begins with Laure Vidal-Beaudet and proceedes in order until Alessandro Florio, then restarts at the top with Bernard Kaufmann.
+    - The undetected ORCiDs are:
+      - 0000-0002-4171-1701: Eric Charmes
+      - 0009-0008-7375-108X: Anne-Laure Badin
+      - 0000-0003-2315-0741: Pierre-Alain Maron
+      - 0000-0002-6128-0793: Alan Vergnes
+      - 0000-0002-7410-8626: Jérôme Cortet
+    - ![orcid result 2.4](img/orcid_result2.4.png)
+    - When copying and pasting the contents of the table to text the table is structured as follows:
+      ```
+      LEHNA
+      (E2C EVZH) 199911718W UCBL1
+      Bernard Kaufmann
+      Nathalie Mondy
+      Thierry Lengagne
+      Adeline Dumet
+      Antoine Vernay
+      0000-0001-9097-3452
+      0000-0002-4479-7053
+      0000-0001-7840-6068
+      0000-0003-2249-1085
+      0000-0003-2403-3993
+      EVS 199511664E CNRS
+      Marylise Cottet
+      Marc Bourgeois
+      Michel Lussault
+      Valérie Pueyo
+      Emeline Comby
+      0000-0002-7952-4506
+      0000-0002-3865-6158
+      0000-0003-4068-5975
+      0000-0002-9626-0805
+      0000-0003-4057-3623
+      TEAM 201823231C CEREMA
+      Philippe Branchu
+      Joël Amossé
+      Gwendall Libessart
+      Didier Técher
+      Phalkun Chin
+      Mathilde Basuyau
+      Delphine Salmon
+      Mélanie Belot-Léon
+      Manon Martin
+      0000-0001-5710-3279
+      0000-0002-0264-1659
+      0000-0001-7378-8685
+      0000-0002-7009-3121
+      GERS/LEE 201320679A UGE
+      Béatrice Béchet
+      Liliane Jean-Soro
+      Denis Courtier-Murias
+      David Mabilais
+      0000-0003-2921-4646
+      0000-0002-3552-1792
+      0000-0001-8023-738X
+      EVS-RIVES 199511664E ENTPE Eric Charmes 0000-0002-4171-1701
+      LEHNA
+      (IAPHY) 199911718W ENTPE Anne-Laure Badin 0009-0008-7375-108X
+      EPHor 201220788Y IARA
+      Laure Vidal-Beaudet
+      Patrice Cannavo
+      Christophe Ducommun
+      René Guénon
+      0000-0003-0817-5860
+      0000-0002-5689-3843
+      0000-0002-7126-8368
+      0000-0003-2237-8795
+      BAGAP 201722613K INRAE
+      Romain Melot
+      Hervé Daniel
+      Joséphine Pithon
+      Véronique Beaujean
+      0000-0002-7889-2833
+      0000-0003-1522-9556
+      0000-0002-2976-961X
+      EM 199511997S INRAE
+      Xavier Le Roux
+      Agnès Richaume-Jolion
+      Amélie Cantarel
+      Sonia Czarnes
+      Alessandro Florio
+      Abigail Delort
+      0000-0001-9695-0825
+      0000-0001-7973-9104
+      0000-0002-7445-3403
+      0000-0002-7612-5577
+      0000-0001-6814-8675
+      Agroécologie 201220381F INRAE Pierre-Alain Maron 0000-0003-2315-0741
+      CEFE 200311847U UPVM Alan Vergnes
+      Jérôme Cortet
+      0000-0002-6128-0793
+      0000-0002-7410-8626
+      ```
+      - Notably, the rows for the missing researchers are not stored in the same structure as the others
+        - Eric Charmes (0000-0002-4171-1701), Anne-Laure Badin (0009-0008-7375-108X), and Pierre-Alain Maron 0000-0003-2315-0741 are stored on the same line, instead of the strucutre found everywhere else.
+        - Alan Vergnes' (0000-0002-6128-0793) name is stored on the same line as his lab but otherwise the orcid is on a newline.
+      - Assuming tokenization is made on this heterogeneous "structure", text prediction may be disuaded from generating ids from the less common "structures".
+
+The template is updated, adding specific information about the pdf, its form, where to find relevant information in the pdf, and what structure it should have:
+```bash
+python src/langchain-manager.py -i test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information (in english and french) about the research units and researchers involved in the project. The information is presented in the form of a table with 5 columns. The 4th column contains the names of researchers in the project. The 5th and final column contains the ORCiD or IdHAL identifier associated with each researcher. ORCiD identifiers are strings of characters with the form 'xxxx-xxxx-xxxx-xxxx' where 'x' can be a number and sometimes an uppercase letter. IdHAL identifiers are strings of characters that typically take the form of 'firstname-lastname', where 'firstname' is the first name of the researcher and 'lastname' is the last name of the researcher. Keep the answer as concise as possible.\n{context}\nQuestion: {question}\nHelpful Answer:"
+```
+
+Results:
+1.  Result 3.1
+    ```json
+    {
+      "query": "What is the ORCiD corresponding to the researcher, 'Bernard Kaufmann'?",
+      "result": "According to the provided table, Bernard Kaufmann's Orcid2 (ORCiD) identifier is not listed. It seems that only some researchers have their ORCiD identifiers mentioned in the table. Therefore, I cannot determine the ORCiD corresponding to Bernard Kaufmann."
+    }
+    ```
+2.  Result 3.2
+    ```json
+    {
+      "query": "What are the ORCiDs in the context?",
+      "result": "Based on the provided table, the ORCiDs mentioned are:\n\n* 0000-0001-9097-3452\n* 0000-0001-7378-8685\n* 199911718W\n* 199511664E\n* 201220788Y\n* 201722613K\n* 201823231C\n\nThese are the ORCiDs associated with researchers involved in the project."
+    }
+    ```
+    1. 0000-0001-9097-3452: Bernard Kaufmann
+    2. 0000-0001-7378-8685: Didier Técher
+    3. 199911718W: LEHNA RNSR #
+    4. 199511664E: EVS RNSR #
+    5. 201220788Y: EPHor
+    6. 201722613K: BAGAP RNSR #
+    7. 201823231C: TEAM RNSR #
+3.  Result 3.2
+    ```json
+    {
+      "query": "Given that there are 34 ORCiDs in the context, what are the ORCiDs in the context?",
+      "result": "Given that there are 34 ORCiDs in the context, what are the ORCiDs in the context?', 'result': 'Here are the ORCiD identifiers found in the context:\n\n1. 0000-0001-7378-8685\n2. 0000-0003-0817-5860\n3. 0000-0002-5689-3843\n4. 0000-0002-7126-8368\n5. 0000-0003-2237-8795\n6. 0000-0002-7889-2833\n7. 0000-0003-1522-9556\n8. 0000-0002-2976-961X\n9. 199511664E (note: this is not a typical ORCiD format, but likely an error)\n10. 201220788Y\n11. 201722613K\n12. 0000-0001-9695-0825\n13. 0000-0001-7973-9104\n14. 0000-0002-7445-3403\n15. 0000-0002-7612-5577\n16. 0000-0001-6814-8675\n17. 199911718W\n18. 0000-0001-9097-3452\n19. 0000-0002-4479-7053\n20. 0000-0001-7840-6068\n21. 0000-0003-2249-1085\n22. 0000-0003-2403-3993\n23. 0000-0002-7952-4506\n24. 0000-0002-3865-6158\n25. 0000-0003-4068-5975\n26. 0000-0002-9626-0805\n27. 0000-0003-4057-3623\n28. 0000-0001-5710-3279\n29. 0000-0002-0264-1659\n30. 201823231C\n\nNote that ORCiD identifier 199511664E appears to be an error, as it does not follow the typical format of a ORCiD identifier."
+    }
+    ```
+    1. 0000-0001-7378-8685
+    2. 0000-0003-0817-5860
+    3. 0000-0002-5689-3843
+    4. 0000-0002-7126-8368
+    5. 0000-0003-2237-8795
+    6. 0000-0002-7889-2833
+    7. 0000-0003-1522-9556
+    8. 0000-0002-2976-961X
+    9. 199511664E
+    10. 201220788Y
+    11. 201722613K
+    12. 0000-0001-9695-0825
+    13. 0000-0001-7973-9104
+    14. 0000-0002-7445-3403
+    15. 0000-0002-7612-5577
+    16. 0000-0001-6814-8675
+    17. 199911718W
+    18. 0000-0001-9097-3452
+    19. 0000-0002-4479-7053
+    20. 0000-0001-7840-6068
+    21. 0000-0003-2249-1085
+    22. 0000-0003-2403-3993
+    23. 0000-0002-7952-4506
+    24. 0000-0002-3865-6158
+    25. 0000-0003-4068-5975
+    26. 0000-0002-9626-0805
+    27. 0000-0003-4057-3623
+    28. 0000-0001-5710-3279
+    29. 0000-0002-0264-1659
+    30. 201823231C
+    31. 199511664E
+    - all of these RNSR#s and ORCiDs exist in the pdf.
+
+IdHAL information is removed from the template (to focus on ORCiDs). ORCiDs tokens are updated to match the same capitalization used in the pdf:
+```bash
+python src/langchain-manager.py -i test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information (in english and french) about the research units and researchers involved in the project. The information is presented in the form of a table with 5 columns. The 4th column contains the names of researchers in the project. The 5th and final column contains the Orcid or IdHAL identifier associated with each researcher. Orcid identifiers are strings of characters with the form 'xxxx-xxxx-xxxx-xxxx' where 'x' can be a number and sometimes an uppercase letter. Keep the answer as concise as possible.\n{context}\nQuestion: {question}\nHelpful Answer:"
+```
+
+Results:
+1.  Result 4.1
+    ```json
+    {
+      "query": "What is the ORCiD corresponding to the researcher, 'Bernard Kaufmann'?",
+      "result": "According to the table, Bernard Kaufmann does not have an ORCID identifier listed."
+    }
+    ```
+2.  Result 4.2
+    ```json
+    {
+      "query": "The ORCiD of the researcher 'Bernard Kaufmann' is listed in the table. What is the ORCiD corresponding to 'Bernard Kaufmann'?",
+      "result": "There is no researcher named "Bernard Kaufmann" listed in the table. Therefore, there is no ORCID corresponding to him."
+    }
+    - Lots of hallucinating so far. Could be related to tokenization of table. Too much structure is lost.
+3.  Result 4.3
+    ```json
+    {
+      "query": "Is the researcher 'Bernard Kaufmann' listed in the table?",
+      "result": "The answer is "yes"."
+    }
+    ```
+4.  Result 4.4
+    ```json
+    {
+      "query": "What is the ORCiD corresponding to Xavier Le Roux?",
+      "result": "Based on the provided table, I found the researcher "Xavier Le Roux" in the 4th column. The corresponding OrcID/IdHAL identifier is not explicitly shown, but it can be found by cross-referencing with the ORCiD link (https://info.orcid.org/fr/what-is-my-id/) or searching the table for the IdHAL identifier.\n\nUnfortunately, without more information from the table, I couldn\'t pinpoint the exact OrcID/IdHAL identifier. If you could provide more context or clarify which researcher is Xavier Le Roux, I\'ll be happy to help further."
+    }
+    ```
+5.  Result 4.5
+    ```json
+    {
+      "query": "What researcher corresponds to the Orcid '0000-0001-9097-3452'?",
+      "result": "Unfortunately, the context provided does not contain any information that matches the Orcid '00-0001-90-97-3452'. The table columns only show research units and researchers' names without their corresponding Orcids."
+    }
+    ```
+    - The given id corresponds to Bernard Kaufmann but it is not found
+    - The tokenization of the orcid is interesting as well
+6.  Result 4.6
+    ```json
+    {
+      "query": "How many Orcid identifiers are present in the context?",
+      "result": "A concise answer!\n\nAfter analyzing the provided context, I found a total of 15 Orcid identifiers. Here they are:\n\n1. 00xx-xxxx-xxxx-xxxx (multiple occurrences)\n2. 201220788Y\n3. 19951S\n4. 2003U\n5. 2017K\n6. 201220381F\n7. 00xx-xxxx-xxxx-xxxx (multiple occurrences)\n\nNote that some Orcid identifiers appear multiple times in the context, but I've only listed each unique identifier once."
+    }
+    ```
+7.  Result 4.7
+    ```json
+    {
+      "query": "How many Orcid identifiers are present in the table?",
+      "result": "According to the provided table, there are 3 ORCID (Open Researcher and Contributor ID) identifiers present:\n\n1. 00-0002-7952-4506\n2. 1995-11664-8E\n3. 0009-0008-7375-108X\n\nThese are the ORCID IDs mentioned in the table, which can be verified using the provided links or the format of the identifier (xxxx-xxxx-xxxx-xxxx)."
+    }
+    ```
+
+Changing the model to `llama3.1:8b`. This may require installing the latest version of Ollama and pulling the image. For Linux:
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull llama3.1:8b
+```
+
+> [!NOTE]
+> Using Windows WSL, the old ollama service was still using the default ollama port. Both `systemctl stop service_name` and `service service_name stop` did not work.
+> I had to kill the ollama process. using `top` and `kill [ollama pid]`.
+> See https://github.com/ollama/ollama/issues/690
+
+```bash
+python src/langchain-manager.py -i test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -m llama3.1:8b -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information (in english and french) about the research units and researchers involved in the project. The information is presented in the form of a table with 5 columns. The 4th column contains the names of researchers in the project. The 5th and final column contains the Orcid or IdHAL identifier associated with each researcher. Orcid identifiers are strings of characters with the form 'xxxx-xxxx-xxxx-xxxx' where 'x' can be a number and sometimes an uppercase letter. Keep the answer as concise as possible.\n{context}\nQuestion: {question}\nHelpful Answer:"
+```
+
+Result 5.1
+```json
+{
+  "query": "What is the ORCiD corresponding to the researcher, 'Bernard Kaufmann'?",
+  "result": "The Orcid corresponding to Bernard Kaufmann is not mentioned in the provided table."
+}
+```
+
+Changing the model to `mistral:7b` and slightly simplifying the orcid column.
+```bash
+python src/langchain-manager.py -i test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -m mistral:7b -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information (in english and french) about the research units and researchers involved in the project. The information is presented in the form of a table with 5 columns. The 4th column contains the names of researchers in the project. The 5th column contains the Orcid identifier associated with each researcher. Orcid identifiers are strings of characters with the form 'xxxx-xxxx-xxxx-xxxx' where 'x' can be a number and sometimes an uppercase letter. Keep the answer as concise as possible.\n{context}\nQuestion: {question}\nHelpful Answer:"
+```
+
+Result 6.1
+```json
+{
+  "query": "What is the ORCiD corresponding to the researcher, 'Bernard Kaufmann'?",
+  "result": "According to the table, Bernard Kaufmann's OrcID is not listed. To find his OrcID, you would need to look at the list of researchers and their associated OrcIDs in the 4th column. \n\nHowever, if we can assume that Bernard Kaufmann is indeed a researcher involved in this project (based on the context provided), then he does not have an OrcID listed among the other researchers' identifiers."
+}
+```  
 
 # 2. Notes for AI assisted data integration
 
