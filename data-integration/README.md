@@ -363,7 +363,13 @@ Test Langchain for RAG ollama queries with workspace configuration.
 
 Summary of results:
 - Results 2.2 to 2.4 seem to indicate that including important syntactic information for identifying relevant tokens is beneficial to finding said tokens. I.e., "Given that there are 34 ORCiDs, and ORCiDs are strings of characters with the form `xxxx-xxxx-xxxx-xxxx, ..."
+  - It seems to be better to place this information in the user query itself and not in the template
+  - Placing some information about the context (the pdf in this case) does seem to benefit the recall of ORCiDs
+  - This may be a common practice in RAG? Or does langchain do this automatically?
+  - Is this configurable with langchain (or other libraries)?
 - The text extraction process of a table in a pdf may remove enough of the table structure that RAG is not possible for queries that require crossing information across columns and rows. See the notes of Results 2.1
+  - An approach for overcoming this may be to use image recognition instead of NLP
+ 
 
 **$F$ score calculations:**
 
@@ -372,7 +378,9 @@ Summary of results:
 - an identified RNSR#, IdHAL, or hallucination is a **false positive**
 - a missing ORCiD is a **false negative**
 - a missing RNSR# or IdHAL is a **true negative**
-- Result 2.4:
+
+**Result 2.4:**
+
 ```mermaid
 pie
   "True positives" : 29
@@ -380,14 +388,16 @@ pie
   "True negatives" : 11
   "False negatives" : 5
 ```
-  - Precision: TODO
-  - Recall: TODO
-  - $F_1$ score: TODO
-  - Adjusting for a more important recall with $\beta=2$: TODO
+  - Precision: 1
+  - Recall: 0,85294
+  - $F_1$ score: 0,92063
+  - Adjusting for a more important recall with $\beta=2$: 0,87879
     - 2 is a common weight for $\beta$ when recall is important [[source]](https://en.wikipedia.org/wiki/F-score#F%CE%B2_score)
     - The precision of identifying ids in general seems to be very good. All retrieved items in this result are well formed and are not hallucinations.
     - Becuase of this recall seems to be more important here.
-- Result 3.2
+
+**Result** 3.2
+
 ```mermaid
 pie
   "True positives" : 25
@@ -395,11 +405,10 @@ pie
   "True negatives" : 10
   "False negatives" : 9
 ```
-  - Precision: 1.4
-  - Recall: 1.5
-  - $F_1$ score: 12.18
-  - Adjusting for a more important recall with $\beta=2$: 1.47
-    - 2 is a common weight for $\beta$ when recall is important [[source]](https://en.wikipedia.org/wiki/F-score#F%CE%B2_score)
+  - Precision: 0,80645
+  - Recall: 0,83333
+  - $F_1$ score: 0,81967
+  - Adjusting for a more important recall with $\beta=2$: 0,82781
     - The precision of identifying ids (where both RNSR#s and ORCiDs are considered good) in general seems to be very good. All retrieved items are well formed and are not hallucinations.
     - Recall seems to be important here as we can systematically filter out RNSR# ids from ORCiDs in post processing.
 
@@ -798,6 +807,12 @@ Result 6.1
   "result": "According to the table, Bernard Kaufmann's OrcID is not listed. To find his OrcID, you would need to look at the list of researchers and their associated OrcIDs in the 4th column. \n\nHowever, if we can assume that Bernard Kaufmann is indeed a researcher involved in this project (based on the context provided), then he does not have an OrcID listed among the other researchers' identifiers."
 }
 ```  
+
+- TODO: test placing less context information in the template, and more in the query
+- TODO: test asking for a structured output (e.g., JSON or CSV)
+  - test in the template and in the query
+- TODO: Once templates/queries are stable test with larger contexts (larger pdfs, the online example is able to query a document of 100+ pages)
+- TODO: Once templates/queries are stable test with different models (e.g. Llama3.1 and Mistral). It is not clear which model works best for our use case.
 
 # 2. Notes for AI assisted data integration
 
