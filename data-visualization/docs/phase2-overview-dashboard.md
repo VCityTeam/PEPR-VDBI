@@ -182,7 +182,7 @@ const project_universities_auditioned_input = Inputs.select(
   }
 );
 const project_universities_financed_input = Inputs.select(
-  getColumnOptions(project_data, "finance"),
+  getColumnOptions(project_data, "financed"),
   {
     value: "All",
     label: "Financed?",
@@ -270,7 +270,7 @@ const projects_auditioned = Generators.input(
 
 // create financed filter input
 const project_financed_input = Inputs.select(
-  getColumnOptions(project_data, "finance"),
+  getColumnOptions(project_data, "financed"),
   {
     value: "All",
     label: "Financed?",
@@ -280,24 +280,24 @@ const projects_financed = Generators.input(
   project_financed_input
 );
 
-// create note filter input
+// create grade filter input
 const project_grade_input = Inputs.select(
-  getColumnOptions(project_data, "note"),
+  getColumnOptions(project_data, "grade"),
   {
     value: "All",
-    label: "Grade?",
+    label: "Grade",
   }
 );
 const project_grades = Generators.input(
   project_grade_input
 );
 
-// create defi filter input
+// create challenge filter input
 const project_challenge_input = Inputs.select(
-  getColumnOptions(project_data, "defi"),
+  getColumnOptions(project_data, "challenge"),
   {
     value: "All",
-    label: "Challenge?",
+    label: "Challenge",
   }
 );
 const project_challenge = Generators.input(
