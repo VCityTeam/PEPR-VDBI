@@ -102,7 +102,7 @@ export function resolveGeneraliteEntities(
       defi: d["Défi"] ? d["Défi"] : null,
       nom_fr: d["NOM COMPLET FR"] ? d["NOM COMPLET FR"] : null,
       nom_en: d["NOM COMPLET ANGLAIS"] ? d["NOM COMPLET ANGLAIS"] : null,
-      etablissements: filter(
+      etablissements: filterEmpty(
         [
           d["Établissement porteur"],
           d["Établissement 2"],
@@ -119,10 +119,9 @@ export function resolveGeneraliteEntities(
           d["Établissement 13"],
           d["Établissement 14"],
           d["Établissement 15"],
-        ],
-        (d) => typeof d !== "undefined" && d !== 0
+        ]
       ),
-      laboratoires: filter(
+      laboratoires: filterEmpty(
         [
           d["LABORATOIRE DU PORTEUR"],
           d["LABORATOIRE 2"],
@@ -145,10 +144,9 @@ export function resolveGeneraliteEntities(
           d["LABORATOIRE 19"],
           d["LABORATOIRE 20"],
           d["LABORATOIRE 21"],
-        ],
-        (d) => typeof d !== "undefined" && d !== 0
+        ]
       ),
-      partenaires: filter(
+      partenaires: filterEmpty(
         [
           d["Partenaire 1"],
           d["Partenaire 2"],
@@ -170,8 +168,7 @@ export function resolveGeneraliteEntities(
           d["Partenaire 18"],
           d["Partenaire 19"],
           d["Partenaire 20"],
-        ],
-        (d) => typeof d !== "undefined" && d !== 0
+        ]
       ),
       action: d["ACTION (de recherche)"] ? d["ACTION (de recherche)"] : null, // empty column?
       comment: d["COMMENT"] ? d["COMMENT"] : null, // empty column?
@@ -251,14 +248,30 @@ export function resolveChercheursEntities(
       sheet,
       (D) => {
         const chercheur = {
-          nom: D[0]["NOM et Prénom"],
-          sexe: D[0]["sexe"],
-          discipline_a: D[0]["discipline a"],
-          discipline_erc: D[0]["discipline ERC chercheur"],
-          position: D[0]["position statutaire"],
-          cnu: D[0]["CNU"],
-          domaine_erc_labo: D[0]["DOMAINES ERC LABO"],
-          disciplines_erc_labo: filter(
+          fullname: D[0]["NOM et Prénom"] ? D[0]["NOM et Prénom"] : null,
+          lastname: D[0]["NOM"] ? D[0]["NOM"] : null,
+          firstname: D[0]["Prénom"] ? D[0]["Prénom"] : null,
+          sexe: D[0]["sexe"] ? D[0]["sexe"] : null,
+          discipline: D[0]["discipline chercheur"]
+            ? D[0]["discipline chercheur"]
+            : null,
+          discipline_erc: D[0]["discipline ERC chercheur"]
+            ? D[0]["discipline ERC chercheur"]
+            : null,
+          position: D[0]["position statutaire"]
+            ? D[0]["position statutaire"]
+            : null,
+          cnu: D[0]["CNU"] ? D[0]["CNU"] : null,
+          site: D[0]["Sites"] ? D[0]["Sites"] : null,
+          orcid: D[0]["ORCID"] ? D[0]["ORCID"] : null,
+          idhal: D[0]["IDHAL"] ? D[0]["IDHAL"] : null,
+          lab_id: D[0]["Identifiant Laboratoire"]
+            ? D[0]["Identifiant Laboratoire"]
+            : null,
+          domaine_erc_labo: D[0]["DOMAINES ERC LABO"]
+            ? D[0]["DOMAINES ERC LABO"]
+            : null,
+          disciplines_erc_labo: filterEmpty(
             [
               D[0]["Discipline ERC 1 LABO"],
               D[0]["Discipline ERC 2 LABO"],
@@ -269,11 +282,10 @@ export function resolveChercheursEntities(
               D[0]["Discipline ERC 7 LABO"],
               D[0]["Discipline ERC 8 LABO"],
               D[0]["Discipline ERC 9 LABO"],
-            ],
-            (d) => typeof d !== "undefined" && d !== 0
+            ]
           ),
           domaine_hceres: D[0]["Domaines scientifique HCERES 1"],
-          disciplines_hceres: filter(
+          disciplines_hceres: filterEmpty(
             [
               D[0]["Sous-domaines scientifique HCERES 1"],
               D[0]["Sous-Domaines scientifique HCERES 2"],
@@ -281,14 +293,15 @@ export function resolveChercheursEntities(
               D[0]["sous-domaine scientifique HCERES 4"],
               D[0]["sous-domaine scientifique HCERES 5"],
               D[0]["sous-domaine scientifique HCERES 6"],
-            ],
-            (d) => typeof d !== "undefined" && d !== 0
+            ]
           ),
           projet: [],
-          laboratoire: D[0]["labo (acronyme)"],
+          notes: D[0]["notes"],
         };
         D.forEach((row) => {
-          chercheur.projet.push(row["Projet 1"]); // every row in group should corresopond to a project the researcher is in, so add every project
+          // every row in group should corresopond to a project the researcher is in,
+          // so add every project
+          chercheur.projet.push(row["ACRONYME Projet"]);
         });
         if (anonymize) {
           chercheur.nom = anonymizeEntry(
@@ -336,21 +349,17 @@ export function resolveLaboratoireEntities(
         ? d["Identifiant Laboratoire"]
         : null,
       nom: d["Nom Laboratoire"] ? d["Nom Laboratoire"] : null,
-      etablissements: filter(
-        // use array substring for (headerless) ranges?
-        [
-          d["C"],
-          d["D"],
-          d["E"],
-          d["F"],
-          d["G"],
-          d["H"],
-          d["I"],
-          d["J"],
-          d["K"],
-        ],
-        (d) => typeof d !== "undefined" && d !== 0
-      ),
+      etablissements: filterEmpty([
+        d["C"],
+        d["D"],
+        d["E"],
+        d["F"],
+        d["G"],
+        d["H"],
+        d["I"],
+        d["J"],
+        d["K"],
+      ]),
     };
     if (anonymize) {
       laboratoire.laboratoire = anonymizeEntry(
@@ -390,7 +399,8 @@ export function resolveEtablissementEntities(
 ) {
   return map(sheet, (d) => {
     const etablissement = {
-      nom: d["Nom des établissements"] ? d["Nom des établissements"] : null, // just 1 column for the moment
+      // just 1 column for the moment
+      nom: d["Nom des établissements"] ? d["Nom des établissements"] : null,
     };
     if (anonymize) {
       etablissement.nom = anonymizeEntry(
@@ -501,6 +511,14 @@ export function getColumnOptions(data, key) {
   return options;
 }
 
+function filterEmpty(data) {
+  return filter(
+    // use array substring for (headerless) ranges?
+    data,
+    (d) => typeof d !== "undefined" && d !== 0
+  );
+}
+
 export function getSortable3DCountPlot(
   data,
   x = "count",
@@ -555,7 +573,7 @@ export function getSortable3DCountPlot(
 export function getSortable2MarkCountPlot(
   data,
   x1 = "count",
-  y1 = "type",
+  // y1 = "type",
   x2 = "count",
   y2 = "type",
   width = 1500,
@@ -591,15 +609,15 @@ export function getSortable2MarkCountPlot(
         d.length > y_tick_format_cuttoff ? d.slice(0, 23).concat("...") : d, // cut off long tick labels
       label: y_label,
     },
-    marks: [
-      Plot.barX(data, {
-        x: x1,
-        y: y1,
-        fill: x1,
-        sort: { y1: sort_criteria },
-        tip: tip,
-      }),
-    ],
+    // marks: [
+    //   Plot.barX(data, {
+    //     x: x1,
+    //     y: y1,
+    //     fill: x1,
+    //     sort: { y1: sort_criteria },
+    //     tip: tip,
+    //   }),
+    // ],
     marks: [
       Plot.barX(data, {
         x: x2,
