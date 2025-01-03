@@ -1,9 +1,12 @@
 # PEPR-VDBI
 
-Data integration, visualization, and analysis tests for the PEPR project proposals
+Data integration, visualization, and analysis tests for the **Programmes et équipements prioritaires de recherche - Ville Durable et Bâtiment Innovant** (PEPR VDBI) project proposals
 
-## [Documentation](./Docs/README.md)
+## [Documentation :memo:](./Docs/README.md)
+Reports, records, meeting notes, and general documentation
 
-## Tests
-- [Data visualizations tests with observable](./data-visualization)
-- [Data integration tests with GPTs](./data-integration)
+## [Data visualization :bar_chart:](./data-visualization)
+Data visualization tests with observable
+  
+## [Data integration :calling:](./data-integration)
+Data integration tests with GPTs
