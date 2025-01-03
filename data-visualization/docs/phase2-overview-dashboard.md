@@ -24,40 +24,22 @@ import {
 ```
 
 ```js
+const debug = true;
+const anonymize = false;
+const anonymizeDict = new Map();
+
 const workbook1 = FileAttachment(
-  "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
+  // "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
+  "./data/241021 PEPR_VBDI_analyse modifiée JYT.xlsx"
 ).xlsx();
 ```
 
 ```js
-const anonymize = false;
-const anonymizeDict = new Map();
 const project_data = resolveGeneraliteEntities(
   getGeneraliteSheet(workbook1),
   anonymize,
   anonymizeDict
 );
-// resolveGeneraliteEntities -> @return:
-// {
-//    acronyme: string,
-//    auditionne: boolean,
-//    finance: boolean,
-//    budget: string,
-//    note: string,
-//    defi: string,
-//    nom_fr: string,
-//    nom_en: string,
-//    etablissements: [],
-//    etablissements_count: number
-//    laboratoires: [],
-//    laboratoires_count: number
-//    partenaires: [],
-//    partenaires_count: number
-//    action: string,
-//    comment: string,
-//    pourquoi: string,
-//    notes: string
-// }
 const researcher_data = resolveChercheursEntities(
   getChercheurSheet(workbook1),
   anonymize,
@@ -73,10 +55,16 @@ const university_data = resolveEtablissementEntities(
   anonymize,
   anonymizeDict
 );
-// display(project_data);
-// display(researcher_data);
-// display(laboratory_data);
-// display(university_data);
+if (debug) {
+  display("project_data")
+  display(project_data);
+  display("researcher_data");
+  display(researcher_data);
+  display("laboratory_data");
+  display(laboratory_data);
+  display("university_data");
+  display(university_data);
+}
 ```
 
 ```js
@@ -147,8 +135,10 @@ const filtered_projects_laboratories = filterOnInput(
   [project_laboratories_auditioned, project_laboratories_financed],
   critera_functions
 );
-display("filtered_projects_laboratories");
-display(filtered_projects_laboratories);
+if (debug) {
+  display("filtered_projects_laboratories");
+  display(filtered_projects_laboratories);
+}
 ```
 
 ```js
@@ -228,8 +218,10 @@ const filtered_projects_universities = filterOnInput(
   [project_universities_auditioned, project_universities_financed],
   critera_functions
 );
-display("filtered_projects_universities");
-display(filtered_projects_universities);
+if (debug) {
+  display("filtered_projects_universities");
+  display(filtered_projects_universities);
+}
 ```
 
 ```js
