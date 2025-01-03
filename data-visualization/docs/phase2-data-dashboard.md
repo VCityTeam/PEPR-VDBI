@@ -18,7 +18,8 @@ import {
 
 ```js
 const workbook1 = FileAttachment(
-  "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
+  // "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
+  "./data/241021 PEPR_VBDI_analyse modifiée JYT.xlsx"
 ).xlsx();
 ```
 
