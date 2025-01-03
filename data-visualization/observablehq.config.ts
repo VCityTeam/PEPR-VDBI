@@ -14,19 +14,19 @@ export default {
     },
     // {
     //   name: 'Phase 2 Project Dashboard',
-    //   path: 'phase2-project-dashboard',
+    //   path: 'phase2-project-dashboard', //deprecated
     // },
     // {
     //   name: 'Phase 2 Laboratory Dashboard',
-    //   path: 'phase2-laboratory-dashboard',
+    //   path: 'phase2-laboratory-dashboard', //deprecated
     // },
     // {
     //   name: 'Phase 2 University Dashboard',
-    //   path: 'phase2-university-dashboard',
+    //   path: 'phase2-university-dashboard', //deprecated
     // },
     // {
     //   name: 'Phase 2 Financing Dashboard',
-    //   path: 'phase2-financing-dashboard',
+    //   path: 'phase2-financing-dashboard', //deprecated
     // },
     {
       name: 'Tests',

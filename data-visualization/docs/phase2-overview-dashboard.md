@@ -10,14 +10,14 @@ import {
   countEntities,
 } from "./components/utilities.js";
 import {
-  getGeneraliteSheet,
-  getChercheurSheet,
-  getLaboSheet,
-  getEtablissementSheet,
-  resolveGeneraliteEntities,
-  resolveChercheursEntities,
-  resolveLaboratoireEntities,
-  resolveEtablissementEntities,
+  getGeneralSheet,
+  getResearcherSheet,
+  getLabSheet,
+  getInstitutionSheet,
+  resolveGeneralEntities,
+  resolveResearcherEntities,
+  resolveLabEntities,
+  resolveInstitutionEntities,
   getColumnOptions,
   filterOnInput,
 } from "./components/phase2-dashboard.js";
@@ -35,23 +35,23 @@ const workbook1 = FileAttachment(
 ```
 
 ```js
-const project_data = resolveGeneraliteEntities(
-  getGeneraliteSheet(workbook1),
+const project_data = resolveGeneralEntities(
+  getGeneralSheet(workbook1),
   anonymize,
   anonymizeDict
 );
-const researcher_data = resolveChercheursEntities(
-  getChercheurSheet(workbook1),
+const researcher_data = resolveResearcherEntities(
+  getResearcherSheet(workbook1),
   anonymize,
   anonymizeDict
 );
-const laboratory_data = resolveLaboratoireEntities(
-  getLaboSheet(workbook1),
+const laboratory_data = resolveLabEntities(
+  getLabSheet(workbook1),
   anonymize,
   anonymizeDict
 );
-const university_data = resolveEtablissementEntities(
-  getEtablissementSheet(workbook1),
+const university_data = resolveInstitutionEntities(
+  getInstitutionSheet(workbook1),
   anonymize,
   anonymizeDict
 );
@@ -70,16 +70,16 @@ if (debug) {
 ```js
 const auditioned_project_count = d3.reduce(
   project_data,
-  (p, v) => p + (v.auditionne ? 1 : 0),
+  (p, v) => p + (v.auditioned ? 1 : 0),
   0
 );
 const financed_project_count = d3.reduce(
   project_data,
-  (p, v) => p + (v.finance ? 1 : 0),
+  (p, v) => p + (v.financed ? 1 : 0),
   0
 );
 
-const partner_count = countEntities(project_data, (d) => d.partenaires);
+const partner_count = countEntities(project_data, (d) => d.partners);
 // display(partner_count);
 const total_partner_count = d3.reduce(partner_count, (p, v) => p + v.count, 0);
 ```
@@ -89,14 +89,14 @@ const total_partner_count = d3.reduce(partner_count, (p, v) => p + v.count, 0);
 ```js
 // project_laboratories by project filter select inputs
 const project_laboratories_auditioned_input = Inputs.select(
-  getColumnOptions(project_data, "auditionne"),
+  getColumnOptions(project_data, "auditioned"),
   {
     value: "All",
     label: "Auditioned?",
   }
 );
 const project_laboratories_financed_input = Inputs.select(
-  getColumnOptions(project_data, "finance"),
+  getColumnOptions(project_data, "financed"),
   {
     value: "All",
     label: "Financed?",
@@ -128,7 +128,7 @@ const project_laboratories_sort = Generators.input(project_laboratories_sort_inp
 
 ```js
 // helper functions to access input field criteria
-const critera_functions = [d => d.auditionne, d => d.finance];
+const critera_functions = [d => d.auditioned, d => d.financed];
 
 const filtered_projects_laboratories = filterOnInput(
   project_data,
@@ -156,13 +156,13 @@ const filtered_projects_laboratories_plot = Plot.plot({
   y: {
     grid: true,
     label: "Laboratory count",
-    domain: [0, Math.max(...filtered_projects_laboratories.map((d) => d.laboratoires.length)) + 1],
+    domain: [0, Math.max(...filtered_projects_laboratories.map((d) => d.labs.length)) + 1],
   },
   marks: [
     Plot.barY(filtered_projects_laboratories, {
       x: "acronyme",
-      y: d => d.laboratoires.length,
-      fill: d => d.laboratoires.length,
+      y: d => d.labs.length,
+      fill: d => d.labs.length,
       sort: {x: project_laboratories_sort},
       tip: true,
     }),
@@ -175,7 +175,7 @@ const filtered_projects_laboratories_plot = Plot.plot({
 ```js
 // project_universities by project filter select inputs
 const project_universities_auditioned_input = Inputs.select(
-  getColumnOptions(project_data, "auditionne"),
+  getColumnOptions(project_data, "auditioned"),
   {
     value: "All",
     label: "Auditioned?",
@@ -239,13 +239,13 @@ const filtered_projects_universities_plot = Plot.plot({
   y: {
     grid: true,
     label: "Laboratory count",
-    domain: [0, Math.max(...filtered_projects_universities.map((d) => d.etablissements.length)) + 1],
+    domain: [0, Math.max(...filtered_projects_universities.map((d) => d.institutions.length)) + 1],
   },
   marks: [
     Plot.barY(filtered_projects_universities, {
       x: "acronyme",
-      y: d => d.etablissements.length,
-      fill: d => d.etablissements.length,
+      y: d => d.institutions.length,
+      fill: d => d.institutions.length,
       sort: {x: project_universities_sort},
       tip: true,
     }),
@@ -258,7 +258,7 @@ const filtered_projects_universities_plot = Plot.plot({
 ```js
 // create auditioned filter input
 const project_auditioned_input = Inputs.select(
-  getColumnOptions(project_data, "auditionne"),
+  getColumnOptions(project_data, "auditioned"),
   {
     value: "All",
     label: "Auditioned?",
@@ -281,27 +281,27 @@ const projects_financed = Generators.input(
 );
 
 // create note filter input
-const project_note_input = Inputs.select(
+const project_grade_input = Inputs.select(
   getColumnOptions(project_data, "note"),
   {
     value: "All",
     label: "Grade?",
   }
 );
-const project_notes = Generators.input(
-  project_note_input
+const project_grades = Generators.input(
+  project_grade_input
 );
 
 // create defi filter input
-const project_defi_input = Inputs.select(
+const project_challenge_input = Inputs.select(
   getColumnOptions(project_data, "defi"),
   {
     value: "All",
     label: "Challenge?",
   }
 );
-const project_defis = Generators.input(
-  project_defi_input
+const project_challenge = Generators.input(
+  project_challenge_input
 );
 ```
 
@@ -309,12 +309,12 @@ const project_defis = Generators.input(
 // filter project data based on input fields
 const filtered_project_data = filterOnInput(
   project_data,
-  [projects_auditioned, projects_financed, project_notes, project_defis],
-  [(d) => d.auditionne, (d) => d.finance, (d) => d.note, (d) => d.defi]
+  [projects_auditioned, projects_financed, project_grades, project_challenge],
+  [(d) => d.auditioned, (d) => d.financed, (d) => d.grade, (d) => d.challenge]
 );
 // display(projects_auditioned);
 // display(projects_financed);
-// display(project_notes);
+// display(project_grades);
 // display(filtered_project_data);
 ```
 
@@ -344,24 +344,24 @@ const project_table = Inputs.table(projects_search, {
   rows: 25,
   columns: [
     "acronyme",
-    "note",
-    "defi",
+    "grade",
+    "challenge",
     "budget",
   ],
   header: {
     acronyme: "Project Acronyme",
     budget: "Budget (M)",
-    note: "Jury grade",
-    defi: "Challenge",
+    grade: "Jury grade",
+    challenge: "Challenge",
   },
   width: {
     acronyme: 120,
-    note: 80,
-    defi: 80,
+    grade: 80,
+    challenge: 80,
   },
   align: {
-    note: "center",
-    defi: "center",
+    grade: "center",
+    challenge: "center",
     budget: "left",
   },
   format: {
@@ -412,8 +412,8 @@ const project_table = Inputs.table(projects_search, {
     <div>${project_search_input}</div>
     <div>${project_auditioned_input}</div>
     <div>${project_financed_input}</div>
-    <div>${project_note_input}</div>
-    <div>${project_defi_input}</div>
+    <div>${project_grade_input}</div>
+    <div>${project_challenge_input}</div>
     <div>${project_table}</div>
   </div>
 </div>

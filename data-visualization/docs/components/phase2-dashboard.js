@@ -9,7 +9,7 @@ import * as Plot from "npm:@observablehq/plot";
  * @returns {Array<Object>} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
-export function getGeneraliteSheet(workbook) {
+export function getGeneralSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[0], {
     range: "A1:HV41",
     headers: true,
@@ -23,7 +23,7 @@ export function getGeneraliteSheet(workbook) {
  * @returns {Array<Object>} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
-export function getChercheurSheet(workbook) {
+export function getResearcherSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[1], {
     range: "A1:AE1087",
     headers: true,
@@ -37,7 +37,7 @@ export function getChercheurSheet(workbook) {
  * @returns {Array<Object>} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
-export function getLaboSheet(workbook) {
+export function getLabSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[4], {
     range: "A1:K262",
     headers: true,
@@ -51,7 +51,7 @@ export function getLaboSheet(workbook) {
  * @returns {Array<Object>} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
-export function getEtablissementSheet(workbook) {
+export function getInstitutionSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[5], {
     range: "A1:A111",
     headers: true,
@@ -62,22 +62,22 @@ export function getEtablissementSheet(workbook) {
  * Format known project entities from the GÉNÉRALITÉ sheet as:
  *  {
  *    acronyme: string,
- *    auditionne: boolean,
- *    finance: boolean,
+ *    auditioned: boolean,
+ *    financed: boolean,
  *    budget: string,
- *    note: string,
- *    defi: string,
- *    nom_fr: string,
- *    nom_en: string,
- *    etablissements: [],
- *    etablissements_count: number
- *    laboratoires: [],
- *    laboratoires_count: number
- *    partenaires: [],
- *    partenaires_count: number
+ *    grade: string,
+ *    challenge: string,
+ *    name_fr: string,
+ *    name_en: string,
+ *    institutions: [],
+ *    institution_count: number
+ *    labs: [],
+ *    lab_count: number
+ *    partners: [],
+ *    partner_count: number
  *    action: string,
- *    comment: string,
- *    pourquoi: string,
+ *    how: string,
+ *    why: string,
  *    notes: string
  *  }
  *
@@ -86,7 +86,7 @@ export function getEtablissementSheet(workbook) {
  * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Array<Object.<Array<string>>} Formatted sheet data
  */
-export function resolveGeneraliteEntities(
+export function resolveGeneralEntities(
   sheet,
   anonymize = false,
   acronymousDict = new Map()
@@ -95,14 +95,14 @@ export function resolveGeneraliteEntities(
     const mapped_entities = {
       acronyme: d["ACRONYME Projet"] ? d["ACRONYME Projet"] : null,
       // present: d['Présent aux journées'] ? [d['Présent aux journées']] : [], // GGE: not needed
-      auditionne: d["AUDITIONNÉ"] == "OUI", // not a list, will this cause a problem with generic map reduce functions looking for lists?
-      finance: d["Financé"] == "OUI", // not a list, will this cause a problem with generic map reduce functions looking for lists?
+      auditioned: d["AUDITIONNÉ"] == "OUI", // not a list, will this cause a problem with generic map reduce functions looking for lists?
+      financed: d["Financé"] == "OUI", // not a list, will this cause a problem with generic map reduce functions looking for lists?
       budget: d["Budget (demandé) en M€"] ? d["Budget (demandé) en M€"] : null,
-      note: d["Note du jury"] ? d["Note du jury"] : null,
-      defi: d["Défi"] ? d["Défi"] : null,
-      nom_fr: d["NOM COMPLET FR"] ? d["NOM COMPLET FR"] : null,
-      nom_en: d["NOM COMPLET ANGLAIS"] ? d["NOM COMPLET ANGLAIS"] : null,
-      etablissements: filterEmpty(
+      grade: d["Note du jury"] ? d["Note du jury"] : null,
+      challenge: d["Défi"] ? d["Défi"] : null,
+      name_fr: d["NOM COMPLET FR"] ? d["NOM COMPLET FR"] : null,
+      name_en: d["NOM COMPLET ANGLAIS"] ? d["NOM COMPLET ANGLAIS"] : null,
+      institutions: filterEmpty(
         [
           d["Établissement porteur"],
           d["Établissement 2"],
@@ -121,7 +121,7 @@ export function resolveGeneraliteEntities(
           d["Établissement 15"],
         ]
       ),
-      laboratoires: filterEmpty(
+      labs: filterEmpty(
         [
           d["LABORATOIRE DU PORTEUR"],
           d["LABORATOIRE 2"],
@@ -146,7 +146,7 @@ export function resolveGeneraliteEntities(
           d["LABORATOIRE 21"],
         ]
       ),
-      partenaires: filterEmpty(
+      partners: filterEmpty(
         [
           d["Partenaire 1"],
           d["Partenaire 2"],
@@ -171,14 +171,14 @@ export function resolveGeneraliteEntities(
         ]
       ),
       action: d["ACTION (de recherche)"] ? d["ACTION (de recherche)"] : null, // empty column?
-      comment: d["COMMENT"] ? d["COMMENT"] : null, // empty column?
-      pourquoi: d["POUR QUOI FAIRE"] ? d["POUR QUOI FAIRE"] : null, // empty column?
+      how: d["COMMENT"] ? d["COMMENT"] : null, // empty column?
+      why: d["POUR QUOI FAIRE"] ? d["POUR QUOI FAIRE"] : null, // empty column?
       notes: d["Notes"] ? d["Notes"] : null, // not empty but almost?
     };
-    mapped_entities.etablissements_count =
-      mapped_entities.etablissements.length;
-    mapped_entities.laboratoires_count = mapped_entities.laboratoires.length;
-    mapped_entities.partenaires_count = mapped_entities.partenaires.length;
+    mapped_entities.institution_count =
+      mapped_entities.institutions.length;
+    mapped_entities.lab_count = mapped_entities.labs.length;
+    mapped_entities.partner_count = mapped_entities.partners.length;
 
     if (anonymize) {
       mapped_entities.acronyme = anonymizeEntry(
@@ -186,41 +186,41 @@ export function resolveGeneraliteEntities(
         acronymousDict,
         "dragon"
       );
-      mapped_entities.nom_fr = anonymizeEntry(
-        mapped_entities.nom_fr,
+      mapped_entities.name_fr = anonymizeEntry(
+        mapped_entities.name_fr,
         acronymousDict,
         "darkelf"
       );
-      mapped_entities.nom_en = anonymizeEntry(
-        mapped_entities.nom_en,
+      mapped_entities.name_en = anonymizeEntry(
+        mapped_entities.name_en,
         acronymousDict,
         "drow"
       );
       for (
         let index = 0;
-        index < mapped_entities.etablissements.length;
+        index < mapped_entities.institutions.length;
         index++
       ) {
-        mapped_entities.etablissements[index] = anonymizeEntry(
-          mapped_entities.etablissements[index],
+        mapped_entities.institutions[index] = anonymizeEntry(
+          mapped_entities.institutions[index],
           acronymousDict,
           "dwarf"
         );
       }
       for (
         let index = 0;
-        index < mapped_entities.laboratoires.length;
+        index < mapped_entities.labs.length;
         index++
       ) {
-        mapped_entities.laboratoires[index] = anonymizeEntry(
-          mapped_entities.laboratoires[index],
+        mapped_entities.labs[index] = anonymizeEntry(
+          mapped_entities.labs[index],
           acronymousDict,
           "highelf"
         );
       }
-      for (let index = 0; index < mapped_entities.partenaires.length; index++) {
-        mapped_entities.partenaires[index] = anonymizeEntry(
-          mapped_entities.partenaires[index],
+      for (let index = 0; index < mapped_entities.partners.length; index++) {
+        mapped_entities.partners[index] = anonymizeEntry(
+          mapped_entities.partners[index],
           acronymousDict,
           "goblin"
         );
@@ -238,7 +238,7 @@ export function resolveGeneraliteEntities(
  * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Array<Object.<Array<string>>} Formatted sheet data
  */
-export function resolveChercheursEntities(
+export function resolveResearcherEntities(
   sheet,
   anonymize = false,
   acronymousDict = new Map()
@@ -247,11 +247,11 @@ export function resolveChercheursEntities(
     rollup(
       sheet,
       (D) => {
-        const chercheur = {
+        const researcher = {
           fullname: D[0]["NOM et Prénom"] ? D[0]["NOM et Prénom"] : null,
           lastname: D[0]["NOM"] ? D[0]["NOM"] : null,
           firstname: D[0]["Prénom"] ? D[0]["Prénom"] : null,
-          sexe: D[0]["sexe"] ? D[0]["sexe"] : null,
+          gender: D[0]["sexe"] ? D[0]["sexe"] : null,
           discipline: D[0]["discipline chercheur"]
             ? D[0]["discipline chercheur"]
             : null,
@@ -265,13 +265,13 @@ export function resolveChercheursEntities(
           site: D[0]["Sites"] ? D[0]["Sites"] : null,
           orcid: D[0]["ORCID"] ? D[0]["ORCID"] : null,
           idhal: D[0]["IDHAL"] ? D[0]["IDHAL"] : null,
-          lab_id: D[0]["Identifiant Laboratoire"]
+          lab: D[0]["Identifiant Laboratoire"]
             ? D[0]["Identifiant Laboratoire"]
             : null,
-          domaine_erc_labo: D[0]["DOMAINES ERC LABO"]
+          domain_erc_lab: D[0]["DOMAINES ERC LABO"]
             ? D[0]["DOMAINES ERC LABO"]
             : null,
-          disciplines_erc_labo: filterEmpty(
+          disciplines_erc_lab: filterEmpty(
             [
               D[0]["Discipline ERC 1 LABO"],
               D[0]["Discipline ERC 2 LABO"],
@@ -284,7 +284,7 @@ export function resolveChercheursEntities(
               D[0]["Discipline ERC 9 LABO"],
             ]
           ),
-          domaine_hceres: D[0]["Domaines scientifique HCERES 1"],
+          domain_hceres: D[0]["Domaines scientifique HCERES 1"],
           disciplines_hceres: filterEmpty(
             [
               D[0]["Sous-domaines scientifique HCERES 1"],
@@ -295,34 +295,44 @@ export function resolveChercheursEntities(
               D[0]["sous-domaine scientifique HCERES 6"],
             ]
           ),
-          projet: [],
+          project: [],
           notes: D[0]["notes"],
         };
         D.forEach((row) => {
           // every row in group should corresopond to a project the researcher is in,
           // so add every project
-          chercheur.projet.push(row["ACRONYME Projet"]);
+          researcher.project.push(row["ACRONYME Projet"]);
         });
         if (anonymize) {
-          chercheur.nom = anonymizeEntry(
-            chercheur.nom,
+          researcher.fullname = anonymizeEntry(
+            researcher.fullname,
             acronymousDict,
             "human"
           );
-          chercheur.laboratoire = anonymizeEntry(
-            chercheur.laboratoire,
+          researcher.firstname = anonymizeEntry(
+            researcher.firstname,
+            acronymousDict,
+            "human"
+          );
+          researcher.lastname = anonymizeEntry(
+            researcher.lastname,
+            acronymousDict,
+            "human"
+          );
+          researcher.lab = anonymizeEntry(
+            researcher.lab,
             acronymousDict,
             "highelf"
           );
-          for (let index = 0; index < chercheur.projet.length; index++) {
-            chercheur.projet[index] = anonymizeEntry(
-              chercheur.projet[index],
+          for (let index = 0; index < researcher.project.length; index++) {
+            researcher.project[index] = anonymizeEntry(
+              researcher.project[index],
               acronymousDict,
               "dragon"
             );
           }
         }
-        return chercheur;
+        return researcher;
       },
       (d) => d["NOM et Prénom"] // group researcher by name
     ),
@@ -338,18 +348,18 @@ export function resolveChercheursEntities(
  * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Array<Object.<Array<string>>} Formatted sheet data
  */
-export function resolveLaboratoireEntities(
+export function resolveLabEntities(
   sheet,
   anonymize = false,
   acronymousDict = new Map()
 ) {
   return map(sheet, (d) => {
-    const laboratoire = {
-      laboratoire: d["Identifiant Laboratoire"]
+    const lab = {
+      lab: d["Identifiant Laboratoire"]
         ? d["Identifiant Laboratoire"]
         : null,
-      nom: d["Nom Laboratoire"] ? d["Nom Laboratoire"] : null,
-      etablissements: filterEmpty([
+      name: d["Nom Laboratoire"] ? d["Nom Laboratoire"] : null,
+      institution: filterEmpty([
         d["C"],
         d["D"],
         d["E"],
@@ -362,25 +372,25 @@ export function resolveLaboratoireEntities(
       ]),
     };
     if (anonymize) {
-      laboratoire.laboratoire = anonymizeEntry(
-        laboratoire.laboratoire,
+      lab.lab = anonymizeEntry(
+        lab.lab,
         acronymousDict,
         "highelf"
       );
-      laboratoire.nom = anonymizeEntry(
-        laboratoire.nom,
+      lab.name = anonymizeEntry(
+        lab.name,
         acronymousDict,
         "gnome"
       );
-      for (let index = 0; index < laboratoire.etablissements.length; index++) {
-        laboratoire.etablissements[index] = anonymizeEntry(
-          laboratoire.etablissements[index],
+      for (let index = 0; index < lab.institution.length; index++) {
+        lab.institution[index] = anonymizeEntry(
+          lab.institution[index],
           acronymousDict,
           "dwarf"
         );
       }
     }
-    return laboratoire;
+    return lab;
   });
 }
 
@@ -392,24 +402,24 @@ export function resolveLaboratoireEntities(
  * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Array<Object.<Array<string>>} Formatted sheet data
  */
-export function resolveEtablissementEntities(
+export function resolveInstitutionEntities(
   sheet,
   anonymize = false,
   acronymousDict = new Map()
 ) {
   return map(sheet, (d) => {
-    const etablissement = {
+    const institution = {
       // just 1 column for the moment
-      nom: d["Nom des établissements"] ? d["Nom des établissements"] : null,
+      name: d["Nom des établissements"] ? d["Nom des établissements"] : null,
     };
     if (anonymize) {
-      etablissement.nom = anonymizeEntry(
-        etablissement.nom,
+      institution.name = anonymizeEntry(
+        institution.name,
         acronymousDict,
         "gnome"
       );
     }
-    return etablissement;
+    return institution;
   });
 }
 
@@ -426,23 +436,23 @@ export function extractPhase2Workbook(
   anonymize = false,
   acronymousDict = new Map()
 ) {
-  const project_data = resolveGeneraliteEntities(
-    getGeneraliteSheet(workbook),
+  const project_data = resolveGeneralEntities(
+    getGeneralSheet(workbook),
     anonymize,
     acronymousDict
   );
-  const researcher_data = resolveChercheursEntities(
-    getChercheurSheet(workbook),
+  const researcher_data = resolveResearcherEntities(
+    getResearcherSheet(workbook),
     anonymize,
     acronymousDict
   );
-  const laboratory_data = resolveLaboratoireEntities(
-    getLaboSheet(workbook),
+  const laboratory_data = resolveLabEntities(
+    getLabSheet(workbook),
     anonymize,
     acronymousDict
   );
-  const university_data = resolveEtablissementEntities(
-    getEtablissementSheet(workbook),
+  const university_data = resolveInstitutionEntities(
+    getInstitutionSheet(workbook),
     anonymize,
     acronymousDict
   );
@@ -450,19 +460,19 @@ export function extractPhase2Workbook(
   // Move laboratory information from researcher_data to laboratory_data
   researcher_data.forEach((researcher) => {
     const lab = laboratory_data.find(
-      (lab) => lab.laboratoire == researcher.laboratoire
+      (lab) => lab.lab == researcher.lab
     );
     if (typeof lab !== "undefined") {
-      lab.domaine_erc = researcher.domaine_erc_labo;
+      lab.domain_erc = researcher.domain_erc_labo;
       lab.disciplines_erc = [...researcher.disciplines_erc_labo];
-      lab.domaine_hceres = researcher.domaine_hceres;
+      lab.domain_hceres = researcher.domain_hceres;
       lab.disciplines_hceres = [...researcher.disciplines_hceres];
-      delete researcher.domaine_erc_labo;
+      delete researcher.domain_erc_labo;
       delete researcher.disciplines_erc_labo;
-      delete researcher.domaine_hceres;
+      delete researcher.domain_hceres;
       delete researcher.disciplines_hceres;
     } else {
-      console.log("laboratory not found:", researcher.laboratoire);
+      console.log("laboratory not found:", researcher.lab);
     }
   });
 
