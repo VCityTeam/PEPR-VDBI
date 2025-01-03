@@ -29,12 +29,12 @@ export default {
     //   path: 'phase2-financing-dashboard',
     // },
     {
-      name: 'Phase 2 All Data Dashboard',
-      path: 'phase2-data-dashboard',
-    },
-    {
       name: 'Tests',
       pages: [
+        {
+          name: 'Phase 2 Raw Data Test Dashboard',
+          path: 'phase2-data-dashboard',
+        },
         {
           name: 'Import Excel Tests',
           path: '/test-excel-import',
