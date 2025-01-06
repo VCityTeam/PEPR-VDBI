@@ -1,0 +1,647 @@
+<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1882px" height="711px" viewBox="-0.5 -0.5 1882 711" content="&lt;mxfile&gt;&lt;diagram id=&quot;prtHgNgQTEPvFCAcTncT&quot; name=&quot;Page-1&quot;&gt;7V1bc9o4FP41THcfYHzBBh65Jc1u0mbD7mbalx1hC1BqS0QWJPTXr2TJ4BsFc0/izrS1j3U/R5++cyyjitn1X68pmE7uiAu9iqG5rxWzVzH4n6bN/xOShZQ0taYUjClypUhfCQboJ1RCTUlnyIVBIiEjxGNomhQ6BGPosIQMUEpekslGxEvWOgVjmBEMHOBlpY/IZRPVC6Oxkn+GaDyJatbtlnzigyix6kkwAS55iYnMfsXsUkKYvPJfu9ATgxeNi8x3tebpsmEUYrZNBvfL6+LLnw2n0RzevswDF959tqq6KmYOvJnq8X3//kEo7BNwHOhBChgiuGLYwJ9WzA4eBuK/SteotDs82b/I40NlaL0ZBcPwCjL+D09gVtoGQ75onaHdYEzmILwUWTsdNSZsEQ108IJ8D2B+15kw3+NCnV8GDFCmrKKuiWeEop8EMxClcMQNwpD+vZiKVIxCUcbYA4FQvciTHamo15Ay+BoTqZG7hsSHjC54EvXUVEpUVlxXty8rk9DtKM0kZg+NyI6BssPxsuiVqviF0la+5qKCY0r6OlWKASJhl3cM0oAryeP1doaUX41Z2HMpCaYAJ4bbfp4Ju+uM+OhVX1SD2zwJJtQXY9tZpYkK+62DeFL4wxPj4kPIEB7/HtXA+yAriSpOqfdlghgcTIEj7l84ViT1LNoxUKnFPfDQGPNrD45EcUJRiE/KthIzMpW9cngb+L21ursNc/TsZSMySk6awi+mxVpraLWS5mBlzcHKswbbOIQ16JnBhS7HLHVLKJuQsTCM/kraoWSGXeiq0U1PsLYASi5wxKRBTiS+Ql6UTFYp6tllIHljyYw6Kq+hVgBexRiyuIlnB5xCj5v5PFlr3uiFWXk/wCKWYEoQZkGs5HshiOnRTurRsK0khG5Ib9paSnOyBSs9LruynWqNd6hao7WnaredGFHlMZjskh6ix4bFxwgT7w6Lifmgl0LGJAamYfSEmKhvhMRWHiTWzQNAol7PaH4wo3MomicKMbS+ixhnDnzwAsVnCq5PfL50iUdomNocjUaGIycTJT9g7IlrD23L3nYFW6Ov069oKX5jaFZGfXUjR326ZR1AfVl+c0/JmAJfTCqAOceWNHIvnbkANke5OrOdJhyO3pzO6g2jZm1Wm5WjNmMHtf0TQPp1+CScLEPzwBB6MmvFsDDwOfO34kCbA6pDQl1Iq44c+HaocPpbtRqX/54LsVHBaM9ytViacbhQH7GybLnWlARIoo8VWyNQuuYjjJ8F/alHFpCevmpZMDhYudqEwlGiFB8gj5EwP+8nv5GdTLWkL58s+w6S63Jow6FB9xAck9C1xSBwSLXt8UbBn2rSRioMkz7AYEpwoDxfF4YzI5zt0i0WOTzigFWO20W0+MiWytkvaqzNZX2VujalhBFc81UJU49D3IR4rvDx4giyVKokO18eBlL+a5e/HkMVhcQxUFUzu7MBXFesU0t528IBv+KNlZioK8kdma8ESZDUEiCqWzsttwVJ6/aev5VaGa0sxOqNHIhtFuc1/DYGsiXolqD7cUB3QLwwZNjEAkTbX3oP/W0B91OYsZXL8LcAX4BdCgPiQQx1jr1j8aTmEP8o2Ns8LvauBdYOYYx3KSF7UGB12fhrNPSaYW3G4DyaexgMzvgrd/P/nq/A40OdsPvvz7eDJ9+9rTYy7knR0M0qzS0RnkYofIKMLVQAHMzEhItbQsFRj4dqcjuh4k/x8E3kW6cCRKcO1dVtO2ED0Zq7LlSX9mhT6fcO1em7hOpy5/ChY3BbK/YsIdeiemxoB9VjyadKPvUh+NS1cED5PNSuYfA8Q5Jb0cihTHCqLqn2EOVTgjd/W9Iki6/JwiEvt67NMJpXPZ7YqI1oIfIka9CMJIFaj2OX7bsejQmZnAkliZCdDbLrrdPxoL9aN9+J3n3S8e1jo/WtddN+NKr7v528AB5kXiwPyvAauyAPOvArS30XfZ+PB+Up9iw8aAM/vSwe9GEJTMk8ijOPNg5DOA8zEOzANu4BRUGGbhSiE/9wIsJTICbjQoIDzQIG5qJVfTQaiR2KG4mG+YGJhl5PYs1paUbpopUu2ocAyr7vAzyDcv/sHYGBM8kDTLEVIrYTogBqriqoqeKVlwZDFCzqph0EV9/ey8ct9o0cDYltLbPFo76UXJLXZ74Hr8++WK9vA/s/ffR7F32fz+vLU+xZvL6MHlsFvb5WGf0uqVVJrTZRqx7xEUbPs5BZoTEmLI9ZFfdD3ajcmi9LPT+hsi+fUJ2QHpWuaomnJZ4e/m0iGFIUftl7TUluWK8dBIhjV0he0pv3cwE297XiUeHzDYT0dnU9j/F1QbORwlYz55ueElxLcC3BdT9w/YPMXC4YAPoDHQZbFXnVqvzvamfqrjib3dtqlUhaAEkb+pmRNBu+yX4pu5yQkZV2vwqbvPm317mJGfEwacTbf4y3wwf9R1OIrulJfehaXlC13szRiF5fKnOvb5Wznzzma+DuZtC96bx7DSwtfeP428WnRNb+W9uOfn/Qvn/3g19vHXHw19G4vBBNSefWd2IVrDohm9rGxToTuVvPyrYI0sXY3SHb98Hjk5JXXjYvPCKqmilSkfcjUad3l0ucLXH2op3oQnBd4qzA2TcQyTwezhqNEmdLnH13OFvy2cvD2TewWfF0fNY0T7zzsETaEmlLRvsxkPYNvFE6HaMtkbZE2neBtCWnvTykfTP7RU/Baa0ydlDi7NvH2ZLRXh7ONj4yzqYZ7YlxNnuwwv7fJ575YAW1Y+Xyzsyw08cOnfjMDGOLvTxXCAPscFWG+yeFnQQxZBrmYXVS4qJ5LszyicOqam+PAFm1vWc9Wq89cWIInB/j0OLioM0BjKFfHMfjE8wm2509sRSHfdltF9MRiVnq9IhGFi/s3PMHtENsB7N3QIej4EHezM9O/MQveB/wRJVyx/2+ndh2x/37Y4gH2goPAa5+m4c/XPg3mQUBQDiXDioYrxT/xOhJVLHgVdTYsoI6B9oAhD9euJkXLheed0Lwfo3M1eVW5eVO3RMHJ7lodUiiJAiroybN/v8=&lt;/diagram&gt;&lt;/mxfile&gt;">
+    <defs/>
+    <g>
+        <path d="M 250 40 L 250 0 L 1880 0 L 1880 40" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 250 40 L 250 710 L 1880 710 L 1880 40" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 250 40 L 1880 40" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 20px; margin-left: 1065px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: nowrap;">
+                                PEPR d'acceleration « Ville Durable et Bâtiment Innovant »
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="1065" y="24" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">
+                    PEPR d'acceleration « Ville Durable et Bâtiment Innovant »
+                </text>
+            </switch>
+        </g>
+        <rect x="1240" y="50" width="530" height="620" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 516px; height: 1px; padding-top: 60px; margin-left: 1251px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Operational Centers
+                                <br/>
+                                <span style="font-weight: normal;">
+                                    (Bi-weekly meeting)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="1251" y="72" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Operational Centers...
+                </text>
+            </switch>
+        </g>
+        <path d="M 1196.37 265.05 L 1203.18 265.05 Q 1210 265.05 1210 275.05 L 1210 350 Q 1210 360 1220 360 L 1233.63 360" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1191.12 265.05 L 1198.12 261.55 L 1196.37 265.05 L 1198.12 268.55 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1238.88 360 L 1231.88 363.5 L 1233.63 360 L 1231.88 356.5 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 725.05 486.37 L 725.05 515.05 Q 725.05 525.05 715.05 525.05 L 670 525.05 Q 660 525.05 660 535.05 L 660 563.63" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 725.05 481.12 L 728.55 488.12 L 725.05 486.37 L 721.55 488.12 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 660 568.88 L 656.5 561.88 L 660 563.63 L 663.5 561.88 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="260" y="50" width="930" height="430" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 916px; height: 1px; padding-top: 60px; margin-left: 271px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                CoDir
+                                <br/>
+                                <span style="font-weight: normal;">
+                                    (Weekly Meeting)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="271" y="72" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    CoDir...
+                </text>
+            </switch>
+        </g>
+        <rect x="280" y="205" width="420" height="155" fill="#fff2cc" stroke="#d6b656" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 406px; height: 1px; padding-top: 215px; margin-left: 291px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Survey / Editorialisation
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="291" y="227" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Survey / Editorialisation
+                </text>
+            </switch>
+        </g>
+        <rect x="722.5" y="205" width="450" height="255" fill="#dae8fc" stroke="#6c8ebf" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 436px; height: 1px; padding-top: 215px; margin-left: 733px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Program Management
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="733" y="227" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Program Management
+                </text>
+            </switch>
+        </g>
+        <rect x="300" y="255" width="170" height="80" fill="#fff2cc" stroke="#d6b656" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe flex-start; width: 142px; height: 1px; padding-top: 295px; margin-left: 315px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Diego Vinasco-Alvarez
+                                <br style="border-color: var(--border-color);"/>
+                                <i style="border-color: var(--border-color); color: gray;">
+                                    <i style="border-color: var(--border-color);">
+                                        Responsable de la veille
+                                    </i>
+                                    <br style="border-color: var(--border-color);"/>
+                                    CNRS
+                                </i>
+                                <br style="border-color: var(--border-color);"/>
+                                <a href="mailto:diego.vinasco@proton.me" style="border-color: var(--border-color);">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="315" y="299" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Diego Vinasco-Alvarez...
+                </text>
+            </switch>
+        </g>
+        <rect x="521.25" y="255" width="150" height="80" fill="#fff2cc" stroke="#d6b656" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe flex-start; width: 122px; height: 1px; padding-top: 295px; margin-left: 536px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Solène ANDRE
+                                <br style="border-color: var(--border-color);"/>
+                                <i style="border-color: var(--border-color); color: gray;">
+                                    <i style="border-color: var(--border-color);">
+                                        Responsable de l'éditorialisation
+                                    </i>
+                                    <br style="border-color: var(--border-color);"/>
+                                    CNRS
+                                </i>
+                                <br style="border-color: var(--border-color);"/>
+                                <a href="mailto:andresolene1@gmail.com" style="border-color: var(--border-color);">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="536" y="299" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Solène ANDRE...
+                </text>
+            </switch>
+        </g>
+        <path d="M 716.53 140 L 716.53 160 Q 716.53 170 706.53 170 L 490 170 Q 480 170 480 180 L 480 198.63" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 480 203.88 L 476.5 196.88 L 480 198.63 L 483.5 196.88 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 716.53 140 L 716.53 160 Q 716.53 170 726.53 170 L 940 170 Q 950 170 950 180 L 950 198.63" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 950 203.88 L 946.5 196.88 L 950 198.63 L 953.5 196.88 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="621.5" y="60" width="190" height="80" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe flex-start; width: 162px; height: 1px; padding-top: 100px; margin-left: 637px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Gilles Gesquière
+                                <br style="border-color: var(--border-color);"/>
+                                <i style="border-color: var(--border-color); color: gray;">
+                                    <i style="border-color: var(--border-color);">
+                                        Co-Director
+                                    </i>
+                                    <br style="border-color: var(--border-color);"/>
+                                    Lyon 2
+                                </i>
+                                <br style="border-color: var(--border-color);"/>
+                                <a href="mailto:Gilles.Gesquiere@univ-lyon2.fr" style="border-color: var(--border-color);">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="637" y="104" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Gilles Gesquière...
+                </text>
+            </switch>
+        </g>
+        <path d="M 480 140 L 480 150 Q 480 160 480 170 L 480 198.63" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 480 203.88 L 476.5 196.88 L 480 198.63 L 483.5 196.88 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 480 140 L 480 160 Q 480 170 490 170 L 940 170 Q 950 170 950 180 L 950 198.63" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 950 203.88 L 946.5 196.88 L 950 198.63 L 953.5 196.88 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="390" y="60" width="190" height="80" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe flex-start; width: 162px; height: 1px; padding-top: 100px; margin-left: 405px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Anne Ruas
+                                <br/>
+                                <i style="border-color: var(--border-color); color: gray;">
+                                    <i style="border-color: var(--border-color);">
+                                        Co-Director
+                                    </i>
+                                    <br/>
+                                    Université Gustave Eiffel
+                                </i>
+                                <br style="border-color: var(--border-color);"/>
+                                <a href="mailto:" style="border-color: var(--border-color);">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="405" y="104" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Anne Ruas...
+                </text>
+            </switch>
+        </g>
+        <rect x="852.5" y="242.5" width="190" height="80" fill="#dae8fc" stroke="#6c8ebf" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe flex-start; width: 162px; height: 1px; padding-top: 283px; margin-left: 868px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Emmanuelle Moesch
+                                <br style="border-color: var(--border-color);"/>
+                                <i style="border-color: var(--border-color); color: gray;">
+                                    <i style="border-color: var(--border-color);">
+                                        Progam Manager
+                                    </i>
+                                    <br style="border-color: var(--border-color);"/>
+                                    Université Gustave Eiffel
+                                </i>
+                                <br style="border-color: var(--border-color);"/>
+                                <a href="mailto:Emmanuelle.Moesch@univ-eiffel.fr" style="border-color: var(--border-color);">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="868" y="286" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Emmanuelle Moesch...
+                </text>
+            </switch>
+        </g>
+        <path d="M 950 140 L 950 160 Q 950 170 940 170 L 490 170 Q 480 170 480 180 L 480 198.63" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 480 203.88 L 476.5 196.88 L 480 198.63 L 483.5 196.88 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 950 140 L 950 180 Q 950 190 950 194.32 L 950 198.63" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 950 203.88 L 946.5 196.88 L 950 198.63 L 953.5 196.88 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="852.5" y="60" width="190" height="80" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe flex-start; width: 162px; height: 1px; padding-top: 100px; margin-left: 868px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Dominique Mignot
+                                <br style="border-color: var(--border-color);"/>
+                                <i style="border-color: var(--border-color); color: gray;">
+                                    <i style="border-color: var(--border-color);">
+                                        Director
+                                    </i>
+                                    <br style="border-color: var(--border-color);"/>
+                                    Université Gustave Eiffel
+                                </i>
+                                <br style="border-color: var(--border-color);"/>
+                                <a href="mailto:dominique.mignot@univ-eiffel.fr" style="border-color: var(--border-color);">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="868" y="104" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Dominique Mignot...
+                </text>
+            </switch>
+        </g>
+        <rect x="737.5" y="350" width="190" height="80" fill="#dae8fc" stroke="#6c8ebf" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe flex-start; width: 162px; height: 1px; padding-top: 390px; margin-left: 753px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Gabriel Gros
+                                <br style="border-color: var(--border-color);"/>
+                                <i style="border-color: var(--border-color); color: gray;">
+                                    <i style="border-color: var(--border-color);">
+                                        Assistant Program Manager
+                                    </i>
+                                    <br style="border-color: var(--border-color);"/>
+                                    Université Gustave Eiffel
+                                </i>
+                                <br style="border-color: var(--border-color);"/>
+                                <a href="mailto:" style="border-color: var(--border-color);">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="753" y="394" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Gabriel Gros...
+                </text>
+            </switch>
+        </g>
+        <rect x="967.5" y="350" width="190" height="80" fill="#dae8fc" stroke="#6c8ebf" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe flex-start; width: 162px; height: 1px; padding-top: 390px; margin-left: 983px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Joud Sarkis
+                                <br style="border-color: var(--border-color);"/>
+                                <i style="border-color: var(--border-color); color: gray;">
+                                    <i style="border-color: var(--border-color);">
+                                        Assistant Program Manager
+                                    </i>
+                                    <br style="border-color: var(--border-color);"/>
+                                    CNRS
+                                </i>
+                                <br style="border-color: var(--border-color);"/>
+                                <a href="mailto:" style="border-color: var(--border-color);">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="983" y="394" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Joud Sarkis...
+                </text>
+            </switch>
+        </g>
+        <rect x="1265" y="102.5" width="480" height="147.5" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 472px; height: 1px; padding-top: 113px; margin-left: 1270px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; white-space: normal; overflow-wrap: normal;">
+                                <b>
+                                    CO SIVDBI
+                                </b>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="1270" y="125" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px">
+                    CO SIVDBI
+                </text>
+            </switch>
+        </g>
+        <rect x="1265" y="280" width="480" height="160" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 472px; height: 1px; padding-top: 290px; margin-left: 1270px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; white-space: normal; overflow-wrap: normal;">
+                                <b>
+                                    CO MISCIB
+                                </b>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="1270" y="302" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px">
+                    CO MISCIB
+                </text>
+            </switch>
+        </g>
+        <rect x="1265" y="490" width="480" height="160" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 472px; height: 1px; padding-top: 500px; margin-left: 1270px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; white-space: normal; overflow-wrap: normal;">
+                                <b>
+                                    CO MESAP
+                                </b>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="1270" y="512" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px">
+                    CO MESAP
+                </text>
+            </switch>
+        </g>
+        <rect x="1285" y="140" width="190" height="80" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe flex-start; width: 162px; height: 1px; padding-top: 180px; margin-left: 1300px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Dominique Mignot
+                                <br style="border-color: var(--border-color);"/>
+                                <i style="border-color: var(--border-color); color: gray;">
+                                    <i style="border-color: var(--border-color);">
+                                        Director
+                                    </i>
+                                    <br style="border-color: var(--border-color);"/>
+                                    Université Gustave Eiffel
+                                </i>
+                                <br style="border-color: var(--border-color);"/>
+                                <a style="border-color: var(--border-color);" href="mailto:dominique.mignot@univ-eiffel.fr">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="1300" y="184" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Dominique Mignot...
+                </text>
+            </switch>
+        </g>
+        <rect x="1525" y="140" width="190" height="80" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe flex-start; width: 162px; height: 1px; padding-top: 180px; margin-left: 1540px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Dominique Mignot
+                                <br style="border-color: var(--border-color);"/>
+                                <i style="border-color: var(--border-color); color: gray;">
+                                    <i style="border-color: var(--border-color);">
+                                        Director
+                                    </i>
+                                    <br style="border-color: var(--border-color);"/>
+                                    Université Gustave Eiffel
+                                </i>
+                                <br style="border-color: var(--border-color);"/>
+                                <a href="mailto:dominique.mignot@univ-eiffel.fr" style="border-color: var(--border-color);">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="1540" y="184" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Dominique Mignot...
+                </text>
+            </switch>
+        </g>
+        <rect x="1285" y="332.5" width="190" height="80" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe flex-start; width: 162px; height: 1px; padding-top: 373px; margin-left: 1300px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Dominique Mignot
+                                <br style="border-color: var(--border-color);"/>
+                                <i style="border-color: var(--border-color); color: gray;">
+                                    <i style="border-color: var(--border-color);">
+                                        Director
+                                    </i>
+                                    <br style="border-color: var(--border-color);"/>
+                                    Université Gustave Eiffel
+                                </i>
+                                <br style="border-color: var(--border-color);"/>
+                                <a style="border-color: var(--border-color);" href="mailto:dominique.mignot@univ-eiffel.fr">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="1300" y="376" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Dominique Mignot...
+                </text>
+            </switch>
+        </g>
+        <rect x="1525" y="332.5" width="190" height="80" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe flex-start; width: 162px; height: 1px; padding-top: 373px; margin-left: 1540px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Dominique Mignot
+                                <br style="border-color: var(--border-color);"/>
+                                <i style="border-color: var(--border-color); color: gray;">
+                                    <i style="border-color: var(--border-color);">
+                                        Director
+                                    </i>
+                                    <br style="border-color: var(--border-color);"/>
+                                    Université Gustave Eiffel
+                                </i>
+                                <br style="border-color: var(--border-color);"/>
+                                <a href="mailto:dominique.mignot@univ-eiffel.fr" style="border-color: var(--border-color);">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="1540" y="376" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Dominique Mignot...
+                </text>
+            </switch>
+        </g>
+        <rect x="1285" y="540" width="190" height="80" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe flex-start; width: 162px; height: 1px; padding-top: 580px; margin-left: 1300px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Dominique Mignot
+                                <br style="border-color: var(--border-color);"/>
+                                <i style="border-color: var(--border-color); color: gray;">
+                                    <i style="border-color: var(--border-color);">
+                                        Director
+                                    </i>
+                                    <br style="border-color: var(--border-color);"/>
+                                    Université Gustave Eiffel
+                                </i>
+                                <br style="border-color: var(--border-color);"/>
+                                <a style="border-color: var(--border-color);" href="mailto:dominique.mignot@univ-eiffel.fr">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="1300" y="584" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Dominique Mignot...
+                </text>
+            </switch>
+        </g>
+        <rect x="1525" y="540" width="190" height="80" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe flex-start; width: 162px; height: 1px; padding-top: 580px; margin-left: 1540px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Dominique Mignot
+                                <br style="border-color: var(--border-color);"/>
+                                <i style="border-color: var(--border-color); color: gray;">
+                                    <i style="border-color: var(--border-color);">
+                                        Director
+                                    </i>
+                                    <br style="border-color: var(--border-color);"/>
+                                    Université Gustave Eiffel
+                                </i>
+                                <br style="border-color: var(--border-color);"/>
+                                <a href="mailto:dominique.mignot@univ-eiffel.fr" style="border-color: var(--border-color);">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="1540" y="584" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Dominique Mignot...
+                </text>
+            </switch>
+        </g>
+        <path d="M 976.37 620 L 1200 620 Q 1210 620 1210 610 L 1210 370 Q 1210 360 1220 360 L 1233.63 360" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 971.12 620 L 978.12 616.5 L 976.37 620 L 978.12 623.5 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1238.88 360 L 1231.88 363.5 L 1233.63 360 L 1231.88 356.5 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="350" y="570" width="620" height="100" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 618px; height: 1px; padding-top: 620px; margin-left: 351px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; white-space: normal; overflow-wrap: normal;">
+                                <b>
+                                    Financed Projects
+                                </b>
+                                <br/>
+                                <div style="text-align: left;">
+                                    <span style="background-color: initial;">
+                                        (Bi-monthly Meeting)
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="660" y="624" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                    Financed Projects...
+                </text>
+            </switch>
+        </g>
+        <path d="M 196.37 282.5 L 273.63 282.5" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 191.12 282.5 L 198.12 279 L 196.37 282.5 L 198.12 286 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 278.88 282.5 L 271.88 286 L 273.63 282.5 L 271.88 279 Z" fill="rgb(0, 0, 0)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="0" y="242.5" width="190" height="80" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)scale(0.9999999999999999)">
+            <switch>
+                <foreignObject pointer-events="none" width="101%" height="101%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe flex-start; width: 162px; height: 1px; padding-top: 283px; margin-left: 15px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: left;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                Jean-Yves Toussaint
+                                <br style="border-color: var(--border-color);"/>
+                                <i style="border-color: var(--border-color); color: gray;">
+                                    <i style="border-color: var(--border-color);">
+                                        Project Manager
+                                    </i>
+                                </i>
+                                <br style="border-color: var(--border-color);"/>
+                                <a href="mailto:jean-yves.toussaint@insa-lyon.fr" style="border-color: var(--border-color);">
+                                    Email
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="15" y="286" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" font-weight="bold">
+                    Jean-Yves Toussaint...
+                </text>
+            </switch>
+        </g>
+    </g>
+    <switch>
+        <g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/>
+        <a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank">
+            <text text-anchor="middle" font-size="10px" x="50%" y="100%">
+                Text is not SVG - cannot display
+            </text>
+        </a>
+    </switch>
+</svg>
