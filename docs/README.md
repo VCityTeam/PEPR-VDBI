@@ -1,5 +1,7 @@
 # PEPR VDBI Documentation
 
+![](./organigramme.svg)
+
 > [!NOTE]
 > References to the following individuals may use the following aliases in project documentation for brevity:
 > - GGE: Gilles Gesquière
