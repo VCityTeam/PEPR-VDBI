@@ -22,27 +22,28 @@
 - [Point DVA GGE 6/1/2025](./meeting_notes/06-01-2025_point.md)
 
 
-## Proposed Project Schedule (by year)
-
-| Year | Description                                                                                                                                                                           |
-| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Y1   | Implementation of a project monitoring tool based on the corpus of documents already covered by the call for projects.                                                                |
-| Y2   | Use of the ground truth (corpus already processed manually) to set up an automatic search method in the documentary corpus. Verification of validity using the "ground truth" corpus. |
-| Y3   | Implementation of a tool to facilitate automated SLRs.                                                                                                                                |
-| Y4   | Implementation of bibliometric trajectory tracking tools on VDBI.                                                                                                                     |
-| Y5   | Setting up a larger-scale community characterization tool with AI-based tools. Implementation of visualization and analysis tools.                                                    |
-
-
 ## Project Goals
 
-| Goal | Description                                                                                                                                       |
-| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| G1   | Set up a dashboard to monitor the VDBI community and its development over the course of the program.                                              |
-| G2   | Implementation of AI (GPT) assisted data mining tools to identify characteristics linked to the VDBI research community in documentary corpora.   |
-| G3   | Setting up automatic tools to facilitate SLR (systematic literature review) implementation                                                        |
-| G4   | Implementation of bibliometric trajectory tracking tools on VDBI                                                                                  |
-| G5   | Research and monitoring of the program's impact alongside PEPR partners (other than research laboratories) in connection with the editorial side. |
-| G6   | Promote achievements and results in the form of scientific publications, reports and oral presentations                                           |
+| Goal | Description                                                                                                                                                                                                    |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| G1   | Proposal and implementation of a project monitoring tool based on the call for projects document corpus and open data sources to monitor the VDBI community and its development over the course of the program |
+| G2   | Proposal and implementation of an automated AI (GPT-based) data mining tool to identify characteristics of the VDBI research community in document corpus                                                      |
+| G3   | Proposal and implementation of tools to facilitate automatic SLRs                                                                                                                                              |
+| G4   | Proposal and implementation of bibliometric trajectory tracking tools on VDBI                                                                                                                                  |
+| G6   | Proposal and implementation of a tool for identifying and projecting future trends in the VDBI (and other) research communities                                                                                |
+| G7   | Research and monitoring of the program's impact alongside PEPR partners (other than research laboratories) in connection with the editorial side                                                               |
+| G8   | Promote achievements and results in the form of scientific publications, reports and oral presentations                                                                                                        |
+
+
+## Proposed Project Schedule (by year)
+
+| Year | Description                                                                                                                                                                          |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Y1   | Implementation of dashboard application to monitor the VDBI community and its development over the course of the program                                                             |
+| Y2   | Implementation of an automatic search method in the documentary corpus using the ground truth (manually processed corpus). Verification of validity using the "ground truth" corpus. |
+| Y3   | Implementation of a tool to facilitate automated SLRs (systematic literature review).                                                                                                |
+| Y4   | Implementation of bibliometric trajectory tracking tools on VDBI.                                                                                                                    |
+| Y5   | Implementation of a larger-scale community characterization, visualisation, and analysis tool with AI-based methods.                                                                 |
 
 
 ## Project Tasks
