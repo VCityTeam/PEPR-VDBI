@@ -17,6 +17,6 @@
 > - JSAR: Joud Sarkis
 
 ## Reports/Meeting notes
-- [Day 1 Report 2/1/2025](./02-01-2025_DVA.md)
-- [Meeting CoDir 6/1/2025](./06-01-2025_vdbi.md)
-- [Meeting CO 6/1/2025](./06-01-2025_co.md)
+- [Day 1 Report 2/1/2025](./meeting_notes/02-01-2025_DVA.md)
+- [Meeting CoDir 6/1/2025](./meeting_notes/06-01-2025_vdbi.md)
+- [Meeting CO 6/1/2025](./meeting_notes/06-01-2025_co.md)
