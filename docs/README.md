@@ -1,10 +1,9 @@
 # PEPR VDBI Documentation
 
+### - [Feulle de route](https://pepr-vdbi.fr/feuille-de-route-scientifique-et-technique)
 
-![](./organigramme.drawio.svg)
-
-> [!NOTE]
-> Additional information regarding the mission, processes, and organisation of the PEPR VDBI can be found in the [feulle de route](https://pepr-vdbi.fr/feuille-de-route-scientifique-et-technique)
+### Org Chart
+![org chart](./organigramme.drawio.svg)
 
 > [!NOTE]
 > References to the following individuals may use the following aliases in project documentation for brevity:
@@ -20,3 +19,4 @@
 - [Day 1 Report 2/1/2025](./meeting_notes/02-01-2025_DVA.md)
 - [Meeting CoDir 6/1/2025](./meeting_notes/06-01-2025_vdbi.md)
 - [Meeting CO 6/1/2025](./meeting_notes/06-01-2025_co.md)
+- [Point DVA GGE 6/1/2025](./meeting_notes/06-01-2025_point.md)
