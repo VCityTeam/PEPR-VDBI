@@ -46,14 +46,11 @@ gantt
     section Q1
     Road map planification          :           q1i1,   02-01-2025,     2w
     Integrate latest corpus data    :           q1i2,   02-01-2025,     2w
-    Review project dash             :           q1i5,   13-01-2025,     1w
     Data validation                 :           q1i3,   after q1i2,     1w
     Update Researcher dash          :           q1i6,   after q1i2,     2w
     Geospatial data integration     :           q1i4,   25-01-2025,     2w
-    Create institution dash         :           q1i9,   after q1i4,     1w
-    Create lab dash                 :           q1i10,  after q1i9,     1w
-    Create partner dash             :           q1i11,  after q1i10,    1w
-    Data validation                 :           q1i7,   after q1i11,    1w
+    Dashboard iteration             :           q1i9,   after q1i4,     3w
+    Data validation                 :           q1i7,   after q1i9,     1w
     Relation discovery iteration    :           q1i8,   after q1i7,     1M
     Q1 end                          :milestone, q1,     31-03-2025,     1d
 ```
