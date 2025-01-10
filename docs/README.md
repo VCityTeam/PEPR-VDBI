@@ -45,10 +45,10 @@ gantt
     %name                           %status     %tag    %start          %duration
     section Q1
     Road map planification          :           q1i1,   02-01-2025,     2w
-    Integrate latest corpus data    :           q1i2,   02-01-2025,     2w
+    Integrate latest corpus data    :           q1i2,   02-01-2025,     1w
     Data validation                 :           q1i3,   after q1i2,     1w
     Update Researcher dash          :           q1i6,   after q1i2,     2w
-    Geospatial data integration     :           q1i4,   25-01-2025,     2w
+    Geospatial data integration     :           q1i4,   after q1i6,     2w
     Dashboard iteration             :           q1i9,   after q1i4,     3w
     Data validation                 :           q1i7,   after q1i9,     1w
     Relation discovery iteration    :           q1i8,   after q1i7,     1M
