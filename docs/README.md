@@ -7,19 +7,22 @@
 
 > [!NOTE]
 > References to the following individuals may use the following aliases in project documentation for brevity:
+> - DMI: Dominique Mignot
 > - GGE: Gilles Gesquière
-> - DVA: Diego Vinasco-Alvarez
-> - JYT: Jean-Yves Toussaint
-> - EMO: Emannuelle Moench
 > - ARU: Anne Raus
+> - DVA: Diego Vinasco-Alvarez
+> - EMO: Emannuelle Moench
 > - GGR: Gabriel Gros
 > - JSAR: Joud Sarkis
+> - JYT: Jean-Yves Toussaint
 
 ## Reports/Meeting notes
 - [Day 1 Report 2/1/2025](./meeting_notes/02-01-2025_DVA.md)
-- [Meeting CoDir 6/1/2025](./meeting_notes/06-01-2025_vdbi.md)
-- [Meeting CO 6/1/2025](./meeting_notes/06-01-2025_co.md)
+- [CoDir Meeting 6/1/2025](./meeting_notes/06-01-2025_vdbi.md)
+- [CO Meeting 6/1/2025](./meeting_notes/06-01-2025_co.md)
 - [Point DVA GGE 6/1/2025](./meeting_notes/06-01-2025_point.md)
+- [Point DVA EMO 10/1/2025](./meeting_notes/10-01-2025_DVA_EMO.md)
+- [CoDir Meeting 13/1/2025](./meeting_notes/13-01-2025_codir.md)
 
 
 ## Project Goals
