@@ -3,23 +3,28 @@ This directory contains input data or scripts for integrating data sources
 observable. Refer to the respective [observable dashboard or markdown documentation](../)
 for specific data loader documentation.
 
-To install python dataloaders dependencies, run:
+### Running dataloaders manually
+To install Python dataloader dependencies, run:
 ```bash
 pip install requests
 pip install pandas
+pip install openpyxl
 ```
+
+Some dataloaders require your terminal be in the `../` directory
+
 
 > [!NOTE] Private data
 > Data files not provided must be added manually to this folder.
 
 > [!WARNING] ORCiD API access
-> - Data loaders that require and ORCiD API key (denoted by :asterisk:) require you have a
->   file named `.env` in this directory with the following contents:
->   ```bash
->   # ORCiD API secrets
->   CLIENT_ID="MY_APP_ID"
->   CLIENT_SECRET="MY_APP_SECRET"
->   ```
+> Data loaders that require and ORCiD API key (denoted by :asterisk:) require you have a
+> file named `.env` in this directory with the following contents:
+> ```bash
+> # ORCiD API secrets
+> CLIENT_ID="MY_APP_ID"
+> CLIENT_SECRET="MY_APP_SECRET"
+> ```
 
 
 | Filename                                                                | Provided           | Description                                                                                                             |

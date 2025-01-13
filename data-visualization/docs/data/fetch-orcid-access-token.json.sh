@@ -1,5 +1,5 @@
 # source ORCiD API secrets
-. .env
+. data/.env
 
 # get access token
 curl -L -k -s \
