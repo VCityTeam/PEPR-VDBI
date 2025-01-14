@@ -5,34 +5,38 @@ export default {
   theme: 'dark',
   pages: [
     {
-      name: 'Phase 1 Dashboard',
+      name: 'Phase 1',
       path: 'phase1-dashboard',
     },
     {
-      name: 'Phase 2 Overview Dashboard',
+      name: 'Phase 2 Overview',
       path: 'phase2-overview-dashboard',
     },
+    {
+      name: 'Phase 2 Researchers',
+      path: 'phase2-researcher-dashboard',
+    },
     // {
-    //   name: 'Phase 2 Project Dashboard',
+    //   name: 'Phase 2 Projects',
     //   path: 'phase2-project-dashboard', //deprecated
     // },
     // {
-    //   name: 'Phase 2 Laboratory Dashboard',
+    //   name: 'Phase 2 Laboratories',
     //   path: 'phase2-laboratory-dashboard', //deprecated
     // },
     // {
-    //   name: 'Phase 2 University Dashboard',
+    //   name: 'Phase 2 Institutions',
     //   path: 'phase2-university-dashboard', //deprecated
     // },
     // {
-    //   name: 'Phase 2 Financing Dashboard',
+    //   name: 'Phase 2 Financing',
     //   path: 'phase2-financing-dashboard', //deprecated
     // },
     {
       name: 'Tests',
       pages: [
         {
-          name: 'Phase 2 Raw Data Test Dashboard',
+          name: 'Phase 2 Raw Data Test',
           path: 'phase2-data-dashboard',
         },
         {

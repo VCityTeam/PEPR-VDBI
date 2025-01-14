@@ -54,17 +54,5 @@ const university_table = Inputs.table(phase_2_data.universities);
   </div>
 </div>
 
-## Phase 2 Data structure wishlist
-- `Liste cheurcheurs` sheet
-  - 1 column per `Nom et Prénom`
-  - +1 column per projet/labo (not ideal but intuitive)
-  - Move `DOMAINES ERC LABO` and related columns (HCERES) to `liste des labo`
-- `liste des établissements` sheet
-  - Add code uai? (often used by [ESR Open Data](data.enseignementsup-recherche.gouv.fr))
-- `liste des labo` sheet
-  - Separate `Identifiant Laboratoire` into two columns
-    - `Identifiant Laboratoire`
-    - `Nom Complet Laboratoire`
 
-> [!NOTE]
-> Data quality errors found for special characters, e.g., sheet `GÉNÉRALITÉ`:`Z23`
+<div class="warning">Possible data quality errors found for special characters, e.g., sheet `GÉNÉRALITÉ`:`Z23`</div>

@@ -102,81 +102,74 @@ export function resolveGeneralEntities(
       challenge: d["Défi"] ? d["Défi"] : null,
       name_fr: d["NOM COMPLET FR"] ? d["NOM COMPLET FR"] : null,
       name_en: d["NOM COMPLET ANGLAIS"] ? d["NOM COMPLET ANGLAIS"] : null,
-      institutions: filterEmpty(
-        [
-          d["Établissement porteur"],
-          d["Établissement 2"],
-          d["Établissement 3"],
-          d["Établissement 4"],
-          d["Établissement 5"],
-          d["Établissement 6"],
-          d["Établissement 7"],
-          d["Établissement 8"],
-          d["Établissement 9"],
-          d["Établissement 10"],
-          d["Établissement 11"],
-          d["Établissement 12"],
-          d["Établissement 13"],
-          d["Établissement 14"],
-          d["Établissement 15"],
-        ]
-      ),
-      labs: filterEmpty(
-        [
-          d["LABORATOIRE DU PORTEUR"],
-          d["LABORATOIRE 2"],
-          d["LABORATOIRE 3"],
-          d["LABORATOIRE 4"],
-          d["LABORATOIRE 5"],
-          d["LABORATOIRE 6"],
-          d["LABORATOIRE 7"],
-          d["LABORATOIRE 8"],
-          d["LABORATOIRE 9"],
-          d["LABORATOIRE 10"],
-          d["LABORATOIRE 11"],
-          d["LABORATOIRE 12"],
-          d["LABORATOIRE 13"],
-          d["LABORATOIRE 14"],
-          d["LABORATOIRE 15"],
-          d["LABORATOIRE 16"],
-          d["LABORATOIRE 17"],
-          d["LABORATOIRE 18"],
-          d["LABORATOIRE 19"],
-          d["LABORATOIRE 20"],
-          d["LABORATOIRE 21"],
-        ]
-      ),
-      partners: filterEmpty(
-        [
-          d["Partenaire 1"],
-          d["Partenaire 2"],
-          d["Partenaire 3"],
-          d["Partenaire 4"],
-          d["Partenaire 5"],
-          d["Partenaire 6"],
-          d["Partenaire 7"],
-          d["Partenaire 8"],
-          d["Partenaire 9"],
-          d["Partenaire 10"],
-          d["Partenaire 11"],
-          d["Partenaire 12"],
-          d["Partenaire 13"],
-          d["Partenaire 14"],
-          d["Partenaire 15"],
-          d["Partenaire 16"],
-          d["Partenaire 17"],
-          d["Partenaire 18"],
-          d["Partenaire 19"],
-          d["Partenaire 20"],
-        ]
-      ),
+      institutions: filterEmpty([
+        d["Établissement porteur"],
+        d["Établissement 2"],
+        d["Établissement 3"],
+        d["Établissement 4"],
+        d["Établissement 5"],
+        d["Établissement 6"],
+        d["Établissement 7"],
+        d["Établissement 8"],
+        d["Établissement 9"],
+        d["Établissement 10"],
+        d["Établissement 11"],
+        d["Établissement 12"],
+        d["Établissement 13"],
+        d["Établissement 14"],
+        d["Établissement 15"],
+      ]),
+      labs: filterEmpty([
+        d["LABORATOIRE DU PORTEUR"],
+        d["LABORATOIRE 2"],
+        d["LABORATOIRE 3"],
+        d["LABORATOIRE 4"],
+        d["LABORATOIRE 5"],
+        d["LABORATOIRE 6"],
+        d["LABORATOIRE 7"],
+        d["LABORATOIRE 8"],
+        d["LABORATOIRE 9"],
+        d["LABORATOIRE 10"],
+        d["LABORATOIRE 11"],
+        d["LABORATOIRE 12"],
+        d["LABORATOIRE 13"],
+        d["LABORATOIRE 14"],
+        d["LABORATOIRE 15"],
+        d["LABORATOIRE 16"],
+        d["LABORATOIRE 17"],
+        d["LABORATOIRE 18"],
+        d["LABORATOIRE 19"],
+        d["LABORATOIRE 20"],
+        d["LABORATOIRE 21"],
+      ]),
+      partners: filterEmpty([
+        d["Partenaire 1"],
+        d["Partenaire 2"],
+        d["Partenaire 3"],
+        d["Partenaire 4"],
+        d["Partenaire 5"],
+        d["Partenaire 6"],
+        d["Partenaire 7"],
+        d["Partenaire 8"],
+        d["Partenaire 9"],
+        d["Partenaire 10"],
+        d["Partenaire 11"],
+        d["Partenaire 12"],
+        d["Partenaire 13"],
+        d["Partenaire 14"],
+        d["Partenaire 15"],
+        d["Partenaire 16"],
+        d["Partenaire 17"],
+        d["Partenaire 18"],
+        d["Partenaire 19"],
+        d["Partenaire 20"],
+      ]),
       action: d["ACTION (de recherche)"] ? d["ACTION (de recherche)"] : null, // empty column?
       how: d["COMMENT"] ? d["COMMENT"] : null, // empty column?
       why: d["POUR QUOI FAIRE"] ? d["POUR QUOI FAIRE"] : null, // empty column?
       notes: d["Notes"] ? d["Notes"] : null, // not empty but almost?
     };
-    mapped_entities.institution_count =
-      mapped_entities.institutions.length;
+    mapped_entities.institution_count = mapped_entities.institutions.length;
     mapped_entities.lab_count = mapped_entities.labs.length;
     mapped_entities.partner_count = mapped_entities.partners.length;
 
@@ -207,11 +200,7 @@ export function resolveGeneralEntities(
           "dwarf"
         );
       }
-      for (
-        let index = 0;
-        index < mapped_entities.labs.length;
-        index++
-      ) {
+      for (let index = 0; index < mapped_entities.labs.length; index++) {
         mapped_entities.labs[index] = anonymizeEntry(
           mapped_entities.labs[index],
           acronymousDict,
@@ -271,32 +260,28 @@ export function resolveResearcherEntities(
           domain_erc_lab: D[0]["DOMAINES ERC LABO"]
             ? D[0]["DOMAINES ERC LABO"]
             : null,
-          disciplines_erc_lab: filterEmpty(
-            [
-              D[0]["Discipline ERC 1 LABO"],
-              D[0]["Discipline ERC 2 LABO"],
-              D[0]["Discipline ERC 3 LABO"],
-              D[0]["Discipline ERC 4 LABO"],
-              D[0]["Discipline ERC 5 LABO"],
-              D[0]["Discipline ERC 6 LABO"],
-              D[0]["Discipline ERC 7 LABO"],
-              D[0]["Discipline ERC 8 LABO"],
-              D[0]["Discipline ERC 9 LABO"],
-            ]
-          ),
+          disciplines_erc_lab: filterEmpty([
+            D[0]["Discipline ERC 1 LABO"],
+            D[0]["Discipline ERC 2 LABO"],
+            D[0]["Discipline ERC 3 LABO"],
+            D[0]["Discipline ERC 4 LABO"],
+            D[0]["Discipline ERC 5 LABO"],
+            D[0]["Discipline ERC 6 LABO"],
+            D[0]["Discipline ERC 7 LABO"],
+            D[0]["Discipline ERC 8 LABO"],
+            D[0]["Discipline ERC 9 LABO"],
+          ]),
           domain_hceres: D[0]["Domaines scientifique HCERES 1"],
-          disciplines_hceres: filterEmpty(
-            [
-              D[0]["Sous-domaines scientifique HCERES 1"],
-              D[0]["Sous-Domaines scientifique HCERES 2"],
-              D[0]["Sous-Domaine Scientifique HCERES 3"],
-              D[0]["sous-domaine scientifique HCERES 4"],
-              D[0]["sous-domaine scientifique HCERES 5"],
-              D[0]["sous-domaine scientifique HCERES 6"],
-            ]
-          ),
+          disciplines_hceres: filterEmpty([
+            D[0]["Sous-domaines scientifique HCERES 1"],
+            D[0]["Sous-Domaines scientifique HCERES 2"],
+            D[0]["Sous-Domaine Scientifique HCERES 3"],
+            D[0]["sous-domaine scientifique HCERES 4"],
+            D[0]["sous-domaine scientifique HCERES 5"],
+            D[0]["sous-domaine scientifique HCERES 6"],
+          ]),
           project: [],
-          notes: D[0]["notes"],
+          notes: D[0]["notes"] ? D[0]["notes"] : null,
         };
         D.forEach((row) => {
           // every row in group should corresopond to a project the researcher is in,
@@ -355,9 +340,7 @@ export function resolveLabEntities(
 ) {
   return map(sheet, (d) => {
     const lab = {
-      lab: d["Identifiant Laboratoire"]
-        ? d["Identifiant Laboratoire"]
-        : null,
+      lab: d["Identifiant Laboratoire"] ? d["Identifiant Laboratoire"] : null,
       name: d["Nom Laboratoire"] ? d["Nom Laboratoire"] : null,
       institution: filterEmpty([
         d["C"],
@@ -372,16 +355,8 @@ export function resolveLabEntities(
       ]),
     };
     if (anonymize) {
-      lab.lab = anonymizeEntry(
-        lab.lab,
-        acronymousDict,
-        "highelf"
-      );
-      lab.name = anonymizeEntry(
-        lab.name,
-        acronymousDict,
-        "gnome"
-      );
+      lab.lab = anonymizeEntry(lab.lab, acronymousDict, "highelf");
+      lab.name = anonymizeEntry(lab.name, acronymousDict, "gnome");
       for (let index = 0; index < lab.institution.length; index++) {
         lab.institution[index] = anonymizeEntry(
           lab.institution[index],
@@ -459,16 +434,14 @@ export function extractPhase2Workbook(
 
   // Move laboratory information from researcher_data to laboratory_data
   researcher_data.forEach((researcher) => {
-    const lab = laboratory_data.find(
-      (lab) => lab.lab == researcher.lab
-    );
+    const lab = laboratory_data.find((lab) => lab.lab == researcher.lab);
     if (typeof lab !== "undefined") {
-      lab.domain_erc = researcher.domain_erc_labo;
-      lab.disciplines_erc = [...researcher.disciplines_erc_labo];
+      lab.domain_erc = researcher.domain_erc_lab;
+      lab.disciplines_erc = [...researcher.disciplines_erc_lab];
       lab.domain_hceres = researcher.domain_hceres;
       lab.disciplines_hceres = [...researcher.disciplines_hceres];
-      delete researcher.domain_erc_labo;
-      delete researcher.disciplines_erc_labo;
+      delete researcher.domain_erc_lab;
+      delete researcher.disciplines_erc_lab;
       delete researcher.domain_hceres;
       delete researcher.disciplines_hceres;
     } else {
