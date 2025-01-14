@@ -2,7 +2,7 @@
 
 Data integration, visualization, and analysis tests for the **Programmes et équipements prioritaires de recherche - Ville Durable et Bâtiment Innovant** (PEPR VDBI) project proposals
 
-## [Documentation :memo:](./Docs/README.md)
+## [Documentation :memo:](./docs/README.md)
 Reports, records, meeting notes, and general documentation
 
 ## [Data visualization :bar_chart:](./data-visualization)
