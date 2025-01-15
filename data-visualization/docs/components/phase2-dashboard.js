@@ -241,12 +241,12 @@ export function resolveResearcherEntities(
           lastname: D[0]["NOM"] ? D[0]["NOM"] : null,
           firstname: D[0]["Prénom"] ? D[0]["Prénom"] : null,
           gender: D[0]["sexe"] ? D[0]["sexe"] : null,
-          discipline: D[0]["discipline chercheur"]
-            ? D[0]["discipline chercheur"]
-            : null,
+          disciplines: D[0]["discipline chercheur"]
+            ? D[0]["discipline chercheur"].split(",").map((d) => d.trim())
+            : [],
           discipline_erc: D[0]["discipline ERC chercheur"]
-            ? D[0]["discipline ERC chercheur"]
-            : null,
+            ? D[0]["discipline ERC chercheur"].split(";").map((d) => d.trim())
+            : [],
           position: D[0]["position statutaire"]
             ? D[0]["position statutaire"]
             : null,
