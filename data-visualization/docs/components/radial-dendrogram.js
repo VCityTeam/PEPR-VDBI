@@ -7,8 +7,7 @@ import {
   hierarchy,
   stratify,
   create,
-  linkRadial,
-  zoom
+  linkRadial
 } from "npm:d3";
 
 export function mapEntitesToProjectTree(projects) {

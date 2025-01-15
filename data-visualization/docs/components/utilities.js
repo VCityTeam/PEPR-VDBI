@@ -53,8 +53,8 @@ export function mergeCounts(datasets, count_types) {
  *
  * @param {Array} data - dataset to rollup
  * @param {Function} mapFunction - function to extract the entity from the dataset.
- *    For example to get the owner laboratories of a project something like:
- *    (project) => project.laboratoires.slice(0, 1)
+ *    For example to count the laboratories of a project something like:
+ *    (project) => project.laboratoires
  * @returns {Array<Object.<string, number>>} -
  */
 export function countEntities(data, mapFunction) {
