@@ -5,7 +5,7 @@ export default {
   theme: 'dark',
   pages: [
     {
-      name: 'Phase 1',
+      name: 'Phase 1 Overview',
       path: 'phase1-dashboard',
     },
     {
