@@ -112,7 +112,7 @@ const cnu_pie = donutChart(cnu_count, {
   valueMap: (d) => d[1],
   sort: (a, b) => d3.descending(a[1], b[1]),
   fontSize: 18,
-  majorLabelText: (d) => d != null ? `CNU ${d.data[0].split(" ")[0]}` : "N/A",
+  majorLabelText: (d) => d.data[0] != null ? `CNU ${d.data[0].split(" ")[0]}` : "N/A",
 });
 
 if (debug) {
@@ -135,7 +135,7 @@ if (debug) {
   <!-- Discipline pie | ERC Discipline pie | CNU pie |  -->
   <div class="card grid-colspan-1">
     <h2>Disciplines</h2>
-    <div style="max-height: 400px; overflow: auto;">${discipline_pie}</div>
+    <!-- <div style="max-height: 400px; overflow: auto;">${discipline_pie}</div> -->
   </div>
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
@@ -143,7 +143,7 @@ if (debug) {
   </div>
   <div class="card grid-colspan-1">
     <h2>CNUs</h2>
-    ${input}
+    <!-- ${input} -->
     <div style="max-height: 400px; overflow: auto;">${cnu_pie}</div>
   </div>
   <!-- Project count | Lab count -->

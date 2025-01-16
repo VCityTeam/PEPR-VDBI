@@ -1,0 +1,64 @@
+import * as d3 from "npm:d3";
+
+/**
+ * Create a donut chart
+ * Adapted from:
+ * - https://github.com/VCityTeam/UD-Viz/blob/master/packages/widget_sparql/src/view/D3GraphCanvas.js
+ * - https://d3-graph-gallery.com/graph/custom_legend.html
+ *
+ * @param {Array<Object>} data - input dataset, by default expects an array of key (string)
+ *  and value (number) pairs. Modify keyMap and valueMap in the options if this is not the case.
+ * @param {Object} options - configuration options for the chart
+ * @returns {d3.node} - SVG node containing the donut chart
+ */
+export function circleLegend(
+  data,
+  {
+    keyMap = (d) => d.entity,
+    valueMap = (d) => d.count,
+    radius = 5,
+    lineSeparation = 25,
+    fontSize = 12,
+    fontColor = "white",
+    strokeColor = "white",
+    strokeWidth = 0.5,
+    colorInterpolation = d3.interpolatePlasma,
+    color = (d) => {
+      const min = Math.min(...data.map(valueMap));
+      const max = Math.max(...data.map(valueMap));
+      return colorInterpolation((valueMap(d) - min) / (max - min));
+    },
+    text = (d) => `${valueMap(d)}: ${keyMap(d)}`,
+  } = {}
+) {
+  const svg = d3
+    .create("svg")
+    .attr("height", (data.length - 1) * lineSeparation + radius * 2);
+
+  svg
+    .append("g")
+    .attr("stroke", strokeColor)
+    .attr("stroke-width", strokeWidth)
+    .selectAll("circle")
+    .data(data)
+    .join("circle")
+    .attr("cx", radius)
+    .attr("cy", (_d, i) => radius + i * lineSeparation)
+    .attr("r", radius)
+    .style("fill", (d) => color(d));
+
+  svg
+    .append("g")
+    .style("fill", fontColor)
+    .style("font-size", fontSize)
+    .attr("text-anchor", "left")
+    .selectAll("text")
+    .data(data)
+    .join("text")
+    .attr("x", radius * 2 + 5)
+    .attr("y", (_d, i) => radius * 2 + i * lineSeparation)
+    .text(text);
+
+  console.debug(svg.node());
+  return svg.node();
+}
