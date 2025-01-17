@@ -1,5 +1,6 @@
 import * as d3 from "npm:d3";
 import { circleLegend } from "./legend.js";
+import { createTooltip } from "./utilities.js";
 
 /**
  * Create a donut chart
@@ -16,11 +17,13 @@ export function donutChart(
   data,
   {
     width = 500,
-    outerRadiusRatio = 1,
     innerRadiusRatio = 0.4,
+    outerRadiusRatio = 1,
+    // minorArcLabelRadiusRatio = 0.1, // the ratio of the radius to place the minor arc label outside of the arc
     keyMap = (d) => d.entity,
     valueMap = (d) => d.count,
-    sort = (a, b) => d3.descending(a.count, b.count),
+    sort = undefined,
+    // sort = (a, b) => d3.descending(a.count, b.count),
     fontSize = 12,
     fontFamily = "sans-serif",
     strokeColor = "white",
@@ -29,15 +32,19 @@ export function donutChart(
     fill = "black",
     fillOpacity = 1,
     majorLabelText = (d) => keyMap(d.data),
-    majorLabelCuttoff = 0.25, // minimum angle for displaying major label
-    minorLabelCuttoff = 0.15, // minimum angle for displaying minor label
-    color = d3
-      .scaleLinear()
-      .domain([
-        Math.min(...data.map(valueMap)),
-        Math.max(...data.map(valueMap)),
-      ])
-      .interpolate(d3.interpolatePlasma),
+    minorLabelText = (d) =>
+      `${((valueMap(d.data) / d3.sum(data.map(valueMap))) * 100).toFixed(1)}%`,
+    // minorLabelText = (d) => d.value.toLocaleString("en-US"),
+    labelCuttoff = 0.25, // minimum arc angle for displaying label on arc
+    color = (d) =>
+      d3.interpolatePlasma(
+        d3
+          .scaleLinear()
+          .domain([
+            Math.min(...data.map(valueMap)),
+            Math.max(...data.map(valueMap)),
+          ])(d)
+      ),
   } = {}
 ) {
   const height = Math.min(width, 500);
@@ -46,21 +53,31 @@ export function donutChart(
   const arc = d3
     .arc()
     .innerRadius(radius * innerRadiusRatio)
-    .outerRadius(radius - outerRadiusRatio);
+    .outerRadius(radius * outerRadiusRatio);
 
-  const midAngle = (d) => d.startAngle + (d.endAngle - d.startAngle) / 2;
+  // const minorLabelArc = d3
+  //   .arc()
+  //   .innerRadius(radius * outerRadiusRatio)
+  //   .outerRadius(radius + (radius * minorArcLabelRadiusRatio));
 
-  const cuttoff = (d, cuttoffValue) => d.endAngle - d.startAngle > cuttoffValue;
+  // const midAngle = (d) => d.startAngle + (d.endAngle - d.startAngle) / 2;
+
+  /**
+   * @param {object} d - a datum produced by the d3.pie() to be sent to a d3 arc generator
+   * @returns {boolean}
+   */
+  const isMajorArc = (d) => d.endAngle - d.startAngle > labelCuttoff;
 
   const pie = d3
     .pie()
     .padAngle(1 / radius)
     .sort(sort)
     .value(valueMap);
-  console.debug(pie(data));
+  const pieData = pie(data);
+  console.debug(pieData);
 
-  const cuttoffData = pie(data)
-    .filter((d) => !cuttoff(d, minorLabelCuttoff))
+  const cuttoffData = pieData
+    .filter((d) => !isMajorArc(d))
     .map((d) => d.data)
     .sort(sort);
 
@@ -71,15 +88,7 @@ export function donutChart(
     .attr("viewBox", [-width / 2, -height / 2, width, height])
     .attr("style", "max-width: 100%; height: auto;");
 
-  // const color = d3
-  //   .scaleOrdinal()
-  //   .domain(data.sort(sort).map(valueMap)) // possibly more optimal to presort the data?
-  //   .range(d3.quantize(colorInterpolation, data.length).reverse());
-  debugger;
-  const tooltip = document.createElement("div");
-  tooltip.classList.add("tooltip");
-  tooltip.classList.add("card");
-  tooltip.style.position = "absolute";
+  const tooltip = createTooltip();
   // console.debug(tooltip);
 
   // const labelText = (d) => `${keyMap(d.data)}: ${d.value.toLocaleString()}`;
@@ -87,15 +96,14 @@ export function donutChart(
   svg
     .append("g")
     .selectAll()
-    .data(pie(data))
+    .data(pieData)
     .join("path")
     .attr("fill", (d) => color(valueMap(d.data)))
     .attr("d", arc)
     .on("mouseover", (_e, d) => {
-      // add legend tooltip if arc is too small
-      if (!cuttoff(d, minorLabelCuttoff)) {
+      // add legend tooltip if arc is too small for a label
+      if (!isMajorArc(d)) {
         const legend = circleLegend(cuttoffData, {
-          color: color,
           keyMap: keyMap,
           valueMap: valueMap,
           lineSeparation: 25,
@@ -129,27 +137,48 @@ export function donutChart(
     .attr("fill", fill)
     .attr("fill-opacity", fillOpacity)
     .selectAll()
-    .data(pie(data))
+    .data(pieData)
     .join("text")
     .attr("transform", (d) => `translate(${arc.centroid(d)})`)
+    // add major label for major arcs
     .call((text) =>
       text
-        .filter((d) => cuttoff(d, majorLabelCuttoff))
+        .filter((d) => isMajorArc(d))
         .append("tspan")
         .attr("y", "-0.4em")
         .attr("font-weight", "bold")
         .text(majorLabelText)
     )
+    // add minor label for major arcs
     .call((text) =>
       text
-        .filter((d) => cuttoff(d, minorLabelCuttoff))
+        .filter((d) => isMajorArc(d))
         .append("tspan")
         .attr("x", 0)
-        .attr("y", (d) => (cuttoff(d, minorLabelCuttoff) ? "0.7em" : "0em"))
+        .attr("y", (d) => (isMajorArc(d) ? "0.7em" : "0em"))
         .attr("fill-opacity", 0.7)
         .attr("stroke-width", 0)
-        .text((d) => d.value.toLocaleString("en-US"))
-    );
+        .text(minorLabelText)
+    )
+    // add label for minor arcs
+    // .call((text) =>
+    //   text
+    //     .filter((d) => !isMajorArc(d))
+    //     .attr("x", 0)
+    //     .attr("y", (d) => (isMajorArc(d) ? "0.7em" : "0em"))
+    //     .attr("fill-opacity", 0.7)
+    //     .attr("text-anchor", (d))
+    //     .attr("stroke-width", 0)
+    //     .attr("transform", (d) => {
+    //       const c = minorLabelArc.centroid(d);
+    //       console.debug(d.data, c);
+    //       return `translate(${c})`;
+    //     })
+    //     .text(`hi`)
+    //     // .text(`${minorLabelText}: ${majorLabelText}`)
+    // );
 
   return svg.node();
 }
+
+export const pieChartUserGuideTip = `<p>Hover over a slice to see the count and entity name.</p>`;

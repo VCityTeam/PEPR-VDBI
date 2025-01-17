@@ -3,7 +3,7 @@ title: Phase 2 Laboratory Dashboard
 theme: dashboard
 ---
 
-# PEPR Laboratory Statistics
+# Phase 2 Laboratories
 
 ```js
 import {
