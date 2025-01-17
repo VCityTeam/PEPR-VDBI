@@ -218,3 +218,12 @@ export function anonymizeEntry(entry, dictionary, type = 'human') {
   }
   return dictionary.get(entry);
 }
+
+
+export function createTooltip() {
+  const tooltip = document.createElement("div");
+  tooltip.classList.add("tooltip");
+  tooltip.classList.add("card");
+  tooltip.style.position = "absolute";
+  return tooltip;
+}

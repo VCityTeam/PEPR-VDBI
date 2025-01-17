@@ -3,7 +3,7 @@ title: Phase 1 Dashboard
 theme: dashboard
 ---
 
-# PEPR Dashboard
+# Phase 1 Overview
 
 ```js
 import {
