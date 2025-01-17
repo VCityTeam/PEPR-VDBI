@@ -3,7 +3,7 @@ title: Phase 2 Overview Dashboard
 theme: dashboard
 ---
 
-# Phase 2 Project Overview
+# Phase 2 Overview
 
 ```js
 import {

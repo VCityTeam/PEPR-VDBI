@@ -22,12 +22,15 @@ export function circleLegend(
     fontColor = "white",
     strokeColor = "white",
     strokeWidth = 0.5,
-    colorInterpolation = d3.interpolatePlasma,
-    color = (d) => {
-      const min = Math.min(...data.map(valueMap));
-      const max = Math.max(...data.map(valueMap));
-      return colorInterpolation((valueMap(d) - min) / (max - min));
-    },
+    color = (d) =>
+      d3.interpolatePlasma(
+        d3
+          .scaleLinear()
+          .domain([
+            Math.min(...data.map(valueMap)),
+            Math.max(...data.map(valueMap)),
+          ])(d)
+      ),
     text = (d) => `${valueMap(d)}: ${keyMap(d)}`,
   } = {}
 ) {
@@ -45,7 +48,7 @@ export function circleLegend(
     .attr("cx", radius)
     .attr("cy", (_d, i) => radius + i * lineSeparation)
     .attr("r", radius)
-    .style("fill", (d) => color(d));
+    .style("fill", (d) => color(valueMap(d)));
 
   svg
     .append("g")

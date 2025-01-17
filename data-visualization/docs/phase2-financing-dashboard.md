@@ -3,7 +3,7 @@ title: Phase 2 Financing Dashboard
 theme: dashboard
 ---
 
-# PEPR Projects Financing
+# Phase 2 Financing
 
 ```js
 import {

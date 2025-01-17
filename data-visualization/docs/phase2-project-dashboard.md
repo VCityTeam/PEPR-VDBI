@@ -3,7 +3,7 @@ title: Phase 2 Project Dashboard
 theme: dashboard
 ---
 
-# PEPR Project Statistics
+# Phase 2 Projects
 
 ```js
 import {

@@ -3,7 +3,7 @@ title: Phase 2 Researcher Dashboard
 theme: dashboard
 ---
 
-# Researcher Dashboard
+# Phase 2 Researchers
 
 ```js
 import {
@@ -39,7 +39,6 @@ if (debug) {
 const researcher_search = view(Inputs.search(phase_2_data.researchers, {
     placeholder: "Search for researcher..."
   }));
-researcher_search
 ```
 
 ```js
@@ -49,6 +48,7 @@ const value = Generators.input(input);
 
 ```js
 const researcher_table = Inputs.table(researcher_search, {
+  height: 350,
   columns: [
     "fullname",
     // "firstname",
@@ -80,7 +80,7 @@ const researcher_table = Inputs.table(researcher_search, {
     "idhal": "idHAL",
     "lab": "Laboratory",
     "notes": "Notes",
-  }
+  },
 });
 
 const discipline_count = countEntities(
@@ -125,30 +125,46 @@ if (debug) {
 }
 ```
 
-<div class="note">Researchers with multiple disciplines are counted once per discipline</div>
+<div class="tip" label="Data visualization policy">
+  Pie charts:
+  <ul>
+    <li>Researchers with multiple disciplines are counted once per discipline.</li>
+    <li>Pie charts do not include missing researcher data by default.</li>
+  </ul>
+</div>
+
 <div class="grid grid-cols-3">
-  <!-- Table with all data -->
-  <div class="card grid-colspan-3">
+  <!-- Table with all data | ERC Discipline pie -->
+  <div class="card grid-colspan-2">
     <h2>Researchers</h2>
-    <div style="max-height: 400px; overflow: auto;">${researcher_table}</div>
-  </div>
-  <!-- Discipline pie | ERC Discipline pie | CNU pie |  -->
-  <div class="card grid-colspan-1">
-    <h2>Disciplines</h2>
-    <!-- <div style="max-height: 400px; overflow: auto;">${discipline_pie}</div> -->
+    <div style="overflow: auto;">${researcher_table}</div>
   </div>
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
-    <div style="max-height: 400px; overflow: auto;">${discipline_erc_pie}</div>
+    <div style="overflow: auto;">${discipline_erc_pie}</div>
+  </div>
+</div>
+<div class="grid grid-cols-2">
+  <!-- Discipline pie | CNU pie -->
+  <div class="card grid-colspan-1">
+    <h2>Disciplines</h2>
+    <!-- <div style="overflow: auto;">${discipline_pie}</div> -->
   </div>
   <div class="card grid-colspan-1">
     <h2>CNUs</h2>
     <!-- ${input} -->
-    <div style="max-height: 400px; overflow: auto;">${cnu_pie}</div>
+    <div style="overflow: auto;">${cnu_pie}</div>
   </div>
   <!-- Project count | Lab count -->
   <!-- Researcher map -->
-  <div class="card grid-colspan-3 grid-rowspan-2"></div>
+  <div class="card grid-colspan-2 grid-rowspan-2"></div>
   <!-- Graph, arc diagram; group by discipline, position, CNU, partner -->
-  <div class="card grid-colspan-3 grid-rowspan-2"></div>
+  <div class="card grid-colspan-2 grid-rowspan-2"></div>
 </div>
+
+<!--
+TODO:
+- pie -> %
+- add notes for data modifications
+- dont show 
+-->
