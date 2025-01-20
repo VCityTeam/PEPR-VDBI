@@ -8,6 +8,7 @@ theme: dashboard
 ```js
 import {
   countEntities,
+  cropText
 } from "./components/utilities.js";
 import {
   extractPhase2Workbook,
@@ -36,17 +37,20 @@ if (debug) {
 ```
 
 ```js
-const researcher_search = view(Inputs.search(phase_2_data.researchers, {
-    placeholder: "Search for researcher..."
-  }));
-```
-
-```js
 const input = Inputs.range([0, 1], {step: 0.1});
 const value = Generators.input(input);
 ```
 
 ```js
+const researcher_search_input = Inputs.search(phase_2_data.researchers, {
+  placeholder: "Search researchers..."
+});
+
+const researcher_search = Generators.input(researcher_search_input);
+```
+
+```js
+// Researcher table //
 const researcher_table = Inputs.table(researcher_search, {
   height: 350,
   columns: [
@@ -82,39 +86,144 @@ const researcher_table = Inputs.table(researcher_search, {
     "notes": "Notes",
   },
 });
+```
 
-const discipline_count = countEntities(
-  phase_2_data.researchers,
-  (d) => d.disciplines
-);
-const discipline_pie = donutChart(discipline_count, {
-  width: 700,
-  fontSize: 18
-});
-
+```js
+// Discipline ERC count //
 const discipline_erc_count = countEntities(
-  phase_2_data.researchers,
-  (d) => d.discipline_erc
-).sort((a, b) => d3.descending(a.count, b.count));
+    phase_2_data.researchers,
+    (d) => d.discipline_erc
+  )
+  .filter((d) => d.entity != "non renseignée" && d.entity != "Non Renseigné")
+  .sort((a, b) => d3.descending(a.count, b.count));
+
 const discipline_erc_pie = donutChart(discipline_erc_count, {
   width: 700,
   fontSize: 18
 });
+```
 
-const cnu_count = d3.rollups(
+```js
+// Discipline count //
+const discipline_count = countEntities(
   phase_2_data.researchers,
-  (d) => d.length,
-  (d) => d.cnu
-).sort((a, b) => d3.descending(a[1], b[1]));
-const cnu_pie = donutChart(cnu_count, {
-  width: 700,
-  keyMap: (d) => d[0],
-  valueMap: (d) => d[1],
-  // sort: (a, b) => d3.descending(a[1], b[1]),
-  fontSize: 18,
-  majorLabelText: (d) => d.data[0] != null ? `CNU ${d.data[0].split(" ")[0]}` : "N/A",
+  (d) => d.disciplines
+).sort((a, b) => d3.descending(a.count, b.count));
+
+const discipline_search_input = Inputs.search(discipline_count, {
+  placeholder: "Search disciplines..."
 });
 
+const discipline_search = Generators.input(discipline_search_input);
+```
+
+```js
+const discipline_plot = Plot.plot({
+  width: 450,
+  height: discipline_count.length * 20,
+  marginTop: 30,
+  marginLeft: 100,
+  color: {
+    scheme: "Plasma",
+  },
+  y: {
+    label: "Discipline",
+    tickRotate: 30,
+    tickFormat: (d) => cropText(d),
+  },
+  x: {
+    grid: true,
+    axis: "top",
+    label: "Occurences",
+    // ticks: 5,
+    // domain: [0, Math.max(...discipline_count.map((d) => d.count)) + 1],
+  },
+  marks: [
+    Plot.barX(discipline_count, {
+      y: "entity",
+      x: "count",
+      fill: "count",
+      sort: {y: "-x"},
+      tip: {format: {fill: false}}
+    }),
+    Plot.barX(
+      discipline_count, 
+      Plot.pointerY({x: "count", y: "entity"}),
+    ),
+  ],
+});
+```
+
+```js
+// CNU count //
+const cnu_count = d3.rollups(
+    phase_2_data.researchers,
+    (d) => d.length,
+    (d) => d.cnu
+  )
+  .filter((d) => d[0] != null)
+  .sort((a, b) => d3.descending(a[1], b[1]));
+
+const cnu_search_input = Inputs.search(cnu_count, {
+  placeholder: "Search CNUs..."
+});
+
+const cnu_search = Generators.input(cnu_search_input);
+```
+
+```js
+const cnu_plot = Plot.plot({
+  width: 450,
+  height: cnu_count.length * 20,
+  marginTop: 50,
+  marginLeft: 100,
+  color: {
+    scheme: "Plasma",
+  },
+  y: {
+    label: "CNU",
+    tickRotate: 30,
+    tickFormat: (d) => cropText(d),
+  },
+  x: {
+    grid: true,
+    axis: "top",
+    label: "Occurences",
+    // ticks: 5,
+    // domain: [0, Math.max(...cnu_count.map((d) => d.count)) + 1],
+  },
+  marks: [
+    Plot.barX(cnu_count, {
+      y: (d) => d[0],
+      x: (d) => d[1],
+      fill: (d) => d[1],
+      sort: {y: "-x"},
+      tip: {
+        format: {
+          fill: false
+        },
+        lineWidth: 25,
+        textOverflow: "ellipsis-end"
+      }
+    }),
+    Plot.barX(
+      cnu_count, 
+      Plot.pointerY({x: (d) => d[1], y: (d) => d[0]}),
+    ),
+  ],
+});
+
+// const cnu_pie = donutChart(cnu_count, {
+//   width: 700,
+//   keyMap: (d) => d[0],
+//   valueMap: (d) => d[1],
+//   // sort: (a, b) => d3.descending(a[1], b[1]),
+//   fontSize: 18,
+//   majorLabelText: (d) => d.data[0] != null ? `CNU ${d.data[0].split(" ")[0]}` : "N/A",
+// });
+```
+
+```js
 if (debug) {
   display("discipline_count");
   display(discipline_count);
@@ -134,32 +243,35 @@ if (debug) {
 </div>
 
 <div class="grid grid-cols-3">
-  <!-- Table with all data | ERC Discipline pie -->
   <div class="card grid-colspan-2">
     <h2>Researchers</h2>
-    <div style="overflow: auto;">${researcher_table}</div>
+    <div style="padding: 5px">${researcher_search_input}</div>
+    <div>${researcher_table}</div>
   </div>
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
-    <div style="overflow: auto;">${discipline_erc_pie}</div>
+    <div>${discipline_erc_pie}</div>
   </div>
-</div>
-<div class="grid grid-cols-2">
-  <!-- Discipline pie | CNU pie -->
   <div class="card grid-colspan-1">
     <h2>Disciplines</h2>
-    <!-- <div style="overflow: auto;">${discipline_pie}</div> -->
+    <div style="padding: 5px">${discipline_search_input}</div>
+    <div style="max-height: 350px; overflow: auto">${discipline_plot}</div>
+  </div>
+  <div class="card grid-colspan-2 grid-rowspan-2">
+    Researcher map
   </div>
   <div class="card grid-colspan-1">
     <h2>CNUs</h2>
-    <!-- ${input} -->
-    <div style="overflow: auto;">${cnu_pie}</div>
+    <div style="padding: 5px">${cnu_search_input}</div>
+    <div style="max-height: 350px; overflow: auto">${cnu_plot}</div>
   </div>
-  <!-- Project count | Lab count -->
-  <!-- Researcher map -->
-  <div class="card grid-colspan-2 grid-rowspan-2"></div>
-  <!-- Graph, arc diagram; group by discipline, position, CNU, partner -->
-  <div class="card grid-colspan-2 grid-rowspan-2"></div>
+  <div class="card grid-colspan-3 grid-rowspan-1">
+    Graph, arc diagram; group by discipline, position, CNU, partner
+  </div>
+</div>
+<div class="grid grid-cols-2">
+  
+  
 </div>
 
 <!--

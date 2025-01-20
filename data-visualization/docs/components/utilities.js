@@ -227,3 +227,9 @@ export function createTooltip() {
   tooltip.style.position = "absolute";
   return tooltip;
 }
+
+
+export function cropText(text, maxLength=20) {
+  return text.length > maxLength ? text.slice(0, maxLength - 3).concat("...") : text;
+}
+  
