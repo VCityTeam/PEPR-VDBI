@@ -95,7 +95,7 @@ const discipline_pie = donutChart(discipline_count, {
 const discipline_erc_count = countEntities(
   phase_2_data.researchers,
   (d) => d.discipline_erc
-);
+).sort((a, b) => d3.descending(a.count, b.count));
 const discipline_erc_pie = donutChart(discipline_erc_count, {
   width: 700,
   fontSize: 18
@@ -105,12 +105,12 @@ const cnu_count = d3.rollups(
   phase_2_data.researchers,
   (d) => d.length,
   (d) => d.cnu
-);
+).sort((a, b) => d3.descending(a[1], b[1]));
 const cnu_pie = donutChart(cnu_count, {
   width: 700,
   keyMap: (d) => d[0],
   valueMap: (d) => d[1],
-  sort: (a, b) => d3.descending(a[1], b[1]),
+  // sort: (a, b) => d3.descending(a[1], b[1]),
   fontSize: 18,
   majorLabelText: (d) => d.data[0] != null ? `CNU ${d.data[0].split(" ")[0]}` : "N/A",
 });

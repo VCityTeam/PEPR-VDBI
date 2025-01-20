@@ -101,18 +101,28 @@ export function donutChart(
     .attr("fill", (d) => color(valueMap(d.data)))
     .attr("d", arc)
     .on("mouseover", (_e, d) => {
-      // add legend tooltip if arc is too small for a label
+      // add legend tooltip if arc is too small for a label and highlight arc
       if (!isMajorArc(d)) {
         const legend = circleLegend(cuttoffData, {
           keyMap: keyMap,
           valueMap: valueMap,
           lineSeparation: 25,
+          // if the key in the legend is the same as the mouseovered arc, bold the text
+          fontWeight: (d2) =>
+            keyMap(d2) == keyMap(d.data)
+              ? "bold"
+              : "normal",
         });
         tooltip.appendChild(legend);
       } else {
         tooltip.textContent = `${d.value.toLocaleString()}: ${keyMap(d.data)}`;
       }
       d3.select("body").append(() => tooltip);
+      // highlight the arc
+      d3.select(_e.target)
+        .attr("stroke", "GhostWhite")
+        .attr("stroke-opacity", 0.7)
+        .attr("stroke-width", 3);
     })
     .on("mousemove", (event) =>
       d3
@@ -120,10 +130,11 @@ export function donutChart(
         .style("top", event.pageY - 10 + "px")
         .style("left", event.pageX + 15 + "px")
     )
-    .on("mouseout", () => {
+    .on("mouseout", (event) => {
       console.debug("mouseout");
       tooltip.textContent = "";
       tooltip.parentNode.removeChild(tooltip);
+      d3.select(event.target).attr("stroke-width", 0);
     });
 
   svg
@@ -159,24 +170,24 @@ export function donutChart(
         .attr("fill-opacity", 0.7)
         .attr("stroke-width", 0)
         .text(minorLabelText)
-    )
-    // add label for minor arcs
-    // .call((text) =>
-    //   text
-    //     .filter((d) => !isMajorArc(d))
-    //     .attr("x", 0)
-    //     .attr("y", (d) => (isMajorArc(d) ? "0.7em" : "0em"))
-    //     .attr("fill-opacity", 0.7)
-    //     .attr("text-anchor", (d))
-    //     .attr("stroke-width", 0)
-    //     .attr("transform", (d) => {
-    //       const c = minorLabelArc.centroid(d);
-    //       console.debug(d.data, c);
-    //       return `translate(${c})`;
-    //     })
-    //     .text(`hi`)
-    //     // .text(`${minorLabelText}: ${majorLabelText}`)
-    // );
+    );
+  // add label for minor arcs
+  // .call((text) =>
+  //   text
+  //     .filter((d) => !isMajorArc(d))
+  //     .attr("x", 0)
+  //     .attr("y", (d) => (isMajorArc(d) ? "0.7em" : "0em"))
+  //     .attr("fill-opacity", 0.7)
+  //     .attr("text-anchor", (d))
+  //     .attr("stroke-width", 0)
+  //     .attr("transform", (d) => {
+  //       const c = minorLabelArc.centroid(d);
+  //       console.debug(d.data, c);
+  //       return `translate(${c})`;
+  //     })
+  //     .text(`hi`)
+  //     // .text(`${minorLabelText}: ${majorLabelText}`)
+  // );
 
   return svg.node();
 }

@@ -19,6 +19,7 @@ export function circleLegend(
     radius = 5,
     lineSeparation = 25,
     fontSize = 12,
+    fontWeight = "normal",
     fontColor = "white",
     strokeColor = "white",
     strokeWidth = 0.5,
@@ -58,6 +59,7 @@ export function circleLegend(
     .selectAll("text")
     .data(data)
     .join("text")
+    .style("font-weight", fontWeight)
     .attr("x", radius * 2 + 5)
     .attr("y", (_d, i) => radius * 2 + i * lineSeparation)
     .text(text);
