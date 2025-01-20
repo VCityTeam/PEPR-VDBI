@@ -18,7 +18,11 @@ import {
   resolveProjectEntities,
 } from "./components/240108-proposals-keywords.js";
 import { mapEntitiesToGraph } from "./components/force-graph.js";
-import { mapCounts, mergeCounts, countEntities } from "./components/utilities.js";
+import {
+  mapCounts,
+  mergeCounts,
+  countEntities
+} from "./components/utilities.js";
 ```
 
 ```js
