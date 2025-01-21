@@ -21,7 +21,7 @@ import {
 ```
 
 ```js
-const debug = true;
+const debug = false;
 const workbook1 = FileAttachment(
   // "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
   "./data/241021 PEPR_VBDI_analyse modifiée JYT.xlsx"
@@ -34,6 +34,13 @@ if (debug) {
   display("phase_2_data.researchers");
   display(phase_2_data.researchers);
 }
+
+// global search //
+const global_search_input = Inputs.search(phase_2_data.researchers, {
+  placeholder: "Search dataset..."
+});
+
+const global_search = Generators.input(global_search_input);
 ```
 
 ```js
@@ -43,7 +50,7 @@ const value = Generators.input(input);
 
 ```js
 // Researcher table //
-const researcher_search_input = Inputs.search(phase_2_data.researchers, {
+const researcher_search_input = Inputs.search(global_search, {
   placeholder: "Search researchers..."
 });
 
@@ -91,7 +98,7 @@ const researcher_table = Inputs.table(researcher_search, {
 ```js
 // ERC Discipline count //
 const discipline_erc_count = countEntities(
-    phase_2_data.researchers,
+    global_search,
     (d) => d.discipline_erc
   )
   .filter((d) => d.entity != "non renseignée" && d.entity != "Non Renseigné")
@@ -106,7 +113,7 @@ const discipline_erc_pie = donutChart(discipline_erc_count, {
 ```js
 // Discipline count //
 const discipline_count = countEntities(
-  phase_2_data.researchers,
+  global_search,
   (d) => d.disciplines
 ).sort((a, b) => d3.descending(a.count, b.count));
 
@@ -120,7 +127,7 @@ const discipline_search = Generators.input(discipline_search_input);
 ```js
 const discipline_plot = Plot.plot({
   width: 450,
-  height: discipline_search.length * 20,
+  height: (discipline_search.length + 1) * 20,
   marginTop: 30,
   marginLeft: 100,
   color: {
@@ -157,7 +164,7 @@ const discipline_plot = Plot.plot({
 ```js
 // CNU count //
 const cnu_count = d3.rollups(
-    phase_2_data.researchers,
+    global_search,
     (d) => d.length,
     (d) => d.cnu
   )
@@ -211,31 +218,25 @@ const cnu_plot = Plot.plot({
     ),
   ],
 });
-display("cnu_search.length");
-display(cnu_search.length);
 ```
 
 ```js
 // Position count //
 const position_count = d3.rollups(
-    phase_2_data.researchers,
+    global_search,
     (d) => d.length,
     (d) => d.position
   )
   .filter((d) => d[0] != null)
   .sort((a, b) => d3.descending(a[1], b[1]));
-
-const position_search_input = Inputs.search(position_count, {
-  placeholder: "Search Positions..."
-});
-
-const position_search = Generators.input(position_search_input);
 ```
 
 ```js
 const position_pie = donutChart(position_count, {
   width: 700,
-  fontSize: 18
+  fontSize: 18,
+  keyMap: (d) => d[0],
+  valueMap: (d) => d[1],
 });
 ```
 
@@ -252,13 +253,15 @@ if (debug) {
 }
 ```
 
-<div class="tip" label="Data visualization policy">
-  Pie charts:
+<div class="warning" label="Data visualization policy">
   <ul>
     <li>Researchers with multiple disciplines are counted once per discipline.</li>
-    <li>Pie charts do not include missing researcher data by default.</li>
+    <li>Missing researcher data is not visualized by default.</li>
   </ul>
 </div>
+
+### Dashboard Search
+<div>${global_search_input}</div>
 
 <div class="grid grid-cols-3">
   <div class="card grid-colspan-2">
@@ -272,14 +275,15 @@ if (debug) {
   </div>
   <div class="card grid-colspan-1">
     <h2>CNUs</h2>
-    <div style="padding: 5px">${cnu_search_input}</div>
+    <div style="padding-bottom: 5px">${cnu_search_input}</div>
     <div style="max-height: 350px; overflow: auto">${cnu_plot}</div>
   </div>
   <div class="card grid-colspan-2 grid-rowspan-2">
     Researcher map
   </div>
   <div class="card grid-colspan-1">
-    positions
+    <h2>Position/status</h2>
+    <div>${position_pie}</div>
   </div>
   <div class="card grid-colspan-2">
     Graph, arc diagram; group by discipline, position, CNU, partner
@@ -294,10 +298,3 @@ if (debug) {
   
   
 </div>
-
-<!--
-TODO:
-- pie -> %
-- add notes for data modifications
-- dont show 
--->
