@@ -24,7 +24,7 @@ import {
 ```
 
 ```js
-const debug = true;
+const debug = false;
 const anonymize = false;
 const anonymizeDict = new Map();
 
@@ -320,7 +320,9 @@ const filtered_project_data = filterOnInput(
 
 ```js
 // create search input
-const project_search_input = Inputs.search(filtered_project_data, { placeholder: "Search projects..." })
+const project_search_input = Inputs.search(filtered_project_data, {
+  placeholder: "Search projects..."
+});
 const projects_search = Generators.input(project_search_input);
 // display(projects_search);
 ```

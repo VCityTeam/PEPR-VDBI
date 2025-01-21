@@ -5,10 +5,6 @@ export default {
   theme: 'dark',
   pages: [
     {
-      name: 'Phase 1 Overview',
-      path: 'phase1-dashboard',
-    },
-    {
       name: 'Phase 2 Overview',
       path: 'phase2-overview-dashboard',
     },
@@ -46,6 +42,10 @@ export default {
         {
           name: 'Import dataESR Tests',
           path: '/test-esr-import',
+        },
+        {
+          name: 'Phase 1 Overview Test',
+          path: 'phase1-dashboard',
         },
         {
           name: 'Import ORCID Tests',
