@@ -26,10 +26,10 @@ export function donutChart(
     // sort = (a, b) => d3.descending(a.count, b.count),
     fontSize = 12,
     fontFamily = "sans-serif",
-    strokeColor = "white",
-    strokeWidth = 0.5,
+    strokeColor = "black",
+    strokeWidth = 1,
     strokeOpacity = 0.5,
-    fill = "black",
+    fill = "white",
     fillOpacity = 1,
     majorLabelText = (d) => keyMap(d.data),
     minorLabelText = (d) =>
@@ -71,15 +71,11 @@ export function donutChart(
   const pie = d3
     .pie()
     .padAngle(1 / radius)
-    .sort(sort)
     .value(valueMap);
   const pieData = pie(data);
   console.debug(pieData);
 
-  const cuttoffData = pieData
-    .filter((d) => !isMajorArc(d))
-    .map((d) => d.data)
-    .sort(sort);
+  const cuttoffData = pieData.filter((d) => !isMajorArc(d)).map((d) => d.data);
 
   const svg = d3
     .create("svg")
@@ -109,9 +105,7 @@ export function donutChart(
           lineSeparation: 25,
           // if the key in the legend is the same as the mouseovered arc, bold the text
           fontWeight: (d2) =>
-            keyMap(d2) == keyMap(d.data)
-              ? "bold"
-              : "normal",
+            keyMap(d2) == keyMap(d.data) ? "bold" : "normal",
         });
         tooltip.appendChild(legend);
       } else {
@@ -136,6 +130,45 @@ export function donutChart(
       tooltip.parentNode.removeChild(tooltip);
       d3.select(event.target).attr("stroke-width", 0);
     });
+
+  // TODO: add configuration options for label background placement and sizing
+ 
+  // add major label background
+  svg
+    .append("g")
+    .attr("fill", "black")
+    .attr("fill-opacity", 0.5)
+    .selectAll()
+    .data(pieData)
+    .join("rect")
+    .attr("transform", (d) => `translate(${arc.centroid(d)})`)
+    .call((rect) => 
+      rect
+        .filter((d) => isMajorArc(d))
+        .attr("x", (d) => `-${majorLabelText(d).length / 3}em`)
+        .attr("y", "-2em")
+        .attr("width", (d) => `${majorLabelText(d).length * 0.67}em`)
+        .attr("height", "2em")
+        .attr("rx", "0.5em")
+        .attr("ry", "0.5em")
+    );
+
+  // add minor label background
+  svg
+    .append("g")
+    .attr("fill", "black")
+    .attr("fill-opacity", 0.5)
+    .selectAll()
+    .data(pieData)
+    .join("rect")
+    .attr("transform", (d) => `translate(${arc.centroid(d)})`)
+    .call((rect) => 
+      rect
+        .filter((d) => isMajorArc(d))
+        .attr("x", (d) => `-${minorLabelText(d).length / 2.5}em`)
+        .attr("width", (d) => `${minorLabelText(d).length * 0.82}em`)
+        .attr("height", "1.2em")
+    );
 
   svg
     .append("g")
