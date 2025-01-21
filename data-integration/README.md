@@ -14,6 +14,7 @@ Tests for converting unstructured text to structured text
       - [1.2.1.1. Test: simple keyword extraction in french](#1211-test-simple-keyword-extraction-in-french)
       - [1.2.1.2. Test: simple keyword extraction in english](#1212-test-simple-keyword-extraction-in-english)
       - [1.2.1.3. Test: Ollama server+python](#1213-test-ollama-serverpython)
+      - [1.2.1.4 Test: Pagoda LIRIS Ollama Service](#1214-test-pagoda-liris-ollama-service)
     - [1.2.2. Workflow](#122-workflow)
       - [1.2.2.1. Test: Initial Python data workflow](#1221-test-initial-python-data-workflow)
       - [1.2.2.2. Test: Structured Python data workflow](#1222-test-structured-python-data-workflow)
@@ -67,13 +68,13 @@ inspired from [GGE perplexity tests](./Tests_IA.md)
 
 **Tentative candidates:**
 
-| Tool/library                                                                                          | Type                              | Comment                            |
-| ----------------------------------------------------------------------------------------------------- | --------------------------------- | ---------------------------------- |
-| [pypdf](https://github.com/py-pdf/pypdf)                                                              | Python Library                    |                                    |
-| [Langchain+Ollama](https://github.com/ollama/ollama/tree/main/examples/langchain-python-rag-document) | Python Library                    |                                    |
-| [RAGFlow](https://github.com/infiniflow/ragflow)                                                      | CLI (Command line interface) tool |                                    |
-| [marker-pdf](https://pypi.org/project/marker-pdf/)                                                    | Python Library                    | a pipeline of deep-learning models |
-| [pd3f](https://github.com/pd3f/pd3f)                                                                  | CLI tool                          | no french support? Is it mature?   |
+| Tool/library                                                                                            | Type                              | Comment                            |
+| ------------------------------------------------------------------------------------------------------- | --------------------------------- | ---------------------------------- |
+| [pypdf](https://github.com/py-pdf/pypdf)                                                                | Python Library                    |                                    |
+| [Langchain+Ollama](https://github.com/ollama/ollama/tree/v0.5.5/examples/langchain-python-rag-document) | Python Library                    |                                    |
+| [RAGFlow](https://github.com/infiniflow/ragflow)                                                        | CLI (Command line interface) tool |                                    |
+| [marker-pdf](https://pypi.org/project/marker-pdf/)                                                      | Python Library                    | a pipeline of deep-learning models |
+| [pd3f](https://github.com/pd3f/pd3f)                                                                    | CLI tool                          | no french support? Is it mature?   |
 
 > [!NOTE]
 > On **Windows**, when exporting text files from other programs or writing to files from python, keep in mind that the **UTF-8** encoding is not always used.
@@ -241,12 +242,48 @@ ollama serve & # launch ollama server in the background
 python src/ollama_test.py \
   test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt \
   test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe_out.txt \
-  "Donner le liste des projets décrits" \
+  "Donner le liste des projets décrits"
 ```
 
 > [!TIP]
 > - The test script can be customized. Use `python src/ollama_test.py -h` to see the documentation. 
 > - Also, you can use just `ollama serve` (without the `&`) in another terminal session to be able to view ollama API calls in real time
+
+#### 1.2.1.4 Test: Pagoda LIRIS Ollama Service 
+This test will examine the functionality of the [Ollama service hosted with on the Pagoda3](https://ollama-ui.pagoda.liris.cnrs.fr/).
+As instructed by [Olivier MBAREK](mailto:olivier.mbarek@univ-lyon1.fr), the http interface is accesible with the Ollama Python library (see test [1.2.1.3](#1213-test-ollama-serverpython)). 
+
+> The interface [Ollama-UI] is that of the OpenWebui project in its latest version (0.5.4), but it is evolving rapidly.
+> This interface also allows you to use the ollama APIs via a token key.
+>
+> This token is available in the account settings (settings -> Account -> API keys).
+> 
+> APIs for routes are documented at https://ollama-ui.pagoda.liris.cnrs.fr/docs, but only work on Chrome/Chromium and similar.
+> 
+> If you wish to use the ollama python client (ollama-python)
+> you need to configure the client as follows.
+> 
+> Translated with DeepL.com (free version)
+
+The following client configuration is used, where the `[JWT token]` string is replaced by a valid JWT token:
+```py
+from ollama import Client
+
+client = Client(
+    host='https://ollama-ui.pagoda.liris.cnrs.fr/ollama',
+    headers={'Authorization': 'Bearer [JWT token]'}
+)
+```
+
+The [ollama_test.py](src/ollama_test.py) script is adapted to use this code with if a hostname and token are provided:
+```bash
+python src/ollama_test.py \
+  --host https://ollama-ui.pagoda.liris.cnrs.fr/ollama \
+  --token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NmRkMzg4LWVhMjktNDkwYy1iZjBiLTZiNWRhYjU3YWMzZSJ9.0i9iXyyuLaD3EkBVzd8dQXwUoNmv65JDSNxSn4G-tCc \
+  test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt \
+  test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe_out.txt \
+  "Donner le liste des projets décrits"
+```
 
 ### 1.2.2. Workflow
 
@@ -358,7 +395,7 @@ TODO: run test and add notes
 
 #### 1.2.3.1. Test: Langchain with pdf local document 
 
-Code adapted from the ollama [langchain-python-rag-document](https://github.com/ollama/ollama/tree/main/examples/langchain-python-rag-document) example.
+Code adapted from the ollama [langchain-python-rag-document](https://github.com/ollama/ollama/tree/v0.5.5/examples/langchain-python-rag-document) example.
 Test Langchain for RAG ollama queries with workspace configuration.
 
 Summary of results:
@@ -835,7 +872,7 @@ How to leverage AI in:
 | Model                                               | Company                                             | Pricing                                                                                                                                                                                                          |
 | --------------------------------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | ChatGPT                                             | OpenAI (Microsoft)                                  | [pricing](https://openai.com/chatgpt/pricing) starts at 25$ / month                                                                                                                                              |
-| [OLLaMa](https://github.com/ollama/ollama-python)   | <li>Open source project<li>Based on LLaMa from Meta | A **free** version of LLaMa                                                                                                                                                                                      |
+| [OLLaMa](https://github.com/ollama/ollama)   | <li>Open source project<li>Based on LLaMa from Meta | A **free** version of LLaMa                                                                                                                                                                                      |
 | Gemini                                              | Google                                              | [pay as you go](https://ai.google.dev/pricing)<li>5 RPM (requests per minute)<li>10 million TPM (tokens per minute)<li>2,000 RPD (requests per day)<li>[API TOS](https://ai.google.dev/terms) (terms of service) |
 | Claude                                              | Anthropic                                           | No official private servers<li>[Consumer TOS](https://www.anthropic.com/legal/consumer-terms)<li>[Commercial TOS](https://www.anthropic.com/legal/commercial-terms)                                              |
 | Perplexity (based on ChatGPT/supports other models) | Perplexity                                          | No official private servers ([FAQ](https://docs.perplexity.ai/page/frequently-asked-questions), [TOS](https://www.perplexity.ai/hub/legal/perplexity-ai-api-privacy))                                            |
