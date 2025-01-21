@@ -42,6 +42,7 @@ const value = Generators.input(input);
 ```
 
 ```js
+// Researcher table //
 const researcher_search_input = Inputs.search(phase_2_data.researchers, {
   placeholder: "Search researchers..."
 });
@@ -50,7 +51,6 @@ const researcher_search = Generators.input(researcher_search_input);
 ```
 
 ```js
-// Researcher table //
 const researcher_table = Inputs.table(researcher_search, {
   height: 350,
   columns: [
@@ -89,7 +89,7 @@ const researcher_table = Inputs.table(researcher_search, {
 ```
 
 ```js
-// Discipline ERC count //
+// ERC Discipline count //
 const discipline_erc_count = countEntities(
     phase_2_data.researchers,
     (d) => d.discipline_erc
@@ -120,7 +120,7 @@ const discipline_search = Generators.input(discipline_search_input);
 ```js
 const discipline_plot = Plot.plot({
   width: 450,
-  height: discipline_count.length * 20,
+  height: discipline_search.length * 20,
   marginTop: 30,
   marginLeft: 100,
   color: {
@@ -136,10 +136,10 @@ const discipline_plot = Plot.plot({
     axis: "top",
     label: "Occurences",
     // ticks: 5,
-    // domain: [0, Math.max(...discipline_count.map((d) => d.count)) + 1],
+    // domain: [0, Math.max(...discipline_search.map((d) => d.count)) + 1],
   },
   marks: [
-    Plot.barX(discipline_count, {
+    Plot.barX(discipline_search, {
       y: "entity",
       x: "count",
       fill: "count",
@@ -147,7 +147,7 @@ const discipline_plot = Plot.plot({
       tip: {format: {fill: false}}
     }),
     Plot.barX(
-      discipline_count, 
+      discipline_search, 
       Plot.pointerY({x: "count", y: "entity"}),
     ),
   ],
@@ -174,7 +174,6 @@ const cnu_search = Generators.input(cnu_search_input);
 ```js
 const cnu_plot = Plot.plot({
   width: 450,
-  height: cnu_count.length * 20,
   marginTop: 50,
   marginLeft: 100,
   color: {
@@ -190,10 +189,10 @@ const cnu_plot = Plot.plot({
     axis: "top",
     label: "Occurences",
     // ticks: 5,
-    // domain: [0, Math.max(...cnu_count.map((d) => d.count)) + 1],
+    // domain: [0, Math.max(...cnu_search.map((d) => d.count)) + 1],
   },
   marks: [
-    Plot.barX(cnu_count, {
+    Plot.barX(cnu_search, {
       y: (d) => d[0],
       x: (d) => d[1],
       fill: (d) => d[1],
@@ -207,20 +206,37 @@ const cnu_plot = Plot.plot({
       }
     }),
     Plot.barX(
-      cnu_count, 
+      cnu_search, 
       Plot.pointerY({x: (d) => d[1], y: (d) => d[0]}),
     ),
   ],
 });
+display("cnu_search.length");
+display(cnu_search.length);
+```
 
-// const cnu_pie = donutChart(cnu_count, {
-//   width: 700,
-//   keyMap: (d) => d[0],
-//   valueMap: (d) => d[1],
-//   // sort: (a, b) => d3.descending(a[1], b[1]),
-//   fontSize: 18,
-//   majorLabelText: (d) => d.data[0] != null ? `CNU ${d.data[0].split(" ")[0]}` : "N/A",
-// });
+```js
+// Position count //
+const position_count = d3.rollups(
+    phase_2_data.researchers,
+    (d) => d.length,
+    (d) => d.position
+  )
+  .filter((d) => d[0] != null)
+  .sort((a, b) => d3.descending(a[1], b[1]));
+
+const position_search_input = Inputs.search(position_count, {
+  placeholder: "Search Positions..."
+});
+
+const position_search = Generators.input(position_search_input);
+```
+
+```js
+const position_pie = donutChart(position_count, {
+  width: 700,
+  fontSize: 18
+});
 ```
 
 ```js
@@ -231,6 +247,8 @@ if (debug) {
   display(discipline_erc_count);
   display("cnu_count");
   display(cnu_count);
+  display("position_count");
+  display(position_count);
 }
 ```
 
@@ -245,7 +263,7 @@ if (debug) {
 <div class="grid grid-cols-3">
   <div class="card grid-colspan-2">
     <h2>Researchers</h2>
-    <div style="padding: 5px">${researcher_search_input}</div>
+    <div style="padding-bottom: 5px">${researcher_search_input}</div>
     <div>${researcher_table}</div>
   </div>
   <div class="card grid-colspan-1">
@@ -253,20 +271,23 @@ if (debug) {
     <div>${discipline_erc_pie}</div>
   </div>
   <div class="card grid-colspan-1">
-    <h2>Disciplines</h2>
-    <div style="padding: 5px">${discipline_search_input}</div>
-    <div style="max-height: 350px; overflow: auto">${discipline_plot}</div>
+    <h2>CNUs</h2>
+    <div style="padding: 5px">${cnu_search_input}</div>
+    <div style="max-height: 350px; overflow: auto">${cnu_plot}</div>
   </div>
   <div class="card grid-colspan-2 grid-rowspan-2">
     Researcher map
   </div>
   <div class="card grid-colspan-1">
-    <h2>CNUs</h2>
-    <div style="padding: 5px">${cnu_search_input}</div>
-    <div style="max-height: 350px; overflow: auto">${cnu_plot}</div>
+    positions
   </div>
-  <div class="card grid-colspan-3 grid-rowspan-1">
+  <div class="card grid-colspan-2">
     Graph, arc diagram; group by discipline, position, CNU, partner
+  </div>
+  <div class="card grid-colspan-1">
+    <h2>Disciplines</h2>
+    <div style="padding-bottom: 5px">${discipline_search_input}</div>
+    <div style="max-height: 350px; overflow: auto">${discipline_plot}</div>
   </div>
 </div>
 <div class="grid grid-cols-2">
