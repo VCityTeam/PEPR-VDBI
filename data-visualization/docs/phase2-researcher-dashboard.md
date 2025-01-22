@@ -18,21 +18,37 @@ import {
 import {
   donutChart
 } from "./components/pie-chart.js";
+import {
+  azimuthalEquidistantProjection
+} from "./components/projection-map.js";
 ```
 
 ```js
-const debug = false;
+const debug = true;
+
 const workbook1 = FileAttachment(
   // "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
   "./data/241021 PEPR_VBDI_analyse modifiée JYT.xlsx"
 ).xlsx();
+
+const geocoded_researcher_sites = FileAttachment(
+  "./data/researcher_sites.geocoded.csv"
+).csv();
+
+const world = FileAttachment("./data/world.json").json();
 ```
 
 ```js
+// format data
 const phase_2_data = extractPhase2Workbook(workbook1, false);
+const land = topojson.feature(world, world.objects.land);
+const borders = topojson.mesh(world, world.objects.countries, (a, b) => a !== b);
+
 if (debug) {
   display("phase_2_data.researchers");
   display(phase_2_data.researchers);
+  display("geocoded_researcher_sites");
+  display(geocoded_researcher_sites);
 }
 
 // global search //
@@ -241,6 +257,24 @@ const position_pie = donutChart(position_count, {
 ```
 
 ```js
+// researcher projection map //
+const geocoded_researcher_sites_by_city = d3.groups(
+  geocoded_researcher_sites.filter((d) => d.result_status == "ok"),
+  (d) => d.result_city
+);
+
+const researcher_sites_by_city_plot = azimuthalEquidistantProjection(
+  geocoded_researcher_sites_by_city,
+  land,
+  borders,
+  {
+    width: 800,
+    height: 800,
+  }
+);
+```
+
+```js
 if (debug) {
   display("discipline_count");
   display(discipline_count);
@@ -250,13 +284,18 @@ if (debug) {
   display(cnu_count);
   display("position_count");
   display(position_count);
+  display("geocoded_researcher_sites_by_city");
+  display(geocoded_researcher_sites_by_city);
 }
 ```
 
 <div class="warning" label="Data visualization policy">
   <ul>
     <li>Researchers with multiple disciplines are counted once per discipline.</li>
-    <li>Missing researcher data is not visualized by default.</li>
+    <li>
+      Missing researcher data is not visualized by default.
+      This includes researchers that could not be geolocated.
+    </li>
   </ul>
 </div>
 
@@ -279,7 +318,8 @@ if (debug) {
     <div style="max-height: 350px; overflow: auto">${cnu_plot}</div>
   </div>
   <div class="card grid-colspan-2 grid-rowspan-2">
-    Researcher map
+    <h2>Researcher Sites</h2>
+    <div style="">${researcher_sites_by_city_plot}</div>
   </div>
   <div class="card grid-colspan-1">
     <h2>Position/status</h2>

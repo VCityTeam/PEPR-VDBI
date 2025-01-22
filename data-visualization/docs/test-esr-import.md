@@ -31,6 +31,28 @@ Interesting datasets:
 French geocoding service:
 - [Géocoder un fichier CSV](https://adresse.data.gouv.fr/csv)
 
+<div class="caution">Since 2025 the proposed <a href="https://adresse.data.gouv.fr/csv">french geocoding service</a> has changed API! The resulting output fields use the following structure (as of 22/01/2025):
+  <ul>
+    <li>latitude</li>
+    <li>longitude</li>
+    <li>result_score</li>
+    <li>result_score_next</li>
+    <li>result_label</li>
+    <li>result_type</li>
+    <li>result_id</li>
+    <li>result_housenumber</li>
+    <li>result_name</li>
+    <li>result_street</li>
+    <li>result_postcode</li>
+    <li>result_city</li>
+    <li>result_context</li>
+    <li>result_citycode</li>
+    <li>result_oldcitycode</li>
+    <li>result_oldcity</li>
+    <li>result_district</li>
+    <li>result_status</li>
+  </ul>
+</div>
 
 # Visualization results
 
@@ -51,10 +73,13 @@ const geocoded_research_structures = FileAttachment("./data/fr-esr-structures-re
 const world = FileAttachment("./data/world.json").json();
 ```
 
-```js
+```js echo
 const geocoded_research_structures_by_city = d3.groups(geocoded_research_structures, d => d.commune);
 const land = topojson.feature(world, world.objects.land);
 const borders = topojson.mesh(world, world.objects.countries, (a, b) => a !== b);
+```
+
+```js
 display("geocoded_research_structures");
 display(geocoded_research_structures);
 display("geocoded_research_structures_by_city");
@@ -83,6 +108,12 @@ const france_lat = Generators.input(france_lat_input);
 const france_lon = Generators.input(france_lon_input);
 const france_zoom = Generators.input(france_zoom_input);
 ```
+
+## Globe view
+<!-- 
+<div>Latitude: ${globe_lat_input}</div>
+<div>Longitude: ${globe_lon_input}</div> -->
+<div>${globe_plot}</div>
 
 ```js echo
 const dots = Plot.dot(
@@ -137,7 +168,16 @@ const globe_plot = Plot.plot({
     dots
   ]
 });
+```
 
+## France view
+
+<div>Latitude: ${france_lat_input}</div>
+<div>Longitude: ${france_lon_input}</div>
+<div>Zoom: ${france_zoom_input}</div>
+<div>${france_plot}</div>
+
+```js echo
 const france_circle_domain = d3.geoCircle().center([france_lat, france_lon]).radius(france_zoom)();
 
 const france_plot = Plot.plot({
@@ -155,7 +195,13 @@ const france_plot = Plot.plot({
     dots
   ]
 });
+```
 
+## France view grouped by city
+
+<div>${france_city_plot}</div>
+
+```js echo
 const france_city_circle_domain = d3.geoCircle().center([2, 47]).radius(5)();
 
 const france_city_plot = Plot.plot({
@@ -201,22 +247,3 @@ const france_city_plot = Plot.plot({
   ]
 });
 ```
-
-## Globe view
-<!-- 
-<div>Latitude: ${globe_lat_input}</div>
-<div>Longitude: ${globe_lon_input}</div> -->
-<div>${globe_plot}</div>
-
-
-## France view
-
-<div>Latitude: ${france_lat_input}</div>
-<div>Longitude: ${france_lon_input}</div>
-<div>Zoom: ${france_zoom_input}</div>
-<div>${france_plot}</div>
-
-
-## France view grouped by city
-
-<div>${france_city_plot}</div>
