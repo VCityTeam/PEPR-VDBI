@@ -40,7 +40,7 @@ export default {
           path: '/test-excel-import',
         },
         {
-          name: 'Import dataESR Tests',
+          name: 'Import dataESR+Geospatial Tests',
           path: '/test-esr-import',
         },
         {
