@@ -146,9 +146,9 @@ export function donutChart(
       rect
         .filter((d) => isMajorArc(d))
         .attr("x", (d) => `-${majorLabelText(d).length / 3}em`)
-        .attr("y", "-2em")
+        .attr("y", "-1.9em")
         .attr("width", (d) => `${majorLabelText(d).length * 0.67}em`)
-        .attr("height", "2em")
+        .attr("height", "1.8em")
         .attr("rx", "0.5em")
         .attr("ry", "0.5em")
     );
@@ -166,8 +166,9 @@ export function donutChart(
       rect
         .filter((d) => isMajorArc(d))
         .attr("x", (d) => `-${minorLabelText(d).length / 2.5}em`)
+        .attr("y", "-0.1em")
         .attr("width", (d) => `${minorLabelText(d).length * 0.82}em`)
-        .attr("height", "1.2em")
+        .attr("height", "1.3em")
     );
 
   svg
