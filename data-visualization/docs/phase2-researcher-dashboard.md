@@ -24,7 +24,7 @@ import {
 ```
 
 ```js
-const debug = true;
+const dev_mode = view(Inputs.toggle({label: "Developper Mode", value: false}));
 
 const workbook1 = FileAttachment(
   // "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
@@ -44,7 +44,7 @@ const phase_2_data = extractPhase2Workbook(workbook1, false);
 const land = topojson.feature(world, world.objects.land);
 const borders = topojson.mesh(world, world.objects.countries, (a, b) => a !== b);
 
-if (debug) {
+if (dev_mode) {
   display("phase_2_data.researchers");
   display(phase_2_data.researchers);
   display("geocoded_researcher_sites");
@@ -57,11 +57,6 @@ const global_search_input = Inputs.search(phase_2_data.researchers, {
 });
 
 const global_search = Generators.input(global_search_input);
-```
-
-```js
-const input = Inputs.range([0, 1], {step: 0.1});
-const value = Generators.input(input);
 ```
 
 ```js
@@ -275,7 +270,7 @@ const researcher_sites_by_city_plot = azimuthalEquidistantProjection(
 ```
 
 ```js
-if (debug) {
+if (dev_mode) {
   display("discipline_count");
   display(discipline_count);
   display("discipline_erc_count");
