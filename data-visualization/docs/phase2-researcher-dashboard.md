@@ -19,12 +19,12 @@ import {
   donutChart
 } from "./components/pie-chart.js";
 import {
-  azimuthalEquidistantProjection
+  projectionMap
 } from "./components/projection-map.js";
 ```
 
 ```js
-const dev_mode = view(Inputs.toggle({label: "Developper Mode", value: false}));
+const dev_mode = view(Inputs.toggle({label: "Developer Mode", value: false}));
 
 const workbook1 = FileAttachment(
   // "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
@@ -41,8 +41,6 @@ const world = FileAttachment("./data/world.json").json();
 ```js
 // format data
 const phase_2_data = extractPhase2Workbook(workbook1, false);
-const land = topojson.feature(world, world.objects.land);
-const borders = topojson.mesh(world, world.objects.countries, (a, b) => a !== b);
 
 if (dev_mode) {
   display("phase_2_data.researchers");
@@ -258,13 +256,15 @@ const geocoded_researcher_sites_by_city = d3.groups(
   (d) => d.result_city
 );
 
-const researcher_sites_by_city_plot = azimuthalEquidistantProjection(
+const researcher_sites_by_city_plot = projectionMap(
   geocoded_researcher_sites_by_city,
-  land,
-  borders,
   {
     width: 800,
     height: 800,
+    borderList: [
+      topojson.feature(world, world.objects.land),
+      topojson.mesh(world, world.objects.countries, (a, b) => a !== b)
+    ],
   }
 );
 ```
