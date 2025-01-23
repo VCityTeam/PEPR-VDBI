@@ -49,7 +49,7 @@ import {
   getProductSheet,
   resolveProjectEntities,
 } from "./components/240108-proposals-keywords.js";
-import { mapEntitiesToGraph } from "./components/force-graph.js";
+import { mapProjectsToRDFGraph } from "./components/graph.js";
 import { mapCounts, mergeCounts } from "./components/utilities.js";
 ```
 
@@ -170,7 +170,7 @@ display(
 <!--
 Map table to graph first
 ```js echo
-const phase_1_graph = mapEntitiesToGraph(projects_phase_1);
+const phase_1_graph = mapProjectsToRDFGraph(projects_phase_1);
 display(phase_1_graph);
 ``` -->
 

@@ -44,10 +44,10 @@ import {
   projectColorMap,
 } from "./components/240108-proposals-keywords.js";
 import {
-  mapEntitiesToGraph,
+  mapProjectsToRDFGraph,
   filterLinks,
   forceGraph,
-} from "./components/force-graph.js";
+} from "./components/graph.js";
 
 const workbook1 = FileAttachment(
   "./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
@@ -92,7 +92,7 @@ Once integrated the following information is desired for visualization:
 ... We can also map the data to a graph hierarchy
 
 ```js echo
-const productGraph = mapEntitiesToGraph(productData, projectColorMap);
+const productGraph = mapProjectsToRDFGraph(productData, projectColorMap);
 display(productGraph);
 ```
 
