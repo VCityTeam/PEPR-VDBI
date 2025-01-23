@@ -21,10 +21,17 @@ import {
 import {
   projectionMap
 } from "./components/projection-map.js";
+import {
+  arcDiagramVertical,
+  mapTableToPropertyGraph
+} from "./components/graph.js";
 ```
 
 ```js
 const dev_mode = view(Inputs.toggle({label: "Developer Mode", value: false}));
+
+// function for filtering out unknown values
+const exclude = (d) => ![null, "non renseignée", "Non connue", "Non Renseigné"].includes(d);
 
 const workbook1 = FileAttachment(
   // "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
@@ -110,7 +117,7 @@ const discipline_erc_count = countEntities(
     global_search,
     (d) => d.discipline_erc
   )
-  .filter((d) => d.entity != "non renseignée" && d.entity != "Non Renseigné")
+  .filter((d) => exclude(d.entity))
   .sort((a, b) => d3.descending(a.count, b.count));
 
 const discipline_erc_pie = donutChart(discipline_erc_count, {
@@ -177,7 +184,7 @@ const cnu_count = d3.rollups(
     (d) => d.length,
     (d) => d.cnu
   )
-  .filter((d) => d[0] != null)
+  .filter((d) => exclude(d[0]))
   .sort((a, b) => d3.descending(a[1], b[1]));
 
 const cnu_search_input = Inputs.search(cnu_count, {
@@ -236,7 +243,7 @@ const position_count = d3.rollups(
     (d) => d.length,
     (d) => d.position
   )
-  .filter((d) => d[0] != null)
+  .filter((d) => exclude(d[0]))
   .sort((a, b) => d3.descending(a[1], b[1]));
 ```
 
@@ -267,6 +274,13 @@ const researcher_sites_by_city_plot = projectionMap(
     ],
   }
 );
+const miserables = FileAttachment("./data/miserables.json").json();
+```
+
+```js
+const researcher_graph = mapTableToPropertyGraph(global_search, "fullname");
+
+const arc_diagram = arcDiagramVertical(miserables);
 ```
 
 ```js
@@ -281,6 +295,8 @@ if (dev_mode) {
   display(position_count);
   display("geocoded_researcher_sites_by_city");
   display(geocoded_researcher_sites_by_city);
+  display("researcher_graph");
+  display(researcher_graph);
 }
 ```
 
@@ -320,16 +336,14 @@ if (dev_mode) {
     <h2>Position/status</h2>
     <div>${position_pie}</div>
   </div>
-  <div class="card grid-colspan-2">
-    Graph, arc diagram; group by discipline, position, CNU, partner
+  <div class="card grid-colspan-2 grid-rowspan-3">
+    <!-- Graph, arc diagram; group by discipline, position, CNU, partner -->
+    <h2>Researcher Knowledge Graph</h2>
+    <div>${arc_diagram}</div>
   </div>
   <div class="card grid-colspan-1">
     <h2>Disciplines</h2>
     <div style="padding-bottom: 5px">${discipline_search_input}</div>
     <div style="max-height: 350px; overflow: auto">${discipline_plot}</div>
   </div>
-</div>
-<div class="grid grid-cols-2">
-  
-  
 </div>
