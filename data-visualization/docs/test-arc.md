@@ -1,0 +1,128 @@
+---
+title: Property graph and arc diagram test
+theme: dark
+---
+
+# Visualize Workbook data using Graphs
+
+Visualize the researcher sheet from the phase 2 Excel document using [arc diagrams](https://observablehq.com/@d3/arc-diagram).
+
+## Data integration process
+
+Take a tabluar data structure and transform the table into a graph formalism.
+To do this, we need to set up a component to transform the data.
+
+```mermaid
+flowchart TD
+
+    subgraph "Workbook"
+        BA[Sheet: researchers]
+        BB[Sheet ...]
+        BC[Sheet n]
+    end
+    BA -->|Load| C
+    subgraph Web Application
+        C["Array (of objects)"] -->|Transform| GF[Property graph formalism]
+        GF -->|Load| G(Arc Diagram)
+    end
+```
+
+```js
+import {
+  countEntities,
+  cropText
+} from "./components/utilities.js";
+import {
+  extractPhase2Workbook,
+} from "./components/phase2-dashboard.js";
+import {
+  arcDiagramVertical,
+  mapTableToPropertyGraphLinks
+} from "./components/graph.js";
+
+const workbook = FileAttachment(
+  "./data/241021 PEPR_VBDI_analyse modifiée JYT.xlsx"
+).xlsx();
+```
+
+### Input data
+
+Using the transformation proposed in the imported components we can extract the tabular workbook data and resolve known entities.
+For this experiment we will use the researcher table.
+
+<div class="tip">
+  Large datasets can be hard to visualize with arc diagrams which tend to list nodes linearly in a single dimension.
+</div>
+
+To reduce the amount of information displayed we apply a filter to retain only researchers from the `VF++` project.
+
+```js echo
+const anonymize = false;
+const anonymizeDict = new Map();
+const researcher_data = extractPhase2Workbook(workbook, false)
+  .researchers.filter((d) => d.project.includes("VF++"));
+```
+
+```js
+display(researcher_data);
+```
+
+## Transformation to Property Graph
+
+Map the elements of an array of objects (a table) to a graph with the following rules:
+- Each object (row) is treated as a node with the properties (columns) of the object
+- A link is created between nodes that share the same primitive property values
+- A link is created between nodes with Array properties that share the same elements
+- A link is **NOT** created between nodes with properties that are JS `Object`s *(for now)*
+- Links contain:
+  - a `source` property
+  - a `target` property
+  - a `label` property denoting the property key
+  - a `value` property denoting the property value
+
+<div class="warning">Duplicate rows are treated as duplicate nodes</div>
+<div class="tip">
+  Generating links can be quite costly.
+  A whitelist can be passed to the <code class="language-js">mapTableToPropertyGraphLinks()</code> function to ignore unnecessary properties.
+</div>
+
+The properties are selected for generating links:
+- `fullname`
+- `position`
+
+```js echo
+
+const researcher_links = mapTableToPropertyGraphLinks(researcher_data, {
+    id_key: "fullname",
+    columns: [
+      "fullname",
+      "position",
+    ]
+  }
+);
+```
+
+```js
+display(researcher_links);
+```
+
+## Visualization results
+
+Once transformed an arc diagram is generated from an adaptation of the canonical [arc diagram example](https://observablehq.com/@d3/arc-diagram).
+
+```js echo
+const arc_diagram = arcDiagramVertical(
+  {
+    nodes: researcher_data,
+    links: researcher_links
+  }, {
+    marginLeft: 150,
+    keyMap: (d) => d.fullname,
+    valueMap: (d) => d.position
+  }
+);
+```
+
+```js
+display(arc_diagram)
+```
