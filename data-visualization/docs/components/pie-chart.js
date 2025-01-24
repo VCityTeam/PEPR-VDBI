@@ -16,7 +16,7 @@ import { createTooltip } from "./utilities.js";
 export function donutChart(
   data,
   {
-    width = 500,
+    width = 600,
     innerRadiusRatio = 0.4,
     outerRadiusRatio = 1,
     // minorArcLabelRadiusRatio = 0.1, // the ratio of the radius to place the minor arc label outside of the arc
@@ -24,17 +24,25 @@ export function donutChart(
     valueMap = (d) => d.count,
     sort = undefined,
     // sort = (a, b) => d3.descending(a.count, b.count),
-    fontSize = 12,
+    fontSize = 18,
     fontFamily = "sans-serif",
-    strokeColor = "black",
-    strokeWidth = 1,
-    strokeOpacity = 0.5,
+    // strokeColor = "black",
+    // strokeWidth = 1,
+    // strokeOpacity = 0.5,
     fill = "white",
     fillOpacity = 1,
     majorLabelText = (d) => keyMap(d.data),
     minorLabelText = (d) =>
       `${((valueMap(d.data) / d3.sum(data.map(valueMap))) * 100).toFixed(1)}%`,
     // minorLabelText = (d) => d.value.toLocaleString("en-US"),
+    majorLabelBackgroundX = (d) => `-${majorLabelText(d).length / 3}em`,
+    majorLabelBackgroundY = "-1.9em",
+    majorLabelBackgroundWidth = (d) => `${majorLabelText(d).length * 0.67}em`,
+    majorLabelBackgroundHeight = "1.8em",
+    minorLabelBackgroundX = (d) => `-${minorLabelText(d).length / 2.5}em`,
+    minorLabelBackgroundY = "-0.1em",
+    minorLabelBackgroundWidth = (d) => `${minorLabelText(d).length * 0.82}em`,
+    minorLabelBackgroundHeight = "1.3em",
     labelCuttoff = 0.25, // minimum arc angle for displaying label on arc
     color = (d) =>
       d3.interpolatePlasma(
@@ -115,8 +123,8 @@ export function donutChart(
       // highlight the arc
       d3.select(_e.target)
         .attr("stroke", "GhostWhite")
-        .attr("stroke-opacity", 0.7)
-        .attr("stroke-width", 3);
+        .attr("stroke-opacity", 0.8)
+        .attr("stroke-width", 2);
     })
     .on("mousemove", (event) =>
       d3
@@ -125,7 +133,7 @@ export function donutChart(
         .style("left", event.pageX + 15 + "px")
     )
     .on("mouseout", (event) => {
-      console.debug("mouseout");
+      // console.debug("mouseout");
       tooltip.textContent = "";
       tooltip.parentNode.removeChild(tooltip);
       d3.select(event.target).attr("stroke-width", 0);
@@ -145,10 +153,10 @@ export function donutChart(
     .call((rect) => 
       rect
         .filter((d) => isMajorArc(d))
-        .attr("x", (d) => `-${majorLabelText(d).length / 3}em`)
-        .attr("y", "-1.9em")
-        .attr("width", (d) => `${majorLabelText(d).length * 0.67}em`)
-        .attr("height", "1.8em")
+        .attr("x", majorLabelBackgroundX)
+        .attr("y", majorLabelBackgroundY)
+        .attr("width", majorLabelBackgroundWidth)
+        .attr("height", majorLabelBackgroundHeight)
         .attr("rx", "0.5em")
         .attr("ry", "0.5em")
     );
@@ -165,10 +173,10 @@ export function donutChart(
     .call((rect) => 
       rect
         .filter((d) => isMajorArc(d))
-        .attr("x", (d) => `-${minorLabelText(d).length / 2.5}em`)
-        .attr("y", "-0.1em")
-        .attr("width", (d) => `${minorLabelText(d).length * 0.82}em`)
-        .attr("height", "1.3em")
+        .attr("x", minorLabelBackgroundX)
+        .attr("y", minorLabelBackgroundY)
+        .attr("width", minorLabelBackgroundWidth)
+        .attr("height", minorLabelBackgroundHeight)
     );
 
   svg
@@ -176,9 +184,9 @@ export function donutChart(
     .attr("font-family", fontFamily)
     .attr("font-size", fontSize)
     .attr("text-anchor", "middle")
-    .attr("stroke", strokeColor)
-    .attr("stroke-width", strokeWidth)
-    .attr("stroke-opacity", strokeOpacity)
+    // .attr("stroke", strokeColor)
+    // .attr("stroke-width", strokeWidth)
+    // .attr("stroke-opacity", strokeOpacity)
     .attr("fill", fill)
     .attr("fill-opacity", fillOpacity)
     .selectAll()

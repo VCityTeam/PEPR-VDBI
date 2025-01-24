@@ -1,9 +1,8 @@
 import * as d3 from "npm:d3";
 
-// TODO: is this function necessary, or do we just need a function for generating links?
 /**
  * Map the elements of an array of objects (a table) to a graph with the following rules:
- * - Each object (row) becomes a node with the properties (columns) of the object
+ * - Each object (row) is treated as a node with the properties (columns) of the object
  * - A link is created between nodes that share the same primitive property values
  * - A link is created between nodes with Array properties that share the same elements
  * - Links contain:
@@ -11,39 +10,42 @@ import * as d3 from "npm:d3";
  *   - a `target` property
  *   - a `label` property denoting the property key
  *   - a `value` property denoting the property value
- * - !Objects with the same identifier will create duplicate nodes!
+ * - !Duplicate rows are treated as duplicate nodes!
  * @param {Array<Object>} data - input table
  * @param {Object} options - configuration options
  * @returns {Object<Array, Array>}
  */
-export function mapTableToPropertyGraph(
+export function mapTableToPropertyGraphLinks(
   data,
-  id_key = "id" // the key used to identify a node
+  {
+    id_key = "id", // the key used to identify a row
+    columns, // a column whitelist, columns not in this list are ignored. Use all columns by default
+  } = {}
 ) {
-  const nodes = [...data];
   const links = [];
-
   // create links for each "row" and add them to an array (representing the links)
   data.forEach((row) => {
     // iterate though every property of every row
     for (const [key, value] of Object.entries(row)) {
+      if (columns && !columns.includes(key)) {
+        continue; // column not whitelisted
+      }
       if (key == id_key) {
         continue; // skip ids
-      } else if (typeof value == Array) {
-        const nodes_to_link = [];
-
-        // create link if other nodes contain elements from this array
+      } else if (value instanceof Array) {
+        const rows_to_link = [];
+        // create link if other rows contain elements from this array
         for (let index = 0; index < value.length; index++) {
           const element = value[index];
           if (!element) {
             console.warn("No element found", index, key, value);
             continue;
           }
-          // get nodes with intersecting elements and add them to nodes_to_link
-          nodes
+          // get rows with intersecting elements and add them to rows_to_link
+          data
             .filter((d) => d[id_key] != row[id_key] && d[key].includes(element))
-            .forEach((node) => nodes_to_link.push(node));
-          nodes_to_link.forEach((node) => {
+            .forEach((node) => rows_to_link.push(node));
+          rows_to_link.forEach((node) => {
             links.push({
               source: row[id_key],
               target: node[id_key],
@@ -56,10 +58,10 @@ export function mapTableToPropertyGraph(
         continue; // not handled (yet)
       } else {
         // value must be primitive
-        const nodes_to_link = nodes.filter(
-          (d) => d[id_key] != row[id_key] && d[value] == row[value]
+        const rows_to_link = data.filter(
+          (d) => d[id_key] != row[id_key] && d[key] == row[key]
         );
-        nodes_to_link.forEach((node) => {
+        rows_to_link.forEach((node) => {
           links.push({
             source: row[id_key],
             target: node[id_key],
@@ -71,7 +73,7 @@ export function mapTableToPropertyGraph(
     }
   });
 
-  return { nodes: nodes, links: links };
+  return links;
 }
 
 /**
@@ -520,10 +522,10 @@ export function arcDiagramVertical(
     height = (nodes.length - 1) * step + marginTop + marginBottom,
     r = 3,
     rMouseover = 3.5,
-    yPosition = d3.scalePoint(sortNodes({ nodes, links }).get("by name"), [
-      marginTop,
-      height - marginBottom,
-    ]),
+    yPosition = d3.scalePoint(
+      sortNodes({ nodes, links }, keyMap).get("by name"),
+      [marginTop, height - marginBottom]
+    ),
     fontSize = 12,
     fontFill = "white",
     fontMouseoverOpacity = 0.3,
@@ -573,6 +575,7 @@ export function arcDiagramVertical(
     const y1 = y_positions.get(d.source);
     const y2 = y_positions.get(d.target);
     const r = Math.abs(y2 - y1) / 2;
+    // debugger;
     return `M${marginLeft},${y1}A${r},${r} 0,0,${
       y1 < y2 ? 1 : 0
     } ${marginLeft},${y2}`;
@@ -633,8 +636,8 @@ export function arcDiagramVertical(
       label.classed("secondary", (n) =>
         links.some(
           ({ source, target }) =>
-            (n.id === source && keyMap(d) === target) ||
-            (n.id === target && keyMap(d) === source)
+            (keyMap(n) === source && keyMap(d) === target) ||
+            (keyMap(n) === target && keyMap(d) === source)
         )
       );
       path

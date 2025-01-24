@@ -34,6 +34,18 @@ export function projectionMap(
     stroke = "#f43f5e",
     fill = "#f43f5e",
     fillOpacity = 0.5,
+    entity_label = "City",
+    tip = {
+      format: {
+        entity: true,
+        longitude: false,
+        latitude: false,
+        count: true,
+        x: false,
+        y: false,
+        r: false,
+      },
+    }
     // color = (d) =>
     //   d3.interpolatePlasma(
     //     d3
@@ -57,9 +69,9 @@ export function projectionMap(
       fill: fill,
       fillOpacity: fillOpacity,
       channels: {
-        city: {
+        entity: {
           value: keyMap,
-          label: "City",
+          label: entity_label,
         },
         count: {
           value: (d) => valueMap(d).length,
@@ -74,17 +86,7 @@ export function projectionMap(
           label: "Lat",
         },
       },
-      tip: {
-        format: {
-          city: true,
-          longitude: true,
-          latitude: true,
-          count: true,
-          x: false,
-          y: false,
-          r: false,
-        },
-      },
+      tip: tip,
     }),
   ];
 

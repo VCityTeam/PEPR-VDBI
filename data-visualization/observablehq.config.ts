@@ -60,8 +60,12 @@ export default {
           path: '/test-tree',
         },
         {
-          name: 'Graph Tests',
+          name: 'Force Diagram, Triple Graph Tests',
           path: '/test-graph',
+        },
+        {
+          name: 'Arc Diagram, Property Graph Tests',
+          path: '/test-arc',
         },
       ],
     },
