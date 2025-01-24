@@ -12,8 +12,8 @@ import {
 } from "./components/utilities.js";
 import {
   extractPhase2Workbook,
-  getColumnOptions,
-  filterOnInput,
+  // getColumnOptions,
+  // filterOnInput,
 } from "./components/phase2-dashboard.js";
 import {
   donutChart
@@ -23,7 +23,7 @@ import {
 } from "./components/projection-map.js";
 import {
   arcDiagramVertical,
-  mapTableToPropertyGraph
+  mapTableToPropertyGraphLinks
 } from "./components/graph.js";
 ```
 
@@ -99,7 +99,7 @@ const researcher_table = Inputs.table(researcher_search, {
     "position": "Position",
     "project": "Project(s)",
     "gender": "Gender",
-    "disciplines": "Discipline",
+    "disciplines": "Discipline(s)",
     "discipline_erc": "ERC discipline",
     "cnu": "CNU",
     "site": "Site",
@@ -121,7 +121,7 @@ const discipline_erc_count = countEntities(
   .sort((a, b) => d3.descending(a.count, b.count));
 
 const discipline_erc_pie = donutChart(discipline_erc_count, {
-  width: 700,
+  width: 650,
   fontSize: 18
 });
 ```
@@ -249,7 +249,7 @@ const position_count = d3.rollups(
 
 ```js
 const position_pie = donutChart(position_count, {
-  width: 700,
+  width: 650,
   fontSize: 18,
   keyMap: (d) => d[0],
   valueMap: (d) => d[1],
@@ -278,9 +278,30 @@ const miserables = FileAttachment("./data/miserables.json").json();
 ```
 
 ```js
-const researcher_graph = mapTableToPropertyGraph(global_search, "fullname");
+const researcher_links = mapTableToPropertyGraphLinks(global_search, {
+    id_key: "fullname",
+    columns: [
+      "fullname",
+      "project",
+      "disciplines",
+      "discipline_erc",
+      "position",
+      "cnu",
+      "site",
+    ]
+  }
+).filter((d) => d.label == "project");
 
-const arc_diagram = arcDiagramVertical(miserables);
+const arc_diagram = arcDiagramVertical(
+  {
+    nodes: global_search,
+    links: researcher_links
+  }, {
+    keyMap: (d) => d.fullname,
+    valueMap: (d) => d.project
+  }
+  // miserables
+);
 ```
 
 ```js
@@ -295,9 +316,9 @@ if (dev_mode) {
   display(position_count);
   display("geocoded_researcher_sites_by_city");
   display(geocoded_researcher_sites_by_city);
-  display("researcher_graph");
-  display(researcher_graph);
 }
+display("researcher_links");
+display(researcher_links);
 ```
 
 <div class="warning" label="Data visualization policy">
@@ -317,11 +338,11 @@ if (dev_mode) {
   <div class="card grid-colspan-2">
     <h2>Researchers</h2>
     <div style="padding-bottom: 5px">${researcher_search_input}</div>
-    <div>${researcher_table}</div>
+    <div style="max-height: 350px;">${researcher_table}</div>
   </div>
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
-    <div>${discipline_erc_pie}</div>
+    <div style="">${discipline_erc_pie}</div>
   </div>
   <div class="card grid-colspan-1">
     <h2>CNUs</h2>
@@ -334,12 +355,12 @@ if (dev_mode) {
   </div>
   <div class="card grid-colspan-1">
     <h2>Position/status</h2>
-    <div>${position_pie}</div>
+    <div style="">${position_pie}</div>
   </div>
   <div class="card grid-colspan-2 grid-rowspan-3">
     <!-- Graph, arc diagram; group by discipline, position, CNU, partner -->
     <h2>Researcher Knowledge Graph</h2>
-    <div>${arc_diagram}</div>
+    <div style="">${arc_diagram}</div>
   </div>
   <div class="card grid-colspan-1">
     <h2>Disciplines</h2>
