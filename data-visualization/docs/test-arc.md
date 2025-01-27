@@ -106,9 +106,10 @@ const researcher_links = mapTableToPropertyGraphLinks(researcher_data, {
 display(researcher_links);
 ```
 
-## Visualization results
+## VF++ Researcher Position Arc Diagram 
 
 Once transformed an arc diagram is generated from an adaptation of the canonical [arc diagram example](https://observablehq.com/@d3/arc-diagram).
+A legend is added as well to distinguish arc values.
 
 ```js echo
 const arc_diagram = arcDiagramVertical(
@@ -116,7 +117,9 @@ const arc_diagram = arcDiagramVertical(
     nodes: researcher_data,
     links: researcher_links
   }, {
+    width: 600,
     marginLeft: 150,
+    marginRight: 200,
     keyMap: (d) => d.fullname,
     valueMap: (d) => d.position
   }

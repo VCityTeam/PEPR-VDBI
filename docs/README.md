@@ -24,15 +24,7 @@
 > - JSAR: Joud Sarkis
 > - JYT: Jean-Yves Toussaint
 
-## Reports/Meeting notes
-- [Day 1 Report 2/1/2025](./meeting_notes/02-01-2025_DVA.md)
-- [CoDir Meeting 6/1/2025](./meeting_notes/06-01-2025_vdbi.md)
-- [CO Meeting 6/1/2025](./meeting_notes/06-01-2025_co.md)
-- [Point DVA GGE 6/1/2025](./meeting_notes/06-01-2025_point.md)
-- [Point DVA EMO 10/1/2025](./meeting_notes/10-01-2025_DVA_EMO.md)
-- [CoDir Meeting 13/1/2025](./meeting_notes/13-01-2025_codir.md)
-- [Point DVA GGE 13/1/2025](./meeting_notes/14-01-2025_point.md)
-
+## [Reports/Meeting notes](./meeting_notes/)
 
 ## Project Schedule
 

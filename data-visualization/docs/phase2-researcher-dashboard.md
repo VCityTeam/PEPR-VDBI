@@ -124,6 +124,11 @@ const discipline_erc_pie = donutChart(discipline_erc_count, {
   width: 650,
   fontSize: 18
 });
+
+if (dev_mode) {
+  display("discipline_erc_count");
+  display(discipline_erc_count);
+}
 ```
 
 ```js
@@ -138,6 +143,11 @@ const discipline_search_input = Inputs.search(discipline_count, {
 });
 
 const discipline_search = Generators.input(discipline_search_input);
+
+if (dev_mode) {
+  display("discipline_count");
+  display(discipline_count);
+}
 ```
 
 ```js
@@ -192,6 +202,11 @@ const cnu_search_input = Inputs.search(cnu_count, {
 });
 
 const cnu_search = Generators.input(cnu_search_input);
+
+if (dev_mode) {
+  display("cnu_count");
+  display(cnu_count);
+}
 ```
 
 ```js
@@ -245,6 +260,11 @@ const position_count = d3.rollups(
   )
   .filter((d) => exclude(d[0]))
   .sort((a, b) => d3.descending(a[1], b[1]));
+
+if (dev_mode) {
+  display("position_count");
+  display(position_count);
+}
 ```
 
 ```js
@@ -274,13 +294,48 @@ const researcher_sites_by_city_plot = projectionMap(
     ],
   }
 );
-const miserables = FileAttachment("./data/miserables.json").json();
+
+if (dev_mode) {
+  display("geocoded_researcher_sites_by_city");
+  display(geocoded_researcher_sites_by_city);
+}
 ```
 
 ```js
-const researcher_links = mapTableToPropertyGraphLinks(global_search, {
+// researcher arcs //
+const researcher_data_by_project_select_input = Inputs.select(
+  global_search.flatMap((d) => d.project), {
+    label: "Select project",
+    sort: true,
+    unique: true,
+  }
+);
+
+const researcher_data_by_project_select = Generators.input(
+  researcher_data_by_project_select_input
+);
+
+// const researcher_data_by_property_select_input = Inputs.select(
+//   global_search.flatMap((d) => d.project), {
+//     label: "Select relationship",
+//     sort: true,
+//     unique: true,
+//   }
+// );
+
+// const researcher_data_by_project_select = Generators.input(
+//   researcher_data_by_property_select_input
+// );
+```
+
+```js
+const researcher_data_by_project = global_search.filter(
+  (d) => d.project.includes(researcher_data_by_project_select) && d.position != null
+);
+const researcher_links_by_position = mapTableToPropertyGraphLinks(
+  researcher_data_by_project, {
     id_key: "fullname",
-    columns: [
+    column: [
       "fullname",
       "project",
       "disciplines",
@@ -288,37 +343,29 @@ const researcher_links = mapTableToPropertyGraphLinks(global_search, {
       "position",
       "cnu",
       "site",
-    ]
+    ],
   }
-).filter((d) => d.label == "project");
+).filter((d) => d.label == "position" && d.value != null);
+
+if (dev_mode) {
+  display("researcher_data_by_project");
+  display(researcher_data_by_project);
+  display("researcher_links_by_position");
+  display(researcher_links_by_position);
+}
 
 const arc_diagram = arcDiagramVertical(
   {
-    nodes: global_search,
-    links: researcher_links
+    nodes: researcher_data_by_project,
+    links: researcher_links_by_position
   }, {
+    width: 600,
+    marginLeft: 150,
+    marginRight: 200,
     keyMap: (d) => d.fullname,
-    valueMap: (d) => d.project
+    valueMap: (d) => d.position
   }
-  // miserables
 );
-```
-
-```js
-if (dev_mode) {
-  display("discipline_count");
-  display(discipline_count);
-  display("discipline_erc_count");
-  display(discipline_erc_count);
-  display("cnu_count");
-  display(cnu_count);
-  display("position_count");
-  display(position_count);
-  display("geocoded_researcher_sites_by_city");
-  display(geocoded_researcher_sites_by_city);
-}
-display("researcher_links");
-display(researcher_links);
 ```
 
 <div class="warning" label="Data visualization policy">
@@ -328,6 +375,7 @@ display(researcher_links);
       Missing researcher data is not visualized by default.
       This includes researchers that could not be geolocated.
     </li>
+    <li>Data has not yet been verified. Some visualizations may be incorrect.</li>
   </ul>
 </div>
 
@@ -342,7 +390,7 @@ display(researcher_links);
   </div>
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
-    <div style="">${discipline_erc_pie}</div>
+    <div>${discipline_erc_pie}</div>
   </div>
   <div class="card grid-colspan-1">
     <h2>CNUs</h2>
@@ -351,16 +399,16 @@ display(researcher_links);
   </div>
   <div class="card grid-colspan-2 grid-rowspan-2">
     <h2>Researcher Sites</h2>
-    <div style="">${researcher_sites_by_city_plot}</div>
+    <div>${researcher_sites_by_city_plot}</div>
   </div>
   <div class="card grid-colspan-1">
     <h2>Position/status</h2>
-    <div style="">${position_pie}</div>
+    <div>${position_pie}</div>
   </div>
-  <div class="card grid-colspan-2 grid-rowspan-3">
-    <!-- Graph, arc diagram; group by discipline, position, CNU, partner -->
+  <div class="card grid-colspan-2 grid-rowspan-1">
     <h2>Researcher Knowledge Graph</h2>
-    <div style="">${arc_diagram}</div>
+    <div style="padding-bottom: 5px">${researcher_data_by_project_select_input}</div>
+    <div>${arc_diagram}</div>
   </div>
   <div class="card grid-colspan-1">
     <h2>Disciplines</h2>
