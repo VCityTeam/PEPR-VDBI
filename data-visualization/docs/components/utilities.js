@@ -30,6 +30,7 @@ export function mapCounts(datasets, count_types) {
  * @returns {Array<Object<{entity: string, count: number}>>} An array of all datum with mapped types from each dataset
  */
 export function mergeCounts(datasets, count_types) {
+  // TODO: this can be optimized and simplified with a map, reduce, Array.concat
   const mappedData = new Map();
 
   for (let index = 0; index < datasets.length; index++) {

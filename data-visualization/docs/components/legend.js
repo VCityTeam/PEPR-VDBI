@@ -37,6 +37,7 @@ export function circleLegend(
 ) {
   const svg = d3
     .create("svg")
+    .classed("legend", true)
     .attr("height", (data.length - 1) * lineSeparation + radius * 2);
 
   svg
