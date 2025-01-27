@@ -1,4 +1,5 @@
 import * as d3 from "npm:d3";
+import { circleLegend } from "./legend.js";
 
 /**
  * Map the elements of an array of objects (a table) to a graph with the following rules:
@@ -11,6 +12,7 @@ import * as d3 from "npm:d3";
  *   - a `label` property denoting the property key
  *   - a `value` property denoting the property value
  * - !Duplicate rows are treated as duplicate nodes!
+ * - !`null` and undefined properties are NOT ignored!
  * @param {Array<Object>} data - input table
  * @param {Object} options - configuration options
  * @returns {Object<Array, Array>}
@@ -19,7 +21,8 @@ export function mapTableToPropertyGraphLinks(
   data,
   {
     id_key = "id", // the key used to identify a row
-    columns, // a column whitelist, columns not in this list are ignored. Use all columns by default
+    column, // columns not in this list are ignored. Use all columns by default
+    reflexive = false, // if there is a link from A to B, should a link be generated from B to A?
   } = {}
 ) {
   const links = [];
@@ -27,10 +30,9 @@ export function mapTableToPropertyGraphLinks(
   data.forEach((row) => {
     // iterate though every property of every row
     for (const [key, value] of Object.entries(row)) {
-      if (columns && !columns.includes(key)) {
+      if (column && !column.includes(key)) {
         continue; // column not whitelisted
-      }
-      if (key == id_key) {
+      } else if (key == id_key) {
         continue; // skip ids
       } else if (value instanceof Array) {
         const rows_to_link = [];
@@ -58,17 +60,30 @@ export function mapTableToPropertyGraphLinks(
         continue; // not handled (yet)
       } else {
         // value must be primitive
+
+        // get rows with the same value
         const rows_to_link = data.filter(
           (d) => d[id_key] != row[id_key] && d[key] == row[key]
         );
-        rows_to_link.forEach((node) => {
+
+        for (let index = 0; index < rows_to_link.length; index++) {
+          const node = rows_to_link[index];
+          if (
+            !reflexive &&
+            links.some(
+              (l) => l.source == node[id_key] && l.target == row[id_key]
+            )
+          ) {
+            continue; // link already exists
+          }
+
           links.push({
             source: row[id_key],
             target: node[id_key],
             label: key,
             value: value,
           });
-        });
+        }
       }
     }
   });
@@ -519,6 +534,7 @@ export function arcDiagramVertical(
     marginTop = 20,
     marginBottom = 20,
     marginLeft = 130,
+    marginRight = 130, // used when placing the legend
     height = (nodes.length - 1) * step + marginTop + marginBottom,
     r = 3,
     rMouseover = 3.5,
@@ -543,6 +559,13 @@ export function arcDiagramVertical(
           .reverse()
       )
       .unknown("#aaa"),
+    // create a circle legend from possible arc values
+    legend = circleLegend(color.domain(), {
+      keyMap: (d) => d,
+      valueMap: (d) => d,
+      color: color,
+      text: (d) => d,
+    }),
   } = {}
 ) {
   // A function of a link, that checks that source and target have the same group and returns
@@ -647,12 +670,18 @@ export function arcDiagramVertical(
         )
         .filter(".primary")
         .raise();
+      d3.selectAll(".legend g text")
+        .data(color.domain())
+        .classed("primary", (v) => v == valueMap(d));
     })
     .on("pointerout", () => {
       svg.classed("hover", false);
       label.classed("primary", false);
       label.classed("secondary", false);
       path.classed("primary", false).order();
+      d3.select(".legend g text")
+        .data(color.domain())
+        .classed("primary", false);
     });
 
   // Add styles for the hover interaction.
@@ -663,6 +692,7 @@ export function arcDiagramVertical(
     .hover g.secondary text { opacity: 1; }
     .hover path { opacity: ${arcMouseoverOpacity}; }
     .hover path.primary { opacity: 1; }
+    .hover .legend text.primary { opacity: 1; }
   `);
 
   // A function that updates the positions of the labels and recomputes the arcs
@@ -693,6 +723,13 @@ export function arcDiagramVertical(
       .transition()
       .duration(750 + nodes.length * 20) // Cover the maximum delay of the label transition.
       .attrTween("d", (d) => () => arc(d));
+  }
+
+  if (legend) {
+    svg
+      .append("g")
+      .attr("transform", `translate(${width - marginRight},${marginTop})`)
+      .append(() => legend);
   }
 
   return Object.assign(svg.node(), { update });
