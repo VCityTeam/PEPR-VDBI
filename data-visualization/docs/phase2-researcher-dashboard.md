@@ -23,7 +23,8 @@ import {
 } from "./components/projection-map.js";
 import {
   arcDiagramVertical,
-  mapTableToPropertyGraphLinks
+  mapTableToPropertyGraphLinks,
+  sortNodes,
 } from "./components/graph.js";
 ```
 
@@ -303,8 +304,28 @@ if (dev_mode) {
 
 ```js
 // researcher arcs //
+const arc_columns = new Map([
+  // ["Fullname", "fullname"],
+  // ["Project", "project"],
+  ["Disciplines", "disciplines"],
+  ["ERC Discipline", "discipline_erc"],
+  ["Position", "position"],
+  ["CNU", "cnu"],
+  ["Site", "site"],
+]);
+const arc_value_maps = new Map([
+  ["fullname", (d) => d.fullname],
+  ["project", (d) => d.project],
+  ["disciplines", (d) => d.disciplines[0]], // for property values of Array, just use the first item. This will determine node/arc color
+  ["discipline_erc", (d) => d.discipline_erc[0]],
+  ["position", (d) => d.position],
+  ["cnu", (d) => d.cnu],
+  ["site", (d) => d.site],
+]);
+
 const researcher_data_by_project_select_input = Inputs.select(
-  global_search.flatMap((d) => d.project), {
+  global_search.flatMap((d) => d.project),
+  {
     label: "Select project",
     sort: true,
     unique: true,
@@ -315,17 +336,18 @@ const researcher_data_by_project_select = Generators.input(
   researcher_data_by_project_select_input
 );
 
-// const researcher_data_by_property_select_input = Inputs.select(
-//   global_search.flatMap((d) => d.project), {
-//     label: "Select relationship",
-//     sort: true,
-//     unique: true,
-//   }
-// );
+const researcher_data_by_property_select_input = Inputs.select(
+  arc_columns,
+  {
+    label: "Select relationship",
+    sort: true,
+    unique: true,
+  }
+);
 
-// const researcher_data_by_project_select = Generators.input(
-//   researcher_data_by_property_select_input
-// );
+const researcher_data_by_property_select = Generators.input(
+  researcher_data_by_property_select_input
+);
 ```
 
 ```js
@@ -335,17 +357,9 @@ const researcher_data_by_project = global_search.filter(
 const researcher_links_by_position = mapTableToPropertyGraphLinks(
   researcher_data_by_project, {
     id_key: "fullname",
-    column: [
-      "fullname",
-      "project",
-      "disciplines",
-      "discipline_erc",
-      "position",
-      "cnu",
-      "site",
-    ],
+    column: [...arc_columns.values()],
   }
-).filter((d) => d.label == "position" && d.value != null);
+).filter((d) => d.label == researcher_data_by_property_select && d.value != null);
 
 if (dev_mode) {
   display("researcher_data_by_project");
@@ -353,19 +367,49 @@ if (dev_mode) {
   display("researcher_links_by_position");
   display(researcher_links_by_position);
 }
+```
 
+```js
+const arc_sort_map = sortNodes(
+  {
+    nodes: researcher_data_by_project,
+    links: researcher_links_by_position
+  },
+  {
+    keyMap: (d) => d.fullname,
+    valueMap: arc_value_maps.get(researcher_data_by_property_select)
+  }
+);
+
+const arc_sort_input = Inputs.select(
+  arc_sort_map,
+  {
+    label: "Sort",
+    sort: true,
+    unique: true,
+  }
+);
+
+const arc_sort = Generators.input(
+  arc_sort_input
+);
+```
+
+```js
 const arc_diagram = arcDiagramVertical(
   {
     nodes: researcher_data_by_project,
     links: researcher_links_by_position
   }, {
-    width: 600,
-    marginLeft: 150,
+    width: 700,
+    marginLeft: 230,
     marginRight: 200,
     keyMap: (d) => d.fullname,
-    valueMap: (d) => d.position
+    valueMap: arc_value_maps.get(researcher_data_by_property_select),
+    sort: arc_sort_map.get(arc_sort)
   }
 );
+display(arc_sort_map.get(arc_sort)) // todo fix me: undefined
 ```
 
 <div class="warning" label="Data visualization policy">
@@ -385,7 +429,7 @@ const arc_diagram = arcDiagramVertical(
 <div class="grid grid-cols-3">
   <div class="card grid-colspan-2">
     <h2>Researchers</h2>
-    <div style="padding-bottom: 5px">${researcher_search_input}</div>
+    <div style="padding-bottom: 5px;">${researcher_search_input}</div>
     <div style="max-height: 350px;">${researcher_table}</div>
   </div>
   <div class="card grid-colspan-1">
@@ -394,7 +438,7 @@ const arc_diagram = arcDiagramVertical(
   </div>
   <div class="card grid-colspan-1">
     <h2>CNUs</h2>
-    <div style="padding-bottom: 5px">${cnu_search_input}</div>
+    <div style="padding-bottom: 5px;">${cnu_search_input}</div>
     <div style="max-height: 350px; overflow: auto">${cnu_plot}</div>
   </div>
   <div class="card grid-colspan-2 grid-rowspan-2">
@@ -405,14 +449,16 @@ const arc_diagram = arcDiagramVertical(
     <h2>Position/status</h2>
     <div>${position_pie}</div>
   </div>
-  <div class="card grid-colspan-2 grid-rowspan-1">
+  <div class="card grid-colspan-2 grid-rowspan-2">
     <h2>Researcher Knowledge Graph</h2>
-    <div style="padding-bottom: 5px">${researcher_data_by_project_select_input}</div>
-    <div>${arc_diagram}</div>
+    <div style="padding-bottom: 5px;">${researcher_data_by_project_select_input}</div>
+    <div style="padding-bottom: 5px;">${researcher_data_by_property_select_input}</div>
+    <div style="padding-bottom: 5px;">${arc_sort_input}</div>
+    <div style="max-height: 700px; overflow: auto;">${arc_diagram}</div>
   </div>
   <div class="card grid-colspan-1">
     <h2>Disciplines</h2>
-    <div style="padding-bottom: 5px">${discipline_search_input}</div>
-    <div style="max-height: 350px; overflow: auto">${discipline_plot}</div>
+    <div style="padding-bottom: 5px;">${discipline_search_input}</div>
+    <div style="max-height: 350px; overflow: auto;">${discipline_plot}</div>
   </div>
 </div>

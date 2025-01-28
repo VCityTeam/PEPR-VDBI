@@ -81,7 +81,7 @@ export function donutChart(
     .padAngle(1 / radius)
     .value(valueMap);
   const pieData = pie(data);
-  console.debug(pieData);
+  // console.debug(pieData);
 
   const cuttoffData = pieData.filter((d) => !isMajorArc(d)).map((d) => d.data);
 

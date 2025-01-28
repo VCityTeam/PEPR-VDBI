@@ -56,7 +56,6 @@ def main():
     if args.host is not None and args.token is not None:
         print("using client")
         headers = {"Authorization": f"Bearer {args.token}"}
-        # print(f"headers: {headers}")
         client = ollama.Client(host=args.host, headers=headers)
 
     print(f"reading {input_path}")
@@ -65,10 +64,6 @@ def main():
     prompt = args.prompt + args.separator + text
     response = ""
 
-    # response = client.generate(model="mistral", prompt="what color is the sky?")
-    # response = client.chat(
-    #     model="llama3.2", messages=[{"role": "user", "content": "Why is the sky blue?"}]
-    # )
     if client is None:
         response = sendPrompt(
             model=args.model,
