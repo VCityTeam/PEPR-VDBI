@@ -82,19 +82,19 @@ flowchart LR
 
 Information collected in workbooks is loaded into JS object arrays.
 *Initial loading involves a data cleaning step.
-  
+
 
 ```mermaid
 flowchart TD
     subgraph "Workbook 1"
-        AA[Sheet: 240117 consortium laboratoire^J]
+        AA[Sheet: Feuil_1]
         AB[Sheet ...]
-        AC[Sheet n]
+        AC[Sheet Feuil_n]
     end
     subgraph "Workbook 2"
-        BA[Sheet: Feuil1]
+        BA[Sheet: Feuil_1]
         BB[Sheet ...]
-        BC[Sheet n]
+        BC[Sheet Feuil_n]
     end
     AA -->|Load*| C
     AC -->|Load*| C

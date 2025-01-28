@@ -82,10 +82,9 @@ inspired from [GGE perplexity tests](./Tests_IA.md)
 
 ### 1.1.1. Dependencies
 - [Python](https://www.python.org/downloads/) v3.8+
-It is recommended to use a virtual python environment. See [here](https://docs.python.org/3/library/venv.html#how-venvs-work) for more information on how to manage a python venv
+  - It is recommended to use a virtual python environment. See [here](https://docs.python.org/3/library/venv.html#how-venvs-work) for more information on how to manage a python venv
 ```bash
 python -m venv venv
-venv/Scripts/activate
 ```
 To activate the virtual environment:
 - On Linux
