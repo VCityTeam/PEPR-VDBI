@@ -54,7 +54,7 @@ toc: false
 
 Here is an overview of what data is visualized and the mechanisms for used for data visualization. 
 
-## Data visualized
+## Data collection
 ```mermaid
 flowchart LR
   Z(( )) --> ZZ(Start Phase 1)
@@ -76,6 +76,35 @@ flowchart LR
   - Location
 - Laboratories per project (owner/partner)
   - Domaines (ERC/HCERES)
+- etc...
+
+## Data integration
+
+Information collected in workbooks is loaded into JS object arrays.
+*Initial loading involves a data cleaning step.
+  
+
+```mermaid
+flowchart TD
+    subgraph "Workbook 1"
+        AA[Sheet: 240117 consortium laboratoire^J]
+        AB[Sheet ...]
+        AC[Sheet n]
+    end
+    subgraph "Workbook 2"
+        BA[Sheet: Feuil1]
+        BB[Sheet ...]
+        BC[Sheet n]
+    end
+    AA -->|Load*| C
+    AC -->|Load*| C
+    BA -->|Load*| C
+    subgraph Web Application
+        C["Arrays (of objects)"] -->|Transformation| GF[Graph formalism]
+        GF -->|Load| O(Observable Framework Graphs/Charts)
+        C  -->|Load| O
+    end
+```
 
 ## Data visualization tools
 
