@@ -3,6 +3,8 @@
 ## Table of contents <!-- omit in toc -->
 - [Org Chart](#org-chart)
 - [Reports/Meeting notes](#reportsmeeting-notes)
+- [Data Integraion](#data-integraion)
+- [Data Visualization](#data-visualization)
 - [Project Schedule](#project-schedule)
 - [Project Goals](#project-goals)
 - [Project Tasks](#project-tasks)
@@ -25,6 +27,14 @@
 > - JYT: Jean-Yves Toussaint
 
 ## [Reports/Meeting notes](./meeting_notes/)
+
+## Data Integraion
+Also refered to in the documentation as data mining and data extraction
+- [GPT-based unstructured data integration documentation](../data-integration/README.md) 
+- [Classical data integration](../data-visualization/docs/index.md)
+
+## [Data Visualization](../data-visualization/README.md)
+
 
 ## Project Schedule
 
