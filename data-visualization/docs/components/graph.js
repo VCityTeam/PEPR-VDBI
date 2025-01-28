@@ -1,5 +1,6 @@
 import * as d3 from "npm:d3";
 import { circleLegend } from "./legend.js";
+import { cropText } from "./utilities.js";
 
 /**
  * Map the elements of an array of objects (a table) to a graph with the following rules:
@@ -21,7 +22,7 @@ export function mapTableToPropertyGraphLinks(
   data,
   {
     id_key = "id", // the key used to identify a row
-    column, // columns not in this list are ignored. Use all columns by default
+    column, // columns NOT in this list are ignored. Use all columns by default
     reflexive = false, // if there is a link from A to B, should a link be generated from B to A?
   } = {}
 ) {
@@ -67,11 +68,11 @@ export function mapTableToPropertyGraphLinks(
         );
 
         for (let index = 0; index < rows_to_link.length; index++) {
-          const node = rows_to_link[index];
+          const row_to_link = rows_to_link[index];
           if (
             !reflexive &&
             links.some(
-              (l) => l.source == node[id_key] && l.target == row[id_key]
+              (l) => l.source == row_to_link[id_key] && l.target == row[id_key]
             )
           ) {
             continue; // link already exists
@@ -79,7 +80,7 @@ export function mapTableToPropertyGraphLinks(
 
           links.push({
             source: row[id_key],
-            target: node[id_key],
+            target: row_to_link[id_key],
             label: key,
             value: value,
           });
@@ -538,10 +539,11 @@ export function arcDiagramVertical(
     height = (nodes.length - 1) * step + marginTop + marginBottom,
     r = 3,
     rMouseover = 3.5,
-    yPosition = d3.scalePoint(
-      sortNodes({ nodes, links }, keyMap).get("by name"),
-      [marginTop, height - marginBottom]
-    ),
+    sort = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by degree"),
+    // sort = sortNodes({ nodes, links }, { keyMap, valueMap }).get("input"),
+    // sort = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by name"),
+    // sort = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by property"),
+    yPosition = d3.scalePoint(sort, [marginTop, height - marginBottom]),
     fontSize = 12,
     fontFill = "white",
     fontMouseoverOpacity = 0.3,
@@ -564,13 +566,12 @@ export function arcDiagramVertical(
       keyMap: (d) => d,
       valueMap: (d) => d,
       color: color,
-      text: (d) => d,
+      text: (d) => cropText(d, 40),
     }),
   } = {}
 ) {
   // A function of a link, that checks that source and target have the same group and returns
   // the group; otherwise null. Used to color the links.
-  // TODO: this can be done by d3.groups
   const groups = new Map(nodes.map((d) => [keyMap(d), valueMap(d)]));
 
   function sameGroup({ source, target }) {
@@ -738,7 +739,9 @@ export function arcDiagramVertical(
 /**
  * Generate a map of different sorting options and their sorting function for a list of
  * nodes in a graph. Two are proposed by default:
+ * - "input": unsorted
  * - "by name": the nodes are sorted by their name
+ * - "by property": the nodes are sorted by a node property
  * - "by degree": the nodes are sorted by their group
  *
  * @param {Object} - a graph object with properites `nodes` and `links`
@@ -754,33 +757,24 @@ export function sortNodes(
     // { source: "A", target: "B" },
     // ],
   },
-  keyMap = (d) => d.id
+  { keyMap = (d) => d.id, valueMap = (d) => d.group }
 ) {
   const degree = d3.rollup(
-    links.flatMap(({ source, target, value }) => [
-      { node: source, value },
-      { node: target, value },
+    links.flatMap(({ source, target }) => [
+      { node: source, count: 1 },
+      { node: target, count: 1 },
     ]),
-    (v) => d3.sum(v, ({ value }) => value),
+    (v) => d3.sum(v, ({ count }) => count),
     ({ node }) => node
   );
   return new Map([
     ["by name", d3.sort(nodes.map(keyMap))],
-    // ["by group",d3
-    //     .sort(
-    //       nodes,
-    //       ({ group }) => group,
-    //       keyMap
-    //     )
-    //     .map(keyMap),
-    // ],
-    //    ["input", nodes.map(keyMap)],
+    ["by property", d3.sort(nodes, valueMap, keyMap).map(keyMap)],
+    ["input", nodes.map(keyMap)],
     [
       "by degree",
-      d3
-        .sort(nodes, (d) => degree.get(keyMap(d)), keyMap)
-        .map(keyMap)
-        .reverse(),
+      d3.sort(nodes, (d) => degree.get(keyMap(d)), keyMap).map(keyMap),
+      // .reverse(),
     ],
   ]);
 }
