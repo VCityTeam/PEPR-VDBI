@@ -65,6 +65,6 @@ export function circleLegend(
     .attr("y", (_d, i) => radius * 2 + i * lineSeparation)
     .text(text);
 
-  console.debug(svg.node());
+  // console.debug(svg.node());
   return svg.node();
 }
