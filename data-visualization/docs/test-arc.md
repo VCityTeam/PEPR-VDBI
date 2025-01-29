@@ -37,7 +37,8 @@ import {
 } from "./components/phase2-dashboard.js";
 import {
   arcDiagramVertical,
-  mapTableToPropertyGraphLinks
+  mapTableToPropertyGraphLinks,
+  sortNodes
 } from "./components/graph.js";
 
 const workbook = FileAttachment(
@@ -90,8 +91,8 @@ The properties are selected for generating links:
 - `fullname`
 - `position`
 
+To reduce the size of the visualized data we filter on researcher positions as well for this test.
 ```js echo
-
 const researcher_links = mapTableToPropertyGraphLinks(researcher_data, {
     id_key: "fullname",
     columns: [
@@ -99,27 +100,52 @@ const researcher_links = mapTableToPropertyGraphLinks(researcher_data, {
       "position",
     ]
   }
-);
+).filter((d) => d.label == "position");
 ```
 
 ```js
 display(researcher_links);
 ```
 
-## VF++ Researcher Position Arc Diagram 
+## Arc Diagram 
 
-Once transformed an arc diagram is generated from an adaptation of the canonical [arc diagram example](https://observablehq.com/@d3/arc-diagram).
+An arc diagram is generated from an adaptation of the canonical [arc diagram example](https://observablehq.com/@d3/arc-diagram).
 A legend is added as well to distinguish arc values.
 
 ```js echo
-const arc_diagram = arcDiagramVertical(
+display(
+  arcDiagramVertical(
+    {
+      nodes: researcher_data,
+      links: researcher_links
+    }, {
+      width: 600,
+      marginLeft: 150,
+      marginRight: 200,
+      keyMap: (d) => d.fullname,
+      valueMap: (d) => d.position
+    }
+  )
+);
+```
+
+## Sortable Arc Diagram 
+
+The order of nodes can be sorted on an arc diagram.
+Currently 4 sort modalities are proposed:
+1. `input`: No sort
+2. `by name`: alphabetically, based on node id
+3. `by property`: based on a node property
+4. `by degree`: based on the degree of arcs per node
+
+The node sort order is produced by `sortNodes()`
+```js echo
+const arc_sort_map = sortNodes(
   {
     nodes: researcher_data,
     links: researcher_links
-  }, {
-    width: 600,
-    marginLeft: 150,
-    marginRight: 200,
+  },
+  {
     keyMap: (d) => d.fullname,
     valueMap: (d) => d.position
   }
@@ -127,5 +153,34 @@ const arc_diagram = arcDiagramVertical(
 ```
 
 ```js
-display(arc_diagram)
+display(arc_sort_map);
+```
+
+```js echo
+const arc_sort = view(Inputs.select(
+  arc_sort_map,
+  {
+    label: "Sort",
+    sort: true,
+    unique: true,
+  }
+));
+```
+
+```js echo
+display(
+  arcDiagramVertical(
+    {
+      nodes: researcher_data,
+      links: researcher_links
+    }, {
+      width: 700,
+      marginLeft: 230,
+      marginRight: 200,
+      keyMap: (d) => d.fullname,
+      valueMap: (d) => d.position,
+      sort: arc_sort
+    }
+  )
+);
 ```

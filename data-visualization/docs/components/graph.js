@@ -738,7 +738,9 @@ export function arcDiagramVertical(
 
 /**
  * Generate a map of different sorting options and their sorting function for a list of
- * nodes in a graph. Two are proposed by default:
+ * nodes in a graph.
+ * Adapted from: https://observablehq.com/@d3/arc-diagram
+ * Sort options:
  * - "input": unsorted
  * - "by name": the nodes are sorted by their name
  * - "by property": the nodes are sorted by a node property
@@ -774,8 +776,14 @@ export function sortNodes(
     ["input", nodes.map(keyMap)],
     [
       "by degree",
-      d3.sort(nodes, (d) => degree.get(keyMap(d)), keyMap).map(keyMap),
-      // .reverse(),
+      d3
+        .sort(
+          nodes,
+          (d) => (degree.has(keyMap(d)) ? degree.get(keyMap(d)) : 0),
+          keyMap
+        )
+        .map(keyMap)
+        .reverse(),
     ],
   ]);
 }
