@@ -2,7 +2,7 @@
 
 **Context:** In the context of the PEPR-tests project, we would like to use AI to integrate non-structured data (from PDF documents) to visualize and analyse their underlying knowledge.
 
-- [Notes for AI assisted data integration](#notes-for-ai-assisted-data-integration)
+- [Feasability notes for AI assisted data integration](#feasability-notes-for-ai-assisted-data-integration)
   - [Links](#links)
   - [Research interests](#research-interests)
   - [Private instances](#private-instances)
@@ -57,6 +57,9 @@ A more "classical" approach to AI. Includes logic and search algorithms, ontolog
 > We fine-tune and evaluate our models on a wide range of knowledge-intensive NLP tasks and set the state-of-the-art on three open domain QA tasks, outperforming parametric seq2seq models and task-specific retrieve-and-extract architectures.
 > For language generation tasks, we find that RAG models generate more specific, diverse and factual language than a state-of-the-art parametric-only seq2seq baseline.
 
+![conceptual flow of using RAG with LLMs.](https://docs.aws.amazon.com/images/sagemaker/latest/dg/images/jumpstart/jumpstart-fm-rag.jpg)
+[Source](https://aws.amazon.com/what-is/retrieval-augmented-generation/)
+
 ### [Natural Language Processing](https://en.wikipedia.org/wiki/Natural_language_processing)
 In this context, NLP can be implemented through Machine learning
 
@@ -65,4 +68,3 @@ A type of large language model used for NLP tasks
 
 ### [Large Language Model](https://en.wikipedia.org/wiki/Large_language_model)
 LLMs are artificial neural networks (an approach to Machine learning) trained for NLP tasks
-

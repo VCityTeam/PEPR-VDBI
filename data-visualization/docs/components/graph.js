@@ -767,6 +767,7 @@ export function sortNodes(
     (v) => d3.sum(v, ({ count }) => count),
     ({ node }) => node
   );
+  console.debug("degree", degree);
   return new Map([
     ["by name", d3.sort(nodes.map(keyMap))],
     ["by property", d3.sort(nodes, valueMap, keyMap).map(keyMap)],

@@ -386,11 +386,8 @@ TODO: run test and add notes
 
 ### 1.2.3. RAG tests
 
-> [!NOTE]
-> RAG (Retrieval-Augmented Generation) is an approach to allowing sources of new
-> information to be provided to an LLM from outside of its training data. E.g. perplexity
-> See [here](#retrieval-augmented-generation-for-knowledge-intensive-nlp-tasks) for more
-> information
+> [!TIP]
+> See [here](./feasability-notes-GPT-data-integration.md#retrieval-augmented-generation-for-knowledge-intensive-nlp-tasks) for more information about RAG
 
 #### 1.2.3.1. Test: Langchain with pdf local document 
 
