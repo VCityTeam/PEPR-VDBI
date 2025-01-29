@@ -29,8 +29,6 @@ import {
 ```
 
 ```js
-const dev_mode = view(Inputs.toggle({label: "Developer Mode", value: false}));
-
 // function for filtering out unknown values
 const exclude = (d) => ![null, "non renseignée", "Non connue", "Non Renseigné"].includes(d);
 
@@ -50,12 +48,10 @@ const world = FileAttachment("./data/world.json").json();
 // format data
 const phase_2_data = extractPhase2Workbook(workbook1, false);
 
-if (dev_mode) {
-  display("phase_2_data.researchers");
-  display(phase_2_data.researchers);
-  display("geocoded_researcher_sites");
-  display(geocoded_researcher_sites);
-}
+
+console.debug("phase_2_data.researchers", phase_2_data.researchers);
+console.debug("geocoded_researcher_sites", geocoded_researcher_sites);
+
 
 // global search //
 const global_search_input = Inputs.search(phase_2_data.researchers, {
@@ -126,10 +122,7 @@ const discipline_erc_pie = donutChart(discipline_erc_count, {
   fontSize: 18
 });
 
-if (dev_mode) {
-  display("discipline_erc_count");
-  display(discipline_erc_count);
-}
+console.debug("discipline_erc_count", discipline_erc_count);
 ```
 
 ```js
@@ -145,10 +138,7 @@ const discipline_search_input = Inputs.search(discipline_count, {
 
 const discipline_search = Generators.input(discipline_search_input);
 
-if (dev_mode) {
-  display("discipline_count");
-  display(discipline_count);
-}
+console.debug("discipline_count", discipline_count);
 ```
 
 ```js
@@ -204,10 +194,7 @@ const cnu_search_input = Inputs.search(cnu_count, {
 
 const cnu_search = Generators.input(cnu_search_input);
 
-if (dev_mode) {
-  display("cnu_count");
-  display(cnu_count);
-}
+console.debug("cnu_count", cnu_count);
 ```
 
 ```js
@@ -262,10 +249,7 @@ const position_count = d3.rollups(
   .filter((d) => exclude(d[0]))
   .sort((a, b) => d3.descending(a[1], b[1]));
 
-if (dev_mode) {
-  display("position_count");
-  display(position_count);
-}
+console.debug("position_count", position_count);
 ```
 
 ```js
@@ -296,10 +280,7 @@ const researcher_sites_by_city_plot = projectionMap(
   }
 );
 
-if (dev_mode) {
-  display("geocoded_researcher_sites_by_city");
-  display(geocoded_researcher_sites_by_city);
-}
+console.debug("geocoded_researcher_sites_by_city", geocoded_researcher_sites_by_city);
 ```
 
 ```js
@@ -361,12 +342,8 @@ const researcher_links_by_position = mapTableToPropertyGraphLinks(
   }
 ).filter((d) => d.label == researcher_data_by_property_select && d.value != null);
 
-if (dev_mode) {
-  display("researcher_data_by_project");
-  display(researcher_data_by_project);
-  display("researcher_links_by_position");
-  display(researcher_links_by_position);
-}
+console.debug("researcher_data_by_project", researcher_data_by_project);
+console.debug("researcher_links_by_position", researcher_links_by_position);
 ```
 
 ```js
