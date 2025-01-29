@@ -383,10 +383,9 @@ const arc_diagram = arcDiagramVertical(
     marginRight: 200,
     keyMap: (d) => d.fullname,
     valueMap: arc_value_maps.get(researcher_data_by_property_select),
-    sort: arc_sort_map.get(arc_sort)
+    sort: arc_sort
   }
 );
-display(arc_sort_map.get(arc_sort)) // todo fix me: undefined
 ```
 
 <div class="warning" label="Data visualization policy">
