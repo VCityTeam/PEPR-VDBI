@@ -430,7 +430,7 @@ display(arc_sort_map.get(arc_sort)) // todo fix me: undefined
     <h2>Researcher Knowledge Graph</h2>
     <div style="padding-bottom: 5px;">${researcher_data_by_project_select_input}</div>
     <div style="padding-bottom: 5px;">${researcher_data_by_property_select_input}</div>
-    <div style="padding-bottom: 5px;">${arc_sort_input}</div>
+    <!-- <div style="padding-bottom: 5px;">${arc_sort_input}</div> -->
     <div style="max-height: 700px; overflow: auto;">${arc_diagram}</div>
   </div>
   <div class="card grid-colspan-1">
