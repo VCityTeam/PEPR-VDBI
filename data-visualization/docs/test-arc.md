@@ -113,20 +113,20 @@ An arc diagram is generated from an adaptation of the canonical [arc diagram exa
 A legend is added as well to distinguish arc values.
 
 ```js echo
-// display(
-//   arcDiagramVertical(
-//     {
-//       nodes: researcher_data,
-//       links: researcher_links
-//     }, {
-//       width: 600,
-//       marginLeft: 150,
-//       marginRight: 200,
-//       keyMap: (d) => d.fullname,
-//       valueMap: (d) => d.position
-//     }
-//   )
-// );
+display(
+  arcDiagramVertical(
+    {
+      nodes: researcher_data,
+      links: researcher_links
+    }, {
+      width: 600,
+      marginLeft: 150,
+      marginRight: 200,
+      keyMap: (d) => d.fullname,
+      valueMap: (d) => d.position
+    }
+  )
+);
 ```
 
 ## Sortable Arc Diagram 
@@ -179,7 +179,8 @@ const sortable_arc_diagram = arcDiagramVertical(
   }
 );
 
-// This doesn't work with Observable.Generator (or at least we don't understand how) without regenerating the svg and missing the update() function
+// This doesn't work with Observable.Generator (or at least we don't understand how)
+// without regenerating the svg and missing the update() function.
 sort_select_input.addEventListener("input", () => sortable_arc_diagram.update(sort_select_input.value));
 sortable_arc_diagram.update(sort_select_input.value);
 ```

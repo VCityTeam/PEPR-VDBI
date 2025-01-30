@@ -268,11 +268,11 @@ const geocoded_researcher_sites_by_city = d3.groups(
   (d) => d.result_city
 );
 
-const researcher_sites_by_city_plot = projectionMap(
+const researcher_sites_by_city_projection = projectionMap(
   geocoded_researcher_sites_by_city,
   {
-    width: 800,
-    height: 800,
+    width: 700,
+    height: 750,
     borderList: [
       topojson.feature(world, world.objects.land),
       topojson.mesh(world, world.objects.countries, (a, b) => a !== b)
@@ -377,9 +377,12 @@ const arc_diagram = arcDiagramVertical(
     links: researcher_links_by_position
   }, {
     width: 600,
-    height: 660,
-    marginLeft: 230,
-    marginRight: 230,
+    height: 650,
+    marginLeft: 200,
+    marginRight: 180,
+    marginBottom: 50,
+    labelRotate: -15,
+    sortInitKey: arc_sort_input.value,
     keyMap: (d) => d.fullname,
     valueMap: arc_value_maps.get(researcher_data_by_property_select),
   }
@@ -389,7 +392,7 @@ arc_sort_input.addEventListener("input", () => arc_diagram.update(arc_sort_input
 arc_diagram.update(arc_sort_input.value);
 ```
 
-<div class="warning" label="Data visualization policy">
+<div class="warning" label="Data visualization notice">
   <ul>
     <li>Researchers with multiple disciplines are counted once per discipline.</li>
     <li>
@@ -410,21 +413,28 @@ arc_diagram.update(arc_sort_input.value);
     <div style="max-height: 350px;">${researcher_table}</div>
   </div>
   <div class="card grid-colspan-1">
-    <h2>ERC Disciplines</h2>
-    <div>${discipline_erc_pie}</div>
+    <h2>Position/status</h2>
+    <div>${position_pie}</div>
   </div>
   <div class="card grid-colspan-1">
     <h2>CNUs</h2>
     <div style="padding-bottom: 5px;">${cnu_search_input}</div>
     <div style="max-height: 350px; overflow: auto">${cnu_plot}</div>
   </div>
-  <div class="card grid-colspan-2 grid-rowspan-2">
-    <h2>Researcher Sites</h2>
-    <div>${researcher_sites_by_city_plot}</div>
+  <div class="card grid-colspan-1">
+    <h2>Disciplines</h2>
+    <div style="padding-bottom: 5px;">${discipline_search_input}</div>
+    <div style="max-height: 350px; overflow: auto;">${discipline_plot}</div>
   </div>
   <div class="card grid-colspan-1">
-    <h2>Position/status</h2>
-    <div>${position_pie}</div>
+    <h2>ERC Disciplines</h2>
+    <div>${discipline_erc_pie}</div>
+  </div>
+</div>
+<div class="grid grid-cols-4">
+  <div class="card grid-colspan-2 grid-rowspan-2">
+    <h2>Researcher Sites</h2>
+    <div>${researcher_sites_by_city_projection}</div>
   </div>
   <div class="card grid-colspan-2 grid-rowspan-2">
     <h2>Researcher Knowledge Graph</h2>
@@ -432,10 +442,5 @@ arc_diagram.update(arc_sort_input.value);
     <div style="padding-bottom: 5px;">${researcher_data_by_property_select_input}</div>
     <div style="padding-bottom: 5px;">${arc_sort_input}</div>
     <div style="max-height: 700px; overflow: auto;">${arc_diagram}</div>
-  </div>
-  <div class="card grid-colspan-1">
-    <h2>Disciplines</h2>
-    <div style="padding-bottom: 5px;">${discipline_search_input}</div>
-    <div style="max-height: 350px; overflow: auto;">${discipline_plot}</div>
   </div>
 </div>
