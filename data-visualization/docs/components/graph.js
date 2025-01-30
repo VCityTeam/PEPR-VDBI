@@ -539,11 +539,14 @@ export function arcDiagramVertical(
     height = (nodes.length - 1) * step + marginTop + marginBottom,
     r = 3,
     rMouseover = 3.5,
-    // sort = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by degree"),
-    // sort = sortNodes({ nodes, links }, { keyMap, valueMap }).get("input"),
-    sort = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by name"),
-    // sort = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by property"),
-    yPosition = d3.scalePoint(sort, [marginTop, height - marginBottom]),
+    // order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by degree"),
+    // order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("input"),
+    // order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by name"),
+    // order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by property"),
+    yDistribution = d3.scalePoint(
+      nodes.map(keyMap),
+      [marginTop, height - marginBottom]
+    ),
     fontSize = 12,
     fontFill = "white",
     fontMouseoverOpacity = 0.3,
@@ -590,7 +593,7 @@ export function arcDiagramVertical(
 
   // The current position, indexed by id. Will be interpolated.
   const y_positions = new Map(
-    nodes.map((d) => [keyMap(d), yPosition(keyMap(d))])
+    nodes.map((d) => [keyMap(d), yDistribution(keyMap(d))])
   );
 
   // Add an arc for each link.
@@ -604,6 +607,7 @@ export function arcDiagramVertical(
       y1 < y2 ? 1 : 0
     } ${marginLeft},${y2}`;
   }
+
   const path = svg
     .insert("g", "*")
     .attr("fill", "none")
@@ -614,6 +618,19 @@ export function arcDiagramVertical(
     .join("path")
     .attr("stroke", (d) => color(sameGroup(d)))
     .attr("d", arc);
+  // .join(
+  //   (enter) => {
+  //     console.debug("enter", enter);
+  //     return enter
+  //       .append("path")
+  //       .attr("stroke", (d) => color(sameGroup(d)))
+  //       .attr("d", arc);
+  //   },
+  //   (update) => {
+  //     console.debug("update", update);
+  //     return update;
+  //   }
+  // );
 
   // Add a text label and a dot for each node.
   const label = svg
@@ -643,6 +660,35 @@ export function arcDiagramVertical(
         .attr("r", r)
         .attr("fill", (d) => color(valueMap(d)))
     );
+  // .join(
+  //   (enter) => {
+  //     console.debug("enter", enter);
+  //     return enter
+  //       .append("g")
+  //       .attr(
+  //         "transform",
+  //         (d) => `translate(${marginLeft},${y_positions.get(keyMap(d))})`
+  //       )
+  //       .call((g) =>
+  //         g
+  //           .append("text")
+  //           .attr("x", -6)
+  //           .attr("dy", "0.35em")
+  //           // .attr("fill", (d) => color(valueMap(d)))
+  //           .text((d) => keyMap(d))
+  //       )
+  //       .call((g) =>
+  //         g
+  //           .append("circle")
+  //           .attr("r", r)
+  //           .attr("fill", (d) => color(valueMap(d)))
+  //       );
+  //   },
+  //   (update) => {
+  //     console.debug("update", update);
+  //     return update;
+  //   }
+  // );
 
   // Add invisible rects that update the class of the elements on mouseover.
   label
@@ -699,7 +745,9 @@ export function arcDiagramVertical(
   // A function that updates the positions of the labels and recomputes the arcs
   // when passed a new order.
   function update(order) {
-    yPosition.domain(order);
+    yDistribution.domain(order);
+    console.debug("order", order);
+    console.debug("update y_positions", y_positions);
 
     label
       .sort((a, b) =>
@@ -711,7 +759,7 @@ export function arcDiagramVertical(
       .attrTween("transform", (d) => {
         const i = d3.interpolateNumber(
           y_positions.get(keyMap(d)),
-          yPosition(keyMap(d))
+          yDistribution(keyMap(d))
         );
         return (t) => {
           const y = i(t);
@@ -733,6 +781,8 @@ export function arcDiagramVertical(
       .append(() => legend);
   }
 
+  console.debug("init y_positions", y_positions);
+  // return svg.node();
   return Object.assign(svg.node(), { update });
 }
 
@@ -769,11 +819,11 @@ export function sortNodes(
     (v) => d3.sum(v, ({ count }) => count),
     ({ node }) => node
   );
-  console.debug("degree", degree);
+  // console.debug("degree", degree);
   return new Map([
     ["by name", d3.sort(nodes.map(keyMap))],
     ["by property", d3.sort(nodes, valueMap, keyMap).map(keyMap)],
-    ["input", nodes.map(keyMap)],
+    //    ["input", nodes.map(keyMap)],
     [
       "by degree",
       d3
