@@ -541,17 +541,15 @@ export function arcDiagramVertical(
     rMouseover = 3.5,
     // order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by degree"),
     // order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("input"),
-    // order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by name"),
+    order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by name"),
     // order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by property"),
-    yDistribution = d3.scalePoint(
-      nodes.map(keyMap),
-      [marginTop, height - marginBottom]
-    ),
+    yDistribution = d3.scalePoint(order, [marginTop, height - marginBottom]),
     fontSize = 12,
     fontFill = "white",
     fontMouseoverOpacity = 0.3,
     arcMouseoverOpacity = 0.1,
-    // A color scale for the nodes and links.
+    labelRotate = 0,
+    // A color scale for links.
     color = d3
       .scaleOrdinal()
       .domain(nodes.map((d) => valueMap(d)).sort(d3.ascending))
@@ -644,7 +642,10 @@ export function arcDiagramVertical(
     .join("g")
     .attr(
       "transform",
-      (d) => `translate(${marginLeft},${y_positions.get(keyMap(d))})`
+      (d) =>
+        `translate(${marginLeft},${y_positions.get(
+          keyMap(d)
+        )}), rotate(${labelRotate})`
     )
     .call((g) =>
       g
@@ -658,7 +659,8 @@ export function arcDiagramVertical(
       g
         .append("circle")
         .attr("r", r)
-        .attr("fill", (d) => color(valueMap(d)))
+        .attr("fill", "grey")
+        .attr("stroke", "white")
     );
   // .join(
   //   (enter) => {
@@ -746,8 +748,6 @@ export function arcDiagramVertical(
   // when passed a new order.
   function update(order) {
     yDistribution.domain(order);
-    console.debug("order", order);
-    console.debug("update y_positions", y_positions);
 
     label
       .sort((a, b) =>
@@ -764,7 +764,7 @@ export function arcDiagramVertical(
         return (t) => {
           const y = i(t);
           y_positions.set(keyMap(d), y);
-          return `translate(${marginLeft},${y})`;
+          return `translate(${marginLeft},${y}), rotate(${labelRotate})`;
         };
       });
 
@@ -781,7 +781,6 @@ export function arcDiagramVertical(
       .append(() => legend);
   }
 
-  console.debug("init y_positions", y_positions);
   // return svg.node();
   return Object.assign(svg.node(), { update });
 }
