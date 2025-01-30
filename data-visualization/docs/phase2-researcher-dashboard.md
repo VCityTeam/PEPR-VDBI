@@ -367,25 +367,26 @@ const arc_sort_input = Inputs.select(
   }
 );
 
-const arc_sort = Generators.input(
-  arc_sort_input
-);
-```
+// const arc_sort = Generators.input(
+//   arc_sort_input
+// );
 
-```js
 const arc_diagram = arcDiagramVertical(
   {
     nodes: researcher_data_by_project,
     links: researcher_links_by_position
   }, {
-    width: 700,
+    width: 600,
+    height: 660,
     marginLeft: 230,
-    marginRight: 200,
+    marginRight: 230,
     keyMap: (d) => d.fullname,
     valueMap: arc_value_maps.get(researcher_data_by_property_select),
-    sort: arc_sort
   }
 );
+
+arc_sort_input.addEventListener("input", () => arc_diagram.update(arc_sort_input.value));
+arc_diagram.update(arc_sort_input.value);
 ```
 
 <div class="warning" label="Data visualization policy">
@@ -429,7 +430,7 @@ const arc_diagram = arcDiagramVertical(
     <h2>Researcher Knowledge Graph</h2>
     <div style="padding-bottom: 5px;">${researcher_data_by_project_select_input}</div>
     <div style="padding-bottom: 5px;">${researcher_data_by_property_select_input}</div>
-    <!-- <div style="padding-bottom: 5px;">${arc_sort_input}</div> -->
+    <div style="padding-bottom: 5px;">${arc_sort_input}</div>
     <div style="max-height: 700px; overflow: auto;">${arc_diagram}</div>
   </div>
   <div class="card grid-colspan-1">
