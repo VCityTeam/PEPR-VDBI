@@ -25,6 +25,7 @@ import {
   arcDiagramVertical,
   mapTableToPropertyGraphLinks,
   sortNodes,
+  mapTableToTriples,
 } from "./components/graph.js";
 ```
 
@@ -71,6 +72,16 @@ phase_2_data.researchers.forEach((researcher) => {
 console.debug("phase_2_data.researchers", phase_2_data.researchers);
 console.debug("geocoded_researcher_sites", geocoded_researcher_sites);
 
+
+// Filter financed
+const financed_input = Inputs.toggle(phase_2_data.researchers, {
+  label: "Filter Financed Projects",
+  value: true
+});
+
+const financed = Generators.input(financed_input);
+```
+```js
 // global search //
 const global_search_input = Inputs.search(phase_2_data.researchers, {
   placeholder: "Search dataset..."
@@ -326,7 +337,7 @@ const arc_value_maps = new Map([
   ["site", (d) => d.site],
 ]);
 
-const researcher_data_by_project_select_input = Inputs.select(
+const researcher_arcs_by_project_select_input = Inputs.select(
   global_search.flatMap((d) => d.project),
   {
     label: "Select project",
@@ -335,11 +346,11 @@ const researcher_data_by_project_select_input = Inputs.select(
   }
 );
 
-const researcher_data_by_project_select = Generators.input(
-  researcher_data_by_project_select_input
+const researcher_arcs_by_project_select = Generators.input(
+  researcher_arcs_by_project_select_input
 );
 
-const researcher_data_by_property_select_input = Inputs.select(
+const researcher_arcs_by_property_select_input = Inputs.select(
   arc_columns,
   {
     label: "Select relationship",
@@ -348,35 +359,36 @@ const researcher_data_by_property_select_input = Inputs.select(
   }
 );
 
-const researcher_data_by_property_select = Generators.input(
-  researcher_data_by_property_select_input
+const researcher_arcs_by_property_select = Generators.input(
+  researcher_arcs_by_property_select_input
 );
 ```
 
 ```js
-const researcher_data_by_project = global_search.filter(
-  (d) => d.project.includes(researcher_data_by_project_select) && d.position != null
+const researcher_arcs_by_project = global_search.filter(
+  (d) => d.project.includes(researcher_arcs_by_project_select)
 );
-const researcher_links_by_position = mapTableToPropertyGraphLinks(
-  researcher_data_by_project, {
+const researcher_property_links = mapTableToPropertyGraphLinks(
+  researcher_arcs_by_project,
+  {
     id_key: "fullname",
     column: [...arc_columns.values()],
   }
-).filter((d) => d.label == researcher_data_by_property_select && d.value != null);
+).filter((d) => d.label == researcher_arcs_by_property_select && d.value != null);
 
-console.debug("researcher_data_by_project", researcher_data_by_project);
-console.debug("researcher_links_by_position", researcher_links_by_position);
+console.debug("researcher_arcs_by_project", researcher_arcs_by_project);
+console.debug("researcher_property_links", researcher_property_links);
 ```
 
 ```js
 const arc_sort_map = sortNodes(
   {
-    nodes: researcher_data_by_project,
-    links: researcher_links_by_position
+    nodes: researcher_arcs_by_project,
+    links: researcher_property_links
   },
   {
     keyMap: (d) => d.fullname,
-    valueMap: arc_value_maps.get(researcher_data_by_property_select)
+    valueMap: arc_value_maps.get(researcher_arcs_by_property_select)
   }
 );
 
@@ -395,8 +407,8 @@ const arc_sort_input = Inputs.select(
 
 const arc_diagram = arcDiagramVertical(
   {
-    nodes: researcher_data_by_project,
-    links: researcher_links_by_position
+    nodes: researcher_arcs_by_project,
+    links: researcher_property_links
   }, {
     width: 600,
     height: 650,
@@ -406,12 +418,39 @@ const arc_diagram = arcDiagramVertical(
     labelRotate: -15,
     sortInitKey: arc_sort_input.value,
     keyMap: (d) => d.fullname,
-    valueMap: arc_value_maps.get(researcher_data_by_property_select),
+    valueMap: arc_value_maps.get(researcher_arcs_by_property_select),
   }
 );
 
 arc_sort_input.addEventListener("input", () => arc_diagram.update(arc_sort_input.value));
 arc_diagram.update(arc_sort_input.value);
+```
+
+```js
+// researcher triples //
+const researcher_triples_predicate_select_input = Inputs.select(
+  // we don't use global search here in case 0 results are returned by the search 
+  Object.keys(phase_2_data.researchers[0]),
+  {
+    label: "Select property",
+    sort: true,
+    unique: true,
+  }
+);
+
+const researcher_triples_predicate_select = Generators.input(
+  researcher_triples_predicate_select_input
+);
+```
+
+```js
+const researcher_triples = mapTableToTriples(
+  global_search, {
+    id_key: "fullname"
+  }
+).filter((d) => d.label == researcher_triples_predicate_select);
+
+console.debug("researcher_triples", researcher_triples);
 ```
 
 <div class="warning" label="Data visualization notice">
@@ -459,10 +498,13 @@ arc_diagram.update(arc_sort_input.value);
     <div>${researcher_sites_projection}</div>
   </div>
   <div class="card grid-colspan-2 grid-rowspan-2">
-    <h2>Researcher Knowledge Graph</h2>
-    <div style="padding-bottom: 5px;">${researcher_data_by_project_select_input}</div>
-    <div style="padding-bottom: 5px;">${researcher_data_by_property_select_input}</div>
+    <h2>Researcher Relationships by Project</h2>
+    <div style="padding-bottom: 5px;">${researcher_arcs_by_project_select_input}</div>
+    <div style="padding-bottom: 5px;">${researcher_arcs_by_property_select_input}</div>
     <div style="padding-bottom: 5px;">${arc_sort_input}</div>
     <div style="max-height: 700px; overflow: auto;">${arc_diagram}</div>
+  </div>
+  <div class="card grid-colspan-4 grid-rowspan-4">
+    <h2>Researcher Knowledge Graph</h2>
   </div>
 </div>
