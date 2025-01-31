@@ -30,7 +30,13 @@ import {
 
 ```js
 // function for filtering out unknown values
-const exclude = (d) => ![null, "non renseignée", "Non connue", "Non Renseigné"].includes(d);
+const exclude = (d) => ![
+  null,
+  "non renseignée",
+  "Non connue",
+  "non connues",
+  "Non Renseigné"
+].includes(d);
 
 const workbook1 = FileAttachment(
   // "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
@@ -48,10 +54,22 @@ const world = FileAttachment("./data/world.json").json();
 // format data
 const phase_2_data = extractPhase2Workbook(workbook1, false);
 
+// join researchers and site tables
+phase_2_data.researchers.forEach((researcher) => {
+  // join on Sites
+  const locale = geocoded_researcher_sites.find((d) => d.Sites === researcher.site);
+  if (!locale) return;
+
+  // join coordinates, result_name, result_score, and result_status
+  researcher.latitude = locale.latitude;
+  researcher.longitude = locale.longitude;
+  researcher.geo_result_name = locale.result_name;
+  researcher.geo_result_status = locale.result_status;
+  researcher.geo_result_score = locale.result_score;
+});
 
 console.debug("phase_2_data.researchers", phase_2_data.researchers);
 console.debug("geocoded_researcher_sites", geocoded_researcher_sites);
-
 
 // global search //
 const global_search_input = Inputs.search(phase_2_data.researchers, {
@@ -263,13 +281,17 @@ const position_pie = donutChart(position_count, {
 
 ```js
 // researcher projection map //
-const geocoded_researcher_sites_by_city = d3.groups(
-  geocoded_researcher_sites.filter((d) => d.result_status == "ok"),
-  (d) => d.result_city
+const ok_geocoded_researcher_sites = d3.groups(
+  global_search.filter(
+    (d) => d.geo_result_status == "ok" &&
+    exclude(d.site) &&
+    d.geo_result_score > 0.5
+  ),
+  (d) => d.site
 );
 
-const researcher_sites_by_city_projection = projectionMap(
-  geocoded_researcher_sites_by_city,
+const researcher_sites_projection = projectionMap(
+  ok_geocoded_researcher_sites,
   {
     width: 700,
     height: 750,
@@ -280,7 +302,7 @@ const researcher_sites_by_city_projection = projectionMap(
   }
 );
 
-console.debug("geocoded_researcher_sites_by_city", geocoded_researcher_sites_by_city);
+console.debug("ok_geocoded_researcher_sites", ok_geocoded_researcher_sites);
 ```
 
 ```js
@@ -434,7 +456,7 @@ arc_diagram.update(arc_sort_input.value);
 <div class="grid grid-cols-4">
   <div class="card grid-colspan-2 grid-rowspan-2">
     <h2>Researcher Sites</h2>
-    <div>${researcher_sites_by_city_projection}</div>
+    <div>${researcher_sites_projection}</div>
   </div>
   <div class="card grid-colspan-2 grid-rowspan-2">
     <h2>Researcher Knowledge Graph</h2>

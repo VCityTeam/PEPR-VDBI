@@ -562,6 +562,8 @@ export function arcDiagramVertical(
           .reverse()
       )
       .unknown("#aaa"),
+    nodeFill = "white",
+    nodeStroke = "grey",
     // create a circle legend from possible arc values
     legend = circleLegend(color.domain(), {
       keyMap: (d) => d,
@@ -659,8 +661,8 @@ export function arcDiagramVertical(
       g
         .append("circle")
         .attr("r", r)
-        .attr("fill", "grey")
-        .attr("stroke", "white")
+        .attr("fill", nodeFill)
+        .attr("stroke", nodeStroke)
     );
   // .join(
   //   (enter) => {

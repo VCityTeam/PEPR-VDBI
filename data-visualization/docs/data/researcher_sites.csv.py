@@ -30,6 +30,7 @@ def main():
 
     # remove duplicates
     grouped = researcher_data.groupby("Sites").first()
+    # print(grouped)
     print(grouped.to_csv())
 
 
