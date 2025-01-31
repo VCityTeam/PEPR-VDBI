@@ -7,7 +7,7 @@ def main():
     # WORKBOOK_PATH = "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
     WORKBOOK_PATH = "./data/241021 PEPR_VBDI_analyse modifiée JYT.xlsx"
     WORKBOOK_SHEET = "Liste chercheurs"
-    SHEET_COLUMNS = "A,I"
+    SHEET_COLUMNS = "I"
 
     # logging.basicConfig(
     #     format="%(asctime)s %(levelname)-8s %(message)s",
@@ -29,7 +29,7 @@ def main():
     # print(researcher_data)
 
     # remove duplicates
-    grouped = researcher_data.groupby("NOM et Prénom").first()
+    grouped = researcher_data.groupby("Sites").first()
     print(grouped.to_csv())
 
 
