@@ -13,7 +13,8 @@ import { cropText } from "./utilities.js";
  *   - a `label` property denoting the property key
  *   - a `value` property denoting the property value
  * - !Duplicate rows are treated as duplicate nodes!
- * - !`null` and undefined properties are NOT ignored!
+ * - !`null` and `undefined` properties are NOT ignored!
+ * This function is useful for creating the links of a directed property graph
  * @param {Array<Object>} data - input table
  * @param {Object} options - configuration options
  * @returns {Object<Array, Array>}
@@ -33,35 +34,9 @@ export function mapTableToPropertyGraphLinks(
     for (const [key, value] of Object.entries(row)) {
       if (column && !column.includes(key)) {
         continue; // column not whitelisted
-      } else if (key == id_key) {
-        continue; // skip ids
-      } else if (value instanceof Array) {
-        const rows_to_link = [];
-        // create link if other rows contain elements from this array
-        for (let index = 0; index < value.length; index++) {
-          const element = value[index];
-          if (!element) {
-            console.warn("No element found", index, key, value);
-            continue;
-          }
-          // get rows with intersecting elements and add them to rows_to_link
-          data
-            .filter((d) => d[id_key] != row[id_key] && d[key].includes(element))
-            .forEach((node) => rows_to_link.push(node));
-          rows_to_link.forEach((node) => {
-            links.push({
-              source: row[id_key],
-              target: node[id_key],
-              label: key,
-              value: element,
-            });
-          });
-        }
-      } else if (typeof value == Object) {
-        continue; // not handled (yet)
-      } else {
-        // value must be primitive
-
+      } else if (key == id_key || value == null || value == undefined) {
+        continue;
+      } else if (typeof value == "string") {
         // get rows with the same value
         const rows_to_link = data.filter(
           (d) => d[id_key] != row[id_key] && d[key] == row[key]
@@ -85,6 +60,30 @@ export function mapTableToPropertyGraphLinks(
             value: value,
           });
         }
+      } else if (value instanceof Array) {
+        const rows_to_link = [];
+        // create link if other rows contain elements from this array
+        for (let index = 0; index < value.length; index++) {
+          const element = value[index];
+          if (!element) {
+            console.warn("No element found", index, key, value);
+            continue;
+          }
+          // get rows with intersecting elements and add them to rows_to_link
+          data
+            .filter((d) => d[id_key] != row[id_key] && d[key].includes(element))
+            .forEach((node) => rows_to_link.push(node));
+          rows_to_link.forEach((d) => {
+            links.push({
+              source: row[id_key],
+              target: d[id_key],
+              label: key,
+              value: element,
+            });
+          });
+        }
+      } else {
+        console.warn("Unknown property type", key, value);
       }
     }
   });
@@ -93,7 +92,62 @@ export function mapTableToPropertyGraphLinks(
 }
 
 /**
- * @deprecated
+ * Map the elements of an array of objects (a table) to a graph with the following rules:
+ * - Each object (row) is treated as a node identified by an `id_key`
+ * - A triple is created for every property of every row with primitive values
+ * - A triple is created for every element of every Array of every row
+ * - Triples contain:
+ *   - a `source` property (the subject) created from the row id
+ *   - a `label` property (the predicate) created from the property key
+ *   - a `target` property (the object) created from the property value (or array element)
+ * - !Duplicate rows are treated as duplicate nodes!
+ * - `null` and `undefined` property values are ignored
+ * This function is useful for creating the links of a directed graph
+ * @param {Array<Object>} data - input table
+ * @param {Object} options - configuration options
+ * @returns {Object<Array, Array>}
+ */
+export function mapTableToTriples(
+  data,
+  {
+    id_key = "id", // the key used to identify a row
+  } = {}
+) {
+  // create triples for each row and add them to an array (representing the graph)
+  const triples = [];
+
+  data.forEach((row) => {
+    // iterate though every entry of each row
+    for (const [key, value] of Object.entries(row)) {
+      if (key == id_key || value == null || value == undefined) {
+        continue;
+      } else if (typeof value == "string") {
+        triples.push({ source: row[id_key], label: key, target: value });
+      } else if (value instanceof Array) {
+        // push value of row properties to graph
+        for (let index = 0; index < value.length; index++) {
+          const element = value[index];
+          if (!element) {
+            console.warn("No element found", index, key, value);
+            continue;
+          }
+          triples.push({
+            source: row[id_key],
+            label: key,
+            target: element,
+          });
+        }
+      } else {
+        console.warn("Unknown property type", key, value);
+      }
+    }
+  });
+
+  return triples;
+}
+
+/**
+ * @deprecated, use `mapTableToTriples()` instead
  */
 export function mapProjectsToRDFGraph(projects, colorMap = {}) {
   // create triples for each project and add them to an array (representing the graph)
@@ -552,7 +606,12 @@ export function arcDiagramVertical(
     // A color scale for links.
     color = d3
       .scaleOrdinal()
-      .domain(nodes.map((d) => valueMap(d)).sort(d3.ascending))
+      .domain(
+        nodes
+          .map((d) => valueMap(d))
+          .filter((d) => d != null)
+          .sort(d3.ascending)
+      )
       .range(
         d3
           .quantize(
@@ -830,11 +889,14 @@ export function sortNodes(
       d3
         .sort(
           nodes,
-          (d) => (degree.has(keyMap(d)) ? degree.get(keyMap(d)) : 0),
-          keyMap
+          // sort first by degree descending then key ascending
+          (a, b) =>
+            d3.descending(
+              degree.has(keyMap(a)) ? degree.get(keyMap(a)) : 0,
+              degree.has(keyMap(b)) ? degree.get(keyMap(b)) : 0
+            ) || d3.ascending(keyMap(a), keyMap(b))
         )
-        .map(keyMap)
-        .reverse(),
+        .map(keyMap),
     ],
   ]);
 }
