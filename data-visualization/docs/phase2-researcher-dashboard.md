@@ -23,6 +23,7 @@ import {
 } from "./components/projection-map.js";
 import {
   arcDiagramVertical,
+  forceGraph,
   mapTableToPropertyGraphLinks,
   sortNodes,
   mapTableToTriples,
@@ -318,7 +319,7 @@ console.debug("ok_geocoded_researcher_sites", ok_geocoded_researcher_sites);
 
 ```js
 // researcher arcs //
-const arc_columns = new Map([
+const graph_columns = new Map([
   // ["Fullname", "fullname"],
   // ["Project", "project"],
   ["Disciplines", "disciplines"],
@@ -351,7 +352,7 @@ const researcher_arcs_by_project_select = Generators.input(
 );
 
 const researcher_arcs_by_property_select_input = Inputs.select(
-  arc_columns,
+  graph_columns,
   {
     label: "Select relationship",
     sort: true,
@@ -372,7 +373,7 @@ const researcher_property_links = mapTableToPropertyGraphLinks(
   researcher_arcs_by_project,
   {
     id_key: "fullname",
-    column: [...arc_columns.values()],
+    column: [...graph_columns.values()],
   }
 ).filter((d) => d.label == researcher_arcs_by_property_select && d.value != null);
 
@@ -446,11 +447,44 @@ const researcher_triples_predicate_select = Generators.input(
 ```js
 const researcher_triples = mapTableToTriples(
   global_search, {
-    id_key: "fullname"
+    id_key: "fullname",
+    column: [...graph_columns.values()],
   }
-).filter((d) => d.label == researcher_triples_predicate_select);
+);
+
+
+const filtered_researcher_triples = {
+  nodes: researcher_triples.nodes.filter(
+    ({ type }) => type == researcher_triples_predicate_select || type == "fullname"
+  ),
+  links: researcher_triples.links.filter(
+    ({ label }) => label == researcher_triples_predicate_select
+  )
+}
+
+const color = d3
+  .scaleOrdinal()
+  .domain(["fullname", researcher_triples_predicate_select])
+  .range(
+    d3
+      .quantize(d3.interpolatePlasma, 2)
+      // .reverse()
+  )
+  .unknown("#aaa");
 
 console.debug("researcher_triples", researcher_triples);
+console.debug("color", color);
+
+const researcher_force_graph = forceGraph(
+  filtered_researcher_triples,
+  {
+    id: "researcher_force_graph",
+    width: 700,
+    height: 400,
+    color: color,
+    linkLabelOpacity: 0
+  }
+);
 ```
 
 <div class="warning" label="Data visualization notice">
@@ -504,7 +538,9 @@ console.debug("researcher_triples", researcher_triples);
     <div style="padding-bottom: 5px;">${arc_sort_input}</div>
     <div style="max-height: 700px; overflow: auto;">${arc_diagram}</div>
   </div>
-  <div class="card grid-colspan-4 grid-rowspan-4">
+  <div class="card grid-colspan-4 grid-rowspan-2">
     <h2>Researcher Knowledge Graph</h2>
+    <div style="padding-bottom: 5px;">${researcher_triples_predicate_select_input}</div>
+    <div style="overflow: auto;">${researcher_force_graph}</div>
   </div>
 </div>
