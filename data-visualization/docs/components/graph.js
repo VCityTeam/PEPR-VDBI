@@ -100,6 +100,11 @@ export function mapTableToPropertyGraphLinks(
  *   - a `source` property (the subject) created from the row id
  *   - a `label` property (the predicate) created from the property key
  *   - a `target` property (the object) created from the property value (or array element)
+ * - A list of nodes is also created with the following properties:
+ *   - an `id` property created from the property values (and Array elements) of the row
+ *   - a `type` property created from the property keys of the row
+ *     - note that this is not a standard RDF triple structure but is very useful for
+ *       filtering and styling nodes
  * - !Duplicate rows are treated as duplicate nodes!
  * - `null` and `undefined` property values are ignored
  * This function is useful for creating the links of a directed graph
@@ -111,27 +116,50 @@ export function mapTableToTriples(
   data,
   {
     id_key = "id", // the key used to identify a row
+    column, // columns NOT in this list are ignored. Use all columns by default
+    // type_nodes = false, // create an RDF Type triple for each node
   } = {}
 ) {
   // create triples for each row and add them to an array (representing the graph)
-  const triples = [];
+  const nodes = [];
+  const links = [];
 
   data.forEach((row) => {
+    // create node
+    nodes.push({ id: row[id_key], type: id_key });
+
     // iterate though every entry of each row
     for (const [key, value] of Object.entries(row)) {
-      if (key == id_key || value == null || value == undefined) {
-        continue;
+      if (column && !column.includes(key)) {
+        continue; // column not whitelisted
+      } else if (
+        key == id_key ||
+        value == "" ||
+        value == null ||
+        value == undefined
+      ) {
+        continue; // ignore id key and null values
       } else if (typeof value == "string") {
-        triples.push({ source: row[id_key], label: key, target: value });
-      } else if (value instanceof Array) {
+        // create target node if necessary
+        if (!nodes.some(({ id, type }) => id == value && type == key))
+          nodes.push({ id: value, type: key });
+
         // push value of row properties to graph
+        links.push({ source: row[id_key], label: key, target: value });
+      } else if (value instanceof Array) {
         for (let index = 0; index < value.length; index++) {
           const element = value[index];
           if (!element) {
             console.warn("No element found", index, key, value);
             continue;
           }
-          triples.push({
+
+          // create target node if necessary
+          if (!nodes.some(({ id, type }) => id == element && type == key))
+            nodes.push({ id: element, type: key });
+
+          // push value of row Array elements to graph
+          links.push({
             source: row[id_key],
             label: key,
             target: element,
@@ -143,7 +171,7 @@ export function mapTableToTriples(
     }
   });
 
-  return triples;
+  return { nodes: nodes, links: links };
 }
 
 /**
@@ -216,18 +244,27 @@ export function forceGraph(
     typeList = {}, // list of color lables for legend
     width = 500, // canvas width
     height = 500, // canvas height
-    colorScale = d3.scaleOrdinal(d3.schemeCategory10), // color scheme
+    keyMap = (d) => d.id, // the function for identifying a node
+    valueMap = (d) => d.type, // the function for categorizing a node
+    color = d3.scaleOrdinal(d3.schemeCategory10), // color scheme
     fontSize = 10, // label font size
     r = 3, // node radius
     textLength = 15, // label cutoff length
-    stroke = "#111", // stroke for links
+    stroke = "white", // stroke for links
     strokeWidth = 0.5, // stroke width for links
     strokeOpacity = 0.4, // stroke opacity for links
-    textColor = "black", // label color
-    halo = "#fff", // color of label halo
+    textColor = "white", // label color
+    halo = "black", // color of label halo
     haloWidth = 0.25, // padding around the labels
-    labelOpacity = 0.2, // default label opacity
-    highlightOpacity = 0.9, // mouseover label opacity
+    nodeLabelOpacity = 0.3, // default node label opacity
+    linkLabelOpacity = 0.3, // default link label opacity
+    highlightOpacity = 0.8, // mouseover label opacity
+    legend = circleLegend(color.domain(), {
+      keyMap: (d) => d,
+      valueMap: (d) => d,
+      color: color,
+      text: (d) => cropText(d, 40),
+    }),
   }
 ) {
   const svg = d3
@@ -244,7 +281,7 @@ export function forceGraph(
     .forceSimulation(nodes)
     .force(
       "link",
-      d3.forceLink(links).id((d) => d.id)
+      d3.forceLink(links).id(keyMap)
     )
     .force("charge", d3.forceManyBody())
     // .force("center", d3.forceCenter(width / 2, height / 2));
@@ -273,7 +310,7 @@ export function forceGraph(
     .attr("stroke-opacity", strokeOpacity)
     .attr("stroke-width", strokeWidth)
     .attr("stroke", stroke)
-    .attr("fill", (d) => colorScale(d.color))
+    .attr("fill", (d) => color(valueMap(d)))
     // .on("click", (event, datum) => {
     //   console.debug("event", event);
     //   console.debug("datum", datum);
@@ -281,7 +318,7 @@ export function forceGraph(
     .on("mouseover", (event, datum) => {
       event.target.style["stroke-opacity"] = highlightOpacity;
       // event.target.style["stroke"] = "white";
-      // event.target.style["fill"] = colorScale(nodes[datum.index].color);
+      // event.target.style["fill"] = color(valueMap(nodes[datum.index]));
       links
         .filter(
           // get node links
@@ -321,7 +358,7 @@ export function forceGraph(
     .on("mouseout", (event, datum) => {
       event.target.style["stroke-opacity"] = strokeOpacity;
       // event.target.style["stroke"] = stroke;
-      // event.target.style["fill"] = colorScale(nodes[datum.index].color);
+      // event.target.style["fill"] = color(valueMap(nodes[datum.index]));
       links
         .filter(
           // get node links
@@ -339,7 +376,7 @@ export function forceGraph(
             .filter((_, j) => j == d.source.index || j == d.target.index)
             .nodes()
             .forEach((d) => {
-              d.style["opacity"] = labelOpacity;
+              d.style["opacity"] = nodeLabelOpacity;
             });
           link
             .filter((_, j) => j == d.index)
@@ -351,13 +388,13 @@ export function forceGraph(
             .filter((_, j) => j == d.index)
             .nodes()
             .forEach((d) => {
-              d.style["opacity"] = labelOpacity;
+              d.style["opacity"] = linkLabelOpacity;
             });
         });
     })
     .call(drag(simulation));
 
-  node.append("title").text((d) => d.id);
+  node.append("title").text(keyMap);
 
   const node_label = svg
     .selectAll(".node_label")
@@ -365,13 +402,13 @@ export function forceGraph(
     .enter()
     .append("text")
     .text((d) =>
-      d.id.length > textLength ? d.id.slice(0, textLength).concat("...") : d.id
+      keyMap(d).length > textLength ? keyMap(d).slice(0, textLength).concat("...") : keyMap(d)
     )
     .style("text-anchor", "middle")
     .style("font-family", "Arial")
     .style("font-size", fontSize)
     .style("fill", textColor)
-    .style("opacity", labelOpacity)
+    .style("opacity", nodeLabelOpacity)
     // .style('fill', 'white')
     // .style('visibility', 'hidden')
     .attr("stroke-linejoin", "round")
@@ -397,7 +434,7 @@ export function forceGraph(
     .style("fill", textColor)
     // .style('fill', 'white')
     // .style('visibility', 'hidden')
-    .style("opacity", labelOpacity)
+    .style("opacity", linkLabelOpacity)
     .attr("stroke-linejoin", "round")
     .attr("stroke-width", haloWidth)
     .attr("stroke", halo)
@@ -419,42 +456,44 @@ export function forceGraph(
   });
 
   // Create legend
-  svg
-    .append("text")
-    .attr("x", -width / 2 + 12)
-    .attr("y", -height / 2 + 24)
-    .style("font-size", "18px")
-    .style("text-decoration", "underline")
-    .text("Legend")
-    .style("fill", "black");
+  svg.append(() => legend);
 
-  // legend colors
-  svg
-    .append("g")
-    .attr("stroke", "#111")
-    .attr("stroke-width", 1)
-    .selectAll("rect")
-    .data(Object.values(typeList))
-    .join("rect")
-    .attr("x", -width / 2 + 12)
-    .attr("y", (_, i) => -height / 2 + 32 + i * 16)
-    .attr("width", 10)
-    .attr("height", 10)
-    .style("fill", colorScale)
-    .append("title")
-    .text((d) => d);
+  // svg
+  //   .append("text")
+  //   .attr("x", -width / 2 + 12)
+  //   .attr("y", -height / 2 + 24)
+  //   .style("font-size", legendFontSize)
+  //   .style("text-decoration", "underline")
+  //   .text("Legend")
+  //   .style("fill", "black");
 
-  // legend text
-  svg
-    .append("g")
-    .selectAll("text")
-    .data(Object.keys(typeList))
-    .join("text")
-    .attr("x", -width / 2 + 26)
-    .attr("y", (_, i) => -height / 2 + 41 + i * 16)
-    .text((d) => d)
-    .style("fill", "black")
-    .style("font-size", "14px");
+  // // legend colors
+  // svg
+  //   .append("g")
+  //   .attr("stroke", "#111")
+  //   .attr("stroke-width", 1)
+  //   .selectAll("rect")
+  //   .data(Object.values(typeList))
+  //   .join("rect")
+  //   .attr("x", -width / 2 + 12)
+  //   .attr("y", (_, i) => -height / 2 + 32 + i * 16)
+  //   .attr("width", 10)
+  //   .attr("height", 10)
+  //   .style("fill", color)
+  //   .append("title")
+  //   .text((d) => d);
+
+  // // legend text
+  // svg
+  //   .append("g")
+  //   .selectAll("text")
+  //   .data(Object.keys(typeList))
+  //   .join("text")
+  //   .attr("x", -width / 2 + 26)
+  //   .attr("y", (_, i) => -height / 2 + 41 + i * 16)
+  //   .text((d) => d)
+  //   .style("fill", "black")
+  //   .style("font-size", "14px");
 
   return svg.node();
 
@@ -555,7 +594,7 @@ export function filterLinks(graph, filterFunction) {
 
   filteredGraph.nodes = d3.filter(graph.nodes, (node) =>
     filteredGraph.links.find(
-      (link) => link.source == node.id || link.target == node.id
+      (link) => link.source == keyMap(node) || link.target == keyMap(node)
     )
   );
 

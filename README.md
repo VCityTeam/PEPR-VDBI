@@ -62,7 +62,7 @@ gantt
     Y1 Review                       :           q4-3,   17-12-2025,     2w
 ```
 
-> [!TIP] Milestones
+> [!TIP]
 > See project [milestone](https://github.com/VCityTeam/PEPR-VDBI/milestones) descriptions for more information about specific quarterly/yearly goals.
 
 
@@ -78,7 +78,7 @@ gantt
 | G6   | Forecasting tool                 | Proposal and implementation of a tool for identifying and projecting future trends in the VDBI (and other) research communities.                                                                                                                                     |
 | G7   | Promote achievements             | Promote achievements and results in the form of scientific publications, reports and oral presentations                                                                                                                                                              |
 
-> [!TIP] Issues
+> [!TIP]
 > [Issues](https://github.com/VCityTeam/PEPR-VDBI/issues) are labeled by goal for simplifying searching.
 > 
 > For example, use the `label:G1` filter to search for all issues related to G1.

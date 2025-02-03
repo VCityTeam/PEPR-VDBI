@@ -3,6 +3,7 @@ export default {
   // The project’s title; used in the sidebar and webpage titles.
   title: 'PEPR Dashboards',
   theme: 'dark',
+  root: "docs", // path to the source root for preview
   pages: [
     {
       name: 'Phase 2 Overview',
@@ -106,6 +107,5 @@ export default {
   // footer: "Built with Observable.", // what to show in the footer (HTML)
   // toc: true, // whether to show the table of contents
   // pager: true, // whether to show previous & next links in the footer
-  // root: "docs", // path to the source root for preview
   // output: "dist", // path to the output root for build
 };
