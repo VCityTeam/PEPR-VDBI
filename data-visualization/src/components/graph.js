@@ -1,6 +1,6 @@
-import * as d3 from "npm:d3";
-import { circleLegend } from "./legend.js";
-import { cropText } from "./utilities.js";
+import * as d3 from 'npm:d3';
+import { circleLegend } from './legend.js';
+import { cropText } from './utilities.js';
 
 /**
  * Map the elements of an array of objects (a table) to a graph with the following rules:
@@ -22,7 +22,7 @@ import { cropText } from "./utilities.js";
 export function mapTableToPropertyGraphLinks(
   data,
   {
-    id_key = "id", // the key used to identify a row
+    id_key = 'id', // the key used to identify a row
     column, // columns NOT in this list are ignored. Use all columns by default
     reflexive = false, // if there is a link from A to B, should a link be generated from B to A?
   } = {}
@@ -36,7 +36,7 @@ export function mapTableToPropertyGraphLinks(
         continue; // column not whitelisted
       } else if (key == id_key || value == null || value == undefined) {
         continue;
-      } else if (typeof value == "string") {
+      } else if (typeof value == 'string') {
         // get rows with the same value
         const rows_to_link = data.filter(
           (d) => d[id_key] != row[id_key] && d[key] == row[key]
@@ -66,7 +66,7 @@ export function mapTableToPropertyGraphLinks(
         for (let index = 0; index < value.length; index++) {
           const element = value[index];
           if (!element) {
-            console.warn("No element found", index, key, value);
+            console.warn('No element found', index, key, value);
             continue;
           }
           // get rows with intersecting elements and add them to rows_to_link
@@ -83,7 +83,7 @@ export function mapTableToPropertyGraphLinks(
           });
         }
       } else {
-        console.warn("Unknown property type", key, value);
+        console.warn('Unknown property type', key, value);
       }
     }
   });
@@ -115,7 +115,7 @@ export function mapTableToPropertyGraphLinks(
 export function mapTableToTriples(
   data,
   {
-    id_key = "id", // the key used to identify a row
+    id_key = 'id', // the key used to identify a row
     column, // columns NOT in this list are ignored. Use all columns by default
     // type_nodes = false, // create an RDF Type triple for each node
   } = {}
@@ -134,12 +134,12 @@ export function mapTableToTriples(
         continue; // column not whitelisted
       } else if (
         key == id_key ||
-        value == "" ||
+        value == '' ||
         value == null ||
         value == undefined
       ) {
         continue; // ignore id key and null values
-      } else if (typeof value == "string") {
+      } else if (typeof value == 'string') {
         // create target node if necessary
         if (!nodes.some(({ id, type }) => id == value && type == key))
           nodes.push({ id: value, type: key });
@@ -150,7 +150,7 @@ export function mapTableToTriples(
         for (let index = 0; index < value.length; index++) {
           const element = value[index];
           if (!element) {
-            console.warn("No element found", index, key, value);
+            console.warn('No element found', index, key, value);
             continue;
           }
 
@@ -166,7 +166,7 @@ export function mapTableToTriples(
           });
         }
       } else {
-        console.warn("Unknown property type", key, value);
+        console.warn('Unknown property type', key, value);
       }
     }
   });
@@ -193,9 +193,9 @@ export function mapProjectsToRDFGraph(projects, colorMap = {}) {
     // });
     // iterate though every entry of each project
     for (const [key, value] of Object.entries(project)) {
-      if (key == "acronyme") {
+      if (key == 'acronyme') {
         nodes.push({ id: project.acronyme, color: colorMap.acronyme });
-      } else if (typeof value == "string") {
+      } else if (typeof value == 'string') {
         if (!nodes.find((d) => d.id == value)) {
           nodes.push({ id: value, color: colorMap[key] });
         }
@@ -205,7 +205,7 @@ export function mapProjectsToRDFGraph(projects, colorMap = {}) {
         for (let index = 0; index < value.length; index++) {
           const element = value[index];
           if (!element) {
-            console.warn("No element found", index, key, value);
+            console.warn('No element found', index, key, value);
           }
           if (!nodes.find((d) => d.id == element)) {
             nodes.push({ id: element, color: colorMap[key] });
@@ -240,7 +240,7 @@ export function forceGraph(
      **/
   },
   {
-    id = "d3_graph_" + Math.random().toString(36).substring(7),
+    id = 'd3_graph_' + Math.random().toString(36).substring(7),
     typeList = {}, // list of color lables for legend
     width = 500, // canvas width
     height = 500, // canvas height
@@ -250,11 +250,11 @@ export function forceGraph(
     fontSize = 10, // label font size
     r = 3, // node radius
     textLength = 15, // label cutoff length
-    stroke = "white", // stroke for links
+    stroke = 'white', // stroke for links
     strokeWidth = 0.5, // stroke width for links
     strokeOpacity = 0.4, // stroke opacity for links
-    textColor = "white", // label color
-    halo = "black", // color of label halo
+    textColor = 'white', // label color
+    halo = 'black', // color of label halo
     haloWidth = 0.25, // padding around the labels
     nodeLabelOpacity = 0.3, // default node label opacity
     linkLabelOpacity = 0.3, // default link label opacity
@@ -268,55 +268,52 @@ export function forceGraph(
   }
 ) {
   const svg = d3
-    .create("svg")
-    .attr("id", id)
-    .attr("class", "d3_graph")
-    .attr("viewBox", [-width / 2, -height / 2, width, height])
-    .style("display", "hidden");
+    .create('svg')
+    .attr('id', id)
+    .attr('class', 'd3_graph')
+    .attr('viewBox', [-width / 2, -height / 2, width, height])
+    .style('display', 'hidden');
 
   const links = data.links.map((d) => Object.create(d));
   const nodes = data.nodes.map((d) => Object.create(d));
 
   const simulation = d3
     .forceSimulation(nodes)
-    .force(
-      "link",
-      d3.forceLink(links).id(keyMap)
-    )
-    .force("charge", d3.forceManyBody())
+    .force('link', d3.forceLink(links).id(keyMap))
+    .force('charge', d3.forceManyBody())
     // .force("center", d3.forceCenter(width / 2, height / 2));
-    .force("x", d3.forceX())
-    .force("y", d3.forceY());
+    .force('x', d3.forceX())
+    .force('y', d3.forceY());
 
-  svg.call(d3.zoom().on("zoom", handleZoom));
+  svg.call(d3.zoom().on('zoom', handleZoom));
 
   const link = svg
-    .append("g")
-    .attr("class", "links")
-    .attr("stroke", stroke)
-    .attr("stroke-opacity", strokeOpacity)
-    .selectAll("line")
+    .append('g')
+    .attr('class', 'links')
+    .attr('stroke', stroke)
+    .attr('stroke-opacity', strokeOpacity)
+    .selectAll('line')
     .data(links)
-    .join("line")
-    .attr("stroke-width", strokeWidth);
+    .join('line')
+    .attr('stroke-width', strokeWidth);
 
   const node = svg
-    .append("g")
-    .attr("class", "nodes")
-    .selectAll("circle")
+    .append('g')
+    .attr('class', 'nodes')
+    .selectAll('circle')
     .data(nodes)
-    .join("circle")
-    .attr("r", r)
-    .attr("stroke-opacity", strokeOpacity)
-    .attr("stroke-width", strokeWidth)
-    .attr("stroke", stroke)
-    .attr("fill", (d) => color(valueMap(d)))
+    .join('circle')
+    .attr('r', r)
+    .attr('stroke-opacity', strokeOpacity)
+    .attr('stroke-width', strokeWidth)
+    .attr('stroke', stroke)
+    .attr('fill', (d) => color(valueMap(d)))
     // .on("click", (event, datum) => {
     //   console.debug("event", event);
     //   console.debug("datum", datum);
     // })
-    .on("mouseover", (event, datum) => {
-      event.target.style["stroke-opacity"] = highlightOpacity;
+    .on('mouseover', (event, datum) => {
+      event.target.style['stroke-opacity'] = highlightOpacity;
       // event.target.style["stroke"] = "white";
       // event.target.style["fill"] = color(valueMap(nodes[datum.index]));
       links
@@ -333,30 +330,30 @@ export function forceGraph(
             )
             .nodes()
             .forEach((d) => {
-              d.style["stroke-opacity"] = highlightOpacity;
+              d.style['stroke-opacity'] = highlightOpacity;
             });
           node_label
             .filter((_, j) => j == d.source.index || j == d.target.index)
             .nodes()
             .forEach((d) => {
-              d.style["opacity"] = highlightOpacity;
+              d.style['opacity'] = highlightOpacity;
             });
           link
             .filter((_, j) => j == d.index)
             .nodes()
             .forEach((d) => {
-              d.style["stroke-opacity"] = highlightOpacity;
+              d.style['stroke-opacity'] = highlightOpacity;
             });
           link_label
             .filter((_, j) => j == d.index)
             .nodes()
             .forEach((d) => {
-              d.style["opacity"] = highlightOpacity;
+              d.style['opacity'] = highlightOpacity;
             });
         });
     })
-    .on("mouseout", (event, datum) => {
-      event.target.style["stroke-opacity"] = strokeOpacity;
+    .on('mouseout', (event, datum) => {
+      event.target.style['stroke-opacity'] = strokeOpacity;
       // event.target.style["stroke"] = stroke;
       // event.target.style["fill"] = color(valueMap(nodes[datum.index]));
       links
@@ -370,93 +367,95 @@ export function forceGraph(
             .filter((_, j) => j == d.source.index || j == d.target.index)
             .nodes()
             .forEach((d) => {
-              d.style["stroke-opacity"] = strokeOpacity;
+              d.style['stroke-opacity'] = strokeOpacity;
             });
           node_label
             .filter((_, j) => j == d.source.index || j == d.target.index)
             .nodes()
             .forEach((d) => {
-              d.style["opacity"] = nodeLabelOpacity;
+              d.style['opacity'] = nodeLabelOpacity;
             });
           link
             .filter((_, j) => j == d.index)
             .nodes()
             .forEach((d) => {
-              d.style["stroke-opacity"] = strokeOpacity;
+              d.style['stroke-opacity'] = strokeOpacity;
             });
           link_label
             .filter((_, j) => j == d.index)
             .nodes()
             .forEach((d) => {
-              d.style["opacity"] = linkLabelOpacity;
+              d.style['opacity'] = linkLabelOpacity;
             });
         });
     })
     .call(drag(simulation));
 
-  node.append("title").text(keyMap);
+  node.append('title').text(keyMap);
 
   const node_label = svg
-    .selectAll(".node_label")
+    .selectAll('.node_label')
     .data(nodes)
     .enter()
-    .append("text")
+    .append('text')
     .text((d) =>
-      keyMap(d).length > textLength ? keyMap(d).slice(0, textLength).concat("...") : keyMap(d)
+      keyMap(d).length > textLength
+        ? keyMap(d).slice(0, textLength).concat('...')
+        : keyMap(d)
     )
-    .style("text-anchor", "middle")
-    .style("font-family", "Arial")
-    .style("font-size", fontSize)
-    .style("fill", textColor)
-    .style("opacity", nodeLabelOpacity)
+    .style('text-anchor', 'middle')
+    .style('font-family', 'Arial')
+    .style('font-size', fontSize)
+    .style('fill', textColor)
+    .style('opacity', nodeLabelOpacity)
     // .style('fill', 'white')
     // .style('visibility', 'hidden')
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-width", haloWidth)
-    .attr("stroke", halo)
-    .attr("paint-order", "stroke")
-    .style("pointer-events", "none")
-    .attr("class", "node_label");
+    .attr('stroke-linejoin', 'round')
+    .attr('stroke-width', haloWidth)
+    .attr('stroke', halo)
+    .attr('paint-order', 'stroke')
+    .style('pointer-events', 'none')
+    .attr('class', 'node_label');
 
   const link_label = svg
-    .selectAll(".link_label")
+    .selectAll('.link_label')
     .data(links)
     .enter()
-    .append("text")
+    .append('text')
     .text((d) =>
       d.label.length > textLength
-        ? d.label.slice(0, textLength).concat("...")
+        ? d.label.slice(0, textLength).concat('...')
         : d.label
     )
-    .style("text-anchor", "middle")
-    .style("font-family", "Arial")
-    .style("font-size", fontSize)
-    .style("fill", textColor)
+    .style('text-anchor', 'middle')
+    .style('font-family', 'Arial')
+    .style('font-size', fontSize)
+    .style('fill', textColor)
     // .style('fill', 'white')
     // .style('visibility', 'hidden')
-    .style("opacity", linkLabelOpacity)
-    .attr("stroke-linejoin", "round")
-    .attr("stroke-width", haloWidth)
-    .attr("stroke", halo)
-    .attr("paint-order", "stroke")
-    .style("pointer-events", "none")
-    .attr("class", "link_label");
+    .style('opacity', linkLabelOpacity)
+    .attr('stroke-linejoin', 'round')
+    .attr('stroke-width', haloWidth)
+    .attr('stroke', halo)
+    .attr('paint-order', 'stroke')
+    .style('pointer-events', 'none')
+    .attr('class', 'link_label');
 
-  simulation.on("tick", () => {
-    node_label.attr("x", (d) => d.x).attr("y", (d) => d.y - 10);
+  simulation.on('tick', () => {
+    node_label.attr('x', (d) => d.x).attr('y', (d) => d.y - 10);
     link
-      .attr("x1", (d) => d.source.x)
-      .attr("y1", (d) => d.source.y)
-      .attr("x2", (d) => d.target.x)
-      .attr("y2", (d) => d.target.y);
+      .attr('x1', (d) => d.source.x)
+      .attr('y1', (d) => d.source.y)
+      .attr('x2', (d) => d.target.x)
+      .attr('y2', (d) => d.target.y);
     link_label
-      .attr("x", (d) => (d.source.x + d.target.x) / 2)
-      .attr("y", (d) => (d.source.y + d.target.y) / 2);
-    node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
+      .attr('x', (d) => (d.source.x + d.target.x) / 2)
+      .attr('y', (d) => (d.source.y + d.target.y) / 2);
+    node.attr('cx', (d) => d.x).attr('cy', (d) => d.y);
   });
 
   // Create legend
-  svg.append(() => legend);
+  svg.append('g').append(() => legend);
 
   // svg
   //   .append("text")
@@ -537,9 +536,9 @@ export function forceGraph(
 
     return d3
       .drag()
-      .on("start", dragstarted)
-      .on("drag", dragged)
-      .on("end", dragended);
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended);
   }
 
   /**
@@ -549,39 +548,39 @@ export function forceGraph(
    */
   function handleZoom(event) {
     d3.selectAll(`#${id} g.nodes`)
-      .attr("height", "100%")
-      .attr("width", "100%")
-      .attr("transform", event.transform);
+      .attr('height', '100%')
+      .attr('width', '100%')
+      .attr('transform', event.transform);
 
     d3.selectAll(`#${id} g.links`)
-      .attr("height", "100%")
-      .attr("width", "100%")
-      .attr("transform", event.transform);
+      .attr('height', '100%')
+      .attr('width', '100%')
+      .attr('transform', event.transform);
 
     d3.selectAll(`#${id} text.node_label`)
       // .style("font-size", fontSize / event.transform.k + "px")
       .attr(
-        "transform",
-        "translate(" +
+        'transform',
+        'translate(' +
           event.transform.x +
-          "," +
+          ',' +
           event.transform.y +
-          ") scale(" +
+          ') scale(' +
           event.transform.k +
-          ")"
+          ')'
       );
 
     d3.selectAll(`#${id} text.link_label`)
       // .style("font-size", fontSize / event.transform.k + "px")
       .attr(
-        "transform",
-        "translate(" +
+        'transform',
+        'translate(' +
           event.transform.x +
-          "," +
+          ',' +
           event.transform.y +
-          ") scale(" +
+          ') scale(' +
           event.transform.k +
-          ")"
+          ')'
       );
   }
 }
@@ -634,11 +633,11 @@ export function arcDiagramVertical(
     rMouseover = 3.5,
     // order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by degree"),
     // order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("input"),
-    order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by name"),
+    order = sortNodes({ nodes, links }, { keyMap, valueMap }).get('by name'),
     // order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by property"),
     yDistribution = d3.scalePoint(order, [marginTop, height - marginBottom]),
     fontSize = 12,
-    fontFill = "white",
+    fontFill = 'white',
     fontMouseoverOpacity = 0.3,
     arcMouseoverOpacity = 0.1,
     labelRotate = 0,
@@ -659,9 +658,9 @@ export function arcDiagramVertical(
           )
           .reverse()
       )
-      .unknown("#aaa"),
-    nodeFill = "white",
-    nodeStroke = "grey",
+      .unknown('#aaa'),
+    nodeFill = 'white',
+    nodeStroke = 'grey',
     // create a circle legend from possible arc values
     legend = circleLegend(color.domain(), {
       keyMap: (d) => d,
@@ -683,11 +682,11 @@ export function arcDiagramVertical(
 
   // Create the SVG container.
   const svg = d3
-    .create("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("viewBox", [0, 0, width, height])
-    .attr("style", "max-width: 100%; height: auto;");
+    .create('svg')
+    .attr('width', width)
+    .attr('height', height)
+    .attr('viewBox', [0, 0, width, height])
+    .attr('style', 'max-width: 100%; height: auto;');
 
   // The current position, indexed by id. Will be interpolated.
   const y_positions = new Map(
@@ -707,15 +706,15 @@ export function arcDiagramVertical(
   }
 
   const path = svg
-    .insert("g", "*")
-    .attr("fill", "none")
-    .attr("stroke-opacity", 0.6)
-    .attr("stroke-width", 1.5)
-    .selectAll("path")
+    .insert('g', '*')
+    .attr('fill', 'none')
+    .attr('stroke-opacity', 0.6)
+    .attr('stroke-width', 1.5)
+    .selectAll('path')
     .data(links)
-    .join("path")
-    .attr("stroke", (d) => color(sameGroup(d)))
-    .attr("d", arc);
+    .join('path')
+    .attr('stroke', (d) => color(sameGroup(d)))
+    .attr('d', arc);
   // .join(
   //   (enter) => {
   //     console.debug("enter", enter);
@@ -732,16 +731,16 @@ export function arcDiagramVertical(
 
   // Add a text label and a dot for each node.
   const label = svg
-    .append("g")
-    .attr("font-family", "sans-serif")
-    .attr("font-size", fontSize)
-    .attr("fill", fontFill)
-    .attr("text-anchor", "end")
-    .selectAll("g")
+    .append('g')
+    .attr('font-family', 'sans-serif')
+    .attr('font-size', fontSize)
+    .attr('fill', fontFill)
+    .attr('text-anchor', 'end')
+    .selectAll('g')
     .data(nodes)
-    .join("g")
+    .join('g')
     .attr(
-      "transform",
+      'transform',
       (d) =>
         `translate(${marginLeft},${y_positions.get(
           keyMap(d)
@@ -749,18 +748,18 @@ export function arcDiagramVertical(
     )
     .call((g) =>
       g
-        .append("text")
-        .attr("x", -6)
-        .attr("dy", "0.35em")
+        .append('text')
+        .attr('x', -6)
+        .attr('dy', '0.35em')
         // .attr("fill", (d) => color(valueMap(d)))
         .text((d) => keyMap(d))
     )
     .call((g) =>
       g
-        .append("circle")
-        .attr("r", r)
-        .attr("fill", nodeFill)
-        .attr("stroke", nodeStroke)
+        .append('circle')
+        .attr('r', r)
+        .attr('fill', nodeFill)
+        .attr('stroke', nodeStroke)
     );
   // .join(
   //   (enter) => {
@@ -794,18 +793,18 @@ export function arcDiagramVertical(
 
   // Add invisible rects that update the class of the elements on mouseover.
   label
-    .append("rect")
-    .attr("fill", "none")
-    .attr("width", marginLeft + 40)
-    .attr("height", step)
-    .attr("x", -marginLeft)
-    .attr("y", -step / 2)
-    .attr("fill", "none")
-    .attr("pointer-events", "all")
-    .on("pointerenter", (_e, d) => {
-      svg.classed("hover", true);
-      label.classed("primary", (n) => n === d);
-      label.classed("secondary", (n) =>
+    .append('rect')
+    .attr('fill', 'none')
+    .attr('width', marginLeft + 40)
+    .attr('height', step)
+    .attr('x', -marginLeft)
+    .attr('y', -step / 2)
+    .attr('fill', 'none')
+    .attr('pointer-events', 'all')
+    .on('pointerenter', (_e, d) => {
+      svg.classed('hover', true);
+      label.classed('primary', (n) => n === d);
+      label.classed('secondary', (n) =>
         links.some(
           ({ source, target }) =>
             (keyMap(n) === source && keyMap(d) === target) ||
@@ -814,27 +813,27 @@ export function arcDiagramVertical(
       );
       path
         .classed(
-          "primary",
+          'primary',
           (l) => l.source === keyMap(d) || l.target === keyMap(d)
         )
-        .filter(".primary")
+        .filter('.primary')
         .raise();
-      d3.selectAll(".legend g text")
+      d3.selectAll('.legend g text')
         .data(color.domain())
-        .classed("primary", (v) => v == valueMap(d));
+        .classed('primary', (v) => v == valueMap(d));
     })
-    .on("pointerout", () => {
-      svg.classed("hover", false);
-      label.classed("primary", false);
-      label.classed("secondary", false);
-      path.classed("primary", false).order();
-      d3.select(".legend g text")
+    .on('pointerout', () => {
+      svg.classed('hover', false);
+      label.classed('primary', false);
+      label.classed('secondary', false);
+      path.classed('primary', false).order();
+      d3.select('.legend g text')
         .data(color.domain())
-        .classed("primary", false);
+        .classed('primary', false);
     });
 
   // Add styles for the hover interaction.
-  svg.append("style").text(`
+  svg.append('style').text(`
     .hover text { opacity: ${fontMouseoverOpacity}; }
     .hover g.primary text { font-weight: bold; opacity: 1; }
     .hover g.primary circle { r: ${rMouseover} }
@@ -856,7 +855,7 @@ export function arcDiagramVertical(
       .transition()
       .duration(750)
       .delay((d, i) => i * 20) // Make the movement start from the top.
-      .attrTween("transform", (d) => {
+      .attrTween('transform', (d) => {
         const i = d3.interpolateNumber(
           y_positions.get(keyMap(d)),
           yDistribution(keyMap(d))
@@ -871,13 +870,13 @@ export function arcDiagramVertical(
     path
       .transition()
       .duration(750 + nodes.length * 20) // Cover the maximum delay of the label transition.
-      .attrTween("d", (d) => () => arc(d));
+      .attrTween('d', (d) => () => arc(d));
   }
 
   if (legend) {
     svg
-      .append("g")
-      .attr("transform", `translate(${width - marginRight},${marginTop})`)
+      .append('g')
+      .attr('transform', `translate(${width - marginRight},${marginTop})`)
       .append(() => legend);
   }
 
@@ -920,11 +919,11 @@ export function sortNodes(
   );
   // console.debug("degree", degree);
   return new Map([
-    ["by name", d3.sort(nodes.map(keyMap))],
-    ["by property", d3.sort(nodes, valueMap, keyMap).map(keyMap)],
+    ['by name', d3.sort(nodes.map(keyMap))],
+    ['by property', d3.sort(nodes, valueMap, keyMap).map(keyMap)],
     //    ["input", nodes.map(keyMap)],
     [
-      "by degree",
+      'by degree',
       d3
         .sort(
           nodes,

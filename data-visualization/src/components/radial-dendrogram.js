@@ -7,19 +7,19 @@ import {
   hierarchy,
   stratify,
   create,
-  linkRadial
-} from "npm:d3";
+  linkRadial,
+} from 'npm:d3';
 
 export function mapEntitesToProjectTree(projects) {
   // map graph to d3 hierarchy format
   const projectTree = {
-    name: "PEPR VDBI",
+    name: 'PEPR VDBI',
     children: map(projects, (project) => {
       const projectChildren = filter(
         // filter out project ids and acronymes
         Object.entries(project),
         ([key, _values]) => {
-          return key != "id" && key != "acronyme";
+          return key != 'id' && key != 'acronyme';
         }
       ).map(([key, values]) => {
         return {
@@ -51,16 +51,16 @@ export function mapEntitesToProductToProjectTree(projects) {
     (project) => project.produit[1],
     (project) => project.action[0]
   );
-  console.debug("projectByProduct", projectByProduct);
+  console.debug('projectByProduct', projectByProduct);
 
   // this will be added to the project leaves to map all info
   const projectTree = mapEntitesToProjectTree(projects).children;
 
-  console.debug("projectTree", projectTree);
+  console.debug('projectTree', projectTree);
 
   // this code could/should be made generic to work with any length of grouping ?
   const projectToProductTree = {
-    name: "PEPR VDBI",
+    name: 'PEPR VDBI',
     children: map(projectByProduct.entries(), ([key, value]) => {
       return {
         // primary product name
@@ -86,9 +86,9 @@ export function mapEntitesToProductToProjectTree(projects) {
                       .children.filter(
                         // filter out acronyme, actions, and products (we already added them to the tree as ancestors)
                         (d) =>
-                          d.name != "action" &&
-                          d.name != "produit" &&
-                          d.name != "acronyme"
+                          d.name != 'action' &&
+                          d.name != 'produit' &&
+                          d.name != 'acronyme'
                       ),
                   };
                 }),
@@ -99,7 +99,7 @@ export function mapEntitesToProductToProjectTree(projects) {
       };
     }),
   };
-  console.debug("projectToProductTree", projectToProductTree);
+  console.debug('projectToProductTree', projectToProductTree);
 
   return projectToProductTree;
 }
@@ -129,15 +129,15 @@ export function collapsableRadialDendrogram(
       height - marginTop - marginBottom
     ) / 2, // outer radius
     r = 3, // radius of nodes
-    fill = "#999", // fill for nodes
+    fill = '#999', // fill for nodes
     fillOpacity, // fill opacity for nodes
     fontsize = 10, // font size for labels
-    stroke = "#555", // stroke for links
+    stroke = '#555', // stroke for links
     strokeWidth = 1.5, // stroke width for links
     strokeOpacity = 0.4, // stroke opacity for links
     strokeLinejoin, // stroke line join for links
     strokeLinecap, // stroke line cap for links
-    halo = "#fff", // color of label halo
+    halo = '#fff', // color of label halo
     haloWidth = 3, // padding around the labels
     dynamicPositioning = true, // recalculate positions according to radius on update
   } = {}
@@ -168,13 +168,13 @@ export function collapsableRadialDendrogram(
   //   d.y0 = d.y;
   // });
 
-  const svg = create("svg")
-    .attr("viewBox", [-marginLeft - radius, -marginTop - radius, width, height])
-    .attr("width", width)
-    .attr("height", height)
-    .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
-    .attr("font-family", "sans-serif")
-    .attr("font-size", fontsize);
+  const svg = create('svg')
+    .attr('viewBox', [-marginLeft - radius, -marginTop - radius, width, height])
+    .attr('width', width)
+    .attr('height', height)
+    .attr('style', 'max-width: 100%; height: auto; height: intrinsic;')
+    .attr('font-family', 'sans-serif')
+    .attr('font-size', fontsize);
 
   // Do the first update to the initial configuration of the tree — where a number of nodes
   // are open (arbitrarily selected as the root, plus nodes with 7 letters).
@@ -213,119 +213,119 @@ export function collapsableRadialDendrogram(
     const transition = svg.transition().duration(duration);
 
     // Update the nodes
-    const node = svg.selectAll("g.node").data(nodes, (d) => d.id);
+    const node = svg.selectAll('g.node').data(nodes, (d) => d.id);
 
     // Enter any new nodes at the parent's previous position.
     const nodeEnter = node
       .enter()
-      .append("g")
-      .attr("class", "node")
+      .append('g')
+      .attr('class', 'node')
       .attr(
-        "transform",
+        'transform',
         (_d) =>
           `rotate(${(source.x * 180) / Math.PI - 90}) translate(${source.y},0)`
       )
-      .attr("fill-opacity", 0)
-      .attr("stroke-opacity", 0)
-      .on("click", (_event, d) => {
+      .attr('fill-opacity', 0)
+      .attr('stroke-opacity', 0)
+      .on('click', (_event, d) => {
         console.debug(root.descendants());
         click(d);
       })
-      .attr("cursor", "pointer")
-      .attr("pointer-events", "all");
+      .attr('cursor', 'pointer')
+      .attr('pointer-events', 'all');
 
     nodeEnter
-      .append("circle")
-      .attr("r", r)
-      .attr("fill", (d) => (d._children ? stroke : fill))
-      .attr("stroke-width", strokeWidth);
+      .append('circle')
+      .attr('r', r)
+      .attr('fill', (d) => (d._children ? stroke : fill))
+      .attr('stroke-width', strokeWidth);
 
     nodeEnter
-      .append("text")
-      .attr("dy", "0.32em")
-      .attr("x", (d) => (d.x < Math.PI === !d.children ? 6 : -6))
-      .attr("text-anchor", (d) =>
-        d.x < Math.PI === !d.children ? "start" : "end"
+      .append('text')
+      .attr('dy', '0.32em')
+      .attr('x', (d) => (d.x < Math.PI === !d.children ? 6 : -6))
+      .attr('text-anchor', (d) =>
+        d.x < Math.PI === !d.children ? 'start' : 'end'
       )
       // crop node names longer than textLength characters
       .text((d) => {
         return d.data.name.length > textLength
-          ? d.data.name.slice(0, textLength).concat("...")
+          ? d.data.name.slice(0, textLength).concat('...')
           : d.data.name;
       })
-      .attr("stroke-linejoin", "round")
-      .attr("stroke-width", haloWidth)
-      .attr("stroke", halo)
-      .attr("paint-order", "stroke")
-      .attr("class", "node_label");
+      .attr('stroke-linejoin', 'round')
+      .attr('stroke-width', haloWidth)
+      .attr('stroke', halo)
+      .attr('paint-order', 'stroke')
+      .attr('class', 'node_label');
 
     // Transition nodes to their new position.
     const nodeUpdate = node
       .merge(nodeEnter)
       .transition(transition)
       .attr(
-        "transform",
+        'transform',
         (d) =>
           `rotate(${(d.x * 180) / Math.PI - 90}) translate(${d.y},0) rotate(${
             d.x >= Math.PI ? 180 : 0
           })`
       )
-      .attr("fill-opacity", fillOpacity)
-      .attr("stroke-opacity", strokeOpacity);
+      .attr('fill-opacity', fillOpacity)
+      .attr('stroke-opacity', strokeOpacity);
 
     nodeUpdate
-      .select("circle")
-      .attr("r", r)
-      .style("fill", function (d) {
+      .select('circle')
+      .attr('r', r)
+      .style('fill', function (d) {
         return d._children ? stroke : fill;
       });
 
     nodeUpdate
-      .select("text")
-      .style("fill-opacity", fillOpacity)
-      .attr("x", (d) => (d.x < Math.PI === !d.children ? 6 : -6))
-      .attr("text-anchor", (d) =>
-        d.x < Math.PI === !d.children ? "start" : "end"
+      .select('text')
+      .style('fill-opacity', fillOpacity)
+      .attr('x', (d) => (d.x < Math.PI === !d.children ? 6 : -6))
+      .attr('text-anchor', (d) =>
+        d.x < Math.PI === !d.children ? 'start' : 'end'
       );
 
     // Transition exiting nodes to the parent's new position.
     const nodeExit = node
       .exit()
       .transition(transition)
-      .attr("fill-opacity", 0)
-      .attr("stroke-opacity", 0)
-      .attr("stroke-width", 0)
+      .attr('fill-opacity', 0)
+      .attr('stroke-opacity', 0)
+      .attr('stroke-width', 0)
       .remove();
 
-    nodeExit.select("circle").attr("r", 1);
+    nodeExit.select('circle').attr('r', 1);
 
     // Update the links…
-    const link = svg.selectAll("path.link").data(links, (d) => d.target.id);
+    const link = svg.selectAll('path.link').data(links, (d) => d.target.id);
 
     // Enter any new links at the parent's previous position.
     const linkEnter = link
       .enter()
-      .append("path")
-      .attr("class", "link")
+      .append('path')
+      .attr('class', 'link')
       .attr(
-        "d",
+        'd',
         linkRadial()
           .angle((_d) => source.x)
           .radius((_d) => source.y0)
       )
-      .attr("fill", "none")
-      .attr("stroke", stroke)
-      .attr("stroke-opacity", strokeOpacity)
-      .attr("stroke-linecap", strokeLinecap)
-      .attr("stroke-linejoin", strokeLinejoin)
-      .attr("stroke-width", strokeWidth);
+      .attr('fill', 'none')
+      .attr('stroke', stroke)
+      .attr('stroke-opacity', strokeOpacity)
+      .attr('stroke-linecap', strokeLinecap)
+      .attr('stroke-linejoin', strokeLinejoin)
+      .attr('stroke-width', strokeWidth);
 
     // Transition links to their new position.
     link
       .merge(linkEnter)
       .transition(transition)
       .attr(
-        "d",
+        'd',
         linkRadial()
           .angle((d) => d.x)
           .radius((d) => d.y)
@@ -337,7 +337,7 @@ export function collapsableRadialDendrogram(
       .transition(transition)
       .remove()
       .attr(
-        "d",
+        'd',
         linkRadial()
           .angle((_d) => source.x)
           .radius((_d) => source.y)
@@ -368,32 +368,32 @@ export function collapsableRadialDendrogram(
    * @param {D3ZoomEvent} event the zoom event containing information on how the svg canvas is being translated and scaled
    */
   function handleZoom(event) {
-    selectAll("svg g")
+    selectAll('svg g')
       .filter((_d, i) => i < 2)
-      .attr("height", "100%")
-      .attr("width", "100%")
+      .attr('height', '100%')
+      .attr('width', '100%')
       .attr('transform', event.transform)
       .attr(
-        "transform",
-        "translate(" +
+        'transform',
+        'translate(' +
           event.transform.x +
-          "," +
+          ',' +
           event.transform.y +
-          ") scale(" +
+          ') scale(' +
           event.transform.k +
-          ")"
+          ')'
       );
-    selectAll("text.node_label")
+    selectAll('text.node_label')
       // .style("font-size", fontSize / event.transform.k + "px")
       .attr(
-        "transform",
-        "translate(" +
+        'transform',
+        'translate(' +
           event.transform.x +
-          "," +
+          ',' +
           event.transform.y +
-          ") scale(" +
+          ') scale(' +
           event.transform.k +
-          ")"
+          ')'
       );
   }
 }
