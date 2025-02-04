@@ -42,7 +42,8 @@ const exclude = (d) => ![
 
 const workbook1 = FileAttachment(
   // "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
-  "./data/241021 PEPR_VBDI_analyse modifiée JYT.xlsx"
+  // "./data/241021 PEPR_VBDI_analyse modifiée JYT.xlsx" //outdated
+  "./data/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
 ).xlsx();
 
 const geocoded_researcher_sites = FileAttachment(
@@ -479,10 +480,11 @@ const researcher_force_graph = forceGraph(
   filtered_researcher_triples,
   {
     id: "researcher_force_graph",
-    width: 700,
-    height: 400,
+    width: 1300,
+    height: 900,
     color: color,
-    linkLabelOpacity: 0
+    nodeLabelOpacity: 0.2,
+    linkLabelOpacity: 0,
   }
 );
 ```
@@ -501,7 +503,7 @@ const researcher_force_graph = forceGraph(
 ### Dashboard Search
 <div>${global_search_input}</div>
 
-<!-- <div class="grid grid-cols-3">
+<div class="grid grid-cols-3">
   <div class="card grid-colspan-2">
     <h2>Researchers</h2>
     <div style="padding-bottom: 5px;">${researcher_search_input}</div>
@@ -525,9 +527,9 @@ const researcher_force_graph = forceGraph(
     <h2>ERC Disciplines</h2>
     <div>${discipline_erc_pie}</div>
   </div>
-</div> -->
+</div>
 <div class="grid grid-cols-4">
-  <!-- <div class="card grid-colspan-2 grid-rowspan-2">
+  <div class="card grid-colspan-2 grid-rowspan-2">
     <h2>Researcher Sites</h2>
     <div>${researcher_sites_projection}</div>
   </div>
@@ -537,8 +539,8 @@ const researcher_force_graph = forceGraph(
     <div style="padding-bottom: 5px;">${researcher_arcs_by_property_select_input}</div>
     <div style="padding-bottom: 5px;">${arc_sort_input}</div>
     <div style="max-height: 700px; overflow: auto;">${arc_diagram}</div>
-  </div> -->
-  <div class="card grid-colspan-4 grid-rowspan-2">
+  </div>
+  <div class="card grid-colspan-4 grid-rowspan-3">
     <h2>Researcher Knowledge Graph</h2>
     <div style="padding-bottom: 5px;">${researcher_triples_predicate_select_input}</div>
     <div style="overflow: auto;">${researcher_force_graph}</div>

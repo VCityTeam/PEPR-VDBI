@@ -265,6 +265,7 @@ export function forceGraph(
       keyMap: (d) => d,
       valueMap: (d) => d,
       color: color,
+      lineSeparation: 20,
       text: (d) => cropText(d, 40),
     }),
   }
@@ -399,6 +400,7 @@ export function forceGraph(
   node.append('title').text(keyMap);
 
   const node_label = svg
+    .append('g')
     .selectAll('.node_label')
     .data(nodes)
     .enter()
@@ -423,6 +425,7 @@ export function forceGraph(
     .attr('class', 'node_label');
 
   const link_label = svg
+    .append('g')
     .selectAll('.link_label')
     .data(links)
     .enter()
@@ -447,7 +450,6 @@ export function forceGraph(
     .attr('class', 'link_label');
 
   simulation.on('tick', () => {
-    console.log(simulation.alpha());
     node_label.attr('x', (d) => d.x).attr('y', (d) => d.y - 10);
     link
       .attr('x1', (d) => d.source.x)
@@ -464,11 +466,14 @@ export function forceGraph(
 
   // Create legend
   if (legend) {
-    svg
-      .append('g')
-      .attr('transform', `translate(${-width / 2},${-height / 2})`)
-      .classed('card', true)
-      .append(() => legend);
+    const legend_svg = svg.append('g');
+    legend_svg
+      .append('rect')
+      .attr('height', 100)
+      .attr('width', 100)
+      .attr('fill', 'black')
+      .attr('transform', `translate(${-width / 2 + 10},${-height / 2 + 10})`);
+    legend_svg.append(() => legend);
   }
 
   return svg.node();
