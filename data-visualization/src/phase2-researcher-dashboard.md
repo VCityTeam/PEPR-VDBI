@@ -70,8 +70,8 @@ phase_2_data.researchers.forEach((researcher) => {
   researcher.geo_result_score = locale.result_score;
 });
 
-console.debug("phase_2_data.researchers", phase_2_data.researchers);
-console.debug("geocoded_researcher_sites", geocoded_researcher_sites);
+// console.debug("phase_2_data.researchers", phase_2_data.researchers);
+// console.debug("geocoded_researcher_sites", geocoded_researcher_sites);
 
 
 // Filter financed
@@ -152,7 +152,7 @@ const discipline_erc_pie = donutChart(discipline_erc_count, {
   fontSize: 18
 });
 
-console.debug("discipline_erc_count", discipline_erc_count);
+// console.debug("discipline_erc_count", discipline_erc_count);
 ```
 
 ```js
@@ -168,7 +168,7 @@ const discipline_search_input = Inputs.search(discipline_count, {
 
 const discipline_search = Generators.input(discipline_search_input);
 
-console.debug("discipline_count", discipline_count);
+// console.debug("discipline_count", discipline_count);
 ```
 
 ```js
@@ -224,7 +224,7 @@ const cnu_search_input = Inputs.search(cnu_count, {
 
 const cnu_search = Generators.input(cnu_search_input);
 
-console.debug("cnu_count", cnu_count);
+// console.debug("cnu_count", cnu_count);
 ```
 
 ```js
@@ -279,7 +279,7 @@ const position_count = d3.rollups(
   .filter((d) => exclude(d[0]))
   .sort((a, b) => d3.descending(a[1], b[1]));
 
-console.debug("position_count", position_count);
+// console.debug("position_count", position_count);
 ```
 
 ```js
@@ -314,7 +314,7 @@ const researcher_sites_projection = projectionMap(
   }
 );
 
-console.debug("ok_geocoded_researcher_sites", ok_geocoded_researcher_sites);
+// console.debug("ok_geocoded_researcher_sites", ok_geocoded_researcher_sites);
 ```
 
 ```js
@@ -377,8 +377,8 @@ const researcher_property_links = mapTableToPropertyGraphLinks(
   }
 ).filter((d) => d.label == researcher_arcs_by_property_select && d.value != null);
 
-console.debug("researcher_arcs_by_project", researcher_arcs_by_project);
-console.debug("researcher_property_links", researcher_property_links);
+// console.debug("researcher_arcs_by_project", researcher_arcs_by_project);
+// console.debug("researcher_property_links", researcher_property_links);
 ```
 
 ```js
@@ -501,7 +501,7 @@ const researcher_force_graph = forceGraph(
 ### Dashboard Search
 <div>${global_search_input}</div>
 
-<div class="grid grid-cols-3">
+<!-- <div class="grid grid-cols-3">
   <div class="card grid-colspan-2">
     <h2>Researchers</h2>
     <div style="padding-bottom: 5px;">${researcher_search_input}</div>
@@ -525,9 +525,9 @@ const researcher_force_graph = forceGraph(
     <h2>ERC Disciplines</h2>
     <div>${discipline_erc_pie}</div>
   </div>
-</div>
+</div> -->
 <div class="grid grid-cols-4">
-  <div class="card grid-colspan-2 grid-rowspan-2">
+  <!-- <div class="card grid-colspan-2 grid-rowspan-2">
     <h2>Researcher Sites</h2>
     <div>${researcher_sites_projection}</div>
   </div>
@@ -537,7 +537,7 @@ const researcher_force_graph = forceGraph(
     <div style="padding-bottom: 5px;">${researcher_arcs_by_property_select_input}</div>
     <div style="padding-bottom: 5px;">${arc_sort_input}</div>
     <div style="max-height: 700px; overflow: auto;">${arc_diagram}</div>
-  </div>
+  </div> -->
   <div class="card grid-colspan-4 grid-rowspan-2">
     <h2>Researcher Knowledge Graph</h2>
     <div style="padding-bottom: 5px;">${researcher_triples_predicate_select_input}</div>

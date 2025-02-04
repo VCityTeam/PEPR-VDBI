@@ -1,6 +1,7 @@
 import * as d3 from 'npm:d3';
 import { circleLegend } from './legend.js';
 import { cropText } from './utilities.js';
+import { sum } from 'd3';
 
 /**
  * Map the elements of an array of objects (a table) to a graph with the following rules:
@@ -241,18 +242,19 @@ export function forceGraph(
   },
   {
     id = 'd3_graph_' + Math.random().toString(36).substring(7),
-    typeList = {}, // list of color lables for legend
     width = 500, // canvas width
     height = 500, // canvas height
     keyMap = (d) => d.id, // the function for identifying a node
     valueMap = (d) => d.type, // the function for categorizing a node
     color = d3.scaleOrdinal(d3.schemeCategory10), // color scheme
+    simulationStopThreshold = 0.45, // alpha threshold for stopping simulation
     fontSize = 10, // label font size
     r = 3, // node radius
     textLength = 15, // label cutoff length
     stroke = 'white', // stroke for links
     strokeWidth = 0.5, // stroke width for links
-    strokeOpacity = 0.4, // stroke opacity for links
+    nodeStrokeOpacity = 0.4, // stroke opacity for nodes
+    linkStrokeOpacity = 0.6, // stroke opacity for links
     textColor = 'white', // label color
     halo = 'black', // color of label halo
     haloWidth = 0.25, // padding around the labels
@@ -274,8 +276,8 @@ export function forceGraph(
     .attr('viewBox', [-width / 2, -height / 2, width, height])
     .style('display', 'hidden');
 
-  const links = data.links.map((d) => Object.create(d));
-  const nodes = data.nodes.map((d) => Object.create(d));
+  const links = [...data.links];
+  const nodes = [...data.nodes];
 
   const simulation = d3
     .forceSimulation(nodes)
@@ -284,6 +286,9 @@ export function forceGraph(
     // .force("center", d3.forceCenter(width / 2, height / 2));
     .force('x', d3.forceX())
     .force('y', d3.forceY());
+  // .alphaDecay('0.03');
+
+  Object.assign(svg.node(), { simulation });
 
   svg.call(d3.zoom().on('zoom', handleZoom));
 
@@ -291,7 +296,7 @@ export function forceGraph(
     .append('g')
     .attr('class', 'links')
     .attr('stroke', stroke)
-    .attr('stroke-opacity', strokeOpacity)
+    .attr('stroke-opacity', linkStrokeOpacity)
     .selectAll('line')
     .data(links)
     .join('line')
@@ -304,7 +309,7 @@ export function forceGraph(
     .data(nodes)
     .join('circle')
     .attr('r', r)
-    .attr('stroke-opacity', strokeOpacity)
+    .attr('stroke-opacity', nodeStrokeOpacity)
     .attr('stroke-width', strokeWidth)
     .attr('stroke', stroke)
     .attr('fill', (d) => color(valueMap(d)))
@@ -353,7 +358,7 @@ export function forceGraph(
         });
     })
     .on('mouseout', (event, datum) => {
-      event.target.style['stroke-opacity'] = strokeOpacity;
+      event.target.style['stroke-opacity'] = nodeStrokeOpacity;
       // event.target.style["stroke"] = stroke;
       // event.target.style["fill"] = color(valueMap(nodes[datum.index]));
       links
@@ -367,7 +372,7 @@ export function forceGraph(
             .filter((_, j) => j == d.source.index || j == d.target.index)
             .nodes()
             .forEach((d) => {
-              d.style['stroke-opacity'] = strokeOpacity;
+              d.style['stroke-opacity'] = nodeStrokeOpacity;
             });
           node_label
             .filter((_, j) => j == d.source.index || j == d.target.index)
@@ -379,7 +384,7 @@ export function forceGraph(
             .filter((_, j) => j == d.index)
             .nodes()
             .forEach((d) => {
-              d.style['stroke-opacity'] = strokeOpacity;
+              d.style['stroke-opacity'] = linkStrokeOpacity;
             });
           link_label
             .filter((_, j) => j == d.index)
@@ -442,6 +447,7 @@ export function forceGraph(
     .attr('class', 'link_label');
 
   simulation.on('tick', () => {
+    console.log(simulation.alpha());
     node_label.attr('x', (d) => d.x).attr('y', (d) => d.y - 10);
     link
       .attr('x1', (d) => d.source.x)
@@ -452,51 +458,22 @@ export function forceGraph(
       .attr('x', (d) => (d.source.x + d.target.x) / 2)
       .attr('y', (d) => (d.source.y + d.target.y) / 2);
     node.attr('cx', (d) => d.x).attr('cy', (d) => d.y);
+
+    if (simulation.alpha() < simulationStopThreshold) simulation.stop();
   });
 
   // Create legend
-  svg.append('g').append(() => legend);
-
-  // svg
-  //   .append("text")
-  //   .attr("x", -width / 2 + 12)
-  //   .attr("y", -height / 2 + 24)
-  //   .style("font-size", legendFontSize)
-  //   .style("text-decoration", "underline")
-  //   .text("Legend")
-  //   .style("fill", "black");
-
-  // // legend colors
-  // svg
-  //   .append("g")
-  //   .attr("stroke", "#111")
-  //   .attr("stroke-width", 1)
-  //   .selectAll("rect")
-  //   .data(Object.values(typeList))
-  //   .join("rect")
-  //   .attr("x", -width / 2 + 12)
-  //   .attr("y", (_, i) => -height / 2 + 32 + i * 16)
-  //   .attr("width", 10)
-  //   .attr("height", 10)
-  //   .style("fill", color)
-  //   .append("title")
-  //   .text((d) => d);
-
-  // // legend text
-  // svg
-  //   .append("g")
-  //   .selectAll("text")
-  //   .data(Object.keys(typeList))
-  //   .join("text")
-  //   .attr("x", -width / 2 + 26)
-  //   .attr("y", (_, i) => -height / 2 + 41 + i * 16)
-  //   .text((d) => d)
-  //   .style("fill", "black")
-  //   .style("font-size", "14px");
+  if (legend) {
+    svg
+      .append('g')
+      .attr('transform', `translate(${-width / 2},${-height / 2})`)
+      .classed('card', true)
+      .append(() => legend);
+  }
 
   return svg.node();
 
-  // Interface Functions ///
+  // Interface Functions //
 
   /**
    * Create a drag effect for graph nodes within the context of a force simulation
