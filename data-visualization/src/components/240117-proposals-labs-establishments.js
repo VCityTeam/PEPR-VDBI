@@ -197,20 +197,10 @@ export function resolvePhase1Entities(
       notes: filter([d['Notes']], (d) => typeof d !== 'undefined'),
     };
     if (anonymize) {
-      projectMap.acronyme = anonymizeEntry(
-        projectMap.acronyme,
-        acronymousDict
-      );
-      projectMap.noms = anonymizeEntry(
-        projectMap.noms,
-        acronymousDict
-      );
+      projectMap.acronyme = anonymizeEntry(projectMap.acronyme, acronymousDict);
+      projectMap.noms = anonymizeEntry(projectMap.noms, acronymousDict);
       console.log(projectMap);
-      for (
-        let index = 0;
-        index < projectMap.etablissements.length;
-        index++
-      ) {
+      for (let index = 0; index < projectMap.etablissements.length; index++) {
         projectMap.etablissements[index] = anonymizeEntry(
           projectMap.etablissements[index],
           acronymousDict

@@ -61,7 +61,7 @@ export function mergeCounts(datasets, count_types) {
 export function countEntities(data, mapFunction) {
   // extract the entity from the dataset as an array and merge all entites
   const entity_list = merge(map(data, (d) => mapFunction(d)));
-  console.log("entity_list", entity_list);
+  console.log('entity_list', entity_list);
   // rollup to a count of each unique entity,
   const entity_count = rollup(
     entity_list,
@@ -220,17 +220,16 @@ export function anonymizeEntry(entry, dictionary, type = 'human') {
   return dictionary.get(entry);
 }
 
-
 export function createTooltip() {
-  const tooltip = document.createElement("div");
-  tooltip.classList.add("tooltip");
-  tooltip.classList.add("card");
-  tooltip.style.position = "absolute";
+  const tooltip = document.createElement('div');
+  tooltip.classList.add('tooltip');
+  tooltip.classList.add('card');
+  tooltip.style.position = 'absolute';
   return tooltip;
 }
 
-
-export function cropText(text, maxLength=20) {
-  return text.length > maxLength ? text.slice(0, maxLength - 3).concat("...") : text;
+export function cropText(text, maxLength = 20) {
+  return text.length > maxLength
+    ? text.slice(0, maxLength - 3).concat('...')
+    : text;
 }
-  
