@@ -1,5 +1,5 @@
-import * as d3 from "npm:d3";
-import * as Plot from "npm:@observablehq/plot";
+import * as d3 from 'npm:d3';
+import * as Plot from 'npm:@observablehq/plot';
 
 /**
  * Create projection map from a dataset geocoded by:
@@ -19,22 +19,22 @@ export function projectionMap(
     keyMap = (d) => d[0],
     valueMap = (d) => d[1],
     /*
-      * list of Plot.geo compatible borders. For example:
-      * ```js
-      * const world = FileAttachment("./data/world.json").json();
-      * const borders = [
-      *   topojson.feature(world, world.objects.land),
-      *   topojson.mesh(world, world.objects.countries, (a, b) => a !== b)
-      * ];
-      * ```
+     * list of Plot.geo compatible borders. For example:
+     * ```js
+     * const world = FileAttachment("./data/world.json").json();
+     * const borders = [
+     *   topojson.feature(world, world.objects.land),
+     *   topojson.mesh(world, world.objects.countries, (a, b) => a !== b)
+     * ];
+     * ```
      */
     borderList = [],
-    projectionType = "azimuthal-equidistant",
+    projectionType = 'azimuthal-equidistant',
     projectionDomain = d3.geoCircle().center([2, 47]).radius(5)(), // centered on France
-    stroke = "#f43f5e",
-    fill = "#f43f5e",
+    stroke = '#f43f5e',
+    fill = '#f43f5e',
     fillOpacity = 0.5,
-    entity_label = "City",
+    entity_label = 'City',
     tip = {
       format: {
         entity: true,
@@ -45,7 +45,7 @@ export function projectionMap(
         y: false,
         r: false,
       },
-    }
+    },
     // color = (d) =>
     //   d3.interpolatePlasma(
     //     d3
@@ -75,15 +75,15 @@ export function projectionMap(
         },
         count: {
           value: (d) => valueMap(d).length,
-          label: "Occurences",
+          label: 'Occurences',
         },
         longitude: {
           value: (d) => valueMap(d)[0].longitude,
-          label: "Lon",
+          label: 'Lon',
         },
         latitude: {
           value: (d) => valueMap(d)[0].latitude,
-          label: "Lat",
+          label: 'Lat',
         },
       },
       tip: tip,
@@ -92,7 +92,7 @@ export function projectionMap(
 
   // add borders
   borderList.forEach((border) => {
-    marks.push(Plot.geo(border, { stroke: "var(--theme-foreground-faint)" }));
+    marks.push(Plot.geo(border, { stroke: 'var(--theme-foreground-faint)' }));
   });
 
   return Plot.plot({

@@ -1,4 +1,4 @@
-import * as d3 from "npm:d3";
+import * as d3 from 'npm:d3';
 
 /**
  * Create a donut chart
@@ -19,9 +19,9 @@ export function circleLegend(
     radius = 5,
     lineSeparation = 25,
     fontSize = 12,
-    fontWeight = "normal",
-    fontColor = "white",
-    strokeColor = "white",
+    fontWeight = 'normal',
+    fontColor = 'white',
+    strokeColor = 'white',
     strokeWidth = 0.5,
     color = (d) =>
       d3.interpolatePlasma(
@@ -36,33 +36,33 @@ export function circleLegend(
   } = {}
 ) {
   const svg = d3
-    .create("svg")
-    .classed("legend", true)
-    .attr("height", (data.length - 1) * lineSeparation + radius * 2);
+    .create('svg')
+    .classed('legend', true)
+    .attr('height', (data.length - 1) * lineSeparation + radius * 2);
 
   svg
-    .append("g")
-    .attr("stroke", strokeColor)
-    .attr("stroke-width", strokeWidth)
-    .selectAll("circle")
+    .append('g')
+    .attr('stroke', strokeColor)
+    .attr('stroke-width', strokeWidth)
+    .selectAll('circle')
     .data(data)
-    .join("circle")
-    .attr("cx", radius)
-    .attr("cy", (_d, i) => radius + i * lineSeparation)
-    .attr("r", radius)
-    .style("fill", (d) => color(valueMap(d)));
+    .join('circle')
+    .attr('cx', radius)
+    .attr('cy', (_d, i) => radius + i * lineSeparation)
+    .attr('r', radius)
+    .style('fill', (d) => color(valueMap(d)));
 
   svg
-    .append("g")
-    .style("fill", fontColor)
-    .style("font-size", fontSize)
-    .attr("text-anchor", "left")
-    .selectAll("text")
+    .append('g')
+    .style('fill', fontColor)
+    .style('font-size', fontSize)
+    .attr('text-anchor', 'left')
+    .selectAll('text')
     .data(data)
-    .join("text")
-    .style("font-weight", fontWeight)
-    .attr("x", radius * 2 + 5)
-    .attr("y", (_d, i) => radius * 2 + i * lineSeparation)
+    .join('text')
+    .style('font-weight', fontWeight)
+    .attr('x', radius * 2 + 5)
+    .attr('y', (_d, i) => radius * 2 + i * lineSeparation)
     .text(text);
 
   // console.debug(svg.node());
