@@ -13,10 +13,10 @@ export default {
       name: 'Phase 2 Researchers',
       path: 'phase2-researcher-dashboard',
     },
-    // {
-    //   name: 'Phase 2 Projects',
-    //   path: 'phase2-project-dashboard', //deprecated
-    // },
+    {
+      name: 'Phase 2 Projects',
+      path: 'phase2-project-dashboard', //deprecated
+    },
     // {
     //   name: 'Phase 2 Laboratories',
     //   path: 'phase2-laboratory-dashboard', //deprecated
