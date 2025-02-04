@@ -1,6 +1,6 @@
 import * as d3 from 'npm:d3';
 import { circleLegend } from './legend.js';
-import { createTooltip } from './utilities.js';
+import { createTooltip, cropText } from './utilities.js';
 
 /**
  * Create a donut chart
@@ -17,12 +17,13 @@ export function donutChart(
   data,
   {
     width = 600,
+    height = Math.min(width, 500),
     innerRadiusRatio = 0.4,
     outerRadiusRatio = 1,
+    legendLeftMargin = 80,
     // minorArcLabelRadiusRatio = 0.1, // the ratio of the radius to place the minor arc label outside of the arc
     keyMap = (d) => d.entity,
     valueMap = (d) => d.count,
-    sort = undefined,
     // sort = (a, b) => d3.descending(a.count, b.count),
     fontSize = 18,
     fontFamily = 'sans-serif',
@@ -31,7 +32,7 @@ export function donutChart(
     // strokeOpacity = 0.5,
     fill = 'white',
     fillOpacity = 1,
-    majorLabelText = (d) => keyMap(d.data),
+    majorLabelText = (d) => cropText(keyMap(d.data), 30),
     minorLabelText = (d) =>
       `${((valueMap(d.data) / d3.sum(data.map(valueMap))) * 100).toFixed(1)}%`,
     // minorLabelText = (d) => d.value.toLocaleString("en-US"),
@@ -53,11 +54,18 @@ export function donutChart(
             Math.max(...data.map(valueMap)),
           ])(d)
       ),
+    legend = circleLegend(data, {
+      keyMap: keyMap,
+      valueMap: valueMap,
+      color: color,
+      radius: 6,
+      fontSize: 16,
+      lineSeparation: 25,
+      text: (d) => cropText(keyMap(d), 30),
+    }),
   } = {}
 ) {
-  const height = Math.min(width, 500);
   const radius = Math.min(width, height) / 2;
-
   const arc = d3
     .arc()
     .innerRadius(radius * innerRadiusRatio)
@@ -89,7 +97,12 @@ export function donutChart(
     .create('svg')
     .attr('width', width)
     .attr('height', height)
-    .attr('viewBox', [-width / 2, -height / 2, width, height])
+    .attr('viewBox', [
+      -width / 2 - legendLeftMargin,
+      -height / 2,
+      width,
+      height,
+    ])
     .attr('style', 'max-width: 100%; height: auto;');
 
   const tooltip = createTooltip();
@@ -230,6 +243,17 @@ export function donutChart(
   //     .text(`hi`)
   //     // .text(`${minorLabelText}: ${majorLabelText}`)
   // );
+
+  // Create legend
+  if (legend) {
+    svg
+      .append('g')
+      .attr(
+        'transform',
+        `translate(${-width / 2 - legendLeftMargin + 10},${-height / 2 + 10})`
+      )
+      .append(() => legend);
+  }
 
   return svg.node();
 }
