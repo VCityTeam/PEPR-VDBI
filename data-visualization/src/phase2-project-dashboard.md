@@ -12,22 +12,10 @@ import {
 } from "./components/utilities.js";
 import {
   extractPhase2Workbook,
-  // getColumnOptions,
-  // filterOnInput,
 } from "./components/phase2-dashboard.js";
 import {
   donutChart
 } from "./components/pie-chart.js";
-import {
-  projectionMap
-} from "./components/projection-map.js";
-import {
-  arcDiagramVertical,
-  forceGraph,
-  mapTableToPropertyGraphLinks,
-  sortNodes,
-  mapTableToTriples,
-} from "./components/graph.js";
 ```
 
 ```js
@@ -66,8 +54,6 @@ function isFinanced(projects) {
 }
 
 const workbook1 = FileAttachment(
-  // "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
-  // "./data/241021 PEPR_VBDI_analyse modifiée JYT.xlsx" //outdated
   "./data/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
 ).xlsx();
 ```
@@ -516,7 +502,8 @@ const RESILIENCE_cnu_count = d3.rollups(
     (d) => d.length,
     (d) => d.cnu
   )
-  .filter((d) => exclude(d[0]));
+  .filter((d) => exclude(d[0]))
+  .sort((a, b) => d3.descending(a[1], b[1]));
 const shs_RESILIENCE_cnu_count = RESILIENCE_cnu_count.filter((d) => isSHSCNU(d[0]));
 ```
 
