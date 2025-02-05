@@ -65,6 +65,7 @@ export function donutChart(
     }),
   } = {}
 ) {
+
   const radius = Math.min(width, height) / 2;
   const arc = d3
     .arc()
