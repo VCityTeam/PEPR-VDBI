@@ -472,8 +472,8 @@ export function forceGraph(
       .attr('height', 100)
       .attr('width', 100)
       .attr('fill', 'black')
-      .attr('transform', `translate(${-width / 2 + 10},${-height / 2 + 10})`);
-    legend_svg.append(() => legend);
+      .attr('transform', `translate(${-width / 2 + 10},${-height / 2 + 10})`)
+      .append(() => legend);
   }
 
   return svg.node();
