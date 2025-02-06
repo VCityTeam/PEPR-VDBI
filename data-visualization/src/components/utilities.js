@@ -1,4 +1,4 @@
-import { map, merge, rollup, filter } from 'npm:d3';
+import { map, merge, rollups, filter } from 'npm:d3';
 import { nameByRace } from 'npm:fantasy-name-generator';
 
 /**
@@ -57,25 +57,20 @@ export function mergeCounts(datasets, count_types) {
  *    For example to count the laboratories of a project something like:
  *    (project) => project.laboratoires
  * @returns {Array<Object.<string, number>>} -
+ * 
+ * TODO: this might be done with a flatmap and rollups
  */
 export function countEntities(data, mapFunction) {
   // extract the entity from the dataset as an array and merge all entites
   const entity_list = merge(map(data, (d) => mapFunction(d)));
   // console.debug('entity_list', entity_list);
+
   // rollup to a count of each unique entity,
-  const entity_count = rollup(
+  return rollups(
     entity_list,
     (D) => D.length,
     (d) => d
   );
-
-  // and map to a [{entity: x, count: y}] data structure
-  return map(entity_count, (d) => {
-    return {
-      entity: d[0],
-      count: d[1],
-    };
-  });
 }
 
 /**
