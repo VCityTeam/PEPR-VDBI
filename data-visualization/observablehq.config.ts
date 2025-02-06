@@ -2,7 +2,7 @@
 export default {
   // The project’s title; used in the sidebar and webpage titles.
   title: 'PEPR Dashboards',
-  theme: 'dark',
+  theme: 'light',
   root: 'src', // path to the source root for preview
   pages: [
     {
