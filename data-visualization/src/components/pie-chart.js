@@ -27,7 +27,7 @@ export function donutChart(
     // sort = (a, b) => d3.descending(a.count, b.count),
     fontSize = 18,
     fontFamily = 'sans-serif',
-    // strokeColor = "black",
+    sliceStrokeColor = "black",
     // strokeWidth = 1,
     // strokeOpacity = 0.5,
     fill = 'white',
@@ -136,9 +136,9 @@ export function donutChart(
       d3.select('body').append(() => tooltip);
       // highlight the arc
       d3.select(_e.target)
-        .attr('stroke', 'GhostWhite')
-        .attr('stroke-opacity', 0.8)
-        .attr('stroke-width', 2);
+        .attr('stroke', sliceStrokeColor)
+        // .attr('stroke-opacity', 0.8)
+        .attr('stroke-width', 1);
     })
     .on('mousemove', (event) =>
       d3

@@ -20,8 +20,8 @@ export function circleLegend(
     lineSeparation = 25,
     fontSize = 12,
     fontWeight = 'normal',
-    fontColor = 'white',
-    strokeColor = 'white',
+    fontColor = 'black',
+    strokeColor = 'black',
     strokeWidth = 0.5,
     color = (d) =>
       d3.interpolatePlasma(
