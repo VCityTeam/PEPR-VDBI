@@ -642,7 +642,7 @@ export function arcDiagramVertical(
     // order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by property"),
     yDistribution = d3.scalePoint(order, [marginTop, height - marginBottom]),
     fontSize = 12,
-    fontFill = 'white',
+    fontFill = 'black',
     fontMouseoverOpacity = 0.3,
     arcMouseoverOpacity = 0.1,
     labelRotate = 0,
@@ -664,7 +664,7 @@ export function arcDiagramVertical(
           .reverse()
       )
       .unknown('#aaa'),
-    nodeFill = 'white',
+    nodeFill = 'GhostWhite',
     nodeStroke = 'grey',
     // create a circle legend from possible arc values
     legend = circleLegend(
