@@ -251,23 +251,36 @@ export function forceGraph(
     fontSize = 10, // label font size
     r = 3, // node radius
     textLength = 15, // label cutoff length
-    stroke = 'white', // stroke for links
+    stroke = 'black', // stroke for links
     strokeWidth = 0.5, // stroke width for links
     nodeStrokeOpacity = 0.4, // stroke opacity for nodes
     linkStrokeOpacity = 0.6, // stroke opacity for links
-    textColor = 'white', // label color
-    halo = 'black', // color of label halo
+    textColor = 'black', // label color
+    halo = 'GhostWhite', // color of label halo
     haloWidth = 0.25, // padding around the labels
-    nodeLabelOpacity = 0.3, // default node label opacity
-    linkLabelOpacity = 0.3, // default link label opacity
+    nodeLabelOpacity = 0.1, // default node label opacity
+    linkLabelOpacity = 0.1, // default link label opacity
     highlightOpacity = 0.8, // mouseover label opacity
-    legend = circleLegend(color.domain(), {
-      keyMap: (d) => d,
-      valueMap: (d) => d,
-      color: color,
-      lineSeparation: 20,
-      text: (d) => cropText(d, 40),
-    }),
+    legend = circleLegend(
+      [
+        ...new Set(
+          data.nodes
+            .map((d) => valueMap(d))
+            .filter((d) => d != null)
+            .sort(d3.ascending)
+        ),
+      ],
+      {
+        keyMap: (d) => d,
+        valueMap: (d) => d,
+        color: color,
+        lineSeparation: 20,
+        text: (d) => cropText(d, 40),
+        backgroundColor: 'black',
+        backgroundStroke: 'black',
+        backgroundOpacity: 0.1,
+      }
+    ),
   }
 ) {
   const svg = d3
@@ -466,14 +479,10 @@ export function forceGraph(
 
   // Create legend
   if (legend) {
-    const legend_svg = svg.append('g');
-    legend_svg
-      .append('rect')
-      .attr('height', 100)
-      .attr('width', 100)
-      .attr('fill', 'black')
-      .attr('transform', `translate(${-width / 2 + 10},${-height / 2 + 10})`)
-      .append(() => legend);
+    const legend_svg = svg
+      .append('g')
+      .attr('transform', `translate(${-width / 2 + 10},${-height / 2 + 10})`);
+    legend_svg.append(() => legend);
   }
 
   return svg.node();
@@ -567,17 +576,31 @@ export function forceGraph(
   }
 }
 
-export function filterLinks(graph, filterFunction) {
+export function filterLinks(graph, filterFunction, keyMap = (d) => d.id) {
   const filteredGraph = {
-    nodes: graph.nodes,
     links: d3.filter(graph.links, filterFunction),
   };
-
-  filteredGraph.nodes = d3.filter(graph.nodes, (node) =>
-    filteredGraph.links.find(
-      (link) => link.source == keyMap(node) || link.target == keyMap(node)
-    )
-  );
+  // because force simulations may edit link source and target properties to point to
+  // the actual node objects instead of just string identifiers, we check if this is
+  // the case using the first link
+  if (
+    filteredGraph.links.length > 0 &&
+    typeof filteredGraph.links[0].source == 'string'
+  ) {
+    filteredGraph.nodes = d3.filter(graph.nodes, (node) =>
+      filteredGraph.links.find(
+        (link) => link.source == keyMap(node) || link.target == keyMap(node)
+      )
+    );
+  } else {
+    filteredGraph.nodes = d3.filter(graph.nodes, (node) =>
+      filteredGraph.links.find(
+        (link) =>
+          keyMap(link.source) == keyMap(node) ||
+          keyMap(link.target) == keyMap(node)
+      )
+    );
+  }
 
   return filteredGraph;
 }
@@ -644,12 +667,18 @@ export function arcDiagramVertical(
     nodeFill = 'white',
     nodeStroke = 'grey',
     // create a circle legend from possible arc values
-    legend = circleLegend(color.domain(), {
-      keyMap: (d) => d,
-      valueMap: (d) => d,
-      color: color,
-      text: (d) => cropText(d, 40),
-    }),
+    legend = circleLegend(
+      nodes
+        .map((d) => valueMap(d))
+        .filter((d) => d != null)
+        .sort(d3.ascending),
+      {
+        keyMap: (d) => d,
+        valueMap: (d) => d,
+        color: color,
+        text: (d) => cropText(d, 40),
+      }
+    ),
   } = {}
 ) {
   // A function of a link, that checks that source and target have the same group and returns
