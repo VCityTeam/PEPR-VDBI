@@ -1,6 +1,6 @@
 ---
 title: Property graph and arc diagram test
-theme: dark
+theme: light
 ---
 
 # Visualize Workbook data using Graphs
