@@ -25,7 +25,8 @@ export async function searchOrcid(
     headers: {
       // "Content-Type": "text/csv",
       Accept: 'application/json',
-      Authorization: `Bearer ${token}`,
+      // Authorization: `Bearer ${token}`,
+      // 'Access-Control-Allow-Origin': '*',
     },
     // body: JSON.stringify(data),
   };
