@@ -22,17 +22,24 @@ export function mapEntitesToProjectTree(projects) {
           return key != 'id' && key != 'acronyme';
         }
       ).map(([key, values]) => {
-        return {
-          name: key,
-          children: values.map((d) => {
-            return {
-              name: d,
-            };
-          }),
-        };
+        // debugger;
+        if (typeof values == 'string') {
+          return {
+            name: key,
+          };
+        } else {
+          return {
+            name: key,
+            children: values.map((d) => {
+              return {
+                name: d,
+              };
+            }),
+          };
+        }
       });
       return {
-        name: project.acronyme[0],
+        name: project.acronyme,
         // map datum values to children
         children: projectChildren,
       };
