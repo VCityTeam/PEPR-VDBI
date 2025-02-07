@@ -93,6 +93,9 @@ Once integrated the following information is desired for visualization:
 
 ```js echo
 const productGraph = mapProjectsToRDFGraph(productData, projectColorMap);
+```
+
+```js
 display(productGraph);
 ```
 
@@ -100,10 +103,13 @@ display(productGraph);
 const productForceGraph = forceGraph(productGraph, {
   width: 1400,
   height: 1400,
+  valueMap: (d) => d.color,
   r: 3,
   fontSize: 8,
-  typeList: projectColorMap,
 });
+```
+
+```js
 display(productForceGraph);
 ```
 
@@ -125,10 +131,15 @@ const filteredProductGraph = filterLinks(
 );
 ```
 
+```js
+display(filteredProductGraph);
+```
+
 ```js echo
 const filteredProductForceGraph = forceGraph(filteredProductGraph, {
   width: 1400,
   height: 1400,
+  valueMap: (d) => d.color,
   r: 2,
   fontSize: 8,
   typeList: projectColorMap,

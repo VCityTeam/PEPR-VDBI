@@ -14,15 +14,23 @@ import * as d3 from 'npm:d3';
 export function circleLegend(
   data,
   {
+    width = 100,
     keyMap = (d) => d.entity,
     valueMap = (d) => d.count,
     radius = 5,
     lineSeparation = 25,
-    fontSize = 12,
+    fontSize = 14,
     fontWeight = 'normal',
     fontColor = 'black',
     strokeColor = 'black',
     strokeWidth = 0.5,
+    backgroundColor = 'black',
+    backgroundStroke = 'black',
+    backgroundOpacity = 0,
+    backgroundStrokeOpacity = 0,
+    backgroundRadius = radius,
+    marginTop = 5,
+    marginLeft = 5,
     color = (d) =>
       d3.interpolatePlasma(
         d3
@@ -38,7 +46,19 @@ export function circleLegend(
   const svg = d3
     .create('svg')
     .classed('legend', true)
-    .attr('height', (data.length - 1) * lineSeparation + radius * 2);
+    .attr('height', (data.length - 1) * lineSeparation + radius * 2 + marginTop * 2)
+    .attr('width', width);
+
+  svg
+    .append('rect')
+    .attr('fill', backgroundColor)
+    .attr('fill-opacity', backgroundOpacity)
+    .attr('stroke', backgroundStroke)
+    .attr('stroke-opacity', backgroundStrokeOpacity)
+    .attr('height', (data.length - 1) * lineSeparation + radius * 2 + marginTop * 2)
+    .attr('width', width)
+    .attr('rx', backgroundRadius)
+    .attr('ry', backgroundRadius);
 
   svg
     .append('g')
@@ -47,8 +67,8 @@ export function circleLegend(
     .selectAll('circle')
     .data(data)
     .join('circle')
-    .attr('cx', radius)
-    .attr('cy', (_d, i) => radius + i * lineSeparation)
+    .attr('cx', radius + marginLeft)
+    .attr('cy', (_d, i) => radius + i * lineSeparation + marginTop)
     .attr('r', radius)
     .style('fill', (d) => color(valueMap(d)));
 
@@ -61,8 +81,8 @@ export function circleLegend(
     .data(data)
     .join('text')
     .style('font-weight', fontWeight)
-    .attr('x', radius * 2 + 5)
-    .attr('y', (_d, i) => radius * 2 + i * lineSeparation)
+    .attr('x', radius * 2 + 5 + marginLeft)
+    .attr('y', (_d, i) => radius * 2 + i * lineSeparation + marginTop)
     .text(text);
 
   // console.debug(svg.node());
