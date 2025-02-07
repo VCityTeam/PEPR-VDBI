@@ -31,12 +31,12 @@ import { searchOrcid } from "./components/orcid.js"
 // ).json();
 ```
 
-```js
+```js echo
 // display(access_token_reponse);
 const response = await searchOrcid(
   "vinasco",
   // access_token_reponse.access_token,
-  "4e03ecf7-98af-4ac1-9cd4-876fdc86dc91",
+  "38be4302-f5de-4e69-9e51-44df3ab2f1c2",
 );
 ```
 
