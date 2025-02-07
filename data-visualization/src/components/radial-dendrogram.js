@@ -22,21 +22,24 @@ export function mapEntitesToProjectTree(projects) {
           return key != 'id' && key != 'acronyme';
         }
       ).map(([key, values]) => {
-        // debugger;
-        if (typeof values == 'string') {
-          return {
-            name: key,
-          };
-        } else {
-          return {
-            name: key,
-            children: values.map((d) => {
-              return {
-                name: d,
-              };
-            }),
-          };
-        }
+        return {
+          name: key,
+          children:
+            // if values is a string, map it to a single object, otherwise iterate over the array
+            typeof values == 'string'
+              ? [
+                  {
+                    name: values,
+                    children: [],
+                  },
+                ]
+              : values.map((d) => {
+                  return {
+                    name: d,
+                    children: [],
+                  };
+                }),
+        };
       });
       return {
         name: project.acronyme,
@@ -56,7 +59,7 @@ export function mapEntitesToProductToProjectTree(projects) {
     projects,
     (project) => project.produit[0],
     (project) => project.produit[1],
-    (project) => project.action[0]
+    (project) => project.action
   );
   console.debug('projectByProduct', projectByProduct);
 
@@ -86,10 +89,10 @@ export function mapEntitesToProductToProjectTree(projects) {
                 children: map(value, (project) => {
                   return {
                     // project name
-                    name: project.acronyme[0],
+                    name: project.acronyme,
                     // get this project with its descendants
                     children: projectTree
-                      .find((d) => d.name == project.acronyme[0])
+                      .find((d) => d.name == project.acronyme)
                       .children.filter(
                         // filter out acronyme, actions, and products (we already added them to the tree as ancestors)
                         (d) =>
