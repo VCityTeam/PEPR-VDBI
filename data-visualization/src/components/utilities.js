@@ -1,6 +1,8 @@
 import { map, merge, rollups, filter } from 'npm:d3';
 import { nameByRace } from 'npm:fantasy-name-generator';
 
+// TODO: mapCounts and mergeCounts need to be reworked with new countEntities
+
 /**
  * Map a type attribute to each datum of a count dataset
  *
@@ -23,7 +25,7 @@ export function mapCounts(datasets, count_types) {
 }
 
 /**
- * Merge each count dataset
+ * Merge each count dataset from countEntities()
  *
  * @param {Array<Object<{entity: string, count: number}>>} datasets An array of count datasets of length n
  * @param {Array<string>} count_types An array of names for each count field of length n
@@ -35,14 +37,14 @@ export function mergeCounts(datasets, count_types) {
 
   for (let index = 0; index < datasets.length; index++) {
     datasets[index].forEach((d) => {
-      if (typeof mappedData.get(d.entity) === 'undefined') {
-        const new_d = { entity: d.entity };
+      if (typeof mappedData.get(d[0]) === 'undefined') {
+        const new_d = { entity: d[0] };
         count_types.forEach((count_type) => {
           new_d[count_type] = 0;
         });
-        mappedData.set(d.entity, new_d);
+        mappedData.set(d[0], new_d);
       }
-      mappedData.get(d.entity)[count_types[index]] = d.count;
+      mappedData.get(d[0])[count_types[index]] = d[1];
     });
   }
 
@@ -50,24 +52,22 @@ export function mergeCounts(datasets, count_types) {
 }
 
 /**
- * rollup data by groupFunction, map to a [{entity: x, count: y}] data structure
+ * map data using an an accessor function, merge the data, then rollups data to count
+ * occurrences of each entity. This is useful for counting the ocurrences of property
+ * values in Arrays
  *
  * @param {Array} data - dataset to rollup
- * @param {Function} mapFunction - function to extract the entity from the dataset.
+ * @param {Function} mapFunction - function to extract the entity to be counted from
+ *    the dataset.
  *    For example to count the laboratories of a project something like:
  *    (project) => project.laboratoires
- * @returns {Array<Object.<string, number>>} -
- * 
- * TODO: this might be done with a flatmap and rollups
+ * @returns {Array<Array>} - [[datum 1, count 1], [datum 2, count 2], ...]
  */
 export function countEntities(data, mapFunction) {
   // extract the entity from the dataset as an array and merge all entites
-  const entity_list = merge(map(data, (d) => mapFunction(d)));
-  // console.debug('entity_list', entity_list);
-
   // rollup to a count of each unique entity,
   return rollups(
-    entity_list,
+    merge(map(data, (d) => mapFunction(d))),
     (D) => D.length,
     (d) => d
   );
@@ -104,19 +104,19 @@ export function addEntityProjectOwnerAndPartnerCounts(
 
     // add owner counts
     const source_owner_count = owner_count.find(
-      (source_d) => target_d_entity === source_d.entity
+      (source_d) => target_d_entity === source_d[0]
     );
     target_d.project_owner_count =
-      typeof source_owner_count === 'undefined' ? 0 : source_owner_count.count;
+      typeof source_owner_count === 'undefined' ? 0 : source_owner_count[1];
 
     // add partner counts
     const source_partner_count = partner_count.find(
-      (source_d) => target_d_entity === source_d.entity
+      (source_d) => target_d_entity === source_d[0]
     );
     target_d.project_partner_count =
       typeof source_partner_count === 'undefined'
         ? 0
-        : source_partner_count.count;
+        : source_partner_count[1];
 
     // add total  counts
     target_d.project_total_count =

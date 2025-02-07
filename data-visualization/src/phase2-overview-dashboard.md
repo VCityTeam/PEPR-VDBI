@@ -1,6 +1,6 @@
 ---
 title: Phase 2 Overview Dashboard
-theme: dashboard
+theme: [dashboard, light]
 ---
 
 # Phase 2 Overview
@@ -81,7 +81,7 @@ const financed_project_count = d3.reduce(
 
 const partner_count = countEntities(project_data, (d) => d.partners);
 // display(partner_count);
-const total_partner_count = d3.reduce(partner_count, (p, v) => p + v.count, 0);
+const total_partner_count = d3.reduce(partner_count, (p, v) => p + v[1], 0);
 ```
 
 <!-- LABORATORY COUNT -->
