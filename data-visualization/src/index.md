@@ -55,6 +55,7 @@ toc: false
 Here is an overview of what data is visualized and the mechanisms for used for data visualization. 
 
 ## Data collection
+## Data collection
 ```mermaid
 flowchart LR
   Z(( )) --> ZZ(Start Phase 1)
