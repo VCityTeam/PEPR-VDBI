@@ -14,7 +14,7 @@ import * as d3 from 'npm:d3';
 export function circleLegend(
   data,
   {
-    width = 100,
+    width,
     keyMap = (d) => d.entity,
     valueMap = (d) => d.count,
     radius = 5,
