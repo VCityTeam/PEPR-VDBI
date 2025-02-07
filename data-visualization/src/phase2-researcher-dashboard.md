@@ -1,6 +1,6 @@
 ---
 title: Phase 2 Researcher Dashboard
-theme: dashboard
+theme: [dashboard, light]
 ---
 
 # Phase 2 Researchers
@@ -145,12 +145,14 @@ const discipline_erc_count = countEntities(
     global_search,
     (d) => d.discipline_erc
   )
-  .filter((d) => exclude(d.entity))
-  .sort((a, b) => d3.descending(a.count, b.count));
+  .filter((d) => exclude(d[0]))
+  .sort((a, b) => d3.descending(a[1], b[1]));
 
 const discipline_erc_pie = donutChart(discipline_erc_count, {
   width: 650,
-  fontSize: 18
+  fontSize: 18,
+  keyMap: (d) => d[0],
+  valueMap: (d) => d[1],
 });
 
 // console.debug("discipline_erc_count", discipline_erc_count);
@@ -161,7 +163,7 @@ const discipline_erc_pie = donutChart(discipline_erc_count, {
 const discipline_count = countEntities(
   global_search,
   (d) => d.disciplines
-).sort((a, b) => d3.descending(a.count, b.count));
+).sort((a, b) => d3.descending(a[1], b[1]));
 
 const discipline_search_input = Inputs.search(discipline_count, {
   placeholder: "Search disciplines..."
@@ -195,15 +197,15 @@ const discipline_plot = Plot.plot({
   },
   marks: [
     Plot.barX(discipline_search, {
-      y: "entity",
-      x: "count",
-      fill: "count",
+      y: (d) => d[0],
+      x: (d) => d[1],
+      fill: (d) => d[1],
       sort: {y: "-x"},
       tip: {format: {fill: false}}
     }),
     Plot.barX(
       discipline_search, 
-      Plot.pointerY({x: "count", y: "entity"}),
+      Plot.pointerY({x: (d) => d[1], y: (d) => d[0]}),
     ),
   ],
 });

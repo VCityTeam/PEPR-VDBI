@@ -1,6 +1,6 @@
 ---
 title: Phase 2 Raw Data Dashboard
-theme: dashboard
+theme: [dashboard, light]
 ---
 
 # Phase 2 Data

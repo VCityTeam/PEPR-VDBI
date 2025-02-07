@@ -1,6 +1,6 @@
 ---
 title: Phase 2 Financing Dashboard
-theme: dashboard
+theme: [dashboard, light]
 ---
 
 # Phase 2 Financing
