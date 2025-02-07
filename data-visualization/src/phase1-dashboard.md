@@ -1,6 +1,6 @@
 ---
 title: Phase 1 Dashboard
-theme: dashboard
+theme: [dashboard, light]
 ---
 
 # Phase 1 Overview
@@ -79,10 +79,18 @@ const sorted_establishment_partner_counts = countEntities(
   (project) => project.etablissements.slice(1)
 );
 
-const establishment_counts = mapCounts(
+const establishment_counts = [];
+const establishment_counts_mapped = mapCounts(
   [sorted_establishment_owner_counts, sorted_establishment_partner_counts],
   ["owner", "partner"]
-);
+).forEach((d) => {
+  establishment_counts.push([
+    d[0],
+    d[1],
+    d.type,
+  ])
+});
+// TODO: mapCounts and mergeCounts need to be reworked with new countEntities
 
 const total_establishment_counts = d3.sort(
   d3
@@ -91,26 +99,26 @@ const total_establishment_counts = d3.sort(
       (D) => {
         let count = 0;
         D.forEach((d) => {
-          count = count + d.count;
+          count = count + d[1];
         });
-        return {
-          entity: D[0].entity,
-          count: count,
-          type: "total",
-        };
+        return [
+          D[0][0],
+          count,
+          "total",
+        ];
       },
-      (d) => d.entity
+      (d) => d[0]
     )
     .values(),
-  (d) => d.entity
+  (d) => d[0]
 );
 
 const sorted_establishment_counts = d3.sort(
   establishment_counts.concat(total_establishment_counts),
-  (d) => d.count,
-  (d) => d.entity
+  (d) => d[1],
+  (d) => d[0]
 );
-
+console.log("sorted_establishment_counts", sorted_establishment_counts);
 const city_count = countEntities(
   city_data,
   (establishment) => establishment.lieu
@@ -136,18 +144,18 @@ const total_lab_counts = d3.sort(
       (D) => {
         let count = 0;
         D.forEach((d) => {
-          count = count + d.count;
+          count = count + d[1];
         });
-        return {
-          entity: D[0].entity,
-          count: count,
-          type: "total",
-        };
+        return [
+          D[0][0],
+          count,
+          "total",
+        ];
       },
-      (d) => d.entity
+      (d) => d[0]
     )
     .values(),
-  (d) => d.entity
+  (d) => d[0]
 );
 
 const sorted_lab_counts = [];
@@ -157,23 +165,23 @@ d3.sort(
     [lab_owner_count, lab_partner_count, total_lab_counts],
     ["owner_count", "partner_count", "total_count"]
   ).values(),
-  (d) => d.entity
+  (d) => d[0]
 ).forEach((d) => {
-  sorted_lab_counts.push({
-    entity: d.entity,
-    count: d.owner_count,
-    type: "owner",
-  });
-  sorted_lab_counts.push({
-    entity: d.entity,
-    count: d.partner_count,
-    type: "partner",
-  });
-  sorted_lab_counts.push({
-    entity: d.entity,
-    count: d.total_count,
-    type: "total",
-  });
+  sorted_lab_counts.push([
+    d.entity,
+    d.owner_count,
+    "owner",
+  ]);
+  sorted_lab_counts.push([
+    d.entity,
+    d.partner_count,
+    "partner",
+  ]);
+  sorted_lab_counts.push([
+    d.entity,
+    d.total_count,
+    "total",
+  ]);
 });
 display(sorted_lab_counts);
 ```
@@ -218,9 +226,9 @@ display(sorted_lab_counts);
           },
           marks: [
             Plot.barY(city_count, {
-              x: "entity",
-              y: "count",
-              fill: "count",
+              x: (d) => d[0],
+              y: (d) => d[1],
+              fill: (d) => d[1],
               sort: { x: "-y" },
             }),
           ],
@@ -251,9 +259,9 @@ display(sorted_lab_counts);
           },
           marks: [
             Plot.barX(sorted_keyword_counts, {
-              x: "count",
-              y: "entity",
-              fill: d3.map(sorted_keyword_counts, (d) => d.count + 2), // shift up the color values to be more visible
+              x: (d) => d[1],
+              y: (d) => d[0],
+              fill: d3.map(sorted_keyword_counts, (d) => d[1] + 2), // shift up the color values to be more visible
               sort: {y: "-x"},
             }),
           ],
@@ -285,10 +293,10 @@ display(sorted_lab_counts);
           },
           marks: [
             Plot.barX(sorted_establishment_counts, {
-              x: "count",
-              y: "type",
-              fy: "entity",
-              fill: "count",
+              x: (d) => d[1],
+              y: (d) => d[2],
+              fy: (d) => d[0],
+              fill: (d) => d[1],
               sort: { fy: "-x" },
             }),
           ],
@@ -320,10 +328,10 @@ display(sorted_lab_counts);
           },
           marks: [
             Plot.barX(sorted_lab_counts, {
-              x: "count",
-              y: "type",
-              fy: "entity",
-              fill: "count",
+              x: (d) => d[1],
+              y: (d) => d[2],
+              fy: (d) => d[0],
+              fill: (d) => d[1],
               sort: { fy: "-x" },
             }),
           ],
