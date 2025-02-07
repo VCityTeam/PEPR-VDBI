@@ -668,10 +668,10 @@ export function arcDiagramVertical(
     nodeStroke = 'grey',
     // create a circle legend from possible arc values
     legend = circleLegend(
-      nodes
+      [... new Set(nodes
         .map((d) => valueMap(d))
         .filter((d) => d != null)
-        .sort(d3.ascending),
+        .sort(d3.ascending))],
       {
         keyMap: (d) => d,
         valueMap: (d) => d,
