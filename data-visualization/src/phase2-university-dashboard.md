@@ -1,6 +1,6 @@
 ---
 title: Phase 2 Laboratory Dashboard
-theme: dashboard
+theme: [dashboard, light]
 ---
 
 # Phase 2 Institutions
