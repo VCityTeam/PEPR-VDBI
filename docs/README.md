@@ -4,9 +4,13 @@
 - [VDBI feulle de route](https://pepr-vdbi.fr/feuille-de-route-scientifique-et-technique)
 
 ## Data Integraion
-Also refered to in the documentation as data mining and data extraction
-- [GPT-based unstructured data integration documentation](../data-integration/README.md) 
+*Also refered to in the documentation as data mining and data extraction
 - [Classical data integration](../data-visualization/docs/index.md)
+- AI-based unstructured data integration documentation
+  - [Experimentation documentation](../data-integration/README.md)
+  - [Methodology](../data-integration/README.md)
+  - [References](../data-integration/references.md)
+
 
 ## [Data Visualization](../data-visualization/README.md)
 
