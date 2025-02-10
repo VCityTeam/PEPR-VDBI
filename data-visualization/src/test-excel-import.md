@@ -14,7 +14,7 @@ Then the data should be transformed into an array using a [component](./componen
 Columns with obviously identical entities are combined.
 E.g. `Etablissement`, `Etablissement 2`, ... `Etablissement n` are merged into the same column.
 
-**Input:** Workbook 1 - "240117 consortium laboratoire, établissement CNRS-SHS_Stat"
+**Input:** Workbook 1 - "240117 consortium laboratoire, établissement CNRS-SHS_Stat"
 
 ```mermaid
 flowchart TD
@@ -41,7 +41,7 @@ First a component for transforming the Workbook data is imported, followed by th
 ```js echo
 import { resolvePhase1Entities } from "./components/240117-proposals-labs-establishments.js";
 import { anonymizeEntry } from "./components/utilities.js";
-const workbook = FileAttachment("./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx").xlsx();
+const workbook = FileAttachment("./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx").xlsx();
 ```
 
 ```js

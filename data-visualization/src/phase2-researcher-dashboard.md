@@ -43,7 +43,7 @@ const exclude = (d) => ![
 const workbook1 = FileAttachment(
   // "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
   // "./data/241021 PEPR_VBDI_analyse modifiée JYT.xlsx" //outdated
-  "./data/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
+  "./data/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
 ).xlsx();
 
 const geocoded_researcher_sites = FileAttachment(

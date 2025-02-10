@@ -15,7 +15,7 @@ To do this, we need to set up a component to transform the data.
 
 **Input:**
 
-- Workbook 1: "240117 consortium laboratoire, établissement CNRS-SHS_Stat"
+- Workbook 1: "240117 consortium laboratoire, établissement CNRS-SHS_Stat"
 - Workbook 2: "240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT"
 
 ```mermaid
@@ -50,7 +50,7 @@ import {
 } from "./components/radial-dendrogram.js";
 
 const workbook1 = FileAttachment(
-  "./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
+  "./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
 ).xlsx();
 const workbook2 = FileAttachment(
   "./data/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx"

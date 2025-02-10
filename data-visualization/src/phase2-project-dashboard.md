@@ -31,7 +31,7 @@ import {
 
 ```js
 const workbook1 = FileAttachment(
-  "./data/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
+  "./data/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
 ).xlsx();
 
 // function for filtering out unknown values
