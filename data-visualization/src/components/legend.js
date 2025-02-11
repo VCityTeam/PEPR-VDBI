@@ -17,6 +17,7 @@ export function circleLegend(
     width,
     keyMap = (d) => d.entity,
     valueMap = (d) => d.count,
+    colorMap = valueMap,
     radius = 5,
     lineSeparation = 25,
     fontSize = 14,
@@ -70,7 +71,7 @@ export function circleLegend(
     .attr('cx', radius + marginLeft)
     .attr('cy', (_d, i) => radius + i * lineSeparation + marginTop)
     .attr('r', radius)
-    .style('fill', (d) => color(valueMap(d)));
+    .style('fill', (d) => color(colorMap(d)));
 
   svg
     .append('g')

@@ -24,8 +24,9 @@ export function donutChart(
     // minorArcLabelRadiusRatio = 0.1, // the ratio of the radius to place the minor arc label outside of the arc
     keyMap = (d) => d.entity,
     valueMap = (d) => d.count,
+    colorMap = valueMap,
     // sort = (a, b) => d3.descending(a.count, b.count),
-    fontSize = 18,
+    fontSize = 16,
     fontFamily = 'sans-serif',
     sliceStrokeColor = "black",
     // strokeWidth = 1,
@@ -36,14 +37,14 @@ export function donutChart(
     minorLabelText = (d) =>
       `${((valueMap(d.data) / d3.sum(data.map(valueMap))) * 100).toFixed(1)}%`,
     // minorLabelText = (d) => d.value.toLocaleString("en-US"),
-    majorLabelBackgroundX = (d) => `-${majorLabelText(d).length / 3}em`,
-    majorLabelBackgroundY = '-1.9em',
-    majorLabelBackgroundWidth = (d) => `${majorLabelText(d).length * 0.67}em`,
-    majorLabelBackgroundHeight = '1.8em',
-    minorLabelBackgroundX = (d) => `-${minorLabelText(d).length / 2.5}em`,
+    majorLabelBackgroundX = (d) => `-${majorLabelText(d).length * 0.3}em`,
+    majorLabelBackgroundY = '-1.7em',
+    majorLabelBackgroundWidth = (d) => `${majorLabelText(d).length * 0.6}em`,
+    majorLabelBackgroundHeight = '1.6em',
+    minorLabelBackgroundX = (d) => `-${minorLabelText(d).length * 0.35}em`,
     minorLabelBackgroundY = '-0.1em',
-    minorLabelBackgroundWidth = (d) => `${minorLabelText(d).length * 0.82}em`,
-    minorLabelBackgroundHeight = '1.3em',
+    minorLabelBackgroundWidth = (d) => `${minorLabelText(d).length * 0.7}em`,
+    minorLabelBackgroundHeight = '1.2em',
     labelCuttoff = 0.25, // minimum arc angle for displaying label on arc
     color = (d) =>
       d3.interpolatePlasma(
@@ -57,6 +58,7 @@ export function donutChart(
     legend = circleLegend(data, {
       keyMap: keyMap,
       valueMap: valueMap,
+      colorMap: colorMap,
       color: color,
       radius: 6,
       fontSize: 16,
@@ -65,7 +67,6 @@ export function donutChart(
     }),
   } = {}
 ) {
-
   const radius = Math.min(width, height) / 2;
   const arc = d3
     .arc()
@@ -116,7 +117,7 @@ export function donutChart(
     .selectAll()
     .data(pieData)
     .join('path')
-    .attr('fill', (d) => color(valueMap(d.data)))
+    .attr('fill', (d) => color(colorMap(d.data)))
     .attr('d', arc)
     .on('mouseover', (_e, d) => {
       // add legend tooltip if arc is too small for a label and highlight arc
@@ -124,6 +125,8 @@ export function donutChart(
         const legend = circleLegend(cuttoffData, {
           keyMap: keyMap,
           valueMap: valueMap,
+          colorMap: colorMap,
+          color: color,
           lineSeparation: 25,
           // if the key in the legend is the same as the mouseovered arc, bold the text
           fontWeight: (d2) =>
