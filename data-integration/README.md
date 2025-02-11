@@ -89,6 +89,8 @@ flowchart LR
 > On **Windows**, when exporting text files from other programs or writing to files from python, keep in mind that the **UTF-8** encoding is not always used.
 > When visualizing the content of these files in vscode or in terminals, accent characers may be replaced by unknown symbols.
 
+TODO: https://askubuntu.com/questions/50170/how-to-convert-pdf-to-image
+
 ### 1.1.1. Dependencies
 - [Python](https://www.python.org/downloads/) v3.8+
   - It is recommended to use a virtual python environment. See [here](https://docs.python.org/3/library/venv.html#how-venvs-work) for more information on how to manage a python venv
