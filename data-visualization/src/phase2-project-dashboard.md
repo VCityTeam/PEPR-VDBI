@@ -21,10 +21,7 @@ import {
 <div class="warning" label="Data visualization notice">
   <ul>
     <li>Researchers with multiple disciplines are counted once per discipline.</li>
-    <li>
-      Missing researcher data is not visualized by default.
-      This includes researchers that could not be geolocated.
-    </li>
+    <li>Missing researcher data is not visualized by default.</li>
     <li>Data has not yet been verified. Some visualizations may be incorrect.</li>
   </ul>
 </div>
@@ -43,24 +40,97 @@ const exclude = (d) => ![
   "Non Renseigné"
 ].includes(d);
 
+function getCnuNumber(cnu) {
+  return Number(cnu.trim().substr(0, 2));
+}
+
+
 // detect if a CNU is SHS ( 7 <= cnu <= 24)
 function isSHSCNU(cnu) {
-  const cnu_number = Number(cnu.trim().substr(0, 2));
+  const cnu_number = getCnuNumber(cnu);
   return cnu_number >= 7 && cnu_number <= 24;
 };
 
+const cnu_category_map = new Map([
+  ['Sciences', [...Array(70).keys()].slice(25, 70).filter((d) => d <= 37 || d >= 60)],
+  ['Lettres et sciences humaines', [...Array(25).keys()].slice(7, 25)],
+  [
+    'Sections de santé',
+    [...Array(17).keys()].map((d) => d + 42)
+      .concat([80, 81, 82, 83, 85, 86, 87, 90, 91, 92])
+  ],
+  ['Droit, économie et gestion', [...Array(7).keys()].slice(1, 7)],
+  ['Pluridisciplinaire', [...Array(5).keys()].map((d) => d + 70)],
+  ['Théologie', [76, 77]],
+]);
+
+function getCategoryFromCNU(cnu) {
+  if (!cnu) {
+    console.warn(`could not categorize cnu: ${cnu}`);
+    return null;
+  };
+  if (cnu == 'Administratif') return cnu;
+
+  const cnu_number = getCnuNumber(cnu);
+  const category = cnu_category_map.entries()
+    .find((d) => d[1].includes(cnu_number));
+  
+  if (!category) console.warn(`could not categorize cnu: ${cnu}`)
+
+  return category ? category[0] : null;
+}
+
+function colorCNU(d, max) {
+  // debugger;
+  const cnu_category = getCategoryFromCNU(d[0]);
+
+  const color = d3
+    .scaleSequential()
+    .domain([0, max])
+    .unknown("grey");
+
+  // determine color range by category
+  if (cnu_category == 'Lettres et sciences humaines') {
+    color.interpolator(d3.interpolateOranges);
+  } else if (cnu_category == 'Sections de santé') {
+    color.interpolator(d3.interpolateGreens);
+  } else if (cnu_category == 'Sciences') {
+    color.interpolator(d3.interpolateBlues);
+  } else if (cnu_category == 'Droit, économie et gestion') {
+    color.interpolator(d3.interpolateReds);
+  } else if (cnu_category == 'Pluridisciplinaire') {
+    color.interpolator(d3.interpolatePurples);
+  } else if (cnu_category == 'Administratif' || exclude(cnu_category)) {
+    // do nothing
+  } else {
+    console.error(`color CNU not implemented for ${d[0]}`);
+  }
+  return color(d[1]);
+}
+
+const cnu_category_plot_options = {
+  width: 800,
+  height: 450,
+  legendLeftMargin: 60,
+  keyMap: (d) => d[0],
+  valueMap: (d) => d[1],
+  colorMap: (d) => d[0],
+  color: d3
+    .scaleOrdinal(d3.schemeCategory10)
+    .domain(cnu_category_map.keys())
+    .unknown("grey"),
+};
+
 function cnu_plot_options(data) {
+  // debugger;
   return {
     // width: 500,
     marginTop: 50,
     marginLeft: 200,
-    color: {
-      scheme: "Plasma",
-    },
     y: {
       label: "CNU",
-      tickRotate: 0,
-      tickFormat: (d) => cropText(d, 35),
+      tickRotate: 10,
+      tickFormat: (d) => cropText(d, 40),
     },
     x: {
       grid: true,
@@ -68,54 +138,67 @@ function cnu_plot_options(data) {
       label: "Occurences",
     },
     marks: [
-      Plot.barX(data.cnu_count, {
+      Plot.barX(data, {
         y: (d) => d[0],
         x: (d) => d[1],
-        fill: (d) => d[1],
+        fill: (d) => d3
+          .scaleOrdinal(d3.schemeCategory10)
+          .domain(cnu_category_map.keys())
+          .unknown("grey")(getCategoryFromCNU(d[0])),
+        // fill: (d) => colorCNU(d, Math.max(...data.map((d) => d[1]))),
         sort: {y: "-x"},
         tip: {
           format: {
-            fill: false
+            fill: false,
           },
           lineWidth: 25,
           textOverflow: "ellipsis-end"
         }
       }),
       Plot.barX(
-        data.cnu_count, 
-        Plot.pointerY({x: (d) => d[1], y: (d) => d[0]}),
+        data, 
+        Plot.pointerY({
+          x: (d) => d[1],
+          y: (d) => d[0],
+          fill: "white",
+          opacity: 0.5,
+        }),
       ),
+      Plot.text(data, {
+        x: 0,
+        y: (d) => d[1],
+      })
     ],
   }   
 };
 
-const shs_cnu_percent_plot_options = {
-  width: 800,
-  height: 450,
-  legendLeftMargin: 60,
-  fontSize: 18,
-  keyMap: (d) => d[0],
-  valueMap: (d) => d[1],
-  majorLabelBackgroundWidth: (d) => `${cropText(d.data[0], 30).length}em`,
-  majorLabelBackgroundX: (d) => `-${cropText(d.data[0], 30).length / 2}em`,
-};
+// const shs_cnu_plot_options = {
+//   width: 800,
+//   height: 450,
+//   keyMap: (d) => d[0],
+//   valueMap: (d) => d[1],
+//   legendLeftMargin: 110,
+// };
 
-const shs_cnu_plot_options = {
-  width: 800,
-  height: 450,
-  keyMap: (d) => d[0],
-  valueMap: (d) => d[1],
-  legendLeftMargin: 110,
-  fontSize: 18,
-};
+const erc_category_colors = new Map([
+  ['PE - Sciences & Technologies', d3.schemeCategory10[0]],
+  ['LS - Vie & Santé', d3.schemeCategory10[2]],
+  ['SH - Sciences Humaines & Sociales', "OrangeRed"],
+  ['non chercheur', "grey"],
+]);
 
 const discipline_erc_pie_options = {
   width: 800,
   height: 450,
   keyMap: (d) => d[0],
   valueMap: (d) => d[1],
+  colorMap: (d) => d[0],
+  color: d3
+    .scaleOrdinal(d3.schemeCategory10)
+    .domain(erc_category_colors.keys())
+    .range(erc_category_colors.values())
+    .unknown("grey"),
   legendLeftMargin: 110,
-  fontSize: 18,
 };
 ```
 
@@ -159,12 +242,11 @@ function formatResearcherDataByProject(project, financed=false) {
     ) &&
     (
       financed ?
-        true :
         d.project.some((researcher_project) =>
-          financed_projects.includes(researcher_project))
+          financed_projects.includes(researcher_project)) :
+        true
     )
   );
-
 
   const discipline_erc_count = countEntities(
     filtered_researchers,
@@ -180,19 +262,28 @@ function formatResearcherDataByProject(project, financed=false) {
     )
     .filter((d) => exclude(d[0]))
     .sort((a, b) => d3.descending(a[1], b[1]));
+
   const shs_cnu_count = cnu_count
     .filter((d) => isSHSCNU(d[0]));
-  const shs_cnu_percent = d3.rollups(
-    cnu_count,
+
+  // const shs_cnu_percent = d3.rollups(
+  //   cnu_count,
+  //   (D) => D.length,
+  //   (d) => isSHSCNU(d[0]) ? 'SHS' : 'non-SHS'
+  // );
+
+  const cnu_count_by_category = d3.rollups(
+    filtered_researchers,
     (D) => D.length,
-    (d) => isSHSCNU(d[0]) ? 'SHS' : 'non-SHS'
-  );
+    (d) => d.cnu ? getCategoryFromCNU(d.cnu) : null
+  ).filter((d) => !!d[0]); //TODO: add missing information to data quality check
 
   return {
     discipline_erc_count: discipline_erc_count,
     cnu_count: cnu_count,
     shs_cnu_count: shs_cnu_count,
-    shs_cnu_percent: shs_cnu_percent,
+    // shs_cnu_percent: shs_cnu_percent,
+    cnu_count_by_category: cnu_count_by_category,
   }
 };
 ```
@@ -211,36 +302,38 @@ const discipline_erc_pie = donutChart(
 ```
 
 ```js
-const cnu_plot = Plot.plot(cnu_plot_options(all_project_researcher_data));
+const cnu_plot = Plot.plot(
+  cnu_plot_options(all_project_researcher_data.cnu_count)
+);
 ```
 
-```js
+<!-- ```js
 const shs_cnu_plot = donutChart(
   all_project_researcher_data.shs_cnu_count,
   shs_cnu_plot_options
 );
-```
+``` -->
 
 ```js
-const shs_cnu_percent_plot = donutChart(
-  all_project_researcher_data.shs_cnu_percent,
-  shs_cnu_percent_plot_options
+const cnu_category_plot = donutChart(
+  all_project_researcher_data.cnu_count_by_category,
+  cnu_category_plot_options
 );
 ```
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNUs</h2>
-    <div>${shs_cnu_percent_plot}</div>
+    <h2>CNU Categories</h2>
+    <div>${cnu_category_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Detailed CNUs</h2>
-    <div style="max-height: 350px; overflow: auto">${cnu_plot}</div>
+    <div style="max-height: 950px; overflow: auto">${cnu_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
     <div>${shs_cnu_plot}</div>
-  </div>
+  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${discipline_erc_pie}</div>
@@ -251,7 +344,7 @@ const shs_cnu_percent_plot = donutChart(
 ## Financed Projects
 ```js
 const financed_project_researcher_data = formatResearcherDataByProject(undefined, true);
-// console.debug('financed_project_researcher_data', financed_project_researcher_data);
+console.debug('financed_project_researcher_data', financed_project_researcher_data);
 ```
 
 ```js
@@ -262,36 +355,38 @@ const financed_discipline_erc_pie = donutChart(
 ```
 
 ```js
-const financed_cnu_plot = Plot.plot(cnu_plot_options(financed_project_researcher_data));
+const financed_cnu_plot = Plot.plot(
+  cnu_plot_options(financed_project_researcher_data.cnu_count)
+);
 ```
 
-```js
+<!-- ```js
 const financed_shs_cnu_plot = donutChart(
   financed_project_researcher_data.shs_cnu_count,
   shs_cnu_plot_options
 );
-```
+``` -->
 
 ```js
-const financed_shs_cnu_percent_plot = donutChart(
-  financed_project_researcher_data.shs_cnu_percent,
-  shs_cnu_percent_plot_options
+const financed_cnu_category_plot = donutChart(
+  financed_project_researcher_data.cnu_count_by_category,
+  cnu_category_plot_options
 );
 ```
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNUs</h2>
-    <div>${financed_shs_cnu_percent_plot}</div>
+    <h2>CNU Categories</h2>
+    <div>${financed_cnu_category_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Detailed CNUs</h2>
-    <div style="max-height: 350px; overflow: auto">${financed_cnu_plot}</div>
+    <div style="max-height: 950px; overflow: auto">${financed_cnu_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
     <div>${financed_shs_cnu_plot}</div>
-  </div>
+  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${financed_discipline_erc_pie}</div>
@@ -313,36 +408,38 @@ const neo_discipline_erc_pie = donutChart(
 ```
 
 ```js
-const neo_cnu_plot = Plot.plot(cnu_plot_options(neo_project_researcher_data));
+const neo_cnu_plot = Plot.plot(
+  cnu_plot_options(neo_project_researcher_data.cnu_count)
+);
 ```
 
-```js
+<!-- ```js
 const neo_shs_cnu_plot = donutChart(
   neo_project_researcher_data.shs_cnu_count,
   shs_cnu_plot_options
 );
-```
+``` -->
 
 ```js
-const neo_shs_cnu_percent_plot = donutChart(
-  neo_project_researcher_data.shs_cnu_percent,
-  shs_cnu_percent_plot_options
+const neo_cnu_category_plot = donutChart(
+  neo_project_researcher_data.cnu_count_by_category,
+  cnu_category_plot_options
 );
 ```
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNUs</h2>
-    <div>${neo_shs_cnu_percent_plot}</div>
+    <h2>CNU Categories</h2>
+    <div>${neo_cnu_category_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Detailed CNUs</h2>
-    <div style="max-height: 350px; overflow: auto">${neo_cnu_plot}</div>
+    <div style="max-height: 950px; overflow: auto">${neo_cnu_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
     <div>${neo_shs_cnu_plot}</div>
-  </div>
+  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${neo_discipline_erc_pie}</div>
@@ -365,36 +462,38 @@ const RESILIENCE_discipline_erc_pie = donutChart(
 ```
 
 ```js
-const RESILIENCE_cnu_plot = Plot.plot(cnu_plot_options(RESILIENCE_project_researcher_data));
+const RESILIENCE_cnu_plot = Plot.plot(
+  cnu_plot_options(RESILIENCE_project_researcher_data.cnu_count)
+);
 ```
 
-```js
+<!-- ```js
 const RESILIENCE_shs_cnu_plot = donutChart(
   RESILIENCE_project_researcher_data.shs_cnu_count,
   shs_cnu_plot_options
 );
-```
+``` -->
 
 ```js
-const RESILIENCE_shs_cnu_percent_plot = donutChart(
-  RESILIENCE_project_researcher_data.shs_cnu_percent,
-  shs_cnu_percent_plot_options
+const RESILIENCE_cnu_category_plot = donutChart(
+  RESILIENCE_project_researcher_data.cnu_count_by_category,
+  cnu_category_plot_options
 );
 ```
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNUs</h2>
-    <div>${RESILIENCE_shs_cnu_percent_plot}</div>
+    <h2>CNU Categories</h2>
+    <div>${RESILIENCE_cnu_category_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Detailed CNUs</h2>
-    <div style="max-height: 350px; overflow: auto">${RESILIENCE_cnu_plot}</div>
+    <div style="max-height: 950px; overflow: auto">${RESILIENCE_cnu_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
     <div>${RESILIENCE_shs_cnu_plot}</div>
-  </div>
+  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${RESILIENCE_discipline_erc_pie}</div>
@@ -417,36 +516,38 @@ const TRACES_discipline_erc_pie = donutChart(
 ```
 
 ```js
-const TRACES_cnu_plot = Plot.plot(cnu_plot_options(TRACES_project_researcher_data));
+const TRACES_cnu_plot = Plot.plot(
+  cnu_plot_options(TRACES_project_researcher_data.cnu_count)
+);
 ```
 
-```js
+<!-- ```js
 const TRACES_shs_cnu_plot = donutChart(
   TRACES_project_researcher_data.shs_cnu_count,
   shs_cnu_plot_options
 );
-```
+``` -->
 
 ```js
-const TRACES_shs_cnu_percent_plot = donutChart(
-  TRACES_project_researcher_data.shs_cnu_percent,
-  shs_cnu_percent_plot_options
+const TRACES_cnu_category_plot = donutChart(
+  TRACES_project_researcher_data.cnu_count_by_category,
+  cnu_category_plot_options
 );
 ```
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNUs</h2>
-    <div>${TRACES_shs_cnu_percent_plot}</div>
+    <h2>CNU Categories</h2>
+    <div>${TRACES_cnu_category_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Detailed CNUs</h2>
-    <div style="max-height: 350px; overflow: auto">${TRACES_cnu_plot}</div>
+    <div style="max-height: 950px; overflow: auto">${TRACES_cnu_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
     <div>${TRACES_shs_cnu_plot}</div>
-  </div>
+  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${TRACES_discipline_erc_pie}</div>
@@ -468,36 +569,38 @@ const vfpp_discipline_erc_pie = donutChart(
 ```
 
 ```js
-const vfpp_cnu_plot = Plot.plot(cnu_plot_options(vfpp_project_researcher_data));
+const vfpp_cnu_plot = Plot.plot(
+  cnu_plot_options(vfpp_project_researcher_data.cnu_count)
+);
 ```
 
-```js
+<!-- ```js
 const vfpp_shs_cnu_plot = donutChart(
   vfpp_project_researcher_data.shs_cnu_count,
   shs_cnu_plot_options
 );
-```
+``` -->
 
 ```js
-const vfpp_shs_cnu_percent_plot = donutChart(
-  vfpp_project_researcher_data.shs_cnu_percent,
-  shs_cnu_percent_plot_options
+const vfpp_cnu_category_plot = donutChart(
+  vfpp_project_researcher_data.cnu_count_by_category,
+  cnu_category_plot_options
 );
 ```
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNUs</h2>
-    <div>${vfpp_shs_cnu_percent_plot}</div>
+    <h2>CNU Categories</h2>
+    <div>${vfpp_cnu_category_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Detailed CNUs</h2>
-    <div style="max-height: 350px; overflow: auto">${vfpp_cnu_plot}</div>
+    <div style="max-height: 950px; overflow: auto">${vfpp_cnu_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
     <div>${vfpp_shs_cnu_plot}</div>
-  </div>
+  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${vfpp_discipline_erc_pie}</div>
@@ -520,36 +623,38 @@ const VILLEGARDEN_discipline_erc_pie = donutChart(
 ```
 
 ```js
-const VILLEGARDEN_cnu_plot = Plot.plot(cnu_plot_options(VILLEGARDEN_project_researcher_data));
+const VILLEGARDEN_cnu_plot = Plot.plot(
+  cnu_plot_options(VILLEGARDEN_project_researcher_data.cnu_count)
+);
 ```
 
-```js
+<!-- ```js
 const VILLEGARDEN_shs_cnu_plot = donutChart(
   VILLEGARDEN_project_researcher_data.shs_cnu_count,
   shs_cnu_plot_options
 );
-```
+``` -->
 
 ```js
-const VILLEGARDEN_shs_cnu_percent_plot = donutChart(
-  VILLEGARDEN_project_researcher_data.shs_cnu_percent,
-  shs_cnu_percent_plot_options
+const VILLEGARDEN_cnu_category_plot = donutChart(
+  VILLEGARDEN_project_researcher_data.cnu_count_by_category,
+  cnu_category_plot_options
 );
 ```
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNUs</h2>
-    <div>${VILLEGARDEN_shs_cnu_percent_plot}</div>
+    <h2>CNU Categories</h2>
+    <div>${VILLEGARDEN_cnu_category_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Detailed CNUs</h2>
-    <div style="max-height: 350px; overflow: auto">${VILLEGARDEN_cnu_plot}</div>
+    <div style="max-height: 950px; overflow: auto">${VILLEGARDEN_cnu_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
     <div>${VILLEGARDEN_shs_cnu_plot}</div>
-  </div>
+  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${VILLEGARDEN_discipline_erc_pie}</div>
@@ -571,36 +676,38 @@ const WHAOU_discipline_erc_pie = donutChart(
 ```
 
 ```js
-const WHAOU_cnu_plot = Plot.plot(cnu_plot_options(WHAOU_project_researcher_data));
+const WHAOU_cnu_plot = Plot.plot(
+  cnu_plot_options(WHAOU_project_researcher_data.cnu_count)
+);
 ```
 
-```js
+<!-- ```js
 const WHAOU_shs_cnu_plot = donutChart(
   WHAOU_project_researcher_data.shs_cnu_count,
   shs_cnu_plot_options
 );
-```
+``` -->
 
 ```js
-const WHAOU_shs_cnu_percent_plot = donutChart(
-  WHAOU_project_researcher_data.shs_cnu_percent,
-  shs_cnu_percent_plot_options
+const WHAOU_cnu_category_plot = donutChart(
+  WHAOU_project_researcher_data.cnu_count_by_category,
+  cnu_category_plot_options
 );
 ```
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNUs</h2>
-    <div>${WHAOU_shs_cnu_percent_plot}</div>
+    <h2>CNU Categories</h2>
+    <div>${WHAOU_cnu_category_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Detailed CNUs</h2>
-    <div style="max-height: 350px; overflow: auto">${WHAOU_cnu_plot}</div>
+    <div style="max-height: 950px; overflow: auto">${WHAOU_cnu_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
     <div>${WHAOU_shs_cnu_plot}</div>
-  </div>
+  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${WHAOU_discipline_erc_pie}</div>
@@ -623,36 +730,38 @@ const inteGREEN_discipline_erc_pie = donutChart(
 ```
 
 ```js
-const inteGREEN_cnu_plot = Plot.plot(cnu_plot_options(inteGREEN_project_researcher_data));
+const inteGREEN_cnu_plot = Plot.plot(
+  cnu_plot_options(inteGREEN_project_researcher_data.cnu_count)
+);
 ```
 
-```js
+<!-- ```js
 const inteGREEN_shs_cnu_plot = donutChart(
   inteGREEN_project_researcher_data.shs_cnu_count,
   shs_cnu_plot_options
 );
-```
+``` -->
 
 ```js
-const inteGREEN_shs_cnu_percent_plot = donutChart(
-  inteGREEN_project_researcher_data.shs_cnu_percent,
-  shs_cnu_percent_plot_options
+const inteGREEN_cnu_category_plot = donutChart(
+  inteGREEN_project_researcher_data.cnu_count_by_category,
+  cnu_category_plot_options
 );
 ```
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNUs</h2>
-    <div>${inteGREEN_shs_cnu_percent_plot}</div>
+    <h2>CNU Categories</h2>
+    <div>${inteGREEN_cnu_category_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Detailed CNUs</h2>
-    <div style="max-height: 350px; overflow: auto">${inteGREEN_cnu_plot}</div>
+    <div style="max-height: 950px; overflow: auto">${inteGREEN_cnu_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
     <div>${inteGREEN_shs_cnu_plot}</div>
-  </div>
+  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${inteGREEN_discipline_erc_pie}</div>
@@ -675,36 +784,38 @@ const URBHEALTH_discipline_erc_pie = donutChart(
 ```
 
 ```js
-const URBHEALTH_cnu_plot = Plot.plot(cnu_plot_options(URBHEALTH_project_researcher_data));
+const URBHEALTH_cnu_plot = Plot.plot(
+  cnu_plot_options(URBHEALTH_project_researcher_data.cnu_count)
+);
 ```
 
-```js
+<!-- ```js
 const URBHEALTH_shs_cnu_plot = donutChart(
   URBHEALTH_project_researcher_data.shs_cnu_count,
   shs_cnu_plot_options
 );
-```
+``` -->
 
 ```js
-const URBHEALTH_shs_cnu_percent_plot = donutChart(
-  URBHEALTH_project_researcher_data.shs_cnu_percent,
-  shs_cnu_percent_plot_options
+const URBHEALTH_cnu_category_plot = donutChart(
+  URBHEALTH_project_researcher_data.cnu_count_by_category,
+  cnu_category_plot_options
 );
 ```
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNUs</h2>
-    <div>${URBHEALTH_shs_cnu_percent_plot}</div>
+    <h2>CNU Categories</h2>
+    <div>${URBHEALTH_cnu_category_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Detailed CNUs</h2>
-    <div style="max-height: 350px; overflow: auto">${URBHEALTH_cnu_plot}</div>
+    <div style="max-height: 950px; overflow: auto">${URBHEALTH_cnu_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
     <div>${URBHEALTH_shs_cnu_plot}</div>
-  </div>
+  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${URBHEALTH_discipline_erc_pie}</div>
@@ -770,31 +881,30 @@ const overview_table = Inputs.table(overview_data, {
 ```js
 // missing count //
 const missing_discipline_erc_count = d3.rollup(
-    phase_2_data.researchers.filter((d) => isFinanced(d.project)),
+    phase_2_data.researchers,
     (D) => D.length,
     (d) => exclude(d.discipline_erc) ? 'found_erc': 'missing_erc'
   );
 missing_discipline_erc_count
 
 const missing_cnu_count = d3.rollup(
-    phase_2_data.researchers.filter((d) => isFinanced(d.project)),
+    phase_2_data.researchers,
     (D) => D.length,
     (d) => exclude(d.cnu) ? 'found_cnu': 'missing_cnu'
   );
 
-// const missing_data_table = Inputs.table(
-//   [{
-//     'Missing/unspecified CNU data':
-//       `${((missing_cnu_count.get('missing_cnu') ? missing_cnu_count.get('missing_cnu') : 0) / ((missing_cnu_count.get('missing_cnu') ? missing_cnu_count.get('missing_cnu') : 0) + (missing_cnu_count.get('found_cnu') ? missing_cnu_count.get('found_cnu') : 0)) * 100)
-//         .toPrecision(3)
-//     }%`,
-//     'Missing/unspecified ERC Discipline data':
-      // `${((missing_discipline_erc_count.get('missing_erc') ? missing_discipline_erc_count.get('missing_erc') : 0) / ((missing_discipline_erc_count.get('missing_erc') ? missing_discipline_erc_count.get('missing_erc') : 0) + (missing_discipline_erc_count.get('found_erc') ? missing_discipline_erc_count.get('found_erc') : 0)) * 100)
-      //   .toPrecision(3)
-      // }%`
-//   }],
-//   {}
-// );
+const missing_financed_discipline_erc_count = d3.rollup(
+    phase_2_data.researchers.filter((d) => isFinanced(d.project)),
+    (D) => D.length,
+    (d) => exclude(d.discipline_erc) ? 'found_erc': 'missing_erc'
+  );
+missing_discipline_erc_count
+
+const missing_financed_cnu_count = d3.rollup(
+    phase_2_data.researchers.filter((d) => isFinanced(d.project)),
+    (D) => D.length,
+    (d) => exclude(d.cnu) ? 'found_cnu': 'missing_cnu'
+  );
 ```
 
 ## Financed Project Summary
@@ -806,16 +916,28 @@ const missing_cnu_count = d3.rollup(
 
 ## Data quality metrics
 
-<div class="grid grid-cols-2">
+<div class="grid grid-cols-4">
   <div class="card">
-    <h2>Unspecified researcher CNU data</h2>
+    <h2>Unspecified total researcher CNU data</h2>
     <span class="big">${`${((missing_cnu_count.get('missing_cnu') ? missing_cnu_count.get('missing_cnu') : 0) / ((missing_cnu_count.get('missing_cnu') ? missing_cnu_count.get('missing_cnu') : 0) + (missing_cnu_count.get('found_cnu') ? missing_cnu_count.get('found_cnu') : 0)) * 100)
         .toPrecision(3)
       }%`}</span>
   </div>
   <div class="card">
-    <h2>Unspecified ERC Discipline data</h2>
+    <h2>Unspecified total ERC Discipline data</h2>
     <span class="big">${`${((missing_discipline_erc_count.get('missing_erc') ? missing_discipline_erc_count.get('missing_erc') : 0) / ((missing_discipline_erc_count.get('missing_erc') ? missing_discipline_erc_count.get('missing_erc') : 0) + (missing_discipline_erc_count.get('found_erc') ? missing_discipline_erc_count.get('found_erc') : 0)) * 100)
+      .toPrecision(3)
+    }%`}</span>
+  </div>
+  <div class="card">
+    <h2>Unspecified financed researcher CNU data</h2>
+    <span class="big">${`${((missing_financed_cnu_count.get('missing_cnu') ? missing_financed_cnu_count.get('missing_cnu') : 0) / ((missing_financed_cnu_count.get('missing_cnu') ? missing_financed_cnu_count.get('missing_cnu') : 0) + (missing_financed_cnu_count.get('found_cnu') ? missing_financed_cnu_count.get('found_cnu') : 0)) * 100)
+        .toPrecision(3)
+      }%`}</span>
+  </div>
+  <div class="card">
+    <h2>Unspecified financed ERC Discipline data</h2>
+    <span class="big">${`${((missing_financed_discipline_erc_count.get('missing_erc') ? missing_financed_discipline_erc_count.get('missing_erc') : 0) / ((missing_financed_discipline_erc_count.get('missing_erc') ? missing_financed_discipline_erc_count.get('missing_erc') : 0) + (missing_financed_discipline_erc_count.get('found_erc') ? missing_financed_discipline_erc_count.get('found_erc') : 0)) * 100)
       .toPrecision(3)
     }%`}</span>
   </div>
