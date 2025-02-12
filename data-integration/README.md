@@ -34,29 +34,51 @@ title: Proposed method for RAG-based document querying
 ---
 flowchart LR
 
-    subgraph Application
-        LLM[/Large Language Model\]
-        R[Retriever]
-        VS[(Vector Store)]
-    end
+  subgraph Application
+    LLM[/Large Language Model\]
+    R[Retriever]
+    VS[(Vector Store)]
+    B(Unstructured Text)
+    I(Image?)
+  end
 
-    S(( )) --> A
-    A@{ shape: doc, label: PDF } -->|1-Convert to| B(Unstructured Text)
-    A -->|1-Convert to| BB(Image)
-    B -->|"2-Embed with (by document structure)"| LLM
-    B -->|"2-Embed with (by semantic meaning)"| LLM
-    BB -->|2-Embed with| LLM
-    LLM -->|"3-Store (multimodal) embeddings"| VS
-    
-    %% Use multiquery rewriting?
-    Q1["'What are the ORCiDs of the researchers in project X?'"] -->|4-Send query| R
-    Q2["'What are the challenges is project X solving?'"] -->|4-Send query| R
-    Q3["...?"] -->|4-Send query| R
+  subgraph Input
+    PDF@{ shape: doc }
+    Docx@{ shape: doc }
+    Q1(["'What are the ORCiDs of the researchers in project X?'"])
+    Q2(["'What are the challenges is project X solving?'"])
+    Q3(["...?"])
+  end
 
-    R -->|5-Search for relevant documents| VS
-    VS -->|6-Return relevant documents| R
-    R -->|7-Send query contextualized with documents| LLM
-    LLM -->|8-Generate structured text| O((( )))
+  subgraph Output
+    JSON@{ shape: doc }
+  end
+
+  S(( ))
+  O((( )))
+
+  S --> PDF
+  S --> Docx
+  PDF -->|1-Convert to| B
+  PDF -->|1-Convert to| I
+  Docx -->|1-Convert to| B
+  Docx -->|1-Convert to| I
+
+  B -->|"2-Embed with (by document structure)"| LLM
+  B -->|"2-Embed with (by semantic meaning)"| LLM
+  I -->|2-Embed with| LLM
+  LLM -->|"3-Store (multimodal?) embeddings"| VS
+  
+  %% Use multiquery rewriting?
+  Q1 -->|4-Send query| R
+  Q2 -->|4-Send query| R
+  Q3 -->|4-Send query| R
+
+  R -->|5-Search for relevant documents| VS
+  VS -->|6-Return relevant documents| R
+  R -->|7-Send query contextualized with documents| LLM
+  LLM -->|8-Generate structured text| JSON
+  JSON --> O
 ```
 
 ## 1.1. Step 1 - PDF to unstructured text
