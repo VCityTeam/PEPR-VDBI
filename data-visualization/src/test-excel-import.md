@@ -17,6 +17,11 @@ E.g. `Etablissement`, `Etablissement 2`, ... `Etablissement n` are merged into t
 **Input:** Workbook 1 - "240117 consortium laboratoire, établissement CNRS-SHS_Stat"
 
 ```mermaid
+---
+title: Data integration process
+config:
+  theme: forest
+---
 flowchart TD
     subgraph "Workbook 1"
         AA[Sheet: 240117 consortium laboratoire^J]

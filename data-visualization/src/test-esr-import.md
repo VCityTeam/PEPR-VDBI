@@ -8,10 +8,11 @@ theme: light
 Import and visualize data from the [ESR Open Data](data.enseignementsup-recherche.gouv.fr) using their [API](https://data.enseignementsup-recherche.gouv.fr/api/explore/v2.1/console)
 Also test the Observable Frameworks data loader library.
 
-## Integration process
+## Data integration
 
 ```mermaid
 ---
+title: Data integration process
 config:
   theme: forest
 ---
