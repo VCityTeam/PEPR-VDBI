@@ -7,12 +7,17 @@ theme: light
 
 Visualize the researcher sheet from the phase 2 Excel document using [arc diagrams](https://observablehq.com/@d3/arc-diagram).
 
-## Data integration process
+## Data integration
 
 Take a tabluar data structure and transform the table into a graph formalism.
 To do this, we need to set up a component to transform the data.
 
 ```mermaid
+---
+title: Data integration process
+config:
+  theme: forest
+---
 flowchart TD
 
     subgraph "Workbook"
