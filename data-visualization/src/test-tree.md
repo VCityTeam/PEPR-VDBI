@@ -8,7 +8,7 @@ theme: light
 Visualize the first sheet from the phase 1 Excel document using trees and dendrogram diagrams.
 
 
-## Data integration process
+## Data integration
 
 Take the data imported from the [initial-import-test](./initial-import-test) and transform the table into a tree formalism.
 To do this, we need to set up a component to transform the data.
@@ -19,6 +19,11 @@ To do this, we need to set up a component to transform the data.
 - Workbook 2: "240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT"
 
 ```mermaid
+---
+title: Data integration process
+config:
+  theme: forest
+---
 flowchart TD
     subgraph "Workbook 1"
         AA[Sheet: 240117 consortium laboratoire^J]
@@ -115,6 +120,11 @@ display(collapsableRadialProducts);
 A different mapping showing the relationships between the identified products and results and each project:
 
 ```mermaid
+---
+title: Example hierarchical data structure
+config:
+  theme: forest
+---
 flowchart LR
     A[Primary products/results] --> B
     B[Secondary products/results] --> C

@@ -31,6 +31,8 @@ Tests for converting unstructured text to structured text
 ```mermaid
 ---
 title: Proposed method for RAG-based document querying
+config:
+  theme: forest
 ---
 flowchart LR
 
@@ -445,9 +447,10 @@ Summary of results:
 - a missing ORCiD is a **false negative**
 - a missing RNSR# or IdHAL is a **true negative**
 
-**Result 2.4:**
-
 ```mermaid
+---
+title: Result 2.4
+---
 pie
   "True positives" : 29
   "False positives" : 0
@@ -462,9 +465,11 @@ pie
     - The precision of identifying ids in general seems to be very good. All retrieved items in this result are well formed and are not hallucinations.
     - Becuase of this recall seems to be more important here.
 
-**Result** 3.2
 
 ```mermaid
+---
+title: Result 3.2
+---
 pie
   "True positives" : 25
   "False positives" : 6

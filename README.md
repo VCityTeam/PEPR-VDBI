@@ -29,6 +29,10 @@ Data integration tests with GPTs
 ## Project Schedule
 
 ```mermaid
+---
+config:
+  theme: forest
+---
 gantt
     title PEPR VDBI Surveying/Monitoring Iterative Roadmap 2025
     dateFormat  DD-MM-YYYY

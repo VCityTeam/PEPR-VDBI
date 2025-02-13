@@ -18,6 +18,11 @@ To do this, we need to set up a component to transform the data.
 - Workbook 2: "240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT"
 
 ```mermaid
+---
+title: Data integration process
+config:
+  theme: forest
+---
 flowchart TD
     subgraph "Workbook 1"
         AA[Sheet: 240117 consortium laboratoire^J]

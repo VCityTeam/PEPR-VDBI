@@ -56,6 +56,11 @@ Here is an overview of what data is visualized and the mechanisms for used for d
 
 ## Data collection
 ```mermaid
+---
+title: Data collection process
+config:
+  theme: forest
+---
 flowchart LR
   Z(( )) --> ZZ(Start Phase 1)
   ZZ --> A
@@ -85,6 +90,11 @@ Information collected in workbooks is loaded into JS object arrays.
 
 
 ```mermaid
+---
+title: Data integration process
+config:
+  theme: forest
+---
 flowchart TD
     subgraph "Workbook 1"
         AA[Sheet: Feuil_1]
