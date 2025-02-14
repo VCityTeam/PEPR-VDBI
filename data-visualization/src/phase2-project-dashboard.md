@@ -8,7 +8,8 @@ theme: [dashboard, light]
 ```js
 import {
   countEntities,
-  cropText
+  cropText,
+  exclude
 } from "./components/utilities.js";
 import {
   extractPhase2Workbook,
@@ -16,6 +17,13 @@ import {
 import {
   donutChart
 } from "./components/pie-chart.js";
+import {
+  cnu_category_map
+} from './components/cnu.js';
+import {
+  getCategoryFromCNU,
+  colorCNU
+} from "./components/color.js";
 ```
 
 <div class="warning" label="Data visualization notice">
@@ -27,98 +35,113 @@ import {
 </div>
 
 ```js
+function generateCnuPlotLegend({
+  width = 300,
+  marginLeft = 0,
+  domain = [1, 10],
+  range = [0.4, 1],
+} = {}) {
+
+  return [
+    Plot.legend({
+      label: 'Droit, économie et gestion',
+      marginLeft: marginLeft,
+      width: width,
+      color: {
+        domain: domain,
+        range: range,
+        type: "log",
+        scheme: "Reds"
+      }
+    }),
+    Plot.legend({
+      label: 'Lettres et sciences humaines',
+      marginLeft: marginLeft,
+      width: width,
+      color: {
+        domain: domain,
+        range: range,
+        type: "log",
+        scheme: "Oranges"
+      }
+    }),
+    Plot.legend({
+      label: 'Sciences',
+      marginLeft: marginLeft,
+      width: width,
+      color: {
+        domain: domain,
+        range: range,
+        type: "log",
+        scheme: "Blues"
+      }
+    }),
+    Plot.legend({
+      label: 'Pluridisciplinaire',
+      marginLeft: marginLeft,
+      width: width,
+      color: {
+        domain: domain,
+        range: range,
+        type: "log",
+        scheme: "Purples"
+      }
+    }),
+    Plot.legend({
+      label: 'Sections de santé',
+      marginLeft: marginLeft,
+      width: width,
+      color: {
+        domain: domain,
+        range: range,
+        type: "log",
+        scheme: "Greens"
+      }
+    }),
+    Plot.legend({
+      label: 'Other',
+      marginLeft: marginLeft,
+      width: width,
+      color: {
+        domain: domain,
+        range: range,
+        type: "log",
+        scheme: "Greys"
+      }
+    }),
+  ]
+}
+```
+
+<h3>Detailed CNU Legend</h3>
+<div>${generateCnuPlotLegend()[0]}</div>
+<div>${generateCnuPlotLegend()[1]}</div>
+<div>${generateCnuPlotLegend()[2]}</div>
+<div>${generateCnuPlotLegend()[3]}</div>
+<div>${generateCnuPlotLegend()[4]}</div>
+<div>${generateCnuPlotLegend()[5]}</div>
+
+```js
 const workbook1 = FileAttachment(
   "./data/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
 ).xlsx();
 
-// function for filtering out unknown values
-const exclude = (d) => ![
-  null,
-  "non renseignée",
-  "Non connue",
-  "non connue",
-  "non connues",
-  "Non Renseigné"
-].includes(d);
-
-function getCnuNumber(cnu) {
-  return Number(cnu.trim().substr(0, 2));
-}
+// /**
+//  * Given a string starting with a CNU number, return the number
+//  *
+//  * @param {String} cnu - The CNU full name
+//  * @returns {Number} The CNU number
+//  */
+// function getCnuNumber(cnu) {
+//   return Number(cnu.trim().substring(0, 2));
+// }
 
 
 // detect if a CNU is SHS ( 7 <= cnu <= 24)
-function isSHSCNU(cnu) {
-  const cnu_number = getCnuNumber(cnu);
-  return cnu_number >= 7 && cnu_number <= 24;
-};
-
-const cnu_category_map = new Map([
-  ['Sciences', [...Array(70).keys()].slice(25, 70).filter((d) => d <= 37 || d >= 60)],
-  ['Lettres et sciences humaines', [...Array(25).keys()].slice(7, 25)],
-  [
-    'Sections de santé',
-    [...Array(17).keys()].map((d) => d + 42)
-      .concat([80, 81, 82, 83, 85, 86, 87, 90, 91, 92])
-  ],
-  ['Droit, économie et gestion', [...Array(7).keys()].slice(1, 7)],
-  ['Pluridisciplinaire', [...Array(5).keys()].map((d) => d + 70)],
-  ['Théologie', [76, 77]],
-]);
-
-function getCategoryFromCNU(cnu) {
-  if (!cnu) {
-    console.warn(`empty cnu: ${cnu}`);
-    return null;
-  };
-  if (cnu == 'Administratif') return cnu;
-
-  const cnu_number = getCnuNumber(cnu);
-  const category = cnu_category_map.entries()
-    .find((d) => d[1].includes(cnu_number));
-  
-  if (!category) console.warn(`could not categorize cnu: ${cnu}`)
-
-  return category ? category[0] : null;
-}
-
-function colorCNU(d, max) {
-  // debugger;
-  const cnu_category = getCategoryFromCNU(d[0]);
-  const color_value = d[1] > 1 ? d[1] : 1; // we can't input logs below 1
-
-  const color = d3
-    .scaleLog([1, max], [0.4, 1]);
-  //   .scaleSequential()
-  //   .domain([0, max])
-  //   .interpolator(d3.interpolateGreys)
-  //   .unknown("grey");
-
-  // determine color range by category
-  if (cnu_category == 'Lettres et sciences humaines') {
-    // color.interpolator(d3.interpolateOranges);
-    return d3.interpolateOranges(color(color_value));
-  } else if (cnu_category == 'Sections de santé') {
-    // color.interpolator(d3.interpolateGreens);
-    return d3.interpolateGreens(color(color_value));
-  } else if (cnu_category == 'Sciences') {
-    // color.interpolator(d3.interpolateBlues);
-    return d3.interpolateBlues(color(color_value));
-  } else if (cnu_category == 'Droit, économie et gestion') {
-    // color.interpolator(d3.interpolateReds);
-    return d3.interpolateReds(color(color_value));
-  } else if (cnu_category == 'Pluridisciplinaire') {
-    // color.interpolator(d3.interpolatePurples);
-    return d3.interpolatePurples(color(color_value));
-  } else if (cnu_category == 'Administratif' || exclude(cnu_category)) {
-    // use default interpolator
-  } else {
-    console.error(`color CNU not implemented for ${d[0]}`);
-    // use default interpolator
-  }
-
-  // return color(d[1]);
-  return d3.interpolateGreys(color(color_value));
-}
+// function isSHSCNU(cnu) {
+//   const cnu_number = getCnuNumber(cnu);
+//   return cnu_number >= 7 && cnu_number <= 24;
+// };
 
 const cnu_category_plot_options = {
   width: 800,
@@ -187,77 +210,6 @@ function generateCnuPlotOptions(data, sort="y", height=350) {
     ],
   }   
 };
-
-function generateCnuPlotLegend(max) {
-  return [
-    Plot.legend({
-      label: 'Droit, économie et gestion',
-      marginLeft: 200,
-      width: 600,
-      color: {
-        domain: [1, max],
-        range: [0.4, 1],
-        type: "log",
-        scheme: "Reds"
-      }
-    }),
-    Plot.legend({
-      label: 'Lettres et sciences humaines',
-      marginLeft: 200,
-      width: 600,
-      color: {
-        domain: [1, max],
-        range: [0.4, 1],
-        type: "log",
-        scheme: "Oranges"
-      }
-    }),
-    Plot.legend({
-      label: 'Sciences',
-      marginLeft: 200,
-      width: 600,
-      color: {
-        domain: [1, max],
-        range: [0.4, 1],
-        type: "log",
-        scheme: "Blues"
-      }
-    }),
-    Plot.legend({
-      label: 'Pluridisciplinaire',
-      marginLeft: 200,
-      width: 600,
-      color: {
-        domain: [1, max],
-        range: [0.4, 1],
-        type: "log",
-        scheme: "Purples"
-      }
-    }),
-    Plot.legend({
-      label: 'Sections de santé',
-      marginLeft: 200,
-      width: 600,
-      color: {
-        domain: [1, max],
-        range: [0.4, 1],
-        type: "log",
-        scheme: "Greens"
-      }
-    }),
-    Plot.legend({
-      label: 'Other',
-      marginLeft: 200,
-      width: 600,
-      color: {
-        domain: [1, max],
-        range: [0.4, 1],
-        type: "log",
-        scheme: "Greys"
-      }
-    }),
-  ]
-}
 
 const cnu_plot_sort_values = new Map([
   ['CNU', 'y'],
@@ -358,8 +310,8 @@ function formatResearcherDataByProject(project, financed=false) {
     .filter((d) => exclude(d[0]))
     .sort((a, b) => d3.descending(a[1], b[1]));
 
-  const shs_cnu_count = cnu_count
-    .filter((d) => isSHSCNU(d[0]));
+  // const shs_cnu_count = cnu_count
+  //   .filter((d) => isSHSCNU(d[0]));
 
   // const shs_cnu_percent = d3.rollups(
   //   cnu_count,
@@ -372,11 +324,12 @@ function formatResearcherDataByProject(project, financed=false) {
     (D) => D.length,
     (d) => d.cnu ? getCategoryFromCNU(d.cnu) : null
   ).filter((d) => !!d[0]); //TODO: add missing information to data quality check
+  // debugger;
 
   return {
     discipline_erc_count: discipline_erc_count,
     cnu_count: cnu_count,
-    shs_cnu_count: shs_cnu_count,
+    // shs_cnu_count: shs_cnu_count,
     // shs_cnu_percent: shs_cnu_percent,
     cnu_count_by_category: cnu_count_by_category,
   }
@@ -460,7 +413,7 @@ const cnu_plot = Plot.plot(
 ## Financed Projects
 ```js
 const financed_project_researcher_data = formatResearcherDataByProject(undefined, true);
-console.debug('financed_project_researcher_data', financed_project_researcher_data);
+// console.debug('financed_project_researcher_data', financed_project_researcher_data);
 ```
 
 ```js
