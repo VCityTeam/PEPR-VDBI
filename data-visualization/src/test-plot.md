@@ -13,6 +13,11 @@ Take the data imported from the [initial-import-test](./initial-import-test) and
 To do this, we need to set up a component to transform the data.
 
 ```mermaid
+---
+title: Data integration process
+config:
+  theme: forest
+---
 flowchart LR
     subgraph Excel workbook
         AA[Sheet 1]
