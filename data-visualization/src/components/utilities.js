@@ -114,9 +114,7 @@ export function addEntityProjectOwnerAndPartnerCounts(
       (source_d) => target_d_entity === source_d[0]
     );
     target_d.project_partner_count =
-      typeof source_partner_count === 'undefined'
-        ? 0
-        : source_partner_count[1];
+      typeof source_partner_count === 'undefined' ? 0 : source_partner_count[1];
 
     // add total  counts
     target_d.project_total_count =
@@ -205,10 +203,8 @@ export function anonymizeEntry(entry, dictionary, type = 'human') {
     dictionary.set(
       entry,
       nameByRace(type, {
-        gender: Boolean(Math.floor(Math.random() * 2)) ? 'male' : 'female',
-        allowMultipleNames: Boolean(Math.floor(Math.random() * 2))
-          ? true
-          : false,
+        gender: Math.floor(Math.random() * 2) ? 'male' : 'female',
+        allowMultipleNames: Math.floor(Math.random() * 2) ? true : false,
       })
     );
   }
@@ -228,3 +224,20 @@ export function cropText(text, maxLength = 20) {
     ? text.slice(0, maxLength - 3).concat('...')
     : text;
 }
+
+/**
+ * function for filtering out *known* unknown values
+ *
+ * @param {any} d - value to check
+ * @returns {Boolean} - true if the value is an known value;
+ *   false if the value is an unknown value
+ */
+export const exclude = (d) =>
+  ![
+    null,
+    'non renseignée',
+    'Non connue',
+    'non connue',
+    'non connues',
+    'Non Renseigné',
+  ].includes(d);
