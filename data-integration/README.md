@@ -1,31 +1,32 @@
-# 1. AI-based Automated Data Integration Experiments <!-- omit in toc -->
+# AI-based Automated Data Integration Experiments <!-- omit in toc -->
 
 Tests for converting unstructured text to structured text
 
 ## Table of contents <!-- omit in toc -->
 
-- [1.1. Step 1 - PDF to unstructured text](#11-step-1---pdf-to-unstructured-text)
-  - [1.1.1. Dependencies](#111-dependencies)
-  - [1.1.2. pypdf tests](#112-pypdf-tests)
-    - [1.1.2.1. Test: simple pdf to text conversion](#1121-test-simple-pdf-to-text-conversion)
-    - [1.1.2.2. Test: pdf with table to text conversion](#1122-test-pdf-with-table-to-text-conversion)
-    - [1.1.2.3. Test: Convert PEPR Résumés des lettres d’intention](#1123-test-convert-pepr-résumés-des-lettres-dintention)
-- [1.2. Step 2 - unstructured text to structured text via GPT](#12-step-2---unstructured-text-to-structured-text-via-gpt)
-  - [1.2.1. Mistral](#121-mistral)
-    - [1.2.1.1. Test: simple keyword extraction in french](#1211-test-simple-keyword-extraction-in-french)
-    - [1.2.1.2. Test: simple keyword extraction in english](#1212-test-simple-keyword-extraction-in-english)
-    - [1.2.1.3. Test: Ollama server+python](#1213-test-ollama-serverpython)
-    - [1.2.1.4 Test: Pagoda LIRIS Ollama Service](#1214-test-pagoda-liris-ollama-service)
-  - [1.2.2. Workflow](#122-workflow)
-    - [1.2.2.1. Test: Initial Python data workflow](#1221-test-initial-python-data-workflow)
-    - [1.2.2.2. Test: Structured Python data workflow](#1222-test-structured-python-data-workflow)
-    - [1.2.2.3. Test: Initial prompt optimization test](#1223-test-initial-prompt-optimization-test)
-    - [1.2.2.4. Test: Page range test](#1224-test-page-range-test)
-    - [1.2.2.5. Test: Add csv config to workflow](#1225-test-add-csv-config-to-workflow)
-    - [1.2.2.6. Test: Modelfile test](#1226-test-modelfile-test)
-    - [1.2.2.7. Test: TEMPERATURE and top parameters test](#1227-test-temperature-and-top-parameters-test)
-  - [1.2.3. RAG tests](#123-rag-tests)
-    - [1.2.3.1. Test: Langchain with pdf local document](#1231-test-langchain-with-pdf-local-document)
+- [1. Step 1 - PDF to unstructured text](#1-step-1---pdf-to-unstructured-text)
+  - [1.1. Dependencies](#11-dependencies)
+  - [1.2. pypdf tests](#12-pypdf-tests)
+    - [1.2.1. Test: simple pdf to text conversion](#121-test-simple-pdf-to-text-conversion)
+    - [1.2.2. Test: pdf with table to text conversion](#122-test-pdf-with-table-to-text-conversion)
+    - [1.2.3. Test: Convert PEPR Résumés des lettres d’intention](#123-test-convert-pepr-résumés-des-lettres-dintention)
+- [2. Step 2 - unstructured text to structured text via GPT](#2-step-2---unstructured-text-to-structured-text-via-gpt)
+  - [2.1. Ollama](#21-ollama)
+    - [2.1.1. Test: simple keyword extraction in french](#211-test-simple-keyword-extraction-in-french)
+    - [2.1.2. Test: simple keyword extraction in english](#212-test-simple-keyword-extraction-in-english)
+    - [2.1.3. Test: Ollama server+python](#213-test-ollama-serverpython)
+    - [2.1.4 Test: Pagoda LIRIS Ollama Service](#214-test-pagoda-liris-ollama-service)
+  - [2.2. Workflow](#22-workflow)
+    - [2.2.1. Test: Initial Python data workflow](#221-test-initial-python-data-workflow)
+    - [2.2.2. Test: Structured Python data workflow](#222-test-structured-python-data-workflow)
+    - [2.2.3. Test: Initial prompt optimization test](#223-test-initial-prompt-optimization-test)
+    - [2.2.4. Test: Page range test](#224-test-page-range-test)
+    - [2.2.5. Test: Add csv config to workflow](#225-test-add-csv-config-to-workflow)
+    - [2.2.6. Test: Modelfile test](#226-test-modelfile-test)
+    - [2.2.7. Test: TEMPERATURE and top parameters test](#227-test-temperature-and-top-parameters-test)
+  - [2.3. RAG tests](#23-rag-tests)
+    - [2.3.1. Test: Langchain with single document and semi-structured data](#231-test-langchain-with-single-document-and-semi-structured-data)
+    - [2.3.2. Test: R2R Light](#232-test-r2r-light)
 - [See also](#see-also)
 
 ```mermaid
@@ -83,7 +84,11 @@ flowchart LR
   JSON --> O
 ```
 
-## 1.1. Step 1 - PDF to unstructured text
+> [!NOTE]
+> Most document data used for testing is private.
+> Contact the repository owners to get access if you believe you need it.
+
+## 1. Step 1 - PDF to unstructured text
 
 **RQ1 (Research question):** What is the best open source PDF to text tool or library for transforming pdf files to text?
 
@@ -97,17 +102,13 @@ flowchart LR
 
 **Tentative candidates:**
 
-| Tool/library                                                                                            | Type                              | Comment                            |
-| ------------------------------------------------------------------------------------------------------- | --------------------------------- | ---------------------------------- |
-| [pypdf](https://github.com/py-pdf/pypdf)                                                                | Python Library                    |                                    |
-| [Langchain+Ollama](https://github.com/ollama/ollama/tree/v0.5.5/examples/langchain-python-rag-document) | Python Library                    |                                    |
-| [RAGFlow](https://github.com/infiniflow/ragflow)                                                        | CLI (Command line interface) tool |                                    |
-| [marker-pdf](https://pypi.org/project/marker-pdf/)                                                      | Python Library                    | a pipeline of deep-learning models |
-| [pd3f](https://github.com/pd3f/pd3f)                                                                    | CLI tool                          | no french support? Is it mature?   |
-| [R2R](https://github.com/SciPhi-AI/R2R)                                                                 | RESTful API                       |                                    |
-| [rag-chatbot](https://github.com/datvodinh/rag-chatbot)                                                 |                                   |                                    |
-| [CRAG-Ollama-Chat](https://github.com/Nagi-ovo/CRAG-Ollama-Chat)                                        |                                   |                                    |
-| [chat-ollama](https://github.com/sugarforever/chat-ollama)                                              |                                   |                                    |
+| Tool/library                                       | Type           | Comment                            |
+| -------------------------------------------------- | -------------- | ---------------------------------- |
+| [pypdf](https://github.com/py-pdf/pypdf)           | Python Library |                                    |
+| [marker-pdf](https://pypi.org/project/marker-pdf/) | Python Library | a pipeline of deep-learning models |
+| [pd3f](https://github.com/pd3f/pd3f)               | CLI tool       | no french support? Is it mature?   |
+
+
 
 > [!NOTE]
 > On **Windows**, when exporting text files from other programs or writing to files from python, keep in mind that the **UTF-8** encoding is not always used.
@@ -115,7 +116,7 @@ flowchart LR
 
 TODO: https://askubuntu.com/questions/50170/how-to-convert-pdf-to-image
 
-### 1.1.1. Dependencies
+### 1.1. Dependencies
 - [Python](https://www.python.org/downloads/) v3.8+
   - It is recommended to use a virtual python environment. See [here](https://docs.python.org/3/library/venv.html#how-venvs-work) for more information on how to manage a python venv
 ```bash
@@ -138,13 +139,13 @@ pip install -r src/requirements.txt
 ```
 
 
-### 1.1.2. pypdf tests
+### 1.2. pypdf tests
 
 Dependency:
 - [pypdf](https://github.com/py-pdf/pypdf)
 
 
-#### 1.1.2.1. Test: simple pdf to text conversion
+#### 1.2.1. Test: simple pdf to text conversion
 ```bash
 python src/pypdf_test.py test-data/résumé-thèse-fr.pdf test-data/pypdf_test.txt
 ```
@@ -157,7 +158,7 @@ Notes:
 - no formatting is retained (i.e., headers, bold, color, etc.)
 - perhaps markdown would be better if possible to retain some semi-structured text?
 
-#### 1.1.2.2. Test: pdf with table to text conversion
+#### 1.2.2. Test: pdf with table to text conversion
 ```bash
 python src/pypdf_test.py test-data/résumé-thèse-tableau-fr.pdf test-data/pypdf_table_test.txt
 ```
@@ -169,7 +170,7 @@ Notes:
 - this causes structure of table to be lost
 - again perhaps markdown is better?
 
-#### 1.1.2.3. Test: Convert PEPR Résumés des lettres d’intention
+#### 1.2.3. Test: Convert PEPR Résumés des lettres d’intention
 Download and transform the PDF of project motivation letters.
 
 ```bash
@@ -180,12 +181,18 @@ python src/pypdf_test.py test-data/_231006b_Carnet_VDBI_resumes_des_intention_di
 Notes:
 - formatting for headers, footers, and tables is lost (as expected)
 - conversion is relatively fast for such a long pdf
-- it will be interesting to see how these formatting issues  
+- it will be interesting to see how these formatting issues impact results 
 
-## 1.2. Step 2 - unstructured text to structured text via GPT
+## 2. Step 2 - unstructured text to structured text via GPT
 **RQ2:** What prompts provide the best results for answering the natural language questions posed in the [proposed method](#unstructured-text-to-structured-text-tests)
 
-### 1.2.1. Mistral
+**Tentative candidates:**
+
+| Tool/library                                | Type           | Comment |
+| ------------------------------------------- | -------------- | ------- |
+| [Ollama](https://github.com/ollama/ollama/) | Python Library |         |
+
+### 2.1. Ollama
 Proposed model: **Mistral**
 - open source
 - seems to have decent French language (and multi-language) support (also produced by a French company based in Paris, so I would hope so)
@@ -199,7 +206,7 @@ ollama run mistral
 >>> /set nohistory
 ```
 
-#### 1.2.1.1. Test: simple keyword extraction in french
+#### 2.1.1. Test: simple keyword extraction in french
 
 Note that [deepl.com](https://www.deepl.com/) translates the keywords listed in the top of the documents as :
 > 3D data, spatio-temporal data, urban data, data integration, data transformation, ontologies, knowledge graphs, conceptual models, model-based, data standards
@@ -230,7 +237,7 @@ Notes:
   - in french
   - without the explanation, just the keywords
 
-#### 1.2.1.2. Test: simple keyword extraction in english
+#### 2.1.2. Test: simple keyword extraction in english
 
 For this prompt replace the occurrence of `[text]` with the contents of [pypdf_test.txt](./test-data/pypdf_test.txt)
 
@@ -263,7 +270,7 @@ Notes:
   - with this size of Mistral, do english prompts work better than french ones?
   - how do other models like `llama2` or models with larger parameters like `mixtral:8x22b` perform?
 
-#### 1.2.1.3. Test: Ollama server+python
+#### 2.1.3. Test: Ollama server+python
 
 This test will examine how we can call prompts and extract their output programatically with python.
 This requires launching Ollama on a local server.
@@ -283,7 +290,7 @@ python src/ollama_test.py \
 > - The test script can be customized. Use `python src/ollama_test.py -h` to see the documentation. 
 > - Also, you can use just `ollama serve` (without the `&`) in another terminal session to be able to view ollama API calls in real time
 
-#### 1.2.1.4 Test: Pagoda LIRIS Ollama Service 
+#### 2.1.4 Test: Pagoda LIRIS Ollama Service 
 This test will examine the functionality of the [Ollama service hosted with on the Pagoda3](https://ollama-ui.pagoda.liris.cnrs.fr/).
 As instructed by [Olivier MBAREK](mailto:olivier.mbarek@univ-lyon1.fr), the http interface is accesible with the Ollama Python library (see test [1.2.1.3](#1213-test-ollama-serverpython)). 
 
@@ -299,7 +306,8 @@ As instructed by [Olivier MBAREK](mailto:olivier.mbarek@univ-lyon1.fr), the http
 > 
 > Translated with DeepL.com (free version)
 
-The following client configuration is used, where the `[JWT token]` string is replaced by a valid JWT token:
+The following client configuration is used, where the `[JWT token]` string is replaced by a valid JWT token
+For example:
 ```py
 from ollama import Client
 
@@ -312,16 +320,21 @@ client = Client(
 The [ollama_test.py](src/ollama_test.py) script is adapted to use this code with if a hostname and token are provided:
 ```bash
 python src/ollama_test.py \
-  --host https://ollama-ui.pagoda.liris.cnrs.fr/ollama \
-  --token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NmRkMzg4LWVhMjktNDkwYy1iZjBiLTZiNWRhYjU3YWMzZSJ9.0i9iXyyuLaD3EkBVzd8dQXwUoNmv65JDSNxSn4G-tCc \
+  -s
+  -u https://ollama-ui.pagoda.liris.cnrs.fr/ollama/api/generate \
+  -t '[JWT token]' \
   test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt \
   test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe_out.txt \
   "Donner le liste des projets décrits"
 ```
 
-### 1.2.2. Workflow
+Results:
+The ollama service works web but the response MUST be streamed.
+Thus the `-s` flag was added to the test script.
 
-#### 1.2.2.1. Test: Initial Python data workflow
+### 2.2. Workflow
+
+#### 2.2.1. Test: Initial Python data workflow
 
 This test will examine how we can set up initial data workflows (or data pipelines) for extracting knowledge from multiple pdfs using python.
 
@@ -349,14 +362,14 @@ This test uses the configuration file [test-data/workflow_0_config.json](test-da
 
 The configuration will output to the `test-data/workflow-test/VILLEGARDEN` folder
 
-#### 1.2.2.2. Test: Structured Python data workflow
+#### 2.2.2. Test: Structured Python data workflow
 
 Same test as above but using the configuration file [test-data/workflow_1_config.json](test-data/workflow_1_config.json) which proposes structuring prompt outputs as JSON. 
 ```bash
 python src/workflow_test.py -f json test-data/workflow_1_config.json
 ```
 
-#### 1.2.2.3. Test: Initial prompt optimization test
+#### 2.2.3. Test: Initial prompt optimization test
 
 Same test as above but using the configuration file [test-data/workflow_2_config.json](test-data/workflow_2_config.json) which proposes a more developed prompt featuring:
 - Setting a context for the GPT i.e., *"You are the scientific project manager of the project proposal below"*
@@ -367,7 +380,7 @@ Same test as above but using the configuration file [test-data/workflow_2_config
 python src/workflow_test.py -f json test-data/workflow_2_config.json
 ```
 
-#### 1.2.2.4. Test: Page range test
+#### 2.2.4. Test: Page range test
 
 Same test as above but using the configuration file [test-data/workflow_3_config.json](test-data/workflow_3_config.json) which defines a page range to be searched in:
 Page ranges should be a comma separated string e.g., `1, 2, 5-7` (spaces are allowed)
@@ -376,7 +389,7 @@ Page ranges should be a comma separated string e.g., `1, 2, 5-7` (spaces are all
 python src/workflow_test.py -f json test-data/workflow_3_config.json
 ```
 
-#### 1.2.2.5. Test: Add csv config to workflow
+#### 2.2.5. Test: Add csv config to workflow
 
 Use a csv file to configure workflow instead of a json file.
 
@@ -384,7 +397,7 @@ Use a csv file to configure workflow instead of a json file.
 python src/workflow_test.py -f csv test-data/workflow_0_config.csv
 ```
 
-#### 1.2.2.6. Test: Modelfile test
+#### 2.2.6. Test: Modelfile test
 
 Added modelfile functionality to ollama and workflow test scripts.
 
@@ -392,7 +405,7 @@ Added modelfile functionality to ollama and workflow test scripts.
 python src/workflow_test.py -f json test-data/workflow_4_config.json
 ```
 
-#### 1.2.2.7. Test: TEMPERATURE and top parameters test
+#### 2.2.7. Test: TEMPERATURE and top parameters test
 
 Test ORCID and IdHAL extraction of the following modelfiles:
 - [llama3-json1-creative-default](test-data/modelfiles/llama3-json1-creative-default)
@@ -419,12 +432,24 @@ python src/workflow_test.py -f json test-data/workflow_5_config.json
 
 TODO: run test and add notes
 
-### 1.2.3. RAG tests
+### 2.3. RAG tests
+
+**Tentative candidates:**
+
+| Tool/library                                                                                            | Type                              | Comment |
+| ------------------------------------------------------------------------------------------------------- | --------------------------------- | ------- |
+| [Langchain+Ollama](https://github.com/ollama/ollama/tree/v0.5.5/examples/langchain-python-rag-document) | Python Library                    |         |
+| [RAGFlow](https://github.com/infiniflow/ragflow)                                                        | CLI (Command line interface) tool |         |
+| [R2R](https://github.com/SciPhi-AI/R2R)                                                                 |                                   |         |
+| [rag-chatbot](https://github.com/datvodinh/rag-chatbot)                                                 |                                   |         |
+| [CRAG-Ollama-Chat](https://github.com/Nagi-ovo/CRAG-Ollama-Chat)                                        |                                   |         |
+| [chat-ollama](https://github.com/sugarforever/chat-ollama)                                              |                                   |         |
+| [Sparrow](https://github.com/katanaml/sparrow)                                                          |                                   |         |
 
 > [!TIP]
 > See [here](./feasability-notes-GPT-data-integration.md#retrieval-augmented-generation-for-knowledge-intensive-nlp-tasks) for more information about RAG
 
-#### 1.2.3.1. Test: Langchain with pdf local document 
+#### 2.3.1. Test: Langchain with single document and semi-structured data 
 
 Code adapted from the ollama [langchain-python-rag-document](https://github.com/ollama/ollama/tree/v0.5.5/examples/langchain-python-rag-document) example.
 Test Langchain for RAG ollama queries with workspace configuration.
@@ -885,4 +910,99 @@ Result 6.1
 - TODO: Once templates/queries are stable test with larger contexts (larger pdfs, the online example is able to query a document of 100+ pages)
 - TODO: Once templates/queries are stable test with different models (e.g. Llama3.1 and Mistral). It is not clear which model works best for our use case.
 
+#### 2.3.2. Test: [R2R Light](https://r2r-docs.sciphi.ai/self-hosting/installation/light)
+R2R has 2 modes: `Light` and `Full`
+Light is recommended for development within smaller teams so that's what we will test here.
+To meet our privacy needs we also need to run everything strictly locally (at least for now).
+These tests are initially done with Python but in theory could be done with JavaScript or directly in a bash terminal.
+The relevant online documentation followed is presented as needed and is recommended as prerequisite reading.
+
+**Install dependencies**
+- install [Docker](https://docs.docker.com/engine/install/)
+- install [R2R lite dependencies](https://r2r-docs.sciphi.ai/self-hosting/installation/light#prerequisites)
+  - Python 3.12 or higher
+  - pip (Python package manager)
+  - Git?
+  - Postgres + pgvector docker
+    ```bash
+    docker pull postgres
+    ```
+
+**Install and setup R2R**
+1. (Optional) start with a clean python environment using [venv](https://docs.python.org/3/library/venv.html):
+   ```bash
+   python -m venv venv
+   ```
+2. [Setup ollama](https://r2r-docs.sciphi.ai/self-hosting/local-rag#preparing-local-llms)
+   Prepare a modelfile with a larger context window than the default and add it to the manifest:
+   ```bash
+   mkdir test-data # only if this folder doesn't already exist
+   mkdir test-data/modelfiles # only if this folder doesn't already exist
+   echo 'FROM llama3.1
+   PARAMETER num_ctx 16000' > ./test-data/modelfiles/r2r_Modelfile
+   ollama create llama3.1 -f ./test-data/modelfiles/r2r_Modelfile
+   ```
+   Pull the required models and activate the ollama service:
+   ```bash
+   # in a separate terminal
+   ollama serve
+   ollama pull llama3.1
+   ollama pull mxbai-embed-large
+   ```
+3. [Install R2R](https://r2r-docs.sciphi.ai/self-hosting/installation/light#install-the-extra-dependencies) (light)
+   ```bash
+   pip install 'r2r[core]'
+   ```
+4. [Setup Postgres+pgvector](https://r2r-docs.sciphi.ai/self-hosting/configuration/postgres) (our vector store)
+   Create a custom r2r configuration file with postgres config.
+   ```bash
+   touch ./test-data/ r2r_config.toml
+   ```
+   This example configuration is based on the default [Ollama configuration file](https://r2r-docs.sciphi.ai/self-hosting/local-rag#configuration).
+   ```toml
+   [completion]
+   provider = "litellm"
+   concurrent_request_limit = 1
+
+     [completion.generation_config]
+     model = "ollama/llama3.1"
+     temperature = 0.1
+     top_p = 1
+     max_tokens_to_sample = 1_024
+     stream = false
+     add_generation_kwargs = { }
+
+   [database]
+   provider = "postgres"  # currently only `postgres` is supported
+
+   # Optional parameters (typically set in the environment instead):
+   user     = "user"
+   password = "password"
+   host     = "localhost"
+   port     = 5432           # Use a numeric port (not quoted)
+   db_name  = "vector_store"
+   # not specified here, but note: `app.project_name` sets the root path (schema/prefix) to all R2R tables.
+
+   [embedding]
+   provider = "ollama"
+   base_model = "mxbai-embed-large"
+   base_dimension = 1_024
+   batch_size = 32
+   add_title_as_prefix = true
+   concurrent_request_limit = 32
+
+   [ingestion]
+   excluded_parsers = [ "mp4" ]
+   ```
+   launch a postgres db with docker:
+   ```bash
+   docker run \
+    --name postgres-r2r-test \
+    -d \
+    -p 5432:5432
+    -e POSTGRES_USER=user \
+    -e POSTGRES_PASSWORD=password \
+    -e POSTGRES_DB=vector_store \
+    postgres
+   ```
 ## [See also](../docs/README.md#data-integraion)
