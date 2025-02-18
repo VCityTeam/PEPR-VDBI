@@ -1,0 +1,2 @@
+FROM llama3.1
+PARAMETER num_ctx 16000
