@@ -14,4 +14,4 @@ flowchart LR
     Z --> C
     AA --> C
 ```
-Inspired from [GGE perplexity tests](../../data-integration/Tests_IA.md)
+Inspired from [GGE perplexity tests](../../data-integration/proposed_ai_tests.md)
