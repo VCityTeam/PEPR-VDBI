@@ -911,11 +911,14 @@ Result 6.1
 - TODO: Once templates/queries are stable test with different models (e.g. Llama3.1 and Mistral). It is not clear which model works best for our use case.
 
 #### 2.3.2. Test: [R2R Light](https://r2r-docs.sciphi.ai/self-hosting/installation/light)
-R2R has 2 modes: `Light` and `Full`
-Light is recommended for development within smaller teams so that's what we will test here.
-To meet our privacy needs we also need to run everything strictly locally (at least for now).
-These tests are initially done with Python but in theory could be done with JavaScript or directly in a bash terminal.
-The relevant online documentation followed is presented as needed and is recommended as prerequisite reading.
+Last updated on 20/2/2025
+
+**Preliminary notes**
+- R2R has 2 modes: `Light` and `Full`
+  - `Light` is recommended for development within smaller teams so that's what we will test here.
+- To meet our privacy needs we also need to run everything strictly locally (at least for now) so we will be using Ollama to manage and query our models.
+- These tests are initially done with Python but in theory could be done with JavaScript or directly in a bash terminal.
+- The relevant online documentation for each step is presented as needed and is recommended as prerequisite reading.
 
 **Install dependencies**
 - install [Docker](https://docs.docker.com/engine/install/)
