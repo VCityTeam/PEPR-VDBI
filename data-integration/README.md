@@ -911,7 +911,7 @@ Result 6.1
 - TODO: Once templates/queries are stable test with different models (e.g. Llama3.1 and Mistral). It is not clear which model works best for our use case.
 
 #### 2.3.2. Test: [R2R Light](https://r2r-docs.sciphi.ai/self-hosting/installation/light)
-Last updated on 20/2/2025
+Last updated on 27/2/2025
 
 **Preliminary notes**
 - R2R has 2 modes: `Light` and `Full`
@@ -923,16 +923,21 @@ Last updated on 20/2/2025
 - Note that these instructions are run from a **WSL 2 Ubuntu** Bash shell
 
 **Install dependencies**
-- install [Docker](https://docs.docker.com/engine/install/- install [R2R lite dependencies](https://r2r-docs.sciphi.ai/self-hosting/installation/light#prerequisites)
+- install [Docker](https://docs.docker.com/engine/install/)
+- install [R2R lite dependencies](https://r2r-docs.sciphi.ai/self-hosting/installation/light#prerequisites)
   - Python 3.12 or higher
     - This documentation uses a recommended but optional unix python/venv version manager: [pyenv](https://github.com/pyenv/pyenv)
     - Specifically Python Version `3.12.9` is used.
   - pip (Python package manager)
   - Git?
-  - Postgres + pgvector docker
-    ```bash
-    docker pull postgres
-    ```
+  - Postgres + pgvector
+    - These tests use docker for running Postgres
+      ```bash
+      docker pull postgres
+      ```
+- (Optional) These instructions run Ollama from a Docker container but if you like, you can probably just use Ollama on bare-metal (or in a WSL instance). If you choose don't want to run Ollama dockerized, adapt the instructions accordingly.
+  - Setup [Ollama Docker container](https://ollama.com/blog/ollama-is-now-available-as-an-official-docker-image)
+  - If you have an Nvidia GPU, install the [Nvidia container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installation)
 
 **Install and setup R2R**
 1. (Optional) start with a clean python environment using [venv](https://docs.python.org/3/library/venv.html):
@@ -941,20 +946,25 @@ Last updated on 20/2/2025
    source ./venv/bin/activate
    ```
 2. [Setup ollama](https://r2r-docs.sciphi.ai/self-hosting/local-rag#preparing-local-llms)
+
    Prepare a modelfile with a larger context window than the default and add it to the manifest:
    ```bash
    mkdir test-data # only if this folder doesn't already exist
    mkdir test-data/modelfiles # only if this folder doesn't already exist
    echo 'FROM llama3.1
    PARAMETER num_ctx 16000' > ./test-data/modelfiles/r2r_test232
-
-   ollama serve # only use if ollama isn't already running
-   ollama create llama3.1 -f ./test-data/modelfiles/r2r_test232
    ```
-   Pull the required models:
+   Start Ollama
    ```bash
-   ollama pull llama3.1
-   ollama pull mxbai-embed-large
+   docker run -d --gpus=all -v $PWD/test-data/modelfiles:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+   # or run this command if you aren't using the nvidia container toolkit
+   # docker run -d -v ./test-data/modelfiles:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+   ```
+   Add modelfile and pull models
+   ```bash
+   docker exec -it ollama ollama create llama3.1 -f /root/.ollama/r2r_test232
+   docker exec -it ollama ollama pull llama3.1
+   docker exec -it ollama ollama pull mxbai-embed-large
    ```
 3. [Install R2R](https://r2r-docs.sciphi.ai/self-hosting/installation/light#install-the-extra-dependencies) (light)
    ```bash
@@ -1001,7 +1011,7 @@ Last updated on 20/2/2025
    [ingestion]
    excluded_parsers = [ "mp4" ]
    ```
-   launch a postgres db with docker:
+   Launch a postgres db with docker:
    ```bash
    docker run \
     --name postgres-r2r-test \
