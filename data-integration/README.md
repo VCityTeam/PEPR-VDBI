@@ -916,14 +916,17 @@ Last updated on 20/2/2025
 **Preliminary notes**
 - R2R has 2 modes: `Light` and `Full`
   - `Light` is recommended for development within smaller teams so that's what we will test here.
+  - Installation is based on the [R2R Light installation](https://r2r-docs.sciphi.ai/self-hosting/installation/light) documentation
 - To meet our privacy needs we also need to run everything strictly locally (at least for now) so we will be using Ollama to manage and query our models.
 - These tests are initially done with Python but in theory could be done with JavaScript or directly in a bash terminal.
 - The relevant online documentation for each step is presented as needed and is recommended as prerequisite reading.
+- Note that these instructions are run from a **WSL 2 Ubuntu** Bash shell
 
 **Install dependencies**
-- install [Docker](https://docs.docker.com/engine/install/)
-- install [R2R lite dependencies](https://r2r-docs.sciphi.ai/self-hosting/installation/light#prerequisites)
+- install [Docker](https://docs.docker.com/engine/install/- install [R2R lite dependencies](https://r2r-docs.sciphi.ai/self-hosting/installation/light#prerequisites)
   - Python 3.12 or higher
+    - This documentation uses a recommended but optional unix python/venv version manager: [pyenv](https://github.com/pyenv/pyenv)
+    - Specifically Python Version `3.12.9` is used.
   - pip (Python package manager)
   - Git?
   - Postgres + pgvector docker
@@ -935,6 +938,7 @@ Last updated on 20/2/2025
 1. (Optional) start with a clean python environment using [venv](https://docs.python.org/3/library/venv.html):
    ```bash
    python -m venv venv
+   source ./venv/bin/activate
    ```
 2. [Setup ollama](https://r2r-docs.sciphi.ai/self-hosting/local-rag#preparing-local-llms)
    Prepare a modelfile with a larger context window than the default and add it to the manifest:
@@ -942,13 +946,13 @@ Last updated on 20/2/2025
    mkdir test-data # only if this folder doesn't already exist
    mkdir test-data/modelfiles # only if this folder doesn't already exist
    echo 'FROM llama3.1
-   PARAMETER num_ctx 16000' > ./test-data/modelfiles/r2r_Modelfile
-   ollama create llama3.1 -f ./test-data/modelfiles/r2r_Modelfile
+   PARAMETER num_ctx 16000' > ./test-data/modelfiles/r2r_test232
+
+   ollama serve # only use if ollama isn't already running
+   ollama create llama3.1 -f ./test-data/modelfiles/r2r_test232
    ```
-   Pull the required models and activate the ollama service:
+   Pull the required models:
    ```bash
-   # in a separate terminal
-   ollama serve
    ollama pull llama3.1
    ollama pull mxbai-embed-large
    ```
@@ -959,7 +963,7 @@ Last updated on 20/2/2025
 4. [Setup Postgres+pgvector](https://r2r-docs.sciphi.ai/self-hosting/configuration/postgres) (our vector store)
    Create a custom r2r configuration file with postgres config.
    ```bash
-   touch ./test-data/ r2r_config.toml
+   touch ./test-data/r2r_config.toml
    ```
    This example configuration is based on the default [Ollama configuration file](https://r2r-docs.sciphi.ai/self-hosting/local-rag#configuration).
    ```toml
@@ -980,7 +984,7 @@ Last updated on 20/2/2025
 
    # Optional parameters (typically set in the environment instead):
    user     = "user"
-   password = "password"
+   password = "password"     # obviously don't use this in prod
    host     = "localhost"
    port     = 5432           # Use a numeric port (not quoted)
    db_name  = "vector_store"
@@ -1002,10 +1006,16 @@ Last updated on 20/2/2025
    docker run \
     --name postgres-r2r-test \
     -d \
-    -p 5432:5432
+    -p 5432:5432 \
     -e POSTGRES_USER=user \
     -e POSTGRES_PASSWORD=password \
     -e POSTGRES_DB=vector_store \
     postgres
    ```
+5. [Run R2R](https://r2r-docs.sciphi.ai/self-hosting/installation/light#running-r2r) with [our custom config](https://r2r-docs.sciphi.ai/self-hosting/configuration/overview#server-side-configuration)
+   ```bash
+   export R2R_CONFIG_PATH=$PWD/test-data/r2r_config.toml
+   python -m r2r.serve
+   ```
+
 ## [See also](../docs/README.md#data-integraion)
