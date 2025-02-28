@@ -27,6 +27,8 @@ Tests for converting unstructured text to structured text
   - [2.3. RAG tests](#23-rag-tests)
     - [2.3.1. Test: Langchain with single document and semi-structured data](#231-test-langchain-with-single-document-and-semi-structured-data)
     - [2.3.2. Test: R2R Light](#232-test-r2r-light)
+      - [Install](#install)
+      - [Setup a RAG system](#setup-a-rag-system)
 - [See also](#see-also)
 
 ```mermaid
@@ -911,7 +913,7 @@ Result 6.1
 - TODO: Once templates/queries are stable test with different models (e.g. Llama3.1 and Mistral). It is not clear which model works best for our use case.
 
 #### 2.3.2. Test: [R2R Light](https://r2r-docs.sciphi.ai/self-hosting/installation/light)
-Last updated on 27/2/2025
+Last updated on 28/2/2025
 
 **Preliminary notes**
 - R2R has 2 modes: `Light` and `Full`
@@ -922,6 +924,7 @@ Last updated on 27/2/2025
 - The relevant online documentation for each step is presented as needed and is recommended as prerequisite reading.
 - Note that these instructions are run from a **WSL 2 Ubuntu** Bash shell
 
+##### Install
 **Install dependencies**
 - install [Docker](https://docs.docker.com/engine/install/)
 - install [R2R lite dependencies](https://r2r-docs.sciphi.ai/self-hosting/installation/light#prerequisites)
@@ -930,10 +933,9 @@ Last updated on 27/2/2025
     - Specifically Python Version `3.12.9` is used.
   - pip (Python package manager)
   - Git?
-  - Postgres + pgvector
-    - These tests use docker for running Postgres
+  - Postgres + pgvector. These tests use docker for running Postgres with the pgvector extension
       ```bash
-      docker pull postgres
+      docker pull pgvector/pgvector:pg17
       ```
 - (Optional) These instructions run Ollama from a Docker container but if you like, you can probably just use Ollama on bare-metal (or in a WSL instance). If you choose don't want to run Ollama dockerized, adapt the instructions accordingly.
   - Setup [Ollama Docker container](https://ollama.com/blog/ollama-is-now-available-as-an-official-docker-image)
@@ -976,41 +978,49 @@ Last updated on 27/2/2025
    touch ./test-data/r2r_config.toml
    ```
    This example configuration is based on the default [Ollama configuration file](https://r2r-docs.sciphi.ai/self-hosting/local-rag#configuration).
-   ```toml
-   [completion]
-   provider = "litellm"
-   concurrent_request_limit = 1
+    ```toml
+    [completion]
+    provider = "litellm"
+    concurrent_request_limit = 1
 
-     [completion.generation_config]
-     model = "ollama/llama3.1"
-     temperature = 0.1
-     top_p = 1
-     max_tokens_to_sample = 1_024
-     stream = false
-     add_generation_kwargs = { }
+      [completion.generation_config]
+      model = "ollama/llama3.1"
+      temperature = 0.1
+      top_p = 1
+      max_tokens_to_sample = 1_024
+      stream = false
+      add_generation_kwargs = { }
 
-   [database]
-   provider = "postgres"  # currently only `postgres` is supported
+    [database]
+    provider = "postgres"  # currently only `postgres` is supported
 
-   # Optional parameters (typically set in the environment instead):
-   user     = "user"
-   password = "password"     # obviously don't use this in prod
-   host     = "localhost"
-   port     = 5432           # Use a numeric port (not quoted)
-   db_name  = "vector_store"
-   # not specified here, but note: `app.project_name` sets the root path (schema/prefix) to all R2R tables.
+    # Optional parameters (typically set in the environment instead):
+    user     = "user"
+    password = "password"
+    host     = "localhost"
+    port     = 5432           # Use a numeric port (not quoted)
+    db_name  = "vector_store"
+    # not specified here, but note: `app.project_name` sets the root path (schema/prefix) to all R2R tables.
 
-   [embedding]
-   provider = "ollama"
-   base_model = "mxbai-embed-large"
-   base_dimension = 1_024
-   batch_size = 32
-   add_title_as_prefix = true
-   concurrent_request_limit = 32
+    [embedding]
+    provider = "ollama"
+    base_model = "mxbai-embed-large"
+    base_dimension = 1_024
+    batch_size = 32
+    add_title_as_prefix = true
+    concurrent_request_limit = 32
 
-   [ingestion]
-   excluded_parsers = [ "mp4" ]
-   ```
+    [completion_embedding]
+    provider = "ollama"
+    base_model = "mxbai-embed-large"
+    base_dimension = 1_024 # these 
+    batch_size = 128
+    add_title_as_prefix = true
+    concurrent_request_limit = 2
+
+    [ingestion]
+    excluded_parsers = [ "mp4" ]
+    ```
    Launch a postgres db with docker:
    ```bash
    docker run \
@@ -1020,12 +1030,26 @@ Last updated on 27/2/2025
     -e POSTGRES_USER=user \
     -e POSTGRES_PASSWORD=password \
     -e POSTGRES_DB=vector_store \
-    postgres
+    pgvector/pgvector:pg17
    ```
 5. [Run R2R](https://r2r-docs.sciphi.ai/self-hosting/installation/light#running-r2r) with [our custom config](https://r2r-docs.sciphi.ai/self-hosting/configuration/overview#server-side-configuration)
    ```bash
    export R2R_CONFIG_PATH=$PWD/test-data/r2r_config.toml
    python -m r2r.serve
    ```
+6. Verify the installation by accessing the R2R API at [http://localhost:7272/v3/health](http://localhost:7272/v3/health) or send a curl:
+   ```bash
+   curl http://localhost:7272/v3/health
+   ```
+
+##### Setup a RAG system
+
+**Ingest file**
+1. Ingest a file with python using the provided script. For example, a file located here `./test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf`
+   ```bash
+   python r2r_test.py ./test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf
+   # python -c "from r2r import R2RClient;c = R2RClient();c.set_base_url('http://localhost:7272');c.documents.create('test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf')"
+   ```
+   
 
 ## [See also](../docs/README.md#data-integraion)

@@ -25,9 +25,17 @@ db_name  = "vector_store"
 provider = "ollama"
 base_model = "mxbai-embed-large"
 base_dimension = 1_024
-batch_size = 32
+batch_size = 128
 add_title_as_prefix = true
 concurrent_request_limit = 32
+
+[completion_embedding]
+provider = "ollama"
+base_model = "mxbai-embed-large"
+base_dimension = 1_024
+batch_size = 128
+add_title_as_prefix = true
+concurrent_request_limit = 2
 
 [ingestion]
 excluded_parsers = [ "mp4" ]
