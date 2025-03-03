@@ -1042,6 +1042,12 @@ Last updated on 28/2/2025
    curl http://localhost:7272/v3/health
    ```
 
+Once this setup is complete you can use the `up_test_r2r.sh` script 
+```bash
+# run if needed for execution rights
+# chmod +x up_test_r2r.sh
+./up_test_r2r.sh
+```
 ##### Setup a RAG system
 
 **Ingest file**
