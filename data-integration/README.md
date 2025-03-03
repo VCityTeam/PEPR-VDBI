@@ -28,7 +28,8 @@ Tests for converting unstructured text to structured text
     - [2.3.1. Test: Langchain with single document and semi-structured data](#231-test-langchain-with-single-document-and-semi-structured-data)
     - [2.3.2. Test: R2R Light](#232-test-r2r-light)
       - [Install](#install)
-      - [Setup a RAG system](#setup-a-rag-system)
+      - [Setup RAG system](#setup-rag-system)
+      - [Perspective tests](#perspective-tests)
 - [See also](#see-also)
 
 ```mermaid
@@ -937,9 +938,6 @@ Last updated on 28/2/2025
       ```bash
       docker pull pgvector/pgvector:pg17
       ```
-- (Optional) These instructions run Ollama from a Docker container but if you like, you can probably just use Ollama on bare-metal (or in a WSL instance). If you choose don't want to run Ollama dockerized, adapt the instructions accordingly.
-  - Setup [Ollama Docker container](https://ollama.com/blog/ollama-is-now-available-as-an-official-docker-image)
-  - If you have an Nvidia GPU, install the [Nvidia container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installation)
 
 **Install and setup R2R**
 1. (Optional) start with a clean python environment using [venv](https://docs.python.org/3/library/venv.html):
@@ -956,17 +954,11 @@ Last updated on 28/2/2025
    echo 'FROM llama3.1
    PARAMETER num_ctx 16000' > ./test-data/modelfiles/r2r_test232
    ```
-   Start Ollama
-   ```bash
-   docker run -d --gpus=all -v $PWD/test-data/modelfiles:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
-   # or run this command if you aren't using the nvidia container toolkit
-   # docker run -d -v ./test-data/modelfiles:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
-   ```
    Add modelfile and pull models
    ```bash
-   docker exec -it ollama ollama create llama3.1 -f /root/.ollama/r2r_test232
-   docker exec -it ollama ollama pull llama3.1
-   docker exec -it ollama ollama pull mxbai-embed-large
+   ollama create llama3.1 -f /root/.ollama/r2r_test232
+   ollama pull llama3.1
+   ollama pull mxbai-embed-large
    ```
 3. [Install R2R](https://r2r-docs.sciphi.ai/self-hosting/installation/light#install-the-extra-dependencies) (light)
    ```bash
@@ -1048,14 +1040,63 @@ Once this setup is complete you can use the `up_test_r2r.sh` script
 # chmod +x up_test_r2r.sh
 ./up_test_r2r.sh
 ```
-##### Setup a RAG system
 
-**Ingest file**
-1. Ingest a file with python using the provided script. For example, a file located here `./test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf`
+##### Setup RAG system
+
+**Ingest file(s)**
+1. Use the following one liner to ingest files. For example, to ingest a pdf file located here `./test-data/projects/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf`
    ```bash
-   python r2r_test.py ./test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf
-   # python -c "from r2r import R2RClient;c = R2RClient();c.set_base_url('http://localhost:7272');c.documents.create('test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf')"
+   python -c "from r2r import R2RClient;c = R2RClient();c.set_base_url('http://localhost:7272');c.documents.create(file_path='./test-data/projects/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf', ingestion_mode='fast')"
    ```
-   
+2. Check the file was correctly ingested.
+   ```bash
+   curl -X GET "http://localhost:7272/v3/documents" | less
+   ```
+   You should see something like this (after pretty printing):
+   ```json
+   {
+     "results": [
+       {
+        "id": "b6e9bf87-5ce3-555b-b899-7b8b50fe9987",
+         "collection_ids": ["122fdf6a-e116-546b-a8f6-e4cb2e2c0a09"],
+         "owner_id": "2acb499e-8428-543b-bd85-0d9098718220",
+         "document_type": "pdf",
+         "metadata": { "version": "v0" },
+         "title": "VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf",
+         "version": "v0",
+         "size_in_bytes": 3148204,
+         "ingestion_status": "success",
+         "extraction_status": "pending",
+         "created_at": "2025-03-03T20:39:08.086026Z",
+         "updated_at": "2025-03-03T20:39:08.097748Z",
+         "ingestion_attempt_number": null,
+         "summary": null,
+         "summary_embedding": null,
+         "total_tokens": 64716
+       }
+     ],
+     "total_entries": 1
+   }
+   ```
+   > [!TIP]
+   > Check out the [API](https://r2r-docs.sciphi.ai/api-and-sdks/introduction) for more commands. Note that when running commands on a local R2R instance, you don't need to include the authorization bearer token in the request header. 
+
+
+##### Perspective tests
+1. Couldn't get Ollama to work with docker. In theory, these instructions should Ollama from a Docker container:
+   - Setup [Ollama Docker container](https://ollama.com/blog/ollama-is-now-available-as-an-official-docker-image)
+   - If you have an Nvidia GPU, install the [Nvidia container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installation)
+   - Then run the following for setting up ollama 
+   ```bash
+   docker run -d --gpus=all -v $PWD/test-data/modelfiles:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+   # or run this command if you aren't using the nvidia container toolkit
+   # docker run -d -v ./test-data/modelfiles:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+   ```
+   Add modelfile and pull models
+   ```bash
+   docker exec -it ollama ollama create llama3.1 -f /root/.ollama/r2r_test232
+   docker exec -it ollama ollama pull llama3.1
+   docker exec -it ollama ollama pull mxbai-embed-large
+   ```
 
 ## [See also](../docs/README.md#data-integraion)
