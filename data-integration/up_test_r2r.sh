@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-docker start ollama
+ollama serve
 docker start postgres-r2r-test
 export R2R_CONFIG_PATH=$PWD/test-data/r2r_config.toml
 source ./venv/bin/activate
