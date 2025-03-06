@@ -1,2 +1,2 @@
-FROM mixtral:8x7b
-   PARAMETER num_ctx 16000
+FROM llama3.2:3b
+PARAMETER num_ctx 16000
