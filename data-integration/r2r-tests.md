@@ -12,6 +12,7 @@ Non R2R specific tests are located [here](./README.md).
   - [Perspective tests](#perspective-tests)
 - [2.3.2.2 R2R Light workflow Tests](#2322-r2r-light-workflow-tests)
   - [Preliminaries](#preliminaries-1)
+  - [Install](#install-1)
 
 ## 2.3.2.1 Test [R2R Light](https://r2r-docs.sciphi.ai/self-hosting/installation/light)
 This test will attempt to:
@@ -59,12 +60,12 @@ This test will attempt to:
    mkdir test-data # only if this folder doesn't already exist
    mkdir test-data/modelfiles # only if this folder doesn't already exist
    echo 'FROM llama3.2:3b
-   PARAMETER num_ctx 16000' > ./test-data/modelfiles/r2r_test232
+   PARAMETER num_ctx 16000' > ./test-data/modelfiles/r2r_test2321
    ```
    Add modelfile and pull models
    ```bash
    ollama pull llama3.2:3b
-   ollama create llama3.2:3b -f ./test-data/modelfiles/r2r_test232
+   ollama create llama3.2:3b -f ./test-data/modelfiles/r2r_test2321
    ollama pull mxbai-embed-large
    ```
 3. [Install R2R](https://r2r-docs.sciphi.ai/self-hosting/installation/light#install-the-extra-dependencies) (light)
@@ -376,7 +377,7 @@ Still chunk 17. See above.
 ## 2.3.2.2 R2R Light workflow Tests
 This test will examine:
 - How R2R manages prompting workflows
-- How different patterns affect the generated output
+- How different patterns affect the generated output 
 
 ### Preliminaries
 A series of prompts are defined to be queried on the Villegarden PDF.
@@ -403,8 +404,36 @@ These prompts are defined according to the following article:
 }
 ```
 
-**Test workflow parameters**
+Two patterns are proposed for testing: *Template*, *Persona*, and *Context Manager*.
+Hypothesis:
+- The *Template* pattern will provide better output results as semi-structured data (e.g. JSON).
+- The *Persona* pattern will provide subjectively better results when compared to ground truth.
+- The *Context Manager* pattern will provide subjectively better results when compared to ground truth.
 
-| Prompt pattern |
-| -------------- |
-|                |
+The following invariant parameters are used in this test:
+- Embedding model: `mxbai-embed-large:latest` as this is default recommendation from R2R 
+- Completion model: `mixtral:8x22b` as this is a well known model for quality generation. Also, the mixture of experts model may provide good results when ingesting VDBI project information written by experts.
+
+What is considered a good result?
+- Limited/no hallucinations
+- Well formatted response
+  - Length limits are respected
+  - Format syntax is respected (i.e. in the case of JSON output)
+- Subjective criteria:
+  - This will be given a subjective grade between 1-5 by comparing with ground truth
+    1. Much worse than ground truth
+    2. Worse than ground truth
+    3. As good as ground truth
+    4. Better than ground truth
+    5. Much better than ground truth
+
+**Test workflow parameters**
+| Category             | Prompt pattern  | Prompt                                                                                                                                                                                                                                                                                       |
+| -------------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Output Customization | Template        | I am going to provide a template for your output. The strings `XXX` are placeholders. Any time that you generate text, try to fit it into one of the placeholders that I list. Please preserve the formatting and overall template that I provide. This is the template: <br>``` ``` |
+| Output Customization | Persona         |                                                                                                                                                                                                                                                                                              |
+| Context Control      | Context Manager |                                                                                                                                                                                                                                                                                              |
+
+### Install
+- Follow [the setup instructions of the previous test](#install)
+- Pr
