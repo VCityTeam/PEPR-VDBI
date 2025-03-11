@@ -1,3 +1,0 @@
-input,page_ranges,output,prompt,model,modelfile,format
-test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf,9-18,test-data/workflow-test/VILLEGARDEN_CSV,Provide several keywords from the scientific project proposal below. Please formulate your response as a CSV file:\n,llama3:70b,,
-test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf,9-18,test-data/workflow-test/VILLEGARDEN_JSON,Provide several keywords from the scientific project proposal below. Please formulate your response as a JSON file:\n,llama3:70b,,json

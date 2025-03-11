@@ -1,20 +1,30 @@
-# 2.3.2. R2R tests <!-- omit in toc -->
+# **R2R tests** <!-- omit in toc -->
 Non R2R specific tests are located [here](./README.md).
 
 **Table of contents**
-- [2.3.2.1 Test R2R Light](#2321-test-r2r-light)
+- [2.3.2 Test R2R Light](#232-test-r2r-light)
   - [Preliminaries](#preliminaries)
   - [Install](#install)
-  - [Ingest file(s) and setup prompts](#ingest-files-and-setup-prompts)
-  - [Send query](#send-query)
-  - [Results-1](#results-1)
-  - [Results-2](#results-2)
+    - [Install dependencies](#install-dependencies)
+    - [Install and setup R2R](#install-and-setup-r2r)
+    - [Ingest file(s) and setup prompts](#ingest-files-and-setup-prompts)
+    - [Send query](#send-query)
+  - [Results 2.3.2.1](#results-2321)
+    - [Chunk search output example](#chunk-search-output-example)
+    - [Completion output](#completion-output)
+    - [Analysis](#analysis)
+  - [Results 2.3.2.2](#results-2322)
+    - [Chunk search output example](#chunk-search-output-example-1)
+    - [Completion output](#completion-output-1)
+    - [Analysis](#analysis-1)
   - [Perspective tests](#perspective-tests)
-- [2.3.2.2 R2R Light workflow Tests](#2322-r2r-light-workflow-tests)
-  - [Preliminaries](#preliminaries-1)
-  - [Install](#install-1)
+- [2.3.3 R2R Light workflow Tests](#233-r2r-light-workflow-tests)
+  - [Method](#method)
+    - [Test workflow parameters](#test-workflow-parameters)
+    - [Prompts](#prompts)
+    - [Install](#install-1)
 
-## 2.3.2.1 Test [R2R Light](https://r2r-docs.sciphi.ai/self-hosting/installation/light)
+# 2.3.2 Test [R2R Light](https://r2r-docs.sciphi.ai/self-hosting/installation/light)
 This test will attempt to:
 - Install R2R and minimal dependencies
 - Ingest a document into R2R's RAG system
@@ -22,7 +32,7 @@ This test will attempt to:
 - Determine if R2R is a suitable candidate for performing local RAG
 - Determine next steps
 
-### Preliminaries
+## Preliminaries
 - R2R has 2 modes: `Light` and `Full`
   - `Light` is recommended for development within smaller teams so that's what we will test here.
   - Installation is based on the [R2R Light installation](https://r2r-docs.sciphi.ai/self-hosting/installation/light) documentation
@@ -32,9 +42,9 @@ This test will attempt to:
 - Note that these instructions are run from a **WSL 2 Ubuntu** Bash shell
 - The R2R documentation followed uses the `llama3.1:7b` model for generating query responses, however memory limitations were encountered when using this model (possibly due to WSL?). Instead the `llama3.2:3b` model is proposed for its lightweight size. 
 
-### Install
+## Install
 
-**Install dependencies**
+### Install dependencies
 - install [Docker](https://docs.docker.com/engine/install/)
 - install [R2R lite dependencies](https://r2r-docs.sciphi.ai/self-hosting/installation/light#prerequisites)
   - Python 3.12 or higher
@@ -47,7 +57,7 @@ This test will attempt to:
       docker pull pgvector/pgvector:pg17
       ```
 
-**Install and setup R2R**
+### Install and setup R2R
 1. (Optional) start with a clean python environment using [venv](https://docs.python.org/3/library/venv.html):
    ```bash
    python -m venv venv
@@ -157,9 +167,9 @@ Once this setup is complete you can use the `up_test_r2r.sh` script
 ```
 
 ### Ingest file(s) and setup prompts
-1. Use the following one liner to ingest files. For example, to ingest a pdf file located here `./test-data/projects/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf`
+1. Use the following one liner to ingest files. For example, to ingest a pdf file located here `./test-data/input/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf`
    ```bash
-   python -c "from r2r import R2RClient;c = R2RClient();c.set_base_url('http://localhost:7272');c.documents.create(file_path='./test-data/projects/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf', ingestion_mode='fast')"
+   python -c "from r2r import R2RClient;c = R2RClient();c.set_base_url('http://localhost:7272');c.documents.create(file_path='./test-data/input/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf', ingestion_mode='fast')"
    ```
 2. Check the file was correctly ingested.
    ```bash
@@ -248,12 +258,13 @@ Once this setup is complete you can use the `up_test_r2r.sh` script
    > ./test-data/r2r-test/23212_results.html
    ```
 
-### Results-1
+
+## Results 2.3.2.1
 Initial results from using the system template: `You are a helpful agent.`:
 - [Raw output](./test-data/r2r-test/23211_results.html)
 - [Chunk search output](./test-data/r2r-test/23211_results_chunk_search.json)
 
-**Chunk search output example**
+### Chunk search output example
 ```json
 [
   {
@@ -274,7 +285,7 @@ Initial results from using the system template: `You are a helpful agent.`:
 ]
 ```
 
-**Completion output**
+### Completion output
 
 > I can help you with that. However, I notice that the text appears to be a research proposal or a document related to urban planning and sustainability. If you'd like, I can provide a general outline of how to structure a response to this type of document.
 > 
@@ -286,7 +297,7 @@ Initial results from using the system template: `You are a helpful agent.`:
 > 
 > If you'd like, I can help you craft a specific response to one of the sections of the proposal. Please let me know which section you're interested in responding to (e.g., "The impact of urbanization on biodiversity", "The role of green spaces in urban planning", etc.).
 
-**Result 1 analysis**
+### Analysis
 - System prompt template seems to take **FAR** too much precedence over the rag prompt template in the completion.
   - Initially the system template was `"template": "You are a helpful agent.",`.
   - It should be noted that the initial template may work better with different models, `llama3.2:3b` is relatively small after all 
@@ -324,16 +335,16 @@ Initial results from using the system template: `You are a helpful agent.`:
   - This is the opening lines of the abstract which is generally a good basis for finding information to respond to the given prompt.
 
 
-### Results-2
+## Results 2.3.2.2
 Results from using the empty system template:
 - [Raw output](./test-data/r2r-test/23212_results.html)
 - [Chunk search output](./test-data/r2r-test/23212_results_chunk_search.json)
 
-**Chunk search output example**
+### Chunk search output example
 
 Still chunk 17. See above.
 
-**Completion output**
+### Completion output
 
 > The Villegarden project is a research and development project that aims to improve the management of urban green spaces (GRS) and promote sustainable urban planning. The project focuses on evaluating the performance of different types of GRS systems, such as individual and multifamily homes, and identifying factors that affect their performance.
 > 
@@ -346,7 +357,7 @@ Still chunk 17. See above.
 > In summary, the Villegarden project is a research and development initiative that aims to improve the management of urban green spaces and promote sustainable urban planning. The project focuses on evaluating the performance of different types of GRS systems, identifying factors that affect their performance, and developing tools and models to optimize their use.
 
 
-**Result 2 analysis**
+### Analysis
 - The generated response is much better as it actually provides a plausible description of the project 
 - What are the citations pointing to? It seems to be chunk results as
   - chunk 1 is from the abstract
@@ -354,7 +365,7 @@ Still chunk 17. See above.
   - chunk 8 mentions biodiversity
 
 
-### Perspective tests
+## Perspective tests
 1. Test different prompt templates using a workflow
 2. Test different models, especially a larger one
 3. Couldn't get Ollama to work with docker. In theory, these instructions should allow running Ollama from a Docker container:
@@ -374,12 +385,13 @@ Still chunk 17. See above.
    ```
    Perhaps try running with a proper docker compose and a defined network?
 
-## 2.3.2.2 R2R Light workflow Tests
+# 2.3.3 R2R Light workflow Tests
 This test will examine:
 - How R2R manages prompting workflows
-- How different patterns affect the generated output 
+- How different patterns affect the generated output
+- How language affects the generated output
 
-### Preliminaries
+## Method
 A series of prompts are defined to be queried on the Villegarden PDF.
 These prompts are defined according to the following article:
 ```
@@ -404,6 +416,7 @@ These prompts are defined according to the following article:
 }
 ```
 
+
 Two patterns are proposed for testing: *Template*, *Persona*, and *Context Manager*.
 Hypothesis:
 - The *Template* pattern will provide better output results as semi-structured data (e.g. JSON).
@@ -427,12 +440,53 @@ What is considered a good result?
     4. Better than ground truth
     5. Much better than ground truth
 
-**Test workflow parameters**
-| Category             | Prompt pattern  | Prompt                                                                                                                                                                                                                                                                                       |
-| -------------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Output Customization | Template        | I am going to provide a template for your output. The strings `XXX` are placeholders. Any time that you generate text, try to fit it into one of the placeholders that I list. Please preserve the formatting and overall template that I provide. This is the template: <br>``` ``` |
-| Output Customization | Persona         |                                                                                                                                                                                                                                                                                              |
-| Context Control      | Context Manager |                                                                                                                                                                                                                                                                                              |
+### Test workflow parameters
+Input: `NEO_Document-scientifique_vfin_20240209_avec lettressoutien 20P fr.pdf`
+| Category             | Prompt pattern  | Prompt | Language |
+| -------------------- | --------------- | ------ | -------- |
+| Output Customization | Template        | P1     | EN       |
+| Output Customization | Persona         | P     |
+| Context Control      | Context Manager | P     |
+
+### Prompts
+1. P1
+   - Prompt:
+     > What are the proposed research actions of the NEO project?
+   - Template:
+     > I am going to provide a template for your output in JSON. The strings `XXXX` are placeholders. Any time that you generate text, try to fit it into one of the placeholders that I list. Please preserve the formatting and overall template that I provide. This is the template:
+     > ```
+     > {
+     >   "action": "XXXX"
+     > }
+     > ```
+1. P2
+   - Prompt:
+     > How does the NEO project propose to perform their research actions?
+   - Template: same as P1, except for pattern:
+     > ```
+     > {
+     >   "how": "XXXX"
+     > }
+     > ```
+1. P2
+   - Prompt:
+     > How does the NEO project propose to perform their research actions?
+   - Template: same as P1, except for pattern:
+     > ```
+     > {
+     >   "how": "XXXX"
+     > }
+     > ```
+
+POUR QUOI FAIRE
+proposition de recherche (format synthétique)
+Quels actions POUR quelles solutions ?
+Produit (ou résultat) de la recherche (primaire)
+Produit (ou résultat) de la recherche (Secondaire)
+objets et dispositifs urbains impliqués
+Mot clefs
+Defi principal
+Defis
 
 ### Install
 - Follow [the setup instructions of the previous test](#install)
