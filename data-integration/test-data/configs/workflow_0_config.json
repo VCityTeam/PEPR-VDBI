@@ -1,7 +1,7 @@
 {
   "output": "test-data/workflow-test/VILLEGARDEN",
   "inputs": {
-    "test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf": ""
+    "test-data/input/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI.pdf": ""
   },
   "prompts": [
     {

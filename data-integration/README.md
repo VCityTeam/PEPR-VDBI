@@ -174,8 +174,8 @@ Notes:
 Download and transform the PDF of project motivation letters.
 
 ```bash
-curl https://pepr-vdbi.fr/fileadmin/contributeurs/PEPR_Ville_durable/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf > test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf
-python src/pypdf_test.py test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt
+curl https://pepr-vdbi.fr/fileadmin/contributeurs/PEPR_Ville_durable/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf > test-data/input/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf
+python src/pypdf_test.py test-data/input/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf test-data/input/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt
 ```
 
 Notes:
@@ -281,8 +281,8 @@ This requires launching Ollama on a local server.
 ```bash
 ollama serve & # launch ollama server in the background
 python src/ollama_test.py \
-  test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt \
-  test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe_out.txt \
+  test-data/input/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt \
+  test-data/input/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe_out.txt \
   "Donner le liste des projets décrits"
 ```
 
@@ -323,8 +323,8 @@ python src/ollama_test.py \
   -s
   -u https://ollama-ui.pagoda.liris.cnrs.fr/ollama/api/generate \
   -t '[JWT token]' \
-  test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt \
-  test-data/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe_out.txt \
+  test-data/input/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt \
+  test-data/input/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe_out.txt \
   "Donner le liste des projets décrits"
 ```
 
@@ -343,7 +343,7 @@ The proposed workflow does the following for each input file:
 - step 2: excecute a chain of GPT prompts on the text.
 The following script can be used to run a series of ollama prompts based on a configuration file.
 ```bash
-python src/workflow_test.py -f json test-data/workflow_0_config.json
+python src/workflow_test.py -f json test-data/configs/workflow_0_config.json
 ```
 > [!TIP]
 > - The test script can be customized. Use `python src/workflow_test.py -h` to see the documentation.
@@ -352,7 +352,7 @@ python src/workflow_test.py -f json test-data/workflow_0_config.json
 > [!WARNING]
 > This configuration requires a PDF not provided in the repository
 
-This test uses the configuration file [test-data/workflow_0_config.json](test-data/workflow_0_config.json) which features several prompts:
+This test uses the configuration file [test-data/configs/workflow_0_config.json](test-data/configs/workflow_0_config.json) which features several prompts:
 1. extract keywords
 2. extract short abstract
 3. extract partner
@@ -364,29 +364,29 @@ The configuration will output to the `test-data/workflow-test/VILLEGARDEN` folde
 
 #### 2.2.2. Test: Structured Python data workflow
 
-Same test as above but using the configuration file [test-data/workflow_1_config.json](test-data/workflow_1_config.json) which proposes structuring prompt outputs as JSON. 
+Same test as above but using the configuration file [test-data/configs/workflow_1_config.json](test-data/configs/workflow_1_config.json) which proposes structuring prompt outputs as JSON. 
 ```bash
-python src/workflow_test.py -f json test-data/workflow_1_config.json
+python src/workflow_test.py -f json test-data/configs/workflow_1_config.json
 ```
 
 #### 2.2.3. Test: Initial prompt optimization test
 
-Same test as above but using the configuration file [test-data/workflow_2_config.json](test-data/workflow_2_config.json) which proposes a more developed prompt featuring:
+Same test as above but using the configuration file [test-data/configs/workflow_2_config.json](test-data/configs/workflow_2_config.json) which proposes a more developed prompt featuring:
 - Setting a context for the GPT i.e., *"You are the scientific project manager of the project proposal below"*
 - Clarifying a search perimeter i.e., *"Search only in the sections 1 'Context' and section 2 'Detailed project description'."*
 - Asking for a formatted output i.e., *"Formulate your response as a bulleted list"*
 
 ```bash
-python src/workflow_test.py -f json test-data/workflow_2_config.json
+python src/workflow_test.py -f json test-data/configs/workflow_2_config.json
 ```
 
 #### 2.2.4. Test: Page range test
 
-Same test as above but using the configuration file [test-data/workflow_3_config.json](test-data/workflow_3_config.json) which defines a page range to be searched in:
+Same test as above but using the configuration file [test-data/configs/workflow_3_config.json](test-data/configs/workflow_3_config.json) which defines a page range to be searched in:
 Page ranges should be a comma separated string e.g., `1, 2, 5-7` (spaces are allowed)
 
 ```bash
-python src/workflow_test.py -f json test-data/workflow_3_config.json
+python src/workflow_test.py -f json test-data/configs/workflow_3_config.json
 ```
 
 #### 2.2.5. Test: Add csv config to workflow
@@ -394,7 +394,7 @@ python src/workflow_test.py -f json test-data/workflow_3_config.json
 Use a csv file to configure workflow instead of a json file.
 
 ```bash
-python src/workflow_test.py -f csv test-data/workflow_0_config.csv
+python src/workflow_test.py -f csv test-data/configs/workflow_0_config.csv
 ```
 
 #### 2.2.6. Test: Modelfile test
@@ -402,7 +402,7 @@ python src/workflow_test.py -f csv test-data/workflow_0_config.csv
 Added modelfile functionality to ollama and workflow test scripts.
 
 ```bash
-python src/workflow_test.py -f json test-data/workflow_4_config.json
+python src/workflow_test.py -f json test-data/configs/workflow_4_config.json
 ```
 
 #### 2.2.7. Test: TEMPERATURE and top parameters test
@@ -427,7 +427,7 @@ These modelfiles use differente `temperature`, `top_k`, `top_p` to change see ho
 Additionally, conversation examples are used to provided to the model of how it should respond. The user prompt features a page of text from VILLEGARDEN project containing resercher names and their ORCIDs/IdHal. The assistant response features an example of what the expected corresponding JSON output should be.
 
 ```bash
-python src/workflow_test.py -f json test-data/workflow_5_config.json
+python src/workflow_test.py -f json test-data/configs/workflow_5_config.json
 ```
 
 TODO: run test and add notes
@@ -519,7 +519,7 @@ Additionally Chroma (a dependency) requires sqlite3 >= 3.35.0. Follow [these ins
 To run the test use the following commands. This will serve Ollama analyze a split version of the VILLEGARDEN pdf (this version only contains the first 5 pages with tabular information). Once the pdf is analyzed, you may send prompts regarding the pdf.
 ```bash
 ollama serve &
-python src/langchain-manager.py -i test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables.pdf
+python src/langchain-manager.py -i test-data/input/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables.pdf
 ```
 
 When the `Query: ` prompt appears, enter your query and return to send it. Sending `exit` will close the program.
@@ -576,7 +576,7 @@ Helpful Answer:
 Additionally only page 3 of the pdf is provided.
 
 ```bash
-python src/langchain-manager.py -i test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information about the research units and researchers involved in the project. Keep the answer as concise as possible. \n{context}\nQuestion: {question}\nHelpful Answer:"
+python src/langchain-manager.py -i test-data/input/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information about the research units and researchers involved in the project. Keep the answer as concise as possible. \n{context}\nQuestion: {question}\nHelpful Answer:"
 ```
 
 Results:
@@ -745,7 +745,7 @@ Results:
 
 The template is updated, adding specific information about the pdf, its form, where to find relevant information in the pdf, and what structure it should have:
 ```bash
-python src/langchain-manager.py -i test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information (in english and french) about the research units and researchers involved in the project. The information is presented in the form of a table with 5 columns. The 4th column contains the names of researchers in the project. The 5th and final column contains the ORCiD or IdHAL identifier associated with each researcher. ORCiD identifiers are strings of characters with the form 'xxxx-xxxx-xxxx-xxxx' where 'x' can be a number and sometimes an uppercase letter. IdHAL identifiers are strings of characters that typically take the form of 'firstname-lastname', where 'firstname' is the first name of the researcher and 'lastname' is the last name of the researcher. Keep the answer as concise as possible.\n{context}\nQuestion: {question}\nHelpful Answer:"
+python src/langchain-manager.py -i test-data/input/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information (in english and french) about the research units and researchers involved in the project. The information is presented in the form of a table with 5 columns. The 4th column contains the names of researchers in the project. The 5th and final column contains the ORCiD or IdHAL identifier associated with each researcher. ORCiD identifiers are strings of characters with the form 'xxxx-xxxx-xxxx-xxxx' where 'x' can be a number and sometimes an uppercase letter. IdHAL identifiers are strings of characters that typically take the form of 'firstname-lastname', where 'firstname' is the first name of the researcher and 'lastname' is the last name of the researcher. Keep the answer as concise as possible.\n{context}\nQuestion: {question}\nHelpful Answer:"
 ```
 
 Results:
@@ -812,7 +812,7 @@ Results:
 
 IdHAL information is removed from the template (to focus on ORCiDs). ORCiDs tokens are updated to match the same capitalization used in the pdf:
 ```bash
-python src/langchain-manager.py -i test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information (in english and french) about the research units and researchers involved in the project. The information is presented in the form of a table with 5 columns. The 4th column contains the names of researchers in the project. The 5th and final column contains the Orcid or IdHAL identifier associated with each researcher. Orcid identifiers are strings of characters with the form 'xxxx-xxxx-xxxx-xxxx' where 'x' can be a number and sometimes an uppercase letter. Keep the answer as concise as possible.\n{context}\nQuestion: {question}\nHelpful Answer:"
+python src/langchain-manager.py -i test-data/input/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information (in english and french) about the research units and researchers involved in the project. The information is presented in the form of a table with 5 columns. The 4th column contains the names of researchers in the project. The 5th and final column contains the Orcid or IdHAL identifier associated with each researcher. Orcid identifiers are strings of characters with the form 'xxxx-xxxx-xxxx-xxxx' where 'x' can be a number and sometimes an uppercase letter. Keep the answer as concise as possible.\n{context}\nQuestion: {question}\nHelpful Answer:"
 ```
 
 Results:
@@ -880,7 +880,7 @@ ollama pull llama3.1:8b
 > See https://github.com/ollama/ollama/issues/690
 
 ```bash
-python src/langchain-manager.py -i test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -m llama3.1:8b -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information (in english and french) about the research units and researchers involved in the project. The information is presented in the form of a table with 5 columns. The 4th column contains the names of researchers in the project. The 5th and final column contains the Orcid or IdHAL identifier associated with each researcher. Orcid identifiers are strings of characters with the form 'xxxx-xxxx-xxxx-xxxx' where 'x' can be a number and sometimes an uppercase letter. Keep the answer as concise as possible.\n{context}\nQuestion: {question}\nHelpful Answer:"
+python src/langchain-manager.py -i test-data/input/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -m llama3.1:8b -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information (in english and french) about the research units and researchers involved in the project. The information is presented in the form of a table with 5 columns. The 4th column contains the names of researchers in the project. The 5th and final column contains the Orcid or IdHAL identifier associated with each researcher. Orcid identifiers are strings of characters with the form 'xxxx-xxxx-xxxx-xxxx' where 'x' can be a number and sometimes an uppercase letter. Keep the answer as concise as possible.\n{context}\nQuestion: {question}\nHelpful Answer:"
 ```
 
 Result 5.1
@@ -893,7 +893,7 @@ Result 5.1
 
 Changing the model to `mistral:7b` and slightly simplifying the orcid column.
 ```bash
-python src/langchain-manager.py -i test-data/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -m mistral:7b -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information (in english and french) about the research units and researchers involved in the project. The information is presented in the form of a table with 5 columns. The 4th column contains the names of researchers in the project. The 5th column contains the Orcid identifier associated with each researcher. Orcid identifiers are strings of characters with the form 'xxxx-xxxx-xxxx-xxxx' where 'x' can be a number and sometimes an uppercase letter. Keep the answer as concise as possible.\n{context}\nQuestion: {question}\nHelpful Answer:"
+python src/langchain-manager.py -i test-data/input/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -m mistral:7b -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information (in english and french) about the research units and researchers involved in the project. The information is presented in the form of a table with 5 columns. The 4th column contains the names of researchers in the project. The 5th column contains the Orcid identifier associated with each researcher. Orcid identifiers are strings of characters with the form 'xxxx-xxxx-xxxx-xxxx' where 'x' can be a number and sometimes an uppercase letter. Keep the answer as concise as possible.\n{context}\nQuestion: {question}\nHelpful Answer:"
 ```
 
 Result 6.1
