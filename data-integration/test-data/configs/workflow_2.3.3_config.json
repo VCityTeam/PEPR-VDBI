@@ -1,0 +1,13 @@
+{
+  "output": "test-data/workflow-test/2.2.3-results",
+  "description": "",
+  "prompts": [
+    {
+      "prompt": "",
+      "model": "llama3-json1-creative-default",
+      "modelfile": "test-data/modelfiles/llama3-json1-creative-default",
+      "format": "json",
+      "run": false
+    }
+  ]
+}

@@ -64,6 +64,13 @@ def main():
         default="workflow-test.log",
         help="Specify the logging file",
     )
+    parser.add_argument(
+        "-m",
+        "--mode",
+        choices=["ollama", "r2r"],
+        default="ollama",
+        help="Specify the workflow mode",
+    )
 
     args = parser.parse_args()
 
@@ -74,20 +81,47 @@ def main():
         level=logging.INFO,
     )
     print(f"Initialized, see {args.log} for execution information...")
-    logging.info("=== initialized ===")
+    logging.info(
+        r"""
+         ______     ______    ______     ______     ______
+        /\  ___\   /\__  _\  /\  __ \   /\  == \   /\__  _\
+        \ \___  \  \/_/\ \/  \ \  __ \  \ \  __<   \/_/\ \/
+         \/\_____\    \ \_\   \ \_\ \_\  \ \_\ \_\    \ \_\
+          \/_____/     \/_/    \/_/\/_/   \/_/ /_/     \/_/"""
+    )
 
-    runWorkflows(args.configuration, args.format, args.delimeter)
+    runOllamaWorkflows(args.configuration, args.format, args.delimeter, args.mode)
 
 
-def runWorkflows(configuration: str, format: str, delimeter=",") -> None:
+def runOllamaWorkflows(configuration: str, format: str, delimeter=",", mode="ollama") -> None:
+    """Select which workflow to run based on the mode."""
+    if mode == "ollama":
+        runOllamaWorkflows(configuration, format, delimeter)
+    elif mode == "r2r":
+        runR2RWorkflows(configuration)
+    else:
+        logging.error(f"mode {mode} not recognized")
+
+
+def runR2RWorkflows(configuration: str) -> None:
     """Run a series of workflows based on a configuration file in JSON.
     A configuration file must contain an object with the following keys:
-    "output": a string containing the path to output workflow results.
-    "inputs": an object; each key is a path to a pdf file to execute prompts
+    - "output": a string containing the path to output workflow results.
+    - "prompts": an array of objects containing the information required to run each
+        workflow. See runR2RWorkflow() for more information.
+    """
+
+
+
+def runOllamaWorkflows(configuration: str, format: str, delimeter=",") -> None:
+    """Run a series of workflows based on a configuration file in JSON.
+    A configuration file must contain an object with the following keys:
+    - "output": a string containing the path to output workflow results.
+    - "inputs": an object; each key is a path to a pdf file to execute prompts
         upon; each value is a string containing the page ranges to use from the
         pdf.
-    "prompts": an object containing the information required to run a workflow.
-        See runWorkflow() for more information.
+    - "prompts": an array containing the information required to run each workflow.
+        See runOllamaWorkflow() for more information.
     """
     if format == "csv":
         config = []
@@ -101,7 +135,7 @@ def runWorkflows(configuration: str, format: str, delimeter=",") -> None:
                 f"running workflow on line {i}" + f"{str(row[0])} {str(row[1])}"
             )
             print(f"running workflow on {str(row[0])} {str(row[1])}")
-            runWorkflow(
+            runOllamaWorkflow(
                 str(row[0]),
                 str(row[1]),
                 path.join(str(row[2]), f"p{i}"),
@@ -119,7 +153,7 @@ def runWorkflows(configuration: str, format: str, delimeter=",") -> None:
             print(f"running workflow on {input} {ranges}")
             for prompt in config["prompts"]:
                 if prompt.get("run"):
-                    runWorkflow(
+                    runOllamaWorkflow(
                         input,
                         ranges,
                         path.join(config["output"], f"p{i}"),
@@ -131,7 +165,7 @@ def runWorkflows(configuration: str, format: str, delimeter=",") -> None:
                     i += 1
 
 
-def runWorkflow(
+def runOllamaWorkflow(
     input: str,
     page_ranges: str,
     output: str,
@@ -165,9 +199,7 @@ def runWorkflow(
 
     input_text_path = path.normpath(input[:-3] + "json")
     if not path.exists(input_text_path):
-        logging.info(
-            f"converting {input} to json. writing to {input_text_path}"
-        )
+        logging.info(f"converting {input} to json. writing to {input_text_path}")
         writeToFile(input_text_path, json.dumps(pdf2list(input), indent=2))
 
     # step 2
@@ -217,8 +249,7 @@ def parsePageRanges(ranges: str) -> list[int]:
         if "-" in _range:
             split_range = _range.split("-")
             page_numbers += [
-                page
-                for page in range(int(split_range[0]) - 1, int(split_range[-1]))
+                page for page in range(int(split_range[0]) - 1, int(split_range[-1]))
             ]
         else:
             page_numbers.append(int(_range) - 1)
