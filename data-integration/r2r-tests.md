@@ -20,8 +20,25 @@ Non R2R specific tests are located [here](./README.md).
   - [Perspective tests](#perspective-tests)
 - [2.3.3 R2R Light workflow Tests](#233-r2r-light-workflow-tests)
   - [Method](#method)
-    - [Test workflow parameters](#test-workflow-parameters)
     - [Prompts](#prompts)
+      - [P1](#p1)
+      - [P2](#p2)
+      - [P3](#p3)
+      - [P4](#p4)
+      - [P4](#p4-1)
+      - [P5](#p5)
+      - [P6](#p6)
+      - [P7](#p7)
+      - [P8](#p8)
+      - [P9](#p9)
+      - [P10](#p10)
+      - [P11](#p11)
+      - [P12](#p12)
+      - [P13](#p13)
+      - [P14](#p14)
+      - [P15](#p15)
+      - [P16](#p16)
+      - [P17](#p17)
     - [Install](#install-1)
 
 # 2.3.2 Test [R2R Light](https://r2r-docs.sciphi.ai/self-hosting/installation/light)
@@ -416,7 +433,6 @@ These prompts are defined according to the following article:
 }
 ```
 
-
 Two patterns are proposed for testing: *Template*, *Persona*, and *Context Manager*.
 Hypothesis:
 - The *Template* pattern will provide better output results as semi-structured data (e.g. JSON).
@@ -426,6 +442,7 @@ Hypothesis:
 The following invariant parameters are used in this test:
 - Embedding model: `mxbai-embed-large:latest` as this is default recommendation from R2R 
 - Completion model: `mixtral:8x22b` as this is a well known model for quality generation. Also, the mixture of experts model may provide good results when ingesting VDBI project information written by experts.
+- Prompts are written in english
 
 What is considered a good result?
 - Limited/no hallucinations
@@ -440,26 +457,31 @@ What is considered a good result?
     4. Better than ground truth
     5. Much better than ground truth
 
-### Test workflow parameters
-Input: `NEO_Document-scientifique_vfin_20240209_avec lettressoutien 20P fr.pdf`
-| Category             | Prompt pattern  | Prompt | Language |
-| -------------------- | --------------- | ------ | -------- |
-| Output Customization | Template        | P1     | EN       |
-| Output Customization | Persona         | P     |
-| Context Control      | Context Manager | P     |
+3 responses will be generated for each prompt.
+This is likely not be a representative number of responses but is more responsible in terms of energy consumption and may be enough to understand which prompts return better results compared to others.
+Future tests can attempt to refine prompts based on the results of this test.
+
+**Test workflow parameters**
+Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressoutien 20P fr.pdf`
+| Category             | Prompt pattern  | Prompt |
+| -------------------- | --------------- | ------ |
+| Output Customization | Template        | P1     |
+| Output Customization | Persona         | P      |
+| Context Control      | Context Manager | P      |
 
 ### Prompts
-1. P1
+
+#### P1
    - Prompt:
      > What are the proposed research actions of the NEO project?
    - Template:
-     > I am going to provide a template for your output in JSON. The strings `XXXX` are placeholders. Any time that you generate text, try to fit it into one of the placeholders that I list. Please preserve the formatting and overall template that I provide. This is the template:
+     > I am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:
      > ```
      > {
      >   "action": "XXXX"
      > }
      > ```
-1. P2
+#### P2
    - Prompt:
      > How does the NEO project propose to perform their research actions?
    - Template: same as P1, except for pattern:
@@ -468,26 +490,180 @@ Input: `NEO_Document-scientifique_vfin_20240209_avec lettressoutien 20P fr.pdf`
      >   "how": "XXXX"
      > }
      > ```
-1. P2
+#### P3
    - Prompt:
-     > How does the NEO project propose to perform their research actions?
+     > Why does the NEO project propose their research actions?
    - Template: same as P1, except for pattern:
      > ```
      > {
-     >   "how": "XXXX"
+     >   "why": "XXXX"
+     > }
+     > ```
+#### P4
+   - Prompt:
+     > What is the research proposal of the NEO project?
+   - Template: same as P1, except for pattern:
+     > ```
+     > {
+     >   "proposal": "XXXX"
+     > }
+     > ```
+#### P4
+   - Prompt:
+     > What research actions are proposed for which solutions by the NEO project?
+   - Template: same as P1, except for pattern:
+     > ```
+     > {
+     >   "action_solution": "XXXX"
+     > }
+     > ```
+#### P5
+   - Prompt:
+     > What are the research products or results by the NEO project?
+   - Template: same as P1, except for pattern:
+     > ```
+     > {
+     >   "solution": "XXXX"
+     > }
+     > ```
+#### P6
+   - Prompt:
+     > What are the research products or results by the NEO project?
+   - Template: same as P1, except for pattern:
+     > ```
+     > {
+     >   "solutions": [
+     >     XXXX
+     >   ]
+     > }
+     > ```
+   - prompt redaction reasoning: [P5](#p5) asks the same question, however as multiple products and solutions can be returned, a JSON array may make a better template. 
+#### P7
+   - Prompt:
+     > What are the research products or results by the NEO project? Order your answers by importance.
+   - Template: same as P1, except for pattern:
+     > ```
+     > {
+     >   "solutions": [
+     >     XXXX
+     >   ]
+     > }
+     > ```
+   - prompt redaction reasoning: same as [P6](#p6) but tries to emphasize order (primary, secondary, etc.) in prompt
+#### P8
+   - Prompt:
+     > What are the research products or results by the NEO project?
+   - Template:
+     > I am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. Order answers within JSON arrays by importance. This is the template:
+     > ```
+     > {
+     >   "solutions": [
+     >     XXXX
+     >   ]
+     > }
+     > ```
+   - prompt redaction reasoning: same as [P7](#p7) but tries to emphasize array order (primary, secondary, etc.) in template
+#### P9
+   - Prompt:
+     > What are the primary and secondary research products or results by the NEO project?
+   - Template: same as P1, except for pattern:
+     > ```
+     > {
+     >   "primary_solution": "XXXX",
+     >   "secondary_solution": "XXXX",
+     > }
+     > ```
+   - prompt redaction reasoning: same as [P7](#p7) but tries to emphasize order (primary, secondary) with explicit JSON keys in pattern
+#### P10
+   - Prompt:
+     > What are the urban objects and devices involved by the NEO project?
+   - Template: same as P1, except for pattern:
+     > ```
+     > {
+     >   "objects": [
+     >     XXXX
+     >   ]
+     > }
+     > ```
+#### P11
+   - Prompt:
+     > What are the urban objects and devices involved by the NEO project?
+   - Template: same as P1, except for pattern:
+     > ```
+     > {
+     >   "devices": [
+     >     XXXX
+     >   ]
+     > }
+     > ```
+   - prompt redaction reasoning: same as [P10](#p10) but uses a different JSON key field to see how results are affected
+#### P12
+   - Prompt:
+     > What are the urban objects and devices involved by the NEO project?
+   - Template: same as P1, except for pattern:
+     > ```
+     > {
+     >   "objects_devices": [
+     >     XXXX
+     >   ]
+     > }
+     > ```
+   - prompt redaction reasoning: same as [P10](#p10) but uses a different JSON key field to see how results are affected
+#### P13
+   - Prompt:
+     > List several keywords to describe the NEO project.
+   - Template: same as P1, except for pattern:
+     > ```
+     > {
+     >   "keywords": [
+     >     XXXX
+     >   ]
+     > }
+     > ```
+#### P14
+   - Prompt:
+     > List several keywords to describe the NEO project.
+   - Template: same as P1, except for pattern:
+     > ```
+     > [
+     >   XXXX
+     > ]
+     > ```
+   - prompt redaction reasoning: same as [P13](#p13) but uses a different JSON array pattern to see how results are affected
+#### P15
+   - Prompt:
+     > List several keywords to describe the NEO project.
+   - Template: same as P1, except for pattern:
+     > ```
+     > [XXXX]
+     > ```
+   - prompt redaction reasoning: same as [P13](#p13) but uses a different JSON array pattern to see how results are affected
+#### P16
+   - Prompt:
+     > List several keywords to describe the NEO project.
+   - Template: same as P1, except for pattern:
+     > ```
+     > [
+     >   "XXXX",
+     >   "XXXX",
+     >   ...
+     > ]
+     > ```
+   - prompt redaction reasoning: same as [P13](#p13) but uses a different JSON array pattern to see how results are affected
+#### P17
+   - Prompt:
+     > What are the challenges the NEO project will respond to?
+   - Template: same as P1, except for pattern:
+     > ```
+     > {
+     >   "challenges": [
+     >     XXXX
+     >   ]
      > }
      > ```
 
-POUR QUOI FAIRE
-proposition de recherche (format synthétique)
-Quels actions POUR quelles solutions ?
-Produit (ou résultat) de la recherche (primaire)
-Produit (ou résultat) de la recherche (Secondaire)
-objets et dispositifs urbains impliqués
-Mot clefs
-Defi principal
-Defis
+These prompts are configured in the file [./test-data/configs/workflow_2.3.3_config.json](test-data/configs/workflow_2.3.3_config.json)
 
 ### Install
 - Follow [the setup instructions of the previous test](#install)
-- Pr
+						
