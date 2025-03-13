@@ -1,12 +1,150 @@
 {
   "output": "test-data/workflow-test/2.2.3-results",
-  "description": "",
+  "description": "Ground truth R2R test on 1 pdf RAG",
+  "url": "http://localhost:7272",
   "prompts": [
     {
-      "prompt": "",
-      "model": "llama3-json1-creative-default",
-      "modelfile": "test-data/modelfiles/llama3-json1-creative-default",
+      "prompt": "What are the proposed research actions of the NEO project?",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n{\n  \"action\": \"XXXX\"\n}\n```",
       "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "How does the NEO project propose to perform their research actions?",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n{\n  \"how\": \"XXXX\"\n}\n```",
+      "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "Why does the NEO project propose their research actions?",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n{\n  \"why\": \"XXXX\"\n}\n```",
+      "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "What is the research proposal of the NEO project?",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n{\n  \"proposal\": \"XXXX\"\n}\n```",
+      "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "What research actions are proposed for which solutions by the NEO project?",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n{\n  \"action_solution\": \"XXXX\"\n}\n```",
+      "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "What are the research products or results by the NEO project?",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n{\n  \"solution\": \"XXXX\"\n}\n```",
+      "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "What are the research products or results by the NEO project?",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n{\n  \"solutions\": [\n    XXXX\n  ]\n}\n```",
+      "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "What are the research products or results by the NEO project? Order your answers by importance.",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n{\n  \"solutions\": [\n    XXXX\n  ]\n}\n```",
+      "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "What are the research products or results by the NEO project?",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. Order answers within JSON arrays by importance. This is the template:\n```json\n{\n  \"solutions\": [\n    XXXX\n  ]\n}\n```",
+      "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "What are the primary and secondary research products or results by the NEO project?",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n{\n  \"primary_solution\": \"XXXX\",\n  \"secondary_solution\": \"XXXX\",\n}\n```",
+      "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "What are the urban objects and devices involved by the NEO project?",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n{\n  \"objects\": [\n    XXXX\n  ]\n}\n```",
+      "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "What are the urban objects and devices involved by the NEO project?",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n{\n  \"devices\": [\n    XXXX\n  ]\n}\n```",
+      "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "What are the urban objects and devices involved by the NEO project?",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n{\n  \"objects_devices\": [\n    XXXX\n  ]\n}\n```",
+      "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "List several keywords to describe the NEO project.",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n{\n  \"keywords\": [\n    XXXX\n  ]\n}\n```",
+      "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "List several keywords to describe the NEO project.",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n[\n  XXXX\n]\n```",
+      "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "List several keywords to describe the NEO project.",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n[XXXX]\n```",
+      "model": "mixtral",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "List several keywords to describe the NEO project.",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n[\n  \"XXXX\",\n  \"XXXX\",\n  ...\n]\n```",
+      "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
+      "run": false
+    },
+    {
+      "prompt": "What are the challenges the NEO project will respond to?",
+      "template": "\nI am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:\n```json\n{\n  \"challenges\": [\n    XXXX\n  ]\n}\n```",
+      "format": "json",
+      "model": "mixtral:8x22b",
+      "modelfile": "test-data/modelfiles/r2r_test2322",
       "run": false
     }
   ]

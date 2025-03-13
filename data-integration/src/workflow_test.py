@@ -5,17 +5,9 @@ import argparse
 import logging
 from datetime import timedelta
 from utils import readFile, writeToFile
-from ollama_test import sendPrompt
+from ollama_test import sendPrompt as sendOllamaPrompt
 from pypdf_test import pdf2list
-
-# TODO:
-# - tester formattage des prompts pour:
-#   - sortie structure pour data viz
-#   - impact de structure des prompts
-# - how to chain contexts?
-# - ollama modelfile:
-#   - model parameters
-#   - templates
+from r2r import R2RClient
 
 
 def main():
@@ -80,40 +72,20 @@ def main():
         # level=logging.DEBUG,
         level=logging.INFO,
     )
-    print(f"Initialized, see {args.log} for execution information...")
+    print(f"Initialized, see {args.log} for logs...")
     logging.info(
         r"""
-         ______     ______    ______     ______     ______
-        /\  ___\   /\__  _\  /\  __ \   /\  == \   /\__  _\
-        \ \___  \  \/_/\ \/  \ \  __ \  \ \  __<   \/_/\ \/
-         \/\_____\    \ \_\   \ \_\ \_\  \ \_\ \_\    \ \_\
-          \/_____/     \/_/    \/_/\/_/   \/_/ /_/     \/_/"""
+ ______     ______    ______     ______     ______
+/\  ___\   /\__  _\  /\  __ \   /\  == \   /\__  _\
+\ \___  \  \/_/\ \/  \ \  __ \  \ \  __<   \/_/\ \/
+ \/\_____\    \ \_\   \ \_\ \_\  \ \_\ \_\    \ \_\
+  \/_____/     \/_/    \/_/\/_/   \/_/ /_/     \/_/"""
     )
 
-    runOllamaWorkflows(args.configuration, args.format, args.delimeter, args.mode)
+    runWorkflows(args.configuration, args.format, args.delimeter, args.mode)
 
 
-def runOllamaWorkflows(configuration: str, format: str, delimeter=",", mode="ollama") -> None:
-    """Select which workflow to run based on the mode."""
-    if mode == "ollama":
-        runOllamaWorkflows(configuration, format, delimeter)
-    elif mode == "r2r":
-        runR2RWorkflows(configuration)
-    else:
-        logging.error(f"mode {mode} not recognized")
-
-
-def runR2RWorkflows(configuration: str) -> None:
-    """Run a series of workflows based on a configuration file in JSON.
-    A configuration file must contain an object with the following keys:
-    - "output": a string containing the path to output workflow results.
-    - "prompts": an array of objects containing the information required to run each
-        workflow. See runR2RWorkflow() for more information.
-    """
-
-
-
-def runOllamaWorkflows(configuration: str, format: str, delimeter=",") -> None:
+def runWorkflows(configuration: str, format: str, delimeter=",", mode="ollama") -> None:
     """Run a series of workflows based on a configuration file in JSON.
     A configuration file must contain an object with the following keys:
     - "output": a string containing the path to output workflow results.
@@ -129,40 +101,109 @@ def runOllamaWorkflows(configuration: str, format: str, delimeter=",") -> None:
             csv_file = csv.reader(file, delimiter=delimeter)
             for row in csv_file:
                 config.append(row)
-        i = 0
         for row in config[1:]:
             logging.info(
-                f"running workflow on line {i}" + f"{str(row[0])} {str(row[1])}"
+                f"running workflow on line {config.index(row)}"
+                + f"{str(row[0])} {str(row[1])}"
             )
             print(f"running workflow on {str(row[0])} {str(row[1])}")
-            runOllamaWorkflow(
-                str(row[0]),
-                str(row[1]),
-                path.join(str(row[2]), f"p{i}"),
-                str(row[3]),
-                str(row[4]),
-                str(row[5]),
-                str(row[6]),
-            )
-            i += 1
+            if mode == "ollama":
+                runOllamaWorkflow(
+                    str(row[0]),
+                    str(row[1]),
+                    path.join(str(row[2]), f"p{config.index(row)}.json"),
+                    str(row[3]),
+                    str(row[4]),
+                    str(row[5]),
+                    str(row[6]),
+                )
+            elif mode == "r2r":
+                logging.error("r2r mode not implemented")
+                pass
+                # runR2RWorkflow(configuration)
+            else:
+                logging.error(f"mode {mode} not recognized")
+
     elif format == "json":
         config = json.loads(readFile(configuration))
-        i = 0
-        for input, ranges in config["inputs"].items():
-            logging.info(f"running workflow on {input} {ranges}")
-            print(f"running workflow on {input} {ranges}")
-            for prompt in config["prompts"]:
-                if prompt.get("run"):
-                    runOllamaWorkflow(
-                        input,
-                        ranges,
-                        path.join(config["output"], f"p{i}"),
-                        prompt["prompt"],
-                        prompt["model"],
-                        prompt.get("modelfile"),
-                        prompt.get("format", ""),
-                    )
-                    i += 1
+        if mode == "ollama":
+            for input, ranges in config["inputs"].items():
+                logging.info(f"running workflow on {input} {ranges}")
+                print(f"running workflow on {input} {ranges}")
+                for prompt_config in config["prompts"]:
+                    if prompt_config.get("run"):
+                        runOllamaWorkflow(
+                            input,
+                            ranges,
+                            path.join(
+                                config["output"],
+                                f"p{config['prompts'].index(prompt_config)}.json",
+                            ),
+                            prompt_config["prompt"],
+                            prompt_config["model"],
+                            prompt_config.get("modelfile"),
+                            prompt_config.get("format", ""),
+                        )
+        elif mode == "r2r":
+            client = R2RClient()
+            client.set_base_url(config["url"])
+
+            # first ingest files if necessary
+
+            # then run the workflows
+            for prompt_config in config["prompts"]:
+                runR2RWorkflow(
+                    config["output"],
+                    prompt_config["prompt"],
+                    prompt_config["template"],
+                    prompt_config["model"],
+                    prompt_config["modelfile"],
+                    prompt_config["format"],
+                    client,
+                )
+        else:
+            logging.error(f"mode {mode} not recognized")
+
+
+def runR2RWorkflow(
+    output: str,
+    prompt: str,
+    template: str,
+    model: str,
+    modelfile: str,
+    format: str,
+    client: R2RClient,
+) -> None:
+    """Run a workflow on a set of input files using R2R. Each workflow assumes the
+    relevant documents have already been ingested into a vector store. Then a given list
+    of prompts is executed using R2R. The output of all of these
+    steps is written to an output directory.
+    Parameters:
+        output: the output directory path.
+        prompt: a string containing the prompt to execute over the text.
+        template: a string containing the template to execute with the prompt.
+        model: a string of the ollama model tag to use for the prompt.
+        modelfile: the path to the modelfile to use for the prompt.
+        format: a string of the ollama response format.
+        url: the base url of the R2R service.
+    """
+    # step 0
+    output_path = path.normpath(output)
+    logging.info(f"output directory: {output_path}")
+    if not path.exists(output_path):
+        makedirs(output_path)
+
+    # step 1
+    # ingest documents into R2R
+
+    # step 2
+    logging.info(f"\nsending prompt: {prompt}[text]")
+    print(f"sending prompt: {prompt}[text]")
+
+    response = sendOllamaPrompt(model, prompt + text, modelfile, format)
+    logging.debug(f"response: {response}")
+    if not response["done"]:  # type: ignore
+        logging.warning('response returned "done"=false')
 
 
 def runOllamaWorkflow(
@@ -174,10 +215,10 @@ def runOllamaWorkflow(
     modelfile: str,
     format: str,
 ) -> None:
-    """Run a workflow on a set of input files. Each workflow will transform the
-    input into a json file (unless the file already exists). Then a given list
-    of prompts is executed using Ollama python. The output of all of these
-    steps is written to an output directory.
+    """Run a workflow on a set of input files using Ollama and pypdf. Each workflow will
+    transform the input into a json file (unless the file already exists). Then a given
+    list of prompts is executed. The output of all of these steps is
+    written to an output directory.
     Parameters:
         input: a path to a JSON file containing an array of strings where each
             string corresponds to a page of text.
@@ -185,7 +226,8 @@ def runOllamaWorkflow(
         output: the output directory path.
         prompt: a string containing the prompt to execute over the text.
         model: a string of the ollama model tag to use for the prompt.
-        format: a string of the ollama response format
+        model: the modelfile to use for the prompt.
+        format: a string of the ollama response format.
     """
     # step 0
     output_path = path.normpath(output)
@@ -197,7 +239,7 @@ def runOllamaWorkflow(
     if not input.endswith(".pdf"):
         logging.warning(f"is input {input} a PDF?")
 
-    input_text_path = path.normpath(input[:-3] + "json")
+    input_text_path = f"{path.splitext(input)[0]}.json"
     if not path.exists(input_text_path):
         logging.info(f"converting {input} to json. writing to {input_text_path}")
         writeToFile(input_text_path, json.dumps(pdf2list(input), indent=2))
@@ -208,7 +250,7 @@ def runOllamaWorkflow(
     logging.info(f"\nsending prompt: {prompt}[text]")
     print(f"sending prompt: {prompt}[text]")
 
-    response = sendPrompt(model, prompt + text, modelfile, format)
+    response = sendOllamaPrompt(model, prompt + text, modelfile, format)
     logging.debug(f"response: {response}")
     if not response["done"]:  # type: ignore
         logging.warning('response returned "done"=false')
