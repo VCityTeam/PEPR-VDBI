@@ -431,6 +431,15 @@ python src/workflow_test.py -f json test-data/configs/workflow_5_config.json
 ```
 
 TODO: run test and add notes
+TODO:
+- tester formattage des prompts pour:
+  - sortie structure pour data viz
+  - impact de structure des prompts
+- how to chain contexts?
+- ollama modelfile:
+  - model parameters
+  - templates
+
 
 ### 2.3. RAG tests
 
@@ -909,6 +918,16 @@ Result 6.1
   - test in the template and in the query
 - TODO: Once templates/queries are stable test with larger contexts (larger pdfs, the online example is able to query a document of 100+ pages)
 - TODO: Once templates/queries are stable test with different models (e.g. Llama3.1 and Mistral). It is not clear which model works best for our use case.
+
+
+
+
+
+
+
+
+
+
 
 #### 2.3.2. [Test R2R](./r2r-tests.md)
 Tests moved to [r2r-tests.md](./r2r-tests.md) to better accomodate their length 
