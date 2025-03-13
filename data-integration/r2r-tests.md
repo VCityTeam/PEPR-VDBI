@@ -476,7 +476,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
      > What are the proposed research actions of the NEO project?
    - Template:
      > I am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. This is the template:
-     > ```
+     > ```json
      > {
      >   "action": "XXXX"
      > }
@@ -485,7 +485,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
    - Prompt:
      > How does the NEO project propose to perform their research actions?
    - Template: same as P1, except for pattern:
-     > ```
+     > ```json
      > {
      >   "how": "XXXX"
      > }
@@ -494,7 +494,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
    - Prompt:
      > Why does the NEO project propose their research actions?
    - Template: same as P1, except for pattern:
-     > ```
+     > ```json
      > {
      >   "why": "XXXX"
      > }
@@ -503,7 +503,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
    - Prompt:
      > What is the research proposal of the NEO project?
    - Template: same as P1, except for pattern:
-     > ```
+     > ```json
      > {
      >   "proposal": "XXXX"
      > }
@@ -512,7 +512,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
    - Prompt:
      > What research actions are proposed for which solutions by the NEO project?
    - Template: same as P1, except for pattern:
-     > ```
+     > ```json
      > {
      >   "action_solution": "XXXX"
      > }
@@ -521,7 +521,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
    - Prompt:
      > What are the research products or results by the NEO project?
    - Template: same as P1, except for pattern:
-     > ```
+     > ```json
      > {
      >   "solution": "XXXX"
      > }
@@ -530,7 +530,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
    - Prompt:
      > What are the research products or results by the NEO project?
    - Template: same as P1, except for pattern:
-     > ```
+     > ```json
      > {
      >   "solutions": [
      >     XXXX
@@ -542,7 +542,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
    - Prompt:
      > What are the research products or results by the NEO project? Order your answers by importance.
    - Template: same as P1, except for pattern:
-     > ```
+     > ```json
      > {
      >   "solutions": [
      >     XXXX
@@ -555,7 +555,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
      > What are the research products or results by the NEO project?
    - Template:
      > I am going to provide a template for your output in JSON. The string `XXXX` is a placeholder. Any time that you generate text, try to fit it into the placeholder(s) that I list. Please preserve the formatting and overall template that I provide. Order answers within JSON arrays by importance. This is the template:
-     > ```
+     > ```json
      > {
      >   "solutions": [
      >     XXXX
@@ -567,7 +567,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
    - Prompt:
      > What are the primary and secondary research products or results by the NEO project?
    - Template: same as P1, except for pattern:
-     > ```
+     > ```json
      > {
      >   "primary_solution": "XXXX",
      >   "secondary_solution": "XXXX",
@@ -578,7 +578,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
    - Prompt:
      > What are the urban objects and devices involved by the NEO project?
    - Template: same as P1, except for pattern:
-     > ```
+     > ```json
      > {
      >   "objects": [
      >     XXXX
@@ -589,7 +589,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
    - Prompt:
      > What are the urban objects and devices involved by the NEO project?
    - Template: same as P1, except for pattern:
-     > ```
+     > ```json
      > {
      >   "devices": [
      >     XXXX
@@ -601,7 +601,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
    - Prompt:
      > What are the urban objects and devices involved by the NEO project?
    - Template: same as P1, except for pattern:
-     > ```
+     > ```json
      > {
      >   "objects_devices": [
      >     XXXX
@@ -613,7 +613,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
    - Prompt:
      > List several keywords to describe the NEO project.
    - Template: same as P1, except for pattern:
-     > ```
+     > ```json
      > {
      >   "keywords": [
      >     XXXX
@@ -624,7 +624,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
    - Prompt:
      > List several keywords to describe the NEO project.
    - Template: same as P1, except for pattern:
-     > ```
+     > ```json
      > [
      >   XXXX
      > ]
@@ -634,7 +634,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
    - Prompt:
      > List several keywords to describe the NEO project.
    - Template: same as P1, except for pattern:
-     > ```
+     > ```json
      > [XXXX]
      > ```
    - prompt redaction reasoning: same as [P13](#p13) but uses a different JSON array pattern to see how results are affected
@@ -642,7 +642,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
    - Prompt:
      > List several keywords to describe the NEO project.
    - Template: same as P1, except for pattern:
-     > ```
+     > ```json
      > [
      >   "XXXX",
      >   "XXXX",
@@ -654,7 +654,7 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
    - Prompt:
      > What are the challenges the NEO project will respond to?
    - Template: same as P1, except for pattern:
-     > ```
+     > ```json
      > {
      >   "challenges": [
      >     XXXX
