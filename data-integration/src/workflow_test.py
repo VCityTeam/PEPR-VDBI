@@ -145,10 +145,21 @@ def runWorkflows(configuration: str, format: str, delimeter=",", mode="ollama") 
                             prompt_config.get("format", ""),
                         )
         elif mode == "r2r":
+            # initial setup
             client = R2RClient()
             client.set_base_url(config["url"])
 
+            # update templates
+            for template_config in config["templates"]:
+                response = client.prompts.update(
+                    name=template_config["name"],
+                    template=template_config["template"],
+                    input_types=template_config["input_types"],
+                )
+                logging.info(f"template update response: {response}")
+
             # first ingest files if necessary
+            # todo
 
             # then run the workflows
             for prompt_config in config["prompts"]:
@@ -185,7 +196,7 @@ def runR2RWorkflow(
         model: a string of the ollama model tag to use for the prompt.
         modelfile: the path to the modelfile to use for the prompt.
         format: a string of the ollama response format.
-        url: the base url of the R2R service.
+        client: an R2RClient used to manage the RAG system.
     """
     # step 0
     output_path = path.normpath(output)
@@ -194,13 +205,15 @@ def runR2RWorkflow(
         makedirs(output_path)
 
     # step 1
-    # ingest documents into R2R
+    logging.info(f"\nsending prompt: {prompt}")
+    print(f"sending prompt: {prompt}")
 
-    # step 2
-    logging.info(f"\nsending prompt: {prompt}[text]")
-    print(f"sending prompt: {prompt}[text]")
+    response = client.prompts.update(
+        name="rag",
+        template=template,
+        input_types={"name": "string"}
+    )
 
-    response = sendOllamaPrompt(model, prompt + text, modelfile, format)
     logging.debug(f"response: {response}")
     if not response["done"]:  # type: ignore
         logging.warning('response returned "done"=false')
