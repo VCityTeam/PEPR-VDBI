@@ -157,13 +157,14 @@ def runWorkflows(configuration: str, format: str, delimeter=",", mode="ollama") 
             # update templates
             for template_config in config.get("templates"):
                 logging.info(type(template_config.get("input_types")))
+                # TODO: CHECK IF ADDED FIRST
                 response = client.prompts.update(
-                    name=template_config.get("name"),
+                    template_config.get("name"),
                     template=template_config.get("template"),
-                    input_types=template_config.get("input_types"),
+                    input_types=dict(template_config.get("input_types")),
                 )
                 logging.info(f"template update response: {response}")
-
+            return
             # first ingest files if necessary
             ingested_document_titles = [
                 document.title for document in client.documents.list().results
