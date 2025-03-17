@@ -21,6 +21,7 @@ Non R2R specific tests are located [here](./README.md).
 - [2.3.3 R2R workflow Tests with response models](#233-r2r-workflow-tests-with-response-models)
   - [Method](#method)
     - [Install](#install-1)
+    - [Run](#run)
 
 # 2.3.2 Test [R2R Light](https://r2r-docs.sciphi.ai/self-hosting/installation/light)
 This test will attempt to:
@@ -452,3 +453,9 @@ The templates, prompts, and output formats are configured in the file [./test-da
 
 ### Install
 - Follow [the setup instructions of the previous test](#install)
+
+### Run
+```bash
+./up_test_r2r.sh &
+python src/workflow_test.py -f json -m r2r test-data/configs/workflow_2.3.3_config.json
+```
