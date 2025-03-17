@@ -45,6 +45,11 @@ def main():
     )
     parser.add_argument(
         "-d",
+        "--debug",
+        action="store_true",
+        help="Use debug mode for logging",
+    )
+    parser.add_argument(
         "--delimeter",
         choices=[",", ";", "\t"],
         default=",",
@@ -69,8 +74,7 @@ def main():
     logging.basicConfig(
         format="%(asctime)s %(levelname)-8s %(message)s",
         filename=args.log,
-        # level=logging.DEBUG,
-        level=logging.INFO,
+        level=logging.DEBUG if args.debug else logging.INFO,
     )
     print(f"Initialized, see {args.log} for logs...")
     logging.info(
@@ -146,11 +150,13 @@ def runWorkflows(configuration: str, format: str, delimeter=",", mode="ollama") 
                         )
         elif mode == "r2r":
             # initial setup
+            logging.info(f"creating client connection {config.get("url")}")
             client = R2RClient()
             client.set_base_url(config.get("url"))
 
             # update templates
             for template_config in config.get("templates"):
+                logging.info(type(template_config.get("input_types")))
                 response = client.prompts.update(
                     name=template_config.get("name"),
                     template=template_config.get("template"),
@@ -160,17 +166,21 @@ def runWorkflows(configuration: str, format: str, delimeter=",", mode="ollama") 
 
             # first ingest files if necessary
             ingested_document_titles = [
-                document.get("title") for document in client.documents.list()
+                document.title for document in client.documents.list().results
             ]
+            logging.debug(f"ingested document titles: {ingested_document_titles}")
             if len(ingested_document_titles) == 0:
                 # no existing docs so ingest all
                 R2RIngestDocuments(client, config.get("inputs"))
             else:
                 for document_path in config.get("inputs"):
                     # if document not already ingested, ingest it
-                    if path.splitext(document_path)[0] not in ingested_document_titles:
+                    if path.basename(document_path) not in ingested_document_titles:
                         logging.info(f"ingesting document: {document_path}")
-                        client.documents.create(file_path=document_path)
+                        response = client.documents.create(
+                            file_path=document_path, ingestion_mode="fast"
+                        )
+                        logging.info(f"ingestion response: {response}")
 
             # then run the workflows
             # for prompt_config in config.get("prompts"):
