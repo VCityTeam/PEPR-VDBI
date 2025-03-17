@@ -451,6 +451,37 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
 
 The templates, prompts, and output formats are configured in the file [./test-data/configs/workflow_2.3.3_config.json](test-data/configs/workflow_2.3.3_config.json)
 
+**Template**
+> ## Task:
+> Answer the query given immediately below given the context which follows later. Format your responses in JSON.
+> 
+> ### Query:
+> {query}
+> 
+> ### Context:
+> {context}
+> 
+> "
+
+**Prompts**
+1. "prompt": "What are the proposed research actions of the NEO project?",
+1. "prompt": "What are the proposed research actions of the NEO project?",
+1. "prompt": "How does the NEO project propose to perform their research actions?",
+1. "prompt": "Why does the NEO project propose their research actions?",
+1. "prompt": "What is the research proposal of the NEO project?",
+1. "prompt": "What research actions are proposed for which solutions by the NEO project?",
+1. "prompt": "What research actions are proposed for which solutions by the NEO project?",
+1. "prompt": "What are the research products or results by the NEO project?",
+1. "prompt": "What are the research products or results by the NEO project?",
+1. "prompt": "What are the research products or results by the NEO project? Order your answers by importance.",
+1. "prompt": "What are the primary and secondary research products or results by the NEO project?",
+1. "prompt": "What are the urban objects and devices involved by the NEO project?",
+1. "prompt": "What are the urban objects and devices involved by the NEO project?",
+1. "prompt": "What are the urban objects and devices involved by the NEO project?",
+1. "prompt": "List several keywords to describe the NEO project.",
+1. "prompt": "What are the challenges the NEO project will respond to?",
+
+
 ### Install
 - Follow [the setup instructions of the previous test](#install)
 
