@@ -2,7 +2,7 @@
   "output": "test-data/workflow-test/2.2.3-results",
   "description": "Ground truth R2R test on 1 pdf RAG",
   "url": "http://localhost:7272",
-  "model": "mixtral:8x22b",
+  "model": "llama3.2:3b",
   "modelfile": "test-data/modelfiles/r2r_test2322",
   "templates": [
     {
@@ -15,7 +15,7 @@
     }
   ],
   "inputs": [
-    "test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressoutien 20P fr.pdfs"
+    "test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressoutien 20P fr.pdf"
   ],
   "prompts": [
     {
