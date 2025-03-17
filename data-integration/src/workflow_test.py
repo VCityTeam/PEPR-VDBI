@@ -147,43 +147,84 @@ def runWorkflows(configuration: str, format: str, delimeter=",", mode="ollama") 
         elif mode == "r2r":
             # initial setup
             client = R2RClient()
-            client.set_base_url(config["url"])
+            client.set_base_url(config.get("url"))
 
             # update templates
-            for template_config in config["templates"]:
+            for template_config in config.get("templates"):
                 response = client.prompts.update(
-                    name=template_config["name"],
-                    template=template_config["template"],
-                    input_types=template_config["input_types"],
+                    name=template_config.get("name"),
+                    template=template_config.get("template"),
+                    input_types=template_config.get("input_types"),
                 )
                 logging.info(f"template update response: {response}")
 
             # first ingest files if necessary
-            # todo
+            ingested_document_titles = [
+                document.get("title") for document in client.documents.list()
+            ]
+            if len(ingested_document_titles) == 0:
+                # no existing docs so ingest all
+                R2RIngestDocuments(client, config.get("inputs"))
+            else:
+                for document_path in config.get("inputs"):
+                    # if document not already ingested, ingest it
+                    if path.splitext(document_path)[0] not in ingested_document_titles:
+                        logging.info(f"ingesting document: {document_path}")
+                        client.documents.create(file_path=document_path)
 
             # then run the workflows
-            for prompt_config in config["prompts"]:
-                runR2RWorkflow(
-                    config["output"],
-                    prompt_config["prompt"],
-                    prompt_config["template"],
-                    prompt_config["model"],
-                    prompt_config["modelfile"],
-                    prompt_config["format"],
-                    client,
-                )
+            # for prompt_config in config.get("prompts"):
+            #     output = (
+            #         prompt_config.get("output")
+            #         if prompt_config.get("output") is not None
+            #         else config.get("output")
+            #     )
+            #     model = (
+            #         prompt_config.get("model")
+            #         if prompt_config.get("model") is not None
+            #         else config.get("model")
+            #     )
+            #     modelfile = (
+            #         prompt_config.get("modelfile")
+            #         if prompt_config.get("modelfile") is not None
+            #         else config.get("modelfile")
+            #     )
+            #     output_format = (
+            #         prompt_config.get("format")
+            #         if prompt_config.get("format") is not None
+            #         else config.get("format")
+            #     )
+            #     runR2RWorkflow(
+            #         output=output,
+            #         prompt=prompt_config.get("prompt"),
+            #         model=model,
+            #         modelfile=modelfile,
+            #         output_format=output_format,
+            #         client=client,
+            #     )
         else:
             logging.error(f"mode {mode} not recognized")
+
+
+def R2RIngestDocuments(client: R2RClient, documents: list[str]) -> None:
+    """Ingest a list of documents into the R2R system.
+    Parameters:
+        client: an R2RClient used to manage the RAG system.
+        documents: a list of strings containing the paths to the documents to ingest.
+    """
+    for document_path in documents:
+        logging.info(f"ingesting document: {document_path}")
+        client.document_path.create(file_path=document_path)
 
 
 def runR2RWorkflow(
     output: str,
     prompt: str,
-    template: str,
     model: str,
     modelfile: str,
     format: str,
     client: R2RClient,
+    template="rag",
 ) -> None:
     """Run a workflow on a set of input files using R2R. Each workflow assumes the
     relevant documents have already been ingested into a vector store. Then a given list
@@ -209,11 +250,10 @@ def runR2RWorkflow(
     print(f"sending prompt: {prompt}")
 
     response = client.prompts.update(
-        name="rag",
-        template=template,
-        input_types={"name": "string"}
+        name="rag", template=template, input_types={"name": "string"}
     )
 
+    response = sendOllamaPrompt(model, prompt, modelfile, format)
     logging.debug(f"response: {response}")
     if not response["done"]:  # type: ignore
         logging.warning('response returned "done"=false')

@@ -14,6 +14,9 @@
       }
     }
   ],
+  "inputs": [
+    "test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressoutien 20P fr.pdfs"
+  ],
   "prompts": [
     {
       "prompt": "What are the proposed research actions of the NEO project?",
