@@ -93,6 +93,7 @@ const global_search = Generators.input(global_search_input);
 ```
 
 ```js
+display(phase_2_data)
 // Researcher table //
 const researcher_search_input = Inputs.search(global_search, {
   placeholder: "Search researchers..."
@@ -105,7 +106,7 @@ const researcher_search = Generators.input(researcher_search_input);
 const researcher_table = Inputs.table(researcher_search, {
   height: 350,
   columns: [
-    "fullname",
+    // "fullname",
     // "firstname",
     // "lastname",
     "position",
@@ -150,9 +151,11 @@ const discipline_erc_count = countEntities(
 
 const discipline_erc_pie = donutChart(discipline_erc_count, {
   width: 650,
+  legendLeftMargin: 0,
   fontSize: 18,
   keyMap: (d) => d[0],
   valueMap: (d) => d[1],
+  legend: false
 });
 
 // console.debug("discipline_erc_count", discipline_erc_count);
@@ -205,7 +208,7 @@ const discipline_plot = Plot.plot({
     }),
     Plot.barX(
       discipline_search, 
-      Plot.pointerY({x: (d) => d[1], y: (d) => d[0]}),
+      Plot.pointerY({x: (d) => d[1], y: (d) => d[0], opacity: 0.2}),
     ),
   ],
 });
@@ -266,7 +269,7 @@ const cnu_plot = Plot.plot({
     }),
     Plot.barX(
       cnu_search, 
-      Plot.pointerY({x: (d) => d[1], y: (d) => d[0]}),
+      Plot.pointerY({x: (d) => d[1], y: (d) => d[0], opacity: 0.2}),
     ),
   ],
 });
@@ -288,9 +291,11 @@ const position_count = d3.rollups(
 ```js
 const position_pie = donutChart(position_count, {
   width: 650,
+  legendLeftMargin: 0,
   fontSize: 18,
   keyMap: (d) => d[0],
   valueMap: (d) => d[1],
+  legend: false
 });
 ```
 
