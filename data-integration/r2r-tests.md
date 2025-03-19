@@ -1,29 +1,19 @@
-# **R2R tests** <!-- omit in toc -->
+# R2R tests <!-- omit in toc -->
 Non R2R specific tests are located [here](./README.md).
 
 **Table of contents**
 - [2.3.2 Test R2R Light](#232-test-r2r-light)
   - [Preliminaries](#preliminaries)
   - [Install](#install)
-    - [Install dependencies](#install-dependencies)
-    - [Install and setup R2R](#install-and-setup-r2r)
-    - [Ingest file(s) and setup prompts](#ingest-files-and-setup-prompts)
-    - [Send query](#send-query)
   - [Results 2.3.2.1](#results-2321)
-    - [Chunk search output example](#chunk-search-output-example)
-    - [Completion output](#completion-output)
-    - [Analysis](#analysis)
   - [Results 2.3.2.2](#results-2322)
-    - [Chunk search output example](#chunk-search-output-example-1)
-    - [Completion output](#completion-output-1)
-    - [Analysis](#analysis-1)
   - [Perspective tests](#perspective-tests)
 - [2.3.3 R2R workflow Tests with response models](#233-r2r-workflow-tests-with-response-models)
   - [Method](#method)
-    - [Install](#install-1)
-    - [Run](#run)
+  - [Install](#install-1)
+  - [Run](#run)
 
-# 2.3.2 Test [R2R Light](https://r2r-docs.sciphi.ai/self-hosting/installation/light)
+## 2.3.2 Test [R2R Light](https://r2r-docs.sciphi.ai/self-hosting/installation/light)
 This test will attempt to:
 - Install R2R and minimal dependencies
 - Ingest a document into R2R's RAG system
@@ -31,7 +21,7 @@ This test will attempt to:
 - Determine if R2R is a suitable candidate for performing local RAG
 - Determine next steps
 
-## Preliminaries
+### Preliminaries
 - R2R has 2 modes: `Light` and `Full`
   - `Light` is recommended for development within smaller teams so that's what we will test here.
   - Installation is based on the [R2R Light installation](https://r2r-docs.sciphi.ai/self-hosting/installation/light) documentation
@@ -41,9 +31,9 @@ This test will attempt to:
 - Note that these instructions are run from a **WSL 2 Ubuntu** Bash shell
 - The R2R documentation followed uses the `llama3.1:7b` model for generating query responses, however memory limitations were encountered when using this model (possibly due to WSL?). Instead the `llama3.2:3b` model is proposed for its lightweight size. 
 
-## Install
+### Install
 
-### Install dependencies
+**Install dependencies**
 - install [Docker](https://docs.docker.com/engine/install/)
 - install [R2R lite dependencies](https://r2r-docs.sciphi.ai/self-hosting/installation/light#prerequisites)
   - Python 3.12 or higher
@@ -56,7 +46,7 @@ This test will attempt to:
       docker pull pgvector/pgvector:pg17
       ```
 
-### Install and setup R2R
+**Install and setup R2R**
 1. (Optional) start with a clean python environment using [venv](https://docs.python.org/3/library/venv.html):
    ```bash
    python -m venv venv
@@ -160,12 +150,11 @@ This test will attempt to:
 
 Once this setup is complete you can use the `up_test_r2r.sh` script 
 ```bash
-# run if needed for execution rights
-# chmod +x up_test_r2r.sh
+chmod +x up_test_r2r.sh
 ./up_test_r2r.sh
 ```
 
-### Ingest file(s) and setup prompts
+**Ingest file(s) and setup prompts**
 1. Use the following one liner to ingest files. For example, to ingest a pdf file located here `./test-data/input/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf`
    ```bash
    python -c "from r2r import R2RClient;c = R2RClient();c.set_base_url('http://localhost:7272');c.documents.create(file_path='./test-data/input/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf', ingestion_mode='fast')"
@@ -230,7 +219,7 @@ Once this setup is complete you can use the `up_test_r2r.sh` script
         }'
    ```
 
-### Send query
+**Send query**
 1. Query RAG system with a prompt
    ```bash
    curl -X POST http://localhost:7272/v3/retrieval/rag \
@@ -258,12 +247,12 @@ Once this setup is complete you can use the `up_test_r2r.sh` script
    ```
 
 
-## Results 2.3.2.1
+### Results 2.3.2.1
 Initial results from using the system template: `You are a helpful agent.`:
 - [Raw output](./test-data/r2r-test/23211_results.html)
 - [Chunk search output](./test-data/r2r-test/23211_results_chunk_search.json)
 
-### Chunk search output example
+**Chunk search output example**
 ```json
 [
   {
@@ -284,7 +273,7 @@ Initial results from using the system template: `You are a helpful agent.`:
 ]
 ```
 
-### Completion output
+**Completion output**
 
 > I can help you with that. However, I notice that the text appears to be a research proposal or a document related to urban planning and sustainability. If you'd like, I can provide a general outline of how to structure a response to this type of document.
 > 
@@ -296,7 +285,7 @@ Initial results from using the system template: `You are a helpful agent.`:
 > 
 > If you'd like, I can help you craft a specific response to one of the sections of the proposal. Please let me know which section you're interested in responding to (e.g., "The impact of urbanization on biodiversity", "The role of green spaces in urban planning", etc.).
 
-### Analysis
+**Analysis**
 - System prompt template seems to take **FAR** too much precedence over the rag prompt template in the completion.
   - Initially the system template was `"template": "You are a helpful agent.",`.
   - It should be noted that the initial template may work better with different models, `llama3.2:3b` is relatively small after all 
@@ -334,16 +323,16 @@ Initial results from using the system template: `You are a helpful agent.`:
   - This is the opening lines of the abstract which is generally a good basis for finding information to respond to the given prompt.
 
 
-## Results 2.3.2.2
+### Results 2.3.2.2
 Results from using the empty system template:
 - [Raw output](./test-data/r2r-test/23212_results.html)
 - [Chunk search output](./test-data/r2r-test/23212_results_chunk_search.json)
 
-### Chunk search output example
+**Chunk search output example**
 
 Still chunk 17. See above.
 
-### Completion output
+**Completion output**
 
 > The Villegarden project is a research and development project that aims to improve the management of urban green spaces (GRS) and promote sustainable urban planning. The project focuses on evaluating the performance of different types of GRS systems, such as individual and multifamily homes, and identifying factors that affect their performance.
 > 
@@ -356,7 +345,7 @@ Still chunk 17. See above.
 > In summary, the Villegarden project is a research and development initiative that aims to improve the management of urban green spaces and promote sustainable urban planning. The project focuses on evaluating the performance of different types of GRS systems, identifying factors that affect their performance, and developing tools and models to optimize their use.
 
 
-### Analysis
+**Analysis**
 - The generated response is much better as it actually provides a plausible description of the project 
 - What are the citations pointing to? It seems to be chunk results as
   - chunk 1 is from the abstract
@@ -364,7 +353,7 @@ Still chunk 17. See above.
   - chunk 8 mentions biodiversity
 
 
-## Perspective tests
+### Perspective tests
 1. Test different prompt templates using a workflow
 2. Test different models, especially a larger one
 3. Couldn't get Ollama to work with docker. In theory, these instructions should allow running Ollama from a Docker container:
@@ -384,12 +373,12 @@ Still chunk 17. See above.
    ```
    Perhaps try running with a proper docker compose and a defined network?
 
-# 2.3.3 R2R workflow Tests with response models
+## 2.3.3 R2R workflow Tests with response models
 This test will examine:
 - How R2R manages prompting workflows
 - How R2Rs [response models](https://r2r-docs.sciphi.ai/cookbooks/structured-output) work for generating structured output
 
-## Method
+### Method
 A series of prompts are defined to be queried on the Villegarden PDF.
 These prompts are defined according to the following article:
 ```
@@ -463,24 +452,30 @@ The templates, prompts, and output formats are configured in the file [./test-da
 > 
 > "
 
-**Prompts**
-1. "prompt": "What are the proposed research actions of the NEO project?",
-1. "prompt": "What are the proposed research actions of the NEO project?",
-1. "prompt": "How does the NEO project propose to perform their research actions?",
-1. "prompt": "Why does the NEO project propose their research actions?",
-1. "prompt": "What is the research proposal of the NEO project?",
-1. "prompt": "What research actions are proposed for which solutions by the NEO project?",
-1. "prompt": "What research actions are proposed for which solutions by the NEO project?",
-1. "prompt": "What are the research products or results by the NEO project?",
-1. "prompt": "What are the research products or results by the NEO project?",
-1. "prompt": "What are the research products or results by the NEO project? Order your answers by importance.",
-1. "prompt": "What are the primary and secondary research products or results by the NEO project?",
-1. "prompt": "What are the urban objects and devices involved by the NEO project?",
-1. "prompt": "What are the urban objects and devices involved by the NEO project?",
-1. "prompt": "What are the urban objects and devices involved by the NEO project?",
-1. "prompt": "List several keywords to describe the NEO project.",
-1. "prompt": "What are the challenges the NEO project will respond to?",
+**Example Prompts**
+1. P1: Define research actions as an object
+   - prompt: 
+     > What are the proposed research actions of the NEO project?
+   - response_format:
+     ```json
+     "response_format": {
+       "actions": {
+         "type": "list",
+         "content": ["string"]
+       }
+     }
+     ```
+1. P2: Define research actions as a string 
+   - prompt: 
+     > What are the proposed research actions of the NEO project?
+   - response_format:
+     ```json
+     "response_format": {
+       "actions": "string"
+     }
+     ```
 
+Prompt configurations are stored in [./test-data/configs/workflow_2.3.3_config.json](./test-data/configs/workflow_2.3.3_config.json)
 
 ### Install
 - Follow [the setup instructions of the previous test](#install)
