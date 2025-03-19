@@ -74,7 +74,7 @@ def main():
     logging.basicConfig(
         format="%(asctime)s %(levelname)-8s %(message)s",
         filename=args.log,
-        level=logging.DEBUG if args.debug else logging.INFO,
+        level=(logging.DEBUG if args.debug else logging.INFO),
     )
     print(f"Initialized, see {args.log} for logs...")
     logging.info(
@@ -154,101 +154,106 @@ def runWorkflows(configuration: str, format: str, delimeter=",", mode="ollama") 
             client = R2RClient()
             client.set_base_url(config.get("url"))
 
-            # update templates
-            for template_config in config.get("templates"):
-                logging.info(type(template_config.get("input_types")))
-                # TODO: CHECK IF ADDED FIRST
-                response = client.prompts.update(
-                    template_config.get("name"),
-                    template=template_config.get("template"),
-                    input_types=dict(template_config.get("input_types")),
-                )
-                logging.info(f"template update response: {response}")
-            return
-            # first ingest files if necessary
-            ingested_document_titles = [
-                document.title for document in client.documents.list().results
-            ]
-            logging.debug(f"ingested document titles: {ingested_document_titles}")
-            if len(ingested_document_titles) == 0:
-                # no existing docs so ingest all
-                R2RIngestDocuments(client, config.get("inputs"))
-            else:
-                for document_path in config.get("inputs"):
-                    # if document not already ingested, ingest it
-                    if path.basename(document_path) not in ingested_document_titles:
-                        logging.info(f"ingesting document: {document_path}")
-                        response = client.documents.create(
-                            file_path=document_path, ingestion_mode="fast"
-                        )
-                        logging.info(f"ingestion response: {response}")
+            # create templates
+            R2RCreateTemplates(client, config.get("templates"))
 
-            # then run the workflows
-            # for prompt_config in config.get("prompts"):
-            #     output = (
-            #         prompt_config.get("output")
-            #         if prompt_config.get("output") is not None
-            #         else config.get("output")
-            #     )
-            #     model = (
-            #         prompt_config.get("model")
-            #         if prompt_config.get("model") is not None
-            #         else config.get("model")
-            #     )
-            #     modelfile = (
-            #         prompt_config.get("modelfile")
-            #         if prompt_config.get("modelfile") is not None
-            #         else config.get("modelfile")
-            #     )
-            #     output_format = (
-            #         prompt_config.get("format")
-            #         if prompt_config.get("format") is not None
-            #         else config.get("format")
-            #     )
-            #     runR2RWorkflow(
-            #         output=output,
-            #         prompt=prompt_config.get("prompt"),
-            #         model=model,
-            #         modelfile=modelfile,
-            #         output_format=output_format,
-            #         client=client,
-            #     )
+            # first ingest files if necessary
+            R2RIngestDocuments(client, config.get("inputs"))
+
+            # then run the workflows. Use default values from config if not specified in
+            # prompt_config
+            for prompt_config in [
+                prompt_config
+                for prompt_config in config.get("prompts")
+                if prompt_config.get("run")
+            ]:
+                runR2RWorkflow(
+                    prompt=prompt_config.get("prompt"),
+                    output=(
+                        prompt_config.get("output")
+                        if prompt_config.get("output")
+                        else config.get("output")
+                    ),
+                    rag_generation_config=(
+                        prompt_config.get("rag_generation_config")
+                        if prompt_config.get("rag_generation_config")
+                        else config.get("rag_generation_config")
+                    ),
+                    client=client,
+                )
         else:
             logging.error(f"mode {mode} not recognized")
 
 
-def R2RIngestDocuments(client: R2RClient, documents: list[str]) -> None:
-    """Ingest a list of documents into the R2R system.
+def R2RCreateTemplates(client: R2RClient, template_configs: list[dict]) -> None:
+    """
+    Create new templates in the R2R system. Doesn't overwrite existing templates.
+    Parameters:
+        client: an R2RClient used to manage the RAG system.
+        template_configs: a list of dictionaries containing the template information.
+    """
+    existing_templates = [template.name for template in client.prompts.list().results]
+    logging.debug(f"existing templates: {existing_templates}")
+
+    for template_config in template_configs:
+        # logging.info(type(template_config.get("input_types")))
+        if template_config.get("name") not in existing_templates:
+            logging.info(f"creating template: {template_config.get('name')}")
+            response = client.prompts.create(
+                template_config.get("name"),
+                template=template_config.get("template"),
+                input_types=template_config.get("input_types"),
+            )
+            logging.info(f"template create response: {response}")
+        # else:
+        #     logging.info(f"updating template: {template_config.get('name')}")
+        #     response = client.prompts.update(
+        #         template_config.get("name"),
+        #         template=template_config.get("template"),
+        #         ### This doesn't work for some reason
+        #         input_types=template_config.get("input_types"),
+        #     )
+        #     logging.info(f"template update response: {response}")
+
+
+def R2RIngestDocuments(client: R2RClient, document_paths: list[str]) -> None:
+    """
+    Ingest a list of documents into the R2R system. Checks if the document has already
+    been ingested before ingesting it.
     Parameters:
         client: an R2RClient used to manage the RAG system.
         documents: a list of strings containing the paths to the documents to ingest.
     """
-    for document_path in documents:
-        logging.info(f"ingesting document: {document_path}")
-        client.document_path.create(file_path=document_path)
+    ingested_document_titles = [
+        document.title for document in client.documents.list().results
+    ]
+    logging.debug(f"ingested document titles: {ingested_document_titles}")
+    for document_path in document_paths:
+        # if document not already ingested, ingest it
+        if path.basename(document_path) not in ingested_document_titles:
+            logging.info(f"ingesting document: {document_path}")
+            response = client.documents.create(
+                file_path=document_path, ingestion_mode="fast"
+            )
+            logging.info(f"ingestion response: {response}")
 
 
 def runR2RWorkflow(
     output: str,
     prompt: str,
-    model: str,
-    modelfile: str,
-    format: str,
+    rag_generation_config: dict[str, str],
     client: R2RClient,
-    template="rag",
 ) -> None:
     """Run a workflow on a set of input files using R2R. Each workflow assumes the
-    relevant documents have already been ingested into a vector store. Then a given list
-    of prompts is executed using R2R. The output of all of these
-    steps is written to an output directory.
+    relevant documents and prompts have already been created. Then a given list of
+    prompts is executed using R2R. The output of all of these steps is written to an
+    output directory.
     Parameters:
         output: the output directory path.
         prompt: a string containing the prompt to execute over the text.
-        template: a string containing the template to execute with the prompt.
-        model: a string of the ollama model tag to use for the prompt.
-        modelfile: the path to the modelfile to use for the prompt.
-        format: a string of the ollama response format.
+        rag_generation_config: an object of the R2R response rag_generation_config.
         client: an R2RClient used to manage the RAG system.
+        template: the name of the prompt (template) to use for the prompt.
     """
     # step 0
     output_path = path.normpath(output)
@@ -257,14 +262,15 @@ def runR2RWorkflow(
         makedirs(output_path)
 
     # step 1
-    logging.info(f"\nsending prompt: {prompt}")
-    print(f"sending prompt: {prompt}")
-
-    response = client.prompts.update(
-        name="rag", template=template, input_types={"name": "string"}
+    # TODO: test with GenerationConfig 
+    # https://r2r-docs.sciphi.ai/cookbooks/structured-output
+    response = client.retrieval.rag(
+        prompt, rag_generation_config={
+            "response_format": {
+                "type": "json_object"
+            }
+        }
     )
-
-    response = sendOllamaPrompt(model, prompt, modelfile, format)
     logging.debug(f"response: {response}")
     if not response["done"]:  # type: ignore
         logging.warning('response returned "done"=false')
