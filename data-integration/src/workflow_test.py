@@ -174,7 +174,7 @@ def runWorkflows(configuration: str, format: str, delimeter=",", mode="ollama") 
                         if prompt_config.get("output")
                         else config.get("output")
                     ),
-                    rag_generation_config=(
+                    generation_config=(
                         prompt_config.get("rag_generation_config")
                         if prompt_config.get("rag_generation_config")
                         else config.get("rag_generation_config")
@@ -241,7 +241,7 @@ def R2RIngestDocuments(client: R2RClient, document_paths: list[str]) -> None:
 def runR2RWorkflow(
     output: str,
     prompt: str,
-    rag_generation_config: dict[str, str],
+    generation_config: dict[str, str],
     client: R2RClient,
 ) -> None:
     """Run a workflow on a set of input files using R2R. Each workflow assumes the
@@ -251,7 +251,8 @@ def runR2RWorkflow(
     Parameters:
         output: the output directory path.
         prompt: a string containing the prompt to execute over the text.
-        rag_generation_config: an object of the R2R response rag_generation_config.
+        generation_config: a dictionary used to configure the R2R response
+            rag_generation_config.
         client: an R2RClient used to manage the RAG system.
         template: the name of the prompt (template) to use for the prompt.
     """
@@ -262,18 +263,11 @@ def runR2RWorkflow(
         makedirs(output_path)
 
     # step 1
-    # TODO: test with GenerationConfig 
-    # https://r2r-docs.sciphi.ai/cookbooks/structured-output
     response = client.retrieval.rag(
-        prompt, rag_generation_config={
-            "response_format": {
-                "type": "json_object"
-            }
-        }
-    )
+        prompt, rag_generation_config=generation_config
+    ).results
     logging.debug(f"response: {response}")
-    if not response["done"]:  # type: ignore
-        logging.warning('response returned "done"=false')
+    writeToFile(f"{output_path}/response.json", response.to_json())
 
 
 def runOllamaWorkflow(
