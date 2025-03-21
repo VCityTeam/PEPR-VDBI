@@ -482,6 +482,6 @@ Prompt configurations are stored in [./test-data/configs/workflow_2.3.3_config.j
 
 ### Run
 ```bash
-./up_test_r2r.sh &
+./up_test_r2r.sh
 python src/workflow_test.py -f json -m r2r test-data/configs/workflow_2.3.3_config.json
 ```
