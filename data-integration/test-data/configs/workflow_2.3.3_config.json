@@ -20,8 +20,8 @@
       "prompt": "What are the proposed research actions of the NEO project?",
       "rag_generation_config": {
         "response_format": {
-          "type": "json_object",
-          "actions": "str"
+          "title": "actions",
+          "type":"list"
         }
       },
       "run": true
