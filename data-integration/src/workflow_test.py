@@ -268,6 +268,7 @@ def runR2RWorkflow(
     ).results
     logging.debug(f"response: {response}")
     writeToFile(f"{output_path}/response.json", response.to_json())
+    writeToFile(f"{output_path}/generated_answer.md", response.generated_answer)
 
 
 def runOllamaWorkflow(

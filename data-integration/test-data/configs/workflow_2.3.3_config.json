@@ -17,7 +17,7 @@
   ],
   "prompts": [
     {
-      "prompt": "What are the proposed research actions of the NEO project?",
+      "prompt": "What are the proposed research actions of the NEO project? Structure your response in JSON.",
       "rag_generation_config": {
         "response_format": {
           "title": "actions",
