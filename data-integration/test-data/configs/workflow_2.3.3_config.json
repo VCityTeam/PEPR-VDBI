@@ -94,7 +94,6 @@
       "rag_generation_config": {
         "response_format": {
           "type": "json_object",
-          "type": "list",
           "content": ["string"]
         }
       },
