@@ -1,0 +1,193 @@
+{
+  "output": "test-data/workflow-test/2.2.3-results",
+  "description": "Ground truth R2R test on 1 pdf RAG",
+  "url": "http://localhost:7272",
+  "templates": [
+    {
+      "name": "rag_test_2_3_2",
+      "template": "## Task:\nAnswer the query given immediately below given the context which follows later. Format your responses in JSON.\n\n### Query:\n{query}\n\n### Context:\n{context}\n\n",
+      "input_types": {
+        "query": "string",
+        "context": "string"
+      }
+    }
+  ],
+  "inputs": [
+    "test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressoutien 20P fr.pdf"
+  ],
+  "prompts": [
+    {
+      "prompt": "What are the proposed research actions of the NEO project? Structure your response in JSON.",
+      "rag_generation_config": {
+        "response_format": {
+          "title": "actions",
+          "type":"list"
+        }
+      },
+      "run": true
+    },
+    {
+      "prompt": "How does the NEO project propose to perform their research actions?",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_object",
+          "how": "string"
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "Why does the NEO project propose their research actions?",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_object",
+          "why": "string"
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "What is the research proposal of the NEO project?",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_object",
+          "proposal": "string"
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "What research actions are proposed for which solutions by the NEO project?",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_object",
+          "proposal": "string"
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "What research actions are proposed for which solutions by the NEO project?",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_object",
+          "proposal": {
+            "type": "list",
+            "content": ["string"]
+          }
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "What are the research products or results by the NEO project?",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_object",
+          "solution": "string"
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "What are the research products or results by the NEO project?",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_object",
+          "type": "list",
+          "content": ["string"]
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "What are the research products or results by the NEO project? Order your answers by importance.",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_object",
+          "solutions": {
+            "type": "list",
+            "content": ["string"]
+          }
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "What are the primary and secondary research products or results by the NEO project?",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_object",
+          "primary_solution": "string",
+          "secondary_solution": "string"
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "What are the urban objects and devices involved by the NEO project?",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_object",
+          "objects": {
+            "type": "list",
+            "content": ["string"]
+          }
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "What are the urban objects and devices involved by the NEO project?",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_object",
+          "devices": {
+            "type": "list",
+            "content": ["string"]
+          }
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "What are the urban objects and devices involved by the NEO project?",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_object",
+          "objects_devices": {
+            "type": "list",
+            "content": ["string"]
+          }
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "List several keywords to describe the NEO project.",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_object",
+          "keywords": {
+            "type": "list",
+            "content": ["string"]
+          }
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "What are the challenges the NEO project will respond to?",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_object",
+          "challenges": {
+            "type": "list",
+            "content": ["string"]
+          }
+        }
+      },
+      "run": false
+    }
+  ]
+}
