@@ -373,10 +373,8 @@ Still chunk 17. See above.
    ```
    Perhaps try running with a proper docker compose and a defined network?
 
-## 2.3.3 R2R workflow Tests with response models
-This test will examine:
-- How R2R manages prompting workflows
-- How R2Rs [response models](https://r2r-docs.sciphi.ai/cookbooks/structured-output) work for generating structured output
+## 2.3.3 R2R workflow Tests
+This test will examine how R2R manages prompting workflows
 
 ### Method
 A series of prompts are defined to be queried on the Villegarden PDF.
@@ -432,13 +430,25 @@ Future tests can attempt to refine prompts based on the results of this test.
 
 **Test workflow parameters**
 Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressoutien 20P fr.pdf`
-| Category             | Prompt pattern  | Prompt |
-| -------------------- | --------------- | ------ |
-| Output Customization | Template        | P1     |
-| Output Customization | Persona         | P      |
-| Context Control      | Context Manager | P      |
+
 
 The templates, prompts, and output formats are configured in the file [./test-data/configs/workflow_2.3.3_config.json](test-data/configs/workflow_2.3.3_config.json)
+
+### Install
+- Follow [the setup instructions of the previous test](#install)
+
+### Run
+```bash
+./up_test_r2r.sh
+python src/workflow_test.py -f json -m r2r test-data/configs/workflow_2.3.4_config.json
+```
+
+## 2.3.4 R2R workflow Tests with response models
+This test will examine how R2Rs [response models](https://r2r-docs.sciphi.ai/cookbooks/structured-output) work for generating structured output
+
+### Method
+
+The templates, prompts, and output formats are configured in the file [./test-data/configs/workflow_2.3.4_config.json](test-data/configs/workflow_2.3.4_config.json)
 
 **Template**
 > ## Task:
@@ -475,13 +485,11 @@ The templates, prompts, and output formats are configured in the file [./test-da
      }
      ```
 
-Prompt configurations are stored in [./test-data/configs/workflow_2.3.3_config.json](./test-data/configs/workflow_2.3.3_config.json)
-
 ### Install
 - Follow [the setup instructions of the previous test](#install)
 
 ### Run
 ```bash
 ./up_test_r2r.sh
-python src/workflow_test.py -f json -m r2r test-data/configs/workflow_2.3.3_config.json
+python src/workflow_test.py -f json -m r2r test-data/configs/workflow_2.3.4_config.json
 ```
