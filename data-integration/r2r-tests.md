@@ -1,20 +1,29 @@
 # R2R tests <!-- omit in toc -->
+
 Non R2R specific tests are located [here](./README.md).
 
-**Table of contents**
+## Table of contents
+
+- [Table of contents](#table-of-contents)
 - [2.3.2 Test R2R Light](#232-test-r2r-light)
   - [Preliminaries](#preliminaries)
   - [Install](#install)
   - [Results 2.3.2.1](#results-2321)
   - [Results 2.3.2.2](#results-2322)
   - [Perspective tests](#perspective-tests)
-- [2.3.3 R2R workflow Tests with response models](#233-r2r-workflow-tests-with-response-models)
-  - [Method](#method)
-  - [Install](#install-1)
-  - [Run](#run)
+- [2.3.3 R2R workflow Tests](#233-r2r-workflow-tests)
+  - [2.3.3 Method](#233-method)
+  - [2.3.3 Install](#233-install)
+  - [2.3.3 Run](#233-run)
+- [2.3.4 R2R workflow Tests with response models](#234-r2r-workflow-tests-with-response-models)
+  - [2.3.4 Method](#234-method)
+  - [2.3.4 Install](#234-install)
+  - [2.3.4 Run](#234-run)
 
 ## 2.3.2 Test [R2R Light](https://r2r-docs.sciphi.ai/self-hosting/installation/light)
+
 This test will attempt to:
+
 - Install R2R and minimal dependencies
 - Ingest a document into R2R's RAG system
 - Perform a query on the document
@@ -22,6 +31,7 @@ This test will attempt to:
 - Determine next steps
 
 ### Preliminaries
+
 - R2R has 2 modes: `Light` and `Full`
   - `Light` is recommended for development within smaller teams so that's what we will test here.
   - Installation is based on the [R2R Light installation](https://r2r-docs.sciphi.ai/self-hosting/installation/light) documentation
@@ -29,11 +39,12 @@ This test will attempt to:
 - These tests are initially done with Python but in theory could be done with JavaScript or directly in a bash terminal.
 - The relevant online documentation for each step is presented as needed and is recommended as prerequisite reading.
 - Note that these instructions are run from a **WSL 2 Ubuntu** Bash shell
-- The R2R documentation followed uses the `llama3.1:7b` model for generating query responses, however memory limitations were encountered when using this model (possibly due to WSL?). Instead the `llama3.2:3b` model is proposed for its lightweight size. 
+- The R2R documentation followed uses the `llama3.1:7b` model for generating query responses, however memory limitations were encountered when using this model (possibly due to WSL?). Instead the `llama3.2:3b` model is proposed for its lightweight size.
 
 ### Install
 
-**Install dependencies**
+#### Install dependencies
+
 - install [Docker](https://docs.docker.com/engine/install/)
 - install [R2R lite dependencies](https://r2r-docs.sciphi.ai/self-hosting/installation/light#prerequisites)
   - Python 3.12 or higher
@@ -42,41 +53,54 @@ This test will attempt to:
   - pip (Python package manager)
   - Git?
   - Postgres + pgvector. These tests use docker for running Postgres with the pgvector extension
+
       ```bash
       docker pull pgvector/pgvector:pg17
       ```
 
-**Install and setup R2R**
+#### Install and setup R2R
+
 1. (Optional) start with a clean python environment using [venv](https://docs.python.org/3/library/venv.html):
+
    ```bash
    python -m venv venv
    source ./venv/bin/activate
    ```
+
 2. [Setup ollama](https://r2r-docs.sciphi.ai/self-hosting/local-rag#preparing-local-llms)
 
    Prepare a modelfile with a larger context window than the default and add it to the manifest:
+
    ```bash
    mkdir test-data # only if this folder doesn't already exist
    mkdir test-data/modelfiles # only if this folder doesn't already exist
    echo 'FROM llama3.2:3b
    PARAMETER num_ctx 16000' > ./test-data/modelfiles/r2r_test2321
    ```
+
    Add modelfile and pull models
+
    ```bash
    ollama pull llama3.2:3b
    ollama create llama3.2:3b -f ./test-data/modelfiles/r2r_test2321
    ollama pull mxbai-embed-large
    ```
+
 3. [Install R2R](https://r2r-docs.sciphi.ai/self-hosting/installation/light#install-the-extra-dependencies) (light)
+
    ```bash
    pip install 'r2r[core]'
    ```
+
 4. [Setup Postgres+pgvector](https://r2r-docs.sciphi.ai/self-hosting/configuration/postgres) (our vector store)
    Create a custom r2r configuration file with postgres config.
+
    ```bash
    touch ./test-data/r2r-test/r2r_config.toml
    ```
+
    This example configuration is based on the default [Ollama configuration file](https://r2r-docs.sciphi.ai/self-hosting/local-rag#configuration).
+
     ```toml
     [app]
     # LLM used for internal operations, like deriving conversation names
@@ -127,7 +151,9 @@ This test will attempt to:
     [ingestion]
     excluded_parsers = [ "mp4" ]
     ```
+
    Launch a postgres db with docker:
+
    ```bash
    docker run \
     --name postgres-r2r-test \
@@ -138,32 +164,43 @@ This test will attempt to:
     -e POSTGRES_DB=vector_store \
     pgvector/pgvector:pg17
    ```
+
 5. [Run R2R](https://r2r-docs.sciphi.ai/self-hosting/installation/light#running-r2r) with [our custom config](https://r2r-docs.sciphi.ai/self-hosting/configuration/overview#server-side-configuration)
+
    ```bash
    export R2R_CONFIG_PATH=$PWD/test-data/r2r-test/r2r_config.toml
    python -m r2r.serve
    ```
+
 6. Verify the installation by accessing the R2R API at [http://localhost:7272/v3/health](http://localhost:7272/v3/health) or send a curl:
+
    ```bash
    curl http://localhost:7272/v3/health
    ```
 
-Once this setup is complete you can use the `up_test_r2r.sh` script 
+Once this setup is complete you can use the `up_test_r2r.sh` script
+
 ```bash
 chmod +x up_test_r2r.sh
 ./up_test_r2r.sh
 ```
 
-**Ingest file(s) and setup prompts**
+#### Ingest file(s) and setup prompts
+
 1. Use the following one liner to ingest files. For example, to ingest a pdf file located here `./test-data/input/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf`
+
    ```bash
    python -c "from r2r import R2RClient;c = R2RClient();c.set_base_url('http://localhost:7272');c.documents.create(file_path='./test-data/input/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf', ingestion_mode='fast')"
    ```
+
 2. Check the file was correctly ingested.
+
    ```bash
    curl -X GET http://localhost:7272/v3/documents | less
    ```
+
    You should see something like this (after pretty printing):
+
    ```json
    {
      "results": [
@@ -189,13 +226,17 @@ chmod +x up_test_r2r.sh
      "total_entries": 1
    }
    ```
+
    > [!TIP]
-   > Check out the [API](https://r2r-docs.sciphi.ai/api-and-sdks/introduction) for more commands. Note that when running commands on a local R2R instance, you don't need to include the authorization bearer token in the request header. 
+   > Check out the [API](https://r2r-docs.sciphi.ai/api-and-sdks/introduction) for more commands. Note that when running commands on a local R2R instance, you don't need to include the authorization bearer token in the request header.
    Verify the chunks of your pdf
+
    ```bash
    curl -X GET http://localhost:7272/v3/documents/b6e9bf87-5ce3-555b-b899-7b8b50fe9987/chunks | less
    ```
+
 3. Create a system prompt
+
    ```bash
    curl -X POST http://localhost:7272/v3/prompts \
      -H "Content-Type: application/json" \
@@ -205,7 +246,9 @@ chmod +x up_test_r2r.sh
           "input_types": {}
         }'
    ```
+
 4. [Create a RAG prompt](https://r2r-docs.sciphi.ai/self-hosting/configuration/retrieval/prompts)
+
    ```bash
    curl -X POST http://localhost:7272/v3/prompts \
      -H "Content-Type: application/json" \
@@ -219,16 +262,21 @@ chmod +x up_test_r2r.sh
         }'
    ```
 
-**Send query**
+#### Send query
+
 1. Query RAG system with a prompt
+
    ```bash
+   mkdir ./test-data/r2r-test/2.3.2/
    curl -X POST http://localhost:7272/v3/retrieval/rag \
      -H "Content-Type: application/json" \
      -d '{ "query": "What is the Villegarden project?" }' \
-   > ./test-data/r2r-test/23211_results.html
+   > ./test-data/r2r-test/2.3.2/23211_results.html
    ```
-2. A second test was run with an empty system prompt. See [analysis](#analysis) for why.
+
+2. A second test was run with an empty system prompt. See [analysis](#2321-analysis) for why.
    Update the system prompt
+
    ```bash
    curl -X POST http://localhost:7272/v3/prompts \
      -H "Content-Type: application/json" \
@@ -238,21 +286,25 @@ chmod +x up_test_r2r.sh
           "input_types": {}
         }'
    ```
+
    Resend the query
+
    ```bash
    curl -X POST http://localhost:7272/v3/retrieval/rag \
      -H "Content-Type: application/json" \
      -d '{ "query": "What is the Villegarden project?" }' \
-   > ./test-data/r2r-test/23212_results.html
+   > ./test-data/r2r-test/2.3.2/23212_results.html
    ```
 
-
 ### Results 2.3.2.1
-Initial results from using the system template: `You are a helpful agent.`:
-- [Raw output](./test-data/r2r-test/23211_results.html)
-- [Chunk search output](./test-data/r2r-test/23211_results_chunk_search.json)
 
-**Chunk search output example**
+Initial results from using the system template: `You are a helpful agent.`:
+
+- [Raw output](./test-data/r2r-test/2.3.2/23211_results.html)
+- [Chunk search output](./test-data/r2r-test/2.3.2/23211_results_chunk_search.json)
+
+#### 2.3.2.1 Chunk search output example
+
 ```json
 [
   {
@@ -273,25 +325,27 @@ Initial results from using the system template: `You are a helpful agent.`:
 ]
 ```
 
-**Completion output**
+#### 2.3.2.1 Completion output
 
 > I can help you with that. However, I notice that the text appears to be a research proposal or a document related to urban planning and sustainability. If you'd like, I can provide a general outline of how to structure a response to this type of document.
-> 
+>
 > Here's a possible outline:
-> 
+>
 > 1. **Introduction**: Briefly summarize the main points of the proposal and explain why it's relevant to your interests.
 > 2. **Key findings or arguments**: Identify the most important aspects of the proposal that you'd like to discuss or respond to.
 > 3. **Your perspective or response**: Provide your own thoughts, opinions, or responses to the key findings or arguments presented in the proposal.
-> 
+>
 > If you'd like, I can help you craft a specific response to one of the sections of the proposal. Please let me know which section you're interested in responding to (e.g., "The impact of urbanization on biodiversity", "The role of green spaces in urban planning", etc.).
 
-**Analysis**
+#### 2.3.2.1 Analysis
+
 - System prompt template seems to take **FAR** too much precedence over the rag prompt template in the completion.
   - Initially the system template was `"template": "You are a helpful agent.",`.
-  - It should be noted that the initial template may work better with different models, `llama3.2:3b` is relatively small after all 
+  - It should be noted that the initial template may work better with different models, `llama3.2:3b` is relatively small after all
 - 10 chunks were returned with 21 occurrences of the string `villegarden` (not case sensitive).
   - Seems to avoid the Villegarden occurence in the header of the PDF, which is desired.
 - Chunk scores are as follows:
+
   | chunk_order | score              |
   | ----------- | ------------------ |
   | 17          | 0.7570763358247369 |
@@ -304,82 +358,91 @@ Initial results from using the system template: `You are a helpful agent.`:
   | 164         | 0.7404488525367307 |
   | 49          | 0.7370301578895754 |
   | 51          | 0.7352623851993308 |
+
 - The highest scoring chunk text returned is (after formatting):
   > PEPR  VBDI  
-  > APPEL À PROJETS 
+  > APPEL À PROJETS
   > 2023
-  > DOCUMENT DE PRÉSENTATION 
+  > DOCUMENT DE PRÉSENTATION
   > PROJET
   > VILLEGARDEN7Résumé  du projet  en français  (Non  Confidentiel  - 4000  caractères  maximum),
   > espaces  inclus)
-  > Les villes adoptent des politiques efficaces en matière de biodiversité et de perméabilité 
-  > s'appuyant sur des solutions basées sur la nature pour conserver, restaurer et améliorer les sols 
-  > et la végétation urbains afin de relever les défis comme la surchauffe ou l'atténuation des 
-  > inondations, l'amélioration de la santé physique et mentale des résidents, la réduction de la 
-  > pollution des sols, de l'air et de l'eau, ainsi que la protection et la restauration de la biodiversité et 
-  > des écosystèmes fonctionnels. Ces politiques d'aménagement urbain, résumées en "vertes, 
-  > fraîches et perméables", sont essentielles à la transition écologique vers des villes durables. 
+  > Les villes adoptent des politiques efficaces en matière de biodiversité et de perméabilité
+  > s'appuyant sur des solutions basées sur la nature pour conserver, restaurer et améliorer les sols
+  > et la végétation urbains afin de relever les défis comme la surchauffe ou l'atténuation des
+  > inondations, l'amélioration de la santé physique et mentale des résidents, la réduction de la
+  > pollution des sols, de l'air et de l'eau, ainsi que la protection et la restauration de la biodiversité et
+  > des écosystèmes fonctionnels. Ces politiques d'aménagement urbain, résumées en "vertes,
+  > fraîches et perméables", sont essentielles à la transition écologique vers des villes durables.
   > Cependant, l'étalement urbain, en convertissant des terres agricoles et naturelles, a eu un impact
   - This is the opening lines of the abstract which is generally a good basis for finding information to respond to the given prompt.
 
-
 ### Results 2.3.2.2
-Results from using the empty system template:
-- [Raw output](./test-data/r2r-test/23212_results.html)
-- [Chunk search output](./test-data/r2r-test/23212_results_chunk_search.json)
 
-**Chunk search output example**
+Results from using the empty system template:
+
+- [Raw output](./test-data/r2r-test/2.3.2/23212_results.html)
+- [Chunk search output](./test-data/r2r-test/2.3.2/23212_results_chunk_search.json)
+
+#### 2.3.2.2 Chunk search output example
 
 Still chunk 17. See above.
 
-**Completion output**
+#### 2.3.2.2 Completion output
 
 > The Villegarden project is a research and development project that aims to improve the management of urban green spaces (GRS) and promote sustainable urban planning. The project focuses on evaluating the performance of different types of GRS systems, such as individual and multifamily homes, and identifying factors that affect their performance.
-> 
+>
 > According to [1], the Villegarden project is part of a larger initiative to develop effective policies for biodiversity and permeability in cities. The project's objectives include evaluating the performance of GRS systems, identifying factors that affect their performance, and developing tools and models to optimize their use.
-> 
+>
 > The project also aims to address the issue of artificialization in urban areas, which can lead to a loss of green spaces and ecosystem services. According to [10], artificialization is defined as "the alteration of all or part of a soil's ecological functions, including its biological, hydraulic, climatic, and agronomic potential".
-> 
+>
 > The Villegarden project is expected to provide new references for biodiversity and soil management, which will be essential for the future of French cities. According to [8], the project will co-construct with urban planners, landscape professionals, associations, and citizens to develop solid data and models that can optimize the use of GRS at all scales.
-> 
+>
 > In summary, the Villegarden project is a research and development initiative that aims to improve the management of urban green spaces and promote sustainable urban planning. The project focuses on evaluating the performance of different types of GRS systems, identifying factors that affect their performance, and developing tools and models to optimize their use.
 
+#### 2.3.2.2 Analysis
 
-**Analysis**
-- The generated response is much better as it actually provides a plausible description of the project 
+- The generated response is much better as it actually provides a plausible description of the project
 - What are the citations pointing to? It seems to be chunk results as
   - chunk 1 is from the abstract
   - chunk 10 contains 3 mentions of artificialization
   - chunk 8 mentions biodiversity
 
-
 ### Perspective tests
+
 1. Test different prompt templates using a workflow
 2. Test different models, especially a larger one
 3. Couldn't get Ollama to work with docker. In theory, these instructions should allow running Ollama from a Docker container:
    - Setup [Ollama Docker container](https://ollama.com/blog/ollama-is-now-available-as-an-official-docker-image)
    - If you have an Nvidia GPU, install the [Nvidia container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installation)
-   - Then run the following for setting up ollama 
+   - Then run the following for setting up ollama
+
    ```bash
    docker run -d --gpus=all -v $PWD/test-data/modelfiles:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
    # or run this command if you aren't using the nvidia container toolkit
    # docker run -d -v ./test-data/modelfiles:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
    ```
+
    Add modelfile and pull models
+
    ```bash
    docker exec -it ollama ollama create llama3.1 -f /root/.ollama/r2r_test232
    docker exec -it ollama ollama pull llama3.1
    docker exec -it ollama ollama pull mxbai-embed-large
    ```
+
    Perhaps try running with a proper docker compose and a defined network?
 
 ## 2.3.3 R2R workflow Tests
-This test will examine how R2R manages prompting workflows
 
-### Method
-A series of prompts are defined to be queried on the Villegarden PDF.
+This test will examine how R2R manages prompting workflows on 1 pdf
+
+### 2.3.3 Method
+
+A series of prompts are defined to be queried on the NEO PDF.
 These prompts are defined according to the following article:
-```
+
+```bibtex
 @misc{white2023promptpatterncatalogenhance,
   title={A Prompt Pattern Catalog to Enhance Prompt Engineering with ChatGPT}, 
   author={
@@ -402,20 +465,24 @@ These prompts are defined according to the following article:
 ```
 
 Hypothesis:
+
 - The *Template* pattern will provide better output results as semi-structured data (e.g. JSON).
 <!-- - The *Persona* pattern will provide subjectively better results when compared to ground truth. -->
 <!-- - The *Context Manager* pattern will provide subjectively better results when compared to ground truth. -->
 
 The following invariant parameters are used in this test:
-- Embedding model: `mxbai-embed-large:latest` as this is default recommendation from R2R 
-- Completion model: `mixtral:8x22b` as this is a well known model for quality generation. Also, the mixture of experts model may provide good results when ingesting VDBI project information written by experts.
+
+- Embedding model: `mxbai-embed-large:latest` as this is default recommendation from R2R
+- Completion models:
+  - `llama3.2:3b` a very quick lightweight model.
+  <!-- - `mixtral:8x22b` as this is a well known model for quality generation. Also, the mixture of experts model may provide good results when ingesting VDBI project information written by experts. -->
 - Prompts are written in english
 
 What is considered a good result?
+
 - Limited/no hallucinations
 - Well formatted response
   - Length limits are respected
-  - Format syntax is respected (i.e. in the case of JSON output)
 - Subjective criteria:
   - This will be given a subjective grade between 1-5 by comparing with ground truth
     1. Much worse than ground truth
@@ -429,44 +496,52 @@ This is likely not be a representative number of responses but is more responsib
 Future tests can attempt to refine prompts based on the results of this test.
 
 **Test workflow parameters**
-Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressoutien 20P fr.pdf`
-
+Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressoutien 20P fr_Redacted.pdf`
 
 The templates, prompts, and output formats are configured in the file [./test-data/configs/workflow_2.3.3_config.json](test-data/configs/workflow_2.3.3_config.json)
 
-### Install
+### 2.3.3 Install
+
 - Follow [the setup instructions of the previous test](#install)
 
-### Run
+### 2.3.3 Run
+
 ```bash
 ./up_test_r2r.sh
-python src/workflow_test.py -f json -m r2r test-data/configs/workflow_2.3.4_config.json
+python src/workflow_test.py -f json -m r2r test-data/configs/workflow_2.3.3_config.json
 ```
 
 ## 2.3.4 R2R workflow Tests with response models
+
 This test will examine how R2Rs [response models](https://r2r-docs.sciphi.ai/cookbooks/structured-output) work for generating structured output
 
-### Method
+### 2.3.4 Method
 
 The templates, prompts, and output formats are configured in the file [./test-data/configs/workflow_2.3.4_config.json](test-data/configs/workflow_2.3.4_config.json)
 
-**Template**
-> ## Task:
+#### Template
+
+> ## Task
+>
 > Answer the query given immediately below given the context which follows later. Format your responses in JSON.
-> 
-> ### Query:
+>
+> ### Query
+>
 > {query}
-> 
-> ### Context:
+>
+> ### Context
+>
 > {context}
-> 
+>
 > "
 
-**Example Prompts**
+#### Example Prompts
+
 1. P1: Define research actions as an object
-   - prompt: 
+   - prompt:
      > What are the proposed research actions of the NEO project?
    - response_format:
+
      ```json
      "response_format": {
        "actions": {
@@ -475,20 +550,24 @@ The templates, prompts, and output formats are configured in the file [./test-da
        }
      }
      ```
-1. P2: Define research actions as a string 
-   - prompt: 
+
+1. P2: Define research actions as a string
+   - prompt:
      > What are the proposed research actions of the NEO project?
    - response_format:
+
      ```json
      "response_format": {
        "actions": "string"
      }
      ```
 
-### Install
+### 2.3.4 Install
+
 - Follow [the setup instructions of the previous test](#install)
 
-### Run
+### 2.3.4 Run
+
 ```bash
 ./up_test_r2r.sh
 python src/workflow_test.py -f json -m r2r test-data/configs/workflow_2.3.4_config.json

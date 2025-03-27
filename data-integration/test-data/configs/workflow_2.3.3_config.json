@@ -1,75 +1,55 @@
 {
-  "output": "test-data/workflow-test/2.2.3-results",
+  "output": "test-data/r2r-test/2.2.3",
   "description": "Ground truth R2R test on 1 pdf RAG",
   "url": "http://localhost:7272",
-  "templates": [
-    {
-      "name": "rag_test_2_3_2",
-      "template": "## Task:\nAnswer the query given immediately below given the context which follows later. Format your responses in JSON.\n\n### Query:\n{query}\n\n### Context:\n{context}\n\n",
-      "input_types": {
-        "query": "string",
-        "context": "string"
-      }
-    }
-  ],
+  "rerun": 1,
   "inputs": [
-    "test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressoutien 20P fr.pdf"
+    "test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressoutien 20P fr_Redacted.pdf"
   ],
   "prompts": [
     {
       "prompt": "What are the proposed research actions of the NEO project?",
-      "run": true,
-      "rerun": 3
+      "run": true
     },
     {
       "prompt": "How does the NEO project propose to perform their research actions?",
-      "run": false,
-      "rerun": 3
+      "run": false
     },
     {
       "prompt": "Why does the NEO project propose their research actions?",
-      "run": false,
-      "rerun": 3
+      "run": false
     },
     {
       "prompt": "What is the research proposal of the NEO project?",
-      "run": false,
-      "rerun": 3
+      "run": false
     },
     {
       "prompt": "What research actions are proposed for which solutions by the NEO project?",
-      "run": false,
-      "rerun": 3
+      "run": false
     },
     {
       "prompt": "What are the research products or results by the NEO project?",
-      "run": false,
-      "rerun": 3
+      "run": false
     },
     {
       "prompt": "What are the research products or results by the NEO project? Order your answers by importance.",
-      "run": false,
-      "rerun": 3
+      "run": false
     },
     {
       "prompt": "What are the primary and secondary research products or results by the NEO project?",
-      "run": false,
-      "rerun": 3
+      "run": false
     },
     {
       "prompt": "What are the urban objects and devices involved by the NEO project?",
-      "run": false,
-      "rerun": 3
+      "run": false
     },
     {
       "prompt": "List several keywords to describe the NEO project.",
-      "run": false,
-      "rerun": 3
+      "run": false
     },
     {
       "prompt": "What are the challenges the NEO project will respond to?",
-      "run": false,
-      "rerun": 3
+      "run": false
     }
   ]
 }
