@@ -1,5 +1,5 @@
 {
-  "output": "test-data/workflow-test/2.2.3-results",
+  "output": "test-data/r2r-test/2.2.4",
   "description": "Ground truth R2R test on 1 pdf RAG",
   "url": "http://localhost:7272",
   "templates": [

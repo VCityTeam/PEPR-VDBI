@@ -155,32 +155,46 @@ def runWorkflows(configuration: str, format: str, delimeter=",", mode="ollama") 
             client.set_base_url(config.get("url"))
 
             # create templates
-            R2RCreateTemplates(client, config.get("templates"))
+            if config.get("templates"):
+                R2RCreateTemplates(client, config.get("templates"))
 
             # first ingest files if necessary
             R2RIngestDocuments(client, config.get("inputs"))
 
             # then run the workflows. Use default values from config if not specified in
             # prompt_config
-            for prompt_config in [
+            prompt_config_stack = [
                 prompt_config
                 for prompt_config in config.get("prompts")
                 if prompt_config.get("run")
-            ]:
-                runR2RWorkflow(
-                    prompt=prompt_config.get("prompt"),
-                    output=(
-                        prompt_config.get("output")
-                        if prompt_config.get("output")
-                        else config.get("output")
-                    ),
-                    generation_config=(
-                        prompt_config.get("rag_generation_config")
-                        if prompt_config.get("rag_generation_config")
-                        else config.get("rag_generation_config")
-                    ),
-                    client=client,
-                )
+            ]
+            rerun_number = config.get("rerun") if config.get("rerun") else 1
+            for prompt_config in prompt_config_stack:
+                for run_number in range(rerun_number):
+                    output_suffix = (
+                        f"_{prompt_config_stack.index(prompt_config)}.{run_number}"
+                    )
+                    # format output path
+                    runR2RWorkflow(
+                        prompt=prompt_config.get("prompt"),
+                        output=(
+                            prompt_config.get("output")
+                            if prompt_config.get("output")
+                            else config.get("output")
+                        )
+                        + output_suffix,
+                        search_settings=(
+                            prompt_config.get("search_settings")
+                            if prompt_config.get("search_settings")
+                            else config.get("search_settings")
+                        ),
+                        rag_generation_config=(
+                            prompt_config.get("rag_generation_config")
+                            if prompt_config.get("rag_generation_config")
+                            else config.get("rag_generation_config")
+                        ),
+                        client=client,
+                    )
         else:
             logging.error(f"mode {mode} not recognized")
 
@@ -241,17 +255,21 @@ def R2RIngestDocuments(client: R2RClient, document_paths: list[str]) -> None:
 def runR2RWorkflow(
     output: str,
     prompt: str,
-    generation_config: dict[str, str],
+    search_settings: dict[str, str],
+    rag_generation_config: dict[str, str],
     client: R2RClient,
 ) -> None:
     """Run a workflow on a set of input files using R2R. Each workflow assumes the
     relevant documents and prompts have already been created. Then a given list of
     prompts is executed using R2R. The output of all of these steps is written to an
     output directory.
+    See the API documentation for for more information:
+    https://r2r-docs.sciphi.ai/api-and-sdks/retrieval/rag-app
     Parameters:
         output: the output directory path.
         prompt: a string containing the prompt to execute over the text.
-        generation_config: a dictionary used to configure the R2R response
+        search_settings: a dictionary used to configure the R2R response search_settings
+        rag_generation_config: a dictionary used to configure the R2R response
             rag_generation_config.
         client: an R2RClient used to manage the RAG system.
         template: the name of the prompt (template) to use for the prompt.
@@ -264,7 +282,9 @@ def runR2RWorkflow(
 
     # step 1
     response = client.retrieval.rag(
-        prompt, rag_generation_config=generation_config
+        prompt,
+        search_settings=search_settings,
+        rag_generation_config=rag_generation_config,
     ).results
     logging.debug(f"response: {response}")
     writeToFile(f"{output_path}/response.json", response.to_json())
