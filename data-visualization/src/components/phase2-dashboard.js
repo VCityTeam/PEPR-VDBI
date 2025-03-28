@@ -1,5 +1,5 @@
 import { map, filter, rollup } from 'npm:d3';
-import { anonymizeEntry } from './utilities.js';
+import { anonymizeEntry, pseudoanonymizeEntry } from './utilities.js';
 import * as Plot from 'npm:@observablehq/plot';
 
 /**
@@ -94,7 +94,7 @@ export function resolveGeneralEntities(
   return map(sheet, (d) => {
     const mapped_entities = {
       acronyme: d['ACRONYME Projet'] ? d['ACRONYME Projet'] : null,
-      // present: d['Présent aux journées'] ? [d['Présent aux journées']] : [], // GGE: not needed
+      present: d['Présent aux journées'] ? [d['Présent aux journées']] : [], // GGE: not needed
       auditioned: d['AUDITIONNÉ'] == 'OUI', // not a list, will this cause a problem with generic map reduce functions looking for lists?
       financed: d['Financé'] == 'OUI', // not a list, will this cause a problem with generic map reduce functions looking for lists?
       budget: d['Budget (demandé) en M€'] ? d['Budget (demandé) en M€'] : null,
@@ -174,17 +174,17 @@ export function resolveGeneralEntities(
     mapped_entities.partner_count = mapped_entities.partners.length;
 
     if (anonymize) {
-      mapped_entities.acronyme = anonymizeEntry(
+      mapped_entities.acronyme = pseudoanonymizeEntry(
         mapped_entities.acronyme,
         acronymousDict,
         'dragon'
       );
-      mapped_entities.name_fr = anonymizeEntry(
+      mapped_entities.name_fr = pseudoanonymizeEntry(
         mapped_entities.name_fr,
         acronymousDict,
         'darkelf'
       );
-      mapped_entities.name_en = anonymizeEntry(
+      mapped_entities.name_en = pseudoanonymizeEntry(
         mapped_entities.name_en,
         acronymousDict,
         'drow'
@@ -194,21 +194,21 @@ export function resolveGeneralEntities(
         index < mapped_entities.institutions.length;
         index++
       ) {
-        mapped_entities.institutions[index] = anonymizeEntry(
+        mapped_entities.institutions[index] = pseudoanonymizeEntry(
           mapped_entities.institutions[index],
           acronymousDict,
           'dwarf'
         );
       }
       for (let index = 0; index < mapped_entities.labs.length; index++) {
-        mapped_entities.labs[index] = anonymizeEntry(
+        mapped_entities.labs[index] = pseudoanonymizeEntry(
           mapped_entities.labs[index],
           acronymousDict,
           'highelf'
         );
       }
       for (let index = 0; index < mapped_entities.partners.length; index++) {
-        mapped_entities.partners[index] = anonymizeEntry(
+        mapped_entities.partners[index] = pseudoanonymizeEntry(
           mapped_entities.partners[index],
           acronymousDict,
           'goblin'
@@ -237,10 +237,14 @@ export function resolveResearcherEntities(
       sheet,
       (D) => {
         const researcher = {
-          fullname: D[0]['NOM et Prénom'] ? D[0]['NOM et Prénom'] : null,
-          lastname: D[0]['NOM'] ? D[0]['NOM'] : null,
-          firstname: D[0]['Prénom'] ? D[0]['Prénom'] : null,
-          gender: D[0]['sexe'] ? D[0]['sexe'] : null,
+          // fullname: D[0]['NOM et Prénom'] ? D[0]['NOM et Prénom'] : null,
+          // lastname: D[0]['NOM'] ? D[0]['NOM'] : null,
+          // firstname: D[0]['Prénom'] ? D[0]['Prénom'] : null,
+          // gender: D[0]['sexe'] ? D[0]['sexe'] : null,
+          fullname: anonymizeEntry(),
+          lastname: anonymizeEntry(),
+          firstname: anonymizeEntry(),
+          gender: anonymizeEntry(),
           disciplines: D[0]['discipline chercheur']
             ? D[0]['discipline chercheur'].split(',').map((d) => d.trim())
             : [],
@@ -252,8 +256,10 @@ export function resolveResearcherEntities(
             : null,
           cnu: D[0]['CNU'] ? D[0]['CNU'] : null,
           site: D[0]['Sites'] ? D[0]['Sites'] : null,
-          orcid: D[0]['ORCID'] ? D[0]['ORCID'] : null,
-          idhal: D[0]['IDHAL'] ? D[0]['IDHAL'] : null,
+          // orcid: D[0]['ORCID'] ? D[0]['ORCID'] : null,
+          // idhal: D[0]['IDHAL'] ? D[0]['IDHAL'] : null,
+          orcid: anonymizeEntry(),
+          idhal: anonymizeEntry(),
           lab: D[0]['Identifiant Laboratoire']
             ? D[0]['Identifiant Laboratoire']
             : null,
@@ -289,28 +295,28 @@ export function resolveResearcherEntities(
           researcher.project.push(row['ACRONYME Projet']);
         });
         if (anonymize) {
-          researcher.fullname = anonymizeEntry(
-            researcher.fullname,
-            acronymousDict,
-            'human'
-          );
-          researcher.firstname = anonymizeEntry(
-            researcher.firstname,
-            acronymousDict,
-            'human'
-          );
-          researcher.lastname = anonymizeEntry(
-            researcher.lastname,
-            acronymousDict,
-            'human'
-          );
-          researcher.lab = anonymizeEntry(
+          // researcher.fullname = pseudoanonymizeEntry(
+          //   researcher.fullname,
+          //   acronymousDict,
+          //   'human'
+          // );
+          // researcher.firstname = pseudoanonymizeEntry(
+          //   researcher.firstname,
+          //   acronymousDict,
+          //   'human'
+          // );
+          // researcher.lastname = pseudoanonymizeEntry(
+          //   researcher.lastname,
+          //   acronymousDict,
+          //   'human'
+          // );
+          researcher.lab = pseudoanonymizeEntry(
             researcher.lab,
             acronymousDict,
             'highelf'
           );
           for (let index = 0; index < researcher.project.length; index++) {
-            researcher.project[index] = anonymizeEntry(
+            researcher.project[index] = pseudoanonymizeEntry(
               researcher.project[index],
               acronymousDict,
               'dragon'
@@ -355,10 +361,10 @@ export function resolveLabEntities(
       ]),
     };
     if (anonymize) {
-      lab.lab = anonymizeEntry(lab.lab, acronymousDict, 'highelf');
-      lab.name = anonymizeEntry(lab.name, acronymousDict, 'gnome');
+      lab.lab = pseudoanonymizeEntry(lab.lab, acronymousDict, 'highelf');
+      lab.name = pseudoanonymizeEntry(lab.name, acronymousDict, 'gnome');
       for (let index = 0; index < lab.institution.length; index++) {
-        lab.institution[index] = anonymizeEntry(
+        lab.institution[index] = pseudoanonymizeEntry(
           lab.institution[index],
           acronymousDict,
           'dwarf'
@@ -388,7 +394,7 @@ export function resolveInstitutionEntities(
       name: d['Nom des établissements'] ? d['Nom des établissements'] : null,
     };
     if (anonymize) {
-      institution.name = anonymizeEntry(
+      institution.name = pseudoanonymizeEntry(
         institution.name,
         acronymousDict,
         'gnome'
