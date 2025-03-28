@@ -1,5 +1,5 @@
 import { map, filter, rollup } from 'npm:d3';
-import { anonymizeEntry } from './utilities.js';
+import { pseudoanonymizeEntry } from './utilities.js';
 import * as Plot from 'npm:@observablehq/plot';
 
 /**
@@ -184,17 +184,17 @@ export function resolveGeneraliteEntities(
     mapped_entities.partenaires_count = mapped_entities.partenaires.length;
 
     if (anonymize) {
-      mapped_entities.acronyme = anonymizeEntry(
+      mapped_entities.acronyme = pseudoanonymizeEntry(
         mapped_entities.acronyme,
         acronymousDict,
         'dragon'
       );
-      mapped_entities.nom_fr = anonymizeEntry(
+      mapped_entities.nom_fr = pseudoanonymizeEntry(
         mapped_entities.nom_fr,
         acronymousDict,
         'darkelf'
       );
-      mapped_entities.nom_en = anonymizeEntry(
+      mapped_entities.nom_en = pseudoanonymizeEntry(
         mapped_entities.nom_en,
         acronymousDict,
         'drow'
@@ -204,7 +204,7 @@ export function resolveGeneraliteEntities(
         index < mapped_entities.etablissements.length;
         index++
       ) {
-        mapped_entities.etablissements[index] = anonymizeEntry(
+        mapped_entities.etablissements[index] = pseudoanonymizeEntry(
           mapped_entities.etablissements[index],
           acronymousDict,
           'dwarf'
@@ -215,14 +215,14 @@ export function resolveGeneraliteEntities(
         index < mapped_entities.laboratoires.length;
         index++
       ) {
-        mapped_entities.laboratoires[index] = anonymizeEntry(
+        mapped_entities.laboratoires[index] = pseudoanonymizeEntry(
           mapped_entities.laboratoires[index],
           acronymousDict,
           'highelf'
         );
       }
       for (let index = 0; index < mapped_entities.partenaires.length; index++) {
-        mapped_entities.partenaires[index] = anonymizeEntry(
+        mapped_entities.partenaires[index] = pseudoanonymizeEntry(
           mapped_entities.partenaires[index],
           acronymousDict,
           'goblin'
@@ -291,18 +291,18 @@ export function resolveChercheursEntities(
           chercheur.projet.push(row['Projet 1']); // every row in group should corresopond to a project the researcher is in, so add every project
         });
         if (anonymize) {
-          chercheur.nom = anonymizeEntry(
+          chercheur.nom = pseudoanonymizeEntry(
             chercheur.nom,
             acronymousDict,
             'human'
           );
-          chercheur.laboratoire = anonymizeEntry(
+          chercheur.laboratoire = pseudoanonymizeEntry(
             chercheur.laboratoire,
             acronymousDict,
             'highelf'
           );
           for (let index = 0; index < chercheur.projet.length; index++) {
-            chercheur.projet[index] = anonymizeEntry(
+            chercheur.projet[index] = pseudoanonymizeEntry(
               chercheur.projet[index],
               acronymousDict,
               'dragon'
@@ -351,18 +351,18 @@ export function resolveLaboratoireEntities(
       ),
     };
     if (anonymize) {
-      laboratoire.laboratoire = anonymizeEntry(
+      laboratoire.laboratoire = pseudoanonymizeEntry(
         laboratoire.laboratoire,
         acronymousDict,
         'highelf'
       );
-      laboratoire.nom = anonymizeEntry(
+      laboratoire.nom = pseudoanonymizeEntry(
         laboratoire.nom,
         acronymousDict,
         'gnome'
       );
       for (let index = 0; index < laboratoire.etablissements.length; index++) {
-        laboratoire.etablissements[index] = anonymizeEntry(
+        laboratoire.etablissements[index] = pseudoanonymizeEntry(
           laboratoire.etablissements[index],
           acronymousDict,
           'dwarf'
@@ -391,7 +391,7 @@ export function resolveEtablissementEntities(
       nom: d['Nom des établissements'] ? d['Nom des établissements'] : null, // just 1 column for the moment
     };
     if (anonymize) {
-      etablissement.nom = anonymizeEntry(
+      etablissement.nom = pseudoanonymizeEntry(
         etablissement.nom,
         acronymousDict,
         'gnome'
@@ -597,8 +597,6 @@ export function getSortable2MarkCountPlot(
         sort: { y1: sort_criteria },
         tip: tip,
       }),
-    ],
-    marks: [
       Plot.barX(data, {
         x: x2,
         y: y2,

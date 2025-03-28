@@ -191,20 +191,32 @@ export function joinOnOwnerPartnerKeys(
 }
 
 /**
- * Anonymize a text entry based on existing dictionary values
+ * Anonymize a text entry
+ *
+ * @param {string} entry - a text entry
+ * @returns {string} anonymized entry
+ */
+export function anonymizeEntry() {
+  return Math.random().toString(36).substring(2, 15);
+}
+
+/**
+ * (Pseudo)Anonymize a text entry based on existing dictionary values
  *
  * @param {string} entry - a text entry
  * @param {Map} dictionary - a mapping of entries to anonymized entries
  * @param {string} type - the type of name to generate; based on high fantasy races
  * @returns {string} anonymized entry
  */
-export function anonymizeEntry(entry, dictionary, type = 'human') {
+export function pseudoanonymizeEntry(entry, dictionary, type = 'human') {
   if (!dictionary.has(entry)) {
     dictionary.set(
       entry,
       nameByRace(type, {
         gender: Math.floor(Math.random() * 2) ? 'male' : 'female',
-        allowMultipleNames: Math.floor(Math.random() * 2) ? true : false,
+        allowMultipleNames: Math.floor(Math.random() * 2)
+          ? true
+          : false,
       })
     );
   }
