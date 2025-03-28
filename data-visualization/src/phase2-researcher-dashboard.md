@@ -93,7 +93,7 @@ const global_search = Generators.input(global_search_input);
 ```
 
 ```js
-display(phase_2_data)
+// display(phase_2_data)
 // Researcher table //
 const researcher_search_input = Inputs.search(global_search, {
   placeholder: "Search researchers..."
@@ -488,7 +488,7 @@ const researcher_force_graph = forceGraph(
   {
     id: "researcher_force_graph",
     width: 1300,
-    height: 900,
+    height: 1300,
     color: color,
     nodeLabelOpacity: 0.2,
     linkLabelOpacity: 0,
@@ -498,6 +498,7 @@ const researcher_force_graph = forceGraph(
 
 <div class="warning" label="Data visualization notice">
   <ul>
+    <li>Researchers in multiple projects are counted once per project.</li>
     <li>Researchers with multiple disciplines are counted once per discipline.</li>
     <li>
       Missing researcher data is not visualized by default.
@@ -511,24 +512,24 @@ const researcher_force_graph = forceGraph(
 <div>${global_search_input}</div>
 
 <div class="grid grid-cols-3">
-  <div class="card grid-colspan-2">
+  <!-- <div class="card grid-colspan-2">
     <h2>Researchers</h2>
     <div style="padding-bottom: 5px;">${researcher_search_input}</div>
     <div style="max-height: 350px;">${researcher_table}</div>
-  </div>
+  </div> -->
   <div class="card grid-colspan-1">
     <h2>Position/status</h2>
     <div>${position_pie}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>CNUs</h2>
     <div style="padding-bottom: 5px;">${cnu_search_input}</div>
-    <div style="max-height: 350px; overflow: auto">${cnu_plot}</div>
+    <div style="max-height: 600px; overflow: auto">${cnu_plot}</div>
   </div>
-  <div class="card grid-colspan-1">
+  <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Disciplines</h2>
     <div style="padding-bottom: 5px;">${discipline_search_input}</div>
-    <div style="max-height: 350px; overflow: auto;">${discipline_plot}</div>
+    <div style="max-height: 600px; overflow: auto;">${discipline_plot}</div>
   </div>
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
