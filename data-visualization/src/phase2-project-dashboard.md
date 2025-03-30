@@ -31,6 +31,7 @@ import {
     <li>Researchers with multiple disciplines are counted once per discipline.</li>
     <li>Missing researcher data is not visualized by default.</li>
     <li>Data has not yet been verified. Some visualizations may be incorrect.</li>
+    <li>Bar charts use graded coloring based on a logarithmic scale (see CNU color legend).</li>
   </ul>
 </div>
 
@@ -113,7 +114,7 @@ function generateCnuPlotLegend({
 }
 ```
 
-<h3>Detailed CNU Legend</h3>
+<h3>CNU color legend</h3>
 <div>${generateCnuPlotLegend()[0]}</div>
 <div>${generateCnuPlotLegend()[1]}</div>
 <div>${generateCnuPlotLegend()[2]}</div>
