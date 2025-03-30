@@ -3,7 +3,7 @@ title: Phase 2 Overview Dashboard
 theme: [dashboard, light]
 ---
 
-# Phase 2 Overview
+# Phase 1 Overview
 
 ```js
 import {
@@ -30,7 +30,7 @@ const anonymizeDict = new Map();
 
 const workbook1 = FileAttachment(
   // "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
-  "./data/241021 PEPR_VBDI_analyse modifiée JYT.xlsx"
+  "./data/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
 ).xlsx();
 ```
 
@@ -45,16 +45,19 @@ const researcher_data = resolveResearcherEntities(
   anonymize,
   anonymizeDict
 );
-const laboratory_data = resolveLabEntities(
-  getLabSheet(workbook1),
-  anonymize,
-  anonymizeDict
-);
-const university_data = resolveInstitutionEntities(
-  getInstitutionSheet(workbook1),
-  anonymize,
-  anonymizeDict
-);
+const laboratory_data = new Set(d3.merge(project_data.map((d) => d.labs)));
+// const laboratory_data = resolveLabEntities(
+//   getLabSheet(workbook1),
+//   anonymize,
+//   anonymizeDict
+// );
+const university_data = new Set(d3.merge(project_data.map((d) => d.institutions)));
+// const university_data = resolveInstitutionEntities(
+//   getInstitutionSheet(workbook1),
+//   anonymize,
+//   anonymizeDict
+// );
+const partner_data = new Set(d3.merge(project_data.map((d) => d.partners)));
 if (debug) {
   display("project_data")
   display(project_data);
@@ -68,6 +71,7 @@ if (debug) {
 ```
 
 ```js
+// project counts
 const auditioned_project_count = d3.reduce(
   project_data,
   (p, v) => p + (v.auditioned ? 1 : 0),
@@ -78,10 +82,6 @@ const financed_project_count = d3.reduce(
   (p, v) => p + (v.financed ? 1 : 0),
   0
 );
-
-const partner_count = countEntities(project_data, (d) => d.partners);
-// display(partner_count);
-const total_partner_count = d3.reduce(partner_count, (p, v) => p + v[1], 0);
 ```
 
 <!-- LABORATORY COUNT -->
@@ -143,14 +143,14 @@ if (debug) {
 
 ```js
 const filtered_projects_laboratories_plot = Plot.plot({
-  width,
+  width: 500,
   height: 450,
   marginBottom: 70,
   color: {
     scheme: "Plasma",
   },
   x: {
-    tickRotate: 30,
+    tickRotate: -30,
     label: "Project",
   },
   y: {
@@ -226,19 +226,19 @@ if (debug) {
 
 ```js
 const filtered_projects_universities_plot = Plot.plot({
-  width,
+  width: 500,
   height: 450,
   marginBottom: 70,
   color: {
     scheme: "Plasma",
   },
   x: {
-    tickRotate: 30,
+    tickRotate: -30,
     label: "Project",
   },
   y: {
     grid: true,
-    label: "Laboratory count",
+    label: "University count",
     domain: [0, Math.max(...filtered_projects_universities.map((d) => d.institutions.length)) + 1],
   },
   marks: [
@@ -247,6 +247,56 @@ const filtered_projects_universities_plot = Plot.plot({
       y: d => d.institutions.length,
       fill: d => d.institutions.length,
       sort: {x: project_universities_sort},
+      tip: true,
+    }),
+  ],
+});
+```
+
+<!-- PARTNER COUNT -->
+
+```js
+// project_partners by project sort select inputs
+const project_partners_sort_input = Inputs.select(
+  new Map([
+    ["Project name ⇧", "x"],
+    ["Project name ⇩", "-x"],
+    ["University count ⇧", "y"],
+    ["University count ⇩", "-y"],
+  ]),
+  {
+    value: "x",
+    label: "Sort by",
+  }
+);
+const project_partners_sort = Generators.input(project_partners_sort_input);
+
+const filtered_projects_partners = project_data;
+```
+
+```js
+const filtered_projects_partners_plot = Plot.plot({
+  width: 500,
+  height: 450,
+  marginBottom: 70,
+  color: {
+    scheme: "Plasma",
+  },
+  x: {
+    tickRotate: -30,
+    label: "Project",
+  },
+  y: {
+    grid: true,
+    label: "Partner count",
+    domain: [0, Math.max(...project_data.map((d) => d.partners.length)) + 1],
+  },
+  marks: [
+    Plot.barY(filtered_projects_partners, {
+      x: "acronyme",
+      y: d => d.partners.length,
+      fill: d => d.partners.length,
+      sort: {x: project_partners_sort},
       tip: true,
     }),
   ],
@@ -343,15 +393,17 @@ function sparkbar(max) {
 }
 
 const project_table = Inputs.table(projects_search, {
-  rows: 25,
+  rows: 9,
   columns: [
     "acronyme",
+    "name_fr",
     "grade",
     "challenge",
     "budget",
   ],
   header: {
     acronyme: "Project Acronyme",
+    name_fr: "Project Name",
     budget: "Budget (M)",
     grade: "Jury grade",
     challenge: "Challenge",
@@ -372,48 +424,61 @@ const project_table = Inputs.table(projects_search, {
 });
 ```
 
+<div class="warning" label="Data visualization notice">
+  Data visualizations are unverified and errors may exist. Regard these data visualizations as estimations and not a "ground truth".
+</div>
+
 <div class="grid grid-cols-4">
   <div class="card">
+    <h2>Financed project count</h2>
+    <span class="big">${financed_project_count.toLocaleString("en-US")}</span>
+  </div>
+  <!-- <div class="card">
     <h2>Project count (Total / Auditioned / Financed)</h2>
     <span class="big">${project_data.length.toLocaleString("en-US")} / 
     ${auditioned_project_count.toLocaleString("en-US")} / 
     ${financed_project_count.toLocaleString("en-US")}</span>
-  </div>
+  </div> -->
   <div class="card">
     <h2>University count</h2>
-    <span class="big">${university_data.length.toLocaleString("en-US")}</span>
+    <span class="big">${university_data.size.toLocaleString("en-US")}</span>
   </div>
   <div class="card">
     <h2>Laboratory count</h2>
-    <span class="big">${laboratory_data.length.toLocaleString("en-US")}</span>
+    <span class="big">${laboratory_data.size.toLocaleString("en-US")}</span>
   </div>
   <div class="card">
     <h2>Partner count</h2>
-    <span class="big">${total_partner_count.toLocaleString("en-US")}</span>
+    <span class="big">${partner_data.size.toLocaleString("en-US")}</span>
   </div>
 </div>
-<div class="grid grid-cols-2">
-  <div class="card grid-colspan-2">
-    <h2>Laboratory count by Project</h2>
-    <div>${project_laboratories_auditioned_input}</div>
-    <div>${project_laboratories_financed_input}</div>
-    <div>${project_laboratories_sort_input}</div>
-    <div style="max-height: 450px">${filtered_projects_laboratories_plot}</div>
-  </div>
-  <div class="card grid-colspan-2">
+<div class="grid grid-cols-3">
+  <div class="card">
     <h2>University count by Project</h2>
-    <div>${project_universities_auditioned_input}</div>
-    <div>${project_universities_financed_input}</div>
+    <!-- <div>${project_universities_auditioned_input}</div>
+    <div>${project_universities_financed_input}</div> -->
     <div>${project_universities_sort_input}</div>
-    <div style="max-height: 450px">${filtered_projects_universities_plot}</div>
+    <div>${filtered_projects_universities_plot}</div>
+  </div>
+  <div class="card">
+    <h2>Laboratory count by Project</h2>
+    <!-- <div>${project_laboratories_auditioned_input}</div>
+    <div>${project_laboratories_financed_input}</div> -->
+    <div>${project_laboratories_sort_input}</div>
+    <div>${filtered_projects_laboratories_plot}</div>
+  </div>
+  <div class="card">
+    <h2>Partner count by Project</h2>
+    <div>${project_partners_sort_input}</div>
+    <div>${filtered_projects_partners_plot}</div>
   </div>
 </div>
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-2">
     <h2>Project Financing</h2>
     <div>${project_search_input}</div>
-    <div>${project_auditioned_input}</div>
-    <div>${project_financed_input}</div>
+    <!-- <div>${project_auditioned_input}</div>
+    <div>${project_financed_input}</div> -->
     <div>${project_grade_input}</div>
     <div>${project_challenge_input}</div>
     <div>${project_table}</div>
