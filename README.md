@@ -72,6 +72,8 @@ gantt
 
 ## Project Goals
 
+### EN
+
 | Goal | Title                            | Description                                                                                                                                                                                                                                                          |
 | ---- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | G1   | Project monitoring data viz tool | Proposal and implementation of a dashboard-based project monitoring tool based on the call for projects document corpus and open data sources to monitor the VDBI community and its development over the course of the program.                                      |
@@ -81,6 +83,19 @@ gantt
 | G5   | Tracking tool                    | Proposal and implementation of a tool for identifying existing trends and impact in/of the VDBI (and other) research communities alongside PEPR partners (in connection with the editorial manager).                                                                 |
 | G6   | Forecasting tool                 | Proposal and implementation of a tool for identifying and projecting future trends in the VDBI (and other) research communities.                                                                                                                                     |
 | G7   | Promote achievements             | Promote achievements and results in the form of scientific publications, reports and oral presentations                                                                                                                                                              |
+
+### FR
+
+| Objectif | Titre                                | Description                                                                                                                                                                                                                                                            |
+| -------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| O1       | Outil de visualisation des données de suivi de projet | Proposition et mise en œuvre d'un outil de suivi de projet basé sur un tableau de bord, utilisant le corpus des documents d'appel à projets et des sources de données ouvertes pour surveiller la communauté VDBI et son développement au cours du programme.           |
+| O2       | Outil d'exploration et d'analyse de données | Proposition et mise en œuvre d'un outil automatisé d'exploration et d'analyse de données basé sur l'IA (GPT) pour identifier les caractéristiques de la communauté de recherche VDBI dans un corpus de documents. Vérification de la méthode à l'aide d'un corpus de référence traité manuellement. |
+| O3       | Outil de bibliométrie              | Proposition et mise en œuvre d'outils de suivi des trajectoires bibliométriques sur VDBI.                                                                                                                                                                             |
+| O4       | Outil ASLR                          | Proposition et mise en œuvre d'outils facilitant les revues systématiques automatisées (SLR).                                                                                                                                                                         |
+| O5       | Outil de suivi                      | Proposition et mise en œuvre d'un outil permettant d'identifier les tendances existantes et l'impact dans/de la communauté de recherche VDBI (et autres) en collaboration avec les partenaires PEPR (en lien avec le gestionnaire éditorial).                          |
+| O6       | Outil de prévision                  | Proposition et mise en œuvre d'un outil permettant d'identifier et de projeter les tendances futures dans les communautés de recherche VDBI (et autres).                                                                                                               |
+| O7       | Valorisation des réalisations       | Promotion des réalisations et des résultats sous forme de publications scientifiques, de rapports et de présentations orales.                                                                                                                                         |
+
 
 > [!TIP]
 > [Issues](https://github.com/VCityTeam/PEPR-VDBI/issues) are labeled by goal for simplifying searching.
