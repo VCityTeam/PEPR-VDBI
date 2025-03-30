@@ -26,12 +26,13 @@ def main():
         level=logging.DEBUG,
         # level=logging.INFO
     )
-    logging.info("          __                 __   ")
-    logging.info("  _______/  |______ ________/  |_ ")
-    logging.info(" /  ___/\\   __\\__  \\\\_  __ \\   __\\")
-    logging.info(" \\___ \\  |  |  / __ \\|  | \\/|  |  ")
-    logging.info("/____  > |__| (____  /__|   |__|  ")
-    logging.info("     \\/            \\/             ")
+    logging.info("""
+          __                 __
+  _______/  |______ ________/  |_
+ /  ___/\\   __\\__  \\\\_  __ \\   __\\
+ \\___ \\  |  |  / __ \\|  | \\/|  |
+/____  > |__| (____  /__|   |__|
+     \\/            \\/""")
 
     # Generate or retrieve access token
     token = getAccessToken(CLIENT_ID, CLIENT_SECRET)

@@ -11,7 +11,7 @@ import * as Plot from 'npm:@observablehq/plot';
  */
 export function getGeneralSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[0], {
-    range: 'A1:HV41',
+    range: 'A1:BQ9',
     headers: true,
   });
 }
@@ -25,7 +25,7 @@ export function getGeneralSheet(workbook) {
  */
 export function getResearcherSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[1], {
-    range: 'A1:AE1087',
+    range: 'A1:AA298',
     headers: true,
   });
 }
@@ -38,7 +38,7 @@ export function getResearcherSheet(workbook) {
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
 export function getLabSheet(workbook) {
-  return workbook.sheet(workbook.sheetNames[4], {
+  return workbook.sheet(workbook.sheetNames[3], {
     range: 'A1:K262',
     headers: true,
   });
@@ -52,7 +52,7 @@ export function getLabSheet(workbook) {
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
 export function getInstitutionSheet(workbook) {
-  return workbook.sheet(workbook.sheetNames[5], {
+  return workbook.sheet(workbook.sheetNames[4], {
     range: 'A1:A111',
     headers: true,
   });
@@ -82,14 +82,14 @@ export function getInstitutionSheet(workbook) {
  *  }
  *
  * @param {Array<Object>} sheet - Extracted sheet data
- * @param {boolean} anonymize - Anonymize data or not
- * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
+ * @param {boolean} pseudoanonymize - Pseudoanonymize data or not
+ * @param {Map} pseudoacronymousDict - A preset dictionary of pseudoanomymized entry mappings
  * @returns {Array<Object.<Array<string>>} Formatted sheet data
  */
 export function resolveGeneralEntities(
   sheet,
   anonymize = false,
-  acronymousDict = new Map()
+  pseudoanonymousDict = new Map()
 ) {
   return map(sheet, (d) => {
     const mapped_entities = {
@@ -176,17 +176,17 @@ export function resolveGeneralEntities(
     if (anonymize) {
       mapped_entities.acronyme = pseudoanonymizeEntry(
         mapped_entities.acronyme,
-        acronymousDict,
+        pseudoanonymousDict,
         'dragon'
       );
       mapped_entities.name_fr = pseudoanonymizeEntry(
         mapped_entities.name_fr,
-        acronymousDict,
+        pseudoanonymousDict,
         'darkelf'
       );
       mapped_entities.name_en = pseudoanonymizeEntry(
         mapped_entities.name_en,
-        acronymousDict,
+        pseudoanonymousDict,
         'drow'
       );
       for (
@@ -196,21 +196,21 @@ export function resolveGeneralEntities(
       ) {
         mapped_entities.institutions[index] = pseudoanonymizeEntry(
           mapped_entities.institutions[index],
-          acronymousDict,
+          pseudoanonymousDict,
           'dwarf'
         );
       }
       for (let index = 0; index < mapped_entities.labs.length; index++) {
         mapped_entities.labs[index] = pseudoanonymizeEntry(
           mapped_entities.labs[index],
-          acronymousDict,
+          pseudoanonymousDict,
           'highelf'
         );
       }
       for (let index = 0; index < mapped_entities.partners.length; index++) {
         mapped_entities.partners[index] = pseudoanonymizeEntry(
           mapped_entities.partners[index],
-          acronymousDict,
+          pseudoanonymousDict,
           'goblin'
         );
       }
@@ -223,20 +223,21 @@ export function resolveGeneralEntities(
  * Format known entities from the Liste chercheurs sheet
  *
  * @param {Array<Object>} sheet - Extracted sheet data
- * @param {boolean} anonymize - Anonymize data or not
- * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
+ * @param {boolean} pseudoanonymize - Anonymize data or not
+ * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Array<Object.<Array<string>>} Formatted sheet data
  */
 export function resolveResearcherEntities(
   sheet,
   anonymize = false,
-  acronymousDict = new Map()
+  pseudoanonymousDict = new Map()
 ) {
   return map(
     rollup(
       sheet,
       (D) => {
         const researcher = {
+          id: typeof(D[0]['id']) == 'number' ? D[0]['id'] : null,
           // fullname: D[0]['NOM et Prénom'] ? D[0]['NOM et Prénom'] : null,
           // lastname: D[0]['NOM'] ? D[0]['NOM'] : null,
           // firstname: D[0]['Prénom'] ? D[0]['Prénom'] : null,
@@ -297,35 +298,35 @@ export function resolveResearcherEntities(
         if (anonymize) {
           // researcher.fullname = pseudoanonymizeEntry(
           //   researcher.fullname,
-          //   acronymousDict,
+          //   pseudoanonymousDict,
           //   'human'
           // );
           // researcher.firstname = pseudoanonymizeEntry(
           //   researcher.firstname,
-          //   acronymousDict,
+          //   pseudoanonymousDict,
           //   'human'
           // );
           // researcher.lastname = pseudoanonymizeEntry(
           //   researcher.lastname,
-          //   acronymousDict,
+          //   pseudoanonymousDict,
           //   'human'
           // );
           researcher.lab = pseudoanonymizeEntry(
             researcher.lab,
-            acronymousDict,
+            pseudoanonymousDict,
             'highelf'
           );
           for (let index = 0; index < researcher.project.length; index++) {
             researcher.project[index] = pseudoanonymizeEntry(
               researcher.project[index],
-              acronymousDict,
+              pseudoanonymousDict,
               'dragon'
             );
           }
         }
         return researcher;
       },
-      (d) => d['NOM et Prénom'] // group researcher by name
+      (d) => d['id'] // group researcher by id
     ),
     (d) => d[1]
   );
@@ -335,14 +336,14 @@ export function resolveResearcherEntities(
  * Format known entities from the Liste des labo sheet
  *
  * @param {Array<Object>} sheet - Extracted sheet data
- * @param {boolean} anonymize - Anonymize data or not
- * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
+ * @param {boolean} pseudoanonymize - Anonymize data or not
+ * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Array<Object.<Array<string>>} Formatted sheet data
  */
 export function resolveLabEntities(
   sheet,
   anonymize = false,
-  acronymousDict = new Map()
+  pseudoanonymousDict = new Map()
 ) {
   return map(sheet, (d) => {
     const lab = {
@@ -361,12 +362,12 @@ export function resolveLabEntities(
       ]),
     };
     if (anonymize) {
-      lab.lab = pseudoanonymizeEntry(lab.lab, acronymousDict, 'highelf');
-      lab.name = pseudoanonymizeEntry(lab.name, acronymousDict, 'gnome');
+      lab.lab = pseudoanonymizeEntry(lab.lab, pseudoanonymousDict, 'highelf');
+      lab.name = pseudoanonymizeEntry(lab.name, pseudoanonymousDict, 'gnome');
       for (let index = 0; index < lab.institution.length; index++) {
         lab.institution[index] = pseudoanonymizeEntry(
           lab.institution[index],
-          acronymousDict,
+          pseudoanonymousDict,
           'dwarf'
         );
       }
@@ -379,14 +380,14 @@ export function resolveLabEntities(
  * Format known entities from the Liste des établissements sheet
  *
  * @param {Array<Object>} sheet - Extracted sheet data
- * @param {boolean} anonymize - Anonymize data or not
- * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
+ * @param {boolean} pseudoanonymize - Anonymize data or not
+ * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Array<Object.<Array<string>>} Formatted sheet data
  */
 export function resolveInstitutionEntities(
   sheet,
   anonymize = false,
-  acronymousDict = new Map()
+  pseudoanonymousDict = new Map()
 ) {
   return map(sheet, (d) => {
     const institution = {
@@ -396,7 +397,7 @@ export function resolveInstitutionEntities(
     if (anonymize) {
       institution.name = pseudoanonymizeEntry(
         institution.name,
-        acronymousDict,
+        pseudoanonymousDict,
         'gnome'
       );
     }
@@ -408,34 +409,34 @@ export function resolveInstitutionEntities(
  * Extract and format data from the phase 2 excel.
  *
  * @param {Workbook} workbook - The workbook to extract
- * @param {boolean} anonymize - Anonymize data or not
- * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
+ * @param {boolean} pseudoanonymize - pseudoanonymize data or not
+ * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Object<Array<Object>>} An object containing 3 Plot formatted tables
  */
 export function extractPhase2Workbook(
   workbook,
-  anonymize = false,
-  acronymousDict = new Map()
+  pseudoanonymize = false,
+  pseudoanonymousDict = new Map()
 ) {
   const project_data = resolveGeneralEntities(
     getGeneralSheet(workbook),
-    anonymize,
-    acronymousDict
+    pseudoanonymize,
+    pseudoanonymousDict
   );
   const researcher_data = resolveResearcherEntities(
     getResearcherSheet(workbook),
-    anonymize,
-    acronymousDict
+    pseudoanonymize,
+    pseudoanonymousDict
   );
   const laboratory_data = resolveLabEntities(
     getLabSheet(workbook),
-    anonymize,
-    acronymousDict
+    pseudoanonymize,
+    pseudoanonymousDict
   );
   const university_data = resolveInstitutionEntities(
     getInstitutionSheet(workbook),
-    anonymize,
-    acronymousDict
+    pseudoanonymize,
+    pseudoanonymousDict
   );
 
   // Move laboratory information from researcher_data to laboratory_data
