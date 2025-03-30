@@ -193,7 +193,6 @@ export function joinOnOwnerPartnerKeys(
 /**
  * Anonymize a text entry
  *
- * @param {string} entry - a text entry
  * @returns {string} anonymized entry
  */
 export function anonymizeEntry() {

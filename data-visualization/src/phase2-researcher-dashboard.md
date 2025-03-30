@@ -42,8 +42,9 @@ const exclude = (d) => ![
 
 const workbook1 = FileAttachment(
   // "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
-  // "./data/241021 PEPR_VBDI_analyse modifiée JYT.xlsx" //outdated
-  "./data/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
+  // "./data/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx" //outdated
+  // "./data/250120 PEPR_VBDI_analyse modifiée JYT.xlsx" // outdated
+  "./data/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
 ).xlsx();
 
 const geocoded_researcher_sites = FileAttachment(
@@ -56,7 +57,9 @@ const world = FileAttachment("./data/world.json").json();
 ```js
 // format data
 const phase_2_data = extractPhase2Workbook(workbook1, false);
+```
 
+```js
 // join researchers and site tables
 phase_2_data.researchers.forEach((researcher) => {
   // join on Sites
@@ -83,6 +86,7 @@ const financed_input = Inputs.toggle(phase_2_data.researchers, {
 
 const financed = Generators.input(financed_input);
 ```
+
 ```js
 // global search //
 const global_search_input = Inputs.search(phase_2_data.researchers, {
@@ -116,14 +120,14 @@ const researcher_table = Inputs.table(researcher_search, {
     "discipline_erc",
     "cnu",
     "site",
-    "orcid",
-    "idhal",
+    // "orcid",
+    // "idhal",
     "lab",
     "notes",
   ],
   header: {
-    "fullname": "Name",
-    "lastname": "Lastname",
+    // "fullname": "Name",
+    // "lastname": "Lastname",
     "firstname": "Firstname",
     "position": "Position",
     "project": "Project(s)",
@@ -132,8 +136,8 @@ const researcher_table = Inputs.table(researcher_search, {
     "discipline_erc": "ERC discipline",
     "cnu": "CNU",
     "site": "Site",
-    "orcid": "ORCiD",
-    "idhal": "idHAL",
+    // "orcid": "ORCiD",
+    // "idhal": "idHAL",
     "lab": "Laboratory",
     "notes": "Notes",
   },
@@ -337,7 +341,7 @@ const graph_columns = new Map([
   ["Site", "site"],
 ]);
 const arc_value_maps = new Map([
-  ["fullname", (d) => d.fullname],
+  ["id", (d) => d.id],
   ["project", (d) => d.project],
   ["disciplines", (d) => d.disciplines[0]], // for property values of Array, just use the first item. This will determine node/arc color
   ["discipline_erc", (d) => d.discipline_erc[0]],
@@ -380,7 +384,7 @@ const researcher_arcs_by_project = global_search.filter(
 const researcher_property_links = mapTableToPropertyGraphLinks(
   researcher_arcs_by_project,
   {
-    id_key: "fullname",
+    id_key: "id",
     column: [...graph_columns.values()],
   }
 ).filter((d) => d.label == researcher_arcs_by_property_select && d.value != null);
@@ -396,7 +400,7 @@ const arc_sort_map = sortNodes(
     links: researcher_property_links
   },
   {
-    keyMap: (d) => d.fullname,
+    keyMap: (d) => d.id,
     valueMap: arc_value_maps.get(researcher_arcs_by_property_select)
   }
 );
@@ -426,7 +430,7 @@ const arc_diagram = arcDiagramVertical(
     marginBottom: 50,
     labelRotate: -15,
     sortInitKey: arc_sort_input.value,
-    keyMap: (d) => d.fullname,
+    keyMap: (d) => d.id,
     valueMap: arc_value_maps.get(researcher_arcs_by_property_select),
   }
 );
@@ -455,7 +459,7 @@ const researcher_triples_predicate_select = Generators.input(
 ```js
 const researcher_triples = mapTableToTriples(
   global_search, {
-    id_key: "fullname",
+    id_key: "id",
     column: [...graph_columns.values()],
   }
 );
@@ -463,7 +467,7 @@ const researcher_triples = mapTableToTriples(
 
 const filtered_researcher_triples = {
   nodes: researcher_triples.nodes.filter(
-    ({ type }) => type == researcher_triples_predicate_select || type == "fullname"
+    ({ type }) => type == researcher_triples_predicate_select || type == "id"
   ),
   links: researcher_triples.links.filter(
     ({ label }) => label == researcher_triples_predicate_select
@@ -472,7 +476,7 @@ const filtered_researcher_triples = {
 
 const color = d3
   .scaleOrdinal()
-  .domain(["fullname", researcher_triples_predicate_select])
+  .domain(["id", researcher_triples_predicate_select])
   .range(
     d3
       .quantize(d3.interpolatePlasma, 2)
@@ -510,7 +514,6 @@ const researcher_force_graph = forceGraph(
 
 ### Dashboard Search
 <div>${global_search_input}</div>
-
 <div class="grid grid-cols-3">
   <!-- <div class="card grid-colspan-2">
     <h2>Researchers</h2>
@@ -524,12 +527,12 @@ const researcher_force_graph = forceGraph(
   <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>CNUs</h2>
     <div style="padding-bottom: 5px;">${cnu_search_input}</div>
-    <div style="max-height: 600px; overflow: auto">${cnu_plot}</div>
+    <div style="max-height: 800px; overflow: auto">${cnu_plot}</div>
   </div>
   <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Disciplines</h2>
     <div style="padding-bottom: 5px;">${discipline_search_input}</div>
-    <div style="max-height: 600px; overflow: auto;">${discipline_plot}</div>
+    <div style="max-height: 800px; overflow: auto;">${discipline_plot}</div>
   </div>
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>

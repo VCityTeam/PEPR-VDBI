@@ -1,7 +1,6 @@
 import * as d3 from 'npm:d3';
 import { circleLegend } from './legend.js';
 import { cropText } from './utilities.js';
-import { sum } from 'd3';
 
 /**
  * Map the elements of an array of objects (a table) to a graph with the following rules:

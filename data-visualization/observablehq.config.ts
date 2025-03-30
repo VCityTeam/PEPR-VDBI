@@ -6,16 +6,16 @@ export default {
   root: 'src', // path to the source root for preview
   pages: [
     {
-      name: 'Phase 2 Overview',
+      name: 'Phase 1 Overview',
       path: 'phase2-overview-dashboard',
     },
     {
-      name: 'Phase 2 Researchers',
-      path: 'phase2-researcher-dashboard',
+      name: 'Phase 1 Projects by discipline',
+      path: 'phase2-project-dashboard',
     },
     {
-      name: 'Phase 2 Projects',
-      path: 'phase2-project-dashboard', //deprecated
+      name: 'Phase 1 Researchers',
+      path: 'phase2-researcher-dashboard',
     },
     // {
     //   name: 'Phase 2 Laboratories',
@@ -33,7 +33,7 @@ export default {
       name: 'Tests',
       pages: [
         {
-          name: 'Phase 2 Raw Data Test',
+          name: 'Raw Data Test',
           path: 'phase2-data-dashboard',
         },
         {

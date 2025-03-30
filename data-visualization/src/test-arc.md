@@ -47,7 +47,7 @@ import {
 } from "./components/graph.js";
 
 const workbook = FileAttachment(
-  "./data/241021 PEPR_VBDI_analyse modifiée JYT.xlsx"
+  "./data/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
 ).xlsx();
 ```
 
