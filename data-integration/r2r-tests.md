@@ -505,11 +505,36 @@ The templates, prompts, and output formats are configured in the file [./test-da
 - Follow [the setup instructions of the previous test](#install)
 
 ### 2.3.3 Run
-
+Start local services
 ```bash
 ./up_test_r2r.sh
-python src/workflow_test.py -f json -m r2r test-data/configs/workflow_2.3.3_config.json
 ```
+
+Run the workflow with the LIRIS Ollama service. Replace `[BEARER TOKEN]` with a valid bearer token
+```bash
+python src/workflow_test.py -f json -m r2r -t [BEARER TOKEN] test-data/configs/workflow_2.3.3_config.json
+```
+
+> [!WARNING]
+> When running the workflow from the UCBL campus, you may need to deactivate the Lyon 1 proxy.
+> 
+> To view if you have a proxy set:
+> ```bash
+> env | grep proxy
+> ```
+>
+> To remove the proxy:
+> ```bash
+> unset HTTP_PROXY
+> unset http_proxy
+> ```
+>
+> To readd the proxy:
+> ```bash
+> export HTTP_PROXY=http://proxy.univ-lyon1.fr:3128
+> export http_proxy=http://proxy.univ-lyon1.fr:3128
+> ```
+
 
 ## 2.3.4 R2R workflow Tests with response models
 
@@ -567,8 +592,14 @@ The templates, prompts, and output formats are configured in the file [./test-da
 - Follow [the setup instructions of the previous test](#install)
 
 ### 2.3.4 Run
-
+Start local services
 ```bash
 ./up_test_r2r.sh
-python src/workflow_test.py -f json -m r2r test-data/configs/workflow_2.3.4_config.json
 ```
+
+Run the workflow with the LIRIS Ollama service. Replace `[BEARER TOKEN]` with a valid bearer token
+```bash
+python src/workflow_test.py -f json -m r2r -t [BEARER TOKEN] test-data/configs/workflow_2.3.4_config.json
+```
+
+Note the warning about proxies in [section 2.3.3 - Run](#233-run) 

@@ -68,6 +68,12 @@ def main():
         default="ollama",
         help="Specify the workflow mode",
     )
+    parser.add_argument(
+        "-t",
+        "--token",
+        default=None,
+        help="""Specify a client authorization (bearer) token.""",
+    )
 
     args = parser.parse_args()
 
@@ -86,10 +92,16 @@ def main():
   \/_____/     \/_/    \/_/\/_/   \/_/ /_/     \/_/"""
     )
 
-    runWorkflows(args.configuration, args.format, args.delimeter, args.mode)
+    runWorkflows(args.configuration, args.format, args.delimeter, args.mode, args.token)
 
 
-def runWorkflows(configuration: str, format: str, delimeter=",", mode="ollama") -> None:
+def runWorkflows(
+    configuration: str,
+    format: str,
+    delimeter=",",
+    mode="ollama",
+    token: str | None = None,
+) -> None:
     """Run a series of workflows based on a configuration file in JSON.
     A configuration file must contain an object with the following keys:
     - "output": a string containing the path to output workflow results.
@@ -98,6 +110,7 @@ def runWorkflows(configuration: str, format: str, delimeter=",", mode="ollama") 
         pdf.
     - "prompts": an array containing the information required to run each workflow.
         See runOllamaWorkflow() for more information.
+    - "token": a string containing a client authorization (bearer) token.
     """
     if format == "csv":
         config = []
@@ -153,6 +166,10 @@ def runWorkflows(configuration: str, format: str, delimeter=",", mode="ollama") 
             logging.info(f"creating client connection {config.get("url")}")
             client = R2RClient()
             client.set_base_url(config.get("url"))
+            if token is not None:
+                logging.info("setting token")
+                client.access_token = token
+                logging.debug(f"client.access_token: {client.access_token}")
 
             # create templates
             if config.get("templates"):
