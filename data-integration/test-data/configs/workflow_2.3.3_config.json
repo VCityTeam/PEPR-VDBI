@@ -1,7 +1,7 @@
 {
   "output": "test-data/r2r-test/2.2.3",
   "description": "Ground truth R2R test on 1 pdf RAG",
-  "url": "http://localhost:7272",
+  "url": "https://ollama-ui.pagoda.liris.cnrs.fr/",
   "rerun": 1,
   "inputs": [
     "test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressoutien 20P fr_Redacted.pdf"
