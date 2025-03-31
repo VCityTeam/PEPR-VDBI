@@ -3,7 +3,7 @@ title: Phase 2 Project Dashboard
 theme: [dashboard, light]
 ---
 
-# Phase 2 Researcher Disciplines
+# Project Disciplines
 
 ```js
 import {

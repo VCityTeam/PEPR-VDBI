@@ -67,21 +67,23 @@ flowchart LR
   A(Call for projects) --> B(Projects Submitted)
   B --> C(Projects Auditionned)
   C --> D("Projects Financed (accepted)")
+  D --> E((( )))
   D --> ZZZ(Start Phase ...n)
   ZZZ --> A
 ```
 
 **Information collected:**
 - Project name
+  - Budget
   - Jury grade
-- Researchers per project
-  - Name
-  - Status
 - Universities per project (owner/partner)
   - Location
 - Laboratories per project (owner/partner)
   - Domaines (ERC/HCERES)
 - etc...
+<!-- - Researchers per project
+  - Name
+  - Status -->
 
 ## Data integration
 

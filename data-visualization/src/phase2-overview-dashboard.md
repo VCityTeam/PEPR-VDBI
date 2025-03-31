@@ -21,6 +21,12 @@ import {
   getColumnOptions,
   filterOnInput,
 } from "./components/phase2-dashboard.js";
+import {
+  forceGraph,
+  mapTableToPropertyGraphLinks,
+  sortNodes,
+  mapTableToTriples,
+} from "./components/graph.js";
 ```
 
 ```js
@@ -424,6 +430,76 @@ const project_table = Inputs.table(projects_search, {
 });
 ```
 
+<!-- PROJECT KNOWLEDGE GRAPH -->
+
+```js
+const project_predicates = new Map([
+  ["All", ""],
+  ["Laboratories", "labs"],
+  ["Partners", "partners"],
+  ["Universities", "institutions"],
+]);
+
+// project triples //
+const project_triples_predicate_select_input = Inputs.select(
+  // we don't use global search here in case 0 results are returned by the search 
+  // Object.keys(project_data[0]),
+  project_predicates,
+  {
+    label: "Select property",
+    sort: true,
+    unique: true,
+  }
+);
+
+const project_triples_predicate_select = Generators.input(
+  project_triples_predicate_select_input
+);
+```
+
+```js
+const project_triples = mapTableToTriples(
+  project_data, {
+    id_key: "acronyme",
+    column: [...project_predicates.values()],
+  }
+);
+
+const filtered_project_triples = {
+  nodes: project_triples.nodes.filter(
+    ({ type }) => project_triples_predicate_select == "" || type == project_triples_predicate_select || type == "acronyme"
+  ),
+  links: project_triples.links.filter(
+    ({ label }) => project_triples_predicate_select == "" ? true : label == project_triples_predicate_select
+  )
+}
+
+const color = d3
+  .scaleOrdinal()
+  .domain(["acronyme", "institutions", "labs", "partners"])
+  .range(
+    d3
+      .quantize(d3.interpolatePlasma, 4)
+      // .reverse()
+  )
+  .unknown("#aaa");
+
+console.debug("project_triples", project_triples);
+console.debug("color", color);
+
+const project_force_graph = forceGraph(
+  filtered_project_triples,
+  {
+    id: "project_force_graph",
+    width: 800,
+    height: 800,
+    color: color,
+    nodeLabelOpacity: 0.2,
+    linkLabelOpacity: 0,
+  }
+);
+```
+
 <div class="warning" label="Data visualization notice">
   Data visualizations are unverified and errors may exist. Regard these data visualizations as estimations and not a "ground truth".
 </div>
@@ -473,8 +549,8 @@ const project_table = Inputs.table(projects_search, {
     <div>${filtered_projects_partners_plot}</div>
   </div>
 </div>
-<div class="grid grid-cols-2">
-  <div class="card grid-colspan-2">
+<div class="grid">
+  <div class="card">
     <h2>Project Financing</h2>
     <div>${project_search_input}</div>
     <!-- <div>${project_auditioned_input}</div>
@@ -482,5 +558,10 @@ const project_table = Inputs.table(projects_search, {
     <div>${project_grade_input}</div>
     <div>${project_challenge_input}</div>
     <div>${project_table}</div>
+  </div>
+  <div class="card grid-rowspan-3">
+    <h2>Project Knowledge Graph</h2>
+    <div style="padding-bottom: 5px;">${project_triples_predicate_select_input}</div>
+    <div style="overflow: auto;">${project_force_graph}</div>
   </div>
 </div>
