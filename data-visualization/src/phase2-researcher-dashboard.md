@@ -1,9 +1,9 @@
 ---
-title: Phase 2 Researcher Dashboard
+title: Researcher Dashboard
 theme: [dashboard, light]
 ---
 
-# Phase 2 Researchers
+# Researcher Dashboard
 
 ```js
 import {

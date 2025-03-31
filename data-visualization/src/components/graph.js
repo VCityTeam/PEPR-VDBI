@@ -246,7 +246,7 @@ export function forceGraph(
     keyMap = (d) => d.id, // the function for identifying a node
     valueMap = (d) => d.type, // the function for categorizing a node
     color = d3.scaleOrdinal(d3.schemeCategory10), // color scheme
-    simulationStopThreshold = 0.45, // alpha threshold for stopping simulation
+    simulationStopThreshold = 0.2, // alpha threshold for stopping simulation
     fontSize = 10, // label font size
     r = 3, // node radius
     textLength = 15, // label cutoff length
