@@ -14,7 +14,7 @@ Also test the Observable Frameworks data loader library.
 ---
 title: Data integration process
 config:
-  theme: forest
+  theme: default
 ---
 sequenceDiagram
   Application->>+ESR Database: Query lab locations (REST API)
