@@ -22,7 +22,7 @@ To do this, we need to set up a component to transform the data.
 ---
 title: Data integration process
 config:
-  theme: forest
+  theme: default
 ---
 flowchart TD
     subgraph "Workbook 1"
@@ -123,7 +123,7 @@ A different mapping showing the relationships between the identified products an
 ---
 title: Example hierarchical data structure
 config:
-  theme: forest
+  theme: default
 ---
 flowchart LR
     A[Primary products/results] --> B

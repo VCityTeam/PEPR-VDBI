@@ -54,23 +54,41 @@ toc: false
 
 Here is an overview of what data is visualized and the mechanisms for used for data visualization. 
 
-## Data collection
 ```mermaid
 ---
-title: Data collection process
+title: Data workflow
 config:
-  theme: forest
+  theme: default
 ---
 flowchart LR
-  Z(( )) --> ZZ(Start Phase 1)
-  ZZ --> A
-  A(Call for projects) --> B(Projects Submitted)
-  B --> C(Projects Auditionned)
-  C --> D("Projects Financed (accepted)")
-  D --> E((( )))
-  D --> ZZZ(Start Phase ...n)
-  ZZZ --> A
+  Start(( )) -.-> ZZ(Start Phase 1)
+  ZZ -.-> Call(Call for projects)
+  F[(Open data sources)] -->|Data fusion| DB
+  Call -.-> DA(Data analysis)
+  DA -->|Anonymization and editorialization| AC(Analysis Communication)
+  DA -.-> AC
+  AC -.-> End((( )))
+  AC -.-> P(Start Phase ...n)
+  P -.-> Call
+  Call -->|Store responses| DC
+  DC -->|Data extraction| DB
+  DB -->|Data cleaning| DB
+  DB --> DA
+  DA --> DB
+  DC --> DA
+
+  subgraph Veille data storage
+    DC@{ shape: docs, label: "Document Corpus"}
+    DB[(Database)]
+  end
+
+  subgraph Legend
+    a(( )) -.->|activity flow| b(( ))
+    a(( )) -->|data flow| b(( ))
+  end
 ```
+
+## Data collection
 
 **Information collected:**
 - Project name
@@ -95,7 +113,7 @@ Information collected in workbooks is loaded into JS object arrays.
 ---
 title: Data integration process
 config:
-  theme: forest
+  theme: default
 ---
 flowchart TD
     subgraph "Workbook 1"
