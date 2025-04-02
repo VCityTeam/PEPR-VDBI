@@ -12,7 +12,7 @@ Import and visualize ORCIDs using their [API](https://info.orcid.org/documentati
 ```mermaid
 ---
 config:
-  theme: forest
+  theme: default
 ---
 flowchart TD
   A(( )) --> B("Extract Researcher name (first, last) from excel")

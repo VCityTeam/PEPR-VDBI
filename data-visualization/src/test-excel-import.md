@@ -20,7 +20,7 @@ E.g. `Etablissement`, `Etablissement 2`, ... `Etablissement n` are merged into t
 ---
 title: Data integration process
 config:
-  theme: forest
+  theme: default
 ---
 flowchart TD
     subgraph "Workbook 1"
