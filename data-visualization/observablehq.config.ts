@@ -7,34 +7,34 @@ export default {
   pages: [
     {
       name: 'Phase 1 Overview',
-      path: 'phase2-overview-dashboard',
+      path: 'phase1-overview-dashboard',
     },
     {
       name: 'Phase 1 Projects by discipline',
-      path: 'phase2-project-dashboard',
+      path: 'phase1-project-dashboard',
     },
     {
       name: 'Phase 1 Researchers',
-      path: 'phase2-researcher-dashboard',
+      path: 'phase1-researcher-dashboard',
     },
     // {
-    //   name: 'Phase 2 Laboratories',
-    //   path: 'phase2-laboratory-dashboard', //deprecated
+    //   name: 'Phase 1 Laboratories',
+    //   path: 'phase1-laboratory-dashboard', //deprecated
     // },
     // {
-    //   name: 'Phase 2 Institutions',
-    //   path: 'phase2-university-dashboard', //deprecated
+    //   name: 'Phase 1 Institutions',
+    //   path: 'phase1-university-dashboard', //deprecated
     // },
     // {
-    //   name: 'Phase 2 Financing',
-    //   path: 'phase2-financing-dashboard', //deprecated
+    //   name: 'Phase 1 Financing',
+    //   path: 'phase1-financing-dashboard', //deprecated
     // },
     {
       name: 'Tests',
       pages: [
         {
           name: 'Raw Data Test',
-          path: 'phase2-data-dashboard',
+          path: 'phase1-data-dashboard',
         },
         {
           name: 'Import Excel Tests',
