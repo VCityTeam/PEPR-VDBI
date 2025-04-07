@@ -20,7 +20,7 @@ config:
 ---
 flowchart TD
 
-    subgraph "Workbook"
+    subgraph Workbook
         BA[Sheet: researchers]
         BB[Sheet ...]
         BC[Sheet n]
