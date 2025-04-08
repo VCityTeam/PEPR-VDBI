@@ -14,8 +14,8 @@ export default {
       path: 'phase1-project-dashboard',
     },
     {
-      name: 'Phase 1 Researchers',
-      path: 'phase1-researcher-dashboard',
+      name: 'Demonstrateurs de la Ville Durable',
+      path: 'dvd-dashboard',
     },
     // {
     //   name: 'Phase 1 Laboratories',
@@ -32,6 +32,10 @@ export default {
     {
       name: 'Tests',
       pages: [
+        {
+          name: 'Phase 1 Researchers',
+          path: 'phase1-researcher-dashboard',
+        },
         {
           name: 'Raw Data Test',
           path: 'phase1-data-dashboard',
