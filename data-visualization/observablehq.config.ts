@@ -14,23 +14,23 @@ export default {
       path: 'phase1-project-dashboard',
     },
     // {
-      //   name: 'Phase 1 Laboratories',
-      //   path: 'phase1-laboratory-dashboard', //deprecated
-      // },
-      // {
-        //   name: 'Phase 1 Institutions',
-        //   path: 'phase1-university-dashboard', //deprecated
-        // },
-        {
-          name: 'Tests',
-          pages: [
+    //   name: 'Phase 1 Laboratories',
+    //   path: 'phase1-laboratory-dashboard', //deprecated
+    // },
+    // {
+    //   name: 'Phase 1 Institutions',
+    //   path: 'phase1-university-dashboard', //deprecated
+    // },
+    {
+      name: 'Tests',
+      pages: [
         {
           name: 'Demonstrateurs de la Ville Durable',
           path: 'dvd-dashboard',
         },
         {
           name: 'Phase 1 Financing',
-          path: 'phase1-financing-dashboard', //deprecated
+          path: 'phase1-financing-dashboard',
         },
         {
           name: 'Phase 1 Researchers',

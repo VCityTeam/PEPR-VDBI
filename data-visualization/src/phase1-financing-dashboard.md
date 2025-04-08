@@ -3,174 +3,84 @@ title: Phase 1 Financing Dashboard
 theme: [dashboard, light]
 ---
 
-# Phase 1 Financing
+# Phase 1 Proposed Financing
 
 ```js
 import {
-  getGeneraliteSheet,
-  resolveGeneraliteEntities,
-  filterOnInput,
-  getColumnOptions,
-} from "./components/phase2-dashboard.js";
+  resolveProjectFinancingEntities,
+} from "./components/financing.js";
+import {
+  sparkbar,
+  countEntities,
+} from "./components/utilities.js";
 ```
 
 ```js
+const debug = true;
 const workbook1 = FileAttachment(
-  "./data/private/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
+  "./data/private/inteGREEN_France2030_aap_pepr_vdbi_2023_AnnexeFinanciere.xlsx"
 ).xlsx();
 ```
 
 ```js
-const anonymize = false;
-const anonymizeDict = new Map();
-const project_data = resolveGeneraliteEntities(getGeneraliteSheet(workbook1), anonymize, anonymizeDict);
-// resolveGeneraliteEntities -> @return:
-// {
-//    acronyme: string,
-//    auditionne: boolean,
-//    finance: boolean,
-//    budget: string,
-//    note: string,
-//    defi: string,
-//    nom_fr: string,
-//    nom_en: string,
-//    etablissements: [],
-//    etablissements_count: number
-//    laboratoires: [],
-//    laboratoires_count: number
-//    partenaires: [],
-//    partenaires_count: number
-//    action: string,
-//    comment: string,
-//    pourquoi: string,
-//    notes: string
-// }
-// display(project_data);
-```
-
-```js
-// create auditioned filter input
-const project_auditioned_input = Inputs.select(
-  getColumnOptions(project_data, "auditionne"),
-  {
-    value: "All",
-    label: "Auditioned?",
-  }
-);
-const projects_auditioned = Generators.input(
-  project_auditioned_input
-);
-
-// create financed filter input
-const project_financed_input = Inputs.select(
-  getColumnOptions(project_data, "finance"),
-  {
-    value: "All",
-    label: "Financed?",
-  }
-);
-const projects_financed = Generators.input(
-  project_financed_input
-);
-
-// create note filter input
-const project_note_input = Inputs.select(
-  getColumnOptions(project_data, "note"),
-  {
-    value: "All",
-    label: "Grade?",
-  }
-);
-const project_notes = Generators.input(
-  project_note_input
-);
-
-// create defi filter input
-const project_defi_input = Inputs.select(
-  getColumnOptions(project_data, "defi"),
-  {
-    value: "All",
-    label: "Challenge?",
-  }
-);
-const project_defis = Generators.input(
-  project_defi_input
-);
-```
-
-```js
-// filter project data based on input fields
-const filtered_project_data = filterOnInput(
-  project_data,
-  [projects_auditioned, projects_financed, project_notes, project_defis],
-  [(d) => d.auditionne, (d) => d.finance, (d) => d.note, (d) => d.defi]
-);
-// display(projects_auditioned);
-// display(projects_financed);
-// display(project_notes);
-// display(filtered_project_data);
-```
-
-```js
-// create search input
-const project_search_input = Inputs.search(filtered_project_data, { placeholder: "Search projects..." })
-const projects_search = Generators.input(project_search_input);
-// display(projects_search);
-```
-
-```js
-function sparkbar(max) {
-  // code source: https://observablehq.com/framework/inputs/table
-  return (x) => htl.html`<div style="
-    background: var(--theme-green);
-    color: black;
-    width: ${100 * x / max}%;
-    float: left;
-    padding-right: 3px;
-    box-sizing: border-box;
-    overflow: visible;
-    display: flex;
-    justify-content: end;">${x.toLocaleString("en-US")}`
-}
-
-const project_table = Inputs.table(projects_search, {
-  rows: 25,
+const project_data = resolveProjectFinancingEntities(workbook1);
+const project_table_config = {
+  rows: 9,
   columns: [
-    "acronyme",
-    "note",
-    "defi",
-    "budget",
+    "description",
+    "type",
+    "employer",
+    "months",
+    "assistance",
+    "support",
+    "cost",
   ],
   header: {
-    acronyme: "Project Acronyme",
-    budget: "Budget (M)",
-    note: "Jury grade",
-    defi: "Challenge",
+    "description": "Personnel description",
+    "type": "Contract type",
+    "employer": "Employer",
+    "months": "Contract length (months)",
+    "cost": "Total cost",
+    "assistance": "Requested financial assistance",
+    "support": "Support cost",
   },
   width: {
-    acronyme: 120,
-    note: 80,
-    defi: 80,
+    description: 250,
   },
   align: {
-    note: "center",
-    defi: "center",
-    budget: "left",
+    description: "right",
+    months: "left",
+    cost: "left",
+    assistance: "left",
+    support: "left",
   },
   format: {
-    budget: sparkbar(d3.max(projects_search, d => d.budget)),
+    // cost: sparkbar(d3.max(project_data.personnel, (d) => d.cost)),
   },
-});
+};
 ```
 
+```js
+if (debug) {
+  display(project_data);
+}
+```
+
+## inteGREEN
 <div class="grid grid-cols-4">
   <div class="card grid-colspan-4">
-    <h2>PEPR Projects</h2>
-    <div>${project_search_input}</div>
+    <!-- <div>${project_search_input}</div>
     <div>${project_auditioned_input}</div>
     <div>${project_financed_input}</div>
     <div>${project_note_input}</div>
-    <div>${project_defi_input}</div>
-    <div>${project_table}</div>
+    <div>${project_defi_input}</div> -->
+    <div>
+      ${
+        resize((width) => Inputs.table(
+          project_data.personnel,
+          project_table_config
+        ))//$
+      }
+    </div>
   </div>
 </div>
