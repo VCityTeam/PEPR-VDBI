@@ -13,63 +13,63 @@ export default {
       name: 'Phase 1 Projects by discipline',
       path: 'phase1-project-dashboard',
     },
-    {
-      name: 'Demonstrateurs de la Ville Durable',
-      path: 'dvd-dashboard',
-    },
     // {
-    //   name: 'Phase 1 Laboratories',
-    //   path: 'phase1-laboratory-dashboard', //deprecated
-    // },
-    // {
-    //   name: 'Phase 1 Institutions',
-    //   path: 'phase1-university-dashboard', //deprecated
-    // },
-    // {
-    //   name: 'Phase 1 Financing',
-    //   path: 'phase1-financing-dashboard', //deprecated
-    // },
-    {
-      name: 'Tests',
-      pages: [
+      //   name: 'Phase 1 Laboratories',
+      //   path: 'phase1-laboratory-dashboard', //deprecated
+      // },
+      // {
+        //   name: 'Phase 1 Institutions',
+        //   path: 'phase1-university-dashboard', //deprecated
+        // },
+        {
+          name: 'Tests',
+          pages: [
+        {
+          name: 'Demonstrateurs de la Ville Durable',
+          path: 'dvd-dashboard',
+        },
+        {
+          name: 'Phase 1 Financing',
+          path: 'phase1-financing-dashboard', //deprecated
+        },
         {
           name: 'Phase 1 Researchers',
           path: 'phase1-researcher-dashboard',
         },
         {
-          name: 'Raw Data Test',
+          name: 'Raw Data',
           path: 'phase1-data-dashboard',
         },
         {
-          name: 'Import Excel Tests',
+          name: 'Import Excel',
           path: '/test-excel-import',
         },
         {
-          name: 'Import dataESR+Geospatial Tests',
+          name: 'Import dataESR+Geospatial',
           path: '/test-esr-import',
         },
         {
-          name: 'Phase 1 Overview Test',
+          name: 'Phase 1 Overview',
           path: 'phase1-dashboard',
         },
         {
-          name: 'Import ORCID Tests',
+          name: 'Import ORCID',
           path: '/test-orcid-import',
         },
         {
-          name: 'Plot Tests',
+          name: 'Plot',
           path: '/test-plot',
         },
         {
-          name: 'Tree Tests',
+          name: 'Tree',
           path: '/test-tree',
         },
         {
-          name: 'Force Diagram, Triple Graph Tests',
+          name: 'Force Diagram, Triple Graph',
           path: '/test-graph',
         },
         {
-          name: 'Arc Diagram, Property Graph Tests',
+          name: 'Arc Diagram, Property Graph',
           path: '/test-arc',
         },
       ],

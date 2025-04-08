@@ -14,7 +14,7 @@ pip install openpyxl
 Some dataloaders require your terminal be in the `../` directory
 
 > [!NOTE] Private data
-> Data files not provided must be added manually to this folder.
+> Data files not provided must be added manually to the folder `./private/`.
 
 > [!WARNING] ORCiD API access
 > Data loaders that require and ORCiD API key (denoted by :asterisk:) require you have a
