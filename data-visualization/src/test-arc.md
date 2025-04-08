@@ -5,7 +5,7 @@ theme: light
 
 # Visualize Workbook data using Graphs
 
-Visualize the researcher sheet from the phase 2 Excel document using [arc diagrams](https://observablehq.com/@d3/arc-diagram).
+Visualize the researcher sheet from the phase 1 Excel document using [arc diagrams](https://observablehq.com/@d3/arc-diagram).
 
 ## Data integration
 

@@ -402,7 +402,7 @@ export function resolveEtablissementEntities(
 }
 
 /**
- * Extract and format data from the phase 2 excel.
+ * Extract and format data from the phase 1 excel.
  *
  * @param {Workbook} workbook - The workbook to extract
  * @param {boolean} anonymize - Anonymize data or not
