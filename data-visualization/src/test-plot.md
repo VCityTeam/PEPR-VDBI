@@ -63,7 +63,7 @@ const workbook1 = FileAttachment(
   "./data/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx"
 ).xlsx();
 const workbook2 = FileAttachment(
-  "./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
+  "./data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
 ).xlsx();
 ```
 

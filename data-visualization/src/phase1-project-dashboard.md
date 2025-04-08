@@ -124,8 +124,8 @@ function generateCnuPlotLegend({
 
 ```js
 const workbook1 = FileAttachment(
-  // "./data/250120 PEPR_VBDI_analyse modifiée JYT.xlsx" //outdated
-  "./data/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
+  // "./data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx" //outdated
+  "./data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
 ).xlsx();
 
 // /**

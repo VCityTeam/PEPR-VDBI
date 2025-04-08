@@ -46,7 +46,7 @@ First a component for transforming the Workbook data is imported, followed by th
 ```js echo
 import { resolvePhase1Entities } from "./components/240117-proposals-labs-establishments.js";
 import { anonymizeEntry } from "./components/utilities.js";
-const workbook = FileAttachment("./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx").xlsx();
+const workbook = FileAttachment("./data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx").xlsx();
 ```
 
 ```js

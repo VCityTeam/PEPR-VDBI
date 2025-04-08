@@ -14,7 +14,7 @@ def main():
     secrets = getORCiDSecrets()
     CLIENT_ID = secrets["CLIENT_ID"]
     CLIENT_SECRET = secrets["CLIENT_SECRET"]
-    WORKBOOK_PATH = "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
+    WORKBOOK_PATH = "./data/private/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
     WORKBOOK_SHEET = "Liste chercheurs"
     SHEET_COLUMNS = "A"
     EXPANDED_SEARCH = True
