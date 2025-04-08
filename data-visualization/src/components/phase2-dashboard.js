@@ -1,5 +1,5 @@
 import { map, filter, rollup } from 'npm:d3';
-import { anonymizeEntry, pseudoanonymizeEntry } from './utilities.js';
+import { anonymizeEntry, pseudoanonymizeEntry, filterEmpty } from './utilities.js';
 import * as Plot from 'npm:@observablehq/plot';
 
 /**
@@ -84,7 +84,7 @@ export function getInstitutionSheet(workbook) {
  * @param {Array<Object>} sheet - Extracted sheet data
  * @param {boolean} pseudoanonymize - Pseudoanonymize data or not
  * @param {Map} pseudoacronymousDict - A preset dictionary of pseudoanomymized entry mappings
- * @returns {Array<Object.<Array<string>>} Formatted sheet data
+ * @returns {Array<Object.<Array>} Formatted sheet data
  */
 export function resolveGeneralEntities(
   sheet,
@@ -98,7 +98,8 @@ export function resolveGeneralEntities(
       auditioned: d['AUDITIONNÉ'] == 'OUI', // not a list, will this cause a problem with generic map reduce functions looking for lists?
       financed: d['Financé'] == 'OUI', // not a list, will this cause a problem with generic map reduce functions looking for lists?
       budget: d['Budget (demandé) en M€'] ? d['Budget (demandé) en M€'] : null,
-      grade: d['Note du jury'] ? d['Note du jury'] : null,
+      // grade: d['Note du jury'] ? d['Note du jury'] : null,
+      grade: null,
       challenge: d['Défi'] ? d['Défi'] : null,
       name_fr: d['NOM COMPLET FR'] ? d['NOM COMPLET FR'] : null,
       name_en: d['NOM COMPLET ANGLAIS'] ? d['NOM COMPLET ANGLAIS'] : null,
@@ -499,14 +500,6 @@ export function getColumnOptions(data, key) {
   const options = new Set(['All']);
   data.forEach((d) => options.add(d[key]));
   return options;
-}
-
-function filterEmpty(data) {
-  return filter(
-    // use array substring for (headerless) ranges?
-    data,
-    (d) => typeof d !== 'undefined' && d !== 0
-  );
 }
 
 export function getSortable3DCountPlot(

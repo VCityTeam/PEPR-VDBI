@@ -1,5 +1,5 @@
 import { map, filter, rollup } from 'npm:d3';
-import { pseudoanonymizeEntry } from './utilities.js';
+import { anonymizeEntry, pseudoanonymizeEntry } from './utilities.js';
 import * as Plot from 'npm:@observablehq/plot';
 
 /**
@@ -98,7 +98,8 @@ export function resolveGeneraliteEntities(
       auditionne: d['AUDITIONNÉ'] == 'OUI', // not a list, will this cause a problem with generic map reduce functions looking for lists?
       finance: d['Financé'] == 'OUI', // not a list, will this cause a problem with generic map reduce functions looking for lists?
       budget: d['Budget (demandé) en M€'] ? d['Budget (demandé) en M€'] : null,
-      note: d['Note du jury'] ? d['Note du jury'] : null,
+      // note: d['Note du jury'] ? d['Note du jury'] : null,
+      note: null,
       defi: d['Défi'] ? d['Défi'] : null,
       nom_fr: d['NOM COMPLET FR'] ? d['NOM COMPLET FR'] : null,
       nom_en: d['NOM COMPLET ANGLAIS'] ? d['NOM COMPLET ANGLAIS'] : null,
@@ -251,8 +252,9 @@ export function resolveChercheursEntities(
       sheet,
       (D) => {
         const chercheur = {
-          nom: D[0]['NOM et Prénom'],
-          sexe: D[0]['sexe'],
+          // nom: D[0]['NOM et Prénom'],
+          nom: anonymizeEntry(),
+          sexe: anonymizeEntry(),
           discipline_a: D[0]['discipline a'],
           discipline_erc: D[0]['discipline ERC chercheur'],
           position: D[0]['position statutaire'],
