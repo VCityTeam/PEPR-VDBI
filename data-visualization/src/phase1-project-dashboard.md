@@ -1,5 +1,5 @@
 ---
-title: Phase 2 Project Dashboard
+title: Phase 1 Project Dashboard
 theme: [dashboard, light]
 ---
 

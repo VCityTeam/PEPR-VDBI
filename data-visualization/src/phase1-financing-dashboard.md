@@ -1,9 +1,9 @@
 ---
-title: Phase 2 Financing Dashboard
+title: Phase 1 Financing Dashboard
 theme: [dashboard, light]
 ---
 
-# Phase 2 Financing
+# Phase 1 Financing
 
 ```js
 import {

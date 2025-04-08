@@ -1,9 +1,9 @@
 ---
-title: Phase 2 Laboratory Dashboard
+title: Phase 1 Laboratory Dashboard
 theme: dashboard
 ---
 
-# Phase 2 Laboratories
+# Phase 1 Laboratories
 
 ```js
 import {
