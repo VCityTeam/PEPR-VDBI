@@ -1,3 +1,3 @@
 .env
 orcid_token
-./private/*
+private
