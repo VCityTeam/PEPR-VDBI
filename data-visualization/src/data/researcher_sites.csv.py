@@ -4,8 +4,8 @@ import pandas as pd
 
 def main():
 
-    # WORKBOOK_PATH = "./data/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
-    WORKBOOK_PATH = "./data/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
+    # WORKBOOK_PATH = "./data/private/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
+    WORKBOOK_PATH = "./data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
     WORKBOOK_SHEET = "Liste chercheurs"
     SHEET_COLUMNS = "I"
 

@@ -31,7 +31,7 @@ const workbook1 = FileAttachment(
 ).xlsx();
 
 const workbook2 = FileAttachment(
-  "./data/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
+  "./data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
 ).xlsx();
 ```
 
