@@ -64,8 +64,8 @@ flowchart LR
   Start(( )) -.-> ZZ(Start Phase 1)
   ZZ -.-> Call(Call for projects)
   F[(Open data sources)] -->|Data fusion| DB
-  Call -.-> DA(Data analysis)
   DA -->|Anonymization and editorialization| AC(Analysis Communication)
+  Call -.-> DA(Data analysis)
   DA -.-> AC
   AC -.-> End((( )))
   AC -.-> P(Start Phase ...n)
@@ -77,10 +77,10 @@ flowchart LR
   DA --> DB
   DC --> DA
 
-  subgraph Veille data storage
+  subgraph PEPR VDBI Nextcloud storage
     DC@{ shape: docs, label: "Document Corpus"}
-    DB[(Database)]
-  end
+    DB@{ shape: doc, label: "Spreadsheet"}
+  end 
 
   subgraph Legend
     a(( )) -.->|activity flow| b(( ))
