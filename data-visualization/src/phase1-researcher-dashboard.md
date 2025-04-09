@@ -14,7 +14,7 @@ import {
   extractPhase2Workbook,
   // getColumnOptions,
   // filterOnInput,
-} from "./components/phase2-dashboard.js";
+} from "./components/phase1-dashboard.js";
 import {
   donutChart
 } from "./components/pie-chart.js";

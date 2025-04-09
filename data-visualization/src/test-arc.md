@@ -39,7 +39,7 @@ import {
 } from "./components/utilities.js";
 import {
   extractPhase2Workbook,
-} from "./components/phase2-dashboard.js";
+} from "./components/phase1-dashboard.js";
 import {
   arcDiagramVertical,
   mapTableToPropertyGraphLinks,

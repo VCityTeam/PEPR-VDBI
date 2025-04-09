@@ -253,18 +253,18 @@ export const exclude = (d) =>
     'Non Renseigné',
   ].includes(d);
 
-export function sparkbar(max, background = 'var(--theme-green)', color = 'black') {
+export function sparkbar(htl, max, background = 'var(--theme-green)', color = 'black') {
   // code source: https://observablehq.com/framework/inputs/table
   return (x) => htl.html`<div style="
-      background: ${background};
-      color: ${color};
-      width: ${100 * x / max}%;
-      float: left;
-      padding-right: 3px;
-      box-sizing: border-box;
-      overflow: visible;
-      display: flex;
-      justify-content: end;">${x.toLocaleString("en-US")}`
+    background: ${background};
+    color: ${color};
+    width: ${100 * x / max}%;
+    float: left;
+    padding-right: 3px;
+    box-sizing: border-box;
+    overflow: visible;
+    display: flex;
+    justify-content: end;">${x.toLocaleString("en-US")}`
 }
 
 export function filterEmpty(data) {

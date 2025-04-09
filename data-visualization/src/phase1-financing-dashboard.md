@@ -46,16 +46,17 @@ const project_table_config = {
   },
   width: {
     description: 250,
+    cost: 250,
   },
   align: {
-    description: "right",
-    months: "left",
+    // description: "right",
+    // months: "left",
     cost: "left",
-    assistance: "left",
-    support: "left",
+    // assistance: "left",
+    // support: "left",
   },
   format: {
-    // cost: sparkbar(d3.max(project_data.personnel, (d) => d.cost)),
+    cost: sparkbar(htl, d3.max(project_data.personnel, (d) => d.cost)),
   },
 };
 ```

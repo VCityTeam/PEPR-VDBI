@@ -8,6 +8,7 @@ theme: [dashboard, light]
 ```js
 import {
   countEntities,
+  sparkbar,
 } from "./components/utilities.js";
 import {
   getGeneralSheet,
@@ -20,7 +21,7 @@ import {
   resolveInstitutionEntities,
   getColumnOptions,
   filterOnInput,
-} from "./components/phase2-dashboard.js";
+} from "./components/phase1-dashboard.js";
 import {
   forceGraph,
   mapTableToPropertyGraphLinks,
@@ -384,26 +385,12 @@ const projects_search = Generators.input(project_search_input);
 ```
 
 ```js
-function sparkbar(max) {
-  // code source: https://observablehq.com/framework/inputs/table
-  return (x) => htl.html`<div style="
-    background: var(--theme-green);
-    color: black;
-    width: ${100 * x / max}%;
-    float: left;
-    padding-right: 3px;
-    box-sizing: border-box;
-    overflow: visible;
-    display: flex;
-    justify-content: end;">${x.toLocaleString("en-US")}`
-}
-
 const project_table = Inputs.table(projects_search, {
   rows: 9,
   columns: [
     "acronyme",
     "name_fr",
-    "grade",
+    // "grade",
     "challenge",
     "budget",
   ],
@@ -412,7 +399,7 @@ const project_table = Inputs.table(projects_search, {
     name_fr: "Project Name",
     budget: "Budget (M)",
     grade: "Jury grade",
-    challenge: "Challenge",
+    challenge: "Primary challenge",
   },
   width: {
     acronyme: 120,
@@ -425,7 +412,7 @@ const project_table = Inputs.table(projects_search, {
     budget: "left",
   },
   format: {
-    budget: sparkbar(d3.max(projects_search, d => d.budget)),
+    budget: sparkbar(htl, d3.max(projects_search, d => d.budget)),
   },
 });
 ```

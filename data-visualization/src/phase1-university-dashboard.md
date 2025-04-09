@@ -22,7 +22,7 @@ import {
   getColumnOptions,
   filterOnInput,
   getFilterableCountPlot,
-} from "./components/phase2-dashboard.js";
+} from "./components/phase1-dashboard.js";
 ```
 
 ```js
