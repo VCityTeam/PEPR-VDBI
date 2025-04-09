@@ -24,7 +24,7 @@ import {
   getColumnOptions,
   filterOnInput,
   getSortableCountPlot,
-} from "./components/phase2-dashboard.js";
+} from "./components/phase1-dashboard.js";
 ```
 
 ```js
