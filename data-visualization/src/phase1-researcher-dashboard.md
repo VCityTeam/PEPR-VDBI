@@ -425,8 +425,8 @@ const arc_diagram = arcDiagramVertical(
   }, {
     width: 600,
     height: 650,
-    marginLeft: 200,
-    marginRight: 180,
+    marginLeft: 30,
+    marginRight: 300,
     marginBottom: 50,
     labelRotate: -15,
     sortInitKey: arc_sort_input.value,

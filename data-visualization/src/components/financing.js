@@ -1,5 +1,5 @@
 import { merge } from 'npm:d3';
-import { anonymizeEntry, formatIfString } from './utilities.js';
+import { formatIfString } from './utilities.js';
 
 /**
  * Format known project entities from the Financing sheet
@@ -41,7 +41,7 @@ export function resolveProjectFinancingEntities(workbook) {
       partner.name
     );
 
-    // personnel without a financing request
+    // civil servant personnel
     const personnel_public = mapPersonnelFinancingEntities(
       workbook.sheet(workbook.sheetNames[index], {
         range: 'B80:I103',
@@ -83,7 +83,7 @@ function mapPersonnelFinancingEntities(
   const mapped_data = data.map((d) => {
     const person = {
       // description: formatIfString(d['B']), // description of role
-      description: anonymizeEntry(), // description of role
+      description: anonymizeDescription(d['B']), // description of role
       type: formatIfString(d['D']), // type of contract
       employer: formatIfString(d['D']), // name of employer (instutution)
       months: formatIfString(d['F']), // contract length by number of months
@@ -93,9 +93,9 @@ function mapPersonnelFinancingEntities(
       total_cost: formatIfString(d['G']), // total cost
     };
     if (fonctionnaire) {
-      person.employer = default_employer;
-    } else {
       person.type = 'CDI';
+    } else {
+      person.employer = default_employer;
     }
     return person;
   });
@@ -120,4 +120,45 @@ function mapPartnerFinancingEntities(data) {
     type: formatIfString(data[2]['D']), // partner type
     siret: formatIfString(data[3]['D']), // partner SIRET
   };
+}
+
+/**
+ * Anonymize post description to return just the type of post
+ *
+ * @param {string || undefined} description - Post description
+ * @returns {string || null} anonymized entry
+ */
+function anonymizeDescription(description) {
+  if (!description) {
+    return null;
+  }
+  const known_tokens = [
+    'IE',
+    'IEES',
+    'IR',
+    'IRHC',
+    'DOCTORANT',
+    'POSTDOC',
+    'POST-DOC',
+    'DR1',
+    'DR2',
+    'CR',
+    'CRCN',
+    'CRHC',
+    'HC',
+    'MCF',
+    'STAGE',
+    'M2',
+    'AI',
+    'IPEF',
+    'PA',
+    'PR',
+    'PR1',
+    'PRCE',
+  ];
+  const tokens = description.trim().split(' ');
+  const anonymized_tokens = tokens.filter((token) =>
+    known_tokens.includes(token.toUpperCase())
+  );
+  return anonymized_tokens.join(' ');
 }

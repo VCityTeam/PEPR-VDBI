@@ -267,7 +267,7 @@ export function sparkbar(
     box-sizing: border-box;
     overflow: visible;
     display: flex;
-    justify-content: end;">${x.toLocaleString('en-US')}`;
+    justify-content: ${((100 * x) / max) > 20 ? 'end' : 'start'};">${x.toLocaleString('en-US')}`;
 }
 
 export function filterEmptyArray(data) {
