@@ -1,5 +1,5 @@
 import { map, filter, rollup } from 'npm:d3';
-import { anonymizeEntry, pseudoanonymizeEntry, filterEmpty } from './utilities.js';
+import { anonymizeEntry, pseudoanonymizeEntry, filterEmptyArray } from './utilities.js';
 import * as Plot from 'npm:@observablehq/plot';
 
 /**
@@ -103,7 +103,7 @@ export function resolveGeneralEntities(
       challenge: d['Défi'] ? d['Défi'] : null,
       name_fr: d['NOM COMPLET FR'] ? d['NOM COMPLET FR'] : null,
       name_en: d['NOM COMPLET ANGLAIS'] ? d['NOM COMPLET ANGLAIS'] : null,
-      institutions: filterEmpty([
+      institutions: filterEmptyArray([
         d['Établissement porteur'],
         d['Établissement 2'],
         d['Établissement 3'],
@@ -120,7 +120,7 @@ export function resolveGeneralEntities(
         d['Établissement 14'],
         d['Établissement 15'],
       ]),
-      labs: filterEmpty([
+      labs: filterEmptyArray([
         d['LABORATOIRE DU PORTEUR'],
         d['LABORATOIRE 2'],
         d['LABORATOIRE 3'],
@@ -143,7 +143,7 @@ export function resolveGeneralEntities(
         d['LABORATOIRE 20'],
         d['LABORATOIRE 21'],
       ]),
-      partners: filterEmpty([
+      partners: filterEmptyArray([
         d['Partenaire 1'],
         d['Partenaire 2'],
         d['Partenaire 3'],
@@ -268,7 +268,7 @@ export function resolveResearcherEntities(
           domain_erc_lab: D[0]['DOMAINES ERC LABO']
             ? D[0]['DOMAINES ERC LABO']
             : null,
-          disciplines_erc_lab: filterEmpty([
+          disciplines_erc_lab: filterEmptyArray([
             D[0]['Discipline ERC 1 LABO'],
             D[0]['Discipline ERC 2 LABO'],
             D[0]['Discipline ERC 3 LABO'],
@@ -280,7 +280,7 @@ export function resolveResearcherEntities(
             D[0]['Discipline ERC 9 LABO'],
           ]),
           domain_hceres: D[0]['Domaines scientifique HCERES 1'],
-          disciplines_hceres: filterEmpty([
+          disciplines_hceres: filterEmptyArray([
             D[0]['Sous-domaines scientifique HCERES 1'],
             D[0]['Sous-Domaines scientifique HCERES 2'],
             D[0]['Sous-Domaine Scientifique HCERES 3'],
@@ -350,7 +350,7 @@ export function resolveLabEntities(
     const lab = {
       lab: d['Identifiant Laboratoire'] ? d['Identifiant Laboratoire'] : null,
       name: d['Nom Laboratoire'] ? d['Nom Laboratoire'] : null,
-      institution: filterEmpty([
+      institution: filterEmptyArray([
         d['C'],
         d['D'],
         d['E'],
