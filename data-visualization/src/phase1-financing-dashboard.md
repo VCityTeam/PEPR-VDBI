@@ -22,10 +22,21 @@ const workbook1 = FileAttachment(
 ).xlsx();
 ```
 
+<div class="warning" label="Data visualization notice">
+  Data visualizations are unverified and errors may exist. Regard these data visualizations as estimations and not a "ground truth". Note the following assumtions:
+  <ul>
+    <li>Civil servant positions are CDIs.</li>
+    <li>The defacto employer of non-civil servant positions is their partner institution.</li>
+  </ul>
+</div>
+
+## inteGREEN
+
 ```js
-const project_data = resolveProjectFinancingEntities(workbook1);
-const project_table_config = {
-  rows: 9,
+const integreen_project_data = resolveProjectFinancingEntities(workbook1);
+
+const integreen_project_table_config = {
+  rows: 15,
   columns: [
     "description",
     "type",
@@ -34,41 +45,47 @@ const project_table_config = {
     "assistance",
     "support",
     "cost",
+    "total_cost",
   ],
   header: {
-    "description": "Personnel description",
+    "description": "Post description",
     "type": "Contract type",
     "employer": "Employer",
     "months": "Contract length (months)",
-    "cost": "Total cost",
-    "assistance": "Requested financial assistance",
+    "cost": "Unitary cost",
+    "assistance": "Financial assistance requested",
     "support": "Support cost",
+    "total_cost": "Total cost",
   },
   width: {
-    description: 250,
-    cost: 250,
+    description: 200,
+    total_cost: 250,
   },
   align: {
     // description: "right",
     // months: "left",
-    cost: "left",
+    total_cost: "left",
     // assistance: "left",
     // support: "left",
   },
   format: {
-    cost: sparkbar(htl, d3.max(project_data.personnel, (d) => d.cost)),
+    support: (d) => {return d != null ? d : 0},
+    total_cost: sparkbar(htl, d3.max(integreen_project_data.personnel, (d) => d.total_cost)),
   },
 };
 ```
 
 ```js
 if (debug) {
-  display(project_data);
+  display(integreen_project_data);
 }
 ```
 
-## inteGREEN
 <div class="grid grid-cols-4">
+  <!-- <div class="card">
+    <h2></h2>
+    <span class="big">${financed_project_count.toLocaleString("en-US")}</span>
+  </div> -->
   <div class="card grid-colspan-4">
     <!-- <div>${project_search_input}</div>
     <div>${project_auditioned_input}</div>
@@ -78,8 +95,8 @@ if (debug) {
     <div>
       ${
         resize((width) => Inputs.table(
-          project_data.personnel,
-          project_table_config
+          integreen_project_data.personnel,
+          integreen_project_table_config
         ))//$
       }
     </div>

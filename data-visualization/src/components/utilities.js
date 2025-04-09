@@ -213,9 +213,7 @@ export function pseudoanonymizeEntry(entry, dictionary, type = 'human') {
       entry,
       nameByRace(type, {
         gender: Math.floor(Math.random() * 2) ? 'male' : 'female',
-        allowMultipleNames: Math.floor(Math.random() * 2)
-          ? true
-          : false,
+        allowMultipleNames: Math.floor(Math.random() * 2) ? true : false,
       })
     );
   }
@@ -253,24 +251,72 @@ export const exclude = (d) =>
     'Non Renseigné',
   ].includes(d);
 
-export function sparkbar(htl, max, background = 'var(--theme-green)', color = 'black') {
+export function sparkbar(
+  htl,
+  max,
+  background = 'var(--theme-green)',
+  color = 'black'
+) {
   // code source: https://observablehq.com/framework/inputs/table
   return (x) => htl.html`<div style="
     background: ${background};
     color: ${color};
-    width: ${100 * x / max}%;
+    width: ${(100 * x) / max}%;
     float: left;
     padding-right: 3px;
     box-sizing: border-box;
     overflow: visible;
     display: flex;
-    justify-content: end;">${x.toLocaleString("en-US")}`
+    justify-content: end;">${x.toLocaleString('en-US')}`;
 }
 
-export function filterEmpty(data) {
+export function filterEmptyArray(data) {
   return filter(
     // use array substring for (headerless) ranges?
     data,
     (d) => typeof d !== 'undefined' && d !== 0
   );
+}
+
+/**
+ * Format a field value by trimming strings and setting empty values to null
+ *
+ * @param {any} d - input datum
+ * @returns {any} - formatted datum
+ */
+export function formatIfString(d) {
+  if (typeof d === 'string') {
+    return d.trim() ? d.trim() : null;
+  } else if (typeof d === 'undefined') {
+    return null;
+  }
+  return d;
+}
+
+export function downloadDataAsCSV(data) {
+  const newline = '\u000D\u000A';
+  const export_buffer = [data[0].columns.toString() + newline];
+  data.forEach((recipe) => {
+    recipe.values.forEach((row) => {
+      const row_buffer = row
+        .map((col) => {
+          if (typeof col == 'string' && col.includes(',')) {
+            return `"${col}"`;
+          }
+          return col;
+        })
+        .toString();
+      export_buffer.push(row_buffer + newline);
+    });
+  });
+  console.debug(export_buffer);
+
+  const link = document.createElement('a');
+  const file = new Blob(export_buffer, {
+    type: 'text/plain',
+  });
+  link.href = URL.createObjectURL(file);
+  link.download = 'favorites.csv';
+  link.click();
+  URL.revokeObjectURL(link.href);
 }
