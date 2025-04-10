@@ -12,7 +12,11 @@ import {
 import {
   sparkbar,
   countEntities,
+  cropText,
 } from "./components/utilities.js";
+import {
+  donutChart
+} from "./components/pie-chart.js";
 ```
 
 ```js
@@ -25,6 +29,7 @@ const default_personnel_table_config = {
     total_cost: 250,
   },
   columns: [
+    // "project",
     "description",
     "type",
     "employer",
@@ -57,13 +62,108 @@ const default_partner_table_config = {
     "siret": "SIRET",
   },
 };
+
+function default_x_plot_options(data, width, height) {
+  return {
+    width: width,
+    height: height,
+    marginTop: 50,
+    marginLeft: 150,
+    y: {
+      label: "Description",
+      tickRotate: 10,
+      tickFormat: (d) => cropText(d, 25),
+    },
+    x: {
+      grid: true,
+      axis: "top",
+      label: "Occurences",
+    },
+    marks: [
+      Plot.barX(data, {
+        y: (d) => d[0],
+        x: (d) => d[1],
+        fill: (d) => d[1],
+        stroke: "black",
+        strokeOpacity: 0.1,
+        // sort: {y: "y"},
+        sort: {y: "-x"},
+        tip: {
+          format: {
+            fill: false,
+          },
+          lineWidth: 25,
+          textOverflow: "ellipsis-end"
+        }
+      }),
+      Plot.barX(
+        data, 
+        Plot.pointerY({
+          x: (d) => d[1],
+          y: (d) => d[0],
+          fill: "white",
+          opacity: 0.5,
+        }),
+      ),
+    ],
+  }; 
+};
+
+function default_y_plot_options(data, width) {
+  return {
+    // width: width,
+    height: 500,
+    marginTop: 50,
+    marginBottom: 50,
+    x: {
+      label: "Description",
+      tickRotate: 10,
+      tickFormat: (d) => cropText(d, 25),
+    },
+    y: {
+      grid: true,
+      // axis: "top",
+      label: "Occurences",
+    },
+    marks: [
+      Plot.barY(data, {
+        y: (d) => d[1],
+        x: (d) => d[0],
+        fill: (d) => d[1],
+        stroke: "black",
+        strokeOpacity: 0.1,
+        sort: {x: "y"},
+        // sort: {x: "-x"},
+        tip: {
+          format: {
+            fill: false,
+          },
+          lineWidth: 25,
+          textOverflow: "ellipsis-end"
+        }
+      }),
+      Plot.barY(
+        data, 
+        Plot.pointerX({
+          x: (d) => d[0],
+          y: (d) => d[1],
+          fill: "white",
+          opacity: 0.5,
+        }),
+      ),
+    ],
+  }; 
+};
 ```
 
 <div class="warning" label="Data visualization notice">
-  Data visualizations are unverified and errors may exist. Regard these data visualizations as estimations and not a "ground truth". Note the following assumtions:
+  Data visualizations are unverified and errors may exist. Regard these data visualizations as estimations and not a "ground truth". Note the following:
   <ul>
     <li>Civil servant positions are CDIs.</li>
     <li>The defacto employer of non-civil servant positions is their partner institution.</li>
+    <li>Some projects have listed the type of contract as the employer.</li>
+    <li>Some post descriptions may be laboratory identifiers.</li>
+    <li>Some post descriptions are missing.</li>
   </ul>
 </div>
 
@@ -95,44 +195,100 @@ const all_data = {
     (d) => d.siret
   ).map((D) => D[1][0]),
 }
+
+const all_description_count = d3.rollups(
+  all_data.personnel,
+  (D) => D.length,
+  (d) => d.description,
+).filter((d) => d[0]);
+
+const all_type_count = d3.rollups(
+  all_data.personnel,
+  (D) => D.length,
+  (d) => d.type,
+).filter((d) => d[0]);
+
+const all_employer_count = d3.rollups(
+  all_data.personnel,
+  (D) => D.length,
+  (d) => d.employer,
+).filter((d) => d[0]);
+
 if (debug) {
   display(all_data);
+  display(all_description_count);
+  display(all_type_count);
+  display(all_employer_count);
 }
 ```
 
-<div class="grid grid-cols-4">
+<div class="grid grid-cols-2">
   <!-- <div class="card">
     <h2></h2>
     <span class="big">${financed_project_count.toLocaleString("en-US")}</span>
   </div> -->
-  <div class="card grid-colspan-4 grid-rowspan-2">
+  <div class="card grid-colspan-2">
     <h2>Identified project personnel</h2>
     <div>
       ${
         resize((width) => Inputs.table(
           all_data.personnel,
           {
-            ...default_personnel_table_config,
-            ...{
-              format: {
-                total_cost: sparkbar(
-                  htl,
-                  d3.max(all_data.personnel, (d) => d.total_cost)
-                ),
-              }
+            rows: default_personnel_table_config.rows,
+            width: default_personnel_table_config.width,
+            maxWidth: width,
+            columns: [
+              "project",
+              "description",
+              "type",
+              "employer",
+              "months",
+              "cost",
+              "assistance",
+              "support",
+              "total_cost",
+            ],
+            header: default_personnel_table_config.header,
+            align: default_personnel_table_config.align,
+            format: {
+              total_cost: sparkbar(
+                htl,
+                d3.max(all_data.personnel, (d) => d.total_cost)
+              ),
             }
           }
         ))//$
       }
     </div>
   </div>
-  <div class="card grid-colspan-4">
-    <h2>Identified project partners</h2>
-    <div>
+</div>
+<div class="grid grid-cols-2">
+  <div class="card grid-rowspan-2">
+    <h2>Proposed posts by post description</h2>
+    <div style="overflow: auto;height: 1000px">
       ${
-        resize((width) => Inputs.table(
-          all_data.partners,
-          default_partner_table_config
+        resize((width) => Plot.plot(
+          default_x_plot_options(all_description_count, width, 3000)
+        ))//$
+      }
+    </div>
+  </div>
+  <div class="card">
+    <h2>Proposed posts by contract type</h2>
+    <div style="overflow: auto;">
+      ${
+        resize((width) => Plot.plot(
+          default_y_plot_options(all_type_count, width)
+        ))//$
+      }
+    </div>
+  </div>
+  <div class="card">
+    <h2>Proposed posts by employer</h2>
+    <div style="overflow: auto;height: 500px">
+      ${
+        resize((width) => Plot.plot(
+          default_x_plot_options(all_employer_count, width, 2000)
         ))//$
       }
     </div>
@@ -148,18 +304,18 @@ const inteGREEN_workbook = FileAttachment(
 ```
 
 ```js
-const inteGREEN_data = resolveProjectFinancingEntities(inteGREEN_workbook);
+const inteGREEN_data = resolveProjectFinancingEntities(inteGREEN_workbook, 'inteGREEN');
 if (debug) {
   display(inteGREEN_data);
 }
 ```
 
-<div class="grid grid-cols-4">
+<div class="grid grid-cols-2">
   <!-- <div class="card">
     <h2></h2>
     <span class="big">${financed_project_count.toLocaleString("en-US")}</span>
   </div> -->
-  <div class="card grid-colspan-4 grid-rowspan-2">
+  <div class="card grid-colspan-2 grid-rowspan-2">
     <h2>Identified project personnel</h2>
     <div>
       ${
@@ -168,6 +324,7 @@ if (debug) {
           {
             ...default_personnel_table_config,
             ...{
+              maxWidth: width,
               format: {
                 total_cost: sparkbar(
                   htl,
@@ -180,13 +337,18 @@ if (debug) {
       }
     </div>
   </div>
-  <div class="card grid-colspan-4">
+  <div class="card grid-colspan-2">
     <h2>Identified project partners</h2>
     <div>
       ${
         resize((width) => Inputs.table(
           inteGREEN_data.partners,
-          default_partner_table_config
+          {
+            ...default_partner_table_config,
+            ...{
+              width: width,
+            }
+          }
         ))//$
       }
     </div>
@@ -202,18 +364,18 @@ const VILLEGARDEN_workbook = FileAttachment(
 ```
 
 ```js
-const VILLEGARDEN_data = resolveProjectFinancingEntities(VILLEGARDEN_workbook);
+const VILLEGARDEN_data = resolveProjectFinancingEntities(VILLEGARDEN_workbook, 'VILLEGARDEN');
 if (debug) {
   display(VILLEGARDEN_data);
 }
 ```
 
-<div class="grid grid-cols-4">
+<div class="grid grid-cols-2">
   <!-- <div class="card">
     <h2></h2>
     <span class="big">${financed_project_count.toLocaleString("en-US")}</span>
   </div> -->
-  <div class="card grid-colspan-4 grid-rowspan-2">
+  <div class="card grid-colspan-2 grid-rowspan-2">
     <h2>Identified project personnel</h2>
     <div>
       ${
@@ -222,6 +384,7 @@ if (debug) {
           {
             ...default_personnel_table_config,
             ...{
+              maxWidth: width,
               format: {
                 total_cost: sparkbar(
                   htl,
@@ -234,13 +397,18 @@ if (debug) {
       }
     </div>
   </div>
-  <div class="card grid-colspan-4">
+  <div class="card grid-colspan-2">
     <h2>Identified project partners</h2>
     <div>
       ${
         resize((width) => Inputs.table(
           VILLEGARDEN_data.partners,
-          default_partner_table_config
+          {
+            ...default_partner_table_config,
+            ...{
+              width: width,
+            }
+          }
         ))//$
       }
     </div>
@@ -256,18 +424,18 @@ const NEO_workbook = FileAttachment(
 ```
 
 ```js
-const NEO_data = resolveProjectFinancingEntities(NEO_workbook);
+const NEO_data = resolveProjectFinancingEntities(NEO_workbook, 'NEO');
 if (debug) {
   display(NEO_data);
 }
 ```
 
-<div class="grid grid-cols-4">
+<div class="grid grid-cols-2">
   <!-- <div class="card">
     <h2></h2>
     <span class="big">${financed_project_count.toLocaleString("en-US")}</span>
   </div> -->
-  <div class="card grid-colspan-4 grid-rowspan-2">
+  <div class="card grid-colspan-2 grid-rowspan-2">
     <h2>Identified project personnel</h2>
     <div>
       ${
@@ -276,6 +444,7 @@ if (debug) {
           {
             ...default_personnel_table_config,
             ...{
+              maxWidth: width,
               format: {
                 total_cost: sparkbar(
                   htl,
@@ -288,13 +457,18 @@ if (debug) {
       }
     </div>
   </div>
-  <div class="card grid-colspan-4">
+  <div class="card grid-colspan-2">
     <h2>Identified project partners</h2>
     <div>
       ${
         resize((width) => Inputs.table(
           NEO_data.partners,
-          default_partner_table_config
+          {
+            ...default_partner_table_config,
+            ...{
+              width: width,
+            }
+          }
         ))//$
       }
     </div>
@@ -310,18 +484,18 @@ const RESILIENCE_workbook = FileAttachment(
 ```
 
 ```js
-const RESILIENCE_data = resolveProjectFinancingEntities(RESILIENCE_workbook);
+const RESILIENCE_data = resolveProjectFinancingEntities(RESILIENCE_workbook, 'RESILIENCE');
 if (debug) {
   display(RESILIENCE_data);
 }
 ```
 
-<div class="grid grid-cols-4">
+<div class="grid grid-cols-2">
   <!-- <div class="card">
     <h2></h2>
     <span class="big">${financed_project_count.toLocaleString("en-US")}</span>
   </div> -->
-  <div class="card grid-colspan-4 grid-rowspan-2">
+  <div class="card grid-colspan-2 grid-rowspan-2">
     <h2>Identified project personnel</h2>
     <div>
       ${
@@ -330,6 +504,7 @@ if (debug) {
           {
             ...default_personnel_table_config,
             ...{
+              maxWidth: width,
               format: {
                 total_cost: sparkbar(
                   htl,
@@ -342,13 +517,18 @@ if (debug) {
       }
     </div>
   </div>
-  <div class="card grid-colspan-4">
+  <div class="card grid-colspan-2">
     <h2>Identified project partners</h2>
     <div>
       ${
         resize((width) => Inputs.table(
           RESILIENCE_data.partners,
-          default_partner_table_config
+          {
+            ...default_partner_table_config,
+            ...{
+              width: width,
+            }
+          }
         ))//$
       }
     </div>
@@ -364,18 +544,18 @@ const TRACES_workbook = FileAttachment(
 ```
 
 ```js
-const TRACES_data = resolveProjectFinancingEntities(TRACES_workbook);
+const TRACES_data = resolveProjectFinancingEntities(TRACES_workbook, 'TRACES');
 if (debug) {
   display(TRACES_data);
 }
 ```
 
-<div class="grid grid-cols-4">
+<div class="grid grid-cols-2">
   <!-- <div class="card">
     <h2></h2>
     <span class="big">${financed_project_count.toLocaleString("en-US")}</span>
   </div> -->
-  <div class="card grid-colspan-4 grid-rowspan-2">
+  <div class="card grid-colspan-2 grid-rowspan-2">
     <h2>Identified project personnel</h2>
     <div>
       ${
@@ -384,6 +564,7 @@ if (debug) {
           {
             ...default_personnel_table_config,
             ...{
+              maxWidth: width,
               format: {
                 total_cost: sparkbar(
                   htl,
@@ -396,13 +577,18 @@ if (debug) {
       }
     </div>
   </div>
-  <div class="card grid-colspan-4">
+  <div class="card grid-colspan-2">
     <h2>Identified project partners</h2>
     <div>
       ${
         resize((width) => Inputs.table(
           TRACES_data.partners,
-          default_partner_table_config
+          {
+            ...default_partner_table_config,
+            ...{
+              width: width,
+            }
+          }
         ))//$
       }
     </div>
@@ -418,18 +604,18 @@ const URBHEALTH_workbook = FileAttachment(
 ```
 
 ```js
-const URBHEALTH_data = resolveProjectFinancingEntities(URBHEALTH_workbook);
+const URBHEALTH_data = resolveProjectFinancingEntities(URBHEALTH_workbook, 'URBHEALTH');
 if (debug) {
   display(URBHEALTH_data);
 }
 ```
 
-<div class="grid grid-cols-4">
+<div class="grid grid-cols-2">
   <!-- <div class="card">
     <h2></h2>
     <span class="big">${financed_project_count.toLocaleString("en-US")}</span>
   </div> -->
-  <div class="card grid-colspan-4 grid-rowspan-2">
+  <div class="card grid-colspan-2 grid-rowspan-2">
     <h2>Identified project personnel</h2>
     <div>
       ${
@@ -438,6 +624,7 @@ if (debug) {
           {
             ...default_personnel_table_config,
             ...{
+              maxWidth: width,
               format: {
                 total_cost: sparkbar(
                   htl,
@@ -450,13 +637,18 @@ if (debug) {
       }
     </div>
   </div>
-  <div class="card grid-colspan-4">
+  <div class="card grid-colspan-2">
     <h2>Identified project partners</h2>
     <div>
       ${
         resize((width) => Inputs.table(
           URBHEALTH_data.partners,
-          default_partner_table_config
+          {
+            ...default_partner_table_config,
+            ...{
+              width: width,
+            }
+          }
         ))//$
       }
     </div>
@@ -472,18 +664,18 @@ const VFpp_workbook = FileAttachment(
 ```
 
 ```js
-const VFpp_data = resolveProjectFinancingEntities(VFpp_workbook);
+const VFpp_data = resolveProjectFinancingEntities(VFpp_workbook, 'VF++');
 if (debug) {
   display(VFpp_data);
 }
 ```
 
-<div class="grid grid-cols-4">
+<div class="grid grid-cols-2">
   <!-- <div class="card">
     <h2></h2>
     <span class="big">${financed_project_count.toLocaleString("en-US")}</span>
   </div> -->
-  <div class="card grid-colspan-4 grid-rowspan-2">
+  <div class="card grid-colspan-2 grid-rowspan-2">
     <h2>Identified project personnel</h2>
     <div>
       ${
@@ -492,6 +684,7 @@ if (debug) {
           {
             ...default_personnel_table_config,
             ...{
+              maxWidth: width,
               format: {
                 total_cost: sparkbar(
                   htl,
@@ -504,13 +697,18 @@ if (debug) {
       }
     </div>
   </div>
-  <div class="card grid-colspan-4">
+  <div class="card grid-colspan-2">
     <h2>Identified project partners</h2>
     <div>
       ${
         resize((width) => Inputs.table(
           VFpp_data.partners,
-          default_partner_table_config
+          {
+            ...default_partner_table_config,
+            ...{
+              width: width,
+            }
+          }
         ))//$
       }
     </div>
@@ -526,18 +724,18 @@ const WHAOU_workbook = FileAttachment(
 ```
 
 ```js
-const WHAOU_data = resolveProjectFinancingEntities(WHAOU_workbook);
+const WHAOU_data = resolveProjectFinancingEntities(WHAOU_workbook, 'WHAOU');
 if (debug) {
   display(WHAOU_data);
 }
 ```
 
-<div class="grid grid-cols-4">
+<div class="grid grid-cols-2">
   <!-- <div class="card">
     <h2></h2>
     <span class="big">${financed_project_count.toLocaleString("en-US")}</span>
   </div> -->
-  <div class="card grid-colspan-4 grid-rowspan-2">
+  <div class="card grid-colspan-2 grid-rowspan-2">
     <h2>Identified project personnel</h2>
     <div>
       ${
@@ -546,6 +744,7 @@ if (debug) {
           {
             ...default_personnel_table_config,
             ...{
+              maxWidth: width,
               format: {
                 total_cost: sparkbar(
                   htl,
@@ -558,13 +757,18 @@ if (debug) {
       }
     </div>
   </div>
-  <div class="card grid-colspan-4">
+  <div class="card grid-colspan-2">
     <h2>Identified project partners</h2>
     <div>
       ${
         resize((width) => Inputs.table(
           WHAOU_data.partners,
-          default_partner_table_config
+          {
+            ...default_partner_table_config,
+            ...{
+              width: width,
+            }
+          }
         ))//$
       }
     </div>

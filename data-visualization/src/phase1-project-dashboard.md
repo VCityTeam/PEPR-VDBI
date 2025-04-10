@@ -210,7 +210,7 @@ function generateCnuPlotOptions(data, sort="y", height=350) {
         y: (d) => d[1],
       })
     ],
-  }   
+  }
 };
 
 const cnu_plot_sort_values = new Map([
