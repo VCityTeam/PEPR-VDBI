@@ -63,7 +63,7 @@ export function donutChart(
       radius: 6,
       fontSize: 16,
       lineSeparation: 25,
-      text: (d) => cropText(keyMap(d), 30),
+      // text: (d) => cropText(keyMap(d), 30),
     }),
   } = {}
 ) {

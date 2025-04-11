@@ -1,6 +1,131 @@
 import { merge } from 'npm:d3';
 import { formatIfString } from './utilities.js';
 
+// all known token used for post description classification
+const known_tokens = [
+  'adjointe',
+  'administratifs',
+  'Agent',
+  'Agents',
+  'AI',
+  'Alternant',
+  'ASI',
+  'Assistante',
+  'attaché',
+  'CE',
+  'Chargé',
+  'chargés',
+  'Chef',
+  'Chercheur',
+  'Chercheure',
+  'clinique',
+  'confirmé',
+  'conférence',
+  'conférences',
+  // 'Contribution responsable opération pour données sur sites choiss',
+  // 'Contribution responsable service réhabilitation aux ateliers, journées de restitution, actions de dissémination',
+  'CPJ',
+  'CR',
+  'CR1',
+  'CR2',
+  'CRCN',
+  'CRHC',
+  'data',
+  'Dir',
+  'Directeur',
+  'Directrice',
+  'doc',
+  'DOCTORANT',
+  'doctorante',
+  'DR',
+  'DR1',
+  'DR12',
+  'DR2',
+  'Décharge',
+  'encadrant',
+  'enseignant',
+  'enseignement',
+  'etude',
+  'executif',
+  'Expert',
+  'Gestionnaire',
+  'Géomaticiens',
+  'HC',
+  'ICPEF',
+  'IDTPE',
+  'IE',
+  'IECN',
+  'IEES',
+  'IGE',
+  'IGR',
+  'IMBE',
+  'Ing',
+  'Ingénieur',
+  'ingénieurs',
+  'ingérieur',
+  'IPEF',
+  'IR',
+  'IR1',
+  'IR2',
+  'IRCN',
+  'IRHC',
+  'ITPE',
+  'IUSTI',
+  'LCE',
+  'M2',
+  'maitre',
+  'manager',
+  'MASTER',
+  'master',
+  'Master2',
+  'maître',
+  'MCF',
+  'MCU',
+  'MdC',
+  'methodologiste',
+  'mission',
+  'Officiers',
+  'Officiers SP Preventionnistes',
+  'PA',
+  'PEA',
+  'Personnel',
+  'PF',
+  'POST',
+  'POSTDOC',
+  'postdoctorant',
+  'PR',
+  'Pr',
+  'PR1',
+  'PRCE',
+  'prof',
+  'professeur',
+  'Project',
+  'projet',
+  'prospective',
+  'PU',
+  'PUPH',
+  'pédagogiques',
+  'recherche',
+  'recruter',
+  'scientist',
+  'SP',
+  'STAGE',
+  'Stages',
+  'Stagiaire',
+  'stagiaires',
+  'statisticien',
+  'supérieur',
+  'Tech',
+  'Technicien',
+  'technique',
+  'TFR',
+  'TR',
+  'TSCDD',
+  'universités',
+  'étude',
+  'études',
+].map((token) => token.trim().toLocaleUpperCase());
+
 /**
  * Format known project entities from the Financing sheet
  *
@@ -22,15 +147,16 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
     );
 
     // personnel without a financing request
-    const personnel_no_request = mapPersonnelFinancingEntities(
-      workbook.sheet(workbook.sheetNames[index], {
-        range: 'B50:I61',
-        headers: false,
-      }),
-      false,
-      project,
-      partner.name,
-    );
+    // const personnel_no_request = mapPersonnelFinancingEntities(
+    //   workbook.sheet(workbook.sheetNames[index], {
+    //     range: 'B50:I61',
+    //     headers: false,
+    //   }),
+    //   false,
+    //   project,
+    //   partner.name,
+    //   partner.siret
+    // );
 
     // personnel with a financing request
     const personnel_request = mapPersonnelFinancingEntities(
@@ -41,18 +167,20 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
       false,
       project,
       partner.name,
+      partner.siret
     );
 
     // civil servant personnel
-    const personnel_public = mapPersonnelFinancingEntities(
-      workbook.sheet(workbook.sheetNames[index], {
-        range: 'B80:I103',
-        headers: false,
-      }),
-      true,
-      project,
-      partner.name,
-    );
+    // const personnel_public = mapPersonnelFinancingEntities(
+    //   workbook.sheet(workbook.sheetNames[index], {
+    //     range: 'B80:I103',
+    //     headers: false,
+    //   }),
+    //   true,
+    //   project,
+    //   partner.name,
+    //   partner.siret
+    // );
 
     // aggregate data
     if (
@@ -63,12 +191,53 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
     ) {
       partners.push(partner);
     }
-    merge([personnel_request, personnel_no_request, personnel_public]).forEach(
-      (person) => {
-        personnel.push(person);
+
+    merge([
+      personnel_request,
+      // personnel_no_request,
+      // personnel_public
+    ]).forEach((person) => {
+      // merge and filter out unwanted personnel types then add to dataset
+
+      // known prefiltered post description mappings to non civil servant classification
+      const personnel_type_map = new Map([
+        ['étude', 'IR'],
+        ['recherche', 'IR'],
+        ['Expert', 'IR'],
+        ['IGR', 'IR'],
+        ['Doctorant', 'Doctorant'],
+        ['IE', 'IE'],
+        ['IGE', 'IE'],
+        ['Master', 'IE'],
+        ['Master2', 'IE'],
+        ['M2', 'IE'],
+        ['stage', 'IE'],
+        ['Stagiaire', 'IE'],
+        ['Tech', 'Tech'],
+        ['Ingénieur', 'IR'],
+        ['data', 'IR'],
+      ]);
+
+      // categorize contract dsecriptions
+      person.type_post = 'other/unknown';
+      const clean_description = person.description
+        ? person.description.trim().toLocaleUpperCase()
+        : null;
+      for (const mapping of personnel_type_map) {
+        if (
+          clean_description &&
+          !clean_description.includes('POST') &&
+          clean_description.includes(mapping[0].toLocaleUpperCase())
+        ) {
+          person.type_post = mapping[1];
+          break;
+        }
       }
-    );
+
+      personnel.push(person);
+    });
   }
+
   return { personnel, partners };
 }
 
@@ -84,17 +253,19 @@ function mapPersonnelFinancingEntities(
   data,
   civil_servants,
   project = null,
-  default_employer = null
+  default_employer = null,
+  default_employer_id = null
 ) {
   const mapped_data = data.map((d) => {
     const person = {
       // description: formatIfString(d['B']), // description of role
       project: project, // project name
       description: anonymizeDescription(d['B']), // description of role
-      type: formatIfString(d['D']), // type of contract
+      type_contract: formatIfString(d['D']), // type of contract
       employer: formatIfString(d['D'])
         ? formatIfString(d['D'])
         : default_employer, // name of employer (instutution)
+      employer_id: default_employer_id, // name of employer (instutution)
       months: formatIfString(d['F']), // contract length by number of months
       cost: formatIfString(d['E']), // unitary cost
       assistance: formatIfString(d['H']), // additional requested financing
@@ -106,19 +277,20 @@ function mapPersonnelFinancingEntities(
 
     // Column D mixes contract type and employer depending on if civil servant
     if (civil_servants) {
-      person.type = 'CDI';
+      person.type_contract = 'CDI';
     } else {
       person.employer = default_employer;
     }
     // contract type may declare post description
     const known_doctoral_CDD_types = [
       'DOCTORANT',
+      'DOCTORANT',
       'POSTDOC',
       'POST-DOC',
       'POST-DOCTORAL',
     ];
-    if (!civil_servants && person.description == '' && person.type) {
-      const contract_type_tokens = person.type.trim().split(' ');
+    if (!civil_servants && person.type_contract) {
+      const contract_type_tokens = person.type_contract.trim().split(' ');
       for (let index = 0; index < known_doctoral_CDD_types.length; index++) {
         const type = known_doctoral_CDD_types[index];
         const match = contract_type_tokens.find(
@@ -130,6 +302,7 @@ function mapPersonnelFinancingEntities(
         }
       }
     }
+
     return person;
   });
 
@@ -165,129 +338,6 @@ function anonymizeDescription(description) {
   if (!description) {
     return null;
   }
-  const known_tokens = [
-    'adjointe',
-    'administratifs',
-    'Agent',
-    'Agents',
-    'AI',
-    'Alternant',
-    'ASI',
-    'Assistante',
-    'attaché',
-    'CE',
-    'Chargé',
-    'chargés',
-    'Chef',
-    'Chercheur',
-    'Chercheure',
-    'clinique ',
-    'confirmé',
-    'conférence ',
-    'conférences',
-    // 'Contribution responsable opération pour données sur sites choiss',
-    // 'Contribution responsable service réhabilitation aux ateliers, journées de restitution, actions de dissémination',
-    'CPJ',
-    'CR',
-    'CR1',
-    'CR2',
-    'CRCN',
-    'CRHC',
-    'data',
-    'Dir',
-    'Directeur',
-    'Directrice',
-    'doc ',
-    'DOCTORANT',
-    'doctorante',
-    'DR',
-    'DR1',
-    'DR12',
-    'DR2',
-    'Décharge',
-    'encadrant',
-    'enseignant',
-    'enseignement',
-    'etude',
-    'executif',
-    'Expert',
-    'Gestionnaire',
-    'Géomaticiens ',
-    'HC',
-    'ICPEF',
-    'IDTPE',
-    'IE',
-    'IECN',
-    'IEES',
-    'IGE',
-    'IGR',
-    'IMBE',
-    'Ing',
-    'Ingénieur',
-    'ingénieurs',
-    'ingérieur',
-    'IPEF',
-    'IR',
-    'IR1',
-    'IR2',
-    'IRCN',
-    'IRHC',
-    'ITPE',
-    'IUSTI',
-    'LCE',
-    'M2',
-    'maitre',
-    'manager',
-    'MASTER',
-    'master ',
-    'Master2',
-    'maître',
-    'MCF',
-    'MCU',
-    'MdC',
-    'methodologiste',
-    'mission',
-    'Officiers',
-    'Officiers SP Preventionnistes',
-    'PA',
-    'PEA',
-    'Personnel',
-    'PF',
-    'POST',
-    'POSTDOC',
-    'postdoctorant',
-    'PR',
-    'Pr',
-    'PR1',
-    'PRCE',
-    'prof',
-    'professeur',
-    'Project',
-    'projet',
-    'prospective',
-    'PU',
-    'PUPH',
-    'pédagogiques',
-    'recherche',
-    'recruter',
-    'scientist',
-    'SP',
-    'STAGE',
-    'Stages ',
-    'Stagiaire',
-    'stagiaires ',
-    'statisticien',
-    'supérieur',
-    'Tech',
-    'Technicien',
-    'technique',
-    'TFR',
-    'TR',
-    'TSCDD',
-    'universités ',
-    'étude',
-    'études',
-  ].map((token) => token.trim().toLocaleUpperCase());
   const tokens = description
     .trim()
     // filter special characters but keep accents and replace apostrophes with spaces
@@ -299,65 +349,3 @@ function anonymizeDescription(description) {
   );
   return anonymized_tokens.join(' ');
 }
-
-// old list:
-// 'Stagiaire',
-// 'IE',
-// 'IECN',
-// 'IEES',
-// 'ICPEF',
-// 'IDTPE',
-// 'IDTPE',
-// 'IR',
-// 'IR1',
-// 'IR2',
-// 'IRHC',
-// 'IPEF',
-// 'ITPE',
-// 'IGR',
-// 'DOCTORANT',
-// 'POSTDOC',
-// 'POST-DOC',
-// 'DR1',
-// 'DR2',
-// 'CR',
-// 'CR1',
-// 'CR2',
-// 'CE',
-// 'CPJ',
-// 'DR',
-// 'PU',
-// 'CRCN',
-// 'CRHC',
-// 'HC',
-// 'MCF',
-// 'MCU',
-// 'STAGE',
-// 'TR',
-// 'Tech',
-// 'TSCDD',
-// 'MASTER',
-// 'M2',
-// 'AI',
-// 'PA',
-// 'PR',
-// 'PR1',
-// 'PEA',
-// 'PRCE',
-// 'Project',
-// 'manager',
-// 'Data',
-// 'Scientist',
-// 'Décharge',
-// "enseignement",
-// 'Chargé',
-// "étude",
-// 'Directeur',
-// 'projet',
-// 'executif',
-// 'Personnel',
-// 'technique',
-// 'Chef',
-// 'Chercheur',
-// 'Chercheure',
-// 'confirmé',

@@ -1,15 +1,12 @@
 import * as d3 from 'npm:d3';
 
 /**
- * Create a donut chart
- * Adapted from:
- * - https://github.com/VCityTeam/UD-Viz/blob/master/packages/widget_sparql/src/view/D3GraphCanvas.js
- * - https://d3-graph-gallery.com/graph/custom_legend.html
+ * Create a legend
  *
  * @param {Array<Object>} data - input dataset, by default expects an array of key (string)
  *  and value (number) pairs. Modify keyMap and valueMap in the options if this is not the case.
- * @param {Object} options - configuration options for the chart
- * @returns {d3.node} - SVG node containing the donut chart
+ * @param {Object} options - configuration options for the legend
+ * @returns {d3.node} - SVG node containing the legend
  */
 export function circleLegend(
   data,
