@@ -2,6 +2,10 @@ import * as d3 from 'npm:d3';
 import { exclude } from './utilities.js';
 import { cnu_category_map } from './cnu.js';
 
+// TODO add PEPR VDBI colors
+// - #3558A2
+// - #FF732C
+
 // CNU Colors //
 
 /**

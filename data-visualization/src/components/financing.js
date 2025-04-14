@@ -9,6 +9,7 @@ const known_tokens = [
   'Agents',
   'AI',
   'Alternant',
+  'Animateur',
   'ASI',
   'Assistante',
   'attaché',
@@ -18,12 +19,10 @@ const known_tokens = [
   'Chef',
   'Chercheur',
   'Chercheure',
-  'clinique',
-  'confirmé',
-  'conférence',
+  'clinique ',
+  'conférence ',
   'conférences',
-  // 'Contribution responsable opération pour données sur sites choiss',
-  // 'Contribution responsable service réhabilitation aux ateliers, journées de restitution, actions de dissémination',
+  'confirmé',
   'CPJ',
   'CR',
   'CR1',
@@ -31,25 +30,29 @@ const known_tokens = [
   'CRCN',
   'CRHC',
   'data',
+  'Décharge',
   'Dir',
   'Directeur',
   'Directrice',
-  'doc',
+  'doc ',
   'DOCTORANT',
   'doctorante',
+  'Doctorat',
   'DR',
   'DR1',
   'DR12',
   'DR2',
-  'Décharge',
   'encadrant',
   'enseignant',
   'enseignement',
   'etude',
+  'étude',
+  'études',
   'executif',
   'Expert',
+  'Facilitateur',
+  'Géomaticiens ',
   'Gestionnaire',
-  'Géomaticiens',
   'HC',
   'ICPEF',
   'IDTPE',
@@ -74,22 +77,23 @@ const known_tokens = [
   'LCE',
   'M2',
   'maitre',
+  'maître',
   'manager',
   'MASTER',
-  'master',
+  'master ',
   'Master2',
-  'maître',
   'MCF',
   'MCU',
   'MdC',
   'methodologiste',
   'mission',
   'Officiers',
-  'Officiers SP Preventionnistes',
   'PA',
   'PEA',
+  'pédagogiques',
   'Personnel',
   'PF',
+  'PhD',
   'POST',
   'POSTDOC',
   'postdoctorant',
@@ -97,6 +101,7 @@ const known_tokens = [
   'Pr',
   'PR1',
   'PRCE',
+  'Preventionnistes',
   'prof',
   'professeur',
   'Project',
@@ -104,26 +109,26 @@ const known_tokens = [
   'prospective',
   'PU',
   'PUPH',
-  'pédagogiques',
   'recherche',
-  'recruter',
+  'responsable',
+  'scientifique',
   'scientist',
   'SP',
   'STAGE',
-  'Stages',
+  'Stages ',
   'Stagiaire',
-  'stagiaires',
+  'stagiaires ',
+  'Stagiare',
   'statisticien',
   'supérieur',
   'Tech',
   'Technicien',
   'technique',
   'TFR',
+  'Thèse',
   'TR',
   'TSCDD',
   'universités',
-  'étude',
-  'études',
 ].map((token) => token.trim().toLocaleUpperCase());
 
 /**
@@ -192,46 +197,101 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
       partners.push(partner);
     }
 
+    // merge and filter out unwanted personnel types then add to dataset
     merge([
       personnel_request,
       // personnel_no_request,
       // personnel_public
     ]).forEach((person) => {
-      // merge and filter out unwanted personnel types then add to dataset
+      // cleanup description
+      person.type_post = null;
+      const clean_description = person.description
+        ? person.description.trim().toLocaleUpperCase()
+        : null;
 
-      // known prefiltered post description mappings to non civil servant classification
-      const personnel_type_map = new Map([
-        ['étude', 'IR'],
-        ['recherche', 'IR'],
-        ['Expert', 'IR'],
-        ['IGR', 'IR'],
+      // check if description is empty or contains POST (for post-docs)
+      if (!clean_description || clean_description.includes('POST')) {
+        person.type_post = 'other/unknown';
+        personnel.push(person);
+        return;
+      }
+
+      // known prefiltered post description keyword mappings to non civil servant classification
+      const personnel_keyword_type_map = new Map([
         ['Doctorant', 'Doctorant'],
-        ['IE', 'IE'],
-        ['IGE', 'IE'],
         ['Master', 'IE'],
         ['Master2', 'IE'],
         ['M2', 'IE'],
         ['stage', 'IE'],
         ['Stagiaire', 'IE'],
         ['Tech', 'Tech'],
+        ['recherche', 'IR'],
+        ['Expert', 'IR'],
+        ['étude', 'IE'],
+        ['etude', 'IE'],
+        // ['IGR', 'IR'],
+        // ['IGE', 'IE'],
+        // ['IR', 'IR'],
+        // ['IE', 'IE'],
         ['Ingénieur', 'IR'],
-        ['data', 'IR'],
+        ['Ingérieur', 'IR'],
+        // ['data', 'IR'],
+        // ['Statisticien', 'IR'],
+      ]);
+
+      // known prefiltered post description token mappings to non civil servant classification
+      const personnel_token_type_map = new Map([
+        // ['recherche', 'IR'],
+        // ['Expert', 'IR'],
+        // ['Doctorant', 'Doctorant'],
+        // ['étude', 'IE'],
+        // ['Master', 'IE'],
+        // ['Master2', 'IE'],
+        // ['M2', 'IE'],
+        // ['stage', 'IE'],
+        // ['Stagiaire', 'IE'],
+        // ['Tech', 'Tech'],
+        ['IGR', 'IR'],
+        ['IGE', 'IE'],
+        ['IR', 'IR'],
+        ['IE', 'IE'],
+        ['AI', 'AI'],
+        // ['Ingénieur', 'IR'],
+        // ['data', 'IR'],
       ]);
 
       // categorize contract dsecriptions
-      person.type_post = 'other/unknown';
-      const clean_description = person.description
-        ? person.description.trim().toLocaleUpperCase()
-        : null;
-      for (const mapping of personnel_type_map) {
-        if (
-          clean_description &&
-          !clean_description.includes('POST') &&
-          clean_description.includes(mapping[0].toLocaleUpperCase())
-        ) {
+
+      // check if description contains a keyword
+      for (const mapping of personnel_keyword_type_map) {
+        if (clean_description.includes(mapping[0].toLocaleUpperCase())) {
           person.type_post = mapping[1];
           break;
         }
+      }
+      // check if description contains a token
+      const tokenized_description = clean_description.split(' ');
+      for (const mapping of personnel_token_type_map) {
+        for (let index = 0; index < tokenized_description.length; index++) {
+          const token = tokenized_description[index];
+          if (token == mapping[0].toLocaleUpperCase()) {
+            person.type_post = mapping[1];
+            break;
+          }
+        }
+      }
+
+      // check if AI
+      if (
+        (person.type_post == 'IR' || person.type_post == 'IE') &&
+        clean_description.includes('assist')
+      ) {
+        person.type_post = 'AI';
+      }
+
+      // default case
+      if (!person.type_post) {
+        person.type_post = 'other/unknown';
       }
 
       personnel.push(person);
@@ -284,7 +344,6 @@ function mapPersonnelFinancingEntities(
     // contract type may declare post description
     const known_doctoral_CDD_types = [
       'DOCTORANT',
-      'DOCTORANT',
       'POSTDOC',
       'POST-DOC',
       'POST-DOCTORAL',
@@ -297,7 +356,10 @@ function mapPersonnelFinancingEntities(
           (token) => token.toUpperCase() == type
         );
         if (match) {
-          person.description = match;
+          person.description += ` (${match})`;
+          person.type_contract = contract_type_tokens
+            .filter((d) => d != match)
+            .join(' ');
           break;
         }
       }
@@ -308,8 +370,8 @@ function mapPersonnelFinancingEntities(
 
   // filter out empty values
   return mapped_data.filter(
-    ({ months, cost, assistance, support, total_cost }) =>
-      months || cost || assistance || support || total_cost
+    ({ description, months, cost, assistance, support, total_cost }) =>
+      description || months || cost || assistance || support || total_cost
   );
 }
 
@@ -340,12 +402,12 @@ function anonymizeDescription(description) {
   }
   const tokens = description
     .trim()
-    // filter special characters but keep accents and replace apostrophes with spaces
-    .replace(/['-]/g, ' ')
-    .replace(/[^a-zA-ZÀ-ž0-9\s]/g, '')
+    // replace special characters with but keep accents and replace apostrophes with spaces
+    // .replace(/['’-]/g, ' ')
+    .replace(/[^a-zA-ZÀ-ž0-9\s]/g, ' ')
     .split(' ');
   const anonymized_tokens = tokens.filter((token) =>
-    known_tokens.includes(token.toUpperCase())
+    known_tokens.includes(token.toUpperCase()) || /^\d+$/.test(token)
   );
   return anonymized_tokens.join(' ');
 }
