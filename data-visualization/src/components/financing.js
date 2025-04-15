@@ -209,8 +209,8 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
         ? person.description.trim().toLocaleUpperCase()
         : null;
 
-      // check if description is empty or contains POST (for post-docs)
-      if (!clean_description || clean_description.includes('POST')) {
+      // check if description is empty
+      if (!clean_description) {
         person.type_post = 'other/unknown';
         personnel.push(person);
         return;
@@ -218,6 +218,7 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
 
       // known prefiltered post description keyword mappings to non civil servant classification
       const personnel_keyword_type_map = new Map([
+        ['Post', 'Postdoctorant'],
         ['Doctorant', 'Doctorant'],
         ['Master', 'IE'],
         ['Master2', 'IE'],
