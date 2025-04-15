@@ -31,6 +31,7 @@ config:
   theme: default
 ---
 flowchart TD
+  Post --> Postdoctorant
   Doctorant1 --> Doctorant2
   Tech1 --> Tech2
   IR2 --> assistant_req
@@ -52,7 +53,8 @@ flowchart TD
   Ingérieur --> IR2
   AI1 --> AI2
 
-  subgraph descriptions
+  subgraph Description keywords
+    Post(Post)
     AI1(AI)
     recherche(recherche)
     Expert(Expert)
@@ -72,8 +74,9 @@ flowchart TD
     Ingérieur(Ingérieur)
   end
 
-  subgraph categories
+  subgraph Categories
     assistant_req{{Contains 'assist'?}}
+    Postdoctorant(Postdoctorant)
     IR2(IR)
     Doctorant2(Doctorant)
     IE2(IE)
@@ -101,8 +104,9 @@ import {
 const category_color_map = new Map([
   ['IR', d3.schemeCategory10[0]],
   ['Doctorant', d3.schemeCategory10[1]],
+  ['Postdoctorant', d3.schemeCategory10[2]],
   ['IE', d3.schemeCategory10[2]],
-  ['I', d3.schemeCategory10[3]],
+  ['AI', d3.schemeCategory10[3]],
   ['Tech', d3.schemeCategory10[4]],
 ])
 
@@ -390,7 +394,7 @@ if (debug) {
     </div>
   </div>
   <div class="card">
-    <h2>All proposed posts by category</h2>
+    <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
         resize((width) => donutChart(
@@ -668,7 +672,7 @@ if (debug) {
     </div>
   </div>
   <div class="card">
-    <h2>All proposed posts by category</h2>
+    <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
         resize((width) => donutChart(
@@ -766,7 +770,7 @@ if (debug) {
     </div>
   </div>
   <div class="card">
-    <h2>All proposed posts by category</h2>
+    <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
         resize((width) => donutChart(
@@ -864,7 +868,7 @@ if (debug) {
     </div>
   </div>
   <div class="card">
-    <h2>All proposed posts by category</h2>
+    <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
         resize((width) => donutChart(
@@ -962,7 +966,7 @@ if (debug) {
     </div>
   </div>
   <div class="card">
-    <h2>All proposed posts by category</h2>
+    <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
         resize((width) => donutChart(
@@ -1060,7 +1064,7 @@ if (debug) {
     </div>
   </div>
   <div class="card">
-    <h2>All proposed posts by category</h2>
+    <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
         resize((width) => donutChart(
@@ -1158,7 +1162,7 @@ if (debug) {
     </div>
   </div>
   <div class="card">
-    <h2>All proposed posts by category</h2>
+    <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
         resize((width) => donutChart(
@@ -1256,7 +1260,7 @@ if (debug) {
     </div>
   </div>
   <div class="card">
-    <h2>All proposed posts by category</h2>
+    <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
         resize((width) => donutChart(
@@ -1354,7 +1358,7 @@ if (debug) {
     </div>
   </div>
   <div class="card">
-    <h2>All proposed posts by category</h2>
+    <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
         resize((width) => donutChart(
