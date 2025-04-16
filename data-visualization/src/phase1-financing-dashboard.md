@@ -4,7 +4,7 @@ theme: [dashboard, light]
 ---
 
 ```js
-const debug = false;
+const debug = true;
 ```
 
 # Phase 1 Proposed Post Financing
@@ -20,6 +20,7 @@ Aggregated financing data by project for proposed personnel contract with reques
     <li>Some post descriptions may be laboratory identifiers.</li>
     <li>Some post descriptions are missing.</li>
     <li>Some post descriptions are an aggregation of multiple posts with the same characteristics.</li>
+    <li>Partners without a type are likely 3rd party employers for functionnaires.</li>
   </ul>
 </div>
 

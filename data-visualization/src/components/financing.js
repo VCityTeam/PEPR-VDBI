@@ -143,10 +143,11 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
 
   // iterate over partner sheets
   for (let index = 3; index < workbook.sheetNames.length; index++) {
-    // partner
-    const partner = mapPartnerFinancingEntities(
+    // partners
+    const project_partners = mapPartnerFinancingEntities(
       workbook.sheet(workbook.sheetNames[index], {
-        range: 'D7:D10',
+        // coordinating partner sheet (index 3) is structured slightly differently
+        range: index === 3 ? 'C257:E264' : 'C256:E263',
         headers: false,
       })
     );
@@ -159,8 +160,8 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
     //   }),
     //   false,
     //   project,
-    //   partner.name,
-    //   partner.siret
+    //   project_partners[0] ? project_partners[0].name : null,
+    //   project_partners[0] ? project_partners[0].siret : null
     // );
 
     // personnel with a financing request
@@ -171,8 +172,8 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
       }),
       false,
       project,
-      partner.name,
-      partner.siret
+      project_partners[0] ? project_partners[0].name : null,
+      project_partners[0] ? project_partners[0].siret : null
     );
 
     // civil servant personnel
@@ -183,19 +184,12 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
     //   }),
     //   true,
     //   project,
-    //   partner.name,
-    //   partner.siret
+    //   project_partners[0] ? project_partners[0].name : null,
+    //   project_partners[0] ? project_partners[0].siret : null
     // );
 
     // aggregate data
-    if (
-      partner.complete_name ||
-      partner.name ||
-      partner.type ||
-      partner.siret
-    ) {
-      partners.push(partner);
-    }
+    project_partners.forEach((partner) => partners.push(partner));
 
     // merge and filter out unwanted personnel types then add to dataset
     merge([
@@ -319,8 +313,8 @@ function mapPersonnelFinancingEntities(
 ) {
   const mapped_data = data.map((d) => {
     const person = {
-      // description: formatIfString(d['B']), // description of role
       project: project, // project name
+      // description: formatIfString(d['B']), // description of role
       description: anonymizeDescription(d['B']), // description of role
       type_contract: formatIfString(d['D']), // type of contract
       employer: formatIfString(d['D'])
@@ -383,12 +377,34 @@ function mapPersonnelFinancingEntities(
  * @returns {Array<Object.<Array>} Formatted personnel data
  */
 function mapPartnerFinancingEntities(data) {
-  return {
-    complete_name: formatIfString(data[0]['D']), // complete name
-    name: formatIfString(data[1]['D']), // short name
-    type: formatIfString(data[2]['D']), // partner type
-    siret: formatIfString(data[3]['D']), // partner SIRET
-  };
+  return data
+    .map((d) => {
+      // format complete_name and type
+      let complete_name = formatIfString(d['C']);
+      let type = null;
+      const tokens = complete_name ? complete_name.split(' ') : [];
+
+      // if last token is wrapped in parentheses update the complete name and type
+      if (/^\(.*\)$/.test(tokens[tokens.length - 1])) {
+        complete_name = tokens.slice(0, tokens.length - 1).join(' ');
+        type = tokens[tokens.length - 1].replace(/^\(|\)$/g, '');
+      }
+
+      return {
+        complete_name: complete_name, // complete name
+        name:
+          d['D'] && d['D'].startsWith('Étab ') ? null : formatIfString(d['D']), // short name
+        type: type, // partner type
+        siret: formatIfString(d['E']), // partner SIRET
+      };
+    })
+    .filter(({ complete_name, name, siret }) => complete_name || name || siret);
+  // return {
+  //   complete_name: formatIfString(data[0]['D']), // complete name
+  //   name: formatIfString(data[1]['D']), // short name
+  //   type: formatIfString(data[2]['D']), // partner type
+  //   siret: formatIfString(data[3]['D']), // partner SIRET
+  // };
 }
 
 /**
@@ -407,8 +423,8 @@ function anonymizeDescription(description) {
     // .replace(/['’-]/g, ' ')
     .replace(/[^a-zA-ZÀ-ž0-9\s]/g, ' ')
     .split(' ');
-  const anonymized_tokens = tokens.filter((token) =>
-    known_tokens.includes(token.toUpperCase()) || /^\d+$/.test(token)
+  const anonymized_tokens = tokens.filter(
+    (token) => known_tokens.includes(token.toUpperCase()) || /^\d+$/.test(token)
   );
   return anonymized_tokens.join(' ');
 }
