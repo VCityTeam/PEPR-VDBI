@@ -1,136 +1,6 @@
 import { merge } from 'npm:d3';
 import { formatIfString } from './utilities.js';
 
-// all known token used for post description classification
-const known_tokens = [
-  'adjointe',
-  'administratifs',
-  'Agent',
-  'Agents',
-  'AI',
-  'Alternant',
-  'Animateur',
-  'ASI',
-  'Assistante',
-  'attaché',
-  'CE',
-  'Chargé',
-  'chargés',
-  'Chef',
-  'Chercheur',
-  'Chercheure',
-  'clinique ',
-  'conférence ',
-  'conférences',
-  'confirmé',
-  'CPJ',
-  'CR',
-  'CR1',
-  'CR2',
-  'CRCN',
-  'CRHC',
-  'data',
-  'Décharge',
-  'Dir',
-  'Directeur',
-  'Directrice',
-  'doc ',
-  'DOCTORANT',
-  'doctorante',
-  'Doctorat',
-  'DR',
-  'DR1',
-  'DR12',
-  'DR2',
-  'encadrant',
-  'enseignant',
-  'enseignement',
-  'etude',
-  'étude',
-  'études',
-  'executif',
-  'Expert',
-  'Facilitateur',
-  'Géomaticiens ',
-  'Gestionnaire',
-  'HC',
-  'ICPEF',
-  'IDTPE',
-  'IE',
-  'IECN',
-  'IEES',
-  'IGE',
-  'IGR',
-  'IMBE',
-  'Ing',
-  'Ingénieur',
-  'ingénieurs',
-  'ingérieur',
-  'IPEF',
-  'IR',
-  'IR1',
-  'IR2',
-  'IRCN',
-  'IRHC',
-  'ITPE',
-  'IUSTI',
-  'LCE',
-  'M2',
-  'maitre',
-  'maître',
-  'manager',
-  'MASTER',
-  'master ',
-  'Master2',
-  'MCF',
-  'MCU',
-  'MdC',
-  'methodologiste',
-  'mission',
-  'Officiers',
-  'PA',
-  'PEA',
-  'pédagogiques',
-  'Personnel',
-  'PF',
-  'PhD',
-  'POST',
-  'POSTDOC',
-  'postdoctorant',
-  'PR',
-  'Pr',
-  'PR1',
-  'PRCE',
-  'Preventionnistes',
-  'prof',
-  'professeur',
-  'Project',
-  'projet',
-  'prospective',
-  'PU',
-  'PUPH',
-  'recherche',
-  'responsable',
-  'scientifique',
-  'scientist',
-  'SP',
-  'STAGE',
-  'Stages ',
-  'Stagiaire',
-  'stagiaires ',
-  'Stagiare',
-  'statisticien',
-  'supérieur',
-  'Tech',
-  'Technicien',
-  'technique',
-  'TFR',
-  'Thèse',
-  'TR',
-  'TSCDD',
-  'universités',
-].map((token) => token.trim().toLocaleUpperCase());
-
 /**
  * Format known project entities from the Financing sheet
  *
@@ -149,7 +19,8 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
         // coordinating partner sheet (index 3) is structured slightly differently
         range: index === 3 ? 'C257:E264' : 'C256:E263',
         headers: false,
-      })
+      }),
+      project
     );
 
     // personnel without a financing request
@@ -374,15 +245,18 @@ function mapPersonnelFinancingEntities(
  * Map known personnel financing entities
  *
  * @param {Array<Object>} data - A table
+ * @param {string} project - Project acronym
  * @returns {Array<Object.<Array>} Formatted personnel data
  */
-function mapPartnerFinancingEntities(data) {
+function mapPartnerFinancingEntities(data, project) {
   return data
     .map((d) => {
       // format complete_name and type
       let complete_name = formatIfString(d['C']);
       let type = null;
-      const tokens = complete_name ? complete_name.split(' ') : [];
+      const tokens = complete_name
+        ? complete_name.split(' ').map((d) => d.trim())
+        : [];
 
       // if last token is wrapped in parentheses update the complete name and type
       if (/^\(.*\)$/.test(tokens[tokens.length - 1])) {
@@ -395,16 +269,11 @@ function mapPartnerFinancingEntities(data) {
         name:
           d['D'] && d['D'].startsWith('Étab ') ? null : formatIfString(d['D']), // short name
         type: type, // partner type
-        siret: formatIfString(d['E']), // partner SIRET
+        siret: d['E'] ? d['E'].replace(/[^0-9]/g, '') : null, // partner SIRET, filter out non numeric characters
+        project: project, // project name
       };
     })
     .filter(({ complete_name, name, siret }) => complete_name || name || siret);
-  // return {
-  //   complete_name: formatIfString(data[0]['D']), // complete name
-  //   name: formatIfString(data[1]['D']), // short name
-  //   type: formatIfString(data[2]['D']), // partner type
-  //   siret: formatIfString(data[3]['D']), // partner SIRET
-  // };
 }
 
 /**
@@ -419,8 +288,7 @@ function anonymizeDescription(description) {
   }
   const tokens = description
     .trim()
-    // replace special characters with but keep accents and replace apostrophes with spaces
-    // .replace(/['’-]/g, ' ')
+    // replace special characters with spaces but keep accents
     .replace(/[^a-zA-ZÀ-ž0-9\s]/g, ' ')
     .split(' ');
   const anonymized_tokens = tokens.filter(
@@ -428,3 +296,133 @@ function anonymizeDescription(description) {
   );
   return anonymized_tokens.join(' ');
 }
+
+// all known token used for post description classification
+const known_tokens = [
+  'adjointe',
+  'administratifs',
+  'Agent',
+  'Agents',
+  'AI',
+  'Alternant',
+  'Animateur',
+  'ASI',
+  'Assistante',
+  'attaché',
+  'CE',
+  'Chargé',
+  'chargés',
+  'Chef',
+  'Chercheur',
+  'Chercheure',
+  'clinique ',
+  'conférence ',
+  'conférences',
+  'confirmé',
+  'CPJ',
+  'CR',
+  'CR1',
+  'CR2',
+  'CRCN',
+  'CRHC',
+  'data',
+  'Décharge',
+  'Dir',
+  'Directeur',
+  'Directrice',
+  'doc ',
+  'DOCTORANT',
+  'doctorante',
+  'Doctorat',
+  'DR',
+  'DR1',
+  'DR12',
+  'DR2',
+  'encadrant',
+  'enseignant',
+  'enseignement',
+  'etude',
+  'étude',
+  'études',
+  'executif',
+  'Expert',
+  'Facilitateur',
+  'Géomaticiens ',
+  'Gestionnaire',
+  'HC',
+  'ICPEF',
+  'IDTPE',
+  'IE',
+  'IECN',
+  'IEES',
+  'IGE',
+  'IGR',
+  'IMBE',
+  'Ing',
+  'Ingénieur',
+  'ingénieurs',
+  'ingérieur',
+  'IPEF',
+  'IR',
+  'IR1',
+  'IR2',
+  'IRCN',
+  'IRHC',
+  'ITPE',
+  'IUSTI',
+  'LCE',
+  'M2',
+  'maitre',
+  'maître',
+  'manager',
+  'MASTER',
+  'master ',
+  'Master2',
+  'MCF',
+  'MCU',
+  'MdC',
+  'methodologiste',
+  'mission',
+  'Officiers',
+  'PA',
+  'PEA',
+  'pédagogiques',
+  'Personnel',
+  'PF',
+  'PhD',
+  'POST',
+  'POSTDOC',
+  'postdoctorant',
+  'PR',
+  'Pr',
+  'PR1',
+  'PRCE',
+  'Preventionnistes',
+  'prof',
+  'professeur',
+  'Project',
+  'projet',
+  'prospective',
+  'PU',
+  'PUPH',
+  'recherche',
+  'responsable',
+  'scientifique',
+  'scientist',
+  'SP',
+  'STAGE',
+  'Stages ',
+  'Stagiaire',
+  'stagiaires ',
+  'Stagiare',
+  'statisticien',
+  'supérieur',
+  'Tech',
+  'Technicien',
+  'technique',
+  'TFR',
+  'Thèse',
+  'TR',
+  'TSCDD',
+  'universités',
+].map((token) => token.trim().toLocaleUpperCase());
