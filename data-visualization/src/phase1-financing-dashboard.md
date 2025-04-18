@@ -4,7 +4,7 @@ theme: [dashboard, light]
 ---
 
 ```js
-const debug = true;
+const debug = false;
 ```
 
 # Phase 1 Proposed Post Financing
@@ -167,6 +167,12 @@ function default_personnel_table_config(data, width) {
 }
 
 const default_partner_table_config = {
+  columns: [
+    "complete_name",
+    "name",
+    "type",
+    "siret",
+  ],
   header: {
     "complete_name": "Complete name",
     "name": "Name",
@@ -311,8 +317,7 @@ const all_data = {
     VFpp_data.personnel,
     WHAOU_data.personnel,
   ]),
-  partners: d3.groups(
-    d3.merge([
+  partners: d3.merge([
       inteGREEN_data.partners,
       VILLEGARDEN_data.partners,
       NEO_data.partners,
@@ -322,8 +327,6 @@ const all_data = {
       VFpp_data.partners,
       WHAOU_data.partners,
     ]),
-    (d) => d.siret
-  ).map((D) => D[1][0]),
 }
 
 // const all_description_count = d3.rollups(
@@ -623,7 +626,22 @@ if (debug) {
       ${
         resize((width) => Inputs.table(
           all_data.partners,
-          default_partner_table_config
+          {
+            columns: [
+              "complete_name",
+              "name",
+              "type",
+              "siret",
+              "project",
+            ],
+            header: {
+              "complete_name": "Complete name",
+              "name": "Name",
+              "type": "Type",
+              "siret": "SIRET",
+              "project": "Project",
+            },
+          },
         ))//$
       }
     </div>
