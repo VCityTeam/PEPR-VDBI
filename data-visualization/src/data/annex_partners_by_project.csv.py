@@ -22,10 +22,11 @@ def main():
      \\/            \\/"""
     )
 
-    PATH = "./data/private/partenaires_aap2023.csv"
+    PATH = "./data/private/financed_annex_partners_by_project.csv"
     partner_data = [
         (
             "siret",
+            "siren",
             "nom_complet",
             "source_label",
             "nature_juridique",
@@ -34,7 +35,6 @@ def main():
             "libelle_commune",
             "commune",
             "project_name",
-            "project_coordinator",
         )
     ]
 
@@ -52,41 +52,19 @@ def main():
         if project_name == "":
             continue
 
-        # get coordinating partner
-        coordinating_partner = row[1].strip()
-        if coordinating_partner != "":
-            response = queryRE(coordinating_partner)
+        # get partner
+        partner = row[1].strip()
+        if partner != "":
+            response = queryRE(partner)
             if response is not None:
                 formatted_response = formatReResponse(
-                    response, coordinating_partner, project_name
-                )
-                if formatted_response is not None:
-                    partner_data += [formatted_response]
-
-        # get institutional partners
-        institutional_partner = row[3].strip()
-        if institutional_partner != "":
-            response = queryRE(institutional_partner)
-            if response is not None:
-                formatted_response = formatReResponse(
-                    response, institutional_partner, project_name
-                )
-                if formatted_response is not None:
-                    partner_data += [formatted_response]
-
-        # get socio-economical partners
-        socio_eco_partner = row[4].strip()
-        if socio_eco_partner != "":
-            response = queryRE(socio_eco_partner)
-            if response is not None:
-                formatted_response = formatReResponse(
-                    response, socio_eco_partner, project_name
+                    response, partner, project_name
                 )
                 if formatted_response is not None:
                     partner_data += [formatted_response]
 
     # write data to file (comment out for use with observable framework data loaders)
-    with open("partners_aap2023.csv", "w") as file:
+    with open("annex_partners_by_project.csv", "w") as file:
         writer = csv.writer(file)
         writer.writerows(partner_data)
 

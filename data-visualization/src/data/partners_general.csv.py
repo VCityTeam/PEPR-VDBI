@@ -1,7 +1,7 @@
 import sys
 import logging
 import csv
-from siret_utils import queryRE
+from siret_utils import queryRE, formatReResponse
 
 
 def main():
@@ -22,11 +22,12 @@ def main():
      \\/            \\/"""
     )
 
-    PATH = "./data/private/financed_annex_partners_by_project.csv"
+    PATH = "./data/private/generality.csv"
     partner_data = [
         (
             "siret",
             "nom_complet",
+            "source_label",
             "nature_juridique",
             "latitude",
             "longitude",
@@ -55,22 +56,12 @@ def main():
         if partner != "":
             response = queryRE(partner)
             if response is not None:
-                for result in response["results"]:
-                    partner_data += [
-                        (
-                            result["siege"]["siret"],
-                            result["nom_complet"],
-                            result["nature_juridique"],
-                            result["siege"]["latitude"],
-                            result["siege"]["longitude"],
-                            result["siege"]["libelle_commune"],
-                            result["siege"]["commune"],
-                            project_name,  # project name
-                        )
-                    ]
+                formatted_response = formatReResponse(response, partner, project_name)
+                if formatted_response is not None:
+                    partner_data += [formatted_response]
 
     # write data to file (comment out for use with observable framework data loaders)
-    with open("partners.csv", "w") as file:
+    with open("partners_general.csv", "w") as file:
         writer = csv.writer(file)
         writer.writerows(partner_data)
 
