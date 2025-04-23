@@ -1,4 +1,4 @@
-import sys
+# import sys
 import logging
 import csv
 from siret_utils import queryAndFormatRe, defaultCsvHeader
@@ -22,7 +22,7 @@ def main():
      \\/            \\/"""
     )
 
-    PATH = "./data/private/financed_annex_partners_by_project.csv"
+    PATH = "./src/data/private/financed_annex_partners_by_project.csv"
     partner_data = [defaultCsvHeader()]
 
     # get partner data
@@ -54,13 +54,16 @@ def main():
         ]
 
     # write data to file (comment out for use with observable framework data loaders)
-    with open("partners_by_project_annex.csv", "w") as file:
-        writer = csv.writer(file)
-        writer.writerows(partner_data)
+    # with open("partners_by_project_annex.csv", "w") as file:
+    #     writer = csv.writer(file)
+    #     writer.writerows(partner_data)
 
     # write data to stdout as csv
-    writer = csv.writer(sys.stdout)
-    writer.writerows(partner_data)
+    # writer = csv.writer(sys.stdout)
+    # writer.writerows(partner_data)
+
+    for row in partner_data:
+        print(",".join(row))
 
 
 if __name__ == "__main__":

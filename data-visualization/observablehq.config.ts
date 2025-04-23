@@ -25,6 +25,10 @@ export default {
       name: 'Tests',
       pages: [
         {
+          name: 'Phase 1 Actors',
+          path: 'phase1-actors-dashboard',
+        },
+        {
           name: 'Demonstrateurs de la Ville Durable',
           path: 'dvd-dashboard',
         },
