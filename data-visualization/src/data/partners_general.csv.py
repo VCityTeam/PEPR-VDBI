@@ -1,7 +1,7 @@
 import sys
 import logging
 import csv
-from siret_utils import queryRE, formatReResponse
+from siret_utils import queryAndFormatRe, defaultCsvHeader
 
 
 def main():
@@ -23,19 +23,7 @@ def main():
     )
 
     PATH = "./data/private/generality.csv"
-    partner_data = [
-        (
-            "siret",
-            "nom_complet",
-            "source_label",
-            "nature_juridique",
-            "latitude",
-            "longitude",
-            "libelle_commune",
-            "commune",
-            "project_name",
-        )
-    ]
+    partner_data = [defaultCsvHeader()]
 
     # get partner data
     phase1_partner_data = []
@@ -49,16 +37,50 @@ def main():
     for row in phase1_partner_data[1:]:
         project_name = row[0].strip()
         if project_name == "":
+            logging.warning(f"project_name not found in row: {row}")
             continue
 
-        # get partner
-        partner = row[1].strip()
+        # get institutional coordinating partners
+        partner = row[9].strip()
         if partner != "":
-            response = queryRE(partner)
-            if response is not None:
-                formatted_response = formatReResponse(response, partner, project_name)
-                if formatted_response is not None:
-                    partner_data += [formatted_response]
+            partner_data += [
+                queryAndFormatRe(
+                    partner,
+                    project_name,
+                    project_coordinator=True,
+                    proposed_from_jyt=True,
+                )
+            ]
+
+        # get other institutional partners
+        for partner in row[10:24]:
+            partner = partner.strip()
+            if partner == "":
+                continue
+
+            partner_data += [
+                queryAndFormatRe(
+                    partner,
+                    project_name,
+                    project_coordinator=False,
+                    proposed_from_jyt=True,
+                )
+            ]
+
+        # get socio-eco partners
+        for partner in row[45:65]:
+            partner = partner.strip()
+            if partner == "":
+                continue
+
+            partner_data += [
+                queryAndFormatRe(
+                    partner,
+                    project_name,
+                    project_coordinator=False,
+                    proposed_from_jyt=True,
+                )
+            ]
 
     # write data to file (comment out for use with observable framework data loaders)
     with open("partners_general.csv", "w") as file:

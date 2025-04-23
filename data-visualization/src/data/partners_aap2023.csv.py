@@ -1,7 +1,7 @@
 import sys
 import logging
 import csv
-from siret_utils import queryRE, formatReResponse
+from siret_utils import queryAndFormatRe, defaultCsvHeader
 
 
 def main():
@@ -23,20 +23,7 @@ def main():
     )
 
     PATH = "./data/private/partenaires_aap2023.csv"
-    partner_data = [
-        (
-            "siret",
-            "nom_complet",
-            "source_label",
-            "nature_juridique",
-            "latitude",
-            "longitude",
-            "libelle_commune",
-            "commune",
-            "project_name",
-            "project_coordinator",
-        )
-    ]
+    partner_data = [defaultCsvHeader()]
 
     # get partner data
     phase1_partner_data = []
@@ -50,40 +37,44 @@ def main():
     for row in phase1_partner_data[1:]:
         project_name = row[0].strip()
         if project_name == "":
+            logging.warning(f"project_name not found in row: {row}")
             continue
 
         # get coordinating partner
         coordinating_partner = row[1].strip()
         if coordinating_partner != "":
-            response = queryRE(coordinating_partner)
-            if response is not None:
-                formatted_response = formatReResponse(
-                    response, coordinating_partner, project_name
+            partner_data += [
+                queryAndFormatRe(
+                    coordinating_partner,
+                    project_name,
+                    project_coordinator=True,
+                    proposed_in_appel2023=True,
                 )
-                if formatted_response is not None:
-                    partner_data += [formatted_response]
+            ]
 
         # get institutional partners
         institutional_partner = row[3].strip()
         if institutional_partner != "":
-            response = queryRE(institutional_partner)
-            if response is not None:
-                formatted_response = formatReResponse(
-                    response, institutional_partner, project_name
+            partner_data += [
+                queryAndFormatRe(
+                    institutional_partner,
+                    project_name,
+                    project_coordinator=False,
+                    proposed_in_appel2023=True,
                 )
-                if formatted_response is not None:
-                    partner_data += [formatted_response]
+            ]
 
         # get socio-economical partners
         socio_eco_partner = row[4].strip()
         if socio_eco_partner != "":
-            response = queryRE(socio_eco_partner)
-            if response is not None:
-                formatted_response = formatReResponse(
-                    response, socio_eco_partner, project_name
+            partner_data += [
+                queryAndFormatRe(
+                    socio_eco_partner,
+                    project_name,
+                    project_coordinator=False,
+                    proposed_in_appel2023=True,
                 )
-                if formatted_response is not None:
-                    partner_data += [formatted_response]
+            ]
 
     # write data to file (comment out for use with observable framework data loaders)
     with open("partners_aap2023.csv", "w") as file:
