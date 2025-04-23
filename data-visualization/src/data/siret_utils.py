@@ -1,6 +1,6 @@
-import logging
 import requests
 import time
+import logging
 
 
 def defaultCsvHeader() -> tuple:
@@ -21,7 +21,7 @@ def defaultCsvHeader() -> tuple:
         "project_coordinator",
         "proposed_in_annex",
         "proposed_in_appel2023",
-        "proposed_from_jyt",
+        "proposed_from_generality",
     )
 
 
@@ -31,24 +31,24 @@ def queryAndFormatRe(
     project_coordinator: bool | None = None,
     proposed_in_annex: bool = False,
     proposed_in_appel2023: bool = False,
-    proposed_from_jyt: bool = False,
+    proposed_from_generality: bool = False,
 ) -> tuple:
     response = queryRE(query)
     default_response = (
-        None,
-        None,
-        None,
+        "",
+        "",
+        "",
         query,
-        None,
-        None,
-        None,
-        None,
-        None,
+        "",
+        "",
+        "",
+        "",
+        "",
         project_name,
-        project_coordinator,
-        proposed_in_annex,
-        proposed_in_appel2023,
-        proposed_from_jyt,
+        str(project_coordinator) if project_coordinator is not None else "",
+        str(proposed_in_annex),
+        str(proposed_in_appel2023),
+        str(proposed_from_generality),
     )
     if response is None:
         return default_response
@@ -60,7 +60,7 @@ def queryAndFormatRe(
         project_coordinator,
         proposed_in_annex,
         proposed_in_appel2023,
-        proposed_from_jyt,
+        proposed_from_generality,
     )
     if formatted_response is None:
         return default_response
@@ -92,10 +92,16 @@ def queryRE(query: str, sleep: int = 1) -> dict | None:
         logging.error(
             f"HTTP error occurred when querying recherche-entreprises.api: {http_err}"
         )
+        # raise http_err
+        print(http_err)
+        return None
     except Exception as err:
         logging.error(
             f"Other error occurred when querying recherche-entreprises.api: {err}"
         )
+        # raise err
+        print(err)
+        return None
     else:
         logging.debug(f"recherche-entreprises.api response: {response}")
         return response.json()
@@ -109,12 +115,7 @@ def formatReResponse(
     proposed_in_annex: bool = False,
     proposed_in_appel2023: bool = False,
     proposed_from_generality: bool = False,
-) -> (
-    tuple[
-        str, str, str, str, str, str, str, str, str, str, bool | None, bool, bool, bool
-    ]
-    | None
-):
+) -> tuple | None:
     """Format the response from the recherche-entreprises.api.gouv.fr Public API.
     Params:
     - response: the response from the API
@@ -137,48 +138,42 @@ def formatReResponse(
             else result["matching_etablissements"][0]
         )
 
-        siret = (
-            result["siege"]["siret"]
-            if matching_etablissement is None
-            else matching_etablissement["siret"]
-        )
-        latitude = (
-            result["siege"]["latitude"]
-            if matching_etablissement is None
-            else matching_etablissement["latitude"]
-        )
-        longitude = (
-            result["siege"]["longitude"]
-            if matching_etablissement is None
-            else matching_etablissement["longitude"]
-        )
-        libelle_commune = (
-            result["siege"]["libelle_commune"]
-            if matching_etablissement is None
-            else matching_etablissement["libelle_commune"]
-        )
-        commune = (
-            result["siege"]["commune"]
-            if matching_etablissement is None
-            else matching_etablissement["commune"]
+        return (
+            (
+                matching_etablissement["siret"],
+                result["siren"],
+                result["nom_complet"],
+                label,
+                result["nature_juridique"],
+                matching_etablissement["latitude"],
+                matching_etablissement["longitude"],
+                matching_etablissement["libelle_commune"],
+                matching_etablissement["commune"],
+                project_name,
+                str(project_coordinator) if project_coordinator is not None else "",
+                str(proposed_in_annex),
+                str(proposed_in_appel2023),
+                str(proposed_from_generality),
+            )
+            if matching_etablissement is not None
+            else (
+                result["siege"]["siret"],
+                result["siren"],
+                result["nom_complet"],
+                label,
+                result["nature_juridique"],
+                result["siege"]["latitude"],
+                result["siege"]["longitude"],
+                result["siege"]["libelle_commune"],
+                result["siege"]["commune"],
+                project_name,
+                str(project_coordinator) if project_coordinator is not None else "",
+                str(proposed_in_annex),
+                str(proposed_in_appel2023),
+                str(proposed_from_generality),
+            )
         )
 
-        return (
-            siret,
-            result["siren"],
-            result["nom_complet"],
-            label,
-            result["nature_juridique"],
-            latitude,
-            longitude,
-            libelle_commune,
-            commune,
-            project_name,
-            project_coordinator,
-            proposed_in_annex,
-            proposed_in_appel2023,
-            proposed_from_generality,
-        )
     else:
         logging.warning("No results found for query")
         return None
