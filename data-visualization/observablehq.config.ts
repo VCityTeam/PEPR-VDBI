@@ -49,6 +49,10 @@ export default {
           path: '/test-excel-import',
         },
         {
+          name: 'SQL and DuckDB',
+          path: '/test-sql-duckdb',
+        },
+        {
           name: 'Import dataESR+Geospatial',
           path: '/test-esr-import',
         },

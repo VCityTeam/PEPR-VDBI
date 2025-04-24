@@ -1,5 +1,6 @@
 # import sys
 import logging
+import sys
 import csv
 from siret_utils import queryAndFormatRe, defaultCsvHeader
 
@@ -33,7 +34,7 @@ def main():
     logging.debug(f"phase1_partner_data: {phase1_partner_data}")
 
     # query SIRET api using partner names and aggregate data
-    for row in phase1_partner_data[1:10]:
+    for row in phase1_partner_data[1:]:
         project_name = row[0].strip()
         if project_name == "":
             logging.warning(f"project_name not found in row: {row}")
@@ -75,18 +76,9 @@ def main():
                 )
             ]
 
-    # write data to file (comment out for use with observable framework data loaders)
-    # with open("partners_aap2023.csv", "w") as file:
-    #     writer = csv.writer(file)
-    #     writer.writerows(partner_data)
-
     # write data to stdout as csv
-    # writer = csv.writer(sys.stdout)
-    # writer.writerows(partner_data)
-
-    for row in partner_data:
-        # TODO: FIX comma join
-        print(",".join(row))
+    writer = csv.writer(sys.stdout)
+    writer.writerows(partner_data)
 
 
 if __name__ == "__main__":
