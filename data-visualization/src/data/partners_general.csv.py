@@ -48,8 +48,8 @@ def main():
                 queryAndFormatRe(
                     partner,
                     project_name,
+                    "generality",
                     project_coordinator=True,
-                    proposed_from_generality=True,
                 )
             ]
 
@@ -63,8 +63,8 @@ def main():
                 queryAndFormatRe(
                     partner,
                     project_name,
+                    "generality",
                     project_coordinator=False,
-                    proposed_from_generality=True,
                 )
             ]
 
@@ -78,8 +78,8 @@ def main():
                 queryAndFormatRe(
                     partner,
                     project_name,
+                    "generality",
                     project_coordinator=False,
-                    proposed_from_generality=True,
                 )
             ]
 

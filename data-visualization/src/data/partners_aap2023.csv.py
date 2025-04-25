@@ -47,8 +47,8 @@ def main():
                 queryAndFormatRe(
                     coordinating_partner,
                     project_name,
+                    "partenaires_aap2023",
                     project_coordinator=True,
-                    proposed_in_appel2023=True,
                 )
             ]
 
@@ -59,8 +59,8 @@ def main():
                 queryAndFormatRe(
                     institutional_partner,
                     project_name,
+                    "partenaires_aap2023",
                     project_coordinator=False,
-                    proposed_in_appel2023=True,
                 )
             ]
 
@@ -71,8 +71,8 @@ def main():
                 queryAndFormatRe(
                     socio_eco_partner,
                     project_name,
+                    "partenaires_aap2023",
                     project_coordinator=False,
-                    proposed_in_appel2023=True,
                 )
             ]
 

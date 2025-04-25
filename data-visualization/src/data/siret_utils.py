@@ -19,27 +19,31 @@ def defaultCsvHeader() -> tuple:
         "commune",
         "project_name",
         "project_coordinator",
+        "source",
     )
 
 
 def queryAndFormatRe(
     query: str,
     project_name: str,
+    source: str,
     project_coordinator: bool | None = None,
+    use_siege: bool = True,
 ) -> tuple:
     response = queryRE(query)
     default_response = (
-        "",
-        "",
-        "",
-        query,
-        "",
-        "",
-        "",
-        "",
-        "",
+        "",  # siret
+        "",  # siren
+        "",  # nom_complet
+        query,  # source_label
+        "",  # nature_juridique
+        "",  # latitude
+        "",  # longitude
+        "",  # libelle_commune
+        "",  # commune
         project_name,
-        str(project_coordinator) if project_coordinator is not None else "",
+        str(project_coordinator) if project_coordinator is not None else "",  
+        source,  # source
     )
     if response is None:
         return default_response
@@ -48,7 +52,9 @@ def queryAndFormatRe(
         response,
         query,
         project_name,
+        source,
         project_coordinator,
+        use_siege,
     )
     if formatted_response is None:
         return default_response
@@ -101,6 +107,7 @@ def formatReResponse(
     response: dict,
     label: str,
     project_name: str,
+    source: str,
     project_coordinator: bool | None = None,
     use_siege: bool = True,
 ) -> tuple | None:
@@ -109,6 +116,7 @@ def formatReResponse(
     - response: the response from the API
     - label: the label from the source dataset used to identify the partner
     - project_name: the name of the project to be used in the response
+    - source: the source of the data
     - project_coordinator: whether the partner is the project coordinator or not
     - use_siege: prefer siege results over matching etablissements data. Recommend setting
         to True unless query is a precise identifer like a siret
@@ -137,6 +145,7 @@ def formatReResponse(
                 matching_etablissement["commune"],
                 project_name,
                 str(project_coordinator) if project_coordinator is not None else "",
+                source,
             )
             if not use_siege and matching_etablissement is not None
             else (
@@ -151,6 +160,7 @@ def formatReResponse(
                 result["siege"]["commune"],
                 project_name,
                 str(project_coordinator) if project_coordinator is not None else "",
+                source,
             )
         )
 
