@@ -50,7 +50,8 @@ def main():
             queryAndFormatRe(
                 partner,
                 project_name,
-                proposed_in_annex=True,
+                "financed_annex_partners_by_project",
+                use_siege=False,
             )
         ]
 
