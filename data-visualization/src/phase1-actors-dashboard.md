@@ -2,34 +2,63 @@
 title: Researcher Dashboard
 theme: [dashboard, light]
 sql:
-  partners_aap2023: ./data/partners_aap2023.csv
-  partners_by_project_annex: ./data/partners_by_project_annex.csv
-  partners_general: ./data/partners_general.csv
+  ann: ./data/partners_by_project_annex.csv
+  app: ./data/partners_aap2023.csv
+  gen: ./data/partners_general.csv
 ---
+
+```sql id=partner_data
+-- Clean tables and create views
+
+UPDATE gen
+  SET project_name = 'RESILIENCE'
+  WHERE project_name = 'RÉSILIENCE';
+UPDATE gen
+  SET project_name = 'NEO'
+  WHERE project_name = 'NÉO';
+
+-- merge tables
+CREATE OR REPLACE VIEW union_all AS
+SELECT *
+FROM app
+UNION
+SELECT *
+FROM ann
+UNION
+SELECT *
+FROM gen;
+
+CREATE OR REPLACE VIEW partners AS
+SELECT
+  siret,
+  project_name,
+  nom_complet,
+  nature_juridique,
+  libelle_commune,
+  commune,
+  latitude,
+  longitude,
+  list(project_coordinator) AS project_coordinator,
+  list(source) AS source,
+  list(source_label) AS source_label,
+FROM union_all
+GROUP BY
+  siret,
+  project_name,
+  nom_complet,
+  nature_juridique,
+  libelle_commune,
+  commune,
+  latitude,
+  longitude,
+;
+
+SELECT * FROM partners
+```
 
 # Phase 1 Actors
 
-### partners_aap2023
-```sql
-SELECT * FROM partners_aap2023
-```
-
-### partners_by_project_annex
-```sql
-SELECT * FROM partners_by_project_annex
-```
-
-### partners_general
-```sql
-SELECT * FROM partners_general
-```
-
-siret	siren	nom_complet	source_label	nature_juridique	latitude	longitude	libelle_commune	commune	project_name	project_coordinator	proposed_in_annex	proposed_in_appel2023	proposed_from_generality
-
-```sql
-SELECT partners_aap2023, partners_aap2023,
-FROM partners_aap2023
-JOIN partners_by_project_annex
-  ON partners_aap2023.siret = partners_by_project_annex.siret AND
-    partners_aap2023.project_name	 = partners_by_project_annex.project_name
+```js
+display([...partner_data])
+display(Inputs.table(partner_data))
 ```
