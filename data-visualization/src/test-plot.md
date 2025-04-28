@@ -251,7 +251,7 @@ display(sorted_establishment_counts);
 
 ... and plot data
 
-```js
+```js echo
 display(
   Plot.plot({
     height: sorted_establishment_counts.length * 20, // assure adequate horizontal space for each line
@@ -309,7 +309,7 @@ display(city_count);
 
 Plot data
 
-```js
+```js echo
 display(
   Plot.plot({
     width: 1000,
@@ -434,7 +434,7 @@ display(sorted_lab_counts);
 
 ... and plot data
 
-```js
+```js echo
 display(
   Plot.plot({
     height: sorted_lab_counts.length * 7, // assure adequate horizontal space for each line
