@@ -25,8 +25,8 @@ export default {
       name: 'Tests',
       pages: [
         {
-          name: 'Phase 1 Actors',
-          path: 'phase1-actors-dashboard',
+          name: 'Phase 1 Partners',
+          path: 'phase1-partner-dashboard',
         },
         {
           name: 'Demonstrateurs de la Ville Durable',

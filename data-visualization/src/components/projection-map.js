@@ -15,9 +15,11 @@ export function projectionMap(
   data,
   {
     width = 800,
-    height = 800,
+    // height = 800, // depending on the projection, this may not be the final size
     keyMap = (d) => d[0],
-    valueMap = (d) => d[1],
+    valueMap = (d) => d[1].length,
+    lonMap = (d) => d[1][0].longitude,
+    latMap = (d) => d[1][0].latitude,
     /*
      * list of Plot.geo compatible borders. For example:
      * ```js
@@ -51,8 +53,8 @@ export function projectionMap(
     //     d3
     //       .scaleLinear()
     //       .domain([
-    //         Math.min(...data.map((d) => valueMap(d).length)),
-    //         Math.max(...data.map((d) => valueMap(d).length)),
+    //         Math.min(...data.map((d) => valueMap(d))),
+    //         Math.max(...data.map((d) => valueMap(d))),
     //       ])(d)
     //   ),
   } = {}
@@ -62,9 +64,9 @@ export function projectionMap(
     Plot.graticule(),
     Plot.sphere(),
     Plot.dot(data, {
-      x: (d) => valueMap(d)[0].longitude,
-      y: (d) => valueMap(d)[0].latitude,
-      r: (d) => valueMap(d).length,
+      x: lonMap,
+      y: latMap,
+      r: valueMap,
       stroke: stroke,
       fill: fill,
       fillOpacity: fillOpacity,
@@ -74,15 +76,15 @@ export function projectionMap(
           label: entity_label,
         },
         count: {
-          value: (d) => valueMap(d).length,
+          value: valueMap,
           label: 'Occurences',
         },
         longitude: {
-          value: (d) => valueMap(d)[0].longitude,
+          value: lonMap,
           label: 'Lon',
         },
         latitude: {
-          value: (d) => valueMap(d)[0].latitude,
+          value: latMap,
           label: 'Lat',
         },
       },
@@ -97,7 +99,7 @@ export function projectionMap(
 
   return Plot.plot({
     width: width,
-    height: height,
+    // height: height,
     projection: {
       type: projectionType,
       domain: projectionDomain,

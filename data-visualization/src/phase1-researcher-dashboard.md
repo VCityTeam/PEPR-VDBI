@@ -56,12 +56,12 @@ const world = FileAttachment("./data/world.json").json();
 
 ```js
 // format data
-const phase_2_data = extractPhase2Workbook(workbook1, false);
+const phase_1_data = extractPhase2Workbook(workbook1, false);
 ```
 
 ```js
 // join researchers and site tables
-phase_2_data.researchers.forEach((researcher) => {
+phase_1_data.researchers.forEach((researcher) => {
   // join on Sites
   const locale = geocoded_researcher_sites.find((d) => d.Sites === researcher.site);
   if (!locale) return;
@@ -74,12 +74,12 @@ phase_2_data.researchers.forEach((researcher) => {
   researcher.geo_result_score = locale.result_score;
 });
 
-// console.debug("phase_2_data.researchers", phase_2_data.researchers);
-// console.debug("geocoded_researcher_sites", geocoded_researcher_sites);
+console.debug("phase_1_data.researchers", phase_1_data.researchers);
+console.debug("geocoded_researcher_sites", geocoded_researcher_sites);
 
 
 // Filter financed
-const financed_input = Inputs.toggle(phase_2_data.researchers, {
+const financed_input = Inputs.toggle(phase_1_data.researchers, {
   label: "Filter Financed Projects",
   value: true
 });
@@ -89,7 +89,7 @@ const financed = Generators.input(financed_input);
 
 ```js
 // global search //
-const global_search_input = Inputs.search(phase_2_data.researchers, {
+const global_search_input = Inputs.search(phase_1_data.researchers, {
   placeholder: "Search dataset..."
 });
 
@@ -97,7 +97,7 @@ const global_search = Generators.input(global_search_input);
 ```
 
 ```js
-// display(phase_2_data)
+// display(phase_1_data)
 // Researcher table //
 const researcher_search_input = Inputs.search(global_search, {
   placeholder: "Search researchers..."
@@ -326,7 +326,7 @@ const researcher_sites_projection = projectionMap(
   }
 );
 
-// console.debug("ok_geocoded_researcher_sites", ok_geocoded_researcher_sites);
+console.debug("ok_geocoded_researcher_sites", ok_geocoded_researcher_sites);
 ```
 
 ```js
@@ -443,7 +443,7 @@ arc_diagram.update(arc_sort_input.value);
 // researcher triples //
 const researcher_triples_predicate_select_input = Inputs.select(
   // we don't use global search here in case 0 results are returned by the search 
-  Object.keys(phase_2_data.researchers[0]),
+  Object.keys(phase_1_data.researchers[0]),
   {
     label: "Select property",
     sort: true,
