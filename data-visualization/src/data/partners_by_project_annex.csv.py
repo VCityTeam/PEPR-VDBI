@@ -1,4 +1,3 @@
-# import sys
 import logging
 import sys
 import csv
@@ -54,7 +53,7 @@ def main():
             )
         ]
 
-    # write data to stdout as csv
+    logging.info("Writing data to stdout")
     writer = csv.writer(sys.stdout)
     writer.writerows(partner_data)
 

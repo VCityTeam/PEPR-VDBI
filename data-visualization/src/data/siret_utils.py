@@ -17,6 +17,8 @@ def defaultCsvHeader() -> tuple:
         "longitude",
         "libelle_commune",
         "commune",
+        "code_postal",
+        "region",
         "project_name",
         "project_coordinator",
         "source",
@@ -41,8 +43,10 @@ def queryAndFormatRe(
         "",  # longitude
         "",  # libelle_commune
         "",  # commune
+        "",  # code_postal
+        "",  # region
         project_name,
-        str(project_coordinator) if project_coordinator is not None else "",  
+        str(project_coordinator) if project_coordinator is not None else "",
         source,  # source
     )
     if response is None:
@@ -64,7 +68,7 @@ def queryAndFormatRe(
 
 def queryRE(query: str, sleep: float = 0.2) -> dict | None:
     """Send a basic query to the recherche-entreprises.api.gouv.fr Public API. Only top
-    result is returned. https://recherche-entreprises.api.gouv.fr/api
+    result is returned. https://recherche-entreprises.api.gouv.fr/
     Params:
     - query: the search query to be sent
     - sleep: the number of seconds to sleep before sending the request to avoid rate
@@ -143,6 +147,8 @@ def formatReResponse(
                 matching_etablissement["longitude"],
                 matching_etablissement["libelle_commune"],
                 matching_etablissement["commune"],
+                matching_etablissement["code_postal"],
+                matching_etablissement["region"],
                 project_name,
                 str(project_coordinator) if project_coordinator is not None else "",
                 source,
@@ -158,6 +164,8 @@ def formatReResponse(
                 result["siege"]["longitude"],
                 result["siege"]["libelle_commune"],
                 result["siege"]["commune"],
+                result["siege"]["code_postal"],
+                result["siege"]["region"],
                 project_name,
                 str(project_coordinator) if project_coordinator is not None else "",
                 source,

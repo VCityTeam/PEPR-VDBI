@@ -147,19 +147,15 @@ function default_personnel_table_config(data, width) {
     },
     format: {
       cost: sparkbar(
-        htl,
         d3.max(data, (d) => d.cost)
       ),
       assistance: sparkbar(
-        htl,
         d3.max(data, (d) => d.assistance)
       ),
       support: sparkbar(
-        htl,
         d3.max(data, (d) => d.support)
       ),
       total_cost: sparkbar(
-        htl,
         d3.max(data, (d) => d.total_cost)
       ),
     }
