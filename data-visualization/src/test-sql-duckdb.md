@@ -3,7 +3,7 @@ title: Researcher Dashboard
 theme: [light]
 sql:
   ann: ./data/partners_by_project_annex.csv
-  app: ./data/partners_aap2023.csv
+  aap: ./data/partners_aap2023.csv
   gen: ./data/partners_general.csv
 ---
 
@@ -54,17 +54,17 @@ count_ann
 count_ann
 ```
 
-### app
+### aap
 
 ```sql
-SELECT * FROM app
+SELECT * FROM aap
 ```
-```sql id=[{count_app}]
-SELECT count() as count_app FROM app
+```sql id=[{count_aap}]
+SELECT count() as count_aap FROM aap
 ```
-count_app
+count_aap
 ```js
-count_app
+count_aap
 ```
 
 ### gen
@@ -96,7 +96,7 @@ UPDATE gen
 -- merge tables
 CREATE OR REPLACE VIEW union_all AS
 SELECT *
-FROM app
+FROM aap
 UNION
 SELECT *
 FROM ann
@@ -149,9 +149,9 @@ GROUP BY project_name
 ORDER BY project_name ASC;
 ```
 
-```sql id=app_partner_counts
-SELECT project_name, count() AS partner_count, 'app' AS source
-FROM app
+```sql id=aap_partner_counts
+SELECT project_name, count() AS partner_count, 'aap' AS source
+FROM aap
 GROUP BY project_name
 ORDER BY project_name ASC;
 ```
@@ -183,7 +183,7 @@ const total_partner_counts = await sql`
 const all_counts = d3.merge([
   total_partner_counts,
   ann_partner_counts,
-  app_partner_counts,
+  aap_partner_counts,
   gen_partner_counts,
 ])
 display(Plot.plot({

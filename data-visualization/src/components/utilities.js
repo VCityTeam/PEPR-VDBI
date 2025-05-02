@@ -1,5 +1,6 @@
 import { map, merge, rollups, filter } from 'npm:d3';
 import { nameByRace } from 'npm:fantasy-name-generator';
+import * as htl from 'npm:htl';
 
 // TODO: mapCounts and mergeCounts need to be reworked with new countEntities
 
@@ -252,7 +253,6 @@ export const exclude = (d) =>
   ].includes(d);
 
 export function sparkbar(
-  htl,
   max,
   background = 'var(--theme-green)',
   color = 'black'

@@ -30,7 +30,9 @@ export function projectionMap(
      * ];
      * ```
      */
-    borderList = [],
+    borderList = [], // list of borders to draw
+    borderListStrokes = borderList.map(() => 'var(--theme-foreground-faint)'), // list of border colors; use 'var(--theme-foreground-faint)' for default
+    borderListStrokeOpacity = borderList.map(() => 1),
     projectionType = 'azimuthal-equidistant',
     projectionDomain = d3.geoCircle().center([2, 47]).radius(5)(), // centered on France
     stroke = '#f43f5e',
@@ -93,9 +95,20 @@ export function projectionMap(
   ];
 
   // add borders
-  borderList.forEach((border) => {
-    marks.push(Plot.geo(border, { stroke: 'var(--theme-foreground-faint)' }));
+  const bordersToDraw = d3.zip(
+    borderList,
+    borderListStrokes,
+    borderListStrokeOpacity
+  );
+  bordersToDraw.forEach((borderAndStroke) => {
+    marks.push(
+      Plot.geo(borderAndStroke[0], {
+        stroke: borderAndStroke[1],
+        strokeOpacity: borderAndStroke[2],
+      })
+    );
   });
+  console.debug('bordersToDraw', bordersToDraw);
 
   return Plot.plot({
     width: width,

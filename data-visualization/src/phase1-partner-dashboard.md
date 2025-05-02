@@ -3,7 +3,7 @@ title: Researcher Dashboard
 theme: [dashboard, light]
 sql:
   ann: ./data/partners_by_project_annex.csv
-  app: ./data/partners_aap2023.csv
+  aap: ./data/partners_aap2023.csv
   gen: ./data/partners_general.csv
 ---
 
@@ -28,7 +28,7 @@ UPDATE gen
 WITH
   union_all AS (
     SELECT *
-    FROM app
+    FROM aap
     UNION
     SELECT *
     FROM ann
@@ -46,6 +46,8 @@ WITH
       commune,
       latitude,
       longitude,
+      code_postal,
+      region,
       list(project_coordinator) AS project_coordinator,
       list(source) AS source,
       list(source_label) AS source_label,
@@ -59,6 +61,8 @@ SELECT * FROM partners
 
 ```js
 const world = FileAttachment("./data/world.json").json();
+const regions = FileAttachment("./data/regions.json").json();
+const departements = FileAttachment("./data/departements.json").json();
 ```
 
 ```js
@@ -67,14 +71,24 @@ const filtered_partner_data = [...partner_data]
 
 const partners_by_city = d3.groups(
   filtered_partner_data,
-  (d) => d.libelle_commune
+  (d) => d.code_postal ? d.code_postal.slice(0, 2) : null
 );
+```
 
+```js
 if (debug) {
-  display(Inputs.table(partner_data));
-  display(filtered_partner_data);
-  // display(Inputs.table(filtered_partner_data));
+  // display("Inputs.table(partner_data)");
+  // display(Inputs.table(partner_data));
+  display("Inputs.table(filtered_partner_data)");
+  display(Inputs.table(filtered_partner_data));
+  display("partners_by_city");
   display(partners_by_city);
+  display("world");
+  display(world);
+  display("regions");
+  display(regions);
+  display("departements");
+  display(departements);
 }
 ```
 
@@ -88,9 +102,18 @@ if (debug) {
             partners_by_city,
             {
               width: width,
+              entity_label: "Departement",
               borderList: [
-                topojson.feature(world, world.objects.land),
-                topojson.mesh(world, world.objects.countries, (a, b) => a !== b)
+                regions,
+                departements,
+              ],
+              borderList: [
+                regions,
+                departements,
+              ],
+              borderListStrokeOpacity: [
+                1,
+                0.3,
               ],
             }
           )

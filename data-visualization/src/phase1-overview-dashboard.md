@@ -412,7 +412,7 @@ const project_table = Inputs.table(projects_search, {
     budget: "left",
   },
   format: {
-    budget: sparkbar(htl, d3.max(projects_search, d => d.budget)),
+    budget: sparkbar(d3.max(projects_search, d => d.budget)),
   },
 });
 ```
