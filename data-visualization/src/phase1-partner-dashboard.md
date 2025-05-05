@@ -5,14 +5,52 @@ sql:
   ann: ./data/partners_by_project_annex.csv
   aap: ./data/partners_aap2023.csv
   gen: ./data/partners_general.csv
+  cjn1: ./data/cj_septembre_2022_n1.csv
+  cjn2: ./data/cj_septembre_2022_n2.csv
+  cjn3: ./data/cj_septembre_2022_n3.csv
 ---
 
 ```js
 import {
   projectionMap
 } from "./components/projection-map.js";
+import {
+  cropText
+} from "./components/utilities.js";
+```
 
-const debug = true;
+```js
+const debug = false;
+
+const legal_nature_plot_config = (data, width, height=300) => {
+  return {
+    width: width,
+    height: height,
+    marginBottom: 70,
+    marginRight: 30,
+    x: {
+      tickRotate: 20,
+      label: "Legal nature",
+      tickFormat: (d) => cropText(d),
+    },
+    y: {
+      grid: true,
+      label: "Occurences",
+    },
+    marks: [
+      Plot.barY(
+        data,
+        {
+          x: (d) => d[0],
+          y: (d) => d[1],
+          fill: (d) => d[1],
+          sort: { x: "y" },
+          tip: true,
+        }
+      ),
+    ],
+  };
+};
 ```
 
 ```sql id=partner_data
@@ -54,7 +92,18 @@ WITH
     FROM union_all
     GROUP BY ALL
   )
-SELECT * FROM partners
+SELECT
+  partners.*,
+  cjn1.Libellé AS nature_juridique_n1,
+  cjn2.Libellé AS nature_juridique_n2,
+  cjn3.Libellé AS nature_juridique_n3,
+FROM partners
+JOIN cjn1
+ON partners.nature_juridique // 1000 = cjn1.Code
+JOIN cjn2
+ON partners.nature_juridique // 100 = cjn2.Code
+JOIN cjn3
+ON partners.nature_juridique = cjn3.Code 
 ```
 
 # Phase 1 Actors
@@ -92,8 +141,8 @@ if (debug) {
 }
 ```
 
-<div class="grid grid-cols">
-  <div class="card">
+<div class="grid grid-cols-2">
+  <div class="card grid-rowspan-2">
     <h1>Partner sites by city</h1>
     <div>
       ${
@@ -121,9 +170,82 @@ if (debug) {
       }
     </div>
   </div>
-  <!-- <div class="card grid-colspan-4 grid-rowspan-3">
-    <h2>Researcher Knowledge Graph</h2>
-    <div style="padding-bottom: 5px;">${researcher_triples_predicate_select_input}</div>
-    <div style="overflow: auto;">${researcher_force_graph}</div>
-  </div> -->
+  <div class="card">
+    <h2>Partner by legal nature level 1</h2>
+    <div>
+      ${
+        resize((width) => 
+          Plot.plot(
+            legal_nature_plot_config(
+              d3.rollups(
+                filtered_partner_data,
+                (D) => D.length,
+                (d) => d.nature_juridique_n1
+              ),
+              width
+            )
+          )
+        )//$
+      }
+    </div>
+  </div>
+  <div class="card">
+    <h2>Partner by legal nature level 2</h2>
+    <div>
+      ${
+        resize((width) => 
+          Plot.plot(
+            legal_nature_plot_config(
+              d3.rollups(
+                filtered_partner_data,
+                (D) => D.length,
+                (d) => d.nature_juridique_n2
+              ),
+              width
+            )
+          )
+        )//$
+      }
+    </div>
+  </div>
+  <div class="card grid-colspan-2">
+    <h2>Partner by legal nature level 3</h2>
+    <div>
+      ${
+        resize((width) => 
+          Plot.plot(
+            legal_nature_plot_config(
+              d3.rollups(
+                filtered_partner_data,
+                (D) => D.length,
+                (d) => d.nature_juridique_n3
+              ),
+              width
+            )
+          )
+        )//$
+      }
+    </div>
+  </div>
+</div>
+
+```js
+const filtered_partner_data_search = Inputs.search(filtered_partner_data);
+const filtered_partner_data_value = Generators.input(filtered_partner_data_search);
+```
+
+<div class="card">
+  <div>${filtered_partner_data_search}</div>
+  <div>
+    ${
+      resize((width) => 
+        Inputs.table(
+          filtered_partner_data_value,
+          {
+            width: width,
+          }
+        )
+      )//$
+    }
+  </div>
 </div>
