@@ -15,7 +15,7 @@ export function projectionMap(
   data,
   {
     width = 800,
-    // height = 800, // depending on the projection, this may not be the final size
+    height = 800, // depending on the projection, this may not be the final size
     keyMap = (d) => d[0],
     valueMap = (d) => d[1].length,
     lonMap = (d) => d[1][0].longitude,
@@ -112,7 +112,7 @@ export function projectionMap(
 
   return Plot.plot({
     width: width,
-    // height: height,
+    height: height,
     projection: {
       type: projectionType,
       domain: projectionDomain,

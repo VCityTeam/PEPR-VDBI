@@ -21,36 +21,6 @@ import {
 
 ```js
 const debug = false;
-
-const legal_nature_plot_config = (data, width, height=300) => {
-  return {
-    width: width,
-    height: height,
-    marginBottom: 70,
-    marginRight: 30,
-    x: {
-      tickRotate: 20,
-      label: "Legal nature",
-      tickFormat: (d) => cropText(d),
-    },
-    y: {
-      grid: true,
-      label: "Occurences",
-    },
-    marks: [
-      Plot.barY(
-        data,
-        {
-          x: (d) => d[0],
-          y: (d) => d[1],
-          fill: (d) => d[1],
-          sort: { x: "y" },
-          tip: true,
-        }
-      ),
-    ],
-  };
-};
 ```
 
 ```sql id=partner_data
@@ -125,6 +95,43 @@ const partners_by_city = d3.groups(
 ```
 
 ```js
+const legal_nature_plot_config = (data, width, height=300) => {
+  return {
+    width: width,
+    height: height,
+    marginBottom: 70,
+    marginRight: 30,
+    x: {
+      tickRotate: 20,
+      label: "Legal nature",
+      tickFormat: (d) => cropText(d),
+    },
+    y: {
+      grid: true,
+      label: "Occurences",
+    },
+    marks: [
+      Plot.barY(
+        data,
+        {
+          x: (d) => d[0],
+          y: (d) => d[1],
+          fill: (d) => d[1],
+          sort: { x: "y" },
+          tip: true,
+        }
+      ),
+    ],
+  };
+};
+```
+
+```js
+const filtered_partner_data_search = Inputs.search(filtered_partner_data);
+const filtered_partner_data_value = Generators.input(filtered_partner_data_search);
+```
+
+```js
 if (debug) {
   // display("Inputs.table(partner_data)");
   // display(Inputs.table(partner_data));
@@ -151,6 +158,7 @@ if (debug) {
             partners_by_city,
             {
               width: width,
+              height: width,
               entity_label: "Departement",
               borderList: [
                 regions,
@@ -182,7 +190,7 @@ if (debug) {
                 (D) => D.length,
                 (d) => d.nature_juridique_n1
               ),
-              width
+              width,
             )
           )
         )//$
@@ -201,14 +209,17 @@ if (debug) {
                 (D) => D.length,
                 (d) => d.nature_juridique_n2
               ),
-              width
+              width,
             )
           )
         )//$
       }
     </div>
   </div>
-  <div class="card grid-colspan-2">
+</div>
+
+<div class="grid">
+  <div class="card">
     <h2>Partner by legal nature level 3</h2>
     <div>
       ${
@@ -227,16 +238,8 @@ if (debug) {
       }
     </div>
   </div>
-</div>
-
-```js
-const filtered_partner_data_search = Inputs.search(filtered_partner_data);
-const filtered_partner_data_value = Generators.input(filtered_partner_data_search);
-```
-
-<div class="card">
-  <div>${filtered_partner_data_search}</div>
-  <div>
+  <div class="card" style="padding: 0;">
+    <div style="padding: 1em">${filtered_partner_data_search}</div>
     ${
       resize((width) => 
         Inputs.table(
