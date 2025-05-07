@@ -65,6 +65,10 @@ export default {
           path: '/test-orcid-import',
         },
         {
+          name: 'Zoomable Sunburst',
+          path: '/zoomable-sunburst',
+        },
+        {
           name: 'Plot',
           path: '/test-plot',
         },
