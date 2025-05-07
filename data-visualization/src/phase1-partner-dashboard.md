@@ -2,9 +2,9 @@
 title: Researcher Dashboard
 theme: [dashboard, light]
 sql:
-  ann: ./data/partners_by_project_annex.csv
-  aap: ./data/partners_aap2023.csv
-  gen: ./data/partners_general.csv
+  annex_partners: ./data/partners_by_project_annex.csv
+  aap_partners: ./data/partners_aap2023.csv
+  general_partners: ./data/partners_general.csv
   cjn1: ./data/cj_septembre_2022_n1.csv
   cjn2: ./data/cj_septembre_2022_n2.csv
   cjn3: ./data/cj_septembre_2022_n3.csv
@@ -25,10 +25,10 @@ const debug = false;
 
 ```sql id=partner_data
 -- Clean tables
-UPDATE gen
+UPDATE general_partners
   SET project_name = 'RESILIENCE'
   WHERE project_name = 'RÉSILIENCE';
-UPDATE gen
+UPDATE general_partners
   SET project_name = 'NEO'
   WHERE project_name = 'NÉO';
 
@@ -36,13 +36,13 @@ UPDATE gen
 WITH
   union_all AS (
     SELECT *
-    FROM aap
+    FROM aap_partners
     UNION
     SELECT *
-    FROM ann
+    FROM annex_partners
     UNION
     SELECT *
-    FROM gen
+    FROM general_partners
   ),
   partners AS (
     SELECT
@@ -95,16 +95,15 @@ const partners_by_city = d3.groups(
 ```
 
 ```js
-const legal_nature_plot_config = (data, width, height=300) => {
+const legal_nature_plot_config = (data, width, height=undefined) => {
   return {
     width: width,
     height: height,
-    marginBottom: 70,
-    marginRight: 30,
+    marginBottom: 60,
     x: {
-      tickRotate: 20,
+      tickRotate: -20,
       label: "Legal nature",
-      tickFormat: (d) => cropText(d),
+      tickFormat: (d) => cropText(d, 15),
     },
     y: {
       grid: true,
@@ -117,8 +116,13 @@ const legal_nature_plot_config = (data, width, height=300) => {
           x: (d) => d[0],
           y: (d) => d[1],
           fill: (d) => d[1],
-          sort: { x: "y" },
-          tip: true,
+          sort: { x: "x" },
+          tip: {
+            format : {
+              fill: false,
+            },
+            lineWidth: 100,
+          },
         }
       ),
     ],
@@ -148,8 +152,8 @@ if (debug) {
 }
 ```
 
-<div class="grid grid-cols-2">
-  <div class="card grid-rowspan-2">
+<div class="grid grid-cols-3">
+  <div class="card grid-rowspan-2 grid-colspan-2">
     <h1>Partner sites by city</h1>
     <div>
       ${
@@ -188,8 +192,9 @@ if (debug) {
               d3.rollups(
                 filtered_partner_data,
                 (D) => D.length,
-                (d) => d.nature_juridique_n1
+                (d) => `(${Math.floor(d.nature_juridique / 1000)}) ${d.nature_juridique_n1}`
               ),
+              width,
               width,
             )
           )
@@ -207,8 +212,9 @@ if (debug) {
               d3.rollups(
                 filtered_partner_data,
                 (D) => D.length,
-                (d) => d.nature_juridique_n2
+                (d) => `(${Math.floor(d.nature_juridique / 100)}) ${d.nature_juridique_n2}`
               ),
+              width,
               width,
             )
           )
@@ -229,7 +235,7 @@ if (debug) {
               d3.rollups(
                 filtered_partner_data,
                 (D) => D.length,
-                (d) => d.nature_juridique_n3
+                (d) => `(${d.nature_juridique}) ${d.nature_juridique_n3}`
               ),
               width
             )
