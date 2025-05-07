@@ -39,6 +39,24 @@ export function projectionMap(
     fill = '#f43f5e',
     fillOpacity = 0.5,
     entity_label = 'City',
+    channels = {
+      entity: {
+        value: keyMap,
+        label: entity_label,
+      },
+      count: {
+        value: valueMap,
+        label: 'Occurences',
+      },
+      longitude: {
+        value: lonMap,
+        label: 'Lon',
+      },
+      latitude: {
+        value: latMap,
+        label: 'Lat',
+      },
+    },
     tip = {
       format: {
         entity: true,
@@ -72,24 +90,7 @@ export function projectionMap(
       stroke: stroke,
       fill: fill,
       fillOpacity: fillOpacity,
-      channels: {
-        entity: {
-          value: keyMap,
-          label: entity_label,
-        },
-        count: {
-          value: valueMap,
-          label: 'Occurences',
-        },
-        longitude: {
-          value: lonMap,
-          label: 'Lon',
-        },
-        latitude: {
-          value: latMap,
-          label: 'Lat',
-        },
-      },
+      channels: channels,
       tip: tip,
     }),
   ];

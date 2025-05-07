@@ -10,7 +10,7 @@ export class GeocodingService {
    */
   constructor({
     url = 'https://nominatim.openstreetmap.org/search',
-    requestTimeIntervalMs = '1000',
+    requestTimeIntervalMs = '3000',
     result = {
       format: 'json',
       basePath: '',
