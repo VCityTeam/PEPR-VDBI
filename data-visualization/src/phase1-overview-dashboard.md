@@ -2,8 +2,9 @@
 title: Phase 1 Overview Dashboard
 theme: [dashboard, light]
 sql:
-  general_partners: ./data/partners_general.csv
-  aap_partners: ./data/partners_aap2023.csv
+  # general_partners: ./data/partners_general.csv
+  aap_partners: ./data/private/partenaires_aap2023.csv
+  terrains: ./data/project_terrains.csv
 ---
 
 # Phase 1 Overview
@@ -43,13 +44,13 @@ import {
 ```
 ```js
 import {
+  pepr_colors
+} from "./components/color.js";
+```
+```js
+import {
   GeocodingService
 } from "./components/geocoding.js";
-```
-
-```js
-const geocoding = new GeocodingService();
-console.log(await geocoding.getCoordinates("Paris"))
 ```
 
 ```js
@@ -67,20 +68,15 @@ if (debug) {
   // display([...await sql`select * from general_partners`]);
   display("aap_partners");
   display([...await sql`select * from aap_partners`]);
-  display("project_locations");
-  display([...project_locations]);
+  display("terrains");
+  display([...await sql`select * from terrains`]);
+  display("terrain_data");
+  display(terrain_data);
 }
-```
-
-```sql id=project_locations
-select *
-from aap_partners
-where project_coordinator = true
 ```
 
 ```js
 const workbook1 = FileAttachment(
-  // "./data/private/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
   "./data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
 ).xlsx();
 ```
@@ -530,6 +526,18 @@ const project_force_graph = (width) => forceGraph(
 );
 ```
 
+```js
+const terrain_data = [...await sql`
+  select
+    terrain,
+    list(project) as projects,
+    first(latitude) as latitude,
+    first(longitude) as longitude,
+  from terrains
+  group by all`
+];
+```
+
 <div class="warning" label="Data visualization notice">
   Data visualizations are unverified and errors may exist. Regard these data visualizations as estimations and not a "ground truth".
 </div>
@@ -577,28 +585,20 @@ const project_force_graph = (width) => forceGraph(
 </div>
 <div class="grid grid-cols-2">
   <div class="card">
-    <h2>Project Knowledge Graph</h2>
-    <div style="padding-bottom: 5px;">${project_triples_predicate_select_input}</div>
-    <div style="overflow: auto;">${resize((width) => project_force_graph(width))}</div>
-  </div>
-  <div class="card">
-    <h2>Map</h2>
+    <h2>Project locations</h2>
     <div>${
       resize((width) =>
         projectionMap(
-          project_locations,
+          terrain_data,
           {
             width: width,
             height: width,
-            keyMap: (d) => d.nom_complet,
+            fill: pepr_colors.orange,
+            stroke: pepr_colors.orange,
+            keyMap: (d) => d.terrain,
             valueMap: (d) => 1,
             lonMap: (d) => d.longitude,
             latMap: (d) => d.latitude,
-            entity_label: "Departement",
-            borderList: [
-              regions,
-              departements,
-            ],
             borderList: [
               regions,
               departements,
@@ -607,10 +607,48 @@ const project_force_graph = (width) => forceGraph(
               1,
               0.3,
             ],
+            channels: {
+              entity: {
+                value: (d) => d.terrain,
+                label: 'City',
+              },
+              count: {
+                value: (d) => 1,
+                label: 'Occurences',
+              },
+              longitude: {
+                value: (d) => d.longitude,
+                label: 'Lon',
+              },
+              latitude: {
+                value: (d) => d.latitude,
+                label: 'Lat',
+              },
+              projects: {
+                value: (d) => d.projects.toJSON(),
+                label: 'Projects',
+              },
+            },
+            tip: {
+              format: {
+                entity: true,
+                longitude: false,
+                latitude: false,
+                count: false,
+                x: false,
+                y: false,
+                r: false,
+              }
+            }
           }
         )
       )
     }</div>
+  </div>
+  <div class="card">
+    <h2>Project Knowledge Graph</h2>
+    <div style="padding-bottom: 5px;">${project_triples_predicate_select_input}</div>
+    <div style="overflow: auto;">${resize((width) => project_force_graph(width))}</div>
   </div>
 </div>
 <div class="grid">
