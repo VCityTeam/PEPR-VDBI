@@ -1,6 +1,9 @@
 ---
 title: Phase 1 Overview Dashboard
 theme: [dashboard, light]
+sql:
+  general_partners: ./data/partners_general.csv
+  aap_partners: ./data/partners_aap2023.csv
 ---
 
 # Phase 1 Overview
@@ -10,6 +13,8 @@ import {
   countEntities,
   sparkbar,
 } from "./components/utilities.js";
+```
+```js
 import {
   getGeneralSheet,
   getResearcherSheet,
@@ -22,6 +27,8 @@ import {
   getColumnOptions,
   filterOnInput,
 } from "./components/phase1-dashboard.js";
+```
+```js
 import {
   forceGraph,
   mapTableToPropertyGraphLinks,
@@ -29,19 +36,65 @@ import {
   mapTableToTriples,
 } from "./components/graph.js";
 ```
+```js
+import {
+  projectionMap
+} from "./components/projection-map.js";
+```
+```js
+import {
+  GeocodingService
+} from "./components/geocoding.js";
+```
 
 ```js
-const debug = false;
-const anonymize = false;
-const anonymizeDict = new Map();
+const geocoding = new GeocodingService();
+console.log(await geocoding.getCoordinates("Paris"))
+```
 
+```js
+const debug = true;
+if (debug) {
+  display("project_data")
+  display(project_data);
+  display("researcher_data");
+  display(researcher_data);
+  display("laboratory_data");
+  display(laboratory_data);
+  display("university_data");
+  display(university_data);
+  // display("general_partners");
+  // display([...await sql`select * from general_partners`]);
+  display("aap_partners");
+  display([...await sql`select * from aap_partners`]);
+  display("project_locations");
+  display([...project_locations]);
+}
+```
+
+```sql id=project_locations
+select *
+from aap_partners
+where project_coordinator = true
+```
+
+```js
 const workbook1 = FileAttachment(
   // "./data/private/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
   "./data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
 ).xlsx();
 ```
+```js
+const regions = FileAttachment("./data/regions.json").json();
+```
+```js
+const departements = FileAttachment("./data/departements.json").json();
+```
 
 ```js
+const anonymize = false;
+const anonymizeDict = new Map();
+
 const project_data = resolveGeneralEntities(
   getGeneralSheet(workbook1),
   anonymize,
@@ -65,16 +118,6 @@ const university_data = new Set(d3.merge(project_data.map((d) => d.institutions)
 //   anonymizeDict
 // );
 const partner_data = new Set(d3.merge(project_data.map((d) => d.partners)));
-if (debug) {
-  display("project_data")
-  display(project_data);
-  display("researcher_data");
-  display(researcher_data);
-  display("laboratory_data");
-  display(laboratory_data);
-  display("university_data");
-  display(university_data);
-}
 ```
 
 ```js
@@ -149,9 +192,9 @@ if (debug) {
 ```
 
 ```js
-const filtered_projects_laboratories_plot = Plot.plot({
-  width: 500,
-  height: 450,
+const filtered_projects_laboratories_plot = (width) => Plot.plot({
+  width: width,
+  height: width,
   marginBottom: 70,
   color: {
     scheme: "Plasma",
@@ -232,9 +275,9 @@ if (debug) {
 ```
 
 ```js
-const filtered_projects_universities_plot = Plot.plot({
-  width: 500,
-  height: 450,
+const filtered_projects_universities_plot = (width) => Plot.plot({
+  width: width,
+  height: width,
   marginBottom: 70,
   color: {
     scheme: "Plasma",
@@ -282,9 +325,9 @@ const filtered_projects_partners = project_data;
 ```
 
 ```js
-const filtered_projects_partners_plot = Plot.plot({
-  width: 500,
-  height: 450,
+const filtered_projects_partners_plot = (width) => Plot.plot({
+  width: width,
+  height: width,
   marginBottom: 70,
   color: {
     scheme: "Plasma",
@@ -474,12 +517,12 @@ const color = d3
 console.debug("project_triples", project_triples);
 console.debug("color", color);
 
-const project_force_graph = forceGraph(
+const project_force_graph = (width) => forceGraph(
   filtered_project_triples,
   {
     id: "project_force_graph",
-    width: 800,
-    height: 800,
+    width: width,
+    height: width,
     color: color,
     nodeLabelOpacity: 0.2,
     linkLabelOpacity: 0,
@@ -518,37 +561,64 @@ const project_force_graph = forceGraph(
 <div class="grid grid-cols-3">
   <div class="card">
     <h2>University count by Project</h2>
-    <!-- <div>${project_universities_auditioned_input}</div>
-    <div>${project_universities_financed_input}</div> -->
     <div>${project_universities_sort_input}</div>
-    <div>${filtered_projects_universities_plot}</div>
+    <div>${resize((width) => filtered_projects_universities_plot(width))}</div>
   </div>
   <div class="card">
     <h2>Laboratory count by Project</h2>
-    <!-- <div>${project_laboratories_auditioned_input}</div>
-    <div>${project_laboratories_financed_input}</div> -->
     <div>${project_laboratories_sort_input}</div>
-    <div>${filtered_projects_laboratories_plot}</div>
+    <div>${resize((width) => filtered_projects_laboratories_plot(width))}</div>
   </div>
   <div class="card">
     <h2>Partner count by Project</h2>
     <div>${project_partners_sort_input}</div>
-    <div>${filtered_projects_partners_plot}</div>
+    <div>${resize((width) => filtered_projects_partners_plot(width))}</div>
+  </div>
+</div>
+<div class="grid grid-cols-2">
+  <div class="card">
+    <h2>Project Knowledge Graph</h2>
+    <div style="padding-bottom: 5px;">${project_triples_predicate_select_input}</div>
+    <div style="overflow: auto;">${resize((width) => project_force_graph(width))}</div>
+  </div>
+  <div class="card">
+    <h2>Map</h2>
+    <div>${
+      resize((width) =>
+        projectionMap(
+          project_locations,
+          {
+            width: width,
+            height: width,
+            keyMap: (d) => d.nom_complet,
+            valueMap: (d) => 1,
+            lonMap: (d) => d.longitude,
+            latMap: (d) => d.latitude,
+            entity_label: "Departement",
+            borderList: [
+              regions,
+              departements,
+            ],
+            borderList: [
+              regions,
+              departements,
+            ],
+            borderListStrokeOpacity: [
+              1,
+              0.3,
+            ],
+          }
+        )
+      )
+    }</div>
   </div>
 </div>
 <div class="grid">
   <div class="card">
     <h2>Project Financing</h2>
     <div>${project_search_input}</div>
-    <!-- <div>${project_auditioned_input}</div>
-    <div>${project_financed_input}</div> -->
     <div>${project_grade_input}</div>
     <div>${project_challenge_input}</div>
     <div>${project_table}</div>
-  </div>
-  <div class="card grid-rowspan-3">
-    <h2>Project Knowledge Graph</h2>
-    <div style="padding-bottom: 5px;">${project_triples_predicate_select_input}</div>
-    <div style="overflow: auto;">${project_force_graph}</div>
   </div>
 </div>

@@ -320,3 +320,79 @@ export function downloadDataAsCSV(data) {
   link.click();
   URL.revokeObjectURL(link.href);
 }
+
+/**
+ * From https://www.npmjs.com/package/@ud-viz/utils_browser
+ * Gets an attribute of an object from the given path. To get nested attributes,
+ * the path qualifiers must be separated by dots ('.'). If the path is not
+ * nested (does not contain any dot), the function is equivalent to `obj[path]`.
+ *
+ * @param {object} obj - object to get attribute
+ * @param {string} path - path to get the attribute
+ * @returns {*} - attribute vaue
+ * @example
+ * const obj = {test: {msg: "Hello world !"}};
+ * console.log(getAttributeByPath(obj, "test.msg")); // prints "Hello world !";
+ * console.log(getAttributeByPath(obj, "other")); // undefined
+ */
+export function getAttributeByPath(obj, path) {
+  const segs = path.split('.');
+  let val = obj;
+  for (const seg of segs) {
+    val = val[seg];
+    if (val === undefined) {
+      break;
+    }
+  }
+  return val;
+}
+
+/**
+ * Performs an HTTP request.
+ * Adapted from 
+ *
+ * @async
+ * @param {string} method The HTTP method. Accepted methods include `GET`,
+ * `DELETE`, `POST` and `PUT`.
+ * @param {string} url The requested URL.
+ * @param {object} [options] A dictionary of optional parameters. These
+ * options include the following :
+ * @param {FormData | string} [options.body] The request body
+ * @param {string} [options.responseType] The expected
+ * response type.
+ * @param {Object<string, string>} [options.urlParameters] A dictionary of
+ * URL parameters.
+ * @returns {Promise<XMLHttpRequest>} Request promise
+ */
+export function request(method, url, options = {}) {
+  const args = options || {};
+  const body = args.body || '';
+  const responseType = args.responseType || null;
+  const urlParameters = args.urlParameters || null;
+  return new Promise((resolve, reject) => {
+    const req = new XMLHttpRequest();
+    if (urlParameters) {
+      url += '?';
+      for (const [paramKey, paramValue] of Object.entries(urlParameters)) {
+        url += `${encodeURIComponent(paramKey)}=${encodeURIComponent(
+          paramValue
+        )}&`;
+      }
+    }
+    req.open(method, url, true);
+
+    if (responseType) {
+      req.responseType = responseType;
+    }
+
+    req.send(body);
+
+    req.onload = () => {
+      if (req.status >= 200 && req.status < 300) {
+        resolve(req);
+      } else {
+        reject(req.responseText);
+      }
+    };
+  });
+}
