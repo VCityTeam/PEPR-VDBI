@@ -11,7 +11,8 @@
   "dependencies": {
     "@observablehq/framework": "latest",
     "d3": "latest",
-    "fantasy-name-generator": "^2.0.0"
+    "fantasy-name-generator": "^2.0.0",
+    "geocoder": "^0.2.3"
   },
   "engines": {
     "node": ">=20.6"
