@@ -10,6 +10,17 @@ export const pepr_colors = {
   'orange': '#FF732C',
 };
 
+export const project_colors = new Map([
+  ["inteGREEN", d3.schemeCategory10[0]],
+  ["NEO", d3.schemeCategory10[1]],
+  ["RESILIENCE", d3.schemeCategory10[6]],
+  ["TRACES", d3.schemeCategory10[3]],
+  ["URBHEALTH", d3.schemeCategory10[4]],
+  ["VF++", d3.schemeCategory10[5]],
+  ["VILLEGARDEN", d3.schemeCategory10[2]],
+  ["WHAOU", d3.schemeCategory10[7]],
+]);
+
 // CNU Colors //
 
 /**
