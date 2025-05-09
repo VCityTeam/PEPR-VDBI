@@ -7,8 +7,6 @@ sql:
   terrains: ./data/project_terrains.csv
 ---
 
-# Phase 1 Overview
-
 ```js
 import {
   countEntities,
@@ -44,13 +42,9 @@ import {
 ```
 ```js
 import {
-  pepr_colors
+  pepr_colors,
+  project_colors,
 } from "./components/color.js";
-```
-```js
-import {
-  GeocodingService
-} from "./components/geocoding.js";
 ```
 
 ```js
@@ -71,8 +65,43 @@ if (debug) {
   display("terrains");
   display([...await sql`select * from terrains`]);
   display("terrain_data");
-  display(terrain_data);
+  display([...terrain_data]);
 }
+
+// which terrain results are outside mainland france bbox?
+const inMainlandFrance = (longitude, latitude) =>
+  -5.273438 < longitude && longitude < 8.833008 &&
+  42.228517 < latitude && latitude < 51.261915;
+
+[...terrain_data].filter(
+  (d) => !inMainlandFrance(d.longitude, d.latitude)
+).forEach(
+  (d) => console.warn("terrain outside of france?", d.toJSON())
+);
+```
+
+```sql id=terrain_data
+-- clean and group terrain data
+update terrains
+set terrain = replace(terrain, 'Commune de ', '')
+where starts_with(terrain, 'Commune de ');
+update terrains
+set terrain = replace(terrain, 'Ville de ', '')
+where starts_with(terrain, 'Ville de ');
+update terrains
+set terrain = replace(terrain, 'Métropole d''', '')
+where starts_with(terrain, 'Métropole d''');
+update terrains
+set terrain = replace(terrain, 'Métropole européenne de ', '')
+where starts_with(terrain, 'Métropole européenne de ');
+
+select
+  terrain,
+  list(project) as projects,
+  first(latitude) as latitude,
+  first(longitude) as longitude,
+from terrains
+group by all
 ```
 
 ```js
@@ -518,7 +547,7 @@ const project_force_graph = (width) => forceGraph(
   {
     id: "project_force_graph",
     width: width,
-    height: width,
+    height: width - 50,
     color: color,
     nodeLabelOpacity: 0.2,
     linkLabelOpacity: 0,
@@ -527,16 +556,93 @@ const project_force_graph = (width) => forceGraph(
 ```
 
 ```js
-const terrain_data = [...await sql`
-  select
-    terrain,
-    list(project) as projects,
-    first(latitude) as latitude,
-    first(longitude) as longitude,
-  from terrains
-  group by all`
-];
+const terrain_anchor_mappings = new Map([
+  ['Saclay Cachan', 'right'],
+  ['Lyon', 'top-right'],
+  ['Plauzat', 'top-right'],
+  ['Marseille', 'top-left'],
+  ['Paris', 'top-left'],
+  ['Aix Marseille Provence', 'bottom-left'],
+  ['Villeurbanne', 'bottom-left'],
+]);
+
+const filtered_terrain_data = [...terrain_data].filter(
+  (d) => 
+    d.terrain &&
+    d.longitude &&
+    d.latitude &&
+    inMainlandFrance(d.longitude, d.latitude)
+);
+
+const terrain_data_tips = filtered_terrain_data.map((d) => {
+
+  let tip_anchor = 'bottom';
+
+  if (terrain_anchor_mappings.has(d.terrain)) {
+    tip_anchor = terrain_anchor_mappings.get(d.terrain);
+  }
+
+  return Plot.tip(
+    [d.terrain],
+    {
+      x: d.longitude,
+      y: d.latitude,
+      textPadding: 1,
+      strokeOpacity: 0,
+      fillOpacity: 0.5,
+      fontSize: 12,
+      fontWeight: 'bold',
+      anchor: tip_anchor,
+    }
+  );
+});
+
+const terrain_data_tip_dots = filtered_terrain_data.flatMap((d) => {
+
+  const indexed_projects = [];
+  const projects = d.projects.toJSON();
+  
+  for (let index = 0; index < projects.length; index++) {
+    const data = {...d};
+    data.projects = projects[index];
+    data.project_index = index;
+    data.x = ['Lyon', 'Thiers', 'Plauzat'].includes(data.terrain) ?
+      data.longitude - 0.2 - (index * 0.2) :
+      data.longitude + 0.2 + (index * 0.2);
+    data.y = data.latitude;
+    indexed_projects.push(data);
+  }
+
+  return indexed_projects;
+}).filter((d) => !!d);
+
+
+const terrain_data_legend = [...project_colors.entries()];
+
+const mapToFranceLongitude = (index, subdivisions) =>
+  d3.scaleLinear(
+    [0, subdivisions],
+    [-4, 9.5]
+  )(index);
+
+for (let index = 0; index < terrain_data_legend.length; index++) {
+  terrain_data_legend[index].push(
+    mapToFranceLongitude(index, terrain_data_legend.length)
+  );
+  terrain_data_legend[index].push(52);
+}
 ```
+
+```js
+if (debug) {
+  display("terrain_data_tip_dots")
+  display(terrain_data_tip_dots)
+  display("terrain_data_legend")
+  display(terrain_data_legend)
+}
+```
+
+# Phase 1 Overview
 
 <div class="warning" label="Data visualization notice">
   Data visualizations are unverified and errors may exist. Regard these data visualizations as estimations and not a "ground truth".
@@ -585,63 +691,122 @@ const terrain_data = [...await sql`
 </div>
 <div class="grid grid-cols-2">
   <div class="card">
-    <h2>Project locations</h2>
     <div>${
       resize((width) =>
-        projectionMap(
-          terrain_data,
-          {
-            width: width,
-            height: width,
-            fill: pepr_colors.orange,
-            stroke: pepr_colors.orange,
-            keyMap: (d) => d.terrain,
-            valueMap: (d) => 1,
-            lonMap: (d) => d.longitude,
-            latMap: (d) => d.latitude,
-            borderList: [
-              regions,
-              departements,
-            ],
-            borderListStrokeOpacity: [
-              1,
-              0.3,
-            ],
-            channels: {
-              entity: {
-                value: (d) => d.terrain,
-                label: 'City',
-              },
-              count: {
-                value: (d) => 1,
-                label: 'Occurences',
-              },
-              longitude: {
-                value: (d) => d.longitude,
-                label: 'Lon',
-              },
-              latitude: {
-                value: (d) => d.latitude,
-                label: 'Lat',
-              },
-              projects: {
-                value: (d) => d.projects.toJSON(),
-                label: 'Projects',
-              },
-            },
-            tip: {
-              format: {
-                entity: true,
-                longitude: false,
-                latitude: false,
-                count: false,
-                x: false,
-                y: false,
-                r: false,
+        Plot.plot({
+          title: "Project locations",
+          width: width,
+          height: width,
+          projection: {
+            type: 'azimuthal-equidistant',
+            domain: d3.geoCircle().center([2, 47]).radius(5)(),
+          },
+          marks: [
+            Plot.graticule(),
+            Plot.sphere(),
+            Plot.geo(regions, {
+              stroke: 'white',
+              strokeOpacity: 0.5,
+              fill: pepr_colors.blue,
+              fillOpacity: 0.3,
+            }),
+            //Plot.geo(departements, {
+            //  stroke: pepr_colors.blue,
+            //  strokeOpacity: 0.1,
+            //}),
+            Plot.dot(
+              filtered_terrain_data,
+              {
+                x: "longitude",
+                y: "latitude",
+                r: 3,
+                fill: 'black',
+                //stroke: pepr_colors.orange,
+                //fillOpacity: 0.5,
+                channels: {
+                  entity: {
+                    value: "terrain",
+                    label: 'City',
+                  },
+                  count: {
+                    value: (d) => 1,
+                    label: 'Occurences',
+                  },
+                  longitude: {
+                    value: "longitude",
+                    label: 'Lon',
+                  },
+                  latitude: {
+                    value: "latitude",
+                    label: 'Lat',
+                  },
+                  projects: {
+                    value: (d) => d.projects.toJSON(),
+                    label: 'Projects',
+                  },
+                },
+                tip: debug ? true : {
+                  format: {
+                    longitude: false,
+                    latitude: false,
+                    count: false,
+                    x: false,
+                    y: false,
+                    r: false,
+                  }
+                },
               }
-            }
-          }
-        )
+            ),
+            // legend marks //
+            Plot.dot(
+              terrain_data_legend,
+              {
+                x: (d) => d[2],
+                y: (d) => d[3],
+                r: 5,
+                fill: (d) => d[1],
+              }
+            ),
+            Plot.text(
+              terrain_data_legend,
+              {
+                x: (d) => d[2],
+                y: (d) => d[3],
+                dy: -12,
+                text: (d) => d[0],
+              }
+            ),
+            Plot.link(
+              terrain_data_tip_dots,
+              {
+                x1: (tip_datum) =>
+                  terrain_data_legend.find(
+                    (legend_datum) => legend_datum[0] === tip_datum.projects
+                  )[2],
+                y1: (tip_datum) =>
+                  terrain_data_legend.find(
+                    (legend_datum) => legend_datum[0] === tip_datum.projects
+                  )[3],
+                x2: "longitude",
+                y2: "latitude",
+                stroke: (d) => project_colors.get(d.projects),
+                markerEnd: "arrow",
+                curve: "bump-y",
+              }
+            ),
+            // tip marks //
+            terrain_data_tips,
+            //Plot.dot(
+            //  terrain_data_tip_dots,
+            //  {
+            //    x: "x",
+            //    y: "y",
+            //    r: 4,
+            //    fill: (d) => project_colors.get(d.projects),
+            //  }
+            //),
+          ],
+        }),
       )
     }</div>
   </div>

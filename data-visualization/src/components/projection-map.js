@@ -68,6 +68,21 @@ export function projectionMap(
         r: false,
       },
     },
+    marks = [
+      // default marks
+      Plot.graticule(),
+      Plot.sphere(),
+      Plot.dot(data, {
+        x: lonMap,
+        y: latMap,
+        r: valueMap,
+        stroke: stroke,
+        fill: fill,
+        fillOpacity: fillOpacity,
+        channels: channels,
+        tip: tip,
+      }),
+    ],
     // color = (d) =>
     //   d3.interpolatePlasma(
     //     d3
@@ -79,22 +94,6 @@ export function projectionMap(
     //   ),
   } = {}
 ) {
-  // create basic marks
-  const marks = [
-    Plot.graticule(),
-    Plot.sphere(),
-    Plot.dot(data, {
-      x: lonMap,
-      y: latMap,
-      r: valueMap,
-      stroke: stroke,
-      fill: fill,
-      fillOpacity: fillOpacity,
-      channels: channels,
-      tip: tip,
-    }),
-  ];
-
   // add borders
   const bordersToDraw = d3.zip(
     borderList,
