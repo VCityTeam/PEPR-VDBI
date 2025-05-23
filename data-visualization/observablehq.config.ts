@@ -84,6 +84,10 @@ export default {
           name: 'Arc Diagram, Property Graph',
           path: '/test-arc',
         },
+        {
+          name: 'Mural Data',
+          path: '/test-mural-data',
+        },
       ],
     },
     {
