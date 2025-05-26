@@ -31,7 +31,6 @@ import {
 import {
   forceGraph,
   mapTableToPropertyGraphLinks,
-  sortNodes,
   mapTableToTriples,
 } from "./components/graph.js";
 ```
@@ -527,7 +526,7 @@ const filtered_project_triples = {
   links: project_triples.links.filter(
     ({ label }) => project_triples_predicate_select == "" ? true : label == project_triples_predicate_select
   )
-}
+};
 
 const color = d3
   .scaleOrdinal()

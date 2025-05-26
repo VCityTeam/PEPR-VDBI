@@ -36,7 +36,7 @@ export function mapTableToPropertyGraphLinks(
         continue; // column not whitelisted
       } else if (key == id_key || value == null || value == undefined) {
         continue;
-      } else if (typeof value == 'string') {
+      } else if (typeof value == 'string' || typeof value == 'number') {
         // get rows with the same value
         const rows_to_link = data.filter(
           (d) => d[id_key] != row[id_key] && d[key] == row[key]
@@ -139,7 +139,7 @@ export function mapTableToTriples(
         value == undefined
       ) {
         continue; // ignore id key and null values
-      } else if (typeof value == 'string') {
+      } else if (typeof value == 'string' || typeof value == 'number') {
         // create target node if necessary
         if (!nodes.some(({ id, type }) => id == value && type == key))
           nodes.push({ id: value, type: key });
@@ -303,7 +303,7 @@ export function forceGraph(
 
   Object.assign(svg.node(), { simulation });
 
-  svg.call(d3.zoom().on('zoom', handleZoom));
+  svg.call(d3.zoom().on('zoom', (event) => handleZoom(event, id)));
 
   const link = svg
     .append('g')
@@ -486,7 +486,7 @@ export function forceGraph(
 
   return svg.node();
 
-  // Interface Functions //
+  // Graph UI Functions //
 
   /**
    * Create a drag effect for graph nodes within the context of a force simulation
@@ -530,49 +530,349 @@ export function forceGraph(
       .on('drag', dragged)
       .on('end', dragended);
   }
+}
+
+export function staticGraph(
+  data = {
+    /**
+     *  {
+     *    nodes: array<{
+     *      id:    string,
+     *      color: number
+     *    }>,
+     *    links: array<{
+     *      source: string,
+     *      label:  string,
+     *      target: string
+     *    }>
+     *  }
+     **/
+  },
+  {
+    id = 'd3_graph_' + Math.random().toString(36).substring(7),
+    width = 500, // canvas width
+    height = 500, // canvas height
+    keyMap = (d) => d.id, // the function for identifying a node
+    valueMap = (d) => d.type, // the function for categorizing a node
+    xMap = (d) => d.fx, // the function for placing a node horizontally
+    yMap = (d) => d.fy, // the function for placing a node vertically
+    color = d3.scaleOrdinal(d3.schemeCategory10), // color scheme
+    fontSize = 10, // label font size
+    r = 3, // node radius
+    textLength = 15, // label cutoff length
+    stroke = 'black', // stroke for links
+    strokeWidth = 0.5, // stroke width for links
+    nodeStrokeOpacity = 0.4, // stroke opacity for nodes
+    linkStrokeOpacity = 0.6, // stroke opacity for links
+    textColor = 'black', // label color
+    halo = 'GhostWhite', // color of label halo
+    haloWidth = 0.25, // padding around the labels
+    nodeLabelOpacity = 0.1, // default node label opacity
+    linkLabelOpacity = 0.1, // default link label opacity
+    highlightOpacity = 0.8, // mouseover label opacity
+    legend = circleLegend(
+      [
+        ...new Set(
+          data.nodes
+            .map((d) => valueMap(d))
+            .filter((d) => d != null)
+            .sort(d3.ascending)
+        ),
+      ],
+      {
+        keyMap: (d) => d,
+        valueMap: (d) => d,
+        color: color,
+        lineSeparation: 20,
+        text: (d) => cropText(d, 40),
+        backgroundColor: 'black',
+        backgroundStroke: 'black',
+        backgroundOpacity: 0.1,
+      }
+    ),
+  }
+) {
+  const svg = d3
+    .create('svg')
+    .attr('id', id)
+    .attr('class', 'd3_graph')
+    .attr('viewBox', [-width / 2, -height / 2, width, height])
+    .style('display', 'hidden');
+
+  const links = [...data.links];
+  const nodes = [...data.nodes];
+
+  const simulation = d3
+    .forceSimulation(nodes)
+    .force('link', d3.forceLink(links).id(keyMap))
+    .force('charge', null)
+    .force('fx', xMap)
+    .force('fy', yMap)
+    .stop();
+
+  Object.assign(svg.node(), { simulation });
+
+  svg.call(d3.zoom().on('zoom', (event) => handleZoom(event, id)));
+
+  const link = svg
+    .append('g')
+    .attr('class', 'links')
+    .attr('stroke', stroke)
+    .attr('stroke-opacity', linkStrokeOpacity)
+    .selectAll('line')
+    .data(links)
+    .join('line')
+    .attr('stroke-width', strokeWidth)
+    .attr('x1', (d) => d.source.x)
+    .attr('y1', (d) => d.source.y)
+    .attr('x2', (d) => d.target.x)
+    .attr('y2', (d) => d.target.y);
+
+
+  const node = svg
+    .append('g')
+    .attr('class', 'nodes')
+    .selectAll('circle')
+    .data(nodes)
+    .join('circle')
+    .attr('r', r)
+    .attr('stroke-opacity', nodeStrokeOpacity)
+    .attr('stroke-width', strokeWidth)
+    .attr('stroke', stroke)
+    .attr('fill', (d) => color(valueMap(d)))
+    .attr('cx', (d) => d.x)
+    .attr('cy', (d) => d.y)
+    // .on("click", (event, datum) => {
+    //   console.debug("event", event);
+    //   console.debug("datum", datum);
+    // })
+    .on('mouseover', (event, datum) => {
+      event.target.style['stroke-opacity'] = highlightOpacity;
+      // event.target.style["stroke"] = "white";
+      // event.target.style["fill"] = color(valueMap(nodes[datum.index]));
+      links
+        .filter(
+          // get node links
+          (d) => datum.index == d.source.index || datum.index == d.target.index
+        )
+        .forEach((d) => {
+          // update node highlight
+          node
+            .filter(
+              (_, j) =>
+                datum.index != j && (j == d.source.index || j == d.target.index)
+            )
+            .nodes()
+            .forEach((d) => {
+              d.style['stroke-opacity'] = highlightOpacity;
+            });
+          node_label
+            .filter((_, j) => j == d.source.index || j == d.target.index)
+            .nodes()
+            .forEach((d) => {
+              d.style['opacity'] = highlightOpacity;
+            });
+          link
+            .filter((_, j) => j == d.index)
+            .nodes()
+            .forEach((d) => {
+              d.style['stroke-opacity'] = highlightOpacity;
+            });
+          link_label
+            .filter((_, j) => j == d.index)
+            .nodes()
+            .forEach((d) => {
+              d.style['opacity'] = highlightOpacity;
+            });
+        });
+    })
+    .on('mouseout', (event, datum) => {
+      event.target.style['stroke-opacity'] = nodeStrokeOpacity;
+      // event.target.style["stroke"] = stroke;
+      // event.target.style["fill"] = color(valueMap(nodes[datum.index]));
+      links
+        .filter(
+          // get node links
+          (d) => datum.index == d.source.index || datum.index == d.target.index
+        )
+        .forEach((d) => {
+          // update node highlight
+          node
+            .filter((_, j) => j == d.source.index || j == d.target.index)
+            .nodes()
+            .forEach((d) => {
+              d.style['stroke-opacity'] = nodeStrokeOpacity;
+            });
+          node_label
+            .filter((_, j) => j == d.source.index || j == d.target.index)
+            .nodes()
+            .forEach((d) => {
+              d.style['opacity'] = nodeLabelOpacity;
+            });
+          link
+            .filter((_, j) => j == d.index)
+            .nodes()
+            .forEach((d) => {
+              d.style['stroke-opacity'] = linkStrokeOpacity;
+            });
+          link_label
+            .filter((_, j) => j == d.index)
+            .nodes()
+            .forEach((d) => {
+              d.style['opacity'] = linkLabelOpacity;
+            });
+        });
+    })
+    .call(drag());
+
+  node.append('title').text(keyMap);
+
+  const node_label = svg
+    .append('g')
+    .selectAll('.node_label')
+    .data(nodes)
+    .enter()
+    .append('text')
+    .text((d) =>
+      keyMap(d).length > textLength
+        ? keyMap(d).slice(0, textLength).concat('...')
+        : keyMap(d)
+    )
+    .style('text-anchor', 'middle')
+    .style('font-family', 'Arial')
+    .style('font-size', fontSize)
+    .style('fill', textColor)
+    .style('opacity', nodeLabelOpacity)
+    // .style('fill', 'white')
+    // .style('visibility', 'hidden')
+    .attr('stroke-linejoin', 'round')
+    .attr('stroke-width', haloWidth)
+    .attr('stroke', halo)
+    .attr('paint-order', 'stroke')
+    .style('pointer-events', 'none')
+    .attr('class', 'node_label')
+    .attr('x', (d) => d.x).attr('y', (d) => d.y - 10);
+
+  const link_label = svg
+    .append('g')
+    .selectAll('.link_label')
+    .data(links)
+    .enter()
+    .append('text')
+    .text((d) =>
+      d.label.length > textLength
+        ? d.label.slice(0, textLength).concat('...')
+        : d.label
+    )
+    .style('text-anchor', 'middle')
+    .style('font-family', 'Arial')
+    .style('font-size', fontSize)
+    .style('fill', textColor)
+    // .style('fill', 'white')
+    // .style('visibility', 'hidden')
+    .style('opacity', linkLabelOpacity)
+    .attr('stroke-linejoin', 'round')
+    .attr('stroke-width', haloWidth)
+    .attr('stroke', halo)
+    .attr('paint-order', 'stroke')
+    .style('pointer-events', 'none')
+    .attr('class', 'link_label')
+    .attr('x', (d) => (d.source.x + d.target.x) / 2)
+    .attr('y', (d) => (d.source.y + d.target.y) / 2);
+
+  // Create legend
+  if (legend) {
+    const legend_svg = svg
+      .append('g')
+      .attr('transform', `translate(${-width / 2 + 10},${-height / 2 + 10})`);
+    legend_svg.append(() => legend);
+  }
+
+  return svg.node();
+  // Graph UI Functions //
 
   /**
-   * A handler function for selecting elements to transform during a zoom event
+   * Create a drag effect for graph nodes within the context of a force simulation
    *
-   * @param {d3.D3ZoomEvent} event the zoom event containing information on how the svg canvas is being translated and scaled
+   * @returns {d3.drag} a D3 drag function to enable dragging nodes within the graph
    */
-  function handleZoom(event) {
-    d3.selectAll(`#${id} g.nodes`)
-      .attr('height', '100%')
-      .attr('width', '100%')
-      .attr('transform', event.transform);
+  function drag() {
+    /**
+     *
+     * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
+     */
+    function dragstarted(event) {
+      event.subject.fx = event.subject.x;
+      event.subject.fy = event.subject.y;
+    }
 
-    d3.selectAll(`#${id} g.links`)
-      .attr('height', '100%')
-      .attr('width', '100%')
-      .attr('transform', event.transform);
+    /**
+     *
+     * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
+     */
+    function dragged(event) {
+      event.subject.fx = event.x;
+      event.subject.fy = event.y;
+    }
 
-    d3.selectAll(`#${id} text.node_label`)
-      // .style("font-size", fontSize / event.transform.k + "px")
-      .attr(
-        'transform',
-        'translate(' +
-          event.transform.x +
-          ',' +
-          event.transform.y +
-          ') scale(' +
-          event.transform.k +
-          ')'
-      );
+    /**
+     *
+     * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
+     */
+    function dragended(event) {
+      event.subject.fx = null;
+      event.subject.fy = null;
+    }
 
-    d3.selectAll(`#${id} text.link_label`)
-      // .style("font-size", fontSize / event.transform.k + "px")
-      .attr(
-        'transform',
-        'translate(' +
-          event.transform.x +
-          ',' +
-          event.transform.y +
-          ') scale(' +
-          event.transform.k +
-          ')'
-      );
+    return d3
+      .drag()
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended);
   }
+}
+
+/**
+ * A handler function for selecting elements to transform during a zoom event
+ *
+ * @param {d3.D3ZoomEvent} event the zoom event containing information on how the svg canvas is being translated and scaled
+ */
+function handleZoom(event, id) {
+  d3.selectAll(`#${id} g.nodes`)
+    .attr('height', '100%')
+    .attr('width', '100%')
+    .attr('transform', event.transform);
+
+  d3.selectAll(`#${id} g.links`)
+    .attr('height', '100%')
+    .attr('width', '100%')
+    .attr('transform', event.transform);
+
+  d3.selectAll(`#${id} text.node_label`)
+    // .style("font-size", fontSize / event.transform.k + "px")
+    .attr(
+      'transform',
+      'translate(' +
+        event.transform.x +
+        ',' +
+        event.transform.y +
+        ') scale(' +
+        event.transform.k +
+        ')'
+    );
+
+  d3.selectAll(`#${id} text.link_label`)
+    // .style("font-size", fontSize / event.transform.k + "px")
+    .attr(
+      'transform',
+      'translate(' +
+        event.transform.x +
+        ',' +
+        event.transform.y +
+        ') scale(' +
+        event.transform.k +
+        ')'
+    );
 }
 
 export function filterLinks(graph, filterFunction, keyMap = (d) => d.id) {
@@ -667,10 +967,14 @@ export function arcDiagramVertical(
     nodeStroke = 'grey',
     // create a circle legend from possible arc values
     legend = circleLegend(
-      [... new Set(nodes
-        .map((d) => valueMap(d))
-        .filter((d) => d != null)
-        .sort(d3.ascending))],
+      [
+        ...new Set(
+          nodes
+            .map((d) => valueMap(d))
+            .filter((d) => d != null)
+            .sort(d3.ascending)
+        ),
+      ],
       {
         keyMap: (d) => d,
         valueMap: (d) => d,
