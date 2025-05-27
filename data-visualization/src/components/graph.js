@@ -417,11 +417,7 @@ export function forceGraph(
     .data(nodes)
     .enter()
     .append('text')
-    .text((d) =>
-      keyMap(d).length > textLength
-        ? keyMap(d).slice(0, textLength).concat('...')
-        : keyMap(d)
-    )
+    .text((d) => cropText(keyMap(d), textLength))
     .style('text-anchor', 'middle')
     .style('font-family', 'Arial')
     .style('font-size', fontSize)
@@ -442,11 +438,7 @@ export function forceGraph(
     .data(links)
     .enter()
     .append('text')
-    .text((d) =>
-      d.label.length > textLength
-        ? d.label.slice(0, textLength).concat('...')
-        : d.label
-    )
+    .text((d) => cropText(d.label, textLength))
     .style('text-anchor', 'middle')
     .style('font-family', 'Arial')
     .style('font-size', fontSize)
@@ -485,51 +477,6 @@ export function forceGraph(
   }
 
   return svg.node();
-
-  // Graph UI Functions //
-
-  /**
-   * Create a drag effect for graph nodes within the context of a force simulation
-   *
-   * @param {d3.forceSimulation} simulation The active D3 force simulation of the graph
-   * @returns {d3.drag} a D3 drag function to enable dragging nodes within the graph
-   */
-  function drag(simulation) {
-    /**
-     *
-     * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
-     */
-    function dragstarted(event) {
-      if (!event.active) simulation.alphaTarget(0.3).restart();
-      event.subject.fx = event.subject.x;
-      event.subject.fy = event.subject.y;
-    }
-
-    /**
-     *
-     * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
-     */
-    function dragged(event) {
-      event.subject.fx = event.x;
-      event.subject.fy = event.y;
-    }
-
-    /**
-     *
-     * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
-     */
-    function dragended(event) {
-      if (!event.active) simulation.alphaTarget(0);
-      event.subject.fx = null;
-      event.subject.fy = null;
-    }
-
-    return d3
-      .drag()
-      .on('start', dragstarted)
-      .on('drag', dragged)
-      .on('end', dragended);
-  }
 }
 
 export function staticGraph(
@@ -551,7 +498,8 @@ export function staticGraph(
   {
     id = 'd3_graph_' + Math.random().toString(36).substring(7),
     width = 500, // canvas width
-    height = 500, // canvas height
+    // height = 500, // canvas height
+    margin = width / 4, // margin for the graph canvas
     keyMap = (d) => d.id, // the function for identifying a node
     valueMap = (d) => d.type, // the function for categorizing a node
     xMap = (d) => d.fx, // the function for placing a node horizontally
@@ -592,15 +540,35 @@ export function staticGraph(
     ),
   }
 ) {
+  const links = [...data.links];
+  const nodes = [...data.nodes];
+
+  const bounding_box = [
+    [d3.min(nodes, xMap) - margin, d3.min(nodes, yMap) - margin],
+    [d3.max(nodes, xMap) + margin, d3.max(nodes, yMap) + margin],
+  ];
+  console.debug('bounding_box', bounding_box);
+  console.debug('center', [
+    (bounding_box[0][0] + bounding_box[1][0]) / 2,
+    (bounding_box[0][1] + bounding_box[1][1]) / 2,
+  ]);
+  console.debug('width-height', [
+    bounding_box[1][0] - bounding_box[0][0],
+    bounding_box[1][1] - bounding_box[0][1],
+  ]);
+  // debugger;
   const svg = d3
     .create('svg')
     .attr('id', id)
     .attr('class', 'd3_graph')
-    .attr('viewBox', [-width / 2, -height / 2, width, height])
+    .attr('viewBox', [
+      bounding_box[0][0],
+      bounding_box[0][1],
+      bounding_box[1][0] - bounding_box[0][0],
+      bounding_box[1][1] - bounding_box[0][1],
+    ])
+    // .attr('viewBox', [-width / 2, -height / 2, width, height])
     .style('display', 'hidden');
-
-  const links = [...data.links];
-  const nodes = [...data.nodes];
 
   const simulation = d3
     .forceSimulation(nodes)
@@ -612,7 +580,13 @@ export function staticGraph(
 
   Object.assign(svg.node(), { simulation });
 
-  svg.call(d3.zoom().on('zoom', (event) => handleZoom(event, id)));
+  const zoom = d3
+    .zoom()
+    // .extent(bounding_box)
+    // .scaleExtent([0, 5])
+    .translateExtent(bounding_box)
+    .on('zoom', (event) => handleZoom(event, id));
+  svg.call(zoom);
 
   const link = svg
     .append('g')
@@ -627,7 +601,6 @@ export function staticGraph(
     .attr('y1', (d) => d.source.y)
     .attr('x2', (d) => d.target.x)
     .attr('y2', (d) => d.target.y);
-
 
   const node = svg
     .append('g')
@@ -723,7 +696,7 @@ export function staticGraph(
             });
         });
     })
-    .call(drag());
+    .call(drag(null));
 
   node.append('title').text(keyMap);
 
@@ -733,11 +706,7 @@ export function staticGraph(
     .data(nodes)
     .enter()
     .append('text')
-    .text((d) =>
-      keyMap(d).length > textLength
-        ? keyMap(d).slice(0, textLength).concat('...')
-        : keyMap(d)
-    )
+    .text((d) => cropText(keyMap(d), textLength))
     .style('text-anchor', 'middle')
     .style('font-family', 'Arial')
     .style('font-size', fontSize)
@@ -751,7 +720,8 @@ export function staticGraph(
     .attr('paint-order', 'stroke')
     .style('pointer-events', 'none')
     .attr('class', 'node_label')
-    .attr('x', (d) => d.x).attr('y', (d) => d.y - 10);
+    .attr('x', (d) => d.x)
+    .attr('y', (d) => d.y - 10);
 
   const link_label = svg
     .append('g')
@@ -759,11 +729,7 @@ export function staticGraph(
     .data(links)
     .enter()
     .append('text')
-    .text((d) =>
-      d.label.length > textLength
-        ? d.label.slice(0, textLength).concat('...')
-        : d.label
-    )
+    .text((d) => cropText(d.label, textLength))
     .style('text-anchor', 'middle')
     .style('font-family', 'Arial')
     .style('font-size', fontSize)
@@ -784,58 +750,69 @@ export function staticGraph(
   if (legend) {
     const legend_svg = svg
       .append('g')
-      .attr('transform', `translate(${-width / 2 + 10},${-height / 2 + 10})`);
+      .attr(
+        'transform',
+        `translate(${bounding_box[0][0] + margin},${
+          bounding_box[0][1] + margin
+        })`
+      );
     legend_svg.append(() => legend);
   }
 
   return svg.node();
-  // Graph UI Functions //
+}
+
+// Graph UI Functions //
+
+/**
+ * Create a drag effect for graph nodes within the context of a force simulation
+ *
+ * @param {d3.forceSimulation || null} simulation The active D3 force simulation of the
+ *    graph or null to avoid restarting the simulation
+ * @returns {d3.drag} a D3 drag function to enable dragging nodes within the graph
+ */
+function drag(simulation) {
+  /**
+   *
+   * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
+   */
+  function dragstarted(event) {
+    if (simulation && !event.active) simulation.alphaTarget(0.3).restart();
+    event.subject.fx = event.subject.x;
+    event.subject.fy = event.subject.y;
+  }
 
   /**
-   * Create a drag effect for graph nodes within the context of a force simulation
    *
-   * @returns {d3.drag} a D3 drag function to enable dragging nodes within the graph
+   * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
    */
-  function drag() {
-    /**
-     *
-     * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
-     */
-    function dragstarted(event) {
-      event.subject.fx = event.subject.x;
-      event.subject.fy = event.subject.y;
-    }
-
-    /**
-     *
-     * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
-     */
-    function dragged(event) {
-      event.subject.fx = event.x;
-      event.subject.fy = event.y;
-    }
-
-    /**
-     *
-     * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
-     */
-    function dragended(event) {
-      event.subject.fx = null;
-      event.subject.fy = null;
-    }
-
-    return d3
-      .drag()
-      .on('start', dragstarted)
-      .on('drag', dragged)
-      .on('end', dragended);
+  function dragged(event) {
+    event.subject.fx = event.x;
+    event.subject.fy = event.y;
   }
+
+  /**
+   *
+   * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
+   */
+  function dragended(event) {
+    if (simulation && !event.active) simulation.alphaTarget(0);
+    event.subject.fx = null;
+    event.subject.fy = null;
+  }
+
+  return d3
+    .drag()
+    .on('start', dragstarted)
+    .on('drag', dragged)
+    .on('end', dragended);
 }
 
 /**
  * A handler function for selecting elements to transform during a zoom event
  *
  * @param {d3.D3ZoomEvent} event the zoom event containing information on how the svg canvas is being translated and scaled
+ * @param {string} id the id of the graph canvas SVG to apply the zoom transformation to
  */
 function handleZoom(event, id) {
   d3.selectAll(`#${id} g.nodes`)
