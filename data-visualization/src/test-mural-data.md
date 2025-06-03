@@ -7,7 +7,8 @@ sql:
 
 ```js
 import {
-  staticGraph,
+  forceGraph,
+  MuralGraph,
   mapTableToPropertyGraphLinks,
   mapTableToTriples,
 } from "./components/graph.js";
@@ -16,7 +17,7 @@ import {
 } from "./components/legend.js";
 ```
 
-# Mural data
+# Mural link editor
 
 projects ${Inputs.table(projects)}
 
@@ -35,20 +36,9 @@ where
   "Text" is not null
 ```
 
-bounding_box ${Inputs.table(bounding_box)}
+## Mural project data
 
-```sql id=bounding_box echo
-select
-  min("Position x") as min_x,
-  min("Position Y") as min_y,
-  max("Position X") as max_x,
-  max("Position Y") as max_y,
-from mural_data
-where Area = 'Cartographie (à compléter)'
-
-```
-
-```js
+```js echo
 const project_graph_data = {
   nodes: [...projects].map((d) => d.toJSON()),
   links: []
@@ -56,15 +46,7 @@ const project_graph_data = {
 display(project_graph_data)
 ```
 
-```js
-// const filtered_project_triples = {
-//   nodes: project_triples.nodes.filter(
-//     ({ type }) => project_triples_predicate_select == "" || type == project_triples_predicate_select || type == "acronyme"
-//   ),
-//   links: project_triples.links.filter(
-//     ({ label }) => project_triples_predicate_select == "" ? true : label == project_triples_predicate_select
-//   )
-// };
+```js echo
 const project_colors = new Map([
   ["#AAED92", "Projet PEPR VDBI"],
   ["#FCF281", "Projet externe"],
@@ -72,37 +54,33 @@ const project_colors = new Map([
   ["#FCB6D4", "Projet PEPR (externe)"],
   ["#0561A6", "Structure"],
   ["#FFC061", "other"],
-])
+]);
 
-const project_graph = staticGraph(
+const project_graph = new MuralGraph(
   project_graph_data,
   {
     id: "project_graph",
     width: 1000,
-    // height: width - 50,
+    height: 1000,
+    margin: 500,
     r: 20,
     fontSize: 50,
+    strokeWidth: 5,
     keyMap: (d) => d.label,
     valueMap: (d) => d.type,
-    color: (d) => d,
-    nodeLabelOpacity: 0.5,
-    linkLabelOpacity: 0,
+    color: d3.scaleOrdinal([...project_colors.keys()], [...project_colors.keys()]),
+    nodeLabelOpacity: 1,
+    linkLabelOpacity: 1,
+    nodeLabelOffset: 25,
     legend: circleLegend(
-      [
-        ...new Set(
-          project_graph_data.nodes
-            .map((d) => d.type)
-            .filter((d) => d != null)
-            .sort(d3.ascending)
-        ),
-      ],
+      [...project_colors.values()],
       {
         keyMap: (d) => d,
         valueMap: (d) => d,
-        color: (d) => d,
+        color: d3.scaleOrdinal([...project_colors.values()], [...project_colors.keys()]),
         radius: 40,
         lineSeparation: 120,
-        text: (d) => project_colors.has(d) ? project_colors.get(d) : "",
+        text: (d) => d,
         fontSize: 100,
         backgroundColor: 'black',
         backgroundStroke: 'black',
@@ -113,8 +91,44 @@ const project_graph = staticGraph(
 );
 ```
 
+## Mural graph
+
+<div class="card">${project_graph.getCanvas()}</div>
+
+## Mural graph data
+
 ```js
-const project_graph_selection = d3.select("#project_graph");
+const mural_links = (async function* () {
+  while (true) {
+    yield [...project_graph.links].map(
+      ({source, target, label}) => {
+        return {
+          source: source.id,
+          target: target.id,
+          label: label,
+        }
+      }
+    );
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+  }
+})();
+
 ```
 
-<div class="card">${project_graph}</div>
+```js
+display(
+  Inputs.button(
+    "Copy to clipboard",
+    {
+      value: null,
+      reduce: () => navigator.clipboard.writeText(
+        mural_links.reduce(
+          (a, v) => a + `${v.source},${v.target},${v.label}\n`,
+          "source,target,label\n"
+        )
+      ),
+    }
+  )
+);
+display(Inputs.table(mural_links));
+```

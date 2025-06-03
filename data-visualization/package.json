@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@observablehq/framework": "latest",
+    "csv-writer": "^1.6.0",
     "d3": "latest",
     "fantasy-name-generator": "^2.0.0",
     "geocoder": "^0.2.3"

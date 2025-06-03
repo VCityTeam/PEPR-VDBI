@@ -229,80 +229,40 @@ export function mapProjectsToRDFGraph(projects, colorMap = {}) {
  */
 export class Graph {
   /**
-   * @param {object} data - an object with properties `nodes` and `links`
-   * @param {array} data.nodes - an array of node objects with properties:
+   *  {
    *    nodes: array<{
    *      id:    string,
    *      color: number
    *    }>,
-   * @param {array} data.links - an array of link objects with properties:
    *    links: array<{
    *      source: string,
    *      label:  string,
    *      target: string
    *    }>
    *  }
-   * @param {object} options - configuration options for the graph
-   * @param {string} options.id - the id of the graph SVG element
-   * @param {number} options.width - canvas width
-   * @param {number} options.height - canvas height
-   * @param {array<number>} options.viewBox - viewBox for the SVG canvas
-   * @param {array<number>} options.scaleExtent - bounding box for the canvas
-   * @param {array<array<number>>} options.translateExtent - bounding box for the canvas
-   * @param {Function} options.keyMap - the function for identifying a node
-   * @param {Function} options.valueMap - the function for categorizing a node
-   * @param {Function} options.xMap - horizontal position accessor
-   * @param {Function} options.yMap - vertical position accessor
-   * @param {Function} options.color - color scheme
-   * @param {number} options.fontSize - label font size
-   * @param {number} options.r - node radius
-   * @param {number} options.textLength - label cutoff length
-   * @param {number} options.stroke - stroke for links
-   * @param {number} options.strokeWidth - stroke width for links
-   * @param {number} options.nodeStrokeOpacity - stroke opacity for nodes
-   * @param {number} options.linkStrokeOpacity - stroke opacity for links
-   * @param {string} options.textColor - label color
-   * @param {string} options.halo - color of label halo
-   * @param {number} options.haloWidth - padding around the labels
-   * @param {number} options.nodeLabelOpacity - default node label opacity
-   * @param {number} options.linkLabelOpacity - default link label opacity
-   * @param {number} options.highlightOpacity - mouseover label opacity
-   * @param {number} options.nodeLabelOffset - move node label placement
-   * @param {element} options.legend - legend for the graph
-   * @param {number} options.legendX - horizontal location of legend
-   * @param {number} options.legendY - vertical location of legend
    **/
   constructor(
     { nodes = [], links = [] },
     {
       id = 'd3_graph_' + Math.random().toString(36).substring(7),
-      width = 500,
-      height = 500,
-      viewBox = [-width / 2, -height / 2, width, height],
-      scaleExtent = [0, Infinity],
-      translateExtent = [
-        [-Infinity, -Infinity],
-        [Infinity, Infinity],
-      ],
-      keyMap = (d) => d.id,
-      valueMap = (d) => d.type,
-      xMap = (d) => d.fx,
-      yMap = (d) => d.fy,
-      color = d3.scaleOrdinal(d3.schemeCategory10),
-      fontSize = 10,
-      r = 3,
-      textLength = 15,
-      stroke = 'black',
-      strokeWidth = 0.5,
-      nodeStrokeOpacity = 0.4,
-      linkStrokeOpacity = 0.6,
-      textColor = 'black',
-      halo = 'GhostWhite',
-      haloWidth = 0.25,
-      nodeLabelOpacity = 0.1,
-      linkLabelOpacity = 0.1,
-      highlightOpacity = 0.8,
-      nodeLabelOffset = 10,
+      width = 500, // canvas width
+      height = 500, // canvas height
+      keyMap = (d) => d.id, // the function for identifying a node
+      valueMap = (d) => d.type, // the function for categorizing a node
+      color = d3.scaleOrdinal(d3.schemeCategory10), // color scheme
+      fontSize = 10, // label font size
+      r = 3, // node radius
+      textLength = 15, // label cutoff length
+      stroke = 'black', // stroke for links
+      strokeWidth = 0.5, // stroke width for links
+      nodeStrokeOpacity = 0.4, // stroke opacity for nodes
+      linkStrokeOpacity = 0.6, // stroke opacity for links
+      textColor = 'black', // label color
+      halo = 'GhostWhite', // color of label halo
+      haloWidth = 0.25, // padding around the labels
+      nodeLabelOpacity = 0.1, // default node label opacity
+      linkLabelOpacity = 0.1, // default link label opacity
+      highlightOpacity = 0.8, // mouseover label opacity
       legend = circleLegend(
         [
           ...new Set(
@@ -323,167 +283,185 @@ export class Graph {
           backgroundOpacity: 0.1,
         }
       ),
-      legendX = -width / 2 + 10,
-      legendY = -height / 2 + 10,
     }
   ) {
+    this.id = id;
+    this.width = width;
+    this.height = height;
+    this.keyMap = keyMap;
     this.nodes = [...nodes];
     this.links = [...links];
-
-    this.options = Object.assign(
-      {
-        id: id,
-        width: width,
-        height: height,
-        viewBox: viewBox,
-        scaleExtent: scaleExtent,
-        translateExtent: translateExtent,
-        keyMap: keyMap,
-        valueMap: valueMap,
-        xMap: xMap,
-        yMap: yMap,
-        color: color,
-        fontSize: fontSize,
-        r: r,
-        textLength: textLength,
-        stroke: stroke,
-        strokeWidth: strokeWidth,
-        nodeStrokeOpacity: nodeStrokeOpacity,
-        linkStrokeOpacity: linkStrokeOpacity,
-        textColor: textColor,
-        halo: halo,
-        haloWidth: haloWidth,
-        nodeLabelOpacity: nodeLabelOpacity,
-        linkLabelOpacity: linkLabelOpacity,
-        highlightOpacity: highlightOpacity,
-        nodeLabelOffset: nodeLabelOffset,
-        legend: legend,
-        legendX: legendX,
-        legendY: legendY,
-      },
-      arguments[1]
-    );
 
     this.svg = d3
       .create('svg')
       .attr('id', id)
       .attr('class', 'd3_graph')
-      .attr('viewBox', viewBox)
+      .attr('viewBox', [-width / 2, -height / 2, width, height])
       .style('display', 'hidden');
-
-    // Add styles for the user interaction.
-    this.svg.append('style').text(`
-      .hover circle.highlight { opacity: ${highlightOpacity} }
-      .hover circle { opacity: 0.1; }
-      .hover line.highlight { opacity: ${highlightOpacity}; }
-      .hover line { opacity: 0.1; }
-      .hover text.highlight { font-weight: bold; opacity: ${highlightOpacity}; }
-      .hover text.secondary { opacity: ${highlightOpacity}; }
-      .hover text { opacity: 0.1; }
-    `);
-
-    this.svg
-      .append('g')
-      .attr('class', 'links')
-      .attr('stroke', stroke)
-      .attr('stroke-opacity', linkStrokeOpacity);
-
-    this.svg.append('g').attr('class', 'nodes');
-
-    this.svg
-      .append('g')
-      .attr('class', 'link_labels')
-      .style('text-anchor', 'middle')
-      .style('font-family', 'Arial')
-      .style('font-size', this.options.fontSize)
-      .style('fill', this.options.textColor)
-      // .style('fill', 'white')
-      // .style('visibility', 'hidden')
-      .style('opacity', this.options.linkLabelOpacity)
-      .style('pointer-events', 'none');
-
-    this.svg
-      .append('g')
-      .attr('class', 'node_labels')
-      .style('text-anchor', 'middle')
-      .style('font-family', 'Arial')
-      .style('font-size', this.options.fontSize)
-      .style('fill', this.options.textColor)
-      .style('opacity', this.options.nodeLabelOpacity)
-      // .style('fill', 'white')
-      // .style('visibility', 'hidden')
-      .style('pointer-events', 'none');
-
-    if (legend) {
-      const legend_svg = this.svg
-        .append('g')
-        .attr('transform', `translate(${legendX},${legendY})`);
-      legend_svg.append(() => legend);
-    }
 
     this.simulation = this.createSimulation();
     Object.assign(this.svg.node(), { simulation: this.simulation });
 
-    this.update();
-
-    this.zoom = d3
-      .zoom()
-      .scaleExtent(scaleExtent)
-      .translateExtent(translateExtent)
-      .on('zoom', this.handleZoom(id));
+    this.zoom = d3.zoom().on('zoom', (event) => this.handleZoom(event, id));
     this.svg.call(this.zoom);
-  }
 
-  /**
-   * Update the graph with new nodes and links.
-   */
-  update() {
-    this.simulation.nodes(this.nodes);
-    this.simulation.force('link').links(this.links);
-    this.simulation.restart();
-
-    this.getNodes()
-      .data(this.nodes)
-      .join('circle')
-      .attr('r', this.options.r)
-      .attr('stroke-opacity', this.options.nodeStrokeOpacity)
-      .attr('stroke-width', this.options.strokeWidth)
-      .attr('stroke', this.options.stroke)
-      .attr('fill', (d) => this.options.color(this.options.valueMap(d)))
-      .on('pointerup', this.handleNodePointerup())
-      .on('pointerdown', this.handleNodePointerdown())
-      .on('pointerenter', this.handleNodePointerenter())
-      .on('pointerout', this.handleNodePointerout())
-      .style('pointer-events', 'all')
-      .call(this.handleDrag(this.simulation));
-    this.getNodes().append('title').text(this.options.keyMap);
-
-    this.getLinks()
-      .data(this.links)
+    const link = this.svg
+      .append('g')
+      .attr('class', 'links')
+      .attr('stroke', stroke)
+      .attr('stroke-opacity', linkStrokeOpacity)
+      .selectAll('line')
+      .data(links)
       .join('line')
+      .attr('stroke-width', strokeWidth);
+
+    const node = this.svg
+      .append('g')
+      .attr('class', 'nodes')
+      .selectAll('circle')
+      .data(nodes)
+      .join('circle')
+      .attr('r', r)
+      .attr('stroke-opacity', nodeStrokeOpacity)
+      .attr('stroke-width', strokeWidth)
+      .attr('stroke', stroke)
+      .attr('fill', (d) => color(valueMap(d)))
+      // .on("click", (event, datum) => {
+      //   console.debug("event", event);
+      //   console.debug("datum", datum);
+      // })
+      .on('mouseover', (event, datum) => {
+        event.target.style['stroke-opacity'] = highlightOpacity;
+        // event.target.style["stroke"] = "white";
+        // event.target.style["fill"] = color(valueMap(nodes[datum.index]));
+        links
+          .filter(
+            // get node links
+            (d) =>
+              datum.index == d.source.index || datum.index == d.target.index
+          )
+          .forEach((d) => {
+            // update node highlight
+            node
+              .filter(
+                (_, j) =>
+                  datum.index != j &&
+                  (j == d.source.index || j == d.target.index)
+              )
+              .nodes()
+              .forEach((d) => {
+                d.style['stroke-opacity'] = highlightOpacity;
+              });
+            node_label
+              .filter((_, j) => j == d.source.index || j == d.target.index)
+              .nodes()
+              .forEach((d) => {
+                d.style['opacity'] = highlightOpacity;
+              });
+            link
+              .filter((_, j) => j == d.index)
+              .nodes()
+              .forEach((d) => {
+                d.style['stroke-opacity'] = highlightOpacity;
+              });
+            link_label
+              .filter((_, j) => j == d.index)
+              .nodes()
+              .forEach((d) => {
+                d.style['opacity'] = highlightOpacity;
+              });
+          });
+      })
+      .on('mouseout', (event, datum) => {
+        event.target.style['stroke-opacity'] = nodeStrokeOpacity;
+        // event.target.style["stroke"] = stroke;
+        // event.target.style["fill"] = color(valueMap(nodes[datum.index]));
+        links
+          .filter(
+            // get node links
+            (d) =>
+              datum.index == d.source.index || datum.index == d.target.index
+          )
+          .forEach((d) => {
+            // update node highlight
+            node
+              .filter((_, j) => j == d.source.index || j == d.target.index)
+              .nodes()
+              .forEach((d) => {
+                d.style['stroke-opacity'] = nodeStrokeOpacity;
+              });
+            node_label
+              .filter((_, j) => j == d.source.index || j == d.target.index)
+              .nodes()
+              .forEach((d) => {
+                d.style['opacity'] = nodeLabelOpacity;
+              });
+            link
+              .filter((_, j) => j == d.index)
+              .nodes()
+              .forEach((d) => {
+                d.style['stroke-opacity'] = linkStrokeOpacity;
+              });
+            link_label
+              .filter((_, j) => j == d.index)
+              .nodes()
+              .forEach((d) => {
+                d.style['opacity'] = linkLabelOpacity;
+              });
+          });
+      })
+      .call(this.drag(this.simulation));
+
+    node.append('title').text(keyMap);
+
+    const node_label = this.svg
+      .append('g')
+      .selectAll('.node_label')
+      .data(nodes)
+      .enter()
+      .append('text')
+      .text((d) => cropText(keyMap(d), textLength))
+      .style('text-anchor', 'middle')
+      .style('font-family', 'Arial')
+      .style('font-size', fontSize)
+      .style('fill', textColor)
+      .style('opacity', nodeLabelOpacity)
+      // .style('fill', 'white')
+      // .style('visibility', 'hidden')
+      .attr('stroke-linejoin', 'round')
+      .attr('stroke-width', haloWidth)
+      .attr('stroke', halo)
+      .attr('paint-order', 'stroke')
       .style('pointer-events', 'none')
-      .attr('stroke-width', this.options.strokeWidth);
+      .attr('class', 'node_label');
 
-    this.getNodeLabels()
-      .data(this.nodes)
-      .join('text')
-      .text((d) => cropText(this.options.keyMap(d), this.options.textLength))
+    const link_label = this.svg
+      .append('g')
+      .selectAll('.link_label')
+      .data(links)
+      .enter()
+      .append('text')
+      .text((d) => cropText(d.label, textLength))
+      .style('text-anchor', 'middle')
+      .style('font-family', 'Arial')
+      .style('font-size', fontSize)
+      .style('fill', textColor)
+      // .style('fill', 'white')
+      // .style('visibility', 'hidden')
+      .style('opacity', linkLabelOpacity)
       .attr('stroke-linejoin', 'round')
-      .attr('stroke-width', this.options.haloWidth)
-      .attr('stroke', this.options.halo)
-      .attr('paint-order', 'stroke');
+      .attr('stroke-width', haloWidth)
+      .attr('stroke', halo)
+      .attr('paint-order', 'stroke')
+      .style('pointer-events', 'none')
+      .attr('class', 'link_label');
 
-    this.getLinkLabels()
-      .data(this.links)
-      .join('text')
-      .text((d) => cropText(d.label, this.options.textLength))
-      .attr('stroke-linejoin', 'round')
-      .attr('stroke-width', this.options.haloWidth)
-      .attr('stroke', this.options.halo)
-      .attr('paint-order', 'stroke');
+    if (legend) {
+      this.attachLegend(legend);
+    }
+
+    this.simulation.on('tick', this.handleTick);
   }
-
-  // Getters for the graph elements //
 
   /**
    * Get the SVG element of the graph
@@ -491,70 +469,6 @@ export class Graph {
    */
   getCanvas() {
     return this.svg.node();
-  }
-
-  /**
-   * Get the SVG node group of the graph
-   * @returns {d3.selection} the node group
-   */
-  getNodeGroup() {
-    return this.svg.selectAll(`#${this.options.id} g.nodes`);
-  }
-
-  /**
-   * Get the SVG link group of the graph
-   * @returns {d3.selection} the link group
-   */
-  getLinkGroup() {
-    return this.svg.selectAll(`#${this.options.id} g.links`);
-  }
-
-  /**
-   * Get the SVG node label group of the graph
-   * @returns {d3.selection} the node label group
-   */
-  getNodeLabelGroup() {
-    return this.svg.selectAll(`#${this.options.id} g.node_labels`);
-  }
-
-  /**
-   * Get the SVG link label group of the graph
-   * @returns {d3.selection} the link label group
-   */
-  getLinkLabelGroup() {
-    return this.svg.selectAll(`#${this.options.id} g.link_labels`);
-  }
-
-  /**
-   * Get the SVG nodes of the graph
-   * @returns {d3.selection} the SVG nodes
-   */
-  getNodes() {
-    return this.getNodeGroup().selectAll('circle');
-  }
-
-  /**
-   * Get the SVG link group of the graph
-   * @returns {d3.selection} the SVG links
-   */
-  getLinks() {
-    return this.getLinkGroup().selectAll('line');
-  }
-
-  /**
-   * Get the SVG node label group of the graph
-   * @returns {d3.selection} the SVG node labels
-   */
-  getNodeLabels() {
-    return this.getNodeLabelGroup().selectAll('text');
-  }
-
-  /**
-   * Get the SVG link label group of the graph
-   * @returns {d3.selection} the SVG link labels
-   */
-  getLinkLabels() {
-    return this.getLinkLabelGroup().selectAll('text');
   }
 
   /**
@@ -567,31 +481,43 @@ export class Graph {
       d3
         .forceSimulation(this.nodes)
         // .alphaDecay('0.03')
-        .force('link', d3.forceLink(this.links).id(this.options.keyMap))
+        .force('link', d3.forceLink(this.links).id(this.keyMap))
         .force('charge', d3.forceManyBody())
-        .force(
-          'collide',
-          d3.forceCollide().radius(this.options.r).iterations(3)
-        )
+        // .force("center", d3.forceCenter(width / 2, height / 2));
         .force('x', d3.forceX())
         .force('y', d3.forceY())
-        .force('fx', this.options.xMap)
-        .force('fy', this.options.yMap)
-        .on('tick', this.handleTick())
     );
   }
 
   /**
+   * Attach a legend to the graph canvas
+   *
+   * @param {d3.node} legend - an svg element containing the legend
+   */
+  attachLegend(legend) {
+    const legend_svg = this.svg
+      .append('g')
+      .attr(
+        'transform',
+        `translate(${-this.width / 2 + 10},${-this.height / 2 + 10})`
+      );
+    legend_svg.append(() => legend);
+  }
+
+  /**
    * Create a drag effect for graph nodes within the context of a force simulation
+   *
+   * @param {d3.forceSimulation || null} simulation The active D3 force simulation of the
+   *    graph or null to avoid restarting the simulation
    * @returns {d3.drag} a D3 drag function to enable dragging nodes within the graph
    */
-  handleDrag(simulation) {
+  drag(simulation) {
     /**
      *
      * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
      */
     function dragstarted(event) {
-      if (!event.active) simulation.alphaTarget(0.3).restart();
+      if (simulation && !event.active) simulation.alphaTarget(0.3).restart();
       event.subject.fx = event.subject.x;
       event.subject.fy = event.subject.y;
     }
@@ -610,7 +536,7 @@ export class Graph {
      * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
      */
     function dragended(event) {
-      if (!event.active) simulation.alphaTarget(0);
+      if (simulation && !event.active) simulation.alphaTarget(0);
       event.subject.fx = null;
       event.subject.fy = null;
     }
@@ -625,125 +551,66 @@ export class Graph {
   /**
    * A handler function for selecting elements to transform during a zoom event
    *
+   * @param {d3.D3ZoomEvent} event the zoom event containing information on how the svg canvas is being translated and scaled
    */
-  handleZoom() {
-    return (event) => {
-      this.getNodeGroup()
-        .attr('height', '100%')
-        .attr('width', '100%')
-        .attr('transform', event.transform);
+  handleZoom(event) {
+    d3.selectAll(`#${this.id} g.nodes`)
+      .attr('height', '100%')
+      .attr('width', '100%')
+      .attr('transform', event.transform);
 
-      this.getLinkGroup()
-        .attr('height', '100%')
-        .attr('width', '100%')
-        .attr('transform', event.transform);
+    d3.selectAll(`#${this.id} g.links`)
+      .attr('height', '100%')
+      .attr('width', '100%')
+      .attr('transform', event.transform);
 
-      this.getNodeLabelGroup()
-        // .style("font-size", fontSize / event.transform.k + "px")
-        .attr(
-          'transform',
-          'translate(' +
-            event.transform.x +
-            ',' +
-            event.transform.y +
-            ') scale(' +
-            event.transform.k +
-            ')'
-        );
+    d3.selectAll(`#${this.id} text.node_label`)
+      // .style("font-size", fontSize / event.transform.k + "px")
+      .attr(
+        'transform',
+        'translate(' +
+          event.transform.x +
+          ',' +
+          event.transform.y +
+          ') scale(' +
+          event.transform.k +
+          ')'
+      );
 
-      this.getLinkLabelGroup()
-        // .style("font-size", fontSize / event.transform.k + "px")
-        .attr(
-          'transform',
-          'translate(' +
-            event.transform.x +
-            ',' +
-            event.transform.y +
-            ') scale(' +
-            event.transform.k +
-            ')'
-        );
-    };
+    d3.selectAll(`#${this.id} text.link_label`)
+      // .style("font-size", fontSize / event.transform.k + "px")
+      .attr(
+        'transform',
+        'translate(' +
+          event.transform.x +
+          ',' +
+          event.transform.y +
+          ') scale(' +
+          event.transform.k +
+          ')'
+      );
   }
 
   /**
    * A handler function for updating elements to every simulation tick
    */
   handleTick() {
-    return () => {
-      this.getNodes()
-        .attr('cx', (d) => d.x)
-        .attr('cy', (d) => d.y);
-      this.getNodeLabels()
-        .attr('x', (d) => d.x)
-        .attr('y', (d) => d.y - this.options.nodeLabelOffset);
-      this.getLinks()
-        .attr('x1', (d) => d.source.x)
-        .attr('y1', (d) => d.source.y)
-        .attr('x2', (d) => d.target.x)
-        .attr('y2', (d) => d.target.y);
-      this.getLinkLabels()
-        .attr('x', (d) => (d.source.x + d.target.x) / 2)
-        .attr('y', (d) => (d.source.y + d.target.y) / 2);
-    };
-  }
+    d3.selectAll(`#${this.id} text.node`)
+      .attr('cx', (d) => d.x)
+      .attr('cy', (d) => d.y);
+    d3.selectAll(`#${this.id} text.node_label`)
+      .attr('x', (d) => d.x)
+      .attr('y', (d) => d.y - 10);
+    d3.selectAll(`#${this.id} text.link_label`)
+      .attr('x', (d) => (d.source.x + d.target.x) / 2)
+      .attr('y', (d) => (d.source.y + d.target.y) / 2);
+    d3.selectAll(`#${this.id} text.link`)
+      .attr('x1', (d) => d.source.x)
+      .attr('y1', (d) => d.source.y)
+      .attr('x2', (d) => d.target.x)
+      .attr('y2', (d) => d.target.y);
 
-  // Event handlers for node interactions //
-
-  /**
-   * function to handle mouseout events on nodes: highlight the hovered node and connected links
-   */
-  handleNodePointerenter() {
-    return (_event, datum) => {
-      this.svg.classed('hover', true);
-      this.getNodes().classed('highlight', (d) => d === datum);
-      this.getNodeLabels().classed('highlight', (d) => d === datum);
-      this.getLinks().classed(
-        'highlight',
-        ({ source, target }) => datum === target || datum === source
-      );
-      this.getLinkLabels().classed(
-        'highlight',
-        ({ source, target }) => datum === target || datum === source
-      );
-
-      d3.selectAll('.legend g text')
-        .data(this.options.color.domain())
-        .classed('highlight', (v) => v == this.options.valueMap(datum));
-    };
-  }
-
-  /**
-   * function to handle pointerout events on nodes
-   */
-  handleNodePointerout() {
-    return () => {
-      this.svg.classed('hover', false);
-      this.getNodes().classed('highlight', false);
-      this.getNodeLabels().classed('highlight', false);
-      this.getLinks().classed('highlight', false);
-      this.getLinkLabels().classed('highlight', false);
-    };
-  }
-
-  /**
-   * function to handle pointerdown events on nodes
-   */
-  handleNodePointerdown() {
-    // return (event, datum) => {
-    //   console.debug('event', event);
-    //   console.debug('datum', datum);
-    // };
-  }
-
-  /**
-   * function to handle pointerup events on nodes
-   */
-  handleNodePointerup() {
-    // return (event, datum) => {
-    //   console.debug('event', event);
-    //   console.debug('datum', datum);
-    // };
+    if (this.simulation.alpha() < 0.2) this.simulation.stop();
   }
 }
 
@@ -756,105 +623,85 @@ export function forceGraph(data, options = {}) {
 }
 
 export class StaticGraph extends Graph {
-  /**
-   * Create an initially static graph with a stopped simulation and fixed nodes.
-   *
-   * @param {object} data - Same as `Graph`, with properties `nodes` and `links`.
-   * @param {object} options - Same as super constructor with the addition of several properties.
-   */
   constructor(
     data,
-    {
-      margin = 250, // margin for zoom and pan extents
-      xMap = (d) => d.fx, // horizontal position accessor
-      yMap = (d) => d.fy, // vertical position accessor
-      translateExtent = [
-        [d3.min(data.nodes, xMap) - margin, d3.min(data.nodes, yMap) - margin],
-        [d3.max(data.nodes, xMap) + margin, d3.max(data.nodes, yMap) + margin],
-      ], // zoom and pan extents
-      viewBox = [
-        translateExtent[0][0],
-        translateExtent[0][1],
-        translateExtent[1][0] - translateExtent[0][0],
-        translateExtent[1][1] - translateExtent[0][1],
-      ],
-      legendX = translateExtent[0][0] + 10,
-      legendY = translateExtent[0][1] + 10,
+    options = {
+      margin: 250, // margin for the graph canvas
+      xMap: (d) => d.fx, // the function for placing a node horizontally
+      yMap: (d) => d.fy, // the function for placing a node vertically
     }
   ) {
-    super(
-      data,
-      Object.assign(
-        {
-          xMap: xMap,
-          yMap: yMap,
-          translateExtent: translateExtent,
-          viewBox: viewBox,
-          legendX: legendX,
-          legendY: legendY,
-        },
-        arguments[1]
-      )
-    );
+    const bounding_box = [
+      [
+        d3.min(data.nodes, options.xMap) - options.margin,
+        d3.min(data.nodes, options.yMap) - options.margin,
+      ],
+      [
+        d3.max(data.nodes, options.xMap) + options.margin,
+        d3.max(data.nodes, options.yMap) + options.margin,
+      ],
+    ];
+    console.debug('bounding_box', bounding_box);
+    console.debug('center', [
+      (bounding_box[0][0] + bounding_box[1][0]) / 2,
+      (bounding_box[0][1] + bounding_box[1][1]) / 2,
+    ]);
+    console.debug('width-height', [
+      bounding_box[1][0] - bounding_box[0][0],
+      bounding_box[1][1] - bounding_box[0][1],
+    ]);
+
+    options.legendTransform = () =>
+      `translate(${bounding_box[0][0] + options.margin},${
+        bounding_box[0][1] + options.margin
+      })`;
+    super(data, options);
+
+    this.simulation = this.createSimulation(options.xMap, options.yMap);
+
+    this.svg.attr('viewBox', [
+      bounding_box[0][0],
+      bounding_box[0][1],
+      bounding_box[1][0] - bounding_box[0][0],
+      bounding_box[1][1] - bounding_box[0][1],
+    ]);
+
+    this.zoom = d3
+      .zoom()
+      // .extent(bounding_box)
+      // .scaleExtent([0, 5])
+      .translateExtent(bounding_box)
+      .on('zoom', (event) => this.handleZoom(event, this.id));
+    this.svg.call(this.zoom);
   }
 
   /**
-   * An empty drag function for static graphs.
+   * Start a force simulation from graph data
    *
+   * @returns {d3.forceSimulation} a D3 force simulation object
    */
-  handleDrag() {
-    return d3.drag().on('start', null).on('drag', null).on('end', null);
+  createSimulation(xMap = (d) => d.fx, yMap = (d) => d.fy) {
+    return d3
+      .forceSimulation(this.nodes)
+      .force('link', d3.forceLink(this.links).id(this.keyMap))
+      .force('charge', null)
+      .force('fx', xMap)
+      .force('fy', yMap)
+      .stop();
   }
+
+/**
+ * 
+ */
+attachLegend(legend) {
+  
 }
 
-export class MuralGraph extends StaticGraph {
   /**
-   * Create an initially static graph. Add links through mouse clicks
-   *
-   * @param {object} data - Same as super constructor, with properties `nodes` and `links`.
-   * @param {object} options - Same as super constructor with the addition of several properties.
+   * A handler function for updating elements to every simulation tick
    */
-  constructor(data, options) {
-    super(data, options);
-    this.selectedNode = null; // the currently selected node's datum
-    this.svg.append('style').text(`
-      circle.selected { opacity: 1; stroke-width: ${
-        this.options.nodeStroke * 1.5
-      }; }
-      text.selected { font-weight: bold; opacity: 1; }
-    `);
-  }
-
-  /**
-   * Click handler for nodes to select or link them
-   */
-  handleNodePointerdown() {
-    return (_event, datum) => {
-      if (!this.selectedNode) {
-        // select the clicked node
-        this.selectedNode = datum;
-        this.getNodes().classed('selected', (d) => d === datum);
-        this.getNodeLabels().classed('selected', (d) => d === datum);
-      } else if (this.selectedNode !== datum) {
-        // if a different node is already selected, create a link to the clicked node
-        this.links.push({
-          source: this.selectedNode,
-          target: datum,
-          label: prompt('new link label:') || '',
-        });
-        this.update();
-        // this.simulation.nodes(this.nodes).force('link').links(this.links);
-        // this.simulation.tick();
-        this.selectedNode = null; // reset selected node
-        this.getNodes().classed('selected', false);
-        this.getNodeLabels().classed('selected', false);
-      } else {
-        // if the clicked node is already selected, deselect it
-        this.selectedNode = null;
-        this.getNodes().classed('selected', false);
-        this.getNodeLabels().classed('selected', false);
-      }
-    };
+  handleTick() {
+    this.simulation.stop();
   }
 }
 
@@ -996,6 +843,7 @@ export function arcDiagramVertical(
     const y1 = y_positions.get(d.source);
     const y2 = y_positions.get(d.target);
     const r = Math.abs(y2 - y1) / 2;
+    // debugger;
     return `M${marginLeft},${y1}A${r},${r} 0,0,${
       y1 < y2 ? 1 : 0
     } ${marginLeft},${y2}`;
