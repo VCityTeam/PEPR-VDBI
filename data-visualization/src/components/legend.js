@@ -47,7 +47,7 @@ export function circleLegend(
     .attr('height', (data.length - 1) * lineSeparation + radius * 2 + marginTop * 2)
     .attr('width', width);
 
-  svg
+    svg
     .append('rect')
     .attr('fill', backgroundColor)
     .attr('fill-opacity', backgroundOpacity)
@@ -70,7 +70,7 @@ export function circleLegend(
     .attr('r', radius)
     .style('fill', (d) => color(colorMap(d)));
 
-  svg
+    svg
     .append('g')
     .style('fill', fontColor)
     .style('font-size', fontSize)
