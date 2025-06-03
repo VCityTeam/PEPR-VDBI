@@ -3,17 +3,32 @@ import json
 import argparse
 import os
 
+# TODO: NORMALIZE OUTPUT FOR UNION
+
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Clean wordcloud data",
+        description="""Clean wordcloud data
+            1. Texts are uploaded to https://www.nuagesdemots.fr/ to create an initial
+                wordcount dataset
+            2. Datasets are cleaned with the python script `clean_wordcloud.py` by
+                1. removing `-` characters
+                2. separating words by `/` characters
+                3. ignoring words using `ignored_words_en.csv` or `ignored_words_fr.csv`
+                4. removing duplicates according to the following files
+                    `plural_duplicates_en.csv` or `plural_duplicates_fr.csv`
+                5. grouping words using `synonym_mappings_en.json` or
+                    `synonym_mappings_fr.json`
+            3. The final cleaned dataset is a table with the top **50** word occurences
+            """,
     )
     parser.add_argument("input", help="wordcloud input file (csv)")
     parser.add_argument(
         "-l",
         "--limit",
-        help="limit number of words to output",
-        default=50,
+        type=int,
+        help="limit number of words to output. Negative value means no limit",
+        default=-1,
     )
     parser.add_argument(
         "-d",
@@ -25,39 +40,57 @@ def main():
         "-i",
         "--ignored_words",
         help="words to ignore (csv)",
-        default="ignored_words.csv",
+        default="ignored_words_en.csv",
     )
     parser.add_argument(
         "-p",
         "--plural_words",
         help="duplicate plural words (csv)",
-        default="plural_duplicates.csv",
+        default="plural_duplicates_en.csv",
     )
     parser.add_argument(
         "-s",
         "--synonyms",
         help="synonyms mappings (json)",
-        default="synonym_mappings.json",
+        default="synonym_mappings_en.json",
     )
 
     args = parser.parse_args()
 
+    clean_wordcloud(
+        args.input,
+        args.ignored_words,
+        args.plural_words,
+        args.synonyms,
+        args.delimiter,
+        args.limit,
+    )
+
+
+def clean_wordcloud(
+    input_path: str,
+    ignored_words_path: str = "ignored_words_en.csv",
+    plural_words_path: str = "plural_duplicates_en.csv",
+    synonyms_path: str = "synonym_mappings_en.json",
+    delimiter: str = ",",
+    limit: int = -1,
+):
     ignored_words = []
-    with open(args.ignored_words, "r") as file:
+    with open(ignored_words_path, "r") as file:
         reader = csv.reader(file)
         for row in reader:
             ignored_words.append(row[0])
     # print(f"ignored words: {ignored_words}")
 
     plural_words = []
-    with open(args.plural_words, "r") as file:
+    with open(plural_words_path, "r") as file:
         reader = csv.reader(file)
         for row in reader:
             plural_words.append(row[0])
     # print(f"plural words: {plural_words}")
 
     synonyms = {}
-    with open(args.synonyms, "r") as file:
+    with open(synonyms_path, "r") as file:
         synonym_dump = json.load(file)
         for target_word, source_words in synonym_dump.items():
             for source_word in source_words:
@@ -65,8 +98,8 @@ def main():
     # print(f"synonyms: {synonyms}")
 
     word_counts = {}
-    with open(args.input, "r") as file:
-        reader = csv.reader(file, delimiter=args.delimiter)
+    with open(input_path, "r") as file:
+        reader = csv.reader(file, delimiter=delimiter)
         next(reader)  # Skip the header row
         for row in reader:
             # print(row)
@@ -81,17 +114,24 @@ def main():
             else:
                 word_counts[word] = int(row[0])
 
-    split_input_file = os.path.splitext(args.input)
-    output_file = f"{split_input_file[0]}_cleaned{split_input_file[1]}"
+    sorted_word_counts = list(word_counts.items())
+    sorted_word_counts.sort(key=lambda x: x[1], reverse=True)
+
+    split_input_file = os.path.splitext(input_path)
+    output_file = (
+        f"{split_input_file[0]}_cleaned{f'_{limit}_' if limit > 0 else ''}"
+        + split_input_file[1]
+    )
     print(f"writing to csv {output_file}")
     with open(output_file, "w") as file:
         writer = csv.writer(file)
         row_count = 0
         writer.writerow(["weight", "word", "color", "url"])
-        for word, count in word_counts.items():
-            if row_count >= int(args.limit):
+
+        for row in sorted_word_counts:
+            if row_count >= int(limit):
                 break
-            writer.writerow([count, word, "", ""])
+            writer.writerow([row[1], row[0], "", ""])
             row_count += 1
 
 

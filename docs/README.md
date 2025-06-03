@@ -10,7 +10,7 @@
   - [Experimentation documentation](../data-integration/README.md)
   - [Methodology](../data-integration/README.md)
   - [References](../data-integration/references.md)
-
+- [Word clouds](../data-integration/wordclouds.md)
 
 ## [Data Visualization](../data-visualization/README.md)
 
