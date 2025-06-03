@@ -1,0 +1,144 @@
+{
+  "data": [
+    "datasets",
+    "dataset"
+  ],
+  "health": [
+    "healthy",
+    "healthyrelated"
+  ],
+  "management": [
+    "manager"
+  ],
+  "analysis": [
+    "analyse",
+    "analysing",
+    "analyzing",
+    "analytical",
+    "analysed",
+    "analyze"
+  ],
+  "environment": [
+    "environmental",
+    "environnementales",
+    "environnementaux"
+  ],
+  "support": [
+    "supported"
+  ],
+  "planning": [
+    "planned"
+  ],
+  "scale": [
+    "multiscale",
+    "singlescale",
+    "largescale"
+  ],
+  "city": [
+    "cities",
+    "9city"
+  ],
+  "assessment": [
+    "assess",
+    "assessed",
+    "assessing"
+  ],
+  "model": [
+    "modelling",
+    "modeling",
+    "modeled"
+  ],
+  "resident": [
+    "residential"
+  ],
+  "aim": [
+    "aimed",
+    "aiming"
+  ],
+  "impact": [
+    "impacted"
+  ],
+  "development": [
+    "develop",
+    "developed",
+    "developing"
+  ],
+  "study": [
+    "studies",
+    "studied",
+    "studying"
+  ],
+  "approach": [
+    "approaches"
+  ],
+  "biodiversity": [
+    "biodiverse"
+  ],
+  "scientific": [
+    "scientifically"
+  ],
+  "sustainable": [
+    "sustainability",
+    "sustainably"
+  ],
+  "recycling": [
+    "recycle",
+    "recycled",
+    "recyclage",
+    "super-recycling"
+  ],
+  "recyclability": [
+    "recyclable",
+    "difficult-to-recycle",
+    "non-recyclable",
+    "non-recyclable"
+  ],
+  "waste": [
+    "ewaste"
+  ],
+  "process": [
+    "processes",
+    "processing"
+  ],
+  "material": [
+    "multimaterial"
+  ],
+  "recovery": [
+    "recover",
+    "recovered",
+    "recovering",
+    "recoverable"
+  ],
+  "metal": [
+    "metallic"
+  ],
+  "textile": [
+    "textiles",
+    "textileclothing",
+    "textilesclothing"
+  ],
+  "value": [
+    "valueadded",
+    "highvalue"
+  ],
+  "level": [
+    "highlevel"
+  ],
+  "improve": [
+    "improved",
+    "improvement"
+  ],
+  "sorting": [
+    "sorted"
+  ],
+  "economic": [
+    "economically"
+  ],
+  "energy": [
+    "dual-energy",
+    "low-energy"
+  ],
+  "battery": [
+  "batteries"
+  ]
+}
