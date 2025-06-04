@@ -18,6 +18,7 @@ def main():
             {
                 "inputs": list(string),
                 "params": {
+                    "output_dir": string,
                     "ignored_words_path": string,
                     "plural_words_path": string,
                     "synonyms_path": string,
@@ -83,7 +84,8 @@ def runWorkflow(
     File must be structured as follows for JSON:
         {
             "inputs": list(string),
-            "params":{
+            "params": {
+                "output_dir": string,
                 "ignored_words_path": string,
                 "plural_words_path": string,
                 "synonyms_path": string,

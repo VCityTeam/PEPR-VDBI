@@ -1,15 +1,18 @@
 # [PEPR-VDBI](https://pepr-vdbi.fr/)
 
-Data integration, visualization, and analysis tests for the **Programmes et équipements prioritaires de recherche - Ville Durable et Bâtiment Innovant** (PEPR VDBI) projects
+Data integration, analysis, and visualization tests for the **Programmes et Équipements Prioritaires de Recherche - Ville Durable et Bâtiment Innovant** (PEPR VDBI) projects
 
 ## [Documentation :memo:](./docs/README.md)
 Reports, records, and general documentation (non-technical documentation)
+  
+## [Data integration :ballot_box:](./data-integration)
+Data integration tests with GPTs
+
+## [Data analysis :abacus:](./data-analysis)
+Data analysis tests for lexiometry and bibliometry
 
 ## [Data visualization :bar_chart:](./data-visualization)
 Data visualization tests with observable
-  
-## [Data integration :calling:](./data-integration)
-Data integration tests with GPTs
 
 ## Organizational Chart
 
@@ -86,15 +89,15 @@ gantt
 
 ### FR
 
-| Objectif | Titre                                | Description                                                                                                                                                                                                                                                            |
-| -------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| O1       | Outil de visualisation des données de suivi de projet | Proposition et mise en œuvre d'un outil de suivi de projet basé sur un tableau de bord, utilisant le corpus des documents d'appel à projets et des sources de données ouvertes pour surveiller la communauté VDBI et son développement au cours du programme.           |
-| O2       | Outil d'exploration et d'analyse de données | Proposition et mise en œuvre d'un outil automatisé d'exploration et d'analyse de données basé sur l'IA (GPT) pour identifier les caractéristiques de la communauté de recherche VDBI dans un corpus de documents. Vérification de la méthode à l'aide d'un corpus de référence traité manuellement. |
-| O3       | Outil de bibliométrie              | Proposition et mise en œuvre d'outils de suivi des trajectoires bibliométriques sur VDBI.                                                                                                                                                                             |
-| O4       | Outil ASLR                          | Proposition et mise en œuvre d'outils facilitant les revues systématiques automatisées (SLR).                                                                                                                                                                         |
-| O5       | Outil de suivi                      | Proposition et mise en œuvre d'un outil permettant d'identifier les tendances existantes et l'impact dans/de la communauté de recherche VDBI (et autres) en collaboration avec les partenaires PEPR (en lien avec le gestionnaire éditorial).                          |
-| O6       | Outil de prévision                  | Proposition et mise en œuvre d'un outil permettant d'identifier et de projeter les tendances futures dans les communautés de recherche VDBI (et autres).                                                                                                               |
-| O7       | Valorisation des réalisations       | Promotion des réalisations et des résultats sous forme de publications scientifiques, de rapports et de présentations orales.                                                                                                                                         |
+| Objectif | Titre                                                 | Description                                                                                                                                                                                                                                                                                         |
+| -------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| O1       | Outil de visualisation des données de suivi de projet | Proposition et mise en œuvre d'un outil de suivi de projet basé sur un tableau de bord, utilisant le corpus des documents d'appel à projets et des sources de données ouvertes pour surveiller la communauté VDBI et son développement au cours du programme.                                       |
+| O2       | Outil d'exploration et d'analyse de données           | Proposition et mise en œuvre d'un outil automatisé d'exploration et d'analyse de données basé sur l'IA (GPT) pour identifier les caractéristiques de la communauté de recherche VDBI dans un corpus de documents. Vérification de la méthode à l'aide d'un corpus de référence traité manuellement. |
+| O3       | Outil de bibliométrie                                 | Proposition et mise en œuvre d'outils de suivi des trajectoires bibliométriques sur VDBI.                                                                                                                                                                                                           |
+| O4       | Outil ASLR                                            | Proposition et mise en œuvre d'outils facilitant les revues systématiques automatisées (SLR).                                                                                                                                                                                                       |
+| O5       | Outil de suivi                                        | Proposition et mise en œuvre d'un outil permettant d'identifier les tendances existantes et l'impact dans/de la communauté de recherche VDBI (et autres) en collaboration avec les partenaires PEPR (en lien avec le gestionnaire éditorial).                                                       |
+| O6       | Outil de prévision                                    | Proposition et mise en œuvre d'un outil permettant d'identifier et de projeter les tendances futures dans les communautés de recherche VDBI (et autres).                                                                                                                                            |
+| O7       | Valorisation des réalisations                         | Promotion des réalisations et des résultats sous forme de publications scientifiques, de rapports et de présentations orales.                                                                                                                                                                       |
 
 
 > [!TIP]

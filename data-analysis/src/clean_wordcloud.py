@@ -3,8 +3,6 @@ import json
 import argparse
 import os
 
-# TODO: NORMALIZE OUTPUT FOR UNION
-
 
 def main():
     parser = argparse.ArgumentParser(
@@ -22,7 +20,14 @@ def main():
             3. The final cleaned dataset is a table with the top **50** word occurences
             """,
     )
-    parser.add_argument("input", help="wordcloud input file (csv)")
+    parser.add_argument("input", help="wordcloud input data file (csv)")
+    parser.add_argument(
+        "-o",
+        "--output_dir",
+        type=str,
+        help="wordcloud output directory",
+        default=None,
+    )
     parser.add_argument(
         "-l",
         "--limit",
@@ -59,6 +64,7 @@ def main():
 
     clean_wordcloud(
         args.input,
+        args.output,
         args.ignored_words,
         args.plural_words,
         args.synonyms,
@@ -69,6 +75,7 @@ def main():
 
 def clean_wordcloud(
     input_path: str,
+    output_dir: str | None = None,
     ignored_words_path: str = "ignored_words_en.csv",
     plural_words_path: str = "plural_duplicates_en.csv",
     synonyms_path: str = "synonym_mappings_en.json",
@@ -117,11 +124,13 @@ def clean_wordcloud(
     sorted_word_counts = list(word_counts.items())
     sorted_word_counts.sort(key=lambda x: x[1], reverse=True)
 
-    split_input_file = os.path.splitext(input_path)
-    output_file = (
-        f"{split_input_file[0]}_cleaned{f'_{limit}_' if limit > 0 else ''}"
-        + split_input_file[1]
+    split_input_filepath = os.path.split(input_path)
+    split_input_filename = os.path.splitext(split_input_filepath[1])
+    output_file = (output_dir if output_dir else split_input_filepath[0]) + (
+        f"{split_input_filename[0]}_cleaned{f'_{limit}_' if limit > 0 else ''}"
+        + split_input_filename[1]
     )
+
     print(f"writing to csv {output_file}")
     with open(output_file, "w") as file:
         writer = csv.writer(file)
