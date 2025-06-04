@@ -5,6 +5,7 @@ sql:
   # general_partners: ./data/partners_general.csv
   aap_partners: ./data/private/partenaires_aap2023.csv
   terrains: ./data/project_terrains.csv
+  project_summary: ./data/private/project_summary.csv
 ---
 
 ```js
@@ -913,5 +914,14 @@ if (debug) {
     <div>${project_grade_input}</div>
     <div>${project_challenge_input}</div>
     <div>${project_table}</div>
+  </div>
+  <div class="card">
+    <h2>Project summary</h2>
+    <div>${
+      resize((width) => Inputs.table(
+        sql`select * from project_summary`,
+        {width: width})
+      )
+    }</div>
   </div>
 </div>
