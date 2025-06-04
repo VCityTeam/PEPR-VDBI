@@ -34,3 +34,7 @@ Text input and output is stored on the Gouv+Anim nextcloud. Ask Diego Vinasco-Al
    4. removing duplicates according to the following files `plural_duplicates_en.csv` or `plural_duplicates_fr.csv`
    5. grouping words using `synonym_mappings_en.json` or `synonym_mappings_fr.json`
 3. The final cleaned dataset is a table with the top **50** word occurences
+
+```bash
+python src/wordcloud_workflow.py test-data/configs/wordclouds/wordcloud_workflow_config.json
+```

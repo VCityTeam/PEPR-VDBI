@@ -82,6 +82,19 @@ def clean_wordcloud(
     delimiter: str = ",",
     limit: int = -1,
 ):
+    """Clean wordcloud data
+    1. Texts are uploaded to https://www.nuagesdemots.fr/ to create an initial
+        wordcount dataset
+    2. Datasets are cleaned with the python script `clean_wordcloud.py` by
+        1. removing `-` characters
+        2. separating words by `/` characters
+        3. ignoring words using `ignored_words_en.csv` or `ignored_words_fr.csv`
+        4. removing duplicates according to the following files
+            `plural_duplicates_en.csv` or `plural_duplicates_fr.csv`
+        5. grouping words using `synonym_mappings_en.json` or
+            `synonym_mappings_fr.json`
+    3. The final cleaned dataset is a table with the top **50** word occurences
+    """
     ignored_words = []
     with open(ignored_words_path, "r") as file:
         reader = csv.reader(file)
@@ -127,7 +140,7 @@ def clean_wordcloud(
     split_input_filepath = os.path.split(input_path)
     split_input_filename = os.path.splitext(split_input_filepath[1])
     output_file = (output_dir if output_dir else split_input_filepath[0]) + (
-        f"{split_input_filename[0]}_cleaned{f'_{limit}_' if limit > 0 else ''}"
+        f"{split_input_filename[0]}_cleaned{f'_{limit}' if limit > 0 else ''}"
         + split_input_filename[1]
     )
 
