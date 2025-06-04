@@ -701,8 +701,6 @@ if (debug) {
             domain: d3.geoCircle().center([2, 47]).radius(5)(),
           },
           marks: [
-            Plot.graticule(),
-            Plot.sphere(),
             Plot.geo(regions, {
               stroke: 'white',
               strokeOpacity: 0.5,
@@ -795,15 +793,7 @@ if (debug) {
             ),
             // tip marks //
             terrain_data_tips,
-            //Plot.dot(
-            //  terrain_data_tip_dots,
-            //  {
-            //    x: "x",
-            //    y: "y",
-            //    r: 4,
-            //    fill: (d) => project_colors.get(d.projects),
-            //  }
-            //),
+            Plot.sphere(),
           ],
         }),
       )
@@ -813,6 +803,107 @@ if (debug) {
     <h2>Project Knowledge Graph</h2>
     <div style="padding-bottom: 5px;">${project_triples_predicate_select_input}</div>
     <div style="overflow: auto;">${resize((width) => project_force_graph(width))}</div>
+  </div>
+  <div class="card">
+    <div>${
+      resize((width) =>
+        Plot.plot({
+          title: "Project locations",
+          width: width,
+          height: width,
+          projection: {
+            type: 'azimuthal-equidistant',
+            domain: d3.geoCircle().center([2, 47]).radius(5)(),
+          },
+          marks: [
+            Plot.geo(regions, {
+              stroke: 'white',
+              strokeOpacity: 0.5,
+              fill: pepr_colors.blue,
+              fillOpacity: 0.3,
+            }),
+            //Plot.geo(departements, {
+            //  stroke: pepr_colors.blue,
+            //  strokeOpacity: 0.1,
+            //}),
+            Plot.dot(
+              filtered_terrain_data,
+              {
+                x: "longitude",
+                y: "latitude",
+                r: 3,
+                fill: 'black',
+                //stroke: pepr_colors.orange,
+                //fillOpacity: 0.5,
+                channels: {
+                  entity: {
+                    value: "terrain",
+                    label: 'City',
+                  },
+                  count: {
+                    value: (d) => 1,
+                    label: 'Occurences',
+                  },
+                  longitude: {
+                    value: "longitude",
+                    label: 'Lon',
+                  },
+                  latitude: {
+                    value: "latitude",
+                    label: 'Lat',
+                  },
+                  projects: {
+                    value: (d) => d.projects.toJSON(),
+                    label: 'Projects',
+                  },
+                },
+                tip: debug ? true : {
+                  format: {
+                    longitude: false,
+                    latitude: false,
+                    count: false,
+                    x: false,
+                    y: false,
+                    r: false,
+                  }
+                },
+              }
+            ),
+            // legend marks //
+            Plot.dot(
+              terrain_data_legend,
+              {
+                x: (d) => d[2],
+                y: (d) => d[3],
+                r: 5,
+                fill: (d) => d[1],
+              }
+            ),
+            Plot.text(
+              terrain_data_legend,
+              {
+                x: (d) => d[2],
+                y: (d) => d[3],
+                dy: -12,
+                text: (d) => d[0],
+              }
+            ),
+            // tip marks //
+            terrain_data_tips,
+            Plot.dot(
+              terrain_data_tip_dots,
+              {
+                x: "x",
+                y: "y",
+                r: 4,
+                fill: (d) => project_colors.get(d.projects),
+              }
+            ),
+            Plot.sphere(),
+          ],
+        }),
+      )
+    }</div>
   </div>
 </div>
 <div class="grid">
