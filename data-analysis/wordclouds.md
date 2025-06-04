@@ -27,7 +27,7 @@ Text input and output is stored on the Gouv+Anim nextcloud. Ask Diego Vinasco-Al
 ## Text treatment
 
 1. Texts are uploaded to https://www.nuagesdemots.fr/ to create an initial wordcount dataset
-2. Datasets are cleaned with the python script `clean_wordcloud.py` by
+2. Datasets are cleaned with the python script [clean_wordcloud.py](src/) by
    1. removing `-` characters
    2. separating words by `/` characters
    3. ignoring words using `ignored_words_en.csv` or `ignored_words_fr.csv`
