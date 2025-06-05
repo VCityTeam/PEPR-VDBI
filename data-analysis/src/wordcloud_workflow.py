@@ -3,7 +3,8 @@ import json
 import argparse
 import logging
 from utils import readFile
-from clean_wordcloud import clean_wordcloud
+from clean_wordcount import clean_wordcount
+from compare_wordcounts import compare_wordcounts
 
 
 def main():
@@ -28,6 +29,11 @@ def main():
             }
         Or with the following header for CSV:
             input,ignored_words_path,plural_words_path,synonyms_path,delimiter,limit,""",
+    )
+    parser.add_argument(
+        "workflow",
+        choices=["clean", "compare"],
+        help="Specify the workflow",
     )
     parser.add_argument(
         "-f",
@@ -72,52 +78,72 @@ def main():
   \/_____/     \/_/    \/_/\/_/   \/_/ /_/     \/_/"""
     )
 
-    runWorkflow(args.configuration, args.format, args.delimeter)
+    config = parseConfig(args.configuration, args.format, args.delimeter)
+    if args.workflow == "clean":
+        runWorkflowClean(config)
+    elif args.workflow == "compare":
+        runWorkflowCompare(config)
 
 
-def runWorkflow(
+def parseConfig(
     configuration: str,
     format: str = "json",
     delimeter: str = ",",
-) -> None:
-    """Run a clean_wordcloud() workflow based on a configuration file.
+) -> list[tuple[str, dict]]:
+    """Parse a configuration file.
     File must be structured as follows for JSON:
         {
             "inputs": list(string),
-            "params": {
-                "output_dir": string,
-                "ignored_words_path": string,
-                "plural_words_path": string,
-                "synonyms_path": string,
-                "delimiter": string,
-                "limit": int,
-            }
+            "params": dict,
         }
     Or with the following header for CSV:
-        input,ignored_words_path,plural_words_path,synonyms_path,delimiter,limit,
+        input,*parameters
 
-    See the clean_wordcloud() function for more details on the parameters.
+    See the workflow function for more details on the parameters.
     """
+    config = []
     if format == "csv":
-        config = []
         with open(configuration) as file:
             csv_file = csv.reader(file, delimiter=delimeter)
+            header = next(csv_file)[1:]
             for row in csv_file:
-                config.append(row)
-        for row in config[1:]:
-            logging.info(
-                f"running workflow on line {config.index(row)}"
-                + f"{str(row[0])} {str(row[1])}"
-            )
-            print(f"running workflow on {str(row[0])} {str(row[1])}")
-            clean_wordcloud(*row)
-
+                row_params = dict(
+                    (header[row.index(value)], value) for value in row[1:]
+                )
+                config.append((row[0], row_params))
     elif format == "json":
-        config = json.loads(readFile(configuration))
-        for input_path in config["inputs"]:
-            logging.info(f"running workflow on {input_path}")
-            print(f"running workflow on {input_path}")
-            clean_wordcloud(input_path, **config.get("params"))
+        temp_config = json.loads(readFile(configuration))
+        row_params = temp_config.get("params")
+        for input_path in temp_config["inputs"]:
+            row = [input_path]
+            config.append((input_path, row_params))
+    return config
+
+
+def runWorkflowClean(config: list[tuple[str, dict]]):
+    """Run a clean_wordcount() workflow based on a configuration file"""
+    for input_path, params in config:
+        logging.info(f"running workflow on {input_path}")
+        print(f"running workflow on {input_path}")
+        if params.get("limit") == "":
+            params["limit"] = None
+        clean_wordcount(input_path, **params)
+
+
+def runWorkflowCompare(config: list[tuple[str, dict]]):
+    """
+    Run a compare_wordcount() workflow based on a configuration file. Unlike
+    runWorkflowClean(), two inputs are required. Thus the input string is delimited by a
+    ':' character. E.g. `path1:path2`
+    """
+    for input_paths, params in config:
+        logging.info(f"running workflow on {input_paths}")
+        print(f"running workflow on {input_paths}")
+        split_paths = input_paths.split(":")
+        if len(split_paths) != 2:
+            logging.error(f"Invalid input paths: {input_paths}")
+            return None
+        compare_wordcounts(split_paths[0], split_paths[1], **params)
 
 
 if __name__ == "__main__":

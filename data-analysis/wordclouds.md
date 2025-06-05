@@ -27,7 +27,7 @@ Text input and output is stored on the Gouv+Anim nextcloud. Ask Diego Vinasco-Al
 ## Text treatment
 
 1. Texts are uploaded to https://www.nuagesdemots.fr/ to create an initial wordcount dataset
-2. Datasets are cleaned with the python script [clean_wordcloud.py](src/) by
+2. Datasets are cleaned by
    1. removing `-` characters
    2. separating words by `/` characters
    3. ignoring words using `ignored_words_en.csv` or `ignored_words_fr.csv`
@@ -35,6 +35,14 @@ Text input and output is stored on the Gouv+Anim nextcloud. Ask Diego Vinasco-Al
    5. grouping words using `synonym_mappings_en.json` or `synonym_mappings_fr.json`
 3. The final cleaned dataset is a table with the top **50** word occurences
 
+### Experimentation
+The cleaning process is executed with the python script [clean_wordcount.py](src/clean_wordcount.py).
+Automated batch processing is possible with the python script [wordcloud_workflow.py](src/wordcloud_workflow.py). For example:
 ```bash
-python src/wordcloud_workflow.py test-data/configs/wordclouds/wordcloud_workflow_config.json
+python src/wordcloud_workflow.py test-data/configs/wordclouds/wordcloud_clean_workflow_config.json
+```
+For usage on either script, run:
+```bash
+python src/wordcloud_workflow.py -h
+python src/clean_wordcount.py -h
 ```
