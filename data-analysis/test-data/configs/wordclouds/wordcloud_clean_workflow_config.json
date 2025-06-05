@@ -1,0 +1,15 @@
+{
+  "description": "config for clean wordcloud workflow on PEPR recyclage website project descriptions",
+  "inputs": [
+    "test-data/input/wordcloud/clean/wordcloud_financed_project_resume_en.csv",
+    "test-data/input/wordcloud/clean/wordcloud_financed_project_wps_en.csv",
+    "test-data/input/wordcloud/clean/wordcloud_pepr_recyclage_projects_en.csv"
+  ],
+  "params": {
+    "output_dir": "test-data/output/wordcloud/cleaned/",
+    "ignored_words_path": "test-data/configs/wordclouds/ignored_words_en.csv",
+    "plural_words_path": "test-data/configs/wordclouds/plural_duplicates_en.csv",
+    "synonyms_path": "test-data/configs/wordclouds/synonym_mappings_en.json",
+    "delimiter": ";"
+  }
+}

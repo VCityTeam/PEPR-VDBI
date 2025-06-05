@@ -2,6 +2,7 @@ import csv
 import json
 import argparse
 import os
+from utils import writeWordCounts
 
 
 def main():
@@ -9,7 +10,7 @@ def main():
         description="""Clean wordcloud data
             1. Texts are uploaded to https://www.nuagesdemots.fr/ to create an initial
                 wordcount dataset
-            2. Datasets are cleaned with the python script `clean_wordcloud.py` by
+            2. Datasets are cleaned with the python script `clean_wordcount.py` by
                 1. removing `-` characters
                 2. separating words by `/` characters
                 3. ignoring words using `ignored_words_en.csv` or `ignored_words_fr.csv`
@@ -20,20 +21,19 @@ def main():
             3. The final cleaned dataset is a table with the top **50** word occurences
             """,
     )
-    parser.add_argument("input", help="wordcloud input data file (csv)")
+    parser.add_argument("input_path", help="wordcloud input data file (csv)")
     parser.add_argument(
         "-o",
         "--output_dir",
         type=str,
         help="wordcloud output directory",
-        default=None,
+        default="./",
     )
     parser.add_argument(
         "-l",
         "--limit",
         type=int,
-        help="limit number of words to output. Negative value means no limit",
-        default=-1,
+        help="limit number of words to output",
     )
     parser.add_argument(
         "-d",
@@ -43,49 +43,41 @@ def main():
     )
     parser.add_argument(
         "-i",
-        "--ignored_words",
+        "--ignored_words_path",
         help="words to ignore (csv)",
         default="ignored_words_en.csv",
     )
     parser.add_argument(
         "-p",
-        "--plural_words",
+        "--plural_words_path",
         help="duplicate plural words (csv)",
         default="plural_duplicates_en.csv",
     )
     parser.add_argument(
         "-s",
-        "--synonyms",
+        "--synonyms_path",
         help="synonyms mappings (json)",
         default="synonym_mappings_en.json",
     )
 
     args = parser.parse_args()
 
-    clean_wordcloud(
-        args.input,
-        args.output,
-        args.ignored_words,
-        args.plural_words,
-        args.synonyms,
-        args.delimiter,
-        args.limit,
-    )
+    clean_wordcount(**vars(args))
 
 
-def clean_wordcloud(
+def clean_wordcount(
     input_path: str,
-    output_dir: str | None = None,
+    output_dir: str = "./",
     ignored_words_path: str = "ignored_words_en.csv",
     plural_words_path: str = "plural_duplicates_en.csv",
     synonyms_path: str = "synonym_mappings_en.json",
+    limit: int | None = None,
     delimiter: str = ",",
-    limit: int = -1,
 ):
     """Clean wordcloud data
     1. Texts are uploaded to https://www.nuagesdemots.fr/ to create an initial
         wordcount dataset
-    2. Datasets are cleaned with the python script `clean_wordcloud.py` by
+    2. Datasets are cleaned with the python script `clean_wordcount.py` by
         1. removing `-` characters
         2. separating words by `/` characters
         3. ignoring words using `ignored_words_en.csv` or `ignored_words_fr.csv`
@@ -134,27 +126,13 @@ def clean_wordcloud(
             else:
                 word_counts[word] = int(row[0])
 
-    sorted_word_counts = list(word_counts.items())
-    sorted_word_counts.sort(key=lambda x: x[1], reverse=True)
-
-    split_input_filepath = os.path.split(input_path)
-    split_input_filename = os.path.splitext(split_input_filepath[1])
-    output_file = (output_dir if output_dir else split_input_filepath[0]) + (
-        f"{split_input_filename[0]}_cleaned{f'_{limit}' if limit > 0 else ''}"
+    split_input_filename = os.path.splitext(os.path.split(input_path)[1])
+    output_file = (
+        f"{output_dir}{split_input_filename[0]}_cleaned{f'_{limit}' if limit else ''}"
         + split_input_filename[1]
     )
 
-    print(f"writing to csv {output_file}")
-    with open(output_file, "w") as file:
-        writer = csv.writer(file)
-        row_count = 0
-        writer.writerow(["weight", "word", "color", "url"])
-
-        for row in sorted_word_counts:
-            if row_count >= int(limit):
-                break
-            writer.writerow([row[1], row[0], "", ""])
-            row_count += 1
+    writeWordCounts(word_counts, output_file, limit)
 
 
 if __name__ == "__main__":
