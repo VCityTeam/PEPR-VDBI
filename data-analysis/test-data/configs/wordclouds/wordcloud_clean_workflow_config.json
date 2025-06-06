@@ -7,7 +7,7 @@
   ],
   "params": {
     "output_dir": "test-data/output/wordcloud/cleaned/",
-    "ignored_words_path": "test-data/configs/wordclouds/ignored_words_en.csv",
+    "stop_words_path": "test-data/configs/wordclouds/stop_words_english.csv",
     "plural_words_path": "test-data/configs/wordclouds/plural_duplicates_en.csv",
     "synonyms_path": "test-data/configs/wordclouds/synonym_mappings_en.json",
     "delimiter": ";"

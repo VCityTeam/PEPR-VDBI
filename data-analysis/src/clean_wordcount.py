@@ -13,7 +13,7 @@ def main():
             2. Datasets are cleaned with the python script `clean_wordcount.py` by
                 1. removing `-` characters
                 2. separating words by `/` characters
-                3. ignoring words using `ignored_words_en.csv` or `ignored_words_fr.csv`
+                3. ignoring words using `stop_words_en.csv` or `stop_words_fr.csv`
                 4. removing duplicates according to the following files
                     `plural_duplicates_en.csv` or `plural_duplicates_fr.csv`
                 5. grouping words using `synonym_mappings_en.json` or
@@ -43,9 +43,9 @@ def main():
     )
     parser.add_argument(
         "-i",
-        "--ignored_words_path",
+        "--stop_words_path",
         help="words to ignore (csv)",
-        default="ignored_words_en.csv",
+        default="stop_words_english.csv",
     )
     parser.add_argument(
         "-p",
@@ -68,31 +68,30 @@ def main():
 def clean_wordcount(
     input_path: str,
     output_dir: str = "./",
-    ignored_words_path: str = "ignored_words_en.csv",
+    stop_words_path: str = "stop_words_en.csv",
     plural_words_path: str = "plural_duplicates_en.csv",
     synonyms_path: str = "synonym_mappings_en.json",
     limit: int | None = None,
     delimiter: str = ",",
 ):
     """Clean wordcloud data
-    1. Texts are uploaded to https://www.nuagesdemots.fr/ to create an initial
-        wordcount dataset
-    2. Datasets are cleaned with the python script `clean_wordcount.py` by
-        1. removing `-` characters
-        2. separating words by `/` characters
-        3. ignoring words using `ignored_words_en.csv` or `ignored_words_fr.csv`
+    Word count csv should follow the structure used by https://www.nuagesdemots.fr/
+    2. Datasets are cleaned by
+        1. separating words by `/` characters
+        2. ignoring words using `stop_words_en.csv` or `stop_words_fr.csv`
+        3. removing `-` characters
         4. removing duplicates according to the following files
             `plural_duplicates_en.csv` or `plural_duplicates_fr.csv`
         5. grouping words using `synonym_mappings_en.json` or
             `synonym_mappings_fr.json`
     3. The final cleaned dataset is a table with the top **50** word occurences
     """
-    ignored_words = []
-    with open(ignored_words_path, "r") as file:
+    stop_words = []
+    with open(stop_words_path, "r") as file:
         reader = csv.reader(file)
         for row in reader:
-            ignored_words.append(row[0])
-    # print(f"ignored words: {ignored_words}")
+            stop_words.append(row[0])
+    # print(f"ignored words: {stop_words}")
 
     plural_words = []
     with open(plural_words_path, "r") as file:
@@ -114,17 +113,17 @@ def clean_wordcount(
         reader = csv.reader(file, delimiter=delimiter)
         next(reader)  # Skip the header row
         for row in reader:
-            # print(row)
-            if row[1] in ignored_words:
-                continue
-            word = row[1].rstrip("s") if row[1] in plural_words else row[1]
-            word = word.replace("-", "")
-            if word in synonyms:
-                word = synonyms.get(word)
-            if word in word_counts:
-                word_counts[word] += int(row[0])
-            else:
-                word_counts[word] = int(row[0])
+            for word in row[1].split("/"):
+                if word in stop_words:
+                    continue
+                word = word.rstrip("s") if word in plural_words else word
+                word = word.replace("-", "")
+                if word in synonyms:
+                    word = synonyms.get(word)
+                if word in word_counts:
+                    word_counts[word] += int(row[0])
+                else:
+                    word_counts[word] = int(row[0])
 
     split_input_filename = os.path.splitext(os.path.split(input_path)[1])
     output_file = (

@@ -14,30 +14,38 @@ def main():
         "-o",
         "--output_dir",
         type=str,
-        help="wordcloud output directory",
+        help="Wordcloud output directory",
         default="./",
     )
     parser.add_argument(
-        "--mode",
         "-m",
-        help="what comparison mode to use",
+        "--mode",
+        help="What comparison mode to use",
         choices=["intersection", "complement", "union"],
         default="intersection",
+    )
+    parser.add_argument(
+        "-s",
+        "--strategy",
+        help="What strategy to determing intersect word count (weight). "
+        "Doesn't affect complement mode",
+        choices=["average", "min", "max", "sum", "difference"],
+        default="sum",
     )
     parser.add_argument(
         "-l",
         "--limit",
         type=int,
-        help="limit number of words to output. Negative value means no limit",
+        help="Limit number of words to output. Negative value means no limit",
     )
     parser.add_argument(
         "--delimiter_1",
-        help="set input csv delimiters",
+        help="Set input csv delimiters",
         default=",",
     )
     parser.add_argument(
         "--delimiter_2",
-        help="set input csv delimiters",
+        help="Set input csv delimiters",
         default=",",
     )
 
@@ -51,6 +59,7 @@ def compare_wordcounts(
     input_path_2: str,
     output_dir: str = "./",
     mode: str = "intersection",
+    strategy: str = "sum",
     limit: int | None = None,
     delimiter_1: str = ",",
     delimiter_2: str = ",",
@@ -85,25 +94,27 @@ def compare_wordcounts(
 
     compared_word_counts = {}
     if mode == "intersection":
-        compared_word_counts = generate_intersection(word_counts_1, word_counts_2)
+        compared_word_counts = generate_intersection(
+            word_counts_1, word_counts_2, strategy
+        )
     elif mode == "complement":
         compared_word_counts = generate_complement(word_counts_1, word_counts_2)
     elif mode == "union":
-        compared_word_counts = generate_union(word_counts_1, word_counts_2)
+        compared_word_counts = generate_union(word_counts_1, word_counts_2, strategy)
     else:
         print("error: mode not recognized")
 
     split_input_filename_1 = os.path.splitext(os.path.split(input_path_1)[1])
     split_input_filename_2 = os.path.splitext(os.path.split(input_path_2)[1])
     output_file = (
-        f"{output_dir}{split_input_filename_1[0]}_{mode}_{split_input_filename_2[0]}"
-        + split_input_filename_1[1]
+        f"{output_dir}{split_input_filename_1[0]}_{mode}_{strategy}_"
+        f"{split_input_filename_2[0]}{split_input_filename_1[1]}"
     )
 
     writeWordCounts(compared_word_counts, output_file, limit)
 
 
-def generate_intersection(input_1: dict, input_2: dict) -> dict:
+def generate_intersection(input_1: dict, input_2: dict, strategy: str = "min") -> dict:
     """
     Takes two word counts returns a new word count containing the intersection of keys
     with their average weights.
@@ -117,7 +128,9 @@ def generate_intersection(input_1: dict, input_2: dict) -> dict:
     intersection = {}
     for word, count in input_1.items():
         if word in input_2:
-            intersection[word] = average(input_2.get(word), count)
+            intersection[word] = get_intersect_count(
+                input_2.get(word, 0), count, strategy
+            )
     return intersection
 
 
@@ -142,7 +155,7 @@ def generate_complement(input_1: dict, input_2: dict) -> dict:
     return complement
 
 
-def generate_union(input_1: dict, input_2: dict) -> dict:
+def generate_union(input_1: dict, input_2: dict, strategy: str = "min") -> dict:
     """
     Takes two word counts returns a new word count containing the union of keys.
     The count of words in both inputs are averaged.
@@ -156,14 +169,33 @@ def generate_union(input_1: dict, input_2: dict) -> dict:
     union = input_1.copy()
     for word, count in input_2.items():
         if word in union:
-            union[word] = average(union.get(word), count)
+            union[word] = get_intersect_count(union.get(word, 0), count, strategy)
         else:
             union[word] = count
     return union
 
 
-def average(a, b):
-    return round(((a - b) / 2) + b if a > b else ((b - a) / 2) + a)
+def get_intersect_count(
+    count_1: int, count_2: int, strategy: str = "min"
+) -> int | None:
+    """
+    Calculate intersecting count values.
+    """
+    max_count = max(count_1, count_2)
+    min_count = min(count_1, count_2)
+    if strategy == "average":
+        return round(((max_count - min_count) / 2) + min_count)
+    elif strategy == "min":
+        return min_count
+    elif strategy == "max":
+        return max_count
+    elif strategy == "sum":
+        return count_1 + count_2
+    elif strategy == "difference":
+        return max_count - min_count
+    else:
+        print(f"error: unknown intersect strategy: {strategy}")
+        return None
 
 
 def normalize_word_counts(
@@ -185,7 +217,7 @@ def normalize_word_counts(
         normalized_count = (
             ((count - count_min) * range_difference) / word_count_difference
         ) + range_min
-        normalized_word_counts[word] = normalized_count
+        normalized_word_counts[word] = round(normalized_count)
 
     return normalized_word_counts
 

@@ -13,6 +13,11 @@ def main():
             on a configuration"""
     )
     parser.add_argument(
+        "workflow",
+        choices=["clean", "compare"],
+        help="Specify the workflow",
+    )
+    parser.add_argument(
         "configuration",
         help="""Specify the configuration file. File must be structured as
         follows for JSON:
@@ -29,11 +34,6 @@ def main():
             }
         Or with the following header for CSV:
             input,ignored_words_path,plural_words_path,synonyms_path,delimiter,limit,""",
-    )
-    parser.add_argument(
-        "workflow",
-        choices=["clean", "compare"],
-        help="Specify the workflow",
     )
     parser.add_argument(
         "-f",
@@ -89,11 +89,11 @@ def parseConfig(
     configuration: str,
     format: str = "json",
     delimeter: str = ",",
-) -> list[tuple[str, dict]]:
+) -> list[dict]:
     """Parse a configuration file.
     File must be structured as follows for JSON:
         {
-            "inputs": list(string),
+            "inputs": list,
             "params": dict,
         }
     Or with the following header for CSV:
@@ -105,45 +105,50 @@ def parseConfig(
     if format == "csv":
         with open(configuration) as file:
             csv_file = csv.reader(file, delimiter=delimeter)
-            header = next(csv_file)[1:]
+            header = next(csv_file)
             for row in csv_file:
-                row_params = dict(
-                    (header[row.index(value)], value) for value in row[1:]
-                )
-                config.append((row[0], row_params))
+                row_params = dict((header[row.index(value)], value) for value in row)
+                config.append(row_params)
     elif format == "json":
         temp_config = json.loads(readFile(configuration))
-        row_params = temp_config.get("params")
         for input_path in temp_config["inputs"]:
-            row = [input_path]
-            config.append((input_path, row_params))
+            row_params = temp_config["params"].copy()
+            row_params["input_path"] = input_path
+            config.append(row_params)
     return config
 
 
-def runWorkflowClean(config: list[tuple[str, dict]]):
+def runWorkflowClean(config: list[dict]):
     """Run a clean_wordcount() workflow based on a configuration file"""
-    for input_path, params in config:
-        logging.info(f"running workflow on {input_path}")
-        print(f"running workflow on {input_path}")
-        if params.get("limit") == "":
-            params["limit"] = None
-        clean_wordcount(input_path, **params)
+    for params in config:
+        row_params = params.copy()
+        logging.info(f"running workflow on {row_params['input_path']}")
+        print(f"running workflow on {row_params['input_path']}")
+        if row_params.get("limit") == "":
+            row_params["limit"] = None
+        clean_wordcount(**row_params)
 
 
-def runWorkflowCompare(config: list[tuple[str, dict]]):
+def runWorkflowCompare(config: list[dict]):
     """
     Run a compare_wordcount() workflow based on a configuration file. Unlike
-    runWorkflowClean(), two inputs are required. Thus the input string is delimited by a
-    ':' character. E.g. `path1:path2`
+    runWorkflowClean(), two inputs are required. Thus the each input must be formed as a
+    tuple of strings e.g. `["path1","path2"]`
     """
-    for input_paths, params in config:
-        logging.info(f"running workflow on {input_paths}")
-        print(f"running workflow on {input_paths}")
-        split_paths = input_paths.split(":")
+    print(config[0])
+    for params in config:
+        row_params = params.copy()
+        split_paths = row_params.pop("input_path").split(":")
         if len(split_paths) != 2:
-            logging.error(f"Invalid input paths: {input_paths}")
+            logging.error(f"Invalid input paths: {split_paths}")
             return None
-        compare_wordcounts(split_paths[0], split_paths[1], **params)
+
+        logging.info(f"running workflow on {split_paths}")
+        print(f"running workflow on {split_paths}")
+
+        row_params["input_path_1"] = split_paths[0]
+        row_params["input_path_2"] = split_paths[1]
+        compare_wordcounts(**row_params)
 
 
 if __name__ == "__main__":
