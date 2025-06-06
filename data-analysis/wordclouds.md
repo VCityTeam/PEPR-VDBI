@@ -28,21 +28,37 @@ Text input and output is stored on the Gouv+Anim nextcloud. Ask Diego Vinasco-Al
 
 1. Texts are uploaded to https://www.nuagesdemots.fr/ to create an initial wordcount dataset
 2. Datasets are cleaned by
-   1. removing `-` characters
-   2. separating words by `/` characters
-   3. ignoring words using `ignored_words_en.csv` or `ignored_words_fr.csv`
+   1. separating words by `/` characters
+   2. ignoring words using the stop words from https://countwordsfree.com/stopwords:
+      1. `stop_words_english.csv`
+      2. `stop_words_french.csv`
+   3. removing `-` characters
    4. removing duplicates according to the following files `plural_duplicates_en.csv` or `plural_duplicates_fr.csv`
    5. grouping words using `synonym_mappings_en.json` or `synonym_mappings_fr.json`
 3. The final cleaned dataset is a table with the top **50** word occurences
 
-### Experimentation
-The cleaning process is executed with the python script [clean_wordcount.py](src/clean_wordcount.py).
-Automated batch processing is possible with the python script [wordcloud_workflow.py](src/wordcloud_workflow.py). For example:
+## Text comparison
+Compare two word counts by:
+1. Normalizing them to account for differences in text volumes.
+2. Selecting words from each word count based on their:
+   1. intersection
+   2. union (like an outer join)
+   3. complement
+3. In the case of intersecting words, updating the count of the words based on the:
+   1. Average
+   2. Max
+   3. Min  
+
+## Experimentation
+Automated batch processing is possible with the python script [wordcloud_workflow.py](src/wordcloud_workflow.py). For example to run a configuration to clean a word count:
 ```bash
-python src/wordcloud_workflow.py test-data/configs/wordclouds/wordcloud_clean_workflow_config.json
+python src/wordcloud_workflow.py clean test-data/configs/wordclouds/wordcloud_clean_workflow_config.json
 ```
-For usage on either script, run:
+To run a configuration to compare two word counts:
+```bash
+python src/wordcloud_workflow.py compare test-data/configs/wordclouds/wordcloud_compare_workflow_config.json
+```
+For usage, run:
 ```bash
 python src/wordcloud_workflow.py -h
-python src/clean_wordcount.py -h
 ```

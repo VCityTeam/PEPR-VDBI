@@ -32,7 +32,7 @@ def writeWordCounts(
 
     print(f"writing to csv {output_file}")
     output_dir = os.path.split(output_file)[0]
-    if not output_dir:
+    if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     with open(output_file, "w") as file:
         writer = csv.writer(file)
@@ -40,7 +40,7 @@ def writeWordCounts(
         row_count = 0
 
         for row in output:
-            if limit and row_count > limit:
+            if limit and row_count > int(limit):
                 break
             writer.writerow([row[1], row[0], "", ""])
             row_count += 1
