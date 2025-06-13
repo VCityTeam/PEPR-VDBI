@@ -14,7 +14,9 @@ pip install openpyxl
 Some dataloaders require your terminal be in the `../` directory
 
 > [!NOTE] Private data
-> Data files not provided must be added manually to the folder `./private/`.
+> Some data files are not provided and must be added manually to the folder `./private/`.
+> Please contact the PEPR VDBI monitoring manager (responsable de la veille) if you believe data is missing:
+> Diego Vinasco-Alvarez - diego.vinasco-alvarez@liris.cnrs.fr
 
 > [!WARNING] ORCiD API access
 > Data loaders that require and ORCiD API key (denoted by :asterisk:) require you have a
@@ -27,20 +29,11 @@ Some dataloaders require your terminal be in the `../` directory
 
 | Filename                                                                | Provided           | Description                                                                                                             |
 | ----------------------------------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| 250120 PEPR_VBDI_analyse modifiée JYT.xlsx                              | :x:                | PEPR Phase 1 project, researcher, site information (latest)                                                             |
-| 250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx            | :x:                | PEPR Phase 1 project, researcher, site information                                                                      |
-| PEPR_VBDI_analyse_210524_15h24_GGE.xlsx                                 | :x:                | PEPR Phase 1 project, researcher, site information                                                                      |
-| 240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx | :x:                | PEPR Phase 1 keywords, project actions, and challenges                                                                  |
-| 240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx         | :x:                | PEPR Phase 1 project, researcher, site information                                                                      |
-| events.json                                                             | :white_check_mark: | Observable example event data                                                                                           |
 | fetch-orcid-access-token.json.sh                                        | :asterisk:         | Data loader for creating ORCiD access token (used to retrive ORCiD data)                                                |
 | fr-esr-structures-recherche-publiques-actives.csv.js                    | :white_check_mark: | Site, university, and/or laboratory information from data.enseignementsup-recherche.gouv.fr                             |
 | fr-esr-structures-recherche-publiques-actives.geocoded.csv              | :white_check_mark: | Site, university, and/or laboratory information from data.enseignementsup-recherche.gouv.fr (not actually a dataloader) |
 | fr-esr-structures-recherche-publiques-actives.json.js                   | :white_check_mark: | Site, university, and/or laboratory information from data.enseignementsup-recherche.gouv.fr                             |
-| launches.csv.js                                                         | :white_check_mark: | Observable example rocket launch data                                                                                   |
 | cj_septembre_2022_nX                                                    | :white_check_mark: | INSEE catégories juridiques by level (from https://www.insee.fr/fr/information/2028129)                                 |
-| orcids.csv                                                              | :white_check_mark: | General researcher ORCiD information                                                                                    |
 | orcids.csv.py                                                           | :asterisk:         | Fetch researcher ORCiD information by first and last name                                                               |
-| orcids.xlsx                                                             | :white_check_mark: | General researcher ORCiD information                                                                                    |
 | orcids.xlsx.py                                                          | :asterisk:         | Fetch researcher ORCiD information by first and last name                                                               |
 | world.json.js                                                           | :white_check_mark: | Fetch country geometry GeoJSON for projection to globe view                                                             |
