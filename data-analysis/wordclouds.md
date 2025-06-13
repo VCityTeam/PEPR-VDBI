@@ -2,7 +2,22 @@ Create word clouds from project descriptions
 
 ## Text collection process by source
 
-Text input and output is stored on the Gouv+Anim nextcloud. Ask Diego Vinasco-Alvarez for more information.
+
+```mermaid
+---
+title: Wordcloud data pipeline
+---
+flowchart LR
+    1@{ shape: doc, label: "Textual data source"}
+        --> 2(Extract text)
+        --> 3@{ shape: doc, label: "Word counts (.csv)"}
+        --> 4(Clean data)
+        --> 5@{ shape: doc, label: "Cleaned word counts (.csv)"}
+    1 --> 6(Compare word counts)
+    5 --> 6(Compare word counts)
+        --> 7@{ shape: doc, label: "Compared word counts (.csv)"}
+
+```
 
 ### PEPR VDBI project calls
 
