@@ -1,6 +1,6 @@
 # PEPR VDBI Documentation
 
-### External links
+**External links**
 - [VDBI feulle de route](https://pepr-vdbi.fr/feuille-de-route-scientifique-et-technique)
 
 ## [Data Integration](../data-integration/README.md)

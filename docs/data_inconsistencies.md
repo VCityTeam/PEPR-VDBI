@@ -11,6 +11,11 @@
 - Disciplines
   - [ ] Some disciplines are duplicated with only capitalisation or typos
     - e.g. `architecture` vs `Architecture`
+- CNU
+  - [ ] CNU 56 typo
+  - [ ] CNU 56-> 46
+- [ ] Partner lables
+- [ ] site lables
 ## Data Viz Inconsistencies
 ### Researchers
 - Geocoding service

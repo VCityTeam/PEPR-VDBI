@@ -14,21 +14,6 @@ Data analysis tests for lexiometry and bibliometry
 ## [Data visualization :bar_chart:](./data-visualization)
 Data visualization tests with observable
 
-## Organizational Chart
-
-![org chart](./docs/organigramme.drawio.svg)
-
-> [!NOTE]
-> References to the following individuals may use the following aliases in project documentation for brevity:
-> - DMI: Dominique Mignot
-> - GGE: Gilles Gesquière
-> - ARU: Anne Raus
-> - DVA: Diego Vinasco-Alvarez
-> - EMO: Emannuelle Moench
-> - GGR: Gabriel Gros
-> - JSAR: Joud Sarkis
-> - JYT: Jean-Yves Toussaint
-
 ## Project Schedule
 
 ```mermaid
