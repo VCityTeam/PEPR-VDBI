@@ -6,24 +6,24 @@ export default {
   root: 'src', // path to the source root for preview
   pages: [
     {
-      name: 'Phase 1 Overview',
-      path: 'phase1-overview-dashboard',
-    },
-    {
       name: 'Phase 1 Projects by discipline',
       path: 'phase1-project-dashboard',
     },
     // {
-    //   name: 'Phase 1 Laboratories',
-    //   path: 'phase1-laboratory-dashboard', //deprecated
-    // },
-    // {
-    //   name: 'Phase 1 Institutions',
-    //   path: 'phase1-university-dashboard', //deprecated
-    // },
+      //   name: 'Phase 1 Laboratories',
+      //   path: 'phase1-laboratory-dashboard', //deprecated
+      // },
+      // {
+        //   name: 'Phase 1 Institutions',
+        //   path: 'phase1-university-dashboard', //deprecated
+        // },
     {
-      name: 'Tests',
+      name: 'Working Dashboards',
       pages: [
+        {
+          name: 'Phase 1 Overview',
+          path: 'phase1-overview-dashboard',
+        },
         {
           name: 'Phase 1 Partners',
           path: 'phase1-partner-dashboard',
@@ -40,21 +40,26 @@ export default {
           name: 'Phase 1 Researchers',
           path: 'phase1-researcher-dashboard',
         },
+      ],
+    },
+    {
+      name: 'Framework Tests',
+      pages: [
         {
           name: 'Raw Data',
           path: 'phase1-data-dashboard',
         },
         {
           name: 'Import Excel',
-          path: '/test-excel-import',
+          path: 'test-excel-import',
         },
         {
           name: 'SQL and DuckDB',
-          path: '/test-sql-duckdb',
+          path: 'test-sql-duckdb',
         },
         {
           name: 'Import dataESR+Geospatial',
-          path: '/test-esr-import',
+          path: 'test-esr-import',
         },
         {
           name: 'Phase 1 Overview',
@@ -62,48 +67,36 @@ export default {
         },
         {
           name: 'Import ORCID',
-          path: '/test-orcid-import',
-        },
-        {
-          name: 'Zoomable Sunburst',
-          path: '/zoomable-sunburst',
-        },
-        {
-          name: 'Plot',
-          path: '/test-plot',
-        },
-        {
-          name: 'Tree',
-          path: '/test-tree',
-        },
-        {
-          name: 'Force Diagram, Triple Graph',
-          path: '/test-graph',
-        },
-        {
-          name: 'Arc Diagram, Property Graph',
-          path: '/test-arc',
+          path: 'test-orcid-import',
         },
         {
           name: 'Mural Data',
-          path: '/test-mural-data',
+          path: 'test-mural-data',
         },
       ],
     },
     {
-      name: 'Examples',
+      name: 'D3/Plot Tests',
       pages: [
         {
-          name: 'Example Index',
-          path: '/example-index',
+          name: 'Zoomable Sunburst',
+          path: 'zoomable-sunburst',
         },
         {
-          name: 'Example Report',
-          path: '/example-report',
+          name: 'Plot',
+          path: 'test-plot',
         },
         {
-          name: 'Example Dashboard',
-          path: '/example-dashboard',
+          name: 'Tree',
+          path: 'test-tree',
+        },
+        {
+          name: 'Force Diagram, Triple Graph',
+          path: 'test-graph',
+        },
+        {
+          name: 'Arc Diagram, Property Graph',
+          path: 'test-arc',
         },
       ],
     },
