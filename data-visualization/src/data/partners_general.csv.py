@@ -2,24 +2,12 @@ import logging
 import sys
 import csv
 from siret_utils import queryAndFormatRe, defaultCsvHeader
+from utils import initDefaultLogger
 
 
 def main():
 
-    logging.basicConfig(
-        format="%(asctime)s %(levelname)-8s %(message)s",
-        filename="partners.log",
-        level=logging.DEBUG,
-        # level=logging.INFO
-    )
-    logging.info(
-        r"""
- ______     ______    ______     ______     ______
-/\  ___\   /\__  _\  /\  __ \   /\  == \   /\__  _\
-\ \___  \  \/_/\ \/  \ \  __ \  \ \  __<   \/_/\ \/
- \/\_____\    \ \_\   \ \_\ \_\  \ \_\ \_\    \ \_\
-  \/_____/     \/_/    \/_/\/_/   \/_/ /_/     \/_/"""
-    )
+    initDefaultLogger("partners_general.csv.log", True)
 
     PATH = "./src/data/private/generality.csv"
     partner_data = [defaultCsvHeader()]

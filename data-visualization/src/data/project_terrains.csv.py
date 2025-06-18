@@ -2,26 +2,13 @@ import logging
 import sys
 import csv
 import time
-
 import requests
+from utils import initDefaultLogger
 
 
 def main():
 
-    logging.basicConfig(
-        format="%(asctime)s %(levelname)-8s %(message)s",
-        filename="terrain.log",
-        level=logging.DEBUG,
-        # level=logging.INFO
-    )
-    logging.info(
-        r"""
- ______     ______    ______     ______     ______
-/\  ___\   /\__  _\  /\  __ \   /\  == \   /\__  _\
-\ \___  \  \/_/\ \/  \ \  __ \  \ \  __<   \/_/\ \/
- \/\_____\    \ \_\   \ \_\ \_\  \ \_\ \_\    \ \_\
-  \/_____/     \/_/    \/_/\/_/   \/_/ /_/     \/_/"""
-    )
+    initDefaultLogger(".log")
 
     PATH = "./src/data/private/partenaires_aap2023.csv"
     partner_data = [["project", "terrain", "latitude", "longitude"]]
@@ -77,7 +64,8 @@ def queryNominatim(
     Params:
     - query: the search query to be sent
     - format: the format of the response, default is json
-    - referer: the referer header to be sent with the request, default is https://pepr-vdbi.fr/
+    - referer: the referer header to be sent with the request, default is
+        https://pepr-vdbi.fr/
     - sleep: the number of seconds to sleep before sending the request to avoid rate
         limiting
     -----------

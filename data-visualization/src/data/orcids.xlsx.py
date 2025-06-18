@@ -1,4 +1,3 @@
-import logging
 import pandas as pd
 from orcid_utils import (
     getORCiDSecrets,
@@ -7,30 +6,23 @@ from orcid_utils import (
     getFirstname,
     getLastname,
 )
+from utils import initDefaultLogger
 
 
 def main():
 
     secrets = getORCiDSecrets()
+    if not secrets:
+        raise Exception("No secrets found")
+
     CLIENT_ID = secrets["CLIENT_ID"]
     CLIENT_SECRET = secrets["CLIENT_SECRET"]
-    WORKBOOK_PATH = "./data/private/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
+    WORKBOOK_PATH = "./src/data/private/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
     WORKBOOK_SHEET = "Liste chercheurs"
     SHEET_COLUMNS = "A"
     EXPANDED_SEARCH = True
 
-    logging.basicConfig(
-        format="%(asctime)s %(levelname)-8s %(message)s",
-        filename="orcids.log",
-        level=logging.DEBUG,
-        # level=logging.INFO
-    )
-    logging.info("          __                 __   ")
-    logging.info("  _______/  |______ ________/  |_ ")
-    logging.info(" /  ___/\\   __\\__  \\\\_  __ \\   __\\")
-    logging.info(" \\___ \\  |  |  / __ \\|  | \\/|  |  ")
-    logging.info("/____  > |__| (____  /__|   |__|  ")
-    logging.info("     \\/            \\/             ")
+    logging = initDefaultLogger("orcid.log")
     # Generate or retrieve access token
     token = getAccessToken(CLIENT_ID, CLIENT_SECRET)
     if token is None:
