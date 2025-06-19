@@ -2,7 +2,7 @@
 title: Phase 1 Overview Dashboard
 theme: [dashboard, light]
 sql:
-  # general_partners: ./data/partners_general.csv
+  general_partners: ./data/partners_general.csv
   aap_partners: ./data/private/partenaires_aap2023.csv
   terrains: ./data/project_terrains.csv
   project_summary: ./data/private/project_summary.csv
@@ -47,6 +47,10 @@ import {
 } from "./components/color.js";
 ```
 
+<!-- ```js
+const general_partners = await DuckDBClient.of({general_partners: FileAttachment("data/general.csv").csv()});
+``` -->
+
 ```js
 const debug = true;
 if (debug) {
@@ -58,8 +62,8 @@ if (debug) {
   display(laboratory_data);
   display("university_data");
   display(university_data);
-  // display("general_partners");
-  // display([...await sql`select * from general_partners`]);
+  display("general_partners");
+  display([...await sql`select * from general_partners`]);
   display("aap_partners");
   display([...await sql`select * from aap_partners`]);
   display("terrains");

@@ -7,7 +7,7 @@ from utils import initDefaultLogger
 
 def main():
 
-    initDefaultLogger("partners_general.csv.log", True)
+    initDefaultLogger("partners_general.csv.log")
 
     PATH = "./src/data/private/generality.csv"
     partner_data = [defaultCsvHeader()]
