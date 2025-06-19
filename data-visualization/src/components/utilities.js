@@ -235,6 +235,23 @@ export function cropText(text, maxLength = 20) {
     : text;
 }
 
+export function wrapText(text, maxWidth = 20, newlineCharter = '\n') {
+  const words = text.split(' ');
+  let lines = [];
+  let currentLine = '';
+
+  for (let word of words) {
+    if (currentLine.length + word.length > maxWidth - 1) {
+      lines.push(currentLine.trim());
+      currentLine = word + ' ';
+    } else {
+      currentLine += word + ' ';
+    }
+  }
+
+  return lines.join(newlineCharter);
+}
+
 /**
  * function for filtering out *known* unknown values
  *
@@ -349,7 +366,7 @@ export function getAttributeByPath(obj, path) {
 
 /**
  * Performs an HTTP request.
- * Adapted from 
+ * Adapted from
  *
  * @async
  * @param {string} method The HTTP method. Accepted methods include `GET`,
