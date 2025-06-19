@@ -1,20 +1,25 @@
 import * as d3 from 'd3';
-
-interface Hierarchy {
-  id: string;
-  height: number;
-  depth: number;
-  value?: number;
-  children?: Hierarchy[];
-}
+import { cropText } from './utilities.js';
 
 export function zoomableSunburst(
-  hierarchy: Hierarchy,
-  width: number = 500,
-  labelMap: Function = (d) => `(${d.id}) ${d.value}`,
-  titleMap: Function = (d) => d.id,
+  // interface Hierarchy {
+  //   id: string;
+  //   height: number;
+  //   depth: number;
+  //   value?: number;
+  //   children?: Hierarchy[];
+  // }
+  hierarchy = [],
+  {
+    width = 500,
+    fontSize = 8,
+    fontFamily = 'sans-serif',
+    keyMap = (d) => d.id,
+    valueMap = (d) => d.value,
+    labelMap = (d) => cropText(`(${keyMap(d)}) ${valueMap(d)}`),
+  }
 ) {
-
+  // debugger;
   // Specify the chart’s dimensions.
   const height = width;
   const radius = width / 6;
@@ -77,20 +82,24 @@ export function zoomableSunburst(
     .on('click', clicked);
 
   const format = d3.format(',d');
-  path.append('title').text(
-    (d) =>
-      `${d
-        .ancestors()
-        .map(titleMap)
-        .reverse()
-        .join('/')}\n${format(d.value)}`
-  );
+  path
+    .append('title')
+    .text(
+      (d) =>
+        `Path: ${d
+          .ancestors()
+          .map(keyMap)
+          .reverse()
+          .join('/')}\nCount: ${format(d.value)}`
+    );
 
   const label = svg
     .append('g')
     .attr('pointer-events', 'none')
     .attr('text-anchor', 'middle')
     .style('user-select', 'none')
+    .style('font-family', fontFamily)
+    .style('font-size', fontSize + 'px')
     .selectAll('text')
     .data(root.descendants().slice(1))
     .join('text')

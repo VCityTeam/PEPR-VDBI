@@ -11,6 +11,72 @@ sql:
 
 This variant of a [sunburst diagram](https://observablehq.com/@d3/sunburst/2) shows only two layers of the hierarchy at a time. Click a node to zoom in, or the center to zoom out. Compare to an [icicle](https://observablehq.com/@d3/zoomable-icicle).
 
+## Get hierarchical data
+
+Load legal nature data as a hierarchy from INSEE catégories juridiques by level (from https://www.insee.fr/fr/information/2028129)
+
+```sql id=legal_nature_data echo
+-- update data
+ALTER TABLE cjn1
+  RENAME Code TO "name";
+ALTER TABLE cjn1
+  ADD COLUMN parent VARCHAR;
+UPDATE cjn1
+  SET parent = -1;
+
+ALTER TABLE cjn2
+  RENAME Code TO "name";
+ALTER TABLE cjn2
+  ADD COLUMN parent VARCHAR;
+UPDATE cjn2
+  SET parent = substring("name", 0, 2);
+
+ALTER TABLE cjn3
+  RENAME Code TO "name";
+ALTER TABLE cjn3
+  ADD COLUMN parent VARCHAR;
+UPDATE cjn3
+  SET parent = substring("name", 0, 3);
+
+SELECT * FROM cjn1
+UNION
+SELECT * FROM cjn2
+UNION
+SELECT * FROM cjn3
+UNION
+SELECT * FROM (VALUES (-1, null, null))
+```
+
+```js
+display(Inputs.table(legal_nature_data))
+```
+
+### Create a hierarchy
+
+```js echo
+const hierarchy = 
+  d3.stratify()
+    .id((d) => d.name)
+    .parentId((d) => d.parent)
+    (legal_nature_data)
+      .count();
+```
+
+```js
+display(hierarchy)
+```
+
+## Chart
+
+<div class="tip">
+Up to date chart code was moved to <code>/src/components/zoomable-sunburst.js</code> in the code repository
+</div>
+
+```js
+import { zoomableSunburst } from "./components/zoomable-sunburst.js";
+```
+
+
 ```js echo
 class Chart {
 
@@ -140,83 +206,18 @@ class Chart {
 }
 ```
 
-```js echo
-const data = FileAttachment("data/flare-2.json").json()
-```
-
-```js echo
-const chart = new Chart(data)
-display(chart.canvas)
-```
-
-# Again but from a [component](components/zoomable-sunburst.js)
-
-```js
-import {
-  zoomableSunburst
-} from "./components/zoomable-sunburst.js";
-```
-
-## Create data
-
-```sql id=legal_nature_data echo
--- update data
-ALTER TABLE cjn1
-  RENAME Code TO "name";
-ALTER TABLE cjn1
-  ADD COLUMN parent VARCHAR;
-UPDATE cjn1
-  SET parent = -1;
-
-ALTER TABLE cjn2
-  RENAME Code TO "name";
-ALTER TABLE cjn2
-  ADD COLUMN parent VARCHAR;
-UPDATE cjn2
-  SET parent = substring("name", 0, 2);
-
-ALTER TABLE cjn3
-  RENAME Code TO "name";
-ALTER TABLE cjn3
-  ADD COLUMN parent VARCHAR;
-UPDATE cjn3
-  SET parent = substring("name", 0, 3);
-
-SELECT * FROM cjn1
-UNION
-SELECT * FROM cjn2
-UNION
-SELECT * FROM cjn3
-UNION
-SELECT * FROM (VALUES (-1, null, null))
-```
-
-```js
-display([...legal_nature_data])
-```
-
-```js echo
-const hierarchy = 
-  d3.stratify()
-    .id((d) => d.name)
-    .parentId((d) => d.parent)
-    (legal_nature_data)
-      .count();
-```
-```js
-display(hierarchy)
-```
 
 ## Display chart
 
 ```js echo
 const zoomburst = zoomableSunburst(
   hierarchy,
-  500,
-  // (d) => `(${d.id}) ${d.value}`,
-  (d) => d.data["Libellé"] ? d.data["Libellé"] : d.id,
-  (d) => d.data["Libellé"] ? d.data["Libellé"] : d.id,
+  {
+    valueMap: (d) => d.data["Libellé"],
+  }
 );
+```
 
+```js
 display(zoomburst)
 ```

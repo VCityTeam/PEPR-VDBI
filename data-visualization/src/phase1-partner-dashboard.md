@@ -16,6 +16,9 @@ import {
 import {
   cropText
 } from "./components/utilities.js";
+import {
+  zoomableSunburst
+} from "./components/zoomable-sunburst.js";
 ```
 
 ```js
@@ -61,6 +64,14 @@ const filter_single_source = view(
   Inputs.toggle({label: "Filter results from only 1 source", value: false})
 );
 ```
+<div class="card">
+  <h2>Legal nature distribution</h2>
+  ${
+    resize((width) => 
+      zoomableSunburst()
+    )
+  }
+</div>
 
 <div class="grid grid-cols-3">
   <div class="card grid-rowspan-2 grid-colspan-2">
@@ -91,34 +102,7 @@ const filter_single_source = view(
     }
 
   </div>
-  <!-- <div class="card grid-rowspan-2 grid-colspan-2">
-    <h1>Partner legal natures</h1>
-    ${
-      resize((width) => 
-        projectionMap(
-          partners_by_city,
-          {
-            width: width,
-            height: width,
-            entity_label: "Departement",
-            borderList: [
-              regions,
-              departements,
-            ],
-            borderList: [
-              regions,
-              departements,
-            ],
-            borderListStrokeOpacity: [
-              1,
-              0.3,
-            ],
-          }
-        )
-      )
-    }
 
-  </div> -->
   <div class="card">
     <h2>Partner by legal nature level 1</h2>
     ${
