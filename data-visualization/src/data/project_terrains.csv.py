@@ -8,7 +8,7 @@ from utils import initDefaultLogger
 
 def main():
 
-    initDefaultLogger(".log")
+    initDefaultLogger("terrains.log")
 
     PATH = "./src/data/private/partenaires_aap2023.csv"
     partner_data = [["project", "terrain", "latitude", "longitude"]]
