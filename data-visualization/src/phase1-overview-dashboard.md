@@ -47,9 +47,11 @@ import {
 } from "./components/color.js";
 ```
 
-<!-- ```js
-const general_partners = await DuckDBClient.of({general_partners: FileAttachment("data/general.csv").csv()});
-``` -->
+
+
+
+
+<!-- debugging info -->
 
 ```js
 const debug = true;
@@ -70,19 +72,29 @@ if (debug) {
   display([...await sql`select * from terrains`]);
   display("terrain_data");
   display([...terrain_data]);
+  display("ile_de_france_terrain_data");
+  display(ile_de_france_terrain_data);
 }
+```
 
+```js
 // which terrain results are outside mainland france bbox?
-const inMainlandFrance = (longitude, latitude) =>
-  -5.273438 < longitude && longitude < 8.833008 &&
-  42.228517 < latitude && latitude < 51.261915;
+const mainland_france_bbox = {
+  'min_x': -5.273438,
+  'max_x': 8.833008,
+  'min_y': 42.228517,
+  'max_y': 51.261915
+};
 
 [...terrain_data].filter(
-  (d) => !inMainlandFrance(d.longitude, d.latitude)
+  (d) => !inBBox(d.longitude, d.latitude, mainland_france_bbox)
 ).forEach(
   (d) => console.warn("terrain outside of france?", d.toJSON())
 );
 ```
+
+
+<!-- Initial data integration -->
 
 ```sql id=terrain_data
 -- clean and group terrain data
@@ -559,9 +571,55 @@ const project_force_graph = (width) => forceGraph(
 );
 ```
 
+<!-- Project terrain map -->
+
 ```js
-const terrain_anchor_mappings = new Map([
-  ['Saclay Cachan', 'right'],
+// point in bbox?
+const inBBox = (
+  longitude,
+  latitude,
+  {
+    min_x = -180,
+    max_x = 180,
+    min_y = -180,
+    max_y = 180
+  }) =>
+  min_x < longitude && longitude < max_x &&
+  min_y < latitude && latitude < max_y
+```
+
+```js
+
+const ile_de_france_bbox = {
+  'min_x': 1.4425891164457563,
+  'max_x': 3.559891742088918,
+  'min_y': 48.120414136323795,
+  'max_y': 49.24342474094858
+};
+
+const filtered_terrain_data = [...terrain_data].filter(
+  (d) => 
+    d.terrain &&
+    d.longitude &&
+    d.latitude &&
+    inBBox(d.longitude, d.latitude, mainland_france_bbox)
+).map((d) => { // TODO: just add idf terrain, then update the project data
+  const datum = {...d};
+  if (inBBox(d.longitude, d.latitude, ile_de_france_bbox)) {
+    datum.terrain = 'Île-de-France';
+    datum.longitude = ((ile_de_france_bbox.max_x - ile_de_france_bbox.min_x) / 2)
+      + ile_de_france_bbox.min_x;
+    datum.latitude = ((ile_de_france_bbox.max_y - ile_de_france_bbox.min_y) / 2)
+      + ile_de_france_bbox.min_y;
+  }
+  return datum;
+});
+
+const ile_de_france_terrain_data = [...terrain_data].filter(
+  (d) => inBBox(d.longitude, d.latitude, ile_de_france_bbox));
+
+const terrain_anchor_map = new Map([
+  ['Saclay Cachan', 'top-right'],
   ['Lyon', 'top-right'],
   ['Plauzat', 'top-right'],
   ['Marseille', 'top-left'],
@@ -570,20 +628,12 @@ const terrain_anchor_mappings = new Map([
   ['Villeurbanne', 'bottom-left'],
 ]);
 
-const filtered_terrain_data = [...terrain_data].filter(
-  (d) => 
-    d.terrain &&
-    d.longitude &&
-    d.latitude &&
-    inMainlandFrance(d.longitude, d.latitude)
-);
-
-const terrain_data_tips = filtered_terrain_data.map((d) => {
+const terrain_tips = filtered_terrain_data.map((d) => {
 
   let tip_anchor = 'bottom';
 
-  if (terrain_anchor_mappings.has(d.terrain)) {
-    tip_anchor = terrain_anchor_mappings.get(d.terrain);
+  if (terrain_anchor_map.has(d.terrain)) {
+    tip_anchor = terrain_anchor_map.get(d.terrain);
   }
 
   return Plot.tip(
@@ -601,7 +651,14 @@ const terrain_data_tips = filtered_terrain_data.map((d) => {
   );
 });
 
-const terrain_data_tip_dots = filtered_terrain_data.flatMap((d) => {
+const terrain_tip_dots_float_left = [
+  'Lyon',
+  'Thiers',
+  'Plauzat',
+  'Saclay Cachan',
+];
+
+const terrain_tip_dots = filtered_terrain_data.flatMap((d) => {
 
   const indexed_projects = [];
   const projects = d.projects.toJSON();
@@ -610,7 +667,7 @@ const terrain_data_tip_dots = filtered_terrain_data.flatMap((d) => {
     const data = {...d};
     data.projects = projects[index];
     data.project_index = index;
-    data.x = ['Lyon', 'Thiers', 'Plauzat'].includes(data.terrain) ?
+    data.x = terrain_tip_dots_float_left.includes(data.terrain) ?
       data.longitude - 0.2 - (index * 0.2) :
       data.longitude + 0.2 + (index * 0.2);
     data.y = data.latitude;
@@ -621,7 +678,7 @@ const terrain_data_tip_dots = filtered_terrain_data.flatMap((d) => {
 }).filter((d) => !!d);
 
 
-const terrain_data_legend = [...project_colors.entries()];
+const terrain_legend = [...project_colors.entries()];
 
 const mapToFranceLongitude = (index, subdivisions) =>
   d3.scaleLinear(
@@ -629,20 +686,20 @@ const mapToFranceLongitude = (index, subdivisions) =>
     [-4, 9.5]
   )(index);
 
-for (let index = 0; index < terrain_data_legend.length; index++) {
-  terrain_data_legend[index].push(
-    mapToFranceLongitude(index, terrain_data_legend.length)
+for (let index = 0; index < terrain_legend.length; index++) {
+  terrain_legend[index].push(
+    mapToFranceLongitude(index, terrain_legend.length)
   );
-  terrain_data_legend[index].push(52);
+  terrain_legend[index].push(52);
 }
 ```
 
 ```js
 if (debug) {
-  display("terrain_data_tip_dots")
-  display(terrain_data_tip_dots)
-  display("terrain_data_legend")
-  display(terrain_data_legend)
+  display("terrain_tip_dots")
+  display(terrain_tip_dots)
+  display("terrain_legend")
+  display(terrain_legend)
 }
 ```
 
@@ -695,7 +752,7 @@ if (debug) {
 </div>
 <div class="grid grid-cols-2">
   <div class="card">
-    <div>${
+    ${
       resize((width) =>
         Plot.plot({
           title: "Project locations",
@@ -760,33 +817,15 @@ if (debug) {
               }
             ),
             // legend marks //
-            Plot.dot(
-              terrain_data_legend,
-              {
-                x: (d) => d[2],
-                y: (d) => d[3],
-                r: 5,
-                fill: (d) => d[1],
-              }
-            ),
-            Plot.text(
-              terrain_data_legend,
-              {
-                x: (d) => d[2],
-                y: (d) => d[3],
-                dy: -12,
-                text: (d) => d[0],
-              }
-            ),
             Plot.link(
-              terrain_data_tip_dots,
+              terrain_tip_dots,
               {
                 x1: (tip_datum) =>
-                  terrain_data_legend.find(
+                  terrain_legend.find(
                     (legend_datum) => legend_datum[0] === tip_datum.projects
                   )[2],
                 y1: (tip_datum) =>
-                  terrain_data_legend.find(
+                  terrain_legend.find(
                     (legend_datum) => legend_datum[0] === tip_datum.projects
                   )[3],
                 x2: "longitude",
@@ -796,21 +835,35 @@ if (debug) {
                 curve: "bump-y",
               }
             ),
+            Plot.dot(
+              terrain_legend,
+              {
+                x: (d) => d[2],
+                y: (d) => d[3],
+                r: 5,
+                fill: (d) => d[1],
+              }
+            ),
+            Plot.text(
+              terrain_legend,
+              {
+                x: (d) => d[2],
+                y: (d) => d[3],
+                dy: -12,
+                text: (d) => d[0],
+              }
+            ),
             // tip marks //
-            terrain_data_tips,
+            terrain_tips,
             Plot.sphere(),
           ],
         }),
       )
-    }</div>
+    }
+    
   </div>
   <div class="card">
-    <h2>Project Knowledge Graph</h2>
-    <div style="padding-bottom: 5px;">${project_triples_predicate_select_input}</div>
-    <div style="overflow: auto;">${resize((width) => project_force_graph(width))}</div>
-  </div>
-  <div class="card">
-    <div>${
+    ${
       resize((width) =>
         Plot.plot({
           title: "Project locations",
@@ -876,7 +929,7 @@ if (debug) {
             ),
             // legend marks //
             Plot.dot(
-              terrain_data_legend,
+              terrain_legend,
               {
                 x: (d) => d[2],
                 y: (d) => d[3],
@@ -885,7 +938,7 @@ if (debug) {
               }
             ),
             Plot.text(
-              terrain_data_legend,
+              terrain_legend,
               {
                 x: (d) => d[2],
                 y: (d) => d[3],
@@ -894,9 +947,9 @@ if (debug) {
               }
             ),
             // tip marks //
-            terrain_data_tips,
+            terrain_tips,
             Plot.dot(
-              terrain_data_tip_dots,
+              terrain_tip_dots,
               {
                 x: "x",
                 y: "y",
@@ -908,7 +961,13 @@ if (debug) {
           ],
         }),
       )
-    }</div>
+    }
+
+  </div>
+  <div class="card">
+    <h2>Project Knowledge Graph</h2>
+    <div style="padding-bottom: 5px;">${project_triples_predicate_select_input}</div>
+    <div style="overflow: auto;">${resize((width) => project_force_graph(width))}</div>
   </div>
 </div>
 <div class="grid">
