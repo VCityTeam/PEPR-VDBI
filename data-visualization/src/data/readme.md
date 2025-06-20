@@ -27,13 +27,16 @@ Some dataloaders require your terminal be in the `../` directory
 > CLIENT_SECRET="MY_APP_SECRET"
 > ```
 
-| Filename                                                                | Provided           | Description                                                                                                             |
-| ----------------------------------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| fetch-orcid-access-token.json.sh                                        | :asterisk:         | Data loader for creating ORCiD access token (used to retrive ORCiD data)                                                |
-| fr-esr-structures-recherche-publiques-actives.csv.js                    | :white_check_mark: | Site, university, and/or laboratory information from data.enseignementsup-recherche.gouv.fr                             |
-| fr-esr-structures-recherche-publiques-actives.geocoded.csv              | :white_check_mark: | Site, university, and/or laboratory information from data.enseignementsup-recherche.gouv.fr (not actually a dataloader) |
-| fr-esr-structures-recherche-publiques-actives.json.js                   | :white_check_mark: | Site, university, and/or laboratory information from data.enseignementsup-recherche.gouv.fr                             |
-| cj_septembre_2022_nX                                                    | :white_check_mark: | INSEE catégories juridiques by level (from https://www.insee.fr/fr/information/2028129)                                 |
-| orcids.csv.py                                                           | :asterisk:         | Fetch researcher ORCiD information by first and last name                                                               |
-| orcids.xlsx.py                                                          | :asterisk:         | Fetch researcher ORCiD information by first and last name                                                               |
-| world.json.js                                                           | :white_check_mark: | Fetch country geometry GeoJSON for projection to globe view                                                             |
+| Filename                                                   | Provided           | Description                                                              | Source                                      |
+| ---------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------ | ------------------------------------------- |
+| fetch-orcid-access-token.json.sh                           | :asterisk:         | Data loader for creating ORCiD access token (used to retrive ORCiD data) |                                             |
+| fr-esr-structures-recherche-publiques-actives.csv.js       | :white_check_mark: | Site, university, and/or laboratory information                          | data.enseignementsup-recherche.gouv.fr      |
+| fr-esr-structures-recherche-publiques-actives.geocoded.csv | :white_check_mark: | Site, university, and/or laboratory information                          | data.enseignementsup-recherche.gouv.fr      |
+| fr-esr-structures-recherche-publiques-actives.json.js      | :white_check_mark: | Site, university, and/or laboratory information                          | data.enseignementsup-recherche.gouv.fr      |
+| cj_septembre_2022_nX                                       | :white_check_mark: | INSEE catégories juridiques by level                                     | https://www.insee.fr/fr/information/2028129 |
+| orcids.csv.py                                              | :asterisk:         | Fetch researcher ORCiD information by first and last name                | https://orcid.org/                          |
+| orcids.xlsx.py                                             | :asterisk:         | Fetch researcher ORCiD information by first and last name                | https://orcid.org/                          |
+| world.json.js                                              | :white_check_mark: | Low LOD world country geometry GeoJSON                                   | https://static.observableusercontent.com/ * |
+| europe.geo.json                                            | :white_check_mark: | Medium LOD european country geometry GeoJSON                             | https://geojson-maps.kyd.au/                |
+
+\*Full URL: https://static.observableusercontent.com/files/26fc08875c617b59939afa42f6f1e1bf5e75f11dcc2e482d963b6e4128f0250d708f983050a43862ae73d016bc328d1f3f40bc0df709d5dd310f789f334c0ee8?response-content-disposition=attachment%3Bfilename*%3DUTF-8%27%27countries-110m.json
