@@ -1,5 +1,4 @@
 ---
-title: Phase 1 Overview Dashboard
 theme: [dashboard, light]
 sql:
   general_partners: ./data/partners_general.csv

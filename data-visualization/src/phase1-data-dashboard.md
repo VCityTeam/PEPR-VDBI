@@ -1,5 +1,4 @@
 ---
-title: Phase 1 Raw Data Dashboard
 theme: [dashboard, light]
 ---
 

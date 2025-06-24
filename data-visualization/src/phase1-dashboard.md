@@ -1,5 +1,4 @@
 ---
-title: Phase 1 Dashboard
 theme: [dashboard, light]
 ---
 

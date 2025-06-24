@@ -22,7 +22,7 @@ import {
 ```
 
 ```js
-const debug = false;
+const debug = true;
 
 if (debug) {
   display("annex_partners");
@@ -71,6 +71,7 @@ const filter_single_source = view(
       zoomableSunburst()
     )
   }
+
 </div>
 
 <div class="grid grid-cols-3">
@@ -84,10 +85,6 @@ const filter_single_source = view(
             width: width,
             height: width,
             entity_label: "Departement",
-            borderList: [
-              regions,
-              departements,
-            ],
             borderList: [
               regions,
               departements,
@@ -226,7 +223,8 @@ GROUP BY ALL;
 const world = FileAttachment("./data/world.json").json();
 ```
 ```js
-const regions = FileAttachment("./data/regions.json").json();
+const regions = await FileAttachment("./data/regions.json").json();
+regions.features = regions.features.filter((d) => d.properties.nom != "Corse");
 ```
 ```js
 const departements = FileAttachment("./data/departements.json").json();
