@@ -9,16 +9,8 @@ export default {
       name: 'Phase 1 Projects by discipline',
       path: 'phase1-project-dashboard',
     },
-    // {
-      //   name: 'Phase 1 Laboratories',
-      //   path: 'phase1-laboratory-dashboard', //deprecated
-      // },
-      // {
-        //   name: 'Phase 1 Institutions',
-        //   path: 'phase1-university-dashboard', //deprecated
-        // },
     {
-      name: 'Working Dashboards',
+      name: 'Under Construction',
       pages: [
         {
           name: 'Phase 1 Overview',
@@ -29,17 +21,29 @@ export default {
           path: 'phase1-partner-dashboard',
         },
         {
-          name: 'Demonstrateurs de la Ville Durable',
-          path: 'dvd-dashboard',
+          name: 'Phase 1 Maps',
+          path: 'phase1-map-dashboard',
         },
         {
           name: 'Phase 1 Financing',
           path: 'phase1-financing-dashboard',
         },
         {
-          name: 'Phase 1 Researchers',
-          path: 'phase1-researcher-dashboard',
+          name: 'Demonstrateurs de la Ville Durable',
+          path: 'dvd-dashboard',
         },
+        // {
+        //   name: 'Phase 1 Researchers',
+        //   path: 'phase1-researcher-dashboard',
+        // },
+        // {
+        //   name: 'Phase 1 Laboratories',
+        //   path: 'phase1-laboratory-dashboard',
+        // },
+        // {
+        //   name: 'Phase 1 Institutions',
+        //   path: 'phase1-university-dashboard',
+        // },
       ],
     },
     {

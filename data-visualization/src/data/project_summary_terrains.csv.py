@@ -7,35 +7,37 @@ from nominatim_utils import queryNominatim
 
 def main():
 
-    initDefaultLogger("terrains.log")
+    initDefaultLogger("terrain_scales.log")
 
-    PATH = "./src/data/private/partenaires_aap2023.csv"
-    partner_data = [["project", "terrain", "latitude", "longitude"]]
+    PATH = "./src/data/private/project_summary_terrains.csv"
+    partner_data = [
+        [
+            # "project",
+            "terrain",
+            "lat",
+            "lon",
+        ]
+    ]
 
     # get partner data
-    phase1_partner_data = []
+    terrains = set()
     with open(PATH, mode="r") as file:
         reader = csv.reader(file)
         reader.__next__()  # skip header
         for row in reader:
-            phase1_partner_data += [row]
-    # logging.debug(f"phase1_partner_data: {phase1_partner_data}")
+            terrains.add(row[1])
 
     # query Nominatim api using partner names and aggregate data
-    for row in phase1_partner_data[1:]:
-        project_name = row[0].strip()
-        if project_name == "":
-            logging.warning(f"project_name not found in row: {row}")
-            continue
+    for terrain in terrains:
+        logging.info(f"processing terrain: {terrain}")
 
         # get terrains
-        terrain = row[5].strip()
+        terrain = terrain.strip()
         if terrain == "":
-            logging.warning(f"terrain not found in row: {row}")
+            logging.warning(f"terrain not found in terrain: {terrain}")
             continue
 
         terrain_geodata = queryNominatim(terrain)
-        logging.debug(f"terrain_geodata from nominatim: {terrain_geodata}")
 
         if terrain_geodata is None:
             logging.warning(f"data not found for terrain: {terrain}")
@@ -43,7 +45,7 @@ def main():
 
         partner_data += [
             [
-                project_name,
+                # project,
                 terrain,
                 # terrain_geodata[0]["name"] if terrain_geodata else terrain,
                 terrain_geodata[0]["lat"] if terrain_geodata else None,

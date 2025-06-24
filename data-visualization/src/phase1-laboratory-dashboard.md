@@ -1,5 +1,4 @@
 ---
-title: Phase 1 Laboratory Dashboard
 theme: dashboard
 ---
 

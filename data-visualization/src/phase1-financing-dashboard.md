@@ -1,5 +1,4 @@
 ---
-title: Phase 1 Financing Dashboard
 theme: [dashboard, light]
 ---
 
