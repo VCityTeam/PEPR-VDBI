@@ -62,10 +62,6 @@ export default {
           path: 'test-sql-duckdb',
         },
         {
-          name: 'Import dataESR+Geospatial',
-          path: 'test-esr-import',
-        },
-        {
           name: 'Phase 1 Overview',
           path: 'phase1-dashboard',
         },
@@ -101,6 +97,10 @@ export default {
         {
           name: 'Arc Diagram, Property Graph',
           path: 'test-arc',
+        },
+        {
+          name: 'Import dataESR+Geospatial',
+          path: 'test-esr-import',
         },
       ],
     },

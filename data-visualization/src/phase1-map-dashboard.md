@@ -3,9 +3,9 @@ theme: [dashboard, light]
 sql:
   general_partners: ./data/partners_general.csv
   aap_partners: ./data/private/partenaires_aap2023.csv
-  terrains: ./data/project_summary_terrains.csv
+  terrains: ./data/project_summary_terrain_locations.csv
   projects: ./data/private/project_summary.csv
-  project_terrains: ./data/private/project_summary_terrains.csv
+  project_terrain_map: ./data/private/project_summary_terrains.csv
 ---
 
 # Phase 1 Overview
@@ -62,28 +62,31 @@ import {
 
 ```sql id=terrain_data
 -- clean data
-
--- update terrains
--- set project = upper(project);
--- update terrains
--- set terrain = replace(terrain, 'Commune de ', '')
--- where starts_with(terrain, 'Commune de ');
--- update terrains
--- set terrain = replace(terrain, 'Ville de ', '')
--- where starts_with(terrain, 'Ville de ');
--- update terrains
--- set terrain = replace(terrain, 'Métropole d''', '')
--- where starts_with(terrain, 'Métropole d''');
--- update terrains
--- set terrain = replace(terrain, 'Métropole européenne de ', '')
--- where starts_with(terrain, 'Métropole européenne de ');
+update project_terrain_map
+set terrain = replace(terrain, 'Commune de ', '');
+update project_terrain_map
+set terrain = replace(terrain, 'Ville de ', '');
+update project_terrain_map
+set terrain = replace(terrain, 'Métropole d''', '');
+update project_terrain_map
+set terrain = replace(terrain, 'Métropole de ', '');
+update project_terrain_map
+set terrain = replace(terrain, 'Métropole européenne de ', '');
+update project_terrain_map
+set terrain = replace(terrain, 'Métropole Européenne de ', '');
+update project_terrain_map
+set terrain = replace(terrain, 'Aix-Marseille-Provence', 'Marseille');
+update terrains
+set terrain = replace(terrain, 'Métropole Européenne de ', '');
 
 select
-  terrain,
-  -- list(project) as projects,
-  first(lat) as latitude,
-  first(lon) as longitude,
+  terrains.terrain,
+  list(project_terrain_map.acronyme) as projects,
+  first(terrains.lat) as latitude,
+  first(terrains.lon) as longitude,
 from terrains
+join project_terrain_map
+on project_terrain_map.terrain = terrains.terrain
 group by all
 ```
 
@@ -93,11 +96,35 @@ const workbook1 = FileAttachment(
 ).xlsx();
 ```
 ```js
-const regions = await FileAttachment("./data/regions.json").json();
-regions.features = regions.features.filter((d) => d.properties.nom != "Corse");
+const france_regions = await FileAttachment("./data/regions.json").json();
+const mainland_france_regions = {
+  type: "FeatureCollection",
+  features: france_regions.features.filter(
+    (d) => d.properties.code > 10 && d.properties.nom != "Corse"
+  )
+};
+const ile_de_france_region = {
+  type: "Feature",
+  feature: mainland_france_regions.features.find((d) => d.properties.code == 11)
+};
 ```
 ```js
-// const departements = FileAttachment("./data/departements.json").json();
+const departements = await FileAttachment("./data/departements.json").json();
+const ile_de_france_departements = {
+  type: "FeatureCollection",
+  features: departements.features.filter(
+    (d) => d3.geoContains(ile_de_france_region.feature.geometry, d3.geoCentroid(d.geometry))
+  )
+}
+```
+```js
+const europe = await FileAttachment("./data/europe.geo.json").json();
+// const ile_de_france_departements = {
+//   type: "FeatureCollection",
+//   features: departements.features.filter(
+//     (d) => d3.geoContains(ile_de_france_region.feature.geometry, d3.geoCentroid(d.geometry))
+//   )
+// }
 ```
 
 ```js
@@ -161,7 +188,7 @@ const ile_de_france_bbox = {
   'max_y': 49.24342474094858
 };
 
-const filtered_terrain_data = [...terrain_data].filter(
+const france_terrain_data = [...terrain_data].filter(
   (d) => 
     // filter missing data
     d.terrain &&
@@ -174,17 +201,35 @@ const filtered_terrain_data = [...terrain_data].filter(
 );
 
 const ile_de_france_terrain_data = [...terrain_data].filter(
-  (d) => inBBox(d.longitude, d.latitude, ile_de_france_bbox));
+  (d) => d.terrain != 'Île-de-France' &&
+    inBBox(d.longitude, d.latitude, ile_de_france_bbox)
+);
 
-filtered_terrain_data.push({
-  terrain: "Île-de-France",
-  projects: [...new Set(ile_de_france_terrain_data.flatMap((d) => [...d.projects]))],
+france_terrain_data.push({
+  terrain: 'Île-de-France',
+  projects: [
+    ...new Set([...terrain_data]
+      .filter((d) => d.terrain == 'Île-de-France')
+      .flatMap((d) => [...d.projects])),
+    ...new Set(ile_de_france_terrain_data.flatMap((d) => [...d.projects]))
+  ],
   latitude: d3.mean([ile_de_france_bbox.min_y, ile_de_france_bbox.max_y]),
   longitude: d3.mean([ile_de_france_bbox.min_x, ile_de_france_bbox.max_x]),
 });
 
+const international_terrain_data = [...terrain_data].filter(
+  (d) => 
+    // filter missing data
+    d.terrain &&
+    d.longitude &&
+    d.latitude &&
+    // keep projects outside of france
+    !inBBox(d.longitude, d.latitude, mainland_france_bbox)
+);
+```
 
-const terrain_legend = [...project_colors.entries()];
+```js
+const france_terrain_legend = [...project_colors.entries()];
 
 const mapToFranceLongitude = (index, subdivisions) =>
   d3.scaleLinear(
@@ -192,22 +237,77 @@ const mapToFranceLongitude = (index, subdivisions) =>
     [-4, 9.5]
   )(index);
 
-for (let index = 0; index < terrain_legend.length; index++) {
-  terrain_legend[index].push(
-    mapToFranceLongitude(index, terrain_legend.length)
+for (let index = 0; index < france_terrain_legend.length; index++) {
+  // push longitude
+  france_terrain_legend[index].push(
+    mapToFranceLongitude(index, france_terrain_legend.length)
   );
-  terrain_legend[index].push(52);
+    // push latitude
+  france_terrain_legend[index].push(52);
+}
+
+const idf_terrains = new Set(
+  ile_de_france_terrain_data.flatMap((row) => [...row.projects])
+);
+const idf_terrain_legend = [...project_colors.entries()
+  .filter((d) => idf_terrains.has(d[0]))
+];
+
+const mapToIdfLongitude = (index, subdivisions) =>
+  d3.scaleLinear(
+    [0, subdivisions],
+    [2.15, 2.7] 
+  )(index);
+
+for (let index = 0; index < idf_terrain_legend.length; index++) {
+  // push longitude
+  idf_terrain_legend[index].push(
+    mapToIdfLongitude(index, idf_terrain_legend.length)
+  );
+    // push latitude
+  idf_terrain_legend[index].push(49);
+}
+
+const international_terrains = new Set(
+  international_terrain_data.flatMap((row) => [...row.projects])
+);
+const italy_terrain_legend = [...project_colors.entries()
+  .filter((d) => international_terrains.has(d[0]))
+];
+
+const mapToItalyLongitude = (index, subdivisions) =>
+  d3.scaleLinear(
+    [0, subdivisions],
+    [11, 16]
+  )(index);
+
+for (let index = 0; index < italy_terrain_legend.length; index++) {
+  // push longitude
+  italy_terrain_legend[index].push(
+    mapToItalyLongitude(index, italy_terrain_legend.length)
+  );
+    // push latitude
+  italy_terrain_legend[index].push(46);
 }
 
 
 const terrain_anchor_map = new Map([
-  ['Saclay Cachan', 'top-right'],
-  ['Lyon', 'top-right'],
+  // ['Saclay Cachan', 'top-right'],
+  ['Lyon', 'top'],
   ['Plauzat', 'top-right'],
-  ['Marseille', 'top-left'],
-  ['Paris', 'top-left'],
-  ['Aix Marseille Provence', 'bottom-left'],
-  ['Villeurbanne', 'bottom-left'],
+  ['Marseille', 'bottom-left'],
+  // ['Aix-Marseille-Provence', 'bottom-left'],
+  // ['Villeurbanne', 'bottom-left'],
+  ['La Trambouze', 'bottom-left'],
+  ['Thiers', 'bottom-right'],
+  // ['Saint Denis', 'bottom-right'],
+  // ['Seine Saint Denis', 'bottom-left'],
+  // ['Paris', 'bottom-right'],
+  ['Ivry-sur-Seine', 'bottom-left'],
+  // ['Cachan', 'top'],
+  // ['Ris-Orangis', 'top'],
+  // ['Saclay', 'bottom'],
+  ['Acquasanta', 'top'],
 ]);
 
 const terrain_tips = (data) => data.map((d) => {
@@ -240,7 +340,7 @@ const terrain_tip_dots_float_left = [
   // 'Saclay Cachan',
 ];
 
-const terrain_tip_dots = (data) => data.flatMap((d) => {
+const terrain_tip_dots = (data, legend, delta) => data.flatMap((d) => {
 
   const indexed_projects = [];
 
@@ -251,14 +351,14 @@ const terrain_tip_dots = (data) => data.flatMap((d) => {
     data.projects = projects[index];
     data.project_index = index;
     data.x = terrain_tip_dots_float_left.includes(data.terrain) ?
-      data.longitude - 0.2 - (index * 0.2) :
-      data.longitude + 0.2 + (index * 0.2);
+      data.longitude - delta - (index * delta) :
+      data.longitude + delta + (index * delta);
     data.y = data.latitude;
-    data.label_x = terrain_legend.find(
+    data.label_x = legend.find(
         (legend_datum) => legend_datum[0] === data.projects
       );
     data.label_x = data.label_x ? data.label_x[2] : null;
-    data.label_y = terrain_legend.find(
+    data.label_y = legend.find(
         (legend_datum) => legend_datum[0] === data.projects
       );
     data.label_y = data.label_y ? data.label_y[3] : null;
@@ -279,222 +379,561 @@ const defaultProjectionFrance = (width, marks) =>
       domain: d3.geoCircle().center([2, 47]).radius(5)(),
     },
     marks: [
-      Plot.geo(regions, {
+      Plot.geo(mainland_france_regions, {
         stroke: 'white',
         strokeOpacity: 0.5,
         fill: pepr_colors.blue,
         fillOpacity: 0.3,
       }),
       ...marks,
-      Plot.sphere(),
     ],
   }
 );
 
-const lineProjection = (width, data) =>
-  defaultProjectionFrance(
-    width,
-    [
-      Plot.link(
-        terrain_tip_dots(data),
-        {
-          x1: "label_x",
-          y1: "label_y",
-          x2: "longitude",
-          y2: "latitude",
-          stroke: (d) => project_colors.get(d.projects),
-          markerEnd: "arrow",
-          curve: "bump-y",
-        }
-      ),
-      Plot.dot(
-        data,
-        {
-          x: "longitude",
-          y: "latitude",
-          r: 3,
-          fill: 'black',
-          //stroke: pepr_colors.orange,
-          //fillOpacity: 0.5,
-          channels: {
-            entity: {
-              value: "terrain",
-              label: 'City',
-            },
-            count: {
-              value: (d) => 1,
-              label: 'Occurences',
-            },
-            longitude: {
-              value: "longitude",
-              label: 'Lon',
-            },
-            latitude: {
-              value: "latitude",
-              label: 'Lat',
-            },
-            projects: {
-              value: (d) => [...d.projects],
-              label: 'Projects',
-            },
-          },
-          tip: debug ? true : {
-            format: {
-              longitude: false,
-              latitude: false,
-              count: false,
-              x: false,
-              y: false,
-              r: false,
-            }
-          },
-        }
-      ),
-      // legend marks //
-      Plot.dot(
-        terrain_legend,
-        {
-          x: (d) => d[2],
-          y: (d) => d[3],
-          r: 5,
-          fill: (d) => d[1],
-        }
-      ),
-      Plot.text(
-        terrain_legend,
-        {
-          x: (d) => d[2],
-          y: (d) => d[3],
-          dy: -12,
-          text: (d) => d[0],
-        }
-      ),
-      // tip marks //
-      ...terrain_tips(data),
-    ]
-  );
-
-
-const dotProjection = (width, data) =>
-  defaultProjectionFrance(
-    width,
-    [
-      // Plot.dot(walmarts, Plot.hexbin({r: "count", fill: "min"}, {x: "longitude", y: "latitude", fill: "date"}))
-      Plot.dot(
-        data,
-        {
-          x: "longitude",
-          y: "latitude",
-          r: 3,
-          fill: pepr_colors.blue,
-          fillOpacity: 0.5,
-          channels: {
-            entity: {
-              value: "terrain",
-              label: 'City',
-            },
-            count: {
-              value: (d) => 1,
-              label: 'Occurences',
-            },
-            longitude: {
-              value: "longitude",
-              label: 'Lon',
-            },
-            latitude: {
-              value: "latitude",
-              label: 'Lat',
-            },
-            projects: {
-              value: (d) => [...d.projects],
-              label: 'Projects',
-            },
-          },
-          tip: debug ? true : {
-            format: {
-              longitude: false,
-              latitude: false,
-              count: false,
-              x: false,
-              y: false,
-              r: false,
-            }
-          },
-        }
-      ),
-      // legend marks //
-      Plot.dot(
-        terrain_legend,
-        {
-          x: (d) => d[2],
-          y: (d) => d[3],
-          r: 5,
-          fill: (d) => d[1],
-        }
-      ),
-      Plot.text(
-        terrain_legend,
-        {
-          x: (d) => d[2],
-          y: (d) => d[3],
-          dy: -12,
-          text: (d) => d[0],
-        }
-      ),
-      // tip marks //
-      ...terrain_tips(data),
-      Plot.dot(
-        terrain_tip_dots(data),
-        {
-          x: "x",
-          y: "y",
-          r: 4,
-          fill: (d) => project_colors.get(d.projects),
-        }
-      ),
-      Plot.sphere(),
+const defaultProjectionIleDeFrance = (width, marks) =>
+  Plot.plot({
+    width: width,
+    height: width,
+    projection: {
+      type: 'azimuthal-equidistant',
+      domain: d3.geoCircle().center([2.35, 48.83]).radius(0.18)(),
+    },
+    marks: [
+      Plot.geo(ile_de_france_departements, {
+        stroke: 'white',
+        strokeOpacity: 0.5,
+        fill: pepr_colors.blue,
+        fillOpacity: 0.3,
+      }),
+      ...marks,
     ],
-  );
+  }
+);
+
+const defaultProjectionItaly = (width, marks) =>
+  Plot.plot({
+    width: width,
+    height: width,
+    projection: {
+      type: 'azimuthal-equidistant',
+      domain: d3.geoCircle().center([11, 44]).radius(2.5)(),
+    },
+    marks: [
+      Plot.geo(europe, {
+        stroke: 'white',
+        strokeOpacity: 0.5,
+        fill: pepr_colors.blue,
+        fillOpacity: 0.3,
+      }),
+      ...marks,
+    ],
+  }
+);
 ```
 
-  <!-- <div class="card grid-rowspan-2 grid-colspan-2">
-    <h1>Partner sites by city</h1>
+<div class="grid grid-cols-3">
+  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 0;">
+    ${resize((width) => defaultProjectionFrance(
+      width,
+      [
+        Plot.link(
+          terrain_tip_dots(france_terrain_data, france_terrain_legend, 0.2),
+          {
+            x1: "label_x",
+            y1: "label_y",
+            x2: "longitude",
+            y2: "latitude",
+            stroke: (d) => project_colors.get(d.projects),
+            markerEnd: "arrow",
+            curve: "bump-y",
+          }
+        ),
+        Plot.dot(
+          france_terrain_data,
+          {
+            x: "longitude",
+            y: "latitude",
+            r: 3,
+            fill: 'black',
+            //stroke: pepr_colors.orange,
+            //fillOpacity: 0.5,
+            channels: {
+              entity: {
+                value: "terrain",
+                label: 'City',
+              },
+              count: {
+                value: (d) => 1,
+                label: 'Occurences',
+              },
+              longitude: {
+                value: "longitude",
+                label: 'Lon',
+              },
+              latitude: {
+                value: "latitude",
+                label: 'Lat',
+              },
+              projects: {
+                value: (d) => [...d.projects],
+                label: 'Projects',
+              },
+            },
+            tip: debug ? true : {
+              format: {
+                longitude: false,
+                latitude: false,
+                count: false,
+                x: false,
+                y: false,
+                r: false,
+              }
+            },
+          }
+        ),
+        // legend marks //
+        Plot.dot(
+          france_terrain_legend,
+          {
+            x: (d) => d[2],
+            y: (d) => d[3],
+            r: 5,
+            fill: (d) => d[1],
+          }
+        ),
+        Plot.text(
+          france_terrain_legend,
+          {
+            x: (d) => d[2],
+            y: (d) => d[3],
+            dy: -12,
+            text: (d) => d[0],
+          }
+        ),
+        // tip marks //
+        ...terrain_tips(france_terrain_data),
+      ],
+    ))}
+
+  </div>
+  <div class="card" style="padding: 0; overflow: hidden;">
+    ${resize((width) => defaultProjectionIleDeFrance(
+      width,
+      [
+        Plot.link(
+          terrain_tip_dots(ile_de_france_terrain_data, idf_terrain_legend, 0.01),
+          {
+            x1: "label_x",
+            y1: "label_y",
+            x2: "longitude",
+            y2: "latitude",
+            stroke: (d) => project_colors.get(d.projects),
+            markerEnd: "arrow",
+            curve: "bump-y",
+          }
+        ),
+        Plot.dot(
+          ile_de_france_terrain_data,
+          {
+            x: "longitude",
+            y: "latitude",
+            r: 3,
+            fill: 'black',
+            //stroke: pepr_colors.orange,
+            //fillOpacity: 0.5,
+            channels: {
+              entity: {
+                value: "terrain",
+                label: 'City',
+              },
+              count: {
+                value: (d) => 1,
+                label: 'Occurences',
+              },
+              longitude: {
+                value: "longitude",
+                label: 'Lon',
+              },
+              latitude: {
+                value: "latitude",
+                label: 'Lat',
+              },
+              projects: {
+                value: (d) => [...d.projects],
+                label: 'Projects',
+              },
+            },
+            tip: debug ? true : {
+              format: {
+                longitude: false,
+                latitude: false,
+                count: false,
+                x: false,
+                y: false,
+                r: false,
+              }
+            },
+          }
+        ),
+        // legend marks //
+        Plot.dot(
+          idf_terrain_legend,
+          {
+            x: (d) => d[2],
+            y: (d) => d[3],
+            r: 5,
+            fill: (d) => d[1],
+          }
+        ),
+        Plot.text(
+          idf_terrain_legend,
+          {
+            x: (d) => d[2],
+            y: (d) => d[3],
+            dy: -12,
+            text: (d) => d[0],
+          }
+        ),
+        // tip marks //
+        ...terrain_tips(ile_de_france_terrain_data),
+      ]
+    ))}
+
+  </div>
+  <div class="card" style="padding: 0;">
+    ${resize((width) => defaultProjectionItaly(
+      width,
+      [
+        Plot.link(
+          terrain_tip_dots(international_terrain_data, italy_terrain_legend, 0.01),
+          {
+            x1: "label_x",
+            y1: "label_y",
+            x2: "longitude",
+            y2: "latitude",
+            stroke: (d) => project_colors.get(d.projects),
+            markerEnd: "arrow",
+            curve: "bump-y",
+          }
+        ),
+        Plot.dot(
+          international_terrain_data,
+          {
+            x: "longitude",
+            y: "latitude",
+            r: 3,
+            fill: 'black',
+            //stroke: pepr_colors.orange,
+            //fillOpacity: 0.5,
+            channels: {
+              entity: {
+                value: "terrain",
+                label: 'City',
+              },
+              count: {
+                value: (d) => 1,
+                label: 'Occurences',
+              },
+              longitude: {
+                value: "longitude",
+                label: 'Lon',
+              },
+              latitude: {
+                value: "latitude",
+                label: 'Lat',
+              },
+              projects: {
+                value: (d) => [...d.projects],
+                label: 'Projects',
+              },
+            },
+            tip: debug ? true : {
+              format: {
+                longitude: false,
+                latitude: false,
+                count: false,
+                x: false,
+                y: false,
+                r: false,
+              }
+            },
+          }
+        ),
+        // legend marks //
+        Plot.dot(
+          italy_terrain_legend,
+          {
+            x: (d) => d[2],
+            y: (d) => d[3],
+            r: 5,
+            fill: (d) => d[1],
+          }
+        ),
+        Plot.text(
+          italy_terrain_legend,
+          {
+            x: (d) => d[2],
+            y: (d) => d[3],
+            dy: -12,
+            text: (d) => d[0],
+          }
+        ),
+        // tip marks //
+        ...terrain_tips(international_terrain_data),
+      ]
+    ))}
+
+  </div>
+  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 0;">
     ${
-      resize((width) =>
-        Plot.plot({
-          projection: "albers",
-          r: {range: [0, 16]},
-          color: {scheme: "spectral", label: "First year opened", legend: true},
-          marks: [
-            Plot.geo(statemesh, {strokeOpacity: 0.5}),
-            Plot.geo(nation),
-            Plot.dot(walmarts, Plot.hexbin({r: "count", fill: "min"}, {x: "longitude", y: "latitude", fill: "date"}))  // TODO: add this to projectionMap
-          ]
-        })
+      resize((width) => defaultProjectionFrance(
+        width,
+        [
+          Plot.dot(
+            france_terrain_data,
+            {
+              x: "longitude",
+              y: "latitude",
+              r: 3,
+              fill: pepr_colors.blue,
+              fillOpacity: 0.5,
+              channels: {
+                entity: {
+                  value: "terrain",
+                  label: 'City',
+                },
+                count: {
+                  value: (d) => 1,
+                  label: 'Occurences',
+                },
+                longitude: {
+                  value: "longitude",
+                  label: 'Lon',
+                },
+                latitude: {
+                  value: "latitude",
+                  label: 'Lat',
+                },
+                projects: {
+                  value: (d) => [...d.projects],
+                  label: 'Projects',
+                },
+              },
+              tip: debug ? true : {
+                format: {
+                  longitude: false,
+                  latitude: false,
+                  count: false,
+                  x: false,
+                  y: false,
+                  r: false,
+                }
+              },
+            }
+          ),
+          // legend marks //
+          Plot.dot(
+            france_terrain_legend,
+            {
+              x: (d) => d[2],
+              y: (d) => d[3],
+              r: 5,
+              fill: (d) => d[1],
+            }
+          ),
+          Plot.text(
+            france_terrain_legend,
+            {
+              x: (d) => d[2],
+              y: (d) => d[3],
+              dy: -12,
+              text: (d) => d[0],
+            }
+          ),
+          // tip marks //
+          ...terrain_tips(france_terrain_data),
+          Plot.dot(
+            terrain_tip_dots(france_terrain_data, france_terrain_legend, 0.2),
+            {
+              x: "x",
+              y: "y",
+              r: 4,
+              fill: (d) => project_colors.get(d.projects),
+            }
+          ),
+        ],
       )
-    }
-  </div> -->
-
-<div class="grid grid-cols-2">
-  <div class="card">
-    ${resize((width) => lineProjection(width, filtered_terrain_data))}
+    )}
 
   </div>
-  <div class="card">
-    ${resize((width) => dotProjection(width, filtered_terrain_data))}
+  <div class="card" style="padding: 0; overflow: hidden;">
+    ${
+      resize((width) => defaultProjectionIleDeFrance(
+        width,
+        [
+          Plot.dot(
+            ile_de_france_terrain_data,
+            {
+              x: "longitude",
+              y: "latitude",
+              r: 3,
+              fill: pepr_colors.blue,
+              fillOpacity: 0.5,
+              channels: {
+                entity: {
+                  value: "terrain",
+                  label: 'City',
+                },
+                count: {
+                  value: (d) => 1,
+                  label: 'Occurences',
+                },
+                longitude: {
+                  value: "longitude",
+                  label: 'Lon',
+                },
+                latitude: {
+                  value: "latitude",
+                  label: 'Lat',
+                },
+                projects: {
+                  value: (d) => [...d.projects],
+                  label: 'Projects',
+                },
+              },
+              tip: debug ? true : {
+                format: {
+                  longitude: false,
+                  latitude: false,
+                  count: false,
+                  x: false,
+                  y: false,
+                  r: false,
+                }
+              },
+            }
+          ),
+          // legend marks //
+          Plot.dot(
+            idf_terrain_legend,
+            {
+              x: (d) => d[2],
+              y: (d) => d[3],
+              r: 5,
+              fill: (d) => d[1],
+            }
+          ),
+          Plot.text(
+            idf_terrain_legend,
+            {
+              x: (d) => d[2],
+              y: (d) => d[3],
+              dy: -12,
+              text: (d) => d[0],
+            }
+          ),
+          // tip marks //
+          ...terrain_tips(ile_de_france_terrain_data),
+          Plot.dot(
+            terrain_tip_dots(ile_de_france_terrain_data, idf_terrain_legend, 0.015),
+            {
+              x: "x",
+              y: "y",
+              r: 4,
+              fill: (d) => project_colors.get(d.projects),
+            }
+          ),
+        ],
+      )
+    )}
 
   </div>
-  <div class="card">
-    ${resize((width) => lineProjection(width, summary_terrain_data))}
-
-  </div>
-  <div class="card">
-    ${resize((width) => dotProjection(width, summary_terrain_data))}
+  <div class="card" style="padding: 0;">
+    ${
+      resize((width) => defaultProjectionItaly(
+        width,
+        [
+          Plot.dot(
+            international_terrain_data,
+            {
+              x: "longitude",
+              y: "latitude",
+              r: 3,
+              fill: pepr_colors.blue,
+              fillOpacity: 0.5,
+              channels: {
+                entity: {
+                  value: "terrain",
+                  label: 'City',
+                },
+                count: {
+                  value: (d) => 1,
+                  label: 'Occurences',
+                },
+                longitude: {
+                  value: "longitude",
+                  label: 'Lon',
+                },
+                latitude: {
+                  value: "latitude",
+                  label: 'Lat',
+                },
+                projects: {
+                  value: (d) => [...d.projects],
+                  label: 'Projects',
+                },
+              },
+              tip: debug ? true : {
+                format: {
+                  longitude: false,
+                  latitude: false,
+                  count: false,
+                  x: false,
+                  y: false,
+                  r: false,
+                }
+              },
+            }
+          ),
+          // legend marks //
+          Plot.dot(
+            italy_terrain_legend,
+            {
+              x: (d) => d[2],
+              y: (d) => d[3],
+              r: 5,
+              fill: (d) => d[1],
+            }
+          ),
+          Plot.text(
+            italy_terrain_legend,
+            {
+              x: (d) => d[2],
+              y: (d) => d[3],
+              dy: -12,
+              text: (d) => d[0],
+            }
+          ),
+          // tip marks //
+          ...terrain_tips(international_terrain_data),
+          Plot.dot(
+            terrain_tip_dots(international_terrain_data, italy_terrain_legend, 0.2),
+            {
+              x: "x",
+              y: "y",
+              r: 4,
+              fill: (d) => project_colors.get(d.projects),
+            }
+          ),
+        ],
+      )
+    )}
 
   </div>
 </div>
 
 
+<!-- // Plot.dot(walmarts, Plot.hexbin({r: "count", fill: "min"}, {x: "longitude", y: "latitude", fill: "date"})) -->
 
 <!-- debugging info -->
 
@@ -513,31 +952,43 @@ if (debug) {
 ```js
 if (debug) {
   display("aap_partners");
-  display([...await sql`select * from aap_partners`]);
+  display(Inputs.table(await sql`select * from aap_partners`));
   display("terrains");
-  display([...await sql`select * from terrains`]);
+  display(Inputs.table(await sql`select * from terrains`));
   display("projects");
-  display([...await sql`select * from projects`]);
-  display("project_terrains");
-  display([...await sql`select * from project_terrains`]);
+  display(Inputs.table(await sql`select * from projects`));
+  display("project_terrain_map");
+  display(Inputs.table(await sql`select * from project_terrain_map`));
 }
 ```
 ```js
 if (debug) {
   display("terrain_data");
-  display([...terrain_data]);
-  display("filtered_terrain_data");
-  display([...filtered_terrain_data]);
+  display(Inputs.table(terrain_data));
+  display("france_terrain_data");
+  display(Inputs.table(france_terrain_data));
   display("ile_de_france_terrain_data");
-  display(ile_de_france_terrain_data);
+  display(Inputs.table(ile_de_france_terrain_data));
 }
 ```
 ```js
 if (debug) {
-  display("terrain_legend")
-  display(terrain_legend)
-  display("regions")
-  display(regions)
+  display("france_terrain_legend")
+  display(france_terrain_legend)
+  display("idf_terrain_legend")
+  display(idf_terrain_legend)
+  display("france_regions")
+  display(france_regions)
+  display("mainland_france_regions")
+  display(mainland_france_regions)
+  display("ile_de_france_region")
+  display(ile_de_france_region)
+  display("departements")
+  display(departements)
+  display("ile_de_france_departements")
+  display(ile_de_france_departements)
+  display("europe")
+  display(europe)
 }
 ```
 
