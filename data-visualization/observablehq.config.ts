@@ -21,7 +21,7 @@ export default {
           path: 'phase1-partner-dashboard',
         },
         {
-          name: 'Phase 1 Maps',
+          name: 'Phase 1 Cartography',
           path: 'phase1-map-dashboard',
         },
         {
@@ -81,6 +81,10 @@ export default {
         {
           name: 'Zoomable Sunburst',
           path: 'zoomable-sunburst',
+        },
+        {
+          name: 'Parallel Sets',
+          path: 'parallel-sets',
         },
         {
           name: 'Plot',
