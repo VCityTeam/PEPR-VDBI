@@ -327,7 +327,7 @@ The proposed workflow does the following for each input file:
 - step 2: excecute a chain of GPT prompts on the text.
 The following script can be used to run a series of ollama prompts based on a configuration file.
 ```bash
-python src/workflow_test.py -f json test-data/configs/workflow_0_config.json
+python src/workflow_test.py test-data/configs/workflow_0_config.json
 ```
 > [!TIP]
 > - The test script can be customized. Use `python src/workflow_test.py -h` to see the documentation.
@@ -350,7 +350,7 @@ The configuration will output to the `test-data/workflow-test/VILLEGARDEN` folde
 
 Same test as above but using the configuration file [test-data/configs/workflow_1_config.json](test-data/configs/workflow_1_config.json) which proposes structuring prompt outputs as JSON. 
 ```bash
-python src/workflow_test.py -f json test-data/configs/workflow_1_config.json
+python src/workflow_test.py test-data/configs/workflow_1_config.json
 ```
 
 #### 2.2.3. Test: Initial prompt optimization test
@@ -361,7 +361,7 @@ Same test as above but using the configuration file [test-data/configs/workflow_
 - Asking for a formatted output i.e., *"Formulate your response as a bulleted list"*
 
 ```bash
-python src/workflow_test.py -f json test-data/configs/workflow_2_config.json
+python src/workflow_test.py test-data/configs/workflow_2_config.json
 ```
 
 #### 2.2.4. Test: Page range test
@@ -370,7 +370,7 @@ Same test as above but using the configuration file [test-data/configs/workflow_
 Page ranges should be a comma separated string e.g., `1, 2, 5-7` (spaces are allowed)
 
 ```bash
-python src/workflow_test.py -f json test-data/configs/workflow_3_config.json
+python src/workflow_test.py test-data/configs/workflow_3_config.json
 ```
 
 #### 2.2.5. Test: Add csv config to workflow
@@ -378,7 +378,7 @@ python src/workflow_test.py -f json test-data/configs/workflow_3_config.json
 Use a csv file to configure workflow instead of a json file.
 
 ```bash
-python src/workflow_test.py -f csv test-data/configs/workflow_0_config.csv
+python src/workflow_test.py test-data/configs/workflow_0_config.csv
 ```
 
 #### 2.2.6. Test: Modelfile test
@@ -386,7 +386,7 @@ python src/workflow_test.py -f csv test-data/configs/workflow_0_config.csv
 Added modelfile functionality to ollama and workflow test scripts.
 
 ```bash
-python src/workflow_test.py -f json test-data/configs/workflow_4_config.json
+python src/workflow_test.py test-data/configs/workflow_4_config.json
 ```
 
 #### 2.2.7. Test: TEMPERATURE and top parameters test
@@ -411,7 +411,7 @@ These modelfiles use differente `temperature`, `top_k`, `top_p` to change see ho
 Additionally, conversation examples are used to provided to the model of how it should respond. The user prompt features a page of text from VILLEGARDEN project containing resercher names and their ORCIDs/IdHal. The assistant response features an example of what the expected corresponding JSON output should be.
 
 ```bash
-python src/workflow_test.py -f json test-data/configs/workflow_5_config.json
+python src/workflow_test.py test-data/configs/workflow_5_config.json
 ```
 
 TODO: run test and add notes

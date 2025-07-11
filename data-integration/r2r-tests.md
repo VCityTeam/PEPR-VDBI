@@ -19,6 +19,7 @@ Non R2R specific tests are located [here](./README.md).
   - [2.3.4 Method](#234-method)
   - [2.3.4 Install](#234-install)
   - [2.3.4 Run](#234-run)
+  - [2.3.4 Results](#234-results)
 
 ## 2.3.2 Test [R2R Light](https://r2r-docs.sciphi.ai/self-hosting/installation/light)
 
@@ -96,7 +97,7 @@ This test will attempt to:
    Create a custom r2r configuration file with postgres config.
 
    ```bash
-   touch ./test-data/r2r-test/r2r_config.toml
+   touch ./test-data/configs/r2r_config.toml
    ```
 
    This example configuration is based on the default [Ollama configuration file](https://r2r-docs.sciphi.ai/self-hosting/local-rag#configuration).
@@ -168,7 +169,7 @@ This test will attempt to:
 5. [Run R2R](https://r2r-docs.sciphi.ai/self-hosting/installation/light#running-r2r) with [our custom config](https://r2r-docs.sciphi.ai/self-hosting/configuration/overview#server-side-configuration)
 
    ```bash
-   export R2R_CONFIG_PATH=$PWD/test-data/r2r-test/r2r_config.toml
+   export R2R_CONFIG_PATH=$PWD/test-data/configs/r2r_config.toml
    python -m r2r.serve
    ```
 
@@ -512,7 +513,7 @@ Start local services
 
 Run the workflow with the LIRIS Ollama service. Replace `[BEARER_TOKEN]` with a valid bearer token
 ```bash
-python src/workflow_test.py -f json -m r2r -t [BEARER_TOKEN] test-data/configs/workflow_2.3.3_config.json
+python src/workflow_test.py -m r2r -t [BEARER_TOKEN] test-data/configs/workflow_2.3.3_config.json
 ```
 
 > [!WARNING]
@@ -542,13 +543,23 @@ This test will examine how R2Rs [response models](https://r2r-docs.sciphi.ai/coo
 
 ### 2.3.4 Method
 
-The templates, prompts, and output formats are configured in the file [./test-data/configs/workflow_2.3.4_config.json](test-data/configs/workflow_2.3.4_config.json)
+Each prompt will ask roughly the same question about a VDBI project with minor modifications to examine how these modifications affect the output.
+In this case, prompts will ask questions about the NEO project's "research actions" and the outpout format target is JSON (since it is the most supported output format).
+
+The following parameters are changed between prompts
+1. Asking for the prompt to be formatted (e.g., in JSON)
+2. The response format types are changed (e.g., lists, objects). Additionally, in the case of JSON objects
+   1. Object hierarchies
+   2. Object keys
+
+The templates, prompts, and output formats are configured in the file [./test-data/configs/workflow_2.3.4_config.json](test-data/configs/workflow_2.3.4_config.json).
+
 
 #### Template
 
 > ## Task
 >
-> Answer the query given immediately below given the context which follows later. Format your responses in JSON.
+> Answer the query given immediately below given the context which follows later. Output your response in JSON.
 >
 > ### Query
 >
@@ -557,35 +568,37 @@ The templates, prompts, and output formats are configured in the file [./test-da
 > ### Context
 >
 > {context}
->
-> "
+
 
 #### Example Prompts
 
-1. P1: Define research actions as an object
+1. Define research actions as an object
    - prompt:
      > What are the proposed research actions of the NEO project?
-   - response_format:
-
+   - format:
      ```json
      "response_format": {
-       "actions": {
-         "type": "list",
-         "content": ["string"]
-       }
+       "type": "json_object"
      }
      ```
 
-1. P2: Define research actions as a string
+2. Define research actions as a string
    - prompt:
      > What are the proposed research actions of the NEO project?
-   - response_format:
-
-     ```json
-     "response_format": {
-       "actions": "string"
-     }
-     ```
+   - format:
+      ```json
+      "response_format": {
+        "type": "json_schema",
+        "json_schema": {
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+      ```
 
 ### 2.3.4 Install
 
@@ -597,9 +610,16 @@ Start local services
 ./up_test_r2r.sh
 ```
 
-Run the workflow with the LIRIS Ollama service. Replace `[BEARER TOKEN]` with a valid bearer token
+Run the workflow.
 ```bash
-python src/workflow_test.py -f json -m r2r -t [BEARER TOKEN] test-data/configs/workflow_2.3.4_config.json
+python src/workflow_test.py -m r2r -t [BEARER TOKEN] test-data/configs/workflow_2.3.4_config.json
 ```
 
-Note the warning about proxies in [section 2.3.3 - Run](#233-run) 
+If using the LIRIS Pagoda3 Ollama service (or another API with authentication), replace `[BEARER TOKEN]` with a valid bearer token
+```bash
+python src/workflow_test.py -m r2r -t [BEARER TOKEN] test-data/configs/workflow_2.3.4_config.json
+```
+
+Note the warning about proxies in [section 2.3.3 - Run](#233-run) if you have trouble connecting to Pagoda3
+
+### 2.3.4 Results

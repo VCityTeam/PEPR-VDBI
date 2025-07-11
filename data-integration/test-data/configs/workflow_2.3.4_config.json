@@ -1,11 +1,11 @@
 {
-  "output": "test-data/r2r-test/2.2.4",
+  "output": "test-data/private/output/r2r-test/2.3.4",
   "description": "Ground truth R2R test on 1 pdf RAG",
   "url": "http://localhost:7272",
   "templates": [
     {
       "name": "rag_test_2_3_2",
-      "template": "## Task:\nAnswer the query given immediately below given the context which follows later. Format your responses in JSON.\n\n### Query:\n{query}\n\n### Context:\n{context}\n\n",
+      "template": "## Task:\nAnswer the query given immediately below given the context which follows later. Output your response in JSON.\n\n### Query:\n{query}\n\n### Context:\n{context}\n\n",
       "input_types": {
         "query": "string",
         "context": "string"
@@ -13,92 +13,405 @@
     }
   ],
   "inputs": [
-    "test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressoutien 20P fr.pdf"
+    "test-data/private/input/NEO_Document-scientifique_vfin_20240209_avec lettressoutien 20P.pdf"
   ],
   "prompts": [
     {
-      "prompt": "What are the proposed research actions of the NEO project? Structure your response in JSON.",
+      "prompt": "What are the proposed research actions of the NEO project?",
+      "description": "A basic prompt about research actions as an object",
       "rag_generation_config": {
         "response_format": {
-          "title": "actions",
-          "type":"list"
+          "type": "json_object"
+        }
+      },
+      "run": true
+    },
+    {
+      "prompt": "What are the proposed research actions of the NEO project? Structure your response in JSON.",
+      "description": "A basic prompt about research actions as an object with a request for JSON structure",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "run": true
+    },
+    {
+      "prompt": "What are the proposed research actions of the NEO project?",
+      "description": "A basic prompt about research actions as a structured list",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "run": true
+    },
+    {
+      "prompt": "What are the proposed research actions of the NEO project? Structure your response in JSON.",
+      "description": "A basic prompt about research actions as a structured list with a request for JSON structure",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "run": true
+    },
+    {
+      "prompt": "What are the proposed research actions of the NEO project?",
+      "description": "A basic prompt about research actions as an object with a structured list",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "actions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "run": true
+    },
+    {
+      "prompt": "What are the proposed research actions of the NEO project?",
+      "description": "Does a description change the output?",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "actions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "List of research actions"
+                }
+              }
+            }
+          }
         }
       },
       "run": true
     },
     {
       "prompt": "How does the NEO project propose to perform their research actions?",
+      "description": "Basic prompt variation",
       "rag_generation_config": {
         "response_format": {
-          "type": "json_object",
-          "how": "string"
+          "type": "json_object"
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "Why does the NEO project propose their research actions?",
+      "description": "Basic prompt variation",
       "rag_generation_config": {
         "response_format": {
-          "type": "json_object",
-          "why": "string"
+          "type": "json_object"
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What is the research proposal of the NEO project?",
+      "description": "Basic prompt variation",
       "rag_generation_config": {
         "response_format": {
-          "type": "json_object",
-          "proposal": "string"
+          "type": "json_object"
         }
       },
-      "run": false
+      "run": true
     },
     {
-      "prompt": "What research actions are proposed for which solutions by the NEO project?",
+      "prompt": "How does the NEO project propose to perform their research actions?",
+      "description": "Basic prompt variation with structured response",
       "rag_generation_config": {
         "response_format": {
-          "type": "json_object",
-          "proposal": "string"
-        }
-      },
-      "run": false
-    },
-    {
-      "prompt": "What research actions are proposed for which solutions by the NEO project?",
-      "rag_generation_config": {
-        "response_format": {
-          "type": "json_object",
-          "proposal": {
-            "type": "list",
-            "content": ["string"]
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "How": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
-      "prompt": "What are the research products or results by the NEO project?",
+      "prompt": "Why does the NEO project propose their research actions?",
+      "description": "Basic prompt variation with structured response",
       "rag_generation_config": {
         "response_format": {
-          "type": "json_object",
-          "solution": "string"
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Why": {
+                  "type": "string"
+                }
+              }
+            }
+          }
         }
       },
-      "run": false
+      "run": true
     },
     {
-      "prompt": "What are the research products or results by the NEO project?",
+      "prompt": "What is the research proposal of the NEO project?",
+      "description": "Basic prompt variation with structured response",
       "rag_generation_config": {
         "response_format": {
-          "type": "json_object",
-          "type": "list",
-          "content": ["string"]
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "What": {
+                  "type": "string"
+                }
+              }
+            }
+          }
         }
       },
-      "run": false
+      "run": true
+    },
+    {
+      "prompt": "What research actions are proposed for which solutions by the NEO project?",
+      "description": "Prompt on two criteria: research actions and solutions with an open response format",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_object"
+        }
+      },
+      "run": true
+    },
+    {
+      "prompt": "What research actions are proposed for which solutions by the NEO project?",
+      "description": "Prompt on two criteria: research actions and solutions with a structured response format (two lists)",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "research_actions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "solutions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "run": true
+    },
+    {
+      "prompt": "What research actions are proposed for which solutions by the NEO project?",
+      "description": "Prompt on two criteria: research actions and solutions with a structured response format (list of objects)",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "response": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "research_action": {
+                        "type": "string"
+                      },
+                      "solution": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "run": true
+    },
+    {
+      "prompt": "What research actions are proposed for which solutions by the NEO project?",
+      "description": "Prompt on two criteria: research actions and solutions with a structured response format (list of objects) with required properties",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "response": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "research_action": {
+                        "type": "string"
+                      },
+                      "solution": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "research_action",
+                      "solution"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "run": true
+    },
+    {
+      "prompt": "What are the proposed research products or results of the NEO project?",
+      "description": "Get research products or results as a list",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "productsOrResults": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "run": true
+    },
+    {
+      "prompt": "What are the proposed research products or results of the NEO project?",
+      "description": "Get research products or results as a list of objects with enumerations",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "productsOrResults": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "enum": [
+                          "product",
+                          "result"
+                        ]
+                      },
+                      "description": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "description"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "run": true
+    },
+    {
+      "prompt": "What are the proposed research products or results of the NEO project?",
+      "description": "Get research products or results as a list of detailed objects with enumerations",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "productsOrResults": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "productOrResultType": {
+                        "enum": [
+                          "product",
+                          "result"
+                        ]
+                      },
+                      "productOrResultTypeDescription": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "productOrResultType",
+                      "productOrResultTypeDescription"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "run": true
     },
     {
       "prompt": "What are the research products or results by the NEO project? Order your answers by importance.",
@@ -107,7 +420,9 @@
           "type": "json_object",
           "solutions": {
             "type": "list",
-            "content": ["string"]
+            "content": [
+              "string"
+            ]
           }
         }
       },
@@ -131,7 +446,9 @@
           "type": "json_object",
           "objects": {
             "type": "list",
-            "content": ["string"]
+            "content": [
+              "string"
+            ]
           }
         }
       },
@@ -144,7 +461,9 @@
           "type": "json_object",
           "devices": {
             "type": "list",
-            "content": ["string"]
+            "content": [
+              "string"
+            ]
           }
         }
       },
@@ -157,7 +476,9 @@
           "type": "json_object",
           "objects_devices": {
             "type": "list",
-            "content": ["string"]
+            "content": [
+              "string"
+            ]
           }
         }
       },
@@ -170,7 +491,9 @@
           "type": "json_object",
           "keywords": {
             "type": "list",
-            "content": ["string"]
+            "content": [
+              "string"
+            ]
           }
         }
       },
@@ -183,7 +506,9 @@
           "type": "json_object",
           "challenges": {
             "type": "list",
-            "content": ["string"]
+            "content": [
+              "string"
+            ]
           }
         }
       },
