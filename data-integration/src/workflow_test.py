@@ -37,13 +37,6 @@ def main():
         input,page_ranges,output,prompt,model,format""",
     )
     parser.add_argument(
-        "-f",
-        "--format",
-        choices=["csv", "json"],
-        default="csv",
-        help="Specify the configuration format",
-    )
-    parser.add_argument(
         "-d",
         "--debug",
         action="store_true",
@@ -92,7 +85,13 @@ def main():
   \/_____/     \/_/    \/_/\/_/   \/_/ /_/     \/_/"""
     )
 
-    runWorkflows(args.configuration, args.format, args.delimeter, args.mode, args.token)
+    runWorkflows(
+        args.configuration,
+        path.splitext(args.configuration)[-1][1:].lower(),
+        args.delimeter,
+        args.mode,
+        args.token,
+    )
 
 
 def runWorkflows(
@@ -180,17 +179,19 @@ def runWorkflows(
 
             # then run the workflows. Use default values from config if not specified in
             # prompt_config
-            prompt_config_stack = [
-                prompt_config
-                for prompt_config in config.get("prompts")
-                if prompt_config.get("run")
-            ]
-            rerun_number = config.get("rerun") if config.get("rerun") else 1
+            prompt_config_stack = config.get("prompts")
+            # prompt_config_stack = [
+            #     prompt_config
+            #     for prompt_config in config.get("prompts")
+            #     if prompt_config.get("run")
+            # ]
+            rerun_number = config.get("rerun", 1)
             for prompt_config in prompt_config_stack:
+                if not prompt_config.get("run", True):
+                    continue
                 for run_number in range(rerun_number):
-                    output_suffix = (
-                        f"_{prompt_config_stack.index(prompt_config)}.{run_number}"
-                    )
+                    output_suffix = f"_{prompt_config_stack.index(prompt_config)}{
+                        f'.{run_number}' if rerun_number > 1 else ''}"
                     # format output path
                     runR2RWorkflow(
                         prompt=prompt_config.get("prompt"),
@@ -231,9 +232,9 @@ def R2RCreateTemplates(client: R2RClient, template_configs: list[dict]) -> None:
         if template_config.get("name") not in existing_templates:
             logging.info(f"creating template: {template_config.get('name')}")
             response = client.prompts.create(
-                template_config.get("name"),
-                template=template_config.get("template"),
-                input_types=template_config.get("input_types"),
+                template_config.get("name", ""),
+                template=template_config.get("template", ""),
+                input_types=template_config.get("input_types", ""),
             )
             logging.info(f"template create response: {response}")
         # else:
@@ -302,10 +303,13 @@ def runR2RWorkflow(
         prompt,
         search_settings=search_settings,
         rag_generation_config=rag_generation_config,
-    ).results
+    ).results  # type: ignore
     logging.debug(f"response: {response}")
     writeToFile(f"{output_path}/response.json", response.to_json())
-    writeToFile(f"{output_path}/generated_answer.md", response.generated_answer)
+    writeToFile(
+        f"{output_path}/generated_answer.{"json" if rag_generation_config else "md"}",
+        response.generated_answer,
+    )
 
 
 def runOllamaWorkflow(
