@@ -932,6 +932,18 @@ const defaultProjectionItaly = (width, marks) =>
   </div>
 </div>
 
+<!-- <div class="card" style="padding: 0;">
+  ${
+    resize((width) => defaultProjectionFrance(
+      width,
+      [
+        
+      ],
+    )
+  )}
+
+</div> -->
+
 
 <!-- // Plot.dot(walmarts, Plot.hexbin({r: "count", fill: "min"}, {x: "longitude", y: "latitude", fill: "date"})) -->
 
