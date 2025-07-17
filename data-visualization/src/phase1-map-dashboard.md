@@ -8,7 +8,7 @@ sql:
   project_terrain_map: ./data/private/project_summary_terrains.csv
 ---
 
-# Phase 1 Overview
+# Phase 1 Cartography
 
 <div class="warning" label="Data visualization notice">
   Data visualizations are unverified and errors may exist. Regard these data visualizations as estimations and not a "ground truth".
@@ -370,10 +370,11 @@ const terrain_tip_dots = (data, legend, delta) => data.flatMap((d) => {
 ```
 
 ```js
-const defaultProjectionFrance = (width, marks) =>
+const defaultProjectionFrance = (width, marks, caption="") =>
   Plot.plot({
     width: width,
     height: width,
+    caption: caption,
     projection: {
       type: 'azimuthal-equidistant',
       domain: d3.geoCircle().center([2, 47]).radius(5)(),
@@ -390,10 +391,11 @@ const defaultProjectionFrance = (width, marks) =>
   }
 );
 
-const defaultProjectionIleDeFrance = (width, marks) =>
+const defaultProjectionIleDeFrance = (width, marks, caption="") =>
   Plot.plot({
     width: width,
     height: width,
+    caption: caption,
     projection: {
       type: 'azimuthal-equidistant',
       domain: d3.geoCircle().center([2.35, 48.83]).radius(0.18)(),
@@ -410,10 +412,11 @@ const defaultProjectionIleDeFrance = (width, marks) =>
   }
 );
 
-const defaultProjectionItaly = (width, marks) =>
+const defaultProjectionItaly = (width, marks, caption="") =>
   Plot.plot({
     width: width,
     height: width,
+    caption: caption,
     projection: {
       type: 'azimuthal-equidistant',
       domain: d3.geoCircle().center([11, 44]).radius(2.5)(),
@@ -429,523 +432,241 @@ const defaultProjectionItaly = (width, marks) =>
     ],
   }
 );
+
+function generateLineMapMarks(terrain_data, terrain_legend) {
+  const links = Plot.link(
+    terrain_tip_dots(terrain_data, terrain_legend, 0.2),
+    {
+      x1: "label_x",
+      y1: "label_y",
+      x2: "longitude",
+      y2: "latitude",
+      stroke: (d) => project_colors.get(d.projects),
+      markerEnd: "arrow",
+      curve: "bump-y",
+    }
+  );
+  const project_dots = Plot.dot(
+    terrain_data,
+    {
+      x: "longitude",
+      y: "latitude",
+      r: 3,
+      fill: 'black',
+      //stroke: pepr_colors.orange,
+      //fillOpacity: 0.5,
+      channels: {
+        entity: {
+          value: "terrain",
+          label: 'City',
+        },
+        count: {
+          value: (d) => 1,
+          label: 'Occurences',
+        },
+        longitude: {
+          value: "longitude",
+          label: 'Lon',
+        },
+        latitude: {
+          value: "latitude",
+          label: 'Lat',
+        },
+        projects: {
+          value: (d) => [...d.projects],
+          label: 'Projects',
+        },
+      },
+      tip: debug ? true : {
+        format: {
+          longitude: false,
+          latitude: false,
+          count: false,
+          x: false,
+          y: false,
+          r: false,
+        }
+      },
+    }
+  );
+  const legend_dots = Plot.dot(
+    terrain_legend,
+    {
+      x: (d) => d[2],
+      y: (d) => d[3],
+      r: 5,
+      fill: (d) => d[1],
+    }
+  );
+  const legend_text = Plot.text(
+    terrain_legend,
+    {
+      x: (d) => d[2],
+      y: (d) => d[3],
+      dy: -12,
+      text: (d) => d[0],
+    }
+  );
+  return [
+    links,
+    project_dots,
+    // legend marks //
+    legend_dots,
+    legend_text,
+    // tip marks //
+    ...terrain_tips(terrain_data),
+  ];
+};
+
+function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
+  const project_dots = Plot.dot(
+    terrain_data,
+    {
+      x: "longitude",
+      y: "latitude",
+      r: 3,
+      fill: pepr_colors.blue,
+      fillOpacity: 0.5,
+      channels: {
+        entity: {
+          value: "terrain",
+          label: 'City',
+        },
+        count: {
+          value: (d) => 1,
+          label: 'Occurences',
+        },
+        longitude: {
+          value: "longitude",
+          label: 'Lon',
+        },
+        latitude: {
+          value: "latitude",
+          label: 'Lat',
+        },
+        projects: {
+          value: (d) => [...d.projects],
+          label: 'Projects',
+        },
+      },
+      tip: debug ? true : {
+        format: {
+          longitude: false,
+          latitude: false,
+          count: false,
+          x: false,
+          y: false,
+          r: false,
+        }
+      },
+    }
+  );
+  const legend_dots = Plot.dot(
+    terrain_legend,
+    {
+      x: (d) => d[2],
+      y: (d) => d[3],
+      r: 5,
+      fill: (d) => d[1],
+    }
+  );
+  const legend_text = Plot.text(
+    terrain_legend,
+    {
+      x: (d) => d[2],
+      y: (d) => d[3],
+      dy: -12,
+      text: (d) => d[0],
+    }
+  );
+  const tip_dots = Plot.dot(
+    terrain_tip_dots(terrain_data, terrain_legend, tip_dot_delta),
+    {
+      x: "x",
+      y: "y",
+      r: 4,
+      fill: (d) => project_colors.get(d.projects),
+    }
+  );
+  return [
+    project_dots,
+    // legend marks //
+    legend_dots,
+    legend_text,
+    // tip marks //
+    ...terrain_tips(terrain_data),
+    tip_dots,
+  ];
+};
 ```
 
+## Projects by Terrain
+
 <div class="grid grid-cols-3">
-  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 0;">
-    ${resize((width) => defaultProjectionFrance(
-      width,
-      [
-        Plot.link(
-          terrain_tip_dots(france_terrain_data, france_terrain_legend, 0.2),
-          {
-            x1: "label_x",
-            y1: "label_y",
-            x2: "longitude",
-            y2: "latitude",
-            stroke: (d) => project_colors.get(d.projects),
-            markerEnd: "arrow",
-            curve: "bump-y",
-          }
-        ),
-        Plot.dot(
-          france_terrain_data,
-          {
-            x: "longitude",
-            y: "latitude",
-            r: 3,
-            fill: 'black',
-            //stroke: pepr_colors.orange,
-            //fillOpacity: 0.5,
-            channels: {
-              entity: {
-                value: "terrain",
-                label: 'City',
-              },
-              count: {
-                value: (d) => 1,
-                label: 'Occurences',
-              },
-              longitude: {
-                value: "longitude",
-                label: 'Lon',
-              },
-              latitude: {
-                value: "latitude",
-                label: 'Lat',
-              },
-              projects: {
-                value: (d) => [...d.projects],
-                label: 'Projects',
-              },
-            },
-            tip: debug ? true : {
-              format: {
-                longitude: false,
-                latitude: false,
-                count: false,
-                x: false,
-                y: false,
-                r: false,
-              }
-            },
-          }
-        ),
-        // legend marks //
-        Plot.dot(
-          france_terrain_legend,
-          {
-            x: (d) => d[2],
-            y: (d) => d[3],
-            r: 5,
-            fill: (d) => d[1],
-          }
-        ),
-        Plot.text(
-          france_terrain_legend,
-          {
-            x: (d) => d[2],
-            y: (d) => d[3],
-            dy: -12,
-            text: (d) => d[0],
-          }
-        ),
-        // tip marks //
-        ...terrain_tips(france_terrain_data),
-      ],
-    ))}
-
-  </div>
-  <div class="card" style="padding: 0; overflow: hidden;">
-    ${resize((width) => defaultProjectionIleDeFrance(
-      width,
-      [
-        Plot.link(
-          terrain_tip_dots(ile_de_france_terrain_data, idf_terrain_legend, 0.01),
-          {
-            x1: "label_x",
-            y1: "label_y",
-            x2: "longitude",
-            y2: "latitude",
-            stroke: (d) => project_colors.get(d.projects),
-            markerEnd: "arrow",
-            curve: "bump-y",
-          }
-        ),
-        Plot.dot(
-          ile_de_france_terrain_data,
-          {
-            x: "longitude",
-            y: "latitude",
-            r: 3,
-            fill: 'black',
-            //stroke: pepr_colors.orange,
-            //fillOpacity: 0.5,
-            channels: {
-              entity: {
-                value: "terrain",
-                label: 'City',
-              },
-              count: {
-                value: (d) => 1,
-                label: 'Occurences',
-              },
-              longitude: {
-                value: "longitude",
-                label: 'Lon',
-              },
-              latitude: {
-                value: "latitude",
-                label: 'Lat',
-              },
-              projects: {
-                value: (d) => [...d.projects],
-                label: 'Projects',
-              },
-            },
-            tip: debug ? true : {
-              format: {
-                longitude: false,
-                latitude: false,
-                count: false,
-                x: false,
-                y: false,
-                r: false,
-              }
-            },
-          }
-        ),
-        // legend marks //
-        Plot.dot(
-          idf_terrain_legend,
-          {
-            x: (d) => d[2],
-            y: (d) => d[3],
-            r: 5,
-            fill: (d) => d[1],
-          }
-        ),
-        Plot.text(
-          idf_terrain_legend,
-          {
-            x: (d) => d[2],
-            y: (d) => d[3],
-            dy: -12,
-            text: (d) => d[0],
-          }
-        ),
-        // tip marks //
-        ...terrain_tips(ile_de_france_terrain_data),
-      ]
-    ))}
-
-  </div>
-  <div class="card" style="padding: 0;">
-    ${resize((width) => defaultProjectionItaly(
-      width,
-      [
-        Plot.link(
-          terrain_tip_dots(international_terrain_data, italy_terrain_legend, 0.01),
-          {
-            x1: "label_x",
-            y1: "label_y",
-            x2: "longitude",
-            y2: "latitude",
-            stroke: (d) => project_colors.get(d.projects),
-            markerEnd: "arrow",
-            curve: "bump-y",
-          }
-        ),
-        Plot.dot(
-          international_terrain_data,
-          {
-            x: "longitude",
-            y: "latitude",
-            r: 3,
-            fill: 'black',
-            //stroke: pepr_colors.orange,
-            //fillOpacity: 0.5,
-            channels: {
-              entity: {
-                value: "terrain",
-                label: 'City',
-              },
-              count: {
-                value: (d) => 1,
-                label: 'Occurences',
-              },
-              longitude: {
-                value: "longitude",
-                label: 'Lon',
-              },
-              latitude: {
-                value: "latitude",
-                label: 'Lat',
-              },
-              projects: {
-                value: (d) => [...d.projects],
-                label: 'Projects',
-              },
-            },
-            tip: debug ? true : {
-              format: {
-                longitude: false,
-                latitude: false,
-                count: false,
-                x: false,
-                y: false,
-                r: false,
-              }
-            },
-          }
-        ),
-        // legend marks //
-        Plot.dot(
-          italy_terrain_legend,
-          {
-            x: (d) => d[2],
-            y: (d) => d[3],
-            r: 5,
-            fill: (d) => d[1],
-          }
-        ),
-        Plot.text(
-          italy_terrain_legend,
-          {
-            x: (d) => d[2],
-            y: (d) => d[3],
-            dy: -12,
-            text: (d) => d[0],
-          }
-        ),
-        // tip marks //
-        ...terrain_tips(international_terrain_data),
-      ]
-    ))}
-
-  </div>
-  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 0;">
-    ${
-      resize((width) => defaultProjectionFrance(
+  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 5px;">
+    ${resize(
+      (width) => defaultProjectionFrance(
         width,
-        [
-          Plot.dot(
-            france_terrain_data,
-            {
-              x: "longitude",
-              y: "latitude",
-              r: 3,
-              fill: pepr_colors.blue,
-              fillOpacity: 0.5,
-              channels: {
-                entity: {
-                  value: "terrain",
-                  label: 'City',
-                },
-                count: {
-                  value: (d) => 1,
-                  label: 'Occurences',
-                },
-                longitude: {
-                  value: "longitude",
-                  label: 'Lon',
-                },
-                latitude: {
-                  value: "latitude",
-                  label: 'Lat',
-                },
-                projects: {
-                  value: (d) => [...d.projects],
-                  label: 'Projects',
-                },
-              },
-              tip: debug ? true : {
-                format: {
-                  longitude: false,
-                  latitude: false,
-                  count: false,
-                  x: false,
-                  y: false,
-                  r: false,
-                }
-              },
-            }
-          ),
-          // legend marks //
-          Plot.dot(
-            france_terrain_legend,
-            {
-              x: (d) => d[2],
-              y: (d) => d[3],
-              r: 5,
-              fill: (d) => d[1],
-            }
-          ),
-          Plot.text(
-            france_terrain_legend,
-            {
-              x: (d) => d[2],
-              y: (d) => d[3],
-              dy: -12,
-              text: (d) => d[0],
-            }
-          ),
-          // tip marks //
-          ...terrain_tips(france_terrain_data),
-          Plot.dot(
-            terrain_tip_dots(france_terrain_data, france_terrain_legend, 0.2),
-            {
-              x: "x",
-              y: "y",
-              r: 4,
-              fill: (d) => project_colors.get(d.projects),
-            }
-          ),
-        ],
+        generateLineMapMarks(france_terrain_data, france_terrain_legend),
+        "France"
       )
     )}
 
   </div>
-  <div class="card" style="padding: 0; overflow: hidden;">
-    ${
-      resize((width) => defaultProjectionIleDeFrance(
+  <div class="card" style="padding: 5px; overflow: hidden;">
+    ${resize(
+      (width) => defaultProjectionIleDeFrance(
         width,
-        [
-          Plot.dot(
-            ile_de_france_terrain_data,
-            {
-              x: "longitude",
-              y: "latitude",
-              r: 3,
-              fill: pepr_colors.blue,
-              fillOpacity: 0.5,
-              channels: {
-                entity: {
-                  value: "terrain",
-                  label: 'City',
-                },
-                count: {
-                  value: (d) => 1,
-                  label: 'Occurences',
-                },
-                longitude: {
-                  value: "longitude",
-                  label: 'Lon',
-                },
-                latitude: {
-                  value: "latitude",
-                  label: 'Lat',
-                },
-                projects: {
-                  value: (d) => [...d.projects],
-                  label: 'Projects',
-                },
-              },
-              tip: debug ? true : {
-                format: {
-                  longitude: false,
-                  latitude: false,
-                  count: false,
-                  x: false,
-                  y: false,
-                  r: false,
-                }
-              },
-            }
-          ),
-          // legend marks //
-          Plot.dot(
-            idf_terrain_legend,
-            {
-              x: (d) => d[2],
-              y: (d) => d[3],
-              r: 5,
-              fill: (d) => d[1],
-            }
-          ),
-          Plot.text(
-            idf_terrain_legend,
-            {
-              x: (d) => d[2],
-              y: (d) => d[3],
-              dy: -12,
-              text: (d) => d[0],
-            }
-          ),
-          // tip marks //
-          ...terrain_tips(ile_de_france_terrain_data),
-          Plot.dot(
-            terrain_tip_dots(ile_de_france_terrain_data, idf_terrain_legend, 0.015),
-            {
-              x: "x",
-              y: "y",
-              r: 4,
-              fill: (d) => project_colors.get(d.projects),
-            }
-          ),
-        ],
+        generateLineMapMarks(ile_de_france_terrain_data, idf_terrain_legend),
+        "Île-de-France"
       )
     )}
 
   </div>
-  <div class="card" style="padding: 0;">
-    ${
-      resize((width) => defaultProjectionItaly(
+  <div class="card" style="padding: 5px; overflow: hidden;">
+    ${resize(
+      (width) => defaultProjectionItaly(
         width,
-        [
-          Plot.dot(
-            international_terrain_data,
-            {
-              x: "longitude",
-              y: "latitude",
-              r: 3,
-              fill: pepr_colors.blue,
-              fillOpacity: 0.5,
-              channels: {
-                entity: {
-                  value: "terrain",
-                  label: 'City',
-                },
-                count: {
-                  value: (d) => 1,
-                  label: 'Occurences',
-                },
-                longitude: {
-                  value: "longitude",
-                  label: 'Lon',
-                },
-                latitude: {
-                  value: "latitude",
-                  label: 'Lat',
-                },
-                projects: {
-                  value: (d) => [...d.projects],
-                  label: 'Projects',
-                },
-              },
-              tip: debug ? true : {
-                format: {
-                  longitude: false,
-                  latitude: false,
-                  count: false,
-                  x: false,
-                  y: false,
-                  r: false,
-                }
-              },
-            }
-          ),
-          // legend marks //
-          Plot.dot(
-            italy_terrain_legend,
-            {
-              x: (d) => d[2],
-              y: (d) => d[3],
-              r: 5,
-              fill: (d) => d[1],
-            }
-          ),
-          Plot.text(
-            italy_terrain_legend,
-            {
-              x: (d) => d[2],
-              y: (d) => d[3],
-              dy: -12,
-              text: (d) => d[0],
-            }
-          ),
-          // tip marks //
-          ...terrain_tips(international_terrain_data),
-          Plot.dot(
-            terrain_tip_dots(international_terrain_data, italy_terrain_legend, 0.2),
-            {
-              x: "x",
-              y: "y",
-              r: 4,
-              fill: (d) => project_colors.get(d.projects),
-            }
-          ),
-        ],
+        generateLineMapMarks(international_terrain_data, italy_terrain_legend),
+        "Italy"
+      )
+    )}
+
+  </div>
+  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 5px;">
+    ${resize(
+      (width) => defaultProjectionFrance(
+        width,
+        generateDotMapMarks(france_terrain_data, france_terrain_legend, 0.2),
+        "France"
+      )
+    )}
+
+  </div>
+  <div class="card" style="padding: 5px; overflow: hidden;">
+    ${resize(
+      (width) => defaultProjectionIleDeFrance(
+        width,
+        generateDotMapMarks(ile_de_france_terrain_data, idf_terrain_legend, 0.015),
+        "Île-de-France"
+      )
+    )}
+
+  </div>
+  <div class="card" style="padding: 5px; overflow: hidden;">
+    ${resize(
+      (width) => defaultProjectionItaly(
+        width,
+        generateDotMapMarks(international_terrain_data, italy_terrain_legend, 0.2),
+        "Italy"
       )
     )}
 
   </div>
 </div>
 
-<!-- <div class="card" style="padding: 0;">
-  ${
-    resize((width) => defaultProjectionFrance(
-      width,
-      [
-        
-      ],
-    )
-  )}
+## Projects by Owners and Partners
 
-</div> -->
-
-
-<!-- // Plot.dot(walmarts, Plot.hexbin({r: "count", fill: "min"}, {x: "longitude", y: "latitude", fill: "date"})) -->
 
 <!-- debugging info -->
 
