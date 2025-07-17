@@ -12,7 +12,6 @@ export const pepr_colors = {
 
 export const project_colors = new Map([
   ["INTEGREEN", d3.schemeCategory10[0]],
-  ["inteGREEN", d3.schemeCategory10[0]],
   ["NEO", d3.schemeCategory10[1]],
   ["RESILIENCE", d3.schemeCategory10[6]],
   ["TRACES", d3.schemeCategory10[3]],

@@ -821,15 +821,15 @@ if (debug) {
               {
                 x1: (tip_datum) =>
                   terrain_legend.find(
-                    (legend_datum) => legend_datum[0] === tip_datum.projects
+                    (legend_datum) => legend_datum[0] === tip_datum.projects.toLocaleUpperCase()
                   )[2],
                 y1: (tip_datum) =>
                   terrain_legend.find(
-                    (legend_datum) => legend_datum[0] === tip_datum.projects
+                    (legend_datum) => legend_datum[0] === tip_datum.projects.toLocaleUpperCase()
                   )[3],
                 x2: "longitude",
                 y2: "latitude",
-                stroke: (d) => project_colors.get(d.projects),
+                stroke: (d) => project_colors.get(d.projects.toLocaleUpperCase()),
                 markerEnd: "arrow",
                 curve: "bump-y",
               }
@@ -849,7 +849,7 @@ if (debug) {
                 x: (d) => d[2],
                 y: (d) => d[3],
                 dy: -12,
-                text: (d) => d[0],
+                text: (d) => d[0].toLocaleUpperCase(),
               }
             ),
             // tip marks //
@@ -953,7 +953,7 @@ if (debug) {
                 x: "x",
                 y: "y",
                 r: 4,
-                fill: (d) => project_colors.get(d.projects),
+                fill: (d) => project_colors.get(d.projects.toLocaleUpperCase()),
               }
             ),
             Plot.sphere(),
