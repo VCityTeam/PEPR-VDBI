@@ -5,7 +5,7 @@ sql:
   aap_partners: ./data/private/partenaires_aap2023.csv
   terrains: ./data/project_summary_terrain_locations.csv
   projects: ./data/private/project_summary.csv
-  project_terrain_map: ./data/private/project_summary_terrains.csv
+  project_terrain_scale_map: ./data/private/project_summary_terrains.csv
 ---
 
 # Phase 1 Cartography
@@ -63,23 +63,30 @@ import {
 
 ```sql id=terrain_data
 -- clean data
-update project_terrain_map
+update project_terrain_scale_map
 set terrain = replace(terrain, 'Commune de ', '');
-update project_terrain_map
+update project_terrain_scale_map
 set terrain = replace(terrain, 'Ville de ', '');
-update project_terrain_map
+update project_terrain_scale_map
 set terrain = replace(terrain, 'Métropole d''', '');
-update project_terrain_map
+update project_terrain_scale_map
 set terrain = replace(terrain, 'Métropole de ', '');
-update project_terrain_map
+update project_terrain_scale_map
 set terrain = replace(terrain, 'Métropole européenne de ', '');
-update project_terrain_map
+update project_terrain_scale_map
 set terrain = replace(terrain, 'Métropole Européenne de ', '');
-update project_terrain_map
+update project_terrain_scale_map
 set terrain = replace(terrain, 'Aix-Marseille-Provence', 'Marseille');
 update terrains
 set terrain = replace(terrain, 'Métropole Européenne de ', '');
 
+with project_terrain_map as (
+    select
+      acronyme,
+      terrain,
+    from project_terrain_scale_map
+    group by all
+  )
 select
   terrains.terrain,
   list(project_terrain_map.acronyme) as projects,
@@ -315,7 +322,7 @@ const terrain_anchor_map = new Map([
   // ['Cachan', 'top'],
   // ['Ris-Orangis', 'top'],
   // ['Saclay', 'bottom'],
-  ['Acquasanta', 'top'],
+  ['Arquata del Tronto', 'top-right'],
 ]);
 
 const terrain_tips = (data) => data.map((d) => {
@@ -630,7 +637,6 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
       fontSize: 14,
     }
   );
-  console.debug(tip_dots);
   return [
     terrain_dots,
     // legend marks //
@@ -814,8 +820,8 @@ if (debug) {
   display(Inputs.table(await sql`select * from terrains`));
   display("projects");
   display(Inputs.table(await sql`select * from projects`));
-  display("project_terrain_map");
-  display(Inputs.table(await sql`select * from project_terrain_map`));
+  display("project_terrain_scale_map");
+  display(Inputs.table(await sql`select * from project_terrain_scale_map`));
 }
 ```
 ```js
