@@ -11,7 +11,8 @@ sql:
 # Phase 1 Cartography
 
 <div class="warning" label="Data visualization notice">
-  Data visualizations are unverified and errors may exist. Regard these data visualizations as estimations and not a "ground truth".
+  Data visualizations are unverified and errors may exist.
+  Consider these data visualizations as estimations and not a "ground truth".
 </div>
 
 ```js
@@ -229,6 +230,13 @@ const international_terrain_data = [...terrain_data].filter(
 ```
 
 ```js
+/* Legends are structured as a 2D array, each row containing a
+ * - project name
+ * - project color
+ * - longitude for label and/or symbol
+ * - latitude for label and/or symbol
+ */
+
 const france_terrain_legend = [...project_colors.entries()];
 
 const mapToFranceLongitude = (index, subdivisions) =>
@@ -370,68 +378,78 @@ const terrain_tip_dots = (data, legend, delta) => data.flatMap((d) => {
 ```
 
 ```js
+// generate geo projection plot functions
+
+const defaultProjection = (
+  width,
+  marks,
+  caption="",
+  domain=d3.geoCircle().center([2, 47]).radius(5)()
+  ) =>
+    Plot.plot({
+      width: width,
+      height: width,
+      caption: caption,
+      projection: {
+        type: 'azimuthal-equidistant',
+        domain: domain,
+      },
+      marks: [...marks],
+    }
+);
+
 const defaultProjectionFrance = (width, marks, caption="") =>
-  Plot.plot({
-    width: width,
-    height: width,
-    caption: caption,
-    projection: {
-      type: 'azimuthal-equidistant',
-      domain: d3.geoCircle().center([2, 47]).radius(5)(),
-    },
-    marks: [
+  defaultProjection(
+    width,
+    [
       Plot.geo(mainland_france_regions, {
         stroke: 'white',
         strokeOpacity: 0.5,
         fill: pepr_colors.blue,
         fillOpacity: 0.3,
       }),
-      ...marks,
+      marks
     ],
-  }
-);
+    caption,
+    d3.geoCircle().center([2, 47]).radius(5)()
+  );
 
 const defaultProjectionIleDeFrance = (width, marks, caption="") =>
-  Plot.plot({
-    width: width,
-    height: width,
-    caption: caption,
-    projection: {
-      type: 'azimuthal-equidistant',
-      domain: d3.geoCircle().center([2.35, 48.83]).radius(0.18)(),
-    },
-    marks: [
+  defaultProjection(
+    width,
+    [
       Plot.geo(ile_de_france_departements, {
         stroke: 'white',
         strokeOpacity: 0.5,
         fill: pepr_colors.blue,
         fillOpacity: 0.3,
       }),
-      ...marks,
+      marks
     ],
-  }
-);
+    caption,
+    d3.geoCircle().center([2.35, 48.84]).radius(0.19)()
+  );
 
 const defaultProjectionItaly = (width, marks, caption="") =>
-  Plot.plot({
-    width: width,
-    height: width,
-    caption: caption,
-    projection: {
-      type: 'azimuthal-equidistant',
-      domain: d3.geoCircle().center([11, 44]).radius(2.5)(),
-    },
-    marks: [
+  defaultProjection(
+    width,
+    [
       Plot.geo(europe, {
         stroke: 'white',
         strokeOpacity: 0.5,
         fill: pepr_colors.blue,
         fillOpacity: 0.3,
       }),
-      ...marks,
+      marks
     ],
-  }
-);
+    caption,
+    d3.geoCircle().center([11, 44]).radius(2.5)()
+  );
+
+// generate plot marks for each visualisation method
+
+const isProjectSelected = (project) =>
+  selected_project == "All" || project == selected_project;
 
 function generateLineMapMarks(terrain_data, terrain_legend) {
   const links = Plot.link(
@@ -442,11 +460,13 @@ function generateLineMapMarks(terrain_data, terrain_legend) {
       x2: "longitude",
       y2: "latitude",
       stroke: (d) => project_colors.get(d.projects),
+      strokeWidth: (d) => isProjectSelected(d.projects) ? 1 : 0.5,
+      strokeOpacity: (d) => isProjectSelected(d.projects) ? 1 : 0.5,
       markerEnd: "arrow",
       curve: "bump-y",
     }
   );
-  const project_dots = Plot.dot(
+  const terrain_dots = Plot.dot(
     terrain_data,
     {
       x: "longitude",
@@ -496,6 +516,7 @@ function generateLineMapMarks(terrain_data, terrain_legend) {
       y: (d) => d[3],
       r: 5,
       fill: (d) => d[1],
+      fillOpacity: (d) => isProjectSelected(d[0]) ? 1 : 0.2,
     }
   );
   const legend_text = Plot.text(
@@ -507,19 +528,29 @@ function generateLineMapMarks(terrain_data, terrain_legend) {
       text: (d) => d[0],
     }
   );
+  const legend_axis_label = Plot.text(
+    ["Financed Projects"],
+    {
+      x: d3.mean(terrain_legend.map(d => d[2])),
+      y: terrain_legend.length > 0 ? terrain_legend[0][3] : 0,
+      dy: -32,
+      fontSize: 14,
+    }
+  );
   return [
     links,
-    project_dots,
+    terrain_dots,
     // legend marks //
     legend_dots,
     legend_text,
+    legend_axis_label,
     // tip marks //
     ...terrain_tips(terrain_data),
   ];
 };
 
 function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
-  const project_dots = Plot.dot(
+  const terrain_dots = Plot.dot(
     terrain_data,
     {
       x: "longitude",
@@ -568,6 +599,7 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
       y: (d) => d[3],
       r: 5,
       fill: (d) => d[1],
+      fillOpacity: (d) => isProjectSelected(d[0]) ? 1 : 0.2,
     }
   );
   const legend_text = Plot.text(
@@ -586,18 +618,47 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
       y: "y",
       r: 4,
       fill: (d) => project_colors.get(d.projects),
+      fillOpacity: (d) => isProjectSelected(d.projects) ? 1 : 0.2,
     }
   );
+  const legend_axis_label = Plot.text(
+    ["Financed Projects"],
+    {
+      x: d3.mean(terrain_legend.map(d => d[2])),
+      y: terrain_legend.length > 0 ? terrain_legend[0][3] : 0,
+      dy: -32,
+      fontSize: 14,
+    }
+  );
+  console.debug(tip_dots);
   return [
-    project_dots,
+    terrain_dots,
     // legend marks //
     legend_dots,
     legend_text,
+    legend_axis_label,
     // tip marks //
     ...terrain_tips(terrain_data),
     tip_dots,
   ];
 };
+```
+
+```js
+const selected_project = view(
+  Inputs.select(
+    [
+      "All",
+      ...[...await sql`select "Nom projet" from projects`].map(d => d['Nom projet'])],
+    {
+      multiple: false,
+      label: "Optionally, select a project to filter by:",
+      unique: true,
+      sort: true,
+      value: "All"
+    }
+  )
+);
 ```
 
 ## Projects by Terrain
@@ -608,7 +669,7 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
       (width) => defaultProjectionFrance(
         width,
         generateLineMapMarks(france_terrain_data, france_terrain_legend),
-        "France"
+        "- Terrains by Financed Project, France"
       )
     )}
 
@@ -618,7 +679,7 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
       (width) => defaultProjectionIleDeFrance(
         width,
         generateLineMapMarks(ile_de_france_terrain_data, idf_terrain_legend),
-        "Île-de-France"
+        "- Terrains by Financed Project, Île-de-France"
       )
     )}
 
@@ -628,7 +689,7 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
       (width) => defaultProjectionItaly(
         width,
         generateLineMapMarks(international_terrain_data, italy_terrain_legend),
-        "Italy"
+        "- Terrains by Financed Project, Italy"
       )
     )}
 
@@ -638,7 +699,7 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
       (width) => defaultProjectionFrance(
         width,
         generateDotMapMarks(france_terrain_data, france_terrain_legend, 0.2),
-        "France"
+        "- Terrains by Financed Project, France"
       )
     )}
 
@@ -648,7 +709,7 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
       (width) => defaultProjectionIleDeFrance(
         width,
         generateDotMapMarks(ile_de_france_terrain_data, idf_terrain_legend, 0.015),
-        "Île-de-France"
+        "- Terrains by Financed Project, Île-de-France"
       )
     )}
 
@@ -658,14 +719,77 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
       (width) => defaultProjectionItaly(
         width,
         generateDotMapMarks(international_terrain_data, italy_terrain_legend, 0.2),
-        "Italy"
+        "- Terrains by Financed Project, Italy"
       )
     )}
 
   </div>
 </div>
 
-## Projects by Owners and Partners
+## Projects by Partner locations
+
+<div class="grid grid-cols-3">
+  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 5px;">
+    ${resize(
+      (width) => defaultProjectionFrance(
+        width,
+        generateLineMapMarks(france_terrain_data, france_terrain_legend),
+        "- Terrains by Financed Project, France"
+      )
+    )}
+
+  </div>
+  <div class="card" style="padding: 5px; overflow: hidden;">
+    ${resize(
+      (width) => defaultProjectionIleDeFrance(
+        width,
+        generateLineMapMarks(ile_de_france_terrain_data, idf_terrain_legend),
+        "- Terrains by Financed Project, Île-de-France"
+      )
+    )}
+
+  </div>
+  <div class="card" style="padding: 5px; overflow: hidden;">
+    ${resize(
+      (width) => defaultProjectionItaly(
+        width,
+        generateLineMapMarks(international_terrain_data, italy_terrain_legend),
+        "- Terrains by Financed Project, Italy"
+      )
+    )}
+
+  </div>
+  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 5px;">
+    ${resize(
+      (width) => defaultProjectionFrance(
+        width,
+        generateDotMapMarks(france_terrain_data, france_terrain_legend, 0.2),
+        "- Terrains by Financed Project, France"
+      )
+    )}
+
+  </div>
+  <div class="card" style="padding: 5px; overflow: hidden;">
+    ${resize(
+      (width) => defaultProjectionIleDeFrance(
+        width,
+        generateDotMapMarks(ile_de_france_terrain_data, idf_terrain_legend, 0.015),
+        "- Terrains by Financed Project, Île-de-France"
+      )
+    )}
+
+  </div>
+  <div class="card" style="padding: 5px; overflow: hidden;">
+    ${resize(
+      (width) => defaultProjectionItaly(
+        width,
+        generateDotMapMarks(international_terrain_data, italy_terrain_legend, 0.2),
+        "- Terrains by Financed Project, Italy"
+      )
+    )}
+
+  </div>
+</div>
 
 
 <!-- debugging info -->
@@ -723,13 +847,4 @@ if (debug) {
   display("europe")
   display(europe)
 }
-```
-
-```js
-// which terrain results are outside mainland france bbox?
-[...terrain_data].filter(
-  (d) => !inBBox(d.longitude, d.latitude, mainland_france_bbox)
-).forEach(
-  (d) => console.warn("terrain outside of france?", d.toJSON())
-);
 ```
