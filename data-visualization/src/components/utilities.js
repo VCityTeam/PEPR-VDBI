@@ -1,5 +1,5 @@
 import { map, merge, rollups, filter } from 'npm:d3';
-import { button } from "npm:@observablehq/inputs"
+import { button } from 'npm:@observablehq/inputs';
 import { nameByRace } from 'npm:fantasy-name-generator';
 import * as htl from 'npm:htl';
 
@@ -372,12 +372,17 @@ export function getAttributeByPath(obj, path) {
  *  corresponding to the columns of the table
  * @param {Array || null} columns - a list of columns to be copied, if null all columns
  *  will be copied
+ * @param {String} label - button label
  * @returns {button} - a button element that copies the data to the clipboard
  */
-export function copyTableToClipboardButton(data, columns = null) {
+export function copyTableToClipboardButton(
+  data,
+  columns = null,
+  label = 'Copy to clipboard'
+) {
   if (columns === null) columns = Object.keys(data[0]);
 
-  return button('Copy to clipboard', {
+  return button(label, {
     value: null,
     reduce: () =>
       navigator.clipboard.writeText(
@@ -385,7 +390,7 @@ export function copyTableToClipboardButton(data, columns = null) {
           (a, v) => a + columns.map((col) => v[col] || '').join(',') + '\n',
           columns.join(',') + '\n'
         )
-      )
+      ),
   });
 }
 
