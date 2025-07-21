@@ -8,17 +8,26 @@ theme: [dashboard, light]
 import {
   countEntities,
   cropText,
-  exclude
+  exclude,
+  copyTableToClipboardButton,
 } from "./components/utilities.js";
+```
+```js
 import {
   extractPhase2Workbook,
 } from "./components/phase1-dashboard.js";
+```
+```js
 import {
   donutChart
 } from "./components/pie-chart.js";
+```
+```js
 import {
   cnu_category_map
 } from './components/cnu.js';
+```
+```js
 import {
   getCategoryFromCNU,
   colorCNU
@@ -157,18 +166,20 @@ const cnu_category_plot_options = {
     .unknown("grey"),
 };
 
-function generateCnuPlotOptions(data, sort="y", height=350) {
+function generateCnuPlotOptions(data, sort="y", height=350, width=500) {
   return {
-    // width: 500,
+    width: width,
     height: height,
     marginTop: 50,
-    marginLeft: 200,
+    marginRight: 350,
     y: {
       label: "CNU",
       tickRotate: 10,
-      tickFormat: (d) => cropText(d, 40),
+      axis: "right",
+      tickFormat: (d) => cropText(d, 70),
     },
     x: {
+      reverse: true,
       grid: true,
       axis: "top",
       label: "Occurences",
@@ -198,16 +209,16 @@ function generateCnuPlotOptions(data, sort="y", height=350) {
       Plot.barX(
         data, 
         Plot.pointerY({
-          x: (d) => d[1],
           y: (d) => d[0],
+          x: (d) => d[1],
           fill: "white",
           opacity: 0.5,
         }),
       ),
-      Plot.text(data, {
-        x: 0,
-        y: (d) => d[1],
-      })
+      // Plot.text(data, {
+      //   x: 0,
+      //   y: (d) => d[1],
+      // })
     ],
   }
 };
@@ -324,7 +335,9 @@ function formatResearcherDataByProject(project, financed=false) {
     filtered_researchers,
     (D) => D.length,
     (d) => d.cnu ? getCategoryFromCNU(d.cnu) : null
-  ).filter((d) => !!d[0]); //TODO: add missing information to data quality check
+  )
+  .filter((d) => !!d[0])
+  .sort((a, b) => d3.descending(a[1], b[1])); //TODO: add missing information to data quality check
   // debugger;
 
   return {
@@ -378,8 +391,8 @@ const all_project_cnu_max = Math.max(
 ```
 
 ```js
-const cnu_plot = Plot.plot(
-  generateCnuPlotOptions(all_project_researcher_data.cnu_count, cnu_plot_sort, 800)
+const cnu_plot = (width) => Plot.plot(
+  generateCnuPlotOptions(all_project_researcher_data.cnu_count, cnu_plot_sort, 800, width)
 );
 ```
 
@@ -398,7 +411,7 @@ const cnu_plot = Plot.plot(
     <!-- <div>${generateCnuPlotLegend(all_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(all_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(all_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${cnu_plot}</div>
+    <div style="max-height: 950px;">${resize((width) => cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -409,6 +422,24 @@ const cnu_plot = Plot.plot(
     <div>${discipline_erc_pie}</div>
   </div>
 </div>
+
+```js
+display(copyTableToClipboardButton(
+  all_project_researcher_data.cnu_count,
+  null,
+  'Copy CNU data to clipboard'
+));
+display(copyTableToClipboardButton(
+  all_project_researcher_data.cnu_count_by_category,
+  null,
+  'Copy CNU data by category to clipboard'
+));
+display(copyTableToClipboardButton(
+  all_project_researcher_data.discipline_erc_count,
+  null,
+  'Copy ERC data to clipboard'
+));
+```
 
 
 ## Financed Projects
@@ -452,8 +483,8 @@ const financed_project_cnu_max = Math.max(
 ```
 
 ```js
-const financed_cnu_plot = Plot.plot(
-  generateCnuPlotOptions(financed_project_researcher_data.cnu_count, financed_cnu_plot_sort, 800)
+const financed_cnu_plot = (width) => Plot.plot(
+  generateCnuPlotOptions(financed_project_researcher_data.cnu_count, financed_cnu_plot_sort, 800, width)
 );
 ```
 
@@ -472,7 +503,7 @@ const financed_cnu_plot = Plot.plot(
     <!-- <div>${generateCnuPlotLegend(financed_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(financed_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(financed_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${financed_cnu_plot}</div>
+    <div style="max-height: 950px;">${resize((width) => financed_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -483,6 +514,24 @@ const financed_cnu_plot = Plot.plot(
     <div>${financed_discipline_erc_pie}</div>
   </div>
 </div>
+
+```js
+display(copyTableToClipboardButton(
+  financed_project_researcher_data.cnu_count,
+  null,
+  'Copy CNU data to clipboard'
+));
+display(copyTableToClipboardButton(
+  financed_project_researcher_data.cnu_count_by_category,
+  null,
+  'Copy CNU data by category to clipboard'
+));
+display(copyTableToClipboardButton(
+  financed_project_researcher_data.discipline_erc_count,
+  null,
+  'Copy ERC data to clipboard'
+));
+```
 
 ### Financed Project Summary
 
@@ -659,8 +708,8 @@ const neo_project_cnu_max = Math.max(
 ```
 
 ```js
-const neo_cnu_plot = Plot.plot(
-  generateCnuPlotOptions(neo_project_researcher_data.cnu_count, neo_cnu_plot_sort)
+const neo_cnu_plot = (width) => Plot.plot(
+  generateCnuPlotOptions(neo_project_researcher_data.cnu_count, neo_cnu_plot_sort, 350, width)
 );
 ```
 
@@ -679,7 +728,7 @@ const neo_cnu_plot = Plot.plot(
     <!-- <div>${generateCnuPlotLegend(neo_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(neo_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(neo_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${neo_cnu_plot}</div>
+    <div style="max-height: 950px;">${resize((width) => neo_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -691,6 +740,23 @@ const neo_cnu_plot = Plot.plot(
   </div>
 </div>
 
+```js
+display(copyTableToClipboardButton(
+  neo_project_researcher_data.cnu_count,
+  null,
+  'Copy CNU data to clipboard'
+));
+display(copyTableToClipboardButton(
+  neo_project_researcher_data.cnu_count_by_category,
+  null,
+  'Copy CNU data by category to clipboard'
+));
+display(copyTableToClipboardButton(
+  neo_project_researcher_data.discipline_erc_count,
+  null,
+  'Copy ERC data to clipboard'
+));
+```
 
 ## RÉSILIENCE
 
@@ -734,8 +800,8 @@ const RESILIENCE_project_cnu_max = Math.max(
 ```
 
 ```js
-const RESILIENCE_cnu_plot = Plot.plot(
-  generateCnuPlotOptions(RESILIENCE_project_researcher_data.cnu_count, RESILIENCE_cnu_plot_sort)
+const RESILIENCE_cnu_plot = (width) => Plot.plot(
+  generateCnuPlotOptions(RESILIENCE_project_researcher_data.cnu_count, RESILIENCE_cnu_plot_sort, 350, width)
 );
 ```
 
@@ -754,7 +820,7 @@ const RESILIENCE_cnu_plot = Plot.plot(
     <!-- <div>${generateCnuPlotLegend(RESILIENCE_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(RESILIENCE_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(RESILIENCE_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${RESILIENCE_cnu_plot}</div>
+    <div style="max-height: 950px;">${resize((width) => RESILIENCE_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -765,6 +831,24 @@ const RESILIENCE_cnu_plot = Plot.plot(
     <div>${RESILIENCE_discipline_erc_pie}</div>
   </div>
 </div>
+
+```js
+display(copyTableToClipboardButton(
+  RESILIENCE_project_researcher_data.cnu_count,
+  null,
+  'Copy CNU data to clipboard'
+));
+display(copyTableToClipboardButton(
+  RESILIENCE_project_researcher_data.cnu_count_by_category,
+  null,
+  'Copy CNU data by category to clipboard'
+));
+display(copyTableToClipboardButton(
+  RESILIENCE_project_researcher_data.discipline_erc_count,
+  null,
+  'Copy ERC data to clipboard'
+));
+```
 
 
 ## TRACES
@@ -809,8 +893,8 @@ const TRACES_project_cnu_max = Math.max(
 ```
 
 ```js
-const TRACES_cnu_plot = Plot.plot(
-  generateCnuPlotOptions(TRACES_project_researcher_data.cnu_count, TRACES_cnu_plot_sort)
+const TRACES_cnu_plot = (width) => Plot.plot(
+  generateCnuPlotOptions(TRACES_project_researcher_data.cnu_count, TRACES_cnu_plot_sort, 350, width)
 );
 ```
 
@@ -829,7 +913,7 @@ const TRACES_cnu_plot = Plot.plot(
     <!-- <div>${generateCnuPlotLegend(TRACES_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(TRACES_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(TRACES_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${TRACES_cnu_plot}</div>
+    <div style="max-height: 950px;">${resize((width) => TRACES_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -840,6 +924,24 @@ const TRACES_cnu_plot = Plot.plot(
     <div>${TRACES_discipline_erc_pie}</div>
   </div>
 </div>
+
+```js
+display(copyTableToClipboardButton(
+  TRACES_project_researcher_data.cnu_count,
+  null,
+  'Copy CNU data to clipboard'
+));
+display(copyTableToClipboardButton(
+  TRACES_project_researcher_data.cnu_count_by_category,
+  null,
+  'Copy CNU data by category to clipboard'
+));
+display(copyTableToClipboardButton(
+  TRACES_project_researcher_data.discipline_erc_count,
+  null,
+  'Copy ERC data to clipboard'
+));
+```
 
 ## VF++
 
@@ -883,8 +985,8 @@ const vfpp_project_cnu_max = Math.max(
 ```
 
 ```js
-const vfpp_cnu_plot = Plot.plot(
-  generateCnuPlotOptions(vfpp_project_researcher_data.cnu_count, vfpp_cnu_plot_sort)
+const vfpp_cnu_plot = (width) => Plot.plot(
+  generateCnuPlotOptions(vfpp_project_researcher_data.cnu_count, vfpp_cnu_plot_sort, 350, width)
 );
 ```
 
@@ -903,7 +1005,7 @@ const vfpp_cnu_plot = Plot.plot(
     <!-- <div>${generateCnuPlotLegend(vfpp_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(vfpp_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(vfpp_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${vfpp_cnu_plot}</div>
+    <div style="max-height: 950px;">${resize((width) => vfpp_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -914,6 +1016,24 @@ const vfpp_cnu_plot = Plot.plot(
     <div>${vfpp_discipline_erc_pie}</div>
   </div>
 </div>
+
+```js
+display(copyTableToClipboardButton(
+  vfpp_project_researcher_data.cnu_count,
+  null,
+  'Copy CNU data to clipboard'
+));
+display(copyTableToClipboardButton(
+  vfpp_project_researcher_data.cnu_count_by_category,
+  null,
+  'Copy CNU data by category to clipboard'
+));
+display(copyTableToClipboardButton(
+  vfpp_project_researcher_data.discipline_erc_count,
+  null,
+  'Copy ERC data to clipboard'
+));
+```
 
 
 ## VILLEGARDEN
@@ -958,8 +1078,8 @@ const VILLEGARDEN_project_cnu_max = Math.max(
 ```
 
 ```js
-const VILLEGARDEN_cnu_plot = Plot.plot(
-  generateCnuPlotOptions(VILLEGARDEN_project_researcher_data.cnu_count, VILLEGARDEN_cnu_plot_sort)
+const VILLEGARDEN_cnu_plot = (width) => Plot.plot(
+  generateCnuPlotOptions(VILLEGARDEN_project_researcher_data.cnu_count, VILLEGARDEN_cnu_plot_sort, 350, width)
 );
 ```
 
@@ -978,7 +1098,7 @@ const VILLEGARDEN_cnu_plot = Plot.plot(
     <!-- <div>${generateCnuPlotLegend(VILLEGARDEN_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(VILLEGARDEN_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(VILLEGARDEN_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${VILLEGARDEN_cnu_plot}</div>
+    <div style="max-height: 950px;">${resize((width) => VILLEGARDEN_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -989,6 +1109,24 @@ const VILLEGARDEN_cnu_plot = Plot.plot(
     <div>${VILLEGARDEN_discipline_erc_pie}</div>
   </div>
 </div>
+
+```js
+display(copyTableToClipboardButton(
+  VILLEGARDEN_project_researcher_data.cnu_count,
+  null,
+  'Copy CNU data to clipboard'
+));
+display(copyTableToClipboardButton(
+  VILLEGARDEN_project_researcher_data.cnu_count_by_category,
+  null,
+  'Copy CNU data by category to clipboard'
+));
+display(copyTableToClipboardButton(
+  VILLEGARDEN_project_researcher_data.discipline_erc_count,
+  null,
+  'Copy ERC data to clipboard'
+));
+```
 
 ## WHAOU
 
@@ -1032,8 +1170,8 @@ const WHAOU_project_cnu_max = Math.max(
 ```
 
 ```js
-const WHAOU_cnu_plot = Plot.plot(
-  generateCnuPlotOptions(WHAOU_project_researcher_data.cnu_count, WHAOU_cnu_plot_sort)
+const WHAOU_cnu_plot = (width) => Plot.plot(
+  generateCnuPlotOptions(WHAOU_project_researcher_data.cnu_count, WHAOU_cnu_plot_sort, 350, width)
 );
 ```
 
@@ -1052,7 +1190,7 @@ const WHAOU_cnu_plot = Plot.plot(
     <!-- <div>${generateCnuPlotLegend(WHAOU_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(WHAOU_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(WHAOU_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${WHAOU_cnu_plot}</div>
+    <div style="max-height: 950px;">${resize((width) => WHAOU_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -1063,6 +1201,24 @@ const WHAOU_cnu_plot = Plot.plot(
     <div>${WHAOU_discipline_erc_pie}</div>
   </div>
 </div>
+
+```js
+display(copyTableToClipboardButton(
+  WHAOU_project_researcher_data.cnu_count,
+  null,
+  'Copy CNU data to clipboard'
+));
+display(copyTableToClipboardButton(
+  WHAOU_project_researcher_data.cnu_count_by_category,
+  null,
+  'Copy CNU data by category to clipboard'
+));
+display(copyTableToClipboardButton(
+  WHAOU_project_researcher_data.discipline_erc_count,
+  null,
+  'Copy ERC data to clipboard'
+));
+```
 
 
 ## inteGREEN
@@ -1107,8 +1263,8 @@ const inteGREEN_project_cnu_max = Math.max(
 ```
 
 ```js
-const inteGREEN_cnu_plot = Plot.plot(
-  generateCnuPlotOptions(inteGREEN_project_researcher_data.cnu_count, inteGREEN_cnu_plot_sort)
+const inteGREEN_cnu_plot = (width) => Plot.plot(
+  generateCnuPlotOptions(inteGREEN_project_researcher_data.cnu_count, inteGREEN_cnu_plot_sort, 350, width)
 );
 ```
 
@@ -1127,7 +1283,7 @@ const inteGREEN_cnu_plot = Plot.plot(
     <!-- <div>${generateCnuPlotLegend(inteGREEN_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(inteGREEN_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(inteGREEN_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${inteGREEN_cnu_plot}</div>
+    <div style="max-height: 950px;">${resize((width) => inteGREEN_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -1138,6 +1294,24 @@ const inteGREEN_cnu_plot = Plot.plot(
     <div>${inteGREEN_discipline_erc_pie}</div>
   </div>
 </div>
+
+```js
+display(copyTableToClipboardButton(
+  inteGREEN_project_researcher_data.cnu_count,
+  null,
+  'Copy CNU data to clipboard'
+));
+display(copyTableToClipboardButton(
+  inteGREEN_project_researcher_data.cnu_count_by_category,
+  null,
+  'Copy CNU data by category to clipboard'
+));
+display(copyTableToClipboardButton(
+  inteGREEN_project_researcher_data.discipline_erc_count,
+  null,
+  'Copy ERC data to clipboard'
+));
+```
 
 
 ## URBHEALTH
@@ -1182,8 +1356,8 @@ const URBHEALTH_project_cnu_max = Math.max(
 ```
 
 ```js
-const URBHEALTH_cnu_plot = Plot.plot(
-  generateCnuPlotOptions(URBHEALTH_project_researcher_data.cnu_count, URBHEALTH_cnu_plot_sort)
+const URBHEALTH_cnu_plot = (width) => Plot.plot(
+  generateCnuPlotOptions(URBHEALTH_project_researcher_data.cnu_count, URBHEALTH_cnu_plot_sort, 350, width)
 );
 ```
 
@@ -1202,7 +1376,7 @@ const URBHEALTH_cnu_plot = Plot.plot(
     <!-- <div>${generateCnuPlotLegend(URBHEALTH_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(URBHEALTH_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(URBHEALTH_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${URBHEALTH_cnu_plot}</div>
+    <div style="max-height: 950px;">${resize((width) => URBHEALTH_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -1213,6 +1387,24 @@ const URBHEALTH_cnu_plot = Plot.plot(
     <div>${URBHEALTH_discipline_erc_pie}</div>
   </div>
 </div>
+
+```js
+display(copyTableToClipboardButton(
+  URBHEALTH_project_researcher_data.cnu_count,
+  null,
+  'Copy CNU data to clipboard'
+));
+display(copyTableToClipboardButton(
+  URBHEALTH_project_researcher_data.cnu_count_by_category,
+  null,
+  'Copy CNU data by category to clipboard'
+));
+display(copyTableToClipboardButton(
+  URBHEALTH_project_researcher_data.discipline_erc_count,
+  null,
+  'Copy ERC data to clipboard'
+));
+```
 
 ## Data quality metrics
 
