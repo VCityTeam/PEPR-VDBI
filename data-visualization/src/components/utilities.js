@@ -1,4 +1,5 @@
 import { map, merge, rollups, filter } from 'npm:d3';
+import { button } from "npm:@observablehq/inputs"
 import { nameByRace } from 'npm:fantasy-name-generator';
 import * as htl from 'npm:htl';
 
@@ -362,6 +363,30 @@ export function getAttributeByPath(obj, path) {
     }
   }
   return val;
+}
+
+/**
+ * A button for copying a table to the clipboard as a csv.
+ *
+ * @param {Array<object>} data - the data to be copied, rows should contain keys
+ *  corresponding to the columns of the table
+ * @param {Array || null} columns - a list of columns to be copied, if null all columns
+ *  will be copied
+ * @returns {button} - a button element that copies the data to the clipboard
+ */
+export function copyTableToClipboardButton(data, columns = null) {
+  if (columns === null) columns = Object.keys(data[0]);
+
+  return button('Copy to clipboard', {
+    value: null,
+    reduce: () =>
+      navigator.clipboard.writeText(
+        data.reduce(
+          (a, v) => a + columns.map((col) => v[col] || '').join(',') + '\n',
+          columns.join(',') + '\n'
+        )
+      )
+  });
 }
 
 /**

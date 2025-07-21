@@ -116,19 +116,10 @@ const mural_links = (async function* () {
 ```
 
 ```js
-display(
-  Inputs.button(
-    "Copy to clipboard",
-    {
-      value: null,
-      reduce: () => navigator.clipboard.writeText(
-        mural_links.reduce(
-          (a, v) => a + `${v.source},${v.target},${v.label}\n`,
-          "source,target,label\n"
-        )
-      ),
-    }
-  )
-);
+import { copyTableToClipboardButton } from './components/utilities.js';
+```
+
+```js
+display(copyTableToClipboardButton(mural_links, ['source','target','label']));
 display(Inputs.table(mural_links));
 ```
