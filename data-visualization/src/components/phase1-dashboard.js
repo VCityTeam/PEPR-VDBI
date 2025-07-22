@@ -11,7 +11,8 @@ import * as Plot from 'npm:@observablehq/plot';
  */
 export function getGeneralSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[0], {
-    range: 'A1:BQ9',
+    // range: 'A1:BQ9',
+    range: 'A1:HV41',
     headers: true,
   });
 }
@@ -70,11 +71,8 @@ export function getInstitutionSheet(workbook) {
  *    name_fr: string,
  *    name_en: string,
  *    institutions: [],
- *    institution_count: number
  *    labs: [],
- *    lab_count: number
  *    partners: [],
- *    partner_count: number
  *    action: string,
  *    how: string,
  *    why: string,
@@ -94,9 +92,9 @@ export function resolveGeneralEntities(
   return map(sheet, (d) => {
     const mapped_entities = {
       acronyme: d['ACRONYME Projet'] ? d['ACRONYME Projet'] : null,
-      present: d['Présent aux journées'] ? [d['Présent aux journées']] : [], // GGE: not needed
-      auditioned: d['AUDITIONNÉ'] == 'OUI', // not a list, will this cause a problem with generic map reduce functions looking for lists?
-      financed: d['Financé'] == 'OUI', // not a list, will this cause a problem with generic map reduce functions looking for lists?
+      present: String(d['Présent aux journées']).toUpperCase() == 'OUI', // GGE: not needed
+      auditioned: String(d['AUDITIONNÉ']).toUpperCase() == 'OUI', // not a list, will this cause a problem with generic map reduce functions looking for lists?
+      financed: String(d['Financé']).toUpperCase() == 'OUI', // not a list, will this cause a problem with generic map reduce functions looking for lists?
       budget: d['Budget (demandé) en M€'] ? d['Budget (demandé) en M€'] : null,
       // grade: d['Note du jury'] ? d['Note du jury'] : null,
       grade: null,
@@ -170,9 +168,6 @@ export function resolveGeneralEntities(
       why: d['POUR QUOI FAIRE'] ? d['POUR QUOI FAIRE'] : null, // empty column?
       notes: d['Notes'] ? d['Notes'] : null, // not empty but almost?
     };
-    mapped_entities.institution_count = mapped_entities.institutions.length;
-    mapped_entities.lab_count = mapped_entities.labs.length;
-    mapped_entities.partner_count = mapped_entities.partners.length;
 
     if (anonymize) {
       mapped_entities.acronyme = pseudoanonymizeEntry(

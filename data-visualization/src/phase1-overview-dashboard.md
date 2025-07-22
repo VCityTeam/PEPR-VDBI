@@ -63,6 +63,8 @@ if (debug) {
   display(laboratory_data);
   display("university_data");
   display(university_data);
+  display("partner_data")
+  display(partner_data)
   display("general_partners");
   display([...await sql`select * from general_partners`]);
   display("aap_partners");
@@ -120,8 +122,9 @@ group by all
 ```
 
 ```js
+  // "./data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
 const workbook1 = FileAttachment(
-  "./data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
+  "./data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
 ).xlsx();
 ```
 ```js
@@ -135,29 +138,48 @@ const departements = FileAttachment("./data/departements.json").json();
 const anonymize = false;
 const anonymizeDict = new Map();
 
+display(getGeneralSheet(workbook1))
+
 const project_data = resolveGeneralEntities(
   getGeneralSheet(workbook1),
   anonymize,
   anonymizeDict
 );
+const financed_project_data = project_data.filter((d) => d.financed);
 const researcher_data = resolveResearcherEntities(
   getResearcherSheet(workbook1),
   anonymize,
   anonymizeDict
 );
-const laboratory_data = new Set(d3.merge(project_data.map((d) => d.labs)));
+const financed_researcher_data = researcher_data.filter((d) => d.financed);
+
+const laboratory_data = new Set(d3.merge(project_data.map((d) => d.labs)).sort());
+const auditioned_laboratory_data = new Set(
+  d3.merge(project_data.filter((d) => d.auditioned).map((d) => d.labs)).sort()
+);
+const financed_laboratory_data = new Set(
+  d3.merge(financed_project_data.map((d) => d.labs)).sort()
+);
 // const laboratory_data = resolveLabEntities(
 //   getLabSheet(workbook1),
 //   anonymize,
 //   anonymizeDict
 // );
-const university_data = new Set(d3.merge(project_data.map((d) => d.institutions)));
+const university_data = new Set(d3.merge(project_data.map((d) => d.institutions)).sort());
+const auditioned_university_data = new Set(
+  d3.merge(project_data.filter((d) => d.auditioned).map((d) => d.institutions)).sort()
+);
+const financed_university_data = new Set(d3.merge(financed_project_data.map((d) => d.institutions)).sort());
 // const university_data = resolveInstitutionEntities(
 //   getInstitutionSheet(workbook1),
 //   anonymize,
 //   anonymizeDict
 // );
-const partner_data = new Set(d3.merge(project_data.map((d) => d.partners)));
+const partner_data = new Set(d3.merge(project_data.map((d) => d.partners)).sort());
+const auditioned_partner_data = new Set(
+  d3.merge(project_data.filter((d) => d.auditioned).map((d) => d.partners)).sort()
+);
+const financed_partner_data = new Set(d3.merge(financed_project_data.map((d) => d.partners)).sort());
 ```
 
 ```js
@@ -174,6 +196,113 @@ const financed_project_count = d3.reduce(
 );
 ```
 
+<!-- DETAILED COUNTS -->
+
+```js
+// helper functions to access input field criteria
+const critera_functions = [d => d.auditioned, d => d.financed];
+const auditioned_options = getColumnOptions(project_data, "auditioned");
+const financed_options = getColumnOptions(project_data, "financed");
+
+function generateCountPlotAndFilters(label, accessor_function) {
+  // input and value generation
+  const auditioned_input = Inputs.select(
+    auditioned_options,
+    {
+      value: true,
+      label: "Auditioned?",
+    }
+  );
+  const financed_input = Inputs.select(
+    financed_options,
+    {
+      value: true,
+      label: "Financed?",
+    }
+  );
+
+  const auditioned_value = Generators.input(
+    auditioned_input
+  );
+  const financed_value = Generators.input(
+    financed_input
+  );
+
+  // project_laboratories by project sort select inputs
+  const sort_input = Inputs.select(
+    new Map([
+      ["Project name ⇧", "x"],
+      ["Project name ⇩", "-x"],
+      [`${label} count ⇧`, "y"],
+      [`${label} count ⇩`, "-y"],
+    ]),
+    {
+      value: "x",
+      label: "Sort by",
+    }
+  );
+  const sort_value = Generators.input(sort_input);
+
+  debugger;
+  const filtered_data = filterOnInput(
+    project_data,
+    [auditioned_value, financed_value],
+    critera_functions
+  );
+
+  const generatePlot = (width, accessor_function) => Plot.plot({
+    width: width,
+    height: width,
+    marginBottom: 70,
+    color: {
+      scheme: "Observable10",
+    },
+    x: {
+      tickRotate: -30,
+      label: "Project",
+    },
+    y: {
+      grid: true,
+      label: label,
+      domain: [0, Math.max(filtered_data.map(accessor_function)) + 1],
+    },
+    marks: [
+      Plot.barY(filtered_data, {
+        x: "acronyme",
+        y: accessor_function,
+        fill: accessor_function,
+        sort: {x: sort_value},
+        tip: true,
+      }),
+    ],
+  });
+
+  const generateCardContent = () => htl.html`
+    <h2>${label} count by Project</h2>
+    <div>${auditioned_input}</div>
+    <div>${financed_input}</div>
+    <div>${sort_input}</div>
+    <div>${resize((width) => generatePlot(width, accessor_function))}</div>`;
+
+  if (debug) {
+    display(`${label} filtered_data`)
+    display(filtered_data)
+  }
+
+  return {
+    auditioned_input,
+    auditioned_value,
+    financed_input,
+    financed_value,
+    sort_input,
+    sort_value,
+    filtered_data,
+    generatePlot,
+    generateCardContent,
+  }
+}
+```
+
 <!-- LABORATORY COUNT -->
 
 ```js
@@ -181,14 +310,14 @@ const financed_project_count = d3.reduce(
 const project_laboratories_auditioned_input = Inputs.select(
   getColumnOptions(project_data, "auditioned"),
   {
-    value: "All",
+    value: true,
     label: "Auditioned?",
   }
 );
 const project_laboratories_financed_input = Inputs.select(
   getColumnOptions(project_data, "financed"),
   {
-    value: "All",
+    value: true,
     label: "Financed?",
   }
 );
@@ -218,7 +347,7 @@ const project_laboratories_sort = Generators.input(project_laboratories_sort_inp
 
 ```js
 // helper functions to access input field criteria
-const critera_functions = [d => d.auditioned, d => d.financed];
+// const critera_functions = [d => d.auditioned, d => d.financed];
 
 const filtered_projects_laboratories = filterOnInput(
   project_data,
@@ -529,7 +658,7 @@ const project_triples_predicate_select = Generators.input(
 
 ```js
 const project_triples = mapTableToTriples(
-  project_data, {
+  financed_project_data, {
     id_key: "acronyme",
     column: [...project_predicates.values()],
   }
@@ -710,26 +839,40 @@ if (debug) {
 
 <div class="grid grid-cols-4">
   <div class="card">
-    <h2>Financed project count</h2>
-    <span class="big">${financed_project_count.toLocaleString("en-US")}</span>
-  </div>
-  <!-- <div class="card">
-    <h2>Project count (Total / Auditioned / Financed)</h2>
-    <span class="big">${project_data.length.toLocaleString("en-US")} / 
-    ${auditioned_project_count.toLocaleString("en-US")} / 
-    ${financed_project_count.toLocaleString("en-US")}</span>
-  </div> -->
-  <div class="card">
-    <h2>University count</h2>
-    <span class="big">${university_data.size.toLocaleString("en-US")}</span>
+    <h2>Project count <span class="muted">(Total / Auditioned / Financed)</span></h2>
+    <span class="big">
+      ${project_data.length.toLocaleString()} /
+      ${auditioned_project_count.toLocaleString()} /
+      ${financed_project_count.toLocaleString()}
+    </span>
+
   </div>
   <div class="card">
-    <h2>Laboratory count</h2>
-    <span class="big">${laboratory_data.size.toLocaleString("en-US")}</span>
+    <h2>University count <span class="muted">(Total / Auditioned / Financed)</span></h2>
+    <span class="big">
+      ${university_data.size.toLocaleString()} /
+      ${auditioned_university_data.size.toLocaleString()} /
+      ${financed_university_data.size.toLocaleString()}
+    </span>
+
   </div>
   <div class="card">
-    <h2>Partner count</h2>
-    <span class="big">${partner_data.size.toLocaleString("en-US")}</span>
+    <h2>Laboratory count <span class="muted">(Total / Auditioned / Financed)</span></h2>
+    <span class="big">
+      ${laboratory_data.size.toLocaleString()} /
+      ${auditioned_laboratory_data.size.toLocaleString()} /
+      ${financed_laboratory_data.size.toLocaleString()}
+    </span>
+
+  </div>
+  <div class="card">
+    <h2>Partner count <span class="muted">(Total / Auditioned / Financed)</span></h2>
+    <span class="big">
+      ${partner_data.size.toLocaleString()} /
+      ${auditioned_partner_data.size.toLocaleString()} /
+      ${financed_partner_data.size.toLocaleString()}
+    </span>
+
   </div>
 </div>
 <div class="grid grid-cols-3">
@@ -740,9 +883,15 @@ if (debug) {
   </div>
   <div class="card">
     <h2>Laboratory count by Project</h2>
+    <div>${project_laboratories_auditioned_input}</div>
+    <div>${project_laboratories_financed_input}</div>
     <div>${project_laboratories_sort_input}</div>
     <div>${resize((width) => filtered_projects_laboratories_plot(width))}</div>
   </div>
+  <div class="card">
+    ${generateCountPlotAndFilters("University",(d) => d.labs.length).generateCardContent()}
+  </div>
+
   <div class="card">
     <h2>Partner count by Project</h2>
     <div>${project_partners_sort_input}</div>

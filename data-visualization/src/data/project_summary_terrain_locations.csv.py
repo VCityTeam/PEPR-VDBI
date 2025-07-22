@@ -2,7 +2,7 @@ import logging
 import sys
 import csv
 from utils import initDefaultLogger
-from nominatim_utils import queryNominatim
+from geopy.geocoders import Nominatim
 
 
 def main():
@@ -28,6 +28,9 @@ def main():
             terrains.add(row[1])
 
     # query Nominatim api using partner names and aggregate data
+    geolocator = Nominatim(
+        user_agent="https://github.com/VCityTeam/PEPR-VDBI", timeout=10  # type: ignore
+    )
     for terrain in terrains:
         logging.info(f"processing terrain: {terrain}")
 
@@ -37,7 +40,8 @@ def main():
             logging.warning(f"terrain not found in terrain: {terrain}")
             continue
 
-        terrain_geodata = queryNominatim(terrain)
+        terrain_geodata = geolocator.geocode(terrain)
+        logging.debug(f"terrain_geodata from nominatim: {terrain_geodata}")
 
         if terrain_geodata is None:
             logging.warning(f"data not found for terrain: {terrain}")
@@ -48,8 +52,8 @@ def main():
                 # project,
                 terrain,
                 # terrain_geodata[0]["name"] if terrain_geodata else terrain,
-                terrain_geodata[0]["lat"] if terrain_geodata else None,
-                terrain_geodata[0]["lon"] if terrain_geodata else None,
+                terrain_geodata.latitude if terrain_geodata else None,  # type: ignore
+                terrain_geodata.longitude if terrain_geodata else None,  # type: ignore
             ]
         ]
 
