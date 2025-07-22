@@ -171,7 +171,7 @@ function generateCnuPlotOptions(data, sort="y", height=350, width=500) {
     width: width,
     height: height,
     marginTop: 50,
-    marginRight: 350,
+    marginRight: width / 2,
     y: {
       label: "CNU",
       tickRotate: 10,
@@ -411,7 +411,7 @@ const cnu_plot = (width) => Plot.plot(
     <!-- <div>${generateCnuPlotLegend(all_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(all_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(all_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${resize((width) => cnu_plot(width))}</div>
+    <div style="max-height: 950px; overflow: hidden;">${resize((width) => cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -503,7 +503,7 @@ const financed_cnu_plot = (width) => Plot.plot(
     <!-- <div>${generateCnuPlotLegend(financed_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(financed_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(financed_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${resize((width) => financed_cnu_plot(width))}</div>
+    <div style="max-height: 950px; overflow: hidden;">${resize((width) => financed_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -728,7 +728,7 @@ const neo_cnu_plot = (width) => Plot.plot(
     <!-- <div>${generateCnuPlotLegend(neo_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(neo_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(neo_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${resize((width) => neo_cnu_plot(width))}</div>
+    <div style="max-height: 950px; overflow: hidden;">${resize((width) => neo_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -820,7 +820,7 @@ const RESILIENCE_cnu_plot = (width) => Plot.plot(
     <!-- <div>${generateCnuPlotLegend(RESILIENCE_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(RESILIENCE_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(RESILIENCE_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${resize((width) => RESILIENCE_cnu_plot(width))}</div>
+    <div style="max-height: 950px; overflow: hidden;">${resize((width) => RESILIENCE_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -913,7 +913,7 @@ const TRACES_cnu_plot = (width) => Plot.plot(
     <!-- <div>${generateCnuPlotLegend(TRACES_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(TRACES_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(TRACES_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${resize((width) => TRACES_cnu_plot(width))}</div>
+    <div style="max-height: 950px; overflow: hidden;">${resize((width) => TRACES_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -1005,7 +1005,7 @@ const vfpp_cnu_plot = (width) => Plot.plot(
     <!-- <div>${generateCnuPlotLegend(vfpp_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(vfpp_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(vfpp_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${resize((width) => vfpp_cnu_plot(width))}</div>
+    <div style="max-height: 950px; overflow: hidden;">${resize((width) => vfpp_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -1098,7 +1098,7 @@ const VILLEGARDEN_cnu_plot = (width) => Plot.plot(
     <!-- <div>${generateCnuPlotLegend(VILLEGARDEN_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(VILLEGARDEN_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(VILLEGARDEN_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${resize((width) => VILLEGARDEN_cnu_plot(width))}</div>
+    <div style="max-height: 950px; overflow: hidden;">${resize((width) => VILLEGARDEN_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -1190,7 +1190,7 @@ const WHAOU_cnu_plot = (width) => Plot.plot(
     <!-- <div>${generateCnuPlotLegend(WHAOU_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(WHAOU_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(WHAOU_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${resize((width) => WHAOU_cnu_plot(width))}</div>
+    <div style="max-height: 950px; overflow: hidden;">${resize((width) => WHAOU_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -1283,7 +1283,7 @@ const inteGREEN_cnu_plot = (width) => Plot.plot(
     <!-- <div>${generateCnuPlotLegend(inteGREEN_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(inteGREEN_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(inteGREEN_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${resize((width) => inteGREEN_cnu_plot(width))}</div>
+    <div style="max-height: 950px; overflow: hidden;">${resize((width) => inteGREEN_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>
@@ -1376,7 +1376,7 @@ const URBHEALTH_cnu_plot = (width) => Plot.plot(
     <!-- <div>${generateCnuPlotLegend(URBHEALTH_project_cnu_max)[3]}</div> -->
     <!-- <div>${generateCnuPlotLegend(URBHEALTH_project_cnu_max)[4]}</div> -->
     <!-- <div>${generateCnuPlotLegend(URBHEALTH_project_cnu_max)[5]}</div> -->
-    <div style="max-height: 950px;">${resize((width) => URBHEALTH_cnu_plot(width))}</div>
+    <div style="max-height: 950px; overflow: hidden;">${resize((width) => URBHEALTH_cnu_plot(width))}</div>
   </div>
   <!-- <div class="card grid-colspan-1">
     <h2>CNUs SHS</h2>

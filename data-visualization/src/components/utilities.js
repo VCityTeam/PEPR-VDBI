@@ -231,6 +231,8 @@ export function createTooltip() {
 }
 
 export function cropText(text, maxLength = 20) {
+  if (!text) return '';
+
   return text.length > maxLength
     ? text.slice(0, maxLength - 3).concat('...')
     : text;
