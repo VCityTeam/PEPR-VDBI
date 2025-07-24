@@ -16,6 +16,9 @@ Example imported from https://observablehq.com/@d3/parallel-sets and adapted for
 
 [Parallel sets](https://eagereyes.org/publications/Bendix-InfoVis-2005) are like [parallel coordinates](/@d3/parallel-coordinates), but for categorical dimensions. The thickness of each curved line represents a quantity that is repeatedly subdivided by category. This example looks at the *Titanic* disaster of 1912.
 
+<div class="tip">
+Code was moved to <code>/src/components/sankey.js</code> in the code repository
+</div>
 
 ## Test data
 
@@ -181,7 +184,6 @@ import {
 ```
 
 ```sql id=all_partner_data echo
-
 -- Clean tables
 UPDATE general_partners
   SET project_name = 'RESILIENCE'
@@ -245,6 +247,11 @@ on cjn1.Code = floor(aggregate_partners.nature_juridique / 1000)
 ## Partners by category data
 
 ```js
+display(Inputs.table(partners_by_category_data))
+display(partner_graph)
+```
+
+```js echo
 const partners_by_category_data = await [...all_partner_data].map((d) => {
   const datum = {...d};
   datum.category_3 = `(${datum.cjn3_code}) ${datum.cjn3_label}`
@@ -252,7 +259,7 @@ const partners_by_category_data = await [...all_partner_data].map((d) => {
   datum.category_1 = `(${datum.cjn1_code}) ${datum.cjn1_label}`
   return datum;
 })
-display(Inputs.table(partners_by_category_data));
+
 const partner_csv_data = Object.assign(
   partners_by_category_data,
   {
@@ -274,7 +281,6 @@ const partner_csv_data = Object.assign(
   }
 );
 const partner_graph = csvToGraph(partner_csv_data);
-display(partner_graph)
 ```
 
 ```js
