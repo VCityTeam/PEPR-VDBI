@@ -5,7 +5,7 @@ sql:
   aap_partners: ./data/private/partenaires_aap2023.csv
   terrains: ./data/project_summary_terrain_locations.csv
   projects: ./data/private/project_summary.csv
-  project_terrain_scale_map: ./data/private/project_summary_terrains.csv
+  project_terrains_by_scale: ./data/private/project_summary_terrains.csv
 ---
 
 # Phase 1 Cartography
@@ -14,10 +14,6 @@ sql:
   Data visualizations are unverified and errors may exist.
   Consider these data visualizations as estimations and not a "ground truth".
 </div>
-
-```js
-const debug = true;
-```
 
 ```js
 import {
@@ -63,33 +59,46 @@ import {
 
 ```sql id=terrain_data
 -- clean data
-update project_terrain_scale_map
+update project_terrains_by_scale
 set terrain = replace(terrain, 'Commune de ', '');
-update project_terrain_scale_map
+update project_terrains_by_scale
 set terrain = replace(terrain, 'Ville de ', '');
-update project_terrain_scale_map
+update project_terrains_by_scale
 set terrain = replace(terrain, 'Métropole d''', '');
-update project_terrain_scale_map
+update project_terrains_by_scale
 set terrain = replace(terrain, 'Métropole de ', '');
-update project_terrain_scale_map
+update project_terrains_by_scale
 set terrain = replace(terrain, 'Métropole européenne de ', '');
-update project_terrain_scale_map
+update project_terrains_by_scale
 set terrain = replace(terrain, 'Métropole Européenne de ', '');
-update project_terrain_scale_map
+update project_terrains_by_scale
 set terrain = replace(terrain, 'Aix-Marseille-Provence', 'Marseille');
+
+update terrains
+set terrain = replace(terrain, 'Commune de ', '');
+update terrains
+set terrain = replace(terrain, 'Ville de ', '');
+update terrains
+set terrain = replace(terrain, 'Métropole d''', '');
+update terrains
+set terrain = replace(terrain, 'Métropole de ', '');
+update terrains
+set terrain = replace(terrain, 'Métropole européenne de ', '');
 update terrains
 set terrain = replace(terrain, 'Métropole Européenne de ', '');
+update terrains
+set terrain = replace(terrain, 'Aix-Marseille-Provence', 'Marseille');
 
 with project_terrain_map as (
     select
       acronyme,
       terrain,
-    from project_terrain_scale_map
+    from project_terrains_by_scale
     group by all
   )
-select
+select distinct
   terrains.terrain,
-  list(project_terrain_map.acronyme) as projects,
+  list_distinct(list(project_terrain_map.acronyme)) as projects,
   first(terrains.lat) as latitude,
   first(terrains.lon) as longitude,
 from terrains
@@ -104,7 +113,7 @@ const workbook1 = FileAttachment(
 ).xlsx();
 ```
 ```js
-const france_regions = await FileAttachment("./data/regions.json").json();
+const france_regions = await FileAttachment("./data/france_regions.json").json();
 const mainland_france_regions = {
   type: "FeatureCollection",
   features: france_regions.features.filter(
@@ -117,23 +126,20 @@ const ile_de_france_region = {
 };
 ```
 ```js
-const departements = await FileAttachment("./data/departements.json").json();
+const france_departements = await FileAttachment("./data/france_departements.json").json();
 const ile_de_france_departements = {
   type: "FeatureCollection",
-  features: departements.features.filter(
-    (d) => d3.geoContains(ile_de_france_region.feature.geometry, d3.geoCentroid(d.geometry))
-  )
+  features: france_departements.features
 }
 ```
 ```js
-const europe = await FileAttachment("./data/europe.geo.json").json();
-// const ile_de_france_departements = {
-//   type: "FeatureCollection",
-//   features: departements.features.filter(
-//     (d) => d3.geoContains(ile_de_france_region.feature.geometry, d3.geoCentroid(d.geometry))
-//   )
-// }
+const europe = FileAttachment("./data/europe.geo.json").json();
 ```
+
+```js
+const italy_regions = FileAttachment("./data/italy_regions.json").json();
+```
+
 
 ```js
 const anonymize = false;
@@ -196,8 +202,8 @@ const ile_de_france_bbox = {
   'max_y': 49.24342474094858
 };
 
-const france_terrain_data = [...terrain_data].filter(
-  (d) => 
+const france_terrain_data = [...terrain_data]
+  .filter((d) => 
     // filter missing data
     d.terrain &&
     d.longitude &&
@@ -206,7 +212,8 @@ const france_terrain_data = [...terrain_data].filter(
     inBBox(d.longitude, d.latitude, mainland_france_bbox) &&
     // separate out ile-de-france data 
     !inBBox(d.longitude, d.latitude, ile_de_france_bbox)
-);
+  )
+  .map((d) => d.toJSON()); // this is only to make debugging easier, should be removed at scale
 
 const ile_de_france_terrain_data = [...terrain_data].filter(
   (d) => d.terrain != 'Île-de-France' &&
@@ -293,7 +300,7 @@ const italy_terrain_legend = [...project_colors.entries()
 const mapToItalyLongitude = (index, subdivisions) =>
   d3.scaleLinear(
     [0, subdivisions],
-    [11, 16]
+    [13.1, 13.1]
   )(index);
 
 for (let index = 0; index < italy_terrain_legend.length; index++) {
@@ -302,7 +309,7 @@ for (let index = 0; index < italy_terrain_legend.length; index++) {
     mapToItalyLongitude(index, italy_terrain_legend.length)
   );
     // push latitude
-  italy_terrain_legend[index].push(46);
+  italy_terrain_legend[index].push(44.3);
 }
 
 
@@ -323,6 +330,7 @@ const terrain_anchor_map = new Map([
   // ['Ris-Orangis', 'top'],
   // ['Saclay', 'bottom'],
   ['Arquata del Tronto', 'top-right'],
+  ['Acquasanta Terme', 'bottom-left'],
 ]);
 
 const terrain_tips = (data) => data.map((d) => {
@@ -353,6 +361,7 @@ const terrain_tip_dots_float_left = [
   // 'Thiers',
   // 'Plauzat',
   // 'Saclay Cachan',
+  'Arquata del Tronto',
 ];
 
 const terrain_tip_dots = (data, legend, delta) => data.flatMap((d) => {
@@ -389,13 +398,14 @@ const terrain_tip_dots = (data, legend, delta) => data.flatMap((d) => {
 
 const defaultProjection = (
   width,
+  height,
   marks,
   caption="",
   domain=d3.geoCircle().center([2, 47]).radius(5)()
   ) =>
     Plot.plot({
       width: width,
-      height: width,
+      height: height,
       caption: caption,
       projection: {
         type: 'azimuthal-equidistant',
@@ -405,9 +415,10 @@ const defaultProjection = (
     }
 );
 
-const defaultProjectionFrance = (width, marks, caption="") =>
+const defaultProjectionFrance = (width, height, marks, caption="") =>
   defaultProjection(
     width,
+    height,
     [
       Plot.geo(mainland_france_regions, {
         stroke: 'white',
@@ -418,11 +429,12 @@ const defaultProjectionFrance = (width, marks, caption="") =>
       marks
     ],
     caption,
-    d3.geoCircle().center([2, 47]).radius(5)()
+    d3.geoCircle().center([2, 47.4]).radius(5)()
   );
 
 const defaultProjectionIleDeFrance = (width, marks, caption="") =>
   defaultProjection(
+    width,
     width,
     [
       Plot.geo(ile_de_france_departements, {
@@ -434,14 +446,15 @@ const defaultProjectionIleDeFrance = (width, marks, caption="") =>
       marks
     ],
     caption,
-    d3.geoCircle().center([2.35, 48.84]).radius(0.19)()
+    d3.geoCircle().center([2.35, 48.85]).radius(0.2)()
   );
 
 const defaultProjectionItaly = (width, marks, caption="") =>
   defaultProjection(
     width,
+    width,
     [
-      Plot.geo(europe, {
+      Plot.geo(italy_regions, {
         stroke: 'white',
         strokeOpacity: 0.5,
         fill: pepr_colors.blue,
@@ -450,7 +463,7 @@ const defaultProjectionItaly = (width, marks, caption="") =>
       marks
     ],
     caption,
-    d3.geoCircle().center([11, 44]).radius(2.5)()
+    d3.geoCircle().center([13, 43.5]).radius(1.1)()
   );
 
 // generate plot marks for each visualisation method
@@ -504,7 +517,7 @@ function generateLineMapMarks(terrain_data, terrain_legend) {
           label: 'Projects',
         },
       },
-      tip: debug ? true : {
+      tip: {
         format: {
           longitude: false,
           latitude: false,
@@ -587,7 +600,7 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
           label: 'Projects',
         },
       },
-      tip: debug ? true : {
+      tip: {
         format: {
           longitude: false,
           latitude: false,
@@ -655,10 +668,10 @@ const selected_project = view(
   Inputs.select(
     [
       "All",
-      ...[...await sql`select "Nom projet" from projects`].map(d => d['Nom projet'])],
+      ...[...await sql`select "Nom projet" from projects`].map(d => d['Nom projet'].trim())],
     {
       multiple: false,
-      label: "Optionally, select a project to filter by:",
+      label: "Optionally, select a project to focus on:",
       unique: true,
       sort: true,
       value: "All"
@@ -672,8 +685,9 @@ const selected_project = view(
 <div class="grid grid-cols-3">
   <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 5px;">
     ${resize(
-      (width) => defaultProjectionFrance(
+      (width, height) => defaultProjectionFrance(
         width,
+        height - 15,
         generateLineMapMarks(france_terrain_data, france_terrain_legend),
         "- Terrains by Financed Project, France"
       )
@@ -702,8 +716,9 @@ const selected_project = view(
   </div>
   <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 5px;">
     ${resize(
-      (width) => defaultProjectionFrance(
+      (width, height) => defaultProjectionFrance(
         width,
+        height - 15,
         generateDotMapMarks(france_terrain_data, france_terrain_legend, 0.2),
         "- Terrains by Financed Project, France"
       )
@@ -724,7 +739,7 @@ const selected_project = view(
     ${resize(
       (width) => defaultProjectionItaly(
         width,
-        generateDotMapMarks(international_terrain_data, italy_terrain_legend, 0.2),
+        generateDotMapMarks(international_terrain_data, italy_terrain_legend, 0.1),
         "- Terrains by Financed Project, Italy"
       )
     )}
@@ -737,8 +752,9 @@ const selected_project = view(
 <div class="grid grid-cols-3">
   <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 5px;">
     ${resize(
-      (width) => defaultProjectionFrance(
+      (width, height) => defaultProjectionFrance(
         width,
+        height - 15,
         generateLineMapMarks(france_terrain_data, france_terrain_legend),
         "- Terrains by Financed Project, France"
       )
@@ -767,8 +783,9 @@ const selected_project = view(
   </div>
   <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 5px;">
     ${resize(
-      (width) => defaultProjectionFrance(
+      (width, height) => defaultProjectionFrance(
         width,
+        height - 15,
         generateDotMapMarks(france_terrain_data, france_terrain_legend, 0.2),
         "- Terrains by Financed Project, France"
       )
@@ -789,7 +806,7 @@ const selected_project = view(
     ${resize(
       (width) => defaultProjectionItaly(
         width,
-        generateDotMapMarks(international_terrain_data, italy_terrain_legend, 0.2),
+        generateDotMapMarks(international_terrain_data, italy_terrain_legend, 0.1),
         "- Terrains by Financed Project, Italy"
       )
     )}
@@ -801,56 +818,43 @@ const selected_project = view(
 <!-- debugging info -->
 
 ```js
-if (debug) {
-  display("project_data")
-  display(project_data);
-  display("researcher_data");
-  display(researcher_data);
-  display("laboratory_data");
-  display(laboratory_data);
-  display("university_data");
-  display(university_data);
-}
+console.debug("project_data", project_data);
+console.debug("researcher_data", researcher_data);
+console.debug("laboratory_data", laboratory_data);
+console.debug("university_data", university_data);
 ```
 ```js
-if (debug) {
-  display("aap_partners");
-  display(Inputs.table(await sql`select * from aap_partners`));
-  display("terrains");
-  display(Inputs.table(await sql`select * from terrains`));
-  display("projects");
-  display(Inputs.table(await sql`select * from projects`));
-  display("project_terrain_scale_map");
-  display(Inputs.table(await sql`select * from project_terrain_scale_map`));
-}
+console.debug(
+  "aap_partners",
+  [...await sql`select * from aap_partners`].map((d) => d.toJSON()));
+console.debug(
+  "terrains",
+  [...await sql`select * from terrains`].map((d) => d.toJSON()));
+console.debug(
+  "projects",
+  [...await sql`select * from projects`].map((d) => d.toJSON()));
+console.debug(
+  "project_terrains_by_scale",
+  [...await sql`select * from project_terrains_by_scale`].map((d) => d.toJSON()));
 ```
 ```js
-if (debug) {
-  display("terrain_data");
-  display(Inputs.table(terrain_data));
-  display("france_terrain_data");
-  display(Inputs.table(france_terrain_data));
-  display("ile_de_france_terrain_data");
-  display(Inputs.table(ile_de_france_terrain_data));
-}
+console.debug(
+  "terrain_data",
+  [...terrain_data].map((d) => d.toJSON()));
+console.debug(
+  "france_terrain_data",
+  [...france_terrain_data]);
+console.debug(
+  "ile_de_france_terrain_data",
+  [...ile_de_france_terrain_data].map((d) => d.toJSON()));
 ```
 ```js
-if (debug) {
-  display("france_terrain_legend")
-  display(france_terrain_legend)
-  display("idf_terrain_legend")
-  display(idf_terrain_legend)
-  display("france_regions")
-  display(france_regions)
-  display("mainland_france_regions")
-  display(mainland_france_regions)
-  display("ile_de_france_region")
-  display(ile_de_france_region)
-  display("departements")
-  display(departements)
-  display("ile_de_france_departements")
-  display(ile_de_france_departements)
-  display("europe")
-  display(europe)
-}
+console.debug("france_terrain_legend", france_terrain_legend)
+console.debug("idf_terrain_legend", idf_terrain_legend)
+console.debug("france_regions", france_regions)
+console.debug("mainland_france_regions", mainland_france_regions)
+console.debug("ile_de_france_region", ile_de_france_region)
+console.debug("france_departements", france_departements)
+console.debug("ile_de_france_departements", ile_de_france_departements)
+console.debug("europe", europe)
 ```

@@ -398,25 +398,15 @@ const cnu_plot = (width) => Plot.plot(
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNU Categories</h2>
+    <h2>Chercheurs PEPR VDBI par groupe CNU</h2>
     <div>${cnu_category_plot}</div>
+    <h3>*Les regroupements des sections est définis par le CNU</h3>
   </div>
   <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Detailed CNUs</h2>
     <div style="padding: 5px;">${cnu_plot_sort_input}</div>
-    <!-- <h3 style="padding-left: 200px;">Legend</h3> -->
-    <!-- <div>${generateCnuPlotLegend(all_project_cnu_max)[0]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(all_project_cnu_max)[1]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(all_project_cnu_max)[2]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(all_project_cnu_max)[3]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(all_project_cnu_max)[4]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(all_project_cnu_max)[5]}</div> -->
     <div style="max-height: 950px; overflow: hidden;">${resize((width) => cnu_plot(width))}</div>
   </div>
-  <!-- <div class="card grid-colspan-1">
-    <h2>CNUs SHS</h2>
-    <div>${shs_cnu_plot}</div>
-  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${discipline_erc_pie}</div>
@@ -490,25 +480,15 @@ const financed_cnu_plot = (width) => Plot.plot(
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNU Categories</h2>
+    <h2>Chercheurs PEPR VDBI par groupe CNU</h2>
     <div>${financed_cnu_category_plot}</div>
+    <h3>*Les regroupements des sections est définis par le CNU</h3>
   </div>
   <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Detailed CNUs</h2>
     <div style="padding: 5px;">${financed_cnu_plot_sort_input}</div>
-    <!-- <h3 style="padding-left: 200px;">Legend</h3> -->
-    <!-- <div>${generateCnuPlotLegend(financed_project_cnu_max)[0]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(financed_project_cnu_max)[1]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(financed_project_cnu_max)[2]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(financed_project_cnu_max)[3]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(financed_project_cnu_max)[4]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(financed_project_cnu_max)[5]}</div> -->
     <div style="max-height: 950px; overflow: hidden;">${resize((width) => financed_cnu_plot(width))}</div>
   </div>
-  <!-- <div class="card grid-colspan-1">
-    <h2>CNUs SHS</h2>
-    <div>${financed_shs_cnu_plot}</div>
-  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${financed_discipline_erc_pie}</div>
@@ -715,25 +695,15 @@ const neo_cnu_plot = (width) => Plot.plot(
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNU Categories</h2>
+    <h2>Chercheurs PEPR VDBI par groupe CNU</h2>
     <div>${neo_cnu_category_plot}</div>
+    <h3>*Les regroupements des sections est définis par le CNU</h3>
   </div>
   <div class="card grid-colspan-1 grid-rowspan-1">
     <h2>Detailed CNUs</h2>
     <div style="padding: 5px;">${neo_cnu_plot_sort_input}</div>
-    <!-- <h3 style="padding-left: 200px;">Legend</h3> -->
-    <!-- <div>${generateCnuPlotLegend(neo_project_cnu_max)[0]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(neo_project_cnu_max)[1]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(neo_project_cnu_max)[2]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(neo_project_cnu_max)[3]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(neo_project_cnu_max)[4]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(neo_project_cnu_max)[5]}</div> -->
     <div style="max-height: 950px; overflow: hidden;">${resize((width) => neo_cnu_plot(width))}</div>
   </div>
-  <!-- <div class="card grid-colspan-1">
-    <h2>CNUs SHS</h2>
-    <div>${neo_shs_cnu_plot}</div>
-  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${neo_discipline_erc_pie}</div>
@@ -807,25 +777,15 @@ const RESILIENCE_cnu_plot = (width) => Plot.plot(
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNU Categories</h2>
+    <h2>Chercheurs PEPR VDBI par groupe CNU</h2>
     <div>${RESILIENCE_cnu_category_plot}</div>
+    <h3>*Les regroupements des sections est définis par le CNU</h3>
   </div>
   <div class="card grid-colspan-1 grid-rowspan-1">
     <h2>Detailed CNUs</h2>
     <div style="padding: 5px;">${RESILIENCE_cnu_plot_sort_input}</div>
-    <!-- <h3 style="padding-left: 200px;">Legend</h3> -->
-    <!-- <div>${generateCnuPlotLegend(RESILIENCE_project_cnu_max)[0]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(RESILIENCE_project_cnu_max)[1]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(RESILIENCE_project_cnu_max)[2]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(RESILIENCE_project_cnu_max)[3]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(RESILIENCE_project_cnu_max)[4]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(RESILIENCE_project_cnu_max)[5]}</div> -->
     <div style="max-height: 950px; overflow: hidden;">${resize((width) => RESILIENCE_cnu_plot(width))}</div>
   </div>
-  <!-- <div class="card grid-colspan-1">
-    <h2>CNUs SHS</h2>
-    <div>${RESILIENCE_shs_cnu_plot}</div>
-  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${RESILIENCE_discipline_erc_pie}</div>
@@ -900,25 +860,15 @@ const TRACES_cnu_plot = (width) => Plot.plot(
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNU Categories</h2>
+    <h2>Chercheurs PEPR VDBI par groupe CNU</h2>
     <div>${TRACES_cnu_category_plot}</div>
+    <h3>*Les regroupements des sections est définis par le CNU</h3>
   </div>
   <div class="card grid-colspan-1 grid-rowspan-1">
     <h2>Detailed CNUs</h2>
     <div style="padding: 5px;">${TRACES_cnu_plot_sort_input}</div>
-    <!-- <h3 style="padding-left: 200px;">Legend</h3> -->
-    <!-- <div>${generateCnuPlotLegend(TRACES_project_cnu_max)[0]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(TRACES_project_cnu_max)[1]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(TRACES_project_cnu_max)[2]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(TRACES_project_cnu_max)[3]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(TRACES_project_cnu_max)[4]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(TRACES_project_cnu_max)[5]}</div> -->
     <div style="max-height: 950px; overflow: hidden;">${resize((width) => TRACES_cnu_plot(width))}</div>
   </div>
-  <!-- <div class="card grid-colspan-1">
-    <h2>CNUs SHS</h2>
-    <div>${TRACES_shs_cnu_plot}</div>
-  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${TRACES_discipline_erc_pie}</div>
@@ -992,25 +942,15 @@ const vfpp_cnu_plot = (width) => Plot.plot(
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNU Categories</h2>
+    <h2>Chercheurs PEPR VDBI par groupe CNU</h2>
     <div>${vfpp_cnu_category_plot}</div>
+    <h3>*Les regroupements des sections est définis par le CNU</h3>
   </div>
   <div class="card grid-colspan-1 grid-rowspan-1">
     <h2>Detailed CNUs</h2>
     <div style="padding: 5px;">${vfpp_cnu_plot_sort_input}</div>
-    <!-- <h3 style="padding-left: 200px;">Legend</h3> -->
-    <!-- <div>${generateCnuPlotLegend(vfpp_project_cnu_max)[0]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(vfpp_project_cnu_max)[1]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(vfpp_project_cnu_max)[2]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(vfpp_project_cnu_max)[3]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(vfpp_project_cnu_max)[4]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(vfpp_project_cnu_max)[5]}</div> -->
     <div style="max-height: 950px; overflow: hidden;">${resize((width) => vfpp_cnu_plot(width))}</div>
   </div>
-  <!-- <div class="card grid-colspan-1">
-    <h2>CNUs SHS</h2>
-    <div>${vfpp_shs_cnu_plot}</div>
-  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${vfpp_discipline_erc_pie}</div>
@@ -1085,25 +1025,15 @@ const VILLEGARDEN_cnu_plot = (width) => Plot.plot(
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNU Categories</h2>
+    <h2>Chercheurs PEPR VDBI par groupe CNU</h2>
     <div>${VILLEGARDEN_cnu_category_plot}</div>
+    <h3>*Les regroupements des sections est définis par le CNU</h3>
   </div>
   <div class="card grid-colspan-1 grid-rowspan-1">
     <h2>Detailed CNUs</h2>
     <div style="padding: 5px;">${VILLEGARDEN_cnu_plot_sort_input}</div>
-    <!-- <h3 style="padding-left: 200px;">Legend</h3> -->
-    <!-- <div>${generateCnuPlotLegend(VILLEGARDEN_project_cnu_max)[0]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(VILLEGARDEN_project_cnu_max)[1]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(VILLEGARDEN_project_cnu_max)[2]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(VILLEGARDEN_project_cnu_max)[3]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(VILLEGARDEN_project_cnu_max)[4]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(VILLEGARDEN_project_cnu_max)[5]}</div> -->
     <div style="max-height: 950px; overflow: hidden;">${resize((width) => VILLEGARDEN_cnu_plot(width))}</div>
   </div>
-  <!-- <div class="card grid-colspan-1">
-    <h2>CNUs SHS</h2>
-    <div>${VILLEGARDEN_shs_cnu_plot}</div>
-  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${VILLEGARDEN_discipline_erc_pie}</div>
@@ -1177,25 +1107,15 @@ const WHAOU_cnu_plot = (width) => Plot.plot(
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNU Categories</h2>
+    <h2>Chercheurs PEPR VDBI par groupe CNU</h2>
     <div>${WHAOU_cnu_category_plot}</div>
+    <h3>*Les regroupements des sections est définis par le CNU</h3>
   </div>
   <div class="card grid-colspan-1 grid-rowspan-1">
     <h2>Detailed CNUs</h2>
     <div style="padding: 5px;">${WHAOU_cnu_plot_sort_input}</div>
-    <!-- <h3 style="padding-left: 200px;">Legend</h3> -->
-    <!-- <div>${generateCnuPlotLegend(WHAOU_project_cnu_max)[0]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(WHAOU_project_cnu_max)[1]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(WHAOU_project_cnu_max)[2]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(WHAOU_project_cnu_max)[3]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(WHAOU_project_cnu_max)[4]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(WHAOU_project_cnu_max)[5]}</div> -->
     <div style="max-height: 950px; overflow: hidden;">${resize((width) => WHAOU_cnu_plot(width))}</div>
   </div>
-  <!-- <div class="card grid-colspan-1">
-    <h2>CNUs SHS</h2>
-    <div>${WHAOU_shs_cnu_plot}</div>
-  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${WHAOU_discipline_erc_pie}</div>
@@ -1270,25 +1190,15 @@ const inteGREEN_cnu_plot = (width) => Plot.plot(
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNU Categories</h2>
+    <h2>Chercheurs PEPR VDBI par groupe CNU</h2>
     <div>${inteGREEN_cnu_category_plot}</div>
+    <h3>*Les regroupements des sections est définis par le CNU</h3>
   </div>
   <div class="card grid-colspan-1 grid-rowspan-1">
     <h2>Detailed CNUs</h2>
     <div style="padding: 5px;">${inteGREEN_cnu_plot_sort_input}</div>
-    <!-- <h3 style="padding-left: 200px;">Legend</h3> -->
-    <!-- <div>${generateCnuPlotLegend(inteGREEN_project_cnu_max)[0]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(inteGREEN_project_cnu_max)[1]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(inteGREEN_project_cnu_max)[2]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(inteGREEN_project_cnu_max)[3]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(inteGREEN_project_cnu_max)[4]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(inteGREEN_project_cnu_max)[5]}</div> -->
     <div style="max-height: 950px; overflow: hidden;">${resize((width) => inteGREEN_cnu_plot(width))}</div>
   </div>
-  <!-- <div class="card grid-colspan-1">
-    <h2>CNUs SHS</h2>
-    <div>${inteGREEN_shs_cnu_plot}</div>
-  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${inteGREEN_discipline_erc_pie}</div>
@@ -1363,25 +1273,15 @@ const URBHEALTH_cnu_plot = (width) => Plot.plot(
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1">
-    <h2>CNU Categories</h2>
+    <h2>Chercheurs PEPR VDBI par groupe CNU</h2>
     <div>${URBHEALTH_cnu_category_plot}</div>
+    <h3>*Les regroupements des sections est définis par le CNU</h3>
   </div>
   <div class="card grid-colspan-1 grid-rowspan-1">
     <h2>Detailed CNUs</h2>
     <div style="padding: 5px;">${URBHEALTH_cnu_plot_sort_input}</div>
-    <!-- <h3 style="padding-left: 200px;">Legend</h3> -->
-    <!-- <div>${generateCnuPlotLegend(URBHEALTH_project_cnu_max)[0]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(URBHEALTH_project_cnu_max)[1]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(URBHEALTH_project_cnu_max)[2]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(URBHEALTH_project_cnu_max)[3]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(URBHEALTH_project_cnu_max)[4]}</div> -->
-    <!-- <div>${generateCnuPlotLegend(URBHEALTH_project_cnu_max)[5]}</div> -->
     <div style="max-height: 950px; overflow: hidden;">${resize((width) => URBHEALTH_cnu_plot(width))}</div>
   </div>
-  <!-- <div class="card grid-colspan-1">
-    <h2>CNUs SHS</h2>
-    <div>${URBHEALTH_shs_cnu_plot}</div>
-  </div> -->
   <div class="card grid-colspan-1">
     <h2>ERC Disciplines</h2>
     <div>${URBHEALTH_discipline_erc_pie}</div>

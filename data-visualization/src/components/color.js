@@ -90,3 +90,19 @@ export function colorCNU(d, max) {
   // return color(d[1]);
   return d3.interpolateGreys(color(color_value));
 }
+
+// Legal nature colors //
+// "(0) Organisme de placement collectif en valeurs mobilières sans personnalité morale",
+// "(1) Entrepreneur individuel",
+// "(2) Groupement de droit privé non doté de la personnalité morale",
+// "(3) Personne morale de droit étranger",
+// "(4) Personne morale de droit public soumise au droit commercial",
+// "(5) Société commerciale",
+// "(6) Autre personne morale immatriculée au RCS",
+// "(7) Personne morale et organisme soumis au droit administratif",
+// "(8) Organisme privé spécialisé",
+// "(9) Groupement de droit privé",
+export const legal_nature_colors = d3.scaleOrdinal(
+  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  d3.schemeSet3,
+).unknown("#ccc")

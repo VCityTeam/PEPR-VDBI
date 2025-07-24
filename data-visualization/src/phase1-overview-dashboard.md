@@ -118,10 +118,10 @@ const workbook1 = FileAttachment(
 ).xlsx();
 ```
 ```js
-const regions = FileAttachment("./data/regions.json").json();
+const regions = FileAttachment("./data/france_regions.json").json();
 ```
 ```js
-const departements = FileAttachment("./data/departements.json").json();
+const departements = FileAttachment("./data/france_departements.json").json();
 ```
 
 ```js
