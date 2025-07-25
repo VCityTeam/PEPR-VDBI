@@ -6,8 +6,8 @@ export default {
   root: 'src', // path to the source root for preview
   pages: [
     {
-      name: 'Phase 1 Projects by discipline',
-      path: 'phase1-project-dashboard',
+      name: 'Phase 1 Researchers by discipline',
+      path: 'phase1-disciplines',
     },
     {
       name: 'Under Construction',

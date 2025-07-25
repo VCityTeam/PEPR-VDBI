@@ -2,37 +2,32 @@
 theme: [dashboard, light]
 ---
 
-# Project Disciplines
-
 ```js
 import {
   countEntities,
   cropText,
   exclude,
   copyTableToClipboardButton,
-} from "./components/utilities.js";
+} from './components/utilities.js';
 ```
+
 ```js
-import {
-  extractPhase2Workbook,
-} from "./components/phase1-dashboard.js";
+import { extractPhase1Workbook } from './components/phase1-dashboard.js';
 ```
+
 ```js
-import {
-  donutChart
-} from "./components/pie-chart.js";
+import { donutChart } from './components/pie-chart.js';
 ```
+
 ```js
-import {
-  cnu_category_map
-} from './components/cnu.js';
+import { cnu_category_map } from './components/cnu.js';
 ```
+
 ```js
-import {
-  getCategoryFromCNU,
-  colorCNU
-} from "./components/color.js";
+import { getCategoryFromCNU, colorCNU } from './components/color.js';
 ```
+
+# Researcher Disciplines by Project
 
 <div class="warning" label="Data visualization notice">
   <ul>
@@ -44,115 +39,231 @@ import {
 </div>
 
 ```js
-function generateCnuPlotLegend({
-  width = 300,
-  marginLeft = 0,
-  domain = [1, 10],
-  range = [0.4, 1],
-} = {}) {
-
-  return [
-    Plot.legend({
-      label: 'Droit, économie et gestion',
-      marginLeft: marginLeft,
-      width: width,
-      color: {
-        domain: domain,
-        range: range,
-        type: "log",
-        scheme: "Reds"
-      }
-    }),
-    Plot.legend({
-      label: 'Lettres et sciences humaines',
-      marginLeft: marginLeft,
-      width: width,
-      color: {
-        domain: domain,
-        range: range,
-        type: "log",
-        scheme: "Oranges"
-      }
-    }),
-    Plot.legend({
-      label: 'Sciences',
-      marginLeft: marginLeft,
-      width: width,
-      color: {
-        domain: domain,
-        range: range,
-        type: "log",
-        scheme: "Blues"
-      }
-    }),
-    Plot.legend({
-      label: 'Pluridisciplinaire',
-      marginLeft: marginLeft,
-      width: width,
-      color: {
-        domain: domain,
-        range: range,
-        type: "log",
-        scheme: "Purples"
-      }
-    }),
-    Plot.legend({
-      label: 'Sections de santé',
-      marginLeft: marginLeft,
-      width: width,
-      color: {
-        domain: domain,
-        range: range,
-        type: "log",
-        scheme: "Greens"
-      }
-    }),
-    Plot.legend({
-      label: 'Other',
-      marginLeft: marginLeft,
-      width: width,
-      color: {
-        domain: domain,
-        range: range,
-        type: "log",
-        scheme: "Greys"
-      }
-    }),
-  ]
-}
+const selected_project_data = view(Inputs.select(
+  discipline_data_by_project,
+  {label: "Select Project"}
+));
 ```
 
-<h3>CNU color legend</h3>
-<div>${generateCnuPlotLegend()[0]}</div>
-<div>${generateCnuPlotLegend()[1]}</div>
-<div>${generateCnuPlotLegend()[2]}</div>
-<div>${generateCnuPlotLegend()[3]}</div>
-<div>${generateCnuPlotLegend()[4]}</div>
-<div>${generateCnuPlotLegend()[5]}</div>
+<div class="grid grid-cols-2">
+  <div class="card grid-colspan-1 grid-rowspan-2">
+    <h2>Detailed CNUs</h2>
+    <div style="padding: 5px;">${cnu_plot_sort_input}</div>
+    <div style="max-height: 950px; overflow: hidden;">
+      ${resize((width) => Plot.plot(
+        {
+          width: width,
+          height: 800,
+          marginTop: 50,
+          marginRight: width / 2,
+          y: {
+            label: 'CNU',
+            tickRotate: 10,
+            axis: 'right',
+            tickFormat: (d) => cropText(d, 70),
+          },
+          x: {
+            reverse: true,
+            grid: true,
+            axis: 'top',
+            label: 'Occurences',
+          },
+          marks: [
+            Plot.barX(selected_project_data.cnu_count, {
+              y: (d) => d[0],
+              x: (d) => d[1],
+              // fill: (d) => d3
+              // .scaleOrdinal(d3.schemeCategory10)
+              // .domain(cnu_category_map.keys())
+              // .unknown("grey")(getCategoryFromCNU(d[0])),
+              fill: (d) =>
+                colorCNU(d, Math.max(...selected_project_data.cnu_count.map((d) => d[1]))),
+              stroke: 'black',
+              strokeOpacity: 0.1,
+              // sort: {y: "y"},
+              // sort: {y: "-x"},
+              sort: { y: cnu_plot_sort },
+              tip: {
+                format: {
+                  fill: false,
+                },
+                lineWidth: 25,
+                textOverflow: 'ellipsis-end',
+              },
+            }),
+            Plot.barX(
+              selected_project_data.cnu_count,
+              Plot.pointerY({
+                y: (d) => d[0],
+                x: (d) => d[1],
+                fill: 'white',
+                opacity: 0.5,
+              })
+            ),
+            // Plot.text(selected_project_data.cnu_count, {
+            //   x: 0,
+            //   y: (d) => d[1],
+            // })
+          ],
+        }
+      ))}
+    </div>
+    <h3>CNU color legend</h3>
+    ${cnu_plot_legend}
+  </div>
+  <div class="card">
+    <h2>Chercheurs PEPR VDBI par groupe CNU</h2>
+    ${resize((width) => donutChart(
+      selected_project_data.cnu_count_by_category,
+      {
+        width: width,
+        legendLeftMargin: 60,
+        keyMap: (d) => d[0],
+        valueMap: (d) => d[1],
+        colorMap: (d) => d[0],
+        color: d3
+          .scaleOrdinal(d3.schemeCategory10)
+          .domain(cnu_category_map.keys())
+          .unknown('grey'),
+      }
+    ))}
+    <h3>*Les regroupements des sections est définis par le CNU</h3>
+  </div>
+  <div class="card">
+    <h2>ERC Disciplines</h2>
+    ${resize((width) => donutChart(
+      selected_project_data.discipline_erc_count,
+      {
+        width: width,
+        keyMap: (d) => d[0],
+        valueMap: (d) => d[1],
+        colorMap: (d) => d[0],
+        color: d3
+          .scaleOrdinal(d3.schemeCategory10)
+          .domain(erc_category_colors.keys())
+          .range(erc_category_colors.values())
+          .unknown('grey'),
+        legendLeftMargin: 110,
+      }
+    ))}
+  </div>
+</div>
 
 ```js
-const workbook1 = FileAttachment(
-  // "./data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx" //outdated
-  "./data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
+display(
+  copyTableToClipboardButton(
+    selected_project_data.cnu_count,
+    null,
+    'Copy CNU data to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    selected_project_data.cnu_count_by_category,
+    null,
+    'Copy CNU data by category to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    selected_project_data.discipline_erc_count,
+    null,
+    'Copy ERC data to clipboard'
+  )
+);
+```
+
+```js
+const cnu_plot_legend_options = {
+  width: 300,
+  marginLeft: 0,
+  domain: [10, 1],
+  // domain: [1, 10],
+  range: [1, 0.4],
+  // range: [0.4, 1],
+  type: 'log',
+};
+
+const cnu_plot_legend = htl
+  .html`${Plot.legend({
+    label: 'Droit, économie et gestion',
+    marginLeft: cnu_plot_legend_options.marginLeft,
+    width: cnu_plot_legend_options.width,
+    color: {
+      domain: cnu_plot_legend_options.domain,
+      range: cnu_plot_legend_options.range,
+      type: cnu_plot_legend_options.type,
+      scheme: 'Reds',
+    },
+  })}
+  ${Plot.legend({
+    label: 'Lettres et sciences humaines',
+    marginLeft: cnu_plot_legend_options.marginLeft,
+    width: cnu_plot_legend_options.width,
+    color: {
+      domain: cnu_plot_legend_options.domain,
+      range: cnu_plot_legend_options.range,
+      type: cnu_plot_legend_options.type,
+      scheme: 'Oranges',
+    },
+  })}
+  ${Plot.legend({
+    label: 'Sciences',
+    marginLeft: cnu_plot_legend_options.marginLeft,
+    width: cnu_plot_legend_options.width,
+    color: {
+      domain: cnu_plot_legend_options.domain,
+      range: cnu_plot_legend_options.range,
+      type: cnu_plot_legend_options.type,
+      scheme: 'Blues',
+    },
+  })}
+  ${Plot.legend({
+    label: 'Pluridisciplinaire',
+    marginLeft: cnu_plot_legend_options.marginLeft,
+    width: cnu_plot_legend_options.width,
+    color: {
+      domain: cnu_plot_legend_options.domain,
+      range: cnu_plot_legend_options.range,
+      type: cnu_plot_legend_options.type,
+      scheme: 'Purples',
+    },
+  })}
+  ${Plot.legend({
+    label: 'Sections de santé',
+    marginLeft: cnu_plot_legend_options.marginLeft,
+    width: cnu_plot_legend_options.width,
+    color: {
+      domain: cnu_plot_legend_options.domain,
+      range: cnu_plot_legend_options.range,
+      type: cnu_plot_legend_options.type,
+      scheme: 'Greens',
+    },
+  })}
+  ${Plot.legend({
+    label: 'Other',
+    marginLeft: cnu_plot_legend_options.marginLeft,
+    width: cnu_plot_legend_options.width,
+    color: {
+      domain: cnu_plot_legend_options.domain,
+      range: cnu_plot_legend_options.range,
+      type: cnu_plot_legend_options.type,
+      scheme: 'Greys',
+    },
+  })}`;
+```
+
+```js
+const workbook1 = await FileAttachment(
+  "./data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
+  // './data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx'
 ).xlsx();
 
-// /**
-//  * Given a string starting with a CNU number, return the number
-//  *
-//  * @param {String} cnu - The CNU full name
-//  * @returns {Number} The CNU number
-//  */
-// function getCnuNumber(cnu) {
-//   return Number(cnu.trim().substring(0, 2));
-// }
+const phase_1_data = extractPhase1Workbook(workbook1, false);
+console.debug('phase_1_data', phase_1_data);
+```
 
-
-// detect if a CNU is SHS ( 7 <= cnu <= 24)
-// function isSHSCNU(cnu) {
-//   const cnu_number = getCnuNumber(cnu);
-//   return cnu_number >= 7 && cnu_number <= 24;
-// };
-
+```js
 const cnu_category_plot_options = {
   width: 800,
   height: 450,
@@ -163,72 +274,72 @@ const cnu_category_plot_options = {
   color: d3
     .scaleOrdinal(d3.schemeCategory10)
     .domain(cnu_category_map.keys())
-    .unknown("grey"),
+    .unknown('grey'),
 };
 
-function generateCnuPlotOptions(data, sort="y", height=350, width=500) {
+function generateCnuPlotOptions(data, sort = 'y', height = 350, width = 500) {
   return {
     width: width,
     height: height,
     marginTop: 50,
     marginRight: width / 2,
     y: {
-      label: "CNU",
+      label: 'CNU',
       tickRotate: 10,
-      axis: "right",
+      axis: 'right',
       tickFormat: (d) => cropText(d, 70),
     },
     x: {
       reverse: true,
       grid: true,
-      axis: "top",
-      label: "Occurences",
+      axis: 'top',
+      label: 'Occurences',
     },
     marks: [
       Plot.barX(data, {
         y: (d) => d[0],
         x: (d) => d[1],
         // fill: (d) => d3
-          // .scaleOrdinal(d3.schemeCategory10)
-          // .domain(cnu_category_map.keys())
-          // .unknown("grey")(getCategoryFromCNU(d[0])),
+        // .scaleOrdinal(d3.schemeCategory10)
+        // .domain(cnu_category_map.keys())
+        // .unknown("grey")(getCategoryFromCNU(d[0])),
         fill: (d) => colorCNU(d, Math.max(...data.map((d) => d[1]))),
-        stroke: "black",
+        stroke: 'black',
         strokeOpacity: 0.1,
         // sort: {y: "y"},
         // sort: {y: "-x"},
-        sort: {y: sort},
+        sort: { y: sort },
         tip: {
           format: {
             fill: false,
           },
           lineWidth: 25,
-          textOverflow: "ellipsis-end"
-        }
+          textOverflow: 'ellipsis-end',
+        },
       }),
       Plot.barX(
-        data, 
+        data,
         Plot.pointerY({
           y: (d) => d[0],
           x: (d) => d[1],
-          fill: "white",
+          fill: 'white',
           opacity: 0.5,
-        }),
+        })
       ),
       // Plot.text(data, {
       //   x: 0,
       //   y: (d) => d[1],
       // })
     ],
-  }
-};
+  };
+}
 
 const cnu_plot_sort_values = new Map([
   ['CNU', 'y'],
   ['Occurrences', '-x'],
 ]);
 const cnu_plot_sort_options = {
-  label: "Sorted by",
+  label: 'Sorted by',
 };
 
 // const shs_cnu_plot_options = {
@@ -242,8 +353,8 @@ const cnu_plot_sort_options = {
 const erc_category_colors = new Map([
   ['PE - Sciences & Technologies', d3.schemeCategory10[0]],
   ['LS - Vie & Santé', d3.schemeCategory10[2]],
-  ['SH - Sciences Humaines & Sociales', "OrangeRed"],
-  ['non chercheur', "grey"],
+  ['SH - Sciences Humaines & Sociales', 'OrangeRed'],
+  ['non chercheur', 'grey'],
 ]);
 
 const discipline_erc_pie_options = {
@@ -256,17 +367,17 @@ const discipline_erc_pie_options = {
     .scaleOrdinal(d3.schemeCategory10)
     .domain(erc_category_colors.keys())
     .range(erc_category_colors.values())
-    .unknown("grey"),
+    .unknown('grey'),
   legendLeftMargin: 110,
 };
+console.debug("erc_category_colors", erc_category_colors.entries())
 ```
 
 ```js
-// format data
-const phase_2_data = extractPhase2Workbook(workbook1, false);
-console.debug('phase_2_data', phase_2_data);
-
-const financed_projects = phase_2_data.projects
+const auditioned_projects = phase_1_data.projects
+  .filter((d) => d.auditioned)
+  .map((d) => d.acronyme);
+const financed_projects = phase_1_data.projects
   .filter((d) => d.financed)
   .map((d) => d.acronyme);
 // [
@@ -279,42 +390,46 @@ const financed_projects = phase_2_data.projects
 //   "inteGREEN",
 //   "URBHEALTH",
 // ];
-// console.debug('financed_projects', financed_projects);
+console.debug('auditioned_projects', auditioned_projects);
+console.debug('financed_projects', financed_projects);
+```
 
-function isFinanced(projects) {
-  for (let index = 0; index < projects.length; index++) {
-    if (financed_projects.includes(projects[index]))
-      return true;
-  }
-  return false;
-};
-
+```js
 // Get relevant data by project,
+// set auditioned flag to true if filtering out non-auditioned project data
 // set financed flag to true if filtering out non-financed project data
-function formatResearcherDataByProject(project, financed=false) {
+function formatResearcherDataByProject(
+  project,
+  auditioned = false,
+  financed = false,
+) {
   // filter by project if project, otherwise keep everything
-  const filtered_researchers = phase_2_data.researchers.filter(
-    (d) => (
-      project ?
-        d.project.includes(project) :
-        true
-    ) &&
-    (
-      financed ?
-        d.project.some((researcher_project) =>
-          financed_projects.includes(researcher_project)) :
-        true
-    )
+  const filtered_researchers = phase_1_data.researchers.filter(
+    (d) =>
+      (project ? d.project.includes(project) : true) &&
+      (
+        auditioned ?
+          d.project.some((researcher_project) =>
+            auditioned_projects.includes(researcher_project)
+          ) : true
+      ) &&
+      (
+        financed ?
+          d.project.some((researcher_project) =>
+            financed_projects.includes(researcher_project)
+          ) : true
+      )
   );
 
   const discipline_erc_count = countEntities(
     filtered_researchers,
     (d) => d.discipline_erc
   )
-  .filter((d) => exclude(d[0]))
-  .sort((a, b) => d3.descending(a[1], b[1]));
+    .filter((d) => exclude(d[0]))
+    .sort((a, b) => d3.descending(a[1], b[1]));
 
-  const cnu_count = d3.rollups(
+  const cnu_count = d3
+    .rollups(
       filtered_researchers,
       (d) => d.length,
       (d) => d.cnu
@@ -331,13 +446,14 @@ function formatResearcherDataByProject(project, financed=false) {
   //   (d) => isSHSCNU(d[0]) ? 'SHS' : 'non-SHS'
   // );
 
-  const cnu_count_by_category = d3.rollups(
-    filtered_researchers,
-    (D) => D.length,
-    (d) => d.cnu ? getCategoryFromCNU(d.cnu) : null
-  )
-  .filter((d) => !!d[0])
-  .sort((a, b) => d3.descending(a[1], b[1])); //TODO: add missing information to data quality check
+  const cnu_count_by_category = d3
+    .rollups(
+      filtered_researchers,
+      (D) => D.length,
+      (d) => (d.cnu ? getCategoryFromCNU(d.cnu) : null)
+    )
+    .filter((d) => !!d[0])
+    .sort((a, b) => d3.descending(a[1], b[1])); //TODO: add missing information to data quality check
   // debugger;
 
   return {
@@ -346,11 +462,30 @@ function formatResearcherDataByProject(project, financed=false) {
     // shs_cnu_count: shs_cnu_count,
     // shs_cnu_percent: shs_cnu_percent,
     cnu_count_by_category: cnu_count_by_category,
-  }
-};
+  };
+}
+```
+
+```js
+const discipline_data_by_project = new Map([
+  ['All Projects', formatResearcherDataByProject(false, false, false)],
+  ['Auditioned Projects', formatResearcherDataByProject(false, true, false)],
+  ['Financed Projects', formatResearcherDataByProject(false, true, true)],
+  ['NÉO', formatResearcherDataByProject('NÉO', true, true)],
+  ['RÉSILIENCE', formatResearcherDataByProject('RÉSILIENCE', true, true)],
+  ['TRACES', formatResearcherDataByProject('TRACES', true, true)],
+  ['VF++', formatResearcherDataByProject('VF++', true, true)],
+  ['VILLEGARDEN', formatResearcherDataByProject('VILLEGARDEN', true, true)],
+  ['WHAOU', formatResearcherDataByProject('WHAOU', true, true)],
+  ['inteGREEN', formatResearcherDataByProject('inteGREEN', true, true)],
+  ['URBHEALTH', formatResearcherDataByProject('URBHEALTH', true, true)],
+]);
+
+console.debug('discipline_data_by_project', discipline_data_by_project);
 ```
 
 ## All Projects
+
 ```js
 const all_project_researcher_data = formatResearcherDataByProject();
 // console.debug('all_project_researcher_data', all_project_researcher_data);
@@ -391,9 +526,15 @@ const all_project_cnu_max = Math.max(
 ```
 
 ```js
-const cnu_plot = (width) => Plot.plot(
-  generateCnuPlotOptions(all_project_researcher_data.cnu_count, cnu_plot_sort, 800, width)
-);
+const cnu_plot = (width) =>
+  Plot.plot(
+    generateCnuPlotOptions(
+      all_project_researcher_data.cnu_count,
+      cnu_plot_sort,
+      800,
+      width
+    )
+  );
 ```
 
 <div class="grid grid-cols-2">
@@ -404,7 +545,7 @@ const cnu_plot = (width) => Plot.plot(
   </div>
   <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Detailed CNUs</h2>
-    <div style="padding: 5px;">${cnu_plot_sort_input}</div>
+    <!-- <div style="padding: 5px;">${cnu_plot_sort_input}</div> -->
     <div style="max-height: 950px; overflow: hidden;">${resize((width) => cnu_plot(width))}</div>
   </div>
   <div class="card grid-colspan-1">
@@ -414,27 +555,36 @@ const cnu_plot = (width) => Plot.plot(
 </div>
 
 ```js
-display(copyTableToClipboardButton(
-  all_project_researcher_data.cnu_count,
-  null,
-  'Copy CNU data to clipboard'
-));
-display(copyTableToClipboardButton(
-  all_project_researcher_data.cnu_count_by_category,
-  null,
-  'Copy CNU data by category to clipboard'
-));
-display(copyTableToClipboardButton(
-  all_project_researcher_data.discipline_erc_count,
-  null,
-  'Copy ERC data to clipboard'
-));
+display(
+  copyTableToClipboardButton(
+    all_project_researcher_data.cnu_count,
+    null,
+    'Copy CNU data to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    all_project_researcher_data.cnu_count_by_category,
+    null,
+    'Copy CNU data by category to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    all_project_researcher_data.discipline_erc_count,
+    null,
+    'Copy ERC data to clipboard'
+  )
+);
 ```
 
-
 ## Financed Projects
+
 ```js
-const financed_project_researcher_data = formatResearcherDataByProject(undefined, true);
+const financed_project_researcher_data = formatResearcherDataByProject(
+  null,
+  true
+);
 // console.debug('financed_project_researcher_data', financed_project_researcher_data);
 ```
 
@@ -473,9 +623,15 @@ const financed_project_cnu_max = Math.max(
 ```
 
 ```js
-const financed_cnu_plot = (width) => Plot.plot(
-  generateCnuPlotOptions(financed_project_researcher_data.cnu_count, financed_cnu_plot_sort, 800, width)
-);
+const financed_cnu_plot = (width) =>
+  Plot.plot(
+    generateCnuPlotOptions(
+      financed_project_researcher_data.cnu_count,
+      financed_cnu_plot_sort,
+      800,
+      width
+    )
+  );
 ```
 
 <div class="grid grid-cols-2">
@@ -496,21 +652,27 @@ const financed_cnu_plot = (width) => Plot.plot(
 </div>
 
 ```js
-display(copyTableToClipboardButton(
-  financed_project_researcher_data.cnu_count,
-  null,
-  'Copy CNU data to clipboard'
-));
-display(copyTableToClipboardButton(
-  financed_project_researcher_data.cnu_count_by_category,
-  null,
-  'Copy CNU data by category to clipboard'
-));
-display(copyTableToClipboardButton(
-  financed_project_researcher_data.discipline_erc_count,
-  null,
-  'Copy ERC data to clipboard'
-));
+display(
+  copyTableToClipboardButton(
+    financed_project_researcher_data.cnu_count,
+    null,
+    'Copy CNU data to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    financed_project_researcher_data.cnu_count_by_category,
+    null,
+    'Copy CNU data by category to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    financed_project_researcher_data.discipline_erc_count,
+    null,
+    'Copy ERC data to clipboard'
+  )
+);
 ```
 
 ### Financed Project Summary
@@ -518,20 +680,31 @@ display(copyTableToClipboardButton(
 ```js
 function formatDomainPercents(data, label) {
   // debugger;
-  const percent = (value, total) => `${(value / total * 100).toPrecision(3)}%`;
-  const getFromMapOrZero = (map, value) => map.has(value) ? map.get(value) : 0;
+  const percent = (value, total) =>
+    `${((value / total) * 100).toPrecision(3)}%`;
+  const getFromMapOrZero = (map, value) =>
+    map.has(value) ? map.get(value) : 0;
 
   const discipline_erc_count_map = new Map(data.discipline_erc_count);
   const discipline_erc_count_total =
-    getFromMapOrZero(discipline_erc_count_map, 'SH - Sciences Humaines & Sociales') +
-    getFromMapOrZero(discipline_erc_count_map, 'PE - Sciences & Technologies') + 
-    getFromMapOrZero(discipline_erc_count_map, 'LS - Vie & Santé') + 
+    getFromMapOrZero(
+      discipline_erc_count_map,
+      'SH - Sciences Humaines & Sociales'
+    ) +
+    getFromMapOrZero(discipline_erc_count_map, 'PE - Sciences & Technologies') +
+    getFromMapOrZero(discipline_erc_count_map, 'LS - Vie & Santé') +
     getFromMapOrZero(discipline_erc_count_map, 'non chercheur');
 
   const cnu_count_by_category_count_map = new Map(data.cnu_count_by_category);
   const cnu_count_by_category_count_total =
-    getFromMapOrZero(cnu_count_by_category_count_map, 'Droit, économie et gestion') +
-    getFromMapOrZero(cnu_count_by_category_count_map, 'Lettres et sciences humaines') +
+    getFromMapOrZero(
+      cnu_count_by_category_count_map,
+      'Droit, économie et gestion'
+    ) +
+    getFromMapOrZero(
+      cnu_count_by_category_count_map,
+      'Lettres et sciences humaines'
+    ) +
     getFromMapOrZero(cnu_count_by_category_count_map, 'Sciences') +
     getFromMapOrZero(cnu_count_by_category_count_map, 'Pluridisciplinaire') +
     getFromMapOrZero(cnu_count_by_category_count_map, 'Sections de santé');
@@ -539,11 +712,17 @@ function formatDomainPercents(data, label) {
   return {
     label: label,
     erc_sh_percent: percent(
-      getFromMapOrZero(discipline_erc_count_map, 'SH - Sciences Humaines & Sociales'),
+      getFromMapOrZero(
+        discipline_erc_count_map,
+        'SH - Sciences Humaines & Sociales'
+      ),
       discipline_erc_count_total
     ),
     erc_pe_percent: percent(
-      getFromMapOrZero(discipline_erc_count_map, 'PE - Sciences & Technologies'),
+      getFromMapOrZero(
+        discipline_erc_count_map,
+        'PE - Sciences & Technologies'
+      ),
       discipline_erc_count_total
     ),
     erc_ls_percent: percent(
@@ -551,11 +730,17 @@ function formatDomainPercents(data, label) {
       discipline_erc_count_total
     ),
     cnu_droit_percent: percent(
-      getFromMapOrZero(cnu_count_by_category_count_map, 'Droit, économie et gestion'),
+      getFromMapOrZero(
+        cnu_count_by_category_count_map,
+        'Droit, économie et gestion'
+      ),
       cnu_count_by_category_count_total
     ),
     cnu_shs_percent: percent(
-      getFromMapOrZero(cnu_count_by_category_count_map, 'Lettres et sciences humaines'),
+      getFromMapOrZero(
+        cnu_count_by_category_count_map,
+        'Lettres et sciences humaines'
+      ),
       cnu_count_by_category_count_total
     ),
     cnu_science_percent: percent(
@@ -571,55 +756,69 @@ function formatDomainPercents(data, label) {
       cnu_count_by_category_count_total
     ),
   };
-};
+}
 
 // Table //
 const overview_data = [];
 overview_data.push(formatDomainPercents(neo_project_researcher_data, 'NÉO'));
-overview_data.push(formatDomainPercents(RESILIENCE_project_researcher_data, 'RÉSILIENCE'));
-overview_data.push(formatDomainPercents(TRACES_project_researcher_data, 'TRACES'));
+overview_data.push(
+  formatDomainPercents(RESILIENCE_project_researcher_data, 'RÉSILIENCE')
+);
+overview_data.push(
+  formatDomainPercents(TRACES_project_researcher_data, 'TRACES')
+);
 overview_data.push(formatDomainPercents(vfpp_project_researcher_data, 'VF++'));
-overview_data.push(formatDomainPercents(VILLEGARDEN_project_researcher_data, 'VILLEGARDEN'));
-overview_data.push(formatDomainPercents(WHAOU_project_researcher_data, 'WHAOU'));
-overview_data.push(formatDomainPercents(inteGREEN_project_researcher_data, 'inteGREEN'));
-overview_data.push(formatDomainPercents(URBHEALTH_project_researcher_data, 'URBHEALTH'));
-overview_data.push(formatDomainPercents(financed_project_researcher_data, 'Total Financed'));
+overview_data.push(
+  formatDomainPercents(VILLEGARDEN_project_researcher_data, 'VILLEGARDEN')
+);
+overview_data.push(
+  formatDomainPercents(WHAOU_project_researcher_data, 'WHAOU')
+);
+overview_data.push(
+  formatDomainPercents(inteGREEN_project_researcher_data, 'inteGREEN')
+);
+overview_data.push(
+  formatDomainPercents(URBHEALTH_project_researcher_data, 'URBHEALTH')
+);
+overview_data.push(
+  formatDomainPercents(financed_project_researcher_data, 'Total Financed')
+);
 
-console.debug("overview_data", overview_data);
+console.debug('overview_data', overview_data);
 
 const overview_table_erc = Inputs.table(overview_data, {
   // height: 400,
   columns: [
-    "label",
+    'label',
     // "erc_sh_percent",
     // "erc_pe_percent",
     // "erc_ls_percent",
-    "cnu_droit_percent",
-    "cnu_shs_percent",
-    "cnu_science_percent",
-    "cnu_pluri_percent",
-    "cnu_sante_percent",
+    'cnu_droit_percent',
+    'cnu_shs_percent',
+    'cnu_science_percent',
+    'cnu_pluri_percent',
+    'cnu_sante_percent',
   ],
   header: {
-    "label": "Project",
-    "erc_sh_percent": "% ERC SH",
-    "erc_pe_percent": "% ERC PE",
-    "erc_ls_percent": "% ERC VS",
-    "cnu_droit_percent": "% CNU Droit, économie et gestion",
-    "cnu_shs_percent": "% CNU Lettres et SH",
-    "cnu_science_percent": "% CNU Sciences",
-    "cnu_pluri_percent": "% CNU Pluridisciplinaire",
-    "cnu_sante_percent": "% CNU Santé",
+    label: 'Project',
+    erc_sh_percent: '% ERC SH',
+    erc_pe_percent: '% ERC PE',
+    erc_ls_percent: '% ERC VS',
+    cnu_droit_percent: '% CNU Droit, économie et gestion',
+    cnu_shs_percent: '% CNU Lettres et SH',
+    cnu_science_percent: '% CNU Sciences',
+    cnu_pluri_percent: '% CNU Pluridisciplinaire',
+    cnu_sante_percent: '% CNU Santé',
   },
 });
 
 const overview_table_cnu = Inputs.table(overview_data, {
   // height: 400,
   columns: [
-    "label",
-    "erc_sh_percent",
-    "erc_pe_percent",
-    "erc_ls_percent",
+    'label',
+    'erc_sh_percent',
+    'erc_pe_percent',
+    'erc_ls_percent',
     // "cnu_droit_percent",
     // "cnu_shs_percent",
     // "cnu_science_percent",
@@ -627,15 +826,15 @@ const overview_table_cnu = Inputs.table(overview_data, {
     // "cnu_sante_percent",
   ],
   header: {
-    "label": "Project",
-    "erc_sh_percent": "% ERC SH",
-    "erc_pe_percent": "% ERC PE",
-    "erc_ls_percent": "% ERC VS",
-    "cnu_droit_percent": "% CNU Droit, économie et gestion",
-    "cnu_shs_percent": "% CNU Lettres et SH",
-    "cnu_science_percent": "% CNU Sciences",
-    "cnu_pluri_percent": "% CNU Pluridisciplinaire",
-    "cnu_sante_percent": "% CNU Santé",
+    label: 'Project',
+    erc_sh_percent: '% ERC SH',
+    erc_pe_percent: '% ERC PE',
+    erc_ls_percent: '% ERC VS',
+    cnu_droit_percent: '% CNU Droit, économie et gestion',
+    cnu_shs_percent: '% CNU Lettres et SH',
+    cnu_science_percent: '% CNU Sciences',
+    cnu_pluri_percent: '% CNU Pluridisciplinaire',
+    cnu_sante_percent: '% CNU Santé',
   },
 });
 ```
@@ -645,11 +844,10 @@ const overview_table_cnu = Inputs.table(overview_data, {
   <div class="card grid-colspan-1">${overview_table_cnu}</div>
 </div>
 
-
 ## NÉO
 
 ```js
-const neo_project_researcher_data = formatResearcherDataByProject("NÉO", true);
+const neo_project_researcher_data = formatResearcherDataByProject('NÉO', true);
 // console.debug('neo_project_researcher_data', neo_project_researcher_data);
 ```
 
@@ -688,9 +886,15 @@ const neo_project_cnu_max = Math.max(
 ```
 
 ```js
-const neo_cnu_plot = (width) => Plot.plot(
-  generateCnuPlotOptions(neo_project_researcher_data.cnu_count, neo_cnu_plot_sort, 350, width)
-);
+const neo_cnu_plot = (width) =>
+  Plot.plot(
+    generateCnuPlotOptions(
+      neo_project_researcher_data.cnu_count,
+      neo_cnu_plot_sort,
+      350,
+      width
+    )
+  );
 ```
 
 <div class="grid grid-cols-2">
@@ -711,27 +915,36 @@ const neo_cnu_plot = (width) => Plot.plot(
 </div>
 
 ```js
-display(copyTableToClipboardButton(
-  neo_project_researcher_data.cnu_count,
-  null,
-  'Copy CNU data to clipboard'
-));
-display(copyTableToClipboardButton(
-  neo_project_researcher_data.cnu_count_by_category,
-  null,
-  'Copy CNU data by category to clipboard'
-));
-display(copyTableToClipboardButton(
-  neo_project_researcher_data.discipline_erc_count,
-  null,
-  'Copy ERC data to clipboard'
-));
+display(
+  copyTableToClipboardButton(
+    neo_project_researcher_data.cnu_count,
+    null,
+    'Copy CNU data to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    neo_project_researcher_data.cnu_count_by_category,
+    null,
+    'Copy CNU data by category to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    neo_project_researcher_data.discipline_erc_count,
+    null,
+    'Copy ERC data to clipboard'
+  )
+);
 ```
 
 ## RÉSILIENCE
 
 ```js
-const RESILIENCE_project_researcher_data = formatResearcherDataByProject("RÉSILIENCE", true);
+const RESILIENCE_project_researcher_data = formatResearcherDataByProject(
+  'RÉSILIENCE',
+  true
+);
 // console.debug('RESILIENCE_project_researcher_data', RESILIENCE_project_researcher_data);
 ```
 
@@ -762,7 +975,9 @@ const RESILIENCE_cnu_plot_sort_input = Inputs.select(
   cnu_plot_sort_options
 );
 
-const RESILIENCE_cnu_plot_sort = Generators.input(RESILIENCE_cnu_plot_sort_input);
+const RESILIENCE_cnu_plot_sort = Generators.input(
+  RESILIENCE_cnu_plot_sort_input
+);
 
 const RESILIENCE_project_cnu_max = Math.max(
   ...RESILIENCE_project_researcher_data.cnu_count.map((d) => d[1])
@@ -770,9 +985,15 @@ const RESILIENCE_project_cnu_max = Math.max(
 ```
 
 ```js
-const RESILIENCE_cnu_plot = (width) => Plot.plot(
-  generateCnuPlotOptions(RESILIENCE_project_researcher_data.cnu_count, RESILIENCE_cnu_plot_sort, 350, width)
-);
+const RESILIENCE_cnu_plot = (width) =>
+  Plot.plot(
+    generateCnuPlotOptions(
+      RESILIENCE_project_researcher_data.cnu_count,
+      RESILIENCE_cnu_plot_sort,
+      350,
+      width
+    )
+  );
 ```
 
 <div class="grid grid-cols-2">
@@ -793,28 +1014,36 @@ const RESILIENCE_cnu_plot = (width) => Plot.plot(
 </div>
 
 ```js
-display(copyTableToClipboardButton(
-  RESILIENCE_project_researcher_data.cnu_count,
-  null,
-  'Copy CNU data to clipboard'
-));
-display(copyTableToClipboardButton(
-  RESILIENCE_project_researcher_data.cnu_count_by_category,
-  null,
-  'Copy CNU data by category to clipboard'
-));
-display(copyTableToClipboardButton(
-  RESILIENCE_project_researcher_data.discipline_erc_count,
-  null,
-  'Copy ERC data to clipboard'
-));
+display(
+  copyTableToClipboardButton(
+    RESILIENCE_project_researcher_data.cnu_count,
+    null,
+    'Copy CNU data to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    RESILIENCE_project_researcher_data.cnu_count_by_category,
+    null,
+    'Copy CNU data by category to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    RESILIENCE_project_researcher_data.discipline_erc_count,
+    null,
+    'Copy ERC data to clipboard'
+  )
+);
 ```
-
 
 ## TRACES
 
 ```js
-const TRACES_project_researcher_data = formatResearcherDataByProject("TRACES", true);
+const TRACES_project_researcher_data = formatResearcherDataByProject(
+  'TRACES',
+  true
+);
 // console.debug('TRACES_project_researcher_data', TRACES_project_researcher_data);
 ```
 
@@ -853,9 +1082,15 @@ const TRACES_project_cnu_max = Math.max(
 ```
 
 ```js
-const TRACES_cnu_plot = (width) => Plot.plot(
-  generateCnuPlotOptions(TRACES_project_researcher_data.cnu_count, TRACES_cnu_plot_sort, 350, width)
-);
+const TRACES_cnu_plot = (width) =>
+  Plot.plot(
+    generateCnuPlotOptions(
+      TRACES_project_researcher_data.cnu_count,
+      TRACES_cnu_plot_sort,
+      350,
+      width
+    )
+  );
 ```
 
 <div class="grid grid-cols-2">
@@ -876,27 +1111,36 @@ const TRACES_cnu_plot = (width) => Plot.plot(
 </div>
 
 ```js
-display(copyTableToClipboardButton(
-  TRACES_project_researcher_data.cnu_count,
-  null,
-  'Copy CNU data to clipboard'
-));
-display(copyTableToClipboardButton(
-  TRACES_project_researcher_data.cnu_count_by_category,
-  null,
-  'Copy CNU data by category to clipboard'
-));
-display(copyTableToClipboardButton(
-  TRACES_project_researcher_data.discipline_erc_count,
-  null,
-  'Copy ERC data to clipboard'
-));
+display(
+  copyTableToClipboardButton(
+    TRACES_project_researcher_data.cnu_count,
+    null,
+    'Copy CNU data to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    TRACES_project_researcher_data.cnu_count_by_category,
+    null,
+    'Copy CNU data by category to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    TRACES_project_researcher_data.discipline_erc_count,
+    null,
+    'Copy ERC data to clipboard'
+  )
+);
 ```
 
 ## VF++
 
 ```js
-const vfpp_project_researcher_data = formatResearcherDataByProject("VF++", true);
+const vfpp_project_researcher_data = formatResearcherDataByProject(
+  'VF++',
+  true
+);
 // console.debug('vfpp_project_researcher_data', vfpp_project_researcher_data);
 ```
 
@@ -935,9 +1179,15 @@ const vfpp_project_cnu_max = Math.max(
 ```
 
 ```js
-const vfpp_cnu_plot = (width) => Plot.plot(
-  generateCnuPlotOptions(vfpp_project_researcher_data.cnu_count, vfpp_cnu_plot_sort, 350, width)
-);
+const vfpp_cnu_plot = (width) =>
+  Plot.plot(
+    generateCnuPlotOptions(
+      vfpp_project_researcher_data.cnu_count,
+      vfpp_cnu_plot_sort,
+      350,
+      width
+    )
+  );
 ```
 
 <div class="grid grid-cols-2">
@@ -958,28 +1208,36 @@ const vfpp_cnu_plot = (width) => Plot.plot(
 </div>
 
 ```js
-display(copyTableToClipboardButton(
-  vfpp_project_researcher_data.cnu_count,
-  null,
-  'Copy CNU data to clipboard'
-));
-display(copyTableToClipboardButton(
-  vfpp_project_researcher_data.cnu_count_by_category,
-  null,
-  'Copy CNU data by category to clipboard'
-));
-display(copyTableToClipboardButton(
-  vfpp_project_researcher_data.discipline_erc_count,
-  null,
-  'Copy ERC data to clipboard'
-));
+display(
+  copyTableToClipboardButton(
+    vfpp_project_researcher_data.cnu_count,
+    null,
+    'Copy CNU data to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    vfpp_project_researcher_data.cnu_count_by_category,
+    null,
+    'Copy CNU data by category to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    vfpp_project_researcher_data.discipline_erc_count,
+    null,
+    'Copy ERC data to clipboard'
+  )
+);
 ```
-
 
 ## VILLEGARDEN
 
 ```js
-const VILLEGARDEN_project_researcher_data = formatResearcherDataByProject("VILLEGARDEN", true);
+const VILLEGARDEN_project_researcher_data = formatResearcherDataByProject(
+  'VILLEGARDEN',
+  true
+);
 // console.debug('VILLEGARDEN_project_researcher_data', VILLEGARDEN_project_researcher_data);
 ```
 
@@ -1010,7 +1268,9 @@ const VILLEGARDEN_cnu_plot_sort_input = Inputs.select(
   cnu_plot_sort_options
 );
 
-const VILLEGARDEN_cnu_plot_sort = Generators.input(VILLEGARDEN_cnu_plot_sort_input);
+const VILLEGARDEN_cnu_plot_sort = Generators.input(
+  VILLEGARDEN_cnu_plot_sort_input
+);
 
 const VILLEGARDEN_project_cnu_max = Math.max(
   ...VILLEGARDEN_project_researcher_data.cnu_count.map((d) => d[1])
@@ -1018,9 +1278,15 @@ const VILLEGARDEN_project_cnu_max = Math.max(
 ```
 
 ```js
-const VILLEGARDEN_cnu_plot = (width) => Plot.plot(
-  generateCnuPlotOptions(VILLEGARDEN_project_researcher_data.cnu_count, VILLEGARDEN_cnu_plot_sort, 350, width)
-);
+const VILLEGARDEN_cnu_plot = (width) =>
+  Plot.plot(
+    generateCnuPlotOptions(
+      VILLEGARDEN_project_researcher_data.cnu_count,
+      VILLEGARDEN_cnu_plot_sort,
+      350,
+      width
+    )
+  );
 ```
 
 <div class="grid grid-cols-2">
@@ -1041,27 +1307,36 @@ const VILLEGARDEN_cnu_plot = (width) => Plot.plot(
 </div>
 
 ```js
-display(copyTableToClipboardButton(
-  VILLEGARDEN_project_researcher_data.cnu_count,
-  null,
-  'Copy CNU data to clipboard'
-));
-display(copyTableToClipboardButton(
-  VILLEGARDEN_project_researcher_data.cnu_count_by_category,
-  null,
-  'Copy CNU data by category to clipboard'
-));
-display(copyTableToClipboardButton(
-  VILLEGARDEN_project_researcher_data.discipline_erc_count,
-  null,
-  'Copy ERC data to clipboard'
-));
+display(
+  copyTableToClipboardButton(
+    VILLEGARDEN_project_researcher_data.cnu_count,
+    null,
+    'Copy CNU data to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    VILLEGARDEN_project_researcher_data.cnu_count_by_category,
+    null,
+    'Copy CNU data by category to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    VILLEGARDEN_project_researcher_data.discipline_erc_count,
+    null,
+    'Copy ERC data to clipboard'
+  )
+);
 ```
 
 ## WHAOU
 
 ```js
-const WHAOU_project_researcher_data = formatResearcherDataByProject("WHAOU", true);
+const WHAOU_project_researcher_data = formatResearcherDataByProject(
+  'WHAOU',
+  true
+);
 // console.debug('WHAOU_project_researcher_data', WHAOU_project_researcher_data);
 ```
 
@@ -1100,9 +1375,15 @@ const WHAOU_project_cnu_max = Math.max(
 ```
 
 ```js
-const WHAOU_cnu_plot = (width) => Plot.plot(
-  generateCnuPlotOptions(WHAOU_project_researcher_data.cnu_count, WHAOU_cnu_plot_sort, 350, width)
-);
+const WHAOU_cnu_plot = (width) =>
+  Plot.plot(
+    generateCnuPlotOptions(
+      WHAOU_project_researcher_data.cnu_count,
+      WHAOU_cnu_plot_sort,
+      350,
+      width
+    )
+  );
 ```
 
 <div class="grid grid-cols-2">
@@ -1123,28 +1404,36 @@ const WHAOU_cnu_plot = (width) => Plot.plot(
 </div>
 
 ```js
-display(copyTableToClipboardButton(
-  WHAOU_project_researcher_data.cnu_count,
-  null,
-  'Copy CNU data to clipboard'
-));
-display(copyTableToClipboardButton(
-  WHAOU_project_researcher_data.cnu_count_by_category,
-  null,
-  'Copy CNU data by category to clipboard'
-));
-display(copyTableToClipboardButton(
-  WHAOU_project_researcher_data.discipline_erc_count,
-  null,
-  'Copy ERC data to clipboard'
-));
+display(
+  copyTableToClipboardButton(
+    WHAOU_project_researcher_data.cnu_count,
+    null,
+    'Copy CNU data to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    WHAOU_project_researcher_data.cnu_count_by_category,
+    null,
+    'Copy CNU data by category to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    WHAOU_project_researcher_data.discipline_erc_count,
+    null,
+    'Copy ERC data to clipboard'
+  )
+);
 ```
-
 
 ## inteGREEN
 
 ```js
-const inteGREEN_project_researcher_data = formatResearcherDataByProject("inteGREEN", true);
+const inteGREEN_project_researcher_data = formatResearcherDataByProject(
+  'inteGREEN',
+  true
+);
 // console.debug('inteGREEN_project_researcher_data', inteGREEN_project_researcher_data);
 ```
 
@@ -1183,9 +1472,15 @@ const inteGREEN_project_cnu_max = Math.max(
 ```
 
 ```js
-const inteGREEN_cnu_plot = (width) => Plot.plot(
-  generateCnuPlotOptions(inteGREEN_project_researcher_data.cnu_count, inteGREEN_cnu_plot_sort, 350, width)
-);
+const inteGREEN_cnu_plot = (width) =>
+  Plot.plot(
+    generateCnuPlotOptions(
+      inteGREEN_project_researcher_data.cnu_count,
+      inteGREEN_cnu_plot_sort,
+      350,
+      width
+    )
+  );
 ```
 
 <div class="grid grid-cols-2">
@@ -1206,28 +1501,36 @@ const inteGREEN_cnu_plot = (width) => Plot.plot(
 </div>
 
 ```js
-display(copyTableToClipboardButton(
-  inteGREEN_project_researcher_data.cnu_count,
-  null,
-  'Copy CNU data to clipboard'
-));
-display(copyTableToClipboardButton(
-  inteGREEN_project_researcher_data.cnu_count_by_category,
-  null,
-  'Copy CNU data by category to clipboard'
-));
-display(copyTableToClipboardButton(
-  inteGREEN_project_researcher_data.discipline_erc_count,
-  null,
-  'Copy ERC data to clipboard'
-));
+display(
+  copyTableToClipboardButton(
+    inteGREEN_project_researcher_data.cnu_count,
+    null,
+    'Copy CNU data to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    inteGREEN_project_researcher_data.cnu_count_by_category,
+    null,
+    'Copy CNU data by category to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    inteGREEN_project_researcher_data.discipline_erc_count,
+    null,
+    'Copy ERC data to clipboard'
+  )
+);
 ```
-
 
 ## URBHEALTH
 
 ```js
-const URBHEALTH_project_researcher_data = formatResearcherDataByProject("URBHEALTH", true);
+const URBHEALTH_project_researcher_data = formatResearcherDataByProject(
+  'URBHEALTH',
+  true
+);
 // console.debug('URBHEALTH_project_researcher_data', URBHEALTH_project_researcher_data);
 ```
 
@@ -1266,9 +1569,15 @@ const URBHEALTH_project_cnu_max = Math.max(
 ```
 
 ```js
-const URBHEALTH_cnu_plot = (width) => Plot.plot(
-  generateCnuPlotOptions(URBHEALTH_project_researcher_data.cnu_count, URBHEALTH_cnu_plot_sort, 350, width)
-);
+const URBHEALTH_cnu_plot = (width) =>
+  Plot.plot(
+    generateCnuPlotOptions(
+      URBHEALTH_project_researcher_data.cnu_count,
+      URBHEALTH_cnu_plot_sort,
+      350,
+      width
+    )
+  );
 ```
 
 <div class="grid grid-cols-2">
@@ -1289,54 +1598,68 @@ const URBHEALTH_cnu_plot = (width) => Plot.plot(
 </div>
 
 ```js
-display(copyTableToClipboardButton(
-  URBHEALTH_project_researcher_data.cnu_count,
-  null,
-  'Copy CNU data to clipboard'
-));
-display(copyTableToClipboardButton(
-  URBHEALTH_project_researcher_data.cnu_count_by_category,
-  null,
-  'Copy CNU data by category to clipboard'
-));
-display(copyTableToClipboardButton(
-  URBHEALTH_project_researcher_data.discipline_erc_count,
-  null,
-  'Copy ERC data to clipboard'
-));
+display(
+  copyTableToClipboardButton(
+    URBHEALTH_project_researcher_data.cnu_count,
+    null,
+    'Copy CNU data to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    URBHEALTH_project_researcher_data.cnu_count_by_category,
+    null,
+    'Copy CNU data by category to clipboard'
+  )
+);
+display(
+  copyTableToClipboardButton(
+    URBHEALTH_project_researcher_data.discipline_erc_count,
+    null,
+    'Copy ERC data to clipboard'
+  )
+);
 ```
 
 ## Data quality metrics
 
 ```js
-// missing count //
-const missing_discipline_erc_count = d3.rollup(
-    phase_2_data.researchers,
-    (D) => D.length,
-    (d) => exclude(d.discipline_erc) ? 'found_erc': 'missing_erc'
-  );
-missing_discipline_erc_count
-
-const missing_cnu_count = d3.rollup(
-    phase_2_data.researchers,
-    (D) => D.length,
-    (d) => exclude(d.cnu) ? 'found_cnu': 'missing_cnu'
-  );
-
-const missing_financed_discipline_erc_count = d3.rollup(
-    phase_2_data.researchers.filter((d) => isFinanced(d.project)),
-    (D) => D.length,
-    (d) => exclude(d.discipline_erc) ? 'found_erc': 'missing_erc'
-  );
-missing_discipline_erc_count
-
-const missing_financed_cnu_count = d3.rollup(
-    phase_2_data.researchers.filter((d) => isFinanced(d.project)),
-    (D) => D.length,
-    (d) => exclude(d.cnu) ? 'found_cnu': 'missing_cnu'
-  );
+function isFinanced(projects) {
+  for (let index = 0; index < projects.length; index++) {
+    if (financed_projects.includes(projects[index])) return true;
+  }
+  return false;
+}
 ```
 
+```js
+// missing count //
+const missing_discipline_erc_count = d3.rollup(
+  phase_1_data.researchers,
+  (D) => D.length,
+  (d) => (exclude(d.discipline_erc) ? 'found_erc' : 'missing_erc')
+);
+missing_discipline_erc_count;
+
+const missing_cnu_count = d3.rollup(
+  phase_1_data.researchers,
+  (D) => D.length,
+  (d) => (exclude(d.cnu) ? 'found_cnu' : 'missing_cnu')
+);
+
+const missing_financed_discipline_erc_count = d3.rollup(
+  phase_1_data.researchers.filter((d) => isFinanced(d.project)),
+  (D) => D.length,
+  (d) => (exclude(d.discipline_erc) ? 'found_erc' : 'missing_erc')
+);
+missing_discipline_erc_count;
+
+const missing_financed_cnu_count = d3.rollup(
+  phase_1_data.researchers.filter((d) => isFinanced(d.project)),
+  (D) => D.length,
+  (d) => (exclude(d.cnu) ? 'found_cnu' : 'missing_cnu')
+);
+```
 
 <div class="grid grid-cols-4">
   <div class="card">

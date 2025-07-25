@@ -9,7 +9,7 @@ import {
   countEntities,
 } from "./components/utilities.js";
 import {
-  extractPhase2Workbook,
+  extractPhase1Workbook,
   getColumnOptions,
   filterOnInput,
 } from "./components/phase1-dashboard.js";
@@ -23,7 +23,7 @@ const workbook1 = FileAttachment(
 ```
 
 ```js echo
-const phase_2_data = extractPhase2Workbook(workbook1, false);
+const phase_2_data = extractPhase1Workbook(workbook1, false);
 display(phase_2_data);
 ```
 

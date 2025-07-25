@@ -411,7 +411,7 @@ export function resolveEtablissementEntities(
  * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Object<Array<Object>>} An object containing 3 Plot formatted tables
  */
-export function extractPhase2Workbook(
+export function extractPhase1Workbook(
   workbook,
   anonymize = false,
   acronymousDict = new Map()

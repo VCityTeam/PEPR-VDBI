@@ -1,5 +1,9 @@
 import { map, filter, rollup } from 'npm:d3';
-import { anonymizeEntry, pseudoanonymizeEntry, filterEmptyArray } from './utilities.js';
+import {
+  anonymizeEntry,
+  pseudoanonymizeEntry,
+  filterEmptyArray,
+} from './utilities.js';
 import * as Plot from 'npm:@observablehq/plot';
 
 /**
@@ -26,7 +30,8 @@ export function getGeneralSheet(workbook) {
  */
 export function getResearcherSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[1], {
-    range: 'A1:AA298',
+    // range: 'A1:AA298',
+    range: 'A1:AE1087',
     headers: true,
   });
 }
@@ -225,7 +230,7 @@ export function resolveGeneralEntities(
  */
 export function resolveResearcherEntities(
   sheet,
-  anonymize = false,
+  anonymize = true,
   pseudoanonymousDict = new Map()
 ) {
   return map(
@@ -233,15 +238,11 @@ export function resolveResearcherEntities(
       sheet,
       (D) => {
         const researcher = {
-          id: typeof(D[0]['id']) == 'number' ? D[0]['id'] : null,
-          // fullname: D[0]['NOM et Prénom'] ? D[0]['NOM et Prénom'] : null,
-          // lastname: D[0]['NOM'] ? D[0]['NOM'] : null,
-          // firstname: D[0]['Prénom'] ? D[0]['Prénom'] : null,
-          // gender: D[0]['sexe'] ? D[0]['sexe'] : null,
-          fullname: anonymizeEntry(),
-          lastname: anonymizeEntry(),
-          firstname: anonymizeEntry(),
-          gender: anonymizeEntry(),
+          id: typeof D[0]['id'] == 'number' ? D[0]['id'] : null,
+          fullname: D[0]['NOM et Prénom'] ? D[0]['NOM et Prénom'] : null,
+          lastname: D[0]['NOM'] ? D[0]['NOM'] : null,
+          firstname: D[0]['Prénom'] ? D[0]['Prénom'] : null,
+          gender: D[0]['sexe'] ? D[0]['sexe'] : null,
           disciplines: D[0]['discipline chercheur']
             ? D[0]['discipline chercheur'].split(',').map((d) => d.trim())
             : [],
@@ -253,10 +254,8 @@ export function resolveResearcherEntities(
             : null,
           cnu: D[0]['CNU'] ? D[0]['CNU'] : null,
           site: D[0]['Sites'] ? D[0]['Sites'] : null,
-          // orcid: D[0]['ORCID'] ? D[0]['ORCID'] : null,
-          // idhal: D[0]['IDHAL'] ? D[0]['IDHAL'] : null,
-          orcid: anonymizeEntry(),
-          idhal: anonymizeEntry(),
+          orcid: D[0]['ORCID'] ? D[0]['ORCID'] : null,
+          idhal: D[0]['IDHAL'] ? D[0]['IDHAL'] : null,
           lab: D[0]['Identifiant Laboratoire']
             ? D[0]['Identifiant Laboratoire']
             : null,
@@ -292,21 +291,12 @@ export function resolveResearcherEntities(
           researcher.project.push(row['ACRONYME Projet']);
         });
         if (anonymize) {
-          // researcher.fullname = pseudoanonymizeEntry(
-          //   researcher.fullname,
-          //   pseudoanonymousDict,
-          //   'human'
-          // );
-          // researcher.firstname = pseudoanonymizeEntry(
-          //   researcher.firstname,
-          //   pseudoanonymousDict,
-          //   'human'
-          // );
-          // researcher.lastname = pseudoanonymizeEntry(
-          //   researcher.lastname,
-          //   pseudoanonymousDict,
-          //   'human'
-          // );
+          researcher.fullname = anonymizeEntry();
+          researcher.firstname = anonymizeEntry();
+          researcher.lastname = anonymizeEntry();
+          researcher.gender = anonymizeEntry();
+          researcher.orcid = anonymizeEntry();
+          researcher.idhal = anonymizeEntry();
           researcher.lab = pseudoanonymizeEntry(
             researcher.lab,
             pseudoanonymousDict,
@@ -322,7 +312,7 @@ export function resolveResearcherEntities(
         }
         return researcher;
       },
-      (d) => d['id'] // group researcher by id
+      (d) => (d['id'] ? d['id'] : d['NOM et Prénom']) // group researcher by id if available, otherwise by name
     ),
     (d) => d[1]
   );
@@ -407,37 +397,37 @@ export function resolveInstitutionEntities(
  * @param {Workbook} workbook - The workbook to extract
  * @param {boolean} pseudoanonymize - pseudoanonymize data or not
  * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
- * @returns {Object<Array<Object>>} An object containing 3 Plot formatted tables
+ * @returns {Object<Array<Object>>} An object containing Plot formatted tables
  */
-export function extractPhase2Workbook(
+export function extractPhase1Workbook(
   workbook,
-  pseudoanonymize = false,
+  pseudoanonymize = true,
   pseudoanonymousDict = new Map()
 ) {
-  const project_data = resolveGeneralEntities(
+  const projects = resolveGeneralEntities(
     getGeneralSheet(workbook),
     pseudoanonymize,
     pseudoanonymousDict
   );
-  const researcher_data = resolveResearcherEntities(
+  const researchers = resolveResearcherEntities(
     getResearcherSheet(workbook),
     pseudoanonymize,
     pseudoanonymousDict
   );
-  const laboratory_data = resolveLabEntities(
+  const laboratories = resolveLabEntities(
     getLabSheet(workbook),
     pseudoanonymize,
     pseudoanonymousDict
   );
-  const university_data = resolveInstitutionEntities(
+  const universities = resolveInstitutionEntities(
     getInstitutionSheet(workbook),
     pseudoanonymize,
     pseudoanonymousDict
   );
 
-  // Move laboratory information from researcher_data to laboratory_data
-  researcher_data.forEach((researcher) => {
-    const lab = laboratory_data.find((lab) => lab.lab == researcher.lab);
+  // Move laboratory information from researchers to laboratory_data
+  researchers.forEach((researcher) => {
+    const lab = laboratories.find((lab) => lab.lab == researcher.lab);
     if (typeof lab !== 'undefined') {
       lab.domain_erc = researcher.domain_erc_lab;
       lab.disciplines_erc = [...researcher.disciplines_erc_lab];
@@ -453,10 +443,10 @@ export function extractPhase2Workbook(
   });
 
   return {
-    projects: project_data,
-    researchers: researcher_data,
-    laboratories: laboratory_data,
-    universities: university_data,
+    projects,
+    researchers,
+    laboratories,
+    universities,
   };
 }
 
