@@ -48,6 +48,7 @@ This test will attempt to:
 
 - install [Docker](https://docs.docker.com/engine/install/)
 - install [R2R lite dependencies](https://r2r-docs.sciphi.ai/self-hosting/installation/light#prerequisites)
+
   - Python 3.12 or higher
     - This documentation uses a recommended but optional unix python/venv version manager: [pyenv](https://github.com/pyenv/pyenv)
     - Specifically Python Version `3.12.9` is used.
@@ -55,9 +56,9 @@ This test will attempt to:
   - Git?
   - Postgres + pgvector. These tests use docker for running Postgres with the pgvector extension
 
-      ```bash
-      docker pull pgvector/pgvector:pg17
-      ```
+    ```bash
+    docker pull pgvector/pgvector:pg17
+    ```
 
 #### Install and setup R2R
 
@@ -102,56 +103,56 @@ This test will attempt to:
 
    This example configuration is based on the default [Ollama configuration file](https://r2r-docs.sciphi.ai/self-hosting/local-rag#configuration).
 
-    ```toml
-    [app]
-    # LLM used for internal operations, like deriving conversation names
-    fast_llm = "ollama/llama3.2:3b"
+   ```toml
+   [app]
+   # LLM used for internal operations, like deriving conversation names
+   fast_llm = "ollama/llama3.2:3b"
 
-    # LLM used for user-facing output, like RAG replies
-    quality_llm = "ollama/llama3.2:3b"
+   # LLM used for user-facing output, like RAG replies
+   quality_llm = "ollama/llama3.2:3b"
 
-    [completion]
-    provider = "litellm"
-    concurrent_request_limit = 1
+   [completion]
+   provider = "litellm"
+   concurrent_request_limit = 1
 
-      [completion.generation_config]
-      model = "ollama/llama3.2:3b"
-      temperature = 0.1
-      top_p = 1
-      max_tokens_to_sample = 1_024
-      stream = false 
-      add_generation_kwargs = { }
+     [completion.generation_config]
+     model = "ollama/llama3.2:3b"
+     temperature = 0.1
+     top_p = 1
+     max_tokens_to_sample = 1_024
+     stream = false
+     add_generation_kwargs = { }
 
-    [database]
-    provider = "postgres"  # currently only `postgres` is supported
+   [database]
+   provider = "postgres"  # currently only `postgres` is supported
 
-    # Optional parameters (typically set in the environment instead):
-    user     = "user"
-    password = "password"
-    host     = "localhost"
-    port     = 5432           # Use a numeric port (not quoted)
-    db_name  = "vector_store"
-    # not specified here, but note: `app.project_name` sets the root path (schema/prefix) to all R2R tables.
+   # Optional parameters (typically set in the environment instead):
+   user     = "user"
+   password = "password"
+   host     = "localhost"
+   port     = 5432           # Use a numeric port (not quoted)
+   db_name  = "vector_store"
+   # not specified here, but note: `app.project_name` sets the root path (schema/prefix) to all R2R tables.
 
-    [embedding]
-    provider = "ollama"
-    base_model = "mxbai-embed-large"
-    base_dimension = 1_024
-    batch_size = 128
-    add_title_as_prefix = true
-    concurrent_request_limit = 32
+   [embedding]
+   provider = "ollama"
+   base_model = "mxbai-embed-large"
+   base_dimension = 1_024
+   batch_size = 128
+   add_title_as_prefix = true
+   concurrent_request_limit = 32
 
-    [completion_embedding]
-    provider = "ollama"
-    base_model = "mxbai-embed-large"
-    base_dimension = 1_024
-    batch_size = 128
-    add_title_as_prefix = true
-    concurrent_request_limit = 2
+   [completion_embedding]
+   provider = "ollama"
+   base_model = "mxbai-embed-large"
+   base_dimension = 1_024
+   batch_size = 128
+   add_title_as_prefix = true
+   concurrent_request_limit = 2
 
-    [ingestion]
-    excluded_parsers = [ "mp4" ]
-    ```
+   [ingestion]
+   excluded_parsers = [ "mp4" ]
+   ```
 
    Launch a postgres db with docker:
 
@@ -188,80 +189,81 @@ chmod +x up_test_r2r.sh
 
 #### Ingest file(s) and setup prompts
 
-1. Use the following one liner to ingest files. For example, to ingest a pdf file located here `./test-data/input/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf`
+1.  Use the following one liner to ingest files. For example, to ingest a pdf file located here `./test-data/input/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf`
 
-   ```bash
-   python -c "from r2r import R2RClient;c = R2RClient();c.set_base_url('http://localhost:7272');c.documents.create(file_path='./test-data/input/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf', ingestion_mode='fast')"
-   ```
+    ```bash
+    python -c "from r2r import R2RClient;c = R2RClient();c.set_base_url('http://localhost:7272');c.documents.create(file_path='./test-data/input/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf', ingestion_mode='fast')"
+    ```
 
-2. Check the file was correctly ingested.
+2.  Check the file was correctly ingested.
 
-   ```bash
-   curl -X GET http://localhost:7272/v3/documents | less
-   ```
+    ```bash
+    curl -X GET http://localhost:7272/v3/documents | less
+    ```
 
-   You should see something like this (after pretty printing):
+    You should see something like this (after pretty printing):
 
-   ```json
-   {
-     "results": [
-       {
-        "id": "b6e9bf87-5ce3-555b-b899-7b8b50fe9987",
-         "collection_ids": ["122fdf6a-e116-546b-a8f6-e4cb2e2c0a09"],
-         "owner_id": "2acb499e-8428-543b-bd85-0d9098718220",
-         "document_type": "pdf",
-         "metadata": { "version": "v0" },
-         "title": "VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf",
-         "version": "v0",
-         "size_in_bytes": 3148204,
-         "ingestion_status": "success",
-         "extraction_status": "pending",
-         "created_at": "2025-03-03T20:39:08.086026Z",
-         "updated_at": "2025-03-03T20:39:08.097748Z",
-         "ingestion_attempt_number": null,
-         "summary": null,
-         "summary_embedding": null,
-         "total_tokens": 64716
-       }
-     ],
-     "total_entries": 1
-   }
-   ```
+    ```json
+    {
+      "results": [
+        {
+          "id": "b6e9bf87-5ce3-555b-b899-7b8b50fe9987",
+          "collection_ids": ["122fdf6a-e116-546b-a8f6-e4cb2e2c0a09"],
+          "owner_id": "2acb499e-8428-543b-bd85-0d9098718220",
+          "document_type": "pdf",
+          "metadata": { "version": "v0" },
+          "title": "VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf",
+          "version": "v0",
+          "size_in_bytes": 3148204,
+          "ingestion_status": "success",
+          "extraction_status": "pending",
+          "created_at": "2025-03-03T20:39:08.086026Z",
+          "updated_at": "2025-03-03T20:39:08.097748Z",
+          "ingestion_attempt_number": null,
+          "summary": null,
+          "summary_embedding": null,
+          "total_tokens": 64716
+        }
+      ],
+      "total_entries": 1
+    }
+    ```
 
-   > [!TIP]
-   > Check out the [API](https://r2r-docs.sciphi.ai/api-and-sdks/introduction) for more commands. Note that when running commands on a local R2R instance, you don't need to include the authorization bearer token in the request header.
-   Verify the chunks of your pdf
+    Verify the chunks of your pdf
 
-   ```bash
-   curl -X GET http://localhost:7272/v3/documents/b6e9bf87-5ce3-555b-b899-7b8b50fe9987/chunks | less
-   ```
+    ```bash
+    curl -X GET http://localhost:7272/v3/documents/b6e9bf87-5ce3-555b-b899-7b8b50fe9987/chunks | less
+    ```
 
-3. Create a system prompt
+    > [!TIP]
+    > Check out the [API](https://r2r-docs.sciphi.ai/api-and-sdks/introduction) for more commands. Note that when running commands on a local R2R instance, you don't need to include the authorization bearer token in the request header.
 
-   ```bash
-   curl -X POST http://localhost:7272/v3/prompts \
-     -H "Content-Type: application/json" \
-     -d '{
-          "name": "system",
-          "template": "You are a helpful agent.",
-          "input_types": {}
-        }'
-   ```
+3.  Create a system prompt
 
-4. [Create a RAG prompt](https://r2r-docs.sciphi.ai/self-hosting/configuration/retrieval/prompts)
+    ```bash
+    curl -X POST http://localhost:7272/v3/prompts \
+      -H "Content-Type: application/json" \
+      -d '{
+           "name": "system",
+           "template": "You are a helpful agent.",
+           "input_types": {}
+         }'
+    ```
 
-   ```bash
-   curl -X POST http://localhost:7272/v3/prompts \
-     -H "Content-Type: application/json" \
-     -d '{
-          "name": "rag",
-          "template": "## Task:\nAnswer the query given immediately below given the context which follows later. Use line item references to like [1], [2], ... refer to specifically numbered items in the provided context. Pay close attention to the title of each given source to ensure it is consistent with the query.\n\n### Query:\n{query}\n\n### Context:\n{context}\n\nREMINDER - Use line item references to like [1], [2], ... refer to specifically numbered items in the provided context.\n## Response:",
-          "input_types": {
-            "query": "string",
-            "context": "string"
-          }
-        }'
-   ```
+4.  [Create a RAG prompt](https://r2r-docs.sciphi.ai/self-hosting/configuration/retrieval/prompts)
+
+    ```bash
+    curl -X POST http://localhost:7272/v3/prompts \
+      -H "Content-Type: application/json" \
+      -d '{
+           "name": "rag",
+           "template": "## Task:\nAnswer the query given immediately below given the context which follows later. Use line item references to like [1], [2], ... refer to specifically numbered items in the provided context. Pay close attention to the title of each given source to ensure it is consistent with the query.\n\n### Query:\n{query}\n\n### Context:\n{context}\n\nREMINDER - Use line item references to like [1], [2], ... refer to specifically numbered items in the provided context.\n## Response:",
+           "input_types": {
+             "query": "string",
+             "context": "string"
+           }
+         }'
+    ```
 
 #### Send query
 
@@ -361,13 +363,13 @@ Initial results from using the system template: `You are a helpful agent.`:
   | 51          | 0.7352623851993308 |
 
 - The highest scoring chunk text returned is (after formatting):
-  > PEPR  VBDI  
+  > PEPR VBDI  
   > APPEL À PROJETS
   > 2023
   > DOCUMENT DE PRÉSENTATION
   > PROJET
-  > VILLEGARDEN7Résumé  du projet  en français  (Non  Confidentiel  - 4000  caractères  maximum),
-  > espaces  inclus)
+  > VILLEGARDEN7Résumé du projet en français (Non Confidentiel - 4000 caractères maximum),
+  > espaces inclus)
   > Les villes adoptent des politiques efficaces en matière de biodiversité et de perméabilité
   > s'appuyant sur des solutions basées sur la nature pour conserver, restaurer et améliorer les sols
   > et la végétation urbains afin de relever les défis comme la surchauffe ou l'atténuation des
@@ -414,6 +416,7 @@ Still chunk 17. See above.
 1. Test different prompt templates using a workflow
 2. Test different models, especially a larger one
 3. Couldn't get Ollama to work with docker. In theory, these instructions should allow running Ollama from a Docker container:
+
    - Setup [Ollama Docker container](https://ollama.com/blog/ollama-is-now-available-as-an-official-docker-image)
    - If you have an Nvidia GPU, install the [Nvidia container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installation)
    - Then run the following for setting up ollama
@@ -445,7 +448,7 @@ These prompts are defined according to the following article:
 
 ```bibtex
 @misc{white2023promptpatterncatalogenhance,
-  title={A Prompt Pattern Catalog to Enhance Prompt Engineering with ChatGPT}, 
+  title={A Prompt Pattern Catalog to Enhance Prompt Engineering with ChatGPT},
   author={
     Jules White and
     Quchen Fu and
@@ -461,15 +464,15 @@ These prompts are defined according to the following article:
   eprint={2302.11382},
   archivePrefix={arXiv},
   primaryClass={cs.SE},
-  url={https://arxiv.org/abs/2302.11382}, 
+  url={https://arxiv.org/abs/2302.11382},
 }
 ```
 
 Hypothesis:
 
-- The *Template* pattern will provide better output results as semi-structured data (e.g. JSON).
-<!-- - The *Persona* pattern will provide subjectively better results when compared to ground truth. -->
-<!-- - The *Context Manager* pattern will provide subjectively better results when compared to ground truth. -->
+- The _Template_ pattern will provide better output results as semi-structured data (e.g. JSON).
+  <!-- - The *Persona* pattern will provide subjectively better results when compared to ground truth. -->
+  <!-- - The *Context Manager* pattern will provide subjectively better results when compared to ground truth. -->
 
 The following invariant parameters are used in this test:
 
@@ -506,36 +509,41 @@ The templates, prompts, and output formats are configured in the file [./test-da
 - Follow [the setup instructions of the previous test](#install)
 
 ### 2.3.3 Run
+
 Start local services
+
 ```bash
 ./up_test_r2r.sh
 ```
 
 Run the workflow with the LIRIS Ollama service. Replace `[BEARER_TOKEN]` with a valid bearer token
+
 ```bash
 python src/workflow_test.py -m r2r -t [BEARER_TOKEN] test-data/configs/workflow_2.3.3_config.json
 ```
 
 > [!WARNING]
 > When running the workflow from the UCBL campus, you may need to deactivate the Lyon 1 proxy.
-> 
+>
 > To view if you have a proxy set:
+>
 > ```bash
 > env | grep proxy
 > ```
 >
 > To remove the proxy:
+>
 > ```bash
 > unset HTTP_PROXY
 > unset http_proxy
 > ```
 >
 > To readd the proxy:
+>
 > ```bash
 > export HTTP_PROXY=http://proxy.univ-lyon1.fr:3128
 > export http_proxy=http://proxy.univ-lyon1.fr:3128
 > ```
-
 
 ## 2.3.4 R2R workflow Tests with response models
 
@@ -547,13 +555,13 @@ Each prompt will ask roughly the same question about a VDBI project with minor m
 In this case, prompts will ask questions about the NEO project's "research actions" and the outpout format target is JSON (since it is the most supported output format).
 
 The following parameters are changed between prompts
+
 1. Asking for the prompt to be formatted (e.g., in JSON)
 2. The response format types are changed (e.g., lists, objects). Additionally, in the case of JSON objects
    1. Object hierarchies
    2. Object keys
 
 The templates, prompts, and output formats are configured in the file [./test-data/configs/workflow_2.3.4_config.json](test-data/configs/workflow_2.3.4_config.json).
-
 
 #### Template
 
@@ -569,10 +577,10 @@ The templates, prompts, and output formats are configured in the file [./test-da
 >
 > {context}
 
-
 #### Example Prompts
 
 1. Define research actions as an object
+
    - prompt:
      > What are the proposed research actions of the NEO project?
    - format:
@@ -586,36 +594,40 @@ The templates, prompts, and output formats are configured in the file [./test-da
    - prompt:
      > What are the proposed research actions of the NEO project?
    - format:
-      ```json
-      "response_format": {
-        "type": "json_schema",
-        "json_schema": {
-          "schema": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      }
-      ```
+     ```json
+     "response_format": {
+       "type": "json_schema",
+       "json_schema": {
+         "schema": {
+           "type": "array",
+           "items": {
+             "type": "string"
+           }
+         }
+       }
+     }
+     ```
 
 ### 2.3.4 Install
 
 - Follow [the setup instructions of the previous test](#install)
 
 ### 2.3.4 Run
+
 Start local services
+
 ```bash
 ./up_test_r2r.sh
 ```
 
 Run the workflow.
+
 ```bash
 python src/workflow_test.py -m r2r -t [BEARER TOKEN] test-data/configs/workflow_2.3.4_config.json
 ```
 
 If using the LIRIS Pagoda3 Ollama service (or another API with authentication), replace `[BEARER TOKEN]` with a valid bearer token
+
 ```bash
 python src/workflow_test.py -m r2r -t [BEARER TOKEN] test-data/configs/workflow_2.3.4_config.json
 ```

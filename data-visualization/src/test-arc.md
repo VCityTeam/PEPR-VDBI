@@ -38,7 +38,7 @@ import {
   cropText
 } from "./components/utilities.js";
 import {
-  extractPhase2Workbook,
+  extractPhase1Workbook,
 } from "./components/phase1-dashboard.js";
 import {
   arcDiagramVertical,
@@ -65,7 +65,7 @@ To reduce the amount of information displayed we apply a filter to retain only r
 ```js echo
 const anonymize = false;
 const anonymizeDict = new Map();
-const researcher_data = extractPhase2Workbook(workbook, false)
+const researcher_data = extractPhase1Workbook(workbook, false)
   .researchers.filter((d) => d.project.includes("VF++"));
 ```
 

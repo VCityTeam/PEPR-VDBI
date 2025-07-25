@@ -11,7 +11,7 @@ import {
   cropText
 } from "./components/utilities.js";
 import {
-  extractPhase2Workbook,
+  extractPhase1Workbook,
   // getColumnOptions,
   // filterOnInput,
 } from "./components/phase1-dashboard.js";
@@ -56,7 +56,7 @@ const world = FileAttachment("./data/world.json").json();
 
 ```js
 // format data
-const phase_1_data = extractPhase2Workbook(workbook1, false);
+const phase_1_data = extractPhase1Workbook(workbook1, false);
 ```
 
 ```js
