@@ -1,4 +1,4 @@
-import { merge } from 'npm:d3';
+import { merge } from 'd3';
 import { formatIfString } from './utilities.js';
 
 /**

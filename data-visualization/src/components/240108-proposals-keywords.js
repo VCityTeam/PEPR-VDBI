@@ -1,4 +1,4 @@
-import { map, filter } from 'npm:d3';
+import { map, filter } from 'd3';
 import { anonymizeEntry } from './utilities.js';
 
 export function getProductSheet(workbook) {

@@ -10,42 +10,58 @@ sql:
 ---
 
 ```js
-import {
-  projectionMap,
-} from "./components/projection-map.js";
+import { projectionMap } from './components/projection-map.js';
 ```
+
+```js
+import { cropText } from './components/utilities.js';
+```
+
+```js
+import { tableToSankeyGraph, sankeyDiagram } from './components/sankey.js';
+```
+
 ```js
 import {
-  cropText,
-} from "./components/utilities.js";
-```
-```js
-import {
-  tableToSankeyGraph,
-  sankeyDiagram,
-} from "./components/sankey.js";
-```
-```js
-import {
-  legal_nature_colors
-} from "./components/color.js";
+  project_colors,
+  legal_nature_colors,
+  interpolated_legal_nature_color,
+} from './components/color.js';
 ```
 
 # Phase 1 Partners
 
 ```js
 const filter_no_result = view(
-  Inputs.toggle({label: "Filter results with no SIREN", value: true})
+  Inputs.toggle({ label: 'Filter results with no SIREN', value: true })
 );
 const filter_annex_data = view(
-  Inputs.toggle({label: "Filter annex data", value: false})
+  Inputs.toggle({ label: 'Filter annex data', value: false })
 );
 const filter_general_data = view(
-  Inputs.toggle({label: "Filter AAP data source 1", value: false})
+  Inputs.toggle({ label: 'Filter AAP generality data source', value: false })
 );
 const filter_aap_data = view(
-  Inputs.toggle({label: "Filter AAP data source 2", value: false})
+  Inputs.toggle({ label: 'Filter AAP partenaires_aap2023 data source', value: false })
 );
+```
+
+```js
+function filterResults(d) {
+  if (filter_no_result && !d.siren) {
+    return false
+  }
+  if (filter_annex_data && d.sources.includes('financed_annex_partners_by_project')) {
+    return false
+  }
+  if (filter_general_data && d.sources.includes('generality')) {
+    return false
+  }
+  if (filter_aap_data && d.sources.includes('partenaires_aap2023')) {
+    return false
+  }
+  return true
+}
 ```
 
 <div class="card">
@@ -56,10 +72,10 @@ const filter_aap_data = view(
       partner_graph_1_2, 
       {
         width: width,
-        color: legal_nature_colors,
-        colorMap: (d) => Number(d.names[0][6]),
+        nodeFill: (d) => project_colors.unknown('black')(d.id),
+        linkStroke: (d) => legal_nature_colors(Number(d.path[0][6])),
       }
-    ).canvas
+    )
   )}
 
 </div>
@@ -68,8 +84,8 @@ const filter_aap_data = view(
 const level_1_select = Inputs.select(
   new Set(partners_by_legal_nature_level_data.map((d) => d.cjn1_code)),
   {
-    label: "Select level 1 legal nature",
-    value: 0
+    label: 'Select level 1 legal nature',
+    value: 0,
   }
 );
 
@@ -85,58 +101,48 @@ const level_1_value = Generators.input(level_1_select);
       partner_graph_2_3, 
       {
         width: width,
-        color: legal_nature_colors,
-        colorMap: (d) => Number(d.names[0][7]),
+        nodeFill: (d) => project_colors.unknown('black')(d.id),
+        linkStroke: (d) => interpolated_legal_nature_color(
+            level_1_value,
+            filtered_cjn2_codes)
+          (Number(d.path[0][7])),
       }
-    ).canvas
+    )
   )}
 
 </div>
 
-<div class="grid">
-  <div class="card grid-rowspan-2">
-    <h1>Partner sites by city</h1>
-    ${
-      resize((width) => 
-        projectionMap(
-          partners_by_city,
-          {
-            width: width,
-            height: width,
-            entity_label: "Departement",
-            borderList: [
-              regions,
-              departements,
-            ],
-            borderListStrokeOpacity: [
-              1,
-              0.3,
-            ],
-          }
-        )
+<div class="card">
+  <h1>Partner sites by city</h1>
+  ${
+    resize((width) => 
+      projectionMap(
+        partners_by_city,
+        {
+          width: width,
+          height: width,
+          entity_label: "Departement",
+          borderList: [
+            regions,
+            departements,
+          ],
+          borderListStrokeOpacity: [
+            1,
+            0.3,
+          ],
+        }
       )
-    }
-
-  </div>
-  <div class="card" style="padding: 0;">
-    <div style="padding: 1em">
-      <h2>All filtered partner data</h2>${filtered_partner_data_search}
-    </div>
-    ${
-      resize((width) => 
-        Inputs.table(
-          filtered_partner_data_value,
-          {
-            width: width,
-            rows: 20
-          }
-        )
-      )
-    }
-
-  </div>
+    )
+  }
 </div>
 
+<div class="card" style="padding: 0;">
+  <div style="padding: 1em">
+    <h2>All filtered partner data</h2>
+    ${filtered_partner_data_search}
+  </div>
+  ${Inputs.table(filtered_partner_data_value)}
+</div>
 
 ```sql id=all_partner_data
 -- Clean tables
@@ -204,6 +210,8 @@ WITH
       project_name,
       nom_complet,
       nature_juridique,
+      siren,
+      list_distinct(list(source)) AS sources,
       count() as count,
     FROM union_all
     GROUP BY all
@@ -218,6 +226,8 @@ SELECT
   cjn2."Code" as "cjn2_code",
   cjn1."Libellé" as "cjn1_label",
   cjn1."Code" as "cjn1_code",
+  siren,
+  sources,
   aggregate_partners.count as "value",
 from aggregate_partners
 join cjn3
@@ -229,40 +239,32 @@ on cjn1.Code = floor(aggregate_partners.nature_juridique / 1000)
 ```
 
 ```js
-const world = FileAttachment("./data/world.json").json();
-```
-```js
-const regions = await FileAttachment("./data/france_regions.json").json();
-regions.features = regions.features.filter((d) => d.properties.nom != "Corse");
-```
-```js
-const departements = FileAttachment("./data/france_departements.json").json();
+const world = FileAttachment('./data/world.json').json();
 ```
 
 ```js
-const filtered_partner_data = [...all_partner_data].filter((d) => {
-  if (filter_no_result && !d.siren) {
-    return false
-  }
-  if (filter_annex_data && d.sources.includes('financed_annex_partners_by_project')) {
-    return false
-  }
-  if (filter_general_data && d.sources.includes('generality')) {
-    return false
-  }
-  if (filter_aap_data && d.sources.includes('partenaires_aap2023')) {
-    return false
-  }
-  return true
-});
+const regions = await FileAttachment('./data/france_regions.json').json();
+regions.features = regions.features.filter((d) => d.properties.nom != 'Corse');
 ```
 
 ```js
-const partners_by_legal_nature_level_data = await [...legal_natures].map((d) => {
-  const datum = {...d};
-  datum.level_3 = `(Code ${datum.cjn3_code}) ${datum.cjn3_label}`
-  datum.level_2 = `(Code ${datum.cjn2_code}) ${datum.cjn2_label}`
-  datum.level_1 = `(Code ${datum.cjn1_code}) ${datum.cjn1_label}`
+const departements = FileAttachment('./data/france_departements.json').json();
+```
+
+```js
+const filtered_partner_data = [...all_partner_data].filter(filterResults);
+```
+
+```js
+const filtered_legal_natures = [...legal_natures].filter(filterResults);
+```
+
+```js
+const partners_by_legal_nature_level_data = filtered_legal_natures.map((d) => {
+  const datum = { ...d };
+  datum.level_3_label = `(Code ${datum.cjn3_code}) ${datum.cjn3_label}`;
+  datum.level_2_label = `(Code ${datum.cjn2_code}) ${datum.cjn2_label}`;
+  datum.level_1_label = `(Code ${datum.cjn1_code}) ${datum.cjn1_label}`;
   return datum;
 });
 ```
@@ -271,65 +273,75 @@ const partners_by_legal_nature_level_data = await [...legal_natures].map((d) => 
 const partner_graph_1_2 = tableToSankeyGraph(
   partners_by_legal_nature_level_data,
   [
-    "level_1",
-    "level_2",
-    // "level_3",
+    'level_1_label',
+    'level_2_label',
+    // "level_3_label",
     'project_name',
   ]
 );
+console.debug('partner_graph_1_2', partner_graph_1_2);
+```
+
+```js
+const filtered_partners_by_legal_nature_level_data =
+  partners_by_legal_nature_level_data.filter(
+    (d) => d.cjn1_code == level_1_value
+  );
 
 const partner_graph_2_3 = tableToSankeyGraph(
-  partners_by_legal_nature_level_data.filter((d) => d.cjn1_code == level_1_value),
+  filtered_partners_by_legal_nature_level_data,
   [
-    // "level_1",
-    "level_2",
-    "level_3",
+    // "level_1_label",
+    'level_2_label',
+    'level_3_label',
     'project_name',
   ]
 );
 
-console.debug("partner_graph_1_2", partner_graph_1_2)
-console.debug("partner_graph_2_3", partner_graph_2_3)
+const filtered_cjn2_codes = [
+  ...new Set(
+    filtered_partners_by_legal_nature_level_data.map((d) => d.cjn2_code % 10)
+  ),
+];
+
+console.debug('partner_graph_2_3', partner_graph_2_3);
+console.debug('filtered_cjn2_codes', filtered_cjn2_codes);
 ```
 
 ```js
-const partners_by_city = d3.groups(
-  filtered_partner_data,
-  (d) => d.code_postal ? d.code_postal.slice(0, 2) : null
+const partners_by_city = d3.groups(filtered_partner_data, (d) =>
+  d.code_postal ? d.code_postal.slice(0, 2) : null
 );
 ```
 
 ```js
-const legal_nature_plot_config = (data, width, height=undefined) => {
+const legal_nature_plot_config = (data, width, height = undefined) => {
   return {
     width: width,
     height: height,
     marginBottom: 60,
     x: {
       tickRotate: -20,
-      label: "Legal nature",
+      label: 'Legal nature',
       tickFormat: (d) => cropText(d, 15),
     },
     y: {
       grid: true,
-      label: "Occurences",
+      label: 'Occurences',
     },
     marks: [
-      Plot.barY(
-        data,
-        {
-          x: (d) => d[0],
-          y: (d) => d[1],
-          fill: (d) => d[1],
-          sort: { x: "x" },
-          tip: {
-            format : {
-              fill: false,
-            },
-            lineWidth: 100,
+      Plot.barY(data, {
+        x: (d) => d[0],
+        y: (d) => d[1],
+        fill: (d) => d[1],
+        sort: { x: 'x' },
+        tip: {
+          format: {
+            fill: false,
           },
-        }
-      ),
+          lineWidth: 100,
+        },
+      }),
     ],
   };
 };
@@ -337,7 +349,9 @@ const legal_nature_plot_config = (data, width, height=undefined) => {
 
 ```js
 const filtered_partner_data_search = Inputs.search(filtered_partner_data);
-const filtered_partner_data_value = Generators.input(filtered_partner_data_search);
+const filtered_partner_data_value = Generators.input(
+  filtered_partner_data_search
+);
 ```
 
 ## Partner label data quality
@@ -346,7 +360,7 @@ const filtered_partner_data_value = Generators.input(filtered_partner_data_searc
   <div class="card" style="padding: 0;">
     <div style="padding: 1em;">
       <h2>
-        Labels from only 1 source: ${[...no_results].length}/${[...all_partner_data].length}
+        Labels with no siren/siret: ${[...no_results].length}/${[...all_partner_data].length}
       </h2>
       <div>${no_result_search}</div>
     </div>
@@ -377,6 +391,7 @@ const filtered_partner_data_value = Generators.input(filtered_partner_data_searc
 const no_result_search = Inputs.search(no_results);
 const no_result_search_result = Generators.input(no_result_search);
 ```
+
 ```js
 const outlier_search = Inputs.search(outliers);
 const outlier_search_result = Generators.input(outlier_search);
@@ -465,33 +480,34 @@ select * from group_all
 where length(sources) == 1
 ```
 
-
 ```js
 const debug = true;
 
 if (debug) {
-  display("annex_partners");
+  display('annex_partners');
   display(Inputs.table(await sql`select * from annex_partners`));
-  display([... await sql`select * from annex_partners`].length);
-  display("general_partners");
+  display([...(await sql`select * from annex_partners`)].length);
+  display('general_partners');
   display(Inputs.table(await sql`select * from general_partners`));
-  display([...await sql`select * from general_partners`].length);
-  display("aap_partners");
+  display([...(await sql`select * from general_partners`)].length);
+  display('aap_partners');
   display(Inputs.table(await sql`select * from aap_partners`));
-  display([... await sql`select * from aap_partners`].length);
+  display([...(await sql`select * from aap_partners`)].length);
 
-  display("all_partner_data");
+  display('all_partner_data');
   display(Inputs.table(all_partner_data));
-  display("filtered_partner_data");
+  display('filtered_partner_data');
   display(Inputs.table(filtered_partner_data));
-  display("legal_natures");
+  display('legal_natures');
   display(Inputs.table(legal_natures));
+  display('filtered_legal_natures');
+  display(Inputs.table(filtered_legal_natures));
 
   // display("questionable_labels")
   // display(questionable_labels)
 }
-console.debug("partners_by_city", partners_by_city);
-console.debug("world", world);
-console.debug("regions", regions);
-console.debug("departements", departements);
+console.debug('partners_by_city', partners_by_city);
+console.debug('world', world);
+console.debug('regions', regions);
+console.debug('departements', departements);
 ```

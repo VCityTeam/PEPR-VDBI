@@ -8,7 +8,7 @@ import {
   stratify,
   create,
   linkRadial,
-} from 'npm:d3';
+} from 'd3';
 
 export function mapEntitesToProjectTree(projects) {
   // map graph to d3 hierarchy format
