@@ -4,6 +4,7 @@
   "scripts": {
     "clean": "rm -rf docs/.observablehq/cache",
     "build": "rm -rf dist && observable build",
+    "build-jsdoc": "jsdoc ./src/components/* -d jsdoc/",
     "dev": "observable preview",
     "deploy": "observable deploy",
     "observable": "observable"
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "eslint": "^9.17.0",
-    "globals": "^15.14.0"
+    "globals": "^15.14.0",
+    "jsdoc": "^4.0.4"
   }
 }

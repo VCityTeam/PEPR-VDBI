@@ -6,7 +6,7 @@ import * as Plot from 'npm:@observablehq/plot';
  * Extract data from the GÉNÉRALITÉ sheet
  *
  * @param {Workbook} workbook - The workbook to extract
- * @returns {Array<Object>} A dictionary of the extracted sheet, each column header is used a key.
+ * @returns {Object[]} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
 export function getGeneraliteSheet(workbook) {
@@ -20,7 +20,7 @@ export function getGeneraliteSheet(workbook) {
  * Extract data from the Liste chercheurs sheet
  *
  * @param {Workbook} workbook - The workbook to extract
- * @returns {Array<Object>} A dictionary of the extracted sheet, each column header is used a key.
+ * @returns {Object[]} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
 export function getChercheurSheet(workbook) {
@@ -34,7 +34,7 @@ export function getChercheurSheet(workbook) {
  * Extract data from the liste des labo sheet
  *
  * @param {Workbook} workbook - The workbook to extract
- * @returns {Array<Object>} A dictionary of the extracted sheet, each column header is used a key.
+ * @returns {Object[]} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
 export function getLaboSheet(workbook) {
@@ -48,7 +48,7 @@ export function getLaboSheet(workbook) {
  * Extract data from the liste des établissements sheet
  *
  * @param {Workbook} workbook - The workbook to extract
- * @returns {Array<Object>} A dictionary of the extracted sheet, each column header is used a key.
+ * @returns {Object[]} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
 export function getEtablissementSheet(workbook) {
@@ -81,10 +81,10 @@ export function getEtablissementSheet(workbook) {
  *    notes: string
  *  }
  *
- * @param {Array<Object>} sheet - Extracted sheet data
+ * @param {Object[]} sheet - Extracted sheet data
  * @param {boolean} anonymize - Anonymize data or not
  * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
- * @returns {Array<Object.<Array<string>>} Formatted sheet data
+ * @returns {Object[]} Formatted sheet data
  */
 export function resolveGeneraliteEntities(
   sheet,
@@ -237,10 +237,10 @@ export function resolveGeneraliteEntities(
 /**
  * Format known entities from the Liste chercheurs sheet
  *
- * @param {Array<Object>} sheet - Extracted sheet data
+ * @param {Object[]} sheet - Extracted sheet data
  * @param {boolean} anonymize - Anonymize data or not
  * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
- * @returns {Array<Object.<Array<string>>} Formatted sheet data
+ * @returns {Object[]} Formatted sheet data
  */
 export function resolveChercheursEntities(
   sheet,
@@ -322,10 +322,10 @@ export function resolveChercheursEntities(
 /**
  * Format known entities from the Liste des labo sheet
  *
- * @param {Array<Object>} sheet - Extracted sheet data
+ * @param {Object[]} sheet - Extracted sheet data
  * @param {boolean} anonymize - Anonymize data or not
  * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
- * @returns {Array<Object.<Array<string>>} Formatted sheet data
+ * @returns {Object[]} Formatted sheet data
  */
 export function resolveLaboratoireEntities(
   sheet,
@@ -378,10 +378,10 @@ export function resolveLaboratoireEntities(
 /**
  * Format known entities from the Liste des établissements sheet
  *
- * @param {Array<Object>} sheet - Extracted sheet data
+ * @param {Object[]} sheet - Extracted sheet data
  * @param {boolean} anonymize - Anonymize data or not
  * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
- * @returns {Array<Object.<Array<string>>} Formatted sheet data
+ * @returns {Object[]} Formatted sheet data
  */
 export function resolveEtablissementEntities(
   sheet,
@@ -409,7 +409,7 @@ export function resolveEtablissementEntities(
  * @param {Workbook} workbook - The workbook to extract
  * @param {boolean} anonymize - Anonymize data or not
  * @param {Map} acronymousDict - A preset dictionary of anomymized entry mappings
- * @returns {Object<Array<Object>>} An object containing 3 Plot formatted tables
+ * @returns {Object<Object[]>} An object containing 3 Plot formatted tables
  */
 export function extractPhase1Workbook(
   workbook,
@@ -469,7 +469,7 @@ export function extractPhase1Workbook(
  *
  * @param {Array} data - dataset to filter
  * @param {Array} input_criteria - all critereon to consider
- * @param {Array<Function>} criteria_functions - functions to use for each critereon.
+ * @param {Function[]} criteria_functions - functions to use for each critereon.
  *    Keys contain the critereon to meet and the values contain the function to
  *    execute if a critereon is met. Functions should return true or false. If 'All'
  *    is passed in as criterion, the criterion is ignored (and accepted)
@@ -491,9 +491,9 @@ export function filterOnInput(data, input_criteria, criteria_functions) {
 /**
  * Return the possible options of a column
  *
- * @param {Array<Object>} data - the dataset
+ * @param {Object[]} data - the dataset
  * @param {String} key - the column to search in
- * @returns {Array<String>} an Array of the possible options found in the column
+ * @returns {String[]} an Array of the possible options found in the column
  */
 export function getColumnOptions(data, key) {
   const options = new Set(['All']);

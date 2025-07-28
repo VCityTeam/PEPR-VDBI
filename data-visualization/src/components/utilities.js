@@ -8,9 +8,11 @@ import * as htl from 'npm:htl';
 /**
  * Map a type attribute to each datum of a count dataset
  *
- * @param {Array<Object<{entity: string, count: number}>>} datasets An array of count datasets of length n
- * @param {Array<string>} count_types An array of types of length n
- * @returns {Array<Object<{entity: string, count: number}>>} An array of all datum with mapped types from each dataset
+ * @param {Object[]} datasets - An array of count datasets of length n
+ * @param {Object[]} datasets[].entity - a datum value
+ * @param {Object[]} datasets[].count - the count of the datum's value in a dataset
+ * @param {string[]} count_types An array of types of length n
+ * @returns {Object[]} - An array of all datum with mapped types from each dataset
  */
 export function mapCounts(datasets, count_types) {
   const mappedData = [];
@@ -29,9 +31,11 @@ export function mapCounts(datasets, count_types) {
 /**
  * Merge each count dataset from countEntities()
  *
- * @param {Array<Object<{entity: string, count: number}>>} datasets An array of count datasets of length n
- * @param {Array<string>} count_types An array of names for each count field of length n
- * @returns {Array<Object<{entity: string, count: number}>>} An array of all datum with mapped types from each dataset
+ * @param {Object[]} datasets - An array of count datasets of length n
+ * @param {Object[]} datasets[].entity - a datum value
+ * @param {Object[]} datasets[].count - the count of the datum's value in a dataset
+ * @param {string[]} count_types An array of types of length n
+ * @returns {Object[]} - An array of all datum with mapped types from each dataset
  */
 export function mergeCounts(datasets, count_types) {
   // TODO: this can be optimized and simplified with a map, reduce, Array.concat
@@ -58,12 +62,12 @@ export function mergeCounts(datasets, count_types) {
  * occurrences of each entity. This is useful for counting the ocurrences of property
  * values in Arrays
  *
- * @param {Array} data - dataset to rollup
+ * @param {object[]} data - dataset to rollup
  * @param {Function} mapFunction - function to extract the entity to be counted from
  *    the dataset.
  *    For example to count the laboratories of a project something like:
  *    (project) => project.laboratoires
- * @returns {Array<Array>} - [[datum 1, count 1], [datum 2, count 2], ...]
+ * @returns {array[]} - [[datum 1, count 1], [datum 2, count 2], ...]
  */
 export function countEntities(data, mapFunction) {
   // extract the entity from the dataset as an array and merge all entites
@@ -370,9 +374,9 @@ export function getAttributeByPath(obj, path) {
 /**
  * A button for copying a table to the clipboard as a csv.
  *
- * @param {Array<object>} data - the data to be copied, rows should contain keys
+ * @param {object[]} data - the data to be copied, rows should contain keys
  *  corresponding to the columns of the table
- * @param {Array || null} columns - a list of columns to be copied, if null all columns
+ * @param {Array|null} columns - a list of columns to be copied, if null all columns
  *  will be copied
  * @param {String} label - button label
  * @returns {button} - a button element that copies the data to the clipboard
@@ -406,10 +410,10 @@ export function copyTableToClipboardButton(
  * @param {string} url The requested URL.
  * @param {object} [options] A dictionary of optional parameters. These
  * options include the following :
- * @param {FormData | string} [options.body] The request body
+ * @param {FormData|string} [options.body] The request body
  * @param {string} [options.responseType] The expected
  * response type.
- * @param {Object<string, string>} [options.urlParameters] A dictionary of
+ * @param {Object<string>} [options.urlParameters] A dictionary of
  * URL parameters.
  * @returns {Promise<XMLHttpRequest>} Request promise
  */

@@ -4,8 +4,8 @@ import { formatIfString } from './utilities.js';
 /**
  * Format known project entities from the Financing sheet
  *
- * @param {Array<Object>} workbook - The workbook to extract
- * @returns {Array<Object.<Array>} Formatted sheet data
+ * @param {Object[]} workbook - The workbook to extract
+ * @returns {Object[]} Formatted sheet data
  */
 export function resolveProjectFinancingEntities(workbook, project = null) {
   const personnel = [];
@@ -170,10 +170,10 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
 /**
  * Map known personnel financing entities
  *
- * @param {Array<Object>} data - A table
+ * @param {Object[]} data - A table
  * @param {Boolean} civil_servants - Are we dealing with a civil servants?
  * @param {string} project - Optional project name
- * @returns {Array<Object.<Array>} Formatted personnel data
+ * @returns {Object[]} Formatted personnel data
  */
 function mapPersonnelFinancingEntities(
   data,
@@ -244,9 +244,9 @@ function mapPersonnelFinancingEntities(
 /**
  * Map known personnel financing entities
  *
- * @param {Array<Object>} data - A table
+ * @param {Object[]} data - A table
  * @param {string} project - Project acronym
- * @returns {Array<Object.<Array>} Formatted personnel data
+ * @returns {Object[]} Formatted personnel data
  */
 function mapPartnerFinancingEntities(data, project) {
   return data
@@ -279,8 +279,8 @@ function mapPartnerFinancingEntities(data, project) {
 /**
  * Anonymize post description to return just the type of post
  *
- * @param {string || undefined} description - Post description
- * @returns {string || null} anonymized entry
+ * @param {string|undefined} description - Post description
+ * @returns {string|null} anonymized entry
  */
 function anonymizeDescription(description) {
   if (!description) {
