@@ -1,4 +1,4 @@
-import * as d3 from 'npm:d3';
+import * as d3 from 'd3';
 import { exclude } from './utilities.js';
 import { cnu_category_map } from './cnu.js';
 
@@ -6,30 +6,35 @@ import { cnu_category_map } from './cnu.js';
 // - #3558A2
 // - #FF732C
 export const pepr_colors = {
-  'blue': '#3558A2',
-  'orange': '#FF732C',
+  blue: '#3558A2',
+  orange: '#FF732C',
 };
 
-export const project_colors = new Map([
-  ["INTEGREEN", d3.schemeCategory10[0]],
-  ["NEO", d3.schemeCategory10[1]],
-  ["RESILIENCE", d3.schemeCategory10[6]],
-  ["TRACES", d3.schemeCategory10[3]],
-  ["URBHEALTH", d3.schemeCategory10[4]],
-  ["VF++", d3.schemeCategory10[5]],
-  ["VILLEGARDEN", d3.schemeCategory10[2]],
-  ["WHAOU", d3.schemeCategory10[7]],
-]);
+export const project_colors = d3
+  .scaleOrdinal(
+    [
+      'INTEGREEN',
+      'NEO',
+      'RESILIENCE',
+      'TRACES',
+      'URBHEALTH',
+      'VF++',
+      'VILLEGARDEN',
+      'WHAOU',
+    ],
+    d3.schemeCategory10.slice(0, 8)
+  )
+  .unknown('#ccc');
 
 // CNU Colors //
 
 /**
-* Determine the category of a CNU number.
-* Based on https://conseil-national-des-universites.fr/
-*
-* @param {String} cnu - CNU full name to categorize
-* @returns {Number} The CNU category number 
-*/
+ * Determine the category of a CNU number.
+ * Based on https://conseil-national-des-universites.fr/
+ *
+ * @param {String} cnu - CNU full name to categorize
+ * @returns {Number} The CNU category number
+ */
 export function getCategoryFromCNU(cnu) {
   if (!cnu) {
     console.warn(`empty cnu: ${cnu}`);
@@ -49,11 +54,11 @@ export function getCategoryFromCNU(cnu) {
 }
 
 /**
-* Determine the color value of a CNU string.
-*
-* @param {}  - 
-* @returns {} 
-*/
+ * Determine the color value of a CNU string.
+ *
+ * @param {}  -
+ * @returns {}
+ */
 export function colorCNU(d, max) {
   const cnu_category = getCategoryFromCNU(d[0]);
   const color_value = d[1] > 1 ? d[1] : 1; // we can't input logarithmic values below 1
@@ -92,17 +97,30 @@ export function colorCNU(d, max) {
 }
 
 // Legal nature colors //
-// "(0) Organisme de placement collectif en valeurs mobilières sans personnalité morale",
-// "(1) Entrepreneur individuel",
-// "(2) Groupement de droit privé non doté de la personnalité morale",
-// "(3) Personne morale de droit étranger",
-// "(4) Personne morale de droit public soumise au droit commercial",
-// "(5) Société commerciale",
-// "(6) Autre personne morale immatriculée au RCS",
-// "(7) Personne morale et organisme soumis au droit administratif",
-// "(8) Organisme privé spécialisé",
-// "(9) Groupement de droit privé",
-export const legal_nature_colors = d3.scaleOrdinal(
-  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-  d3.schemeSet3,
-).unknown("#ccc")
+// (Code 0) Organisme de placement collectif en valeurs mobilières sans personnalité morale
+// (Code 1) Entrepreneur individuel
+// (Code 2) Groupement de droit privé non doté de la personnalité morale
+// (Code 3) Personne morale de droit étranger
+// (Code 4) Personne morale de droit public soumise au droit commercial
+// (Code 5) Société commerciale
+// (Code 6) Autre personne morale immatriculée au RCS
+// (Code 7) Personne morale et organisme soumis au droit administratif
+// (Code 8) Organisme privé spécialisé
+// (Code 9) Groupement de droit privé
+export const legal_nature_colors = d3
+  .scaleOrdinal([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], d3.schemeSet3)
+  .unknown('#ccc');
+
+export const interpolated_legal_nature_color = (
+  code,
+  domain = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+) =>
+  d3
+    .scaleOrdinal(
+      domain,
+      d3.quantize(
+        d3.interpolateRgb(legal_nature_colors(code), 'white'),
+        domain.length + 1
+      )
+    )
+    .unknown('#ccc');

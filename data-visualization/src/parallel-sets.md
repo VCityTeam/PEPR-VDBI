@@ -177,12 +177,6 @@ display(Inputs.table(await sql`select * from cjn2`))
 display(Inputs.table(await sql`select * from cjn3`))
 ```
 
-```js
-import {
-  project_colors
-} from "./components/color.js";
-```
-
 ```sql id=all_partner_data echo
 -- Clean tables
 UPDATE general_partners
@@ -284,10 +278,6 @@ const partner_graph = csvToGraph(partner_csv_data);
 ```
 
 ```js
-// const color = d3.scaleOrdinal(
-//   project_colors.keys(),
-//   project_colors.values(),
-// )
 const color = d3.scaleOrdinal(
   [
     "(0) Organisme de placement collectif en valeurs mobilières sans personnalité morale",

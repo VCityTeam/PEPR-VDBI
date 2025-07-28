@@ -1,4 +1,4 @@
-import * as d3 from 'npm:d3';
+import * as d3 from 'd3';
 import { circleLegend } from './legend.js';
 import { cropText } from './utilities.js';
 

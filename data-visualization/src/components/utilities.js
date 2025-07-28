@@ -1,7 +1,7 @@
-import { map, merge, rollups, filter } from 'npm:d3';
-import { button } from 'npm:@observablehq/inputs';
-import { nameByRace } from 'npm:fantasy-name-generator';
-import * as htl from 'npm:htl';
+import { map, merge, rollups, filter } from 'd3';
+import { button } from '@observablehq/inputs';
+import { nameByRace } from 'fantasy-name-generator';
+import * as htl from 'htl';
 
 // TODO: mapCounts and mergeCounts need to be reworked with new countEntities
 

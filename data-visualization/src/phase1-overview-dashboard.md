@@ -527,7 +527,10 @@ const terrain_tip_dots = filtered_terrain_data.flatMap((d) => {
 }).filter((d) => !!d);
 
 
-const terrain_legend = [...project_colors.entries()];
+const terrain_legend = d3.zip(
+  project_colors.domain(),
+  project_colors.range(),
+);
 
 const mapToFranceLongitude = (index, subdivisions) =>
   d3.scaleLinear(
@@ -592,7 +595,7 @@ const filtered_project_triples = {
 };
 
 const color = d3
-  .scaleOrdinal(d3.schemeCategory10)
+  .scaleOrdinal(d3.schemeSet2)
   .domain(["acronyme", "institutions", "labs", "partners"])
   // .range(
   //   d3
@@ -697,7 +700,7 @@ const project_force_graph = (width) => forceGraph(
                   )[3],
                 x2: "longitude",
                 y2: "latitude",
-                stroke: (d) => project_colors.get(d.projects.toLocaleUpperCase()),
+                stroke: (d) => project_colors(d.projects.toLocaleUpperCase()),
                 markerEnd: "arrow",
                 curve: "bump-y",
               }

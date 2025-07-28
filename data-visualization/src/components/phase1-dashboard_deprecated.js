@@ -1,6 +1,6 @@
-import { map, filter, rollup } from 'npm:d3';
+import { map, filter, rollup } from 'd3';
 import { anonymizeEntry, pseudoanonymizeEntry } from './utilities.js';
-import * as Plot from 'npm:@observablehq/plot';
+import * as Plot from '@observablehq/plot';
 
 /**
  * Extract data from the GÉNÉRALITÉ sheet
