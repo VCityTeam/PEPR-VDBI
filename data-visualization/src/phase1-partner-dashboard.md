@@ -22,7 +22,7 @@ import {
 ```js
 import {
   tableToSankeyGraph,
-  SankeyDiagram,
+  sankeyDiagram,
 } from "./components/sankey.js";
 ```
 ```js
@@ -52,7 +52,7 @@ const filter_aap_data = view(
   <h2>Legal nature distribution</h2>
   <h3>(Levels 1, 2)</h3>
   ${resize((width) =>
-    new SankeyDiagram(
+    sankeyDiagram(
       partner_graph_1_2, 
       {
         width: width,
@@ -81,7 +81,7 @@ const level_1_value = Generators.input(level_1_select);
   <h3>(Levels 2, 3)</h3>
   ${level_1_select}
   ${resize((width) =>
-    new SankeyDiagram(
+    sankeyDiagram(
       partner_graph_2_3, 
       {
         width: width,

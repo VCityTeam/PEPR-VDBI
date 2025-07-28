@@ -8,7 +8,7 @@ import { createTooltip, cropText } from './utilities.js';
  * - https://observablehq.com/@d3/donut-chart/2
  * - https://observablehq.com/@mast4461/d3-donut-chart-labels
  *
- * @param {Array<Object>} data - input dataset, by default expects an array of key (string)
+ * @param {Object[]} data - input dataset, by default expects an array of key (string)
  *  and value (number) pairs. Modify keyMap and valueMap in the options if this is not the case.
  * @param {Object} options - configuration options for the chart
  * @returns {d3.node} - SVG node containing the donut chart

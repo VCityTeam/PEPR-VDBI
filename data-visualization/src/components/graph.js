@@ -15,7 +15,7 @@ import { cropText } from './utilities.js';
  * - !Duplicate rows are treated as duplicate nodes!
  * - !`null` and `undefined` properties are NOT ignored!
  * This function is useful for creating the links of a directed property graph
- * @param {Array<Object>} data - input table
+ * @param {Object[]} data - input table
  * @param {Object} options - configuration options
  * @returns {Object<Array, Array>}
  */
@@ -108,7 +108,7 @@ export function mapTableToPropertyGraphLinks(
  * - !Duplicate rows are treated as duplicate nodes!
  * - `null` and `undefined` property values are ignored
  * This function is useful for creating the links of a directed graph
- * @param {Array<Object>} data - input table
+ * @param {Object[]} data - input table
  * @param {Object} options - configuration options
  * @returns {Object<Array, Array>}
  */
@@ -230,12 +230,12 @@ export function mapProjectsToRDFGraph(projects, colorMap = {}) {
 export class Graph {
   /**
    * @param {object} data - an object with properties `nodes` and `links`
-   * @param {array} data.nodes - an array of node objects with properties:
+   * @param {object[]} data.nodes - an array of node objects with properties:
    *    nodes: array<{
    *      id:    string,
    *      color: number
    *    }>,
-   * @param {array} data.links - an array of link objects with properties:
+   * @param {object[]} data.links - an array of link objects with properties:
    *    links: array<{
    *      source: string,
    *      label:  string,
@@ -246,9 +246,9 @@ export class Graph {
    * @param {string} options.id - the id of the graph SVG element
    * @param {number} options.width - canvas width
    * @param {number} options.height - canvas height
-   * @param {array<number>} options.viewBox - viewBox for the SVG canvas
-   * @param {array<number>} options.scaleExtent - bounding box for the canvas
-   * @param {array<array<number>>} options.translateExtent - bounding box for the canvas
+   * @param {number[]} options.viewBox - viewBox for the SVG canvas
+   * @param {number[]} options.scaleExtent - bounding box for the canvas
+   * @param {array[]} options.translateExtent - bounding box for the canvas
    * @param {Function} options.keyMap - the function for identifying a node
    * @param {Function} options.valueMap - the function for categorizing a node
    * @param {Function} options.xMap - horizontal position accessor

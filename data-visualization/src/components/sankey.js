@@ -5,10 +5,10 @@ import { InternMap, scaleOrdinal, create, interpolateSpectral } from 'npm:d3';
 
 /**
  * Transform csv data to a graph interoperable with the SankeyDiagram example
- * @param {object} data - An observable framework CSV data object
+ * @param {object[]} data - An observable framework CSV data object
  *   - see here for more information: https://observablehq.com/framework/lib/csv
- * @param {Array} keys - An array of keys to use for the nodes
- * @returns {object} - Graph object with 'nodes' and 'links' arrays
+ * @param {string[]} keys - An array of keys to use for the nodes
+ * @returns {object[]} - Graph object with 'nodes' and 'links' arrays
  */
 export function tableToSankeyGraph(data, keys) {
   const nodes = [];
@@ -54,86 +54,95 @@ export function tableToSankeyGraph(data, keys) {
   return { nodes, links };
 }
 
-export class SankeyDiagram {
-  /**
-   * Create a Sankey diagram from a graph object
-   *
-   * @param {object<nodes: array, links: array>} graph - graph object containing nodes and links
-   * @param {scaleOrdinal} color - color scale for the nodes
-   * @constructor
-   */
-  constructor(
-    graph,
-    {
-      color = scaleOrdinal(interpolateSpectral).unknown('#ccc'),
-      keyMap = (d) => d.names,
-      colorMap = (d) => d.names[0],
-      width = 928,
-      height = 720,
-    } = {}
-  ) {
-    const sankey = d3_sankey
-      .sankey()
-      .nodeSort(null)
-      .linkSort(null)
-      .nodeWidth(4)
-      .nodePadding(20)
-      .extent([
-        [0, 5],
-        [width, height - 5],
-      ]);
+/**
+ * Create a Sankey diagram from a graph object
+ *
+ * @param {Object} graph - graph object containing nodes and links
+ * - should be in the format returned by tableToSankeyGraph:
+ *   {
+ *     nodes: [{ name: 'Node1' }, { name: 'Node2' }, ...],
+ *     links: [{
+ *       source: 0,
+ *       target: 1,
+ *       value: 10,
+ *       names: ['Node1', 'Node2'] },
+ *     ...]
+ *   }
+ * @param {Array} graph.nodes - graph object containing nodes and links
+ * @param {Array} graph.links - graph object containing nodes and links
+ * @param {scaleOrdinal} color - color scale for the nodes
+ */
+export function sankeyDiagram(
+  graph,
+  {
+    keyMap = (d) => d.names,
+    valueMap = (d) => d.names[0],
+    color = scaleOrdinal(interpolateSpectral).unknown('#ccc'),
+    width = 928,
+    height = 720,
+  } = {}
+) {
+  const sankey_generator = d3_sankey
+    .sankey()
+    .nodeSort(null)
+    .linkSort(null)
+    .nodeWidth(4)
+    .nodePadding(20)
+    .extent([
+      [0, 5],
+      [width, height - 5],
+    ]);
 
-    const svg = create('svg')
-      .attr('viewBox', [0, 0, width, height])
-      .attr('width', width)
-      .attr('height', height)
-      .attr('style', 'max-width: 100%; height: auto;');
+  const svg = create('svg')
+    .attr('viewBox', [0, 0, width, height])
+    .attr('width', width)
+    .attr('height', height)
+    .attr('style', 'max-width: 100%; height: auto;');
 
-    const { nodes, links } = sankey({
-      nodes: graph.nodes.map((d) => Object.create(d)),
-      links: graph.links.map((d) => Object.create(d)),
-    });
+  const { nodes, links } = sankey_generator({
+    nodes: graph.nodes.map((d) => Object.create(d)),
+    links: graph.links.map((d) => Object.create(d)),
+  });
 
-    svg
-      .append('g')
-      .selectAll('rect')
-      .data(nodes)
-      .join('rect')
-      .attr('x', (d) => d.x0)
-      .attr('y', (d) => d.y0)
-      .attr('height', (d) => d.y1 - d.y0)
-      .attr('width', (d) => d.x1 - d.x0)
-      .append('title')
-      .text((d) => `${d.name}\n${d.value.toLocaleString()}`);
+  svg
+    .append('g')
+    .selectAll('rect')
+    .data(nodes)
+    .join('rect')
+    .attr('x', (d) => d.x0)
+    .attr('y', (d) => d.y0)
+    .attr('height', (d) => d.y1 - d.y0)
+    .attr('width', (d) => d.x1 - d.x0)
+    .append('title')
+    .text((d) => `${d.name}\n${d.value.toLocaleString()}`);
 
-    svg
-      .append('g')
-      .attr('fill', 'none')
-      .selectAll('g')
-      .data(links)
-      .join('path')
-      .attr('d', d3_sankey.sankeyLinkHorizontal())
-      .attr('stroke', (d) => color(colorMap(d)))
-      .attr('stroke-width', (d) => d.width)
-      .style('mix-blend-mode', 'multiply')
-      .append('title')
-      .text((d) => `${keyMap(d).join(' → ')}\n${d.value.toLocaleString()}`);
+  svg
+    .append('g')
+    .attr('fill', 'none')
+    .selectAll('g')
+    .data(links)
+    .join('path')
+    .attr('d', d3_sankey.sankeyLinkHorizontal())
+    .attr('stroke', (d) => color(valueMap(d)))
+    .attr('stroke-width', (d) => d.width)
+    .style('mix-blend-mode', 'multiply')
+    .append('title')
+    .text((d) => `${keyMap(d).join(' → ')}\n${d.value.toLocaleString()}`);
 
-    svg
-      .append('g')
-      .style('font', '10px sans-serif')
-      .selectAll('text')
-      .data(nodes)
-      .join('text')
-      .attr('x', (d) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
-      .attr('y', (d) => (d.y1 + d.y0) / 2)
-      .attr('dy', '0.35em')
-      .attr('text-anchor', (d) => (d.x0 < width / 2 ? 'start' : 'end'))
-      .text((d) => d.name)
-      .append('tspan')
-      .attr('fill-opacity', 0.7)
-      .text((d) => ` ${d.value.toLocaleString()}`);
+  svg
+    .append('g')
+    .style('font', '10px sans-serif')
+    .selectAll('text')
+    .data(nodes)
+    .join('text')
+    .attr('x', (d) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
+    .attr('y', (d) => (d.y1 + d.y0) / 2)
+    .attr('dy', '0.35em')
+    .attr('text-anchor', (d) => (d.x0 < width / 2 ? 'start' : 'end'))
+    .text((d) => d.name)
+    .append('tspan')
+    .attr('fill-opacity', 0.7)
+    .text((d) => ` ${d.value.toLocaleString()}`);
 
-    this.canvas = svg.node();
-  }
+  return svg.node();
 }
