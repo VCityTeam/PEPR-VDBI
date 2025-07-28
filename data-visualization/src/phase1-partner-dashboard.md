@@ -14,7 +14,10 @@ import { projectionMap } from './components/projection-map.js';
 ```
 
 ```js
-import { cropText } from './components/utilities.js';
+import {
+  cropText,
+  copyTableToClipboardButton,
+} from './components/utilities.js';
 ```
 
 ```js
@@ -357,6 +360,25 @@ const filtered_partner_data_value = Generators.input(
 ## Partner label data quality
 
 <div class="grid grid-cols-2">
+  <div class="card grid-colspan-2" style="padding: 0;">
+    <div style="padding: 1em;">
+      <h2>
+        Labels from all sources: ${[...consensus].length}/${[...all_partner_data].length}
+      </h2>
+      <div>${consensus_search}</div>
+    </div>
+    ${
+      resize((width) => 
+        Inputs.table(consensus_search_result, { width: width, layout: 'auto' })
+      )
+    }
+    ${copyTableToClipboardButton(
+      consensus_search_result,
+      null,
+      'Copy data to clipboard'
+    )}
+    
+  </div>
   <div class="card" style="padding: 0;">
     <div style="padding: 1em;">
       <h2>
@@ -366,9 +388,14 @@ const filtered_partner_data_value = Generators.input(
     </div>
     ${
       resize((width) => 
-        Inputs.table(no_result_search_result, { width: width })
+        Inputs.table(no_result_search_result, { width: width, layout: 'auto' })
       )
     }
+    ${copyTableToClipboardButton(
+      no_result_search_result,
+      null,
+      'Copy data to clipboard'
+    )}
     
   </div>
   <div class="card" style="padding: 0;">
@@ -380,9 +407,14 @@ const filtered_partner_data_value = Generators.input(
     </div>
     ${
       resize((width) => 
-        Inputs.table(outlier_search_result, { width: width })
+        Inputs.table(outlier_search_result, { width: width, layout: 'auto' })
       )
     }
+    ${copyTableToClipboardButton(
+      outlier_search_result,
+      null,
+      'Copy data to clipboard'
+    )}
     
   </div>
 </div>
@@ -395,6 +427,11 @@ const no_result_search_result = Generators.input(no_result_search);
 ```js
 const outlier_search = Inputs.search(outliers);
 const outlier_search_result = Generators.input(outlier_search);
+```
+
+```js
+const consensus_search = Inputs.search(consensus);
+const consensus_search_result = Generators.input(consensus_search);
 ```
 
 ```sql id=no_results
@@ -476,8 +513,62 @@ with
     from union_all
     group by all
   )
-select * from group_all
+select
+  nom_complet,
+  project_names,
+  source_labels[1] as source_label,
+  sources[1] as source,
+from group_all
 where length(sources) == 1
+```
+
+```sql id=consensus
+UPDATE general_partners
+  SET project_name = 'RESILIENCE'
+  WHERE project_name = 'RÉSILIENCE';
+UPDATE general_partners
+  SET project_name = 'NEO'
+  WHERE project_name = 'NÉO';
+
+with
+  union_all as (
+    SELECT
+      source_label,
+      nom_complet,
+      project_name,
+      source,
+    FROM annex_partners
+    union
+    SELECT
+      source_label,
+      nom_complet,
+      project_name,
+      source,
+    FROM general_partners
+    union
+    SELECT
+      source_label,
+      nom_complet,
+      project_name,
+      source,
+    FROM aap_partners
+  ),
+  group_all as (
+    SELECT
+      nom_complet,
+      project_name,
+      list(source_label) as source_labels,
+      list(source) as sources,
+    from union_all
+    group by all
+  )
+select
+  nom_complet,
+  project_name,
+  source_labels,
+  -- sources,
+from group_all
+where length(sources) == 3 and nom_complet is not null
 ```
 
 ```js
