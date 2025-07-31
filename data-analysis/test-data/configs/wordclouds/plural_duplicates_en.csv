@@ -8,6 +8,7 @@ indicators
 exposures
 soils
 buildings
+projects
 scales
 assessments
 models
@@ -15,6 +16,8 @@ practices
 objectives
 areas
 spaces
+scenarios
+soils
 residents
 methods
 aims
@@ -35,3 +38,4 @@ objects
 fibers
 fields
 databases
+datasets

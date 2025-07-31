@@ -1,58 +1,82 @@
-import csv
+import os
 import json
 import argparse
 import logging
-from utils import readFile
-from clean_wordcount import clean_wordcount
-from compare_wordcounts import compare_wordcounts
+from utils import read_file, write_csv
+from wordcount import (
+    tokenize_text,
+    clean_wordcount,
+    compare_wordcounts,
+    write_word_count,
+)
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="""Launch a series of workflows (or data pipelines) based
+        description="""Launch a workflow (or data pipeline) based
             on a configuration"""
     )
     parser.add_argument(
-        "workflow",
-        choices=["clean", "compare"],
-        help="Specify the workflow",
-    )
-    parser.add_argument(
         "configuration",
-        help="""Specify the configuration file. File must be structured as
-        follows for JSON:
-            {
-                "inputs": list(string),
-                "params": {
-                    "output_dir": string,
-                    "ignored_words_path": string,
-                    "plural_words_path": string,
-                    "synonyms_path": string,
-                    "delimiter": string,
-                    "limit": int,
+        help="""Specify the configuration file. File must be structured as a JSON array of
+            configurations, each specifying the type of activity, the inputs and outputs,
+            and the parameters used for the activity. Two types are currently supported:
+            - 'parse': for reading and parsing a text into a word count
+            - 'clean': for cleaning word counts
+            - 'compare': for comparing word counts
+            For example:
+            [
+                {
+                    "activity": "clean",
+                    "description": "config for clean wordcloud workflow on PEPR recyclage
+                        website project descriptions",
+                    "inputs": [
+                        "test-data/private/input/wordcloud-clean/wordcloud_financed_project_resume_en.csv",
+                        "test-data/private/input/wordcloud-clean/wordcloud_financed_project_wps_en.csv",
+                        "test-data/input/wordcloud-clean/wordcloud_pepr_recyclage_projects_en.csv"
+                    ],
+                    "input_dir": "test-data/input/wordcloud-clean/",
+                    "output_dir": "test-data/output/wordcloud-cleaned/",
+                    "params": {
+                        "stop_words_path":
+                            "test-data/configs/wordclouds/stop_words_english.csv",
+                        "plural_words_path":
+                            "test-data/configs/wordclouds/plural_duplicates_en.csv",
+                        "synonyms_path":
+                            "test-data/configs/wordclouds/synonym_mappings_en.json",
+                        "delimiter": ";"
+                    }
+                },
+                {
+                    "activity": "compare",
+                    "description": "config for compare wordcloud workflow on PEPR
+                        recyclage website project descriptions",
+                    "inputs": [
+                        [
+                            "test-data/input/wordcloud/compare/wordcloud_financed_project_wps_en_cleaned.csv",
+                            "test-data/input/wordcloud/compare/wordcloud_pepr_recyclage_projects_en_cleaned.csv"
+                        ],
+                        [
+                            "test-data/input/wordcloud/compare/wordcloud_financed_project_resume_en_cleaned.csv",
+                            "test-data/input/wordcloud/compare/wordcloud_pepr_recyclage_projects_en_cleaned.csv"
+                        ],
+                        [
+                            "test-data/input/wordcloud/compare/wordcloud_financed_project_resume_en_cleaned.csv",
+                            "test-data/input/wordcloud/compare/wordcloud_financed_project_wps_en_cleaned.csv"
+                        ]
+                    ],
+                    "output_dir": "test-data/output/wordcloud/compared/",
+                    "params": {
+                        "mode": "intersection"
+                    }
                 }
-            }
-        Or with the following header for CSV:
-            input,ignored_words_path,plural_words_path,synonyms_path,delimiter,limit,""",
-    )
-    parser.add_argument(
-        "-f",
-        "--format",
-        choices=["csv", "json"],
-        default="json",
-        help="Specify the configuration format",
+            ]""",
     )
     parser.add_argument(
         "-d",
         "--debug",
         action="store_true",
         help="Use debug mode for logging",
-    )
-    parser.add_argument(
-        "--delimeter",
-        choices=[",", ";", "\t"],
-        default=",",
-        help="Specify the csv delimeter (only used for 'csv' format)",
     )
     parser.add_argument(
         "-l",
@@ -68,7 +92,7 @@ def main():
         filename=args.log,
         level=(logging.DEBUG if args.debug else logging.INFO),
     )
-    print(f"Initialized, see {args.log} for logs...")
+    print(f"Initializing, see {args.log} for logs...")
     logging.info(
         r"""
  ______     ______    ______     ______     ______
@@ -78,77 +102,133 @@ def main():
   \/_____/     \/_/    \/_/\/_/   \/_/ /_/     \/_/"""
     )
 
-    config = parseConfig(args.configuration, args.format, args.delimeter)
-    if args.workflow == "clean":
-        runWorkflowClean(config)
-    elif args.workflow == "compare":
-        runWorkflowCompare(config)
+    runWorkflow(args.configuration)
 
 
-def parseConfig(
-    configuration: str,
-    format: str = "json",
-    delimeter: str = ",",
-) -> list[dict]:
-    """Parse a configuration file.
-    File must be structured as follows for JSON:
-        {
-            "inputs": list,
-            "params": dict,
-        }
-    Or with the following header for CSV:
-        input,*parameters
-
-    See the workflow function for more details on the parameters.
+def runWorkflow(config_path: str) -> None:
+    """Run a workflow based on a configuration file.
+    :config_path: Path to JSON configuration.
+        The file must be structured as follows for JSON:
+            [
+                {
+                    "activity": str,
+                    "inputs": list,
+                    "input_dir": str (optional),
+                    "params": dict,
+                },
+                ...
+            ]
+        `input_dir` is not supported by the compare activity. If `input_dir` is specified,
+        all files from the sepecified directory are taken into account and inputs are set
+        to the files in that directory.
     """
-    config = []
-    if format == "csv":
-        with open(configuration) as file:
-            csv_file = csv.reader(file, delimiter=delimeter)
-            header = next(csv_file)
-            for row in csv_file:
-                row_params = dict((header[row.index(value)], value) for value in row)
-                config.append(row_params)
-    elif format == "json":
-        temp_config = json.loads(readFile(configuration))
-        for input_path in temp_config["inputs"]:
-            row_params = temp_config["params"].copy()
+    config = json.loads(read_file(config_path))
+    for activity_config in config:
+
+        # parse the inputs and parameters for activity
+        parsed_activity_config = []
+        inputs = activity_config.get("inputs")
+        output_dir = activity_config["output_dir"]
+        logging.debug(f"Activity config: {json.dumps(activity_config, indent=2)}")
+
+        if "input_dir" in activity_config:
+            # If input_dir is specified, set inputs to the files in that directory
+            input_dir = activity_config["input_dir"]
+            if not os.path.exists(input_dir):
+                logging.error(f"Input directory does not exist: {input_dir}")
+                print(f"Input directory does not exist: {input_dir}")
+                return None
+
+            inputs = [
+                os.path.join(input_dir, input_file)
+                for input_file in os.listdir(input_dir)
+            ]
+
+        for input_path in inputs:
+            row_params = activity_config.get("params", {}).copy()
             row_params["input_path"] = input_path
-            config.append(row_params)
-    return config
+            parsed_activity_config.append(row_params)
+
+        logging.debug(
+            f"Parsed activity config: {json.dumps(parsed_activity_config, indent=2)}"
+        )
+
+        if activity_config.get("activity") == "parse":
+            runParse(parsed_activity_config, output_dir)
+        elif activity_config.get("activity") == "clean":
+            runClean(parsed_activity_config, output_dir)
+        elif activity_config.get("activity") == "compare":
+            runCompare(parsed_activity_config, output_dir)
+        else:
+            logging.error(f"Unknown activity type: {activity_config.get('activity')}")
+            print(f"Unknown activity type: {activity_config.get('activity')}")
+    print("Done!")
 
 
-def runWorkflowClean(config: list[dict]):
-    """Run a clean_wordcount() workflow based on a configuration file"""
+def runParse(config: list[dict], output_dir: str = "./"):
+    """Run tokenize_text() on one file based on a configuration"""
     for params in config:
-        row_params = params.copy()
-        logging.info(f"running workflow on {row_params['input_path']}")
-        print(f"running workflow on {row_params['input_path']}")
-        if row_params.get("limit") == "":
-            row_params["limit"] = None
-        clean_wordcount(**row_params)
+        row_params = params.copy()  # deep copy
+        input_path = row_params["input_path"]
+
+        logging.info(f"running tokenize_text() on {input_path}")
+        tokens = tokenize_text(**row_params)
+
+        # print(tokens)
+        input_basename = os.path.splitext(os.path.basename(input_path))[0]
+        output_file = f"{output_dir}{input_basename}.csv"
+        logging.info(f"writing tokens to {output_file}")
+        write_csv(output_file, [[token] for token in tokens])
 
 
-def runWorkflowCompare(config: list[dict]):
-    """
-    Run a compare_wordcount() workflow based on a configuration file. Unlike
-    runWorkflowClean(), two inputs are required. Thus the each input must be formed as a
-    tuple of strings e.g. `["path1","path2"]`
-    """
-    print(config[0])
+def runClean(config: list[dict], output_dir: str = "./"):
+    """Run clean_wordcount() on one file based on a configuration"""
     for params in config:
-        row_params = params.copy()
+        row_params = params.copy()  # deep copy
+        input_path = row_params["input_path"]
+
+        logging.info(f"running clean_wordcount() on {input_path}")
+        word_counts = clean_wordcount(**row_params)
+
+        split_input_filename = os.path.splitext(os.path.basename(input_path))
+        output_file = (
+            f"{output_dir}{split_input_filename[0]}_cleaned"
+            + (f"_{row_params["limit"]}" if "limit" in row_params else "")
+            + split_input_filename[1]
+        )
+        logging.info(f"writing tokens to {output_file}")
+        write_word_count(word_counts, output_file)
+
+
+def runCompare(config: list[dict], output_dir: str = "./"):
+    """
+    Run compare_wordcount() based on a configuration. Unlike runClean(), two inputs are
+    required for comparison. Thus the each input must be formed as a tuple of strings e.g.
+        `["path1","path2"]`
+    """
+    for params in config:
+        row_params = params.copy()  # deep copy
         split_paths = row_params.pop("input_path").split(":")
         if len(split_paths) != 2:
             logging.error(f"Invalid input paths: {split_paths}")
             return None
 
-        logging.info(f"running workflow on {split_paths}")
-        print(f"running workflow on {split_paths}")
+        logging.info(f"running compare_wordcount() on {split_paths}")
 
-        row_params["input_path_1"] = split_paths[0]
-        row_params["input_path_2"] = split_paths[1]
-        compare_wordcounts(**row_params)
+        row_params["input_path_1"], row_params["input_path_2"] = split_paths
+        compared_word_counts = compare_wordcounts(**row_params)
+
+        split_input_filename_1 = os.path.splitext(os.path.basename(split_paths[0]))
+        split_input_filename_2 = os.path.splitext(os.path.basename(split_paths[1]))
+        mode = row_params["mode"] if "mode" in row_params else "INTERSECTION"
+        strategy = row_params["strategy"] if "strategy" in row_params else "SUM"
+        output_file = (
+            f"{output_dir}{split_input_filename_1[0]}_{mode}_{strategy}_"
+            f"{split_input_filename_2[0]}.csv"
+        )
+
+        logging.info(f"writing tokens to {output_file}")
+        write_word_count(compared_word_counts, output_file)
 
 
 if __name__ == "__main__":
