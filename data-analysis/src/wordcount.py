@@ -59,19 +59,16 @@ def clean_wordcount(
     input_path: str,
     stop_words_path: str = "stop_words_en.csv",
     language: str = "eng",
-    limit: int | None = None,
     delimiter: str = ",",
-) -> list[tuple[str, int]]:
-    """Clean wordcloud data
-    Word count csv should have a header and contain two columns:
-        1. word count (int)
-        2. word (str)
-    2. Datasets are cleaned by
-        1. removing all non-alphabetic characters
-        2. ignoring defined stop words
-        3. stemming words
-    3. The final cleaned dataset is a table with the top **50** word occurences
-    :param input_path: path to the word count csv file (see text_to_wordcount())
+) -> dict[str, int]:
+    """Clean wordcloud data by
+    1. Lemmatizing words using nltk.stem.WordNetLemmatizer
+    2. Mapping words to lower case
+    3. removing digits
+    4. removing all non-alphabetic characters
+    5. ignoring predefined stop words
+    Once cleaned, the words are counted and returned as a dictionary.
+    :param input_path: path to the word count csv file (a single column of words)
     :param stop_words_path: path to the stop words csv file
     :param plural_words_path: path to the plural words csv file
     :param synonyms_path: path to the synonyms json file
@@ -104,7 +101,7 @@ def clean_wordcount(
         else:
             word_counts[word] = 1
 
-    return format_word_count(word_counts, limit)
+    return word_counts
 
 
 def compare_wordcounts(
@@ -112,10 +109,9 @@ def compare_wordcounts(
     input_path_2: str,
     mode: str = "INTERSECTION",
     strategy: str = "SUM",
-    limit: int | None = None,
     delimiter_1: str = ",",
     delimiter_2: str = ",",
-) -> list[tuple[str, int]]:
+) -> dict[str, int]:
 
     if strategy not in [member.name for member in CompareStrategy]:
         raise ValueError("Unknown strategy: ", strategy)
@@ -165,15 +161,7 @@ def compare_wordcounts(
     else:
         print("error: mode not recognized")
 
-    return format_word_count(compared_word_counts, limit)
-    # split_input_filename_1 = os.path.splitext(os.path.split(input_path_1)[1])
-    # split_input_filename_2 = os.path.splitext(os.path.split(input_path_2)[1])
-    # output_file = (
-    #     f"{output_dir}{split_input_filename_1[0]}_{mode}_{strategy}_"
-    #     f"{split_input_filename_2[0]}{split_input_filename_1[1]}"
-    # )
-
-    # write_word_count(compared_word_counts, output_file, limit)
+    return compared_word_counts
 
 
 def generate_intersection(input_1: dict, input_2: dict, strategy: str = "SUM") -> dict:
@@ -285,7 +273,7 @@ def normalize_word_counts(
 
 
 def write_word_count(
-    word_counts: list,
+    word_counts: dict[str, int],
     output_file: str = "./wordcount.csv",
     limit: int | None = None,
 ):
@@ -295,9 +283,10 @@ def write_word_count(
     :output_file: output file path
     :limit: limit number of output rows
     """
-    output = [["weight", "word", "color", "url"]]
-    output.extend([[weight, word, "", ""] for word, weight in word_counts])
+    output = [[weight, word, "", ""] for word, weight in word_counts.items()]
+    output.insert(0, ["weight", "word", "color", "url"])
 
+    limit = len(output) if limit is None else limit + 1  # +1 for header row
     print(f"writing to csv {output_file}")
     write_csv(output_file, output[:limit])
 

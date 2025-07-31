@@ -1,59 +1,39 @@
-Create word clouds from project descriptions
+Create word clouds from text
 
-## Text collection process by source
-
+# Text collection process
 
 ```mermaid
 ---
 title: Wordcloud data pipeline
 ---
 flowchart LR
-    1@{ shape: doc, label: "Textual data source"}
-        --> 2(Extract text)
-        --> 3@{ shape: doc, label: "Word counts (.csv)"}
-        --> 4(Clean data)
-        --> 5@{ shape: doc, label: "Cleaned word counts (.csv)"}
-    1 --> 6(Compare word counts)
-    5 --> 6(Compare word counts)
-        --> 7@{ shape: doc, label: "Compared word counts (.csv)"}
-
+1@{ shape: doc, label: "Text file"}
+  --> 2(Tokenize text)
+  --> 3@{ shape: doc, label: "Tokens (.csv)"}
+  --> 4("Clean words")
+  --> 5@{ shape: doc, label: "Cleaned word counts (.csv)"}
+6(Compare word counts)
+  --> 7@{ shape: doc, label: "Compared word counts (.csv)"}
+5 --> 6
+5 --> 6
 ```
 
-### PEPR VDBI project calls
+## Clean words
 
-1. Copy all text (with the exception of major section headers) from the following three sections of each project call:
-   * Resume (en)
-   * Resume (fr)
-   * Sections 2.1 and 2.2 regarding WP descriptions
-2. Texts are aggregated in the `financed_project_XXX.txt` files
+Clean word tokens by:
 
-### PEPR Recyclage
+1. Lemmatizing words using nltk.stem.WordNetLemmatizer
+2. Mapping words to lower case
+3. removing digits
+4. removing all non-alphabetic characters
+5. ignoring predefined stop words
 
-1. Copy all text (with the exception of titles and section headers) from the following three sections of each project [website](https://www.pepr-recyclage.fr/):
-   * Excerpt (en)
-     * Project title (en)
-     * Project description (en)
-     * Keywords (en)
-   * Tasks (en)
-   * Consortium (en)
-2. For projects still under construction phases such as 'Soon to come' are removed.
-3. Texts are aggregated in the `pepr_recyclage_project_XXX.txt` files
+Once cleaned, the words are counted and returned as a dictionary.
 
-## Text treatment
+## Word count comparison
 
-1. Texts are uploaded to https://www.nuagesdemots.fr/ to create an initial wordcount dataset
-2. Datasets are cleaned by
-   1. separating words by `/` characters
-   2. ignoring words using the stop words from https://countwordsfree.com/stopwords:
-      1. `stop_words_english.csv`
-      2. `stop_words_french.csv`
-   3. removing `-` characters
-   4. removing duplicates according to the following files `plural_duplicates_en.csv` or `plural_duplicates_fr.csv`
-   5. grouping words using `synonym_mappings_en.json` or `synonym_mappings_fr.json`
-3. The final cleaned dataset is a table with the top **50** word occurences
-
-## Text comparison
 Compare two word counts by:
+
 1. Normalizing them to account for differences in text volumes.
 2. Selecting words from each word count based on their:
    1. intersection
@@ -62,18 +42,94 @@ Compare two word counts by:
 3. In the case of intersecting words, updating the count of the words based on the:
    1. Average
    2. Max
-   3. Min  
+   3. Min
 
-## Experimentation
-Automated batch processing is possible with the python script [wordcloud_workflow.py](src/wordcloud_workflow.py). For example to run a configuration to clean a word count:
+## Run scripts
+
+Use the workflow script for automating the pipeline
 ```bash
-python src/wordcloud_workflow.py clean test-data/configs/wordclouds/wordcloud_clean_workflow_config.json
+python src/wordcloud_workflow.py test-data/configs/wordclouds/wordcloud_full_workflow_test_config.json
 ```
-To run a configuration to compare two word counts:
+
+**Usage:**
+
 ```bash
-python src/wordcloud_workflow.py compare test-data/configs/wordclouds/wordcloud_compare_workflow_config.json
+usage: wordcloud_workflow.py [-h] [-d] [-l LOG] configuration
+
+Launch a workflow (or data pipeline) based on a configuration
+
+positional arguments:
+  configuration      Specify the configuration file.
+                     File must be structured as a JSON array of configurations, each specifying the type of activity, the inputs and outputs, and the parameters used for the activity.
+                     Two types are currently supported:
+                     - 'parse': for reading and parsing a text into a word count
+                     - 'clean': for cleaning word counts
+                     - 'compare': for comparing word counts
+                     For example:
+                     [
+                        {
+                           "activity": "parse",
+                           "input_dir": "./input/wordcloud-test/",
+                           "output_dir": "./wordcloud-test_stage_0/"
+                        },
+                        {
+                           "activity": "clean",
+                           "input_dir": "./wordcloud-test_stage_0/",
+                           "output_dir": "./wordcloud-test_stage_1/",
+                           "limit": 50,
+                           "params": {
+                           "stop_words_path": "./configs/wordclouds/stop_words_english.csv"
+                           }
+                        },
+                        {
+                           "activity": "clean",
+                           "input_dir": "./wordcloud-test_stage_0/",
+                           "output_dir": "./wordcloud-test_stage_1/",
+                           "limit": 100,
+                           "params": {
+                           "stop_words_path": "./configs/wordclouds/stop_words_english.csv"
+                           }
+                        },
+                        {
+                           "activity": "compare",
+                           "inputs": [
+                                 "./wordcloud-test_stage_1/example-text_cleaned_50.csv:./wordcloud-test_stage_1/example-text_cleaned_100.csv"
+                           ],
+                           "output_dir": "./output/wordcloud-test/",
+                           "params": {
+                           "mode": "INTERSECTION"
+                           }
+                        }
+                     ]
+
+options:
+  -h, --help         show this help message and exit
+  -d, --debug        Use debug mode for logging
+  -l LOG, --log LOG  Specify the logging file
 ```
-For usage, run:
-```bash
-python src/wordcloud_workflow.py -h
-```
+
+# Experiments
+
+## Compare PEPR VDBI project calls to PEPR Recyclage
+
+This was done using deprecated code from [d70ef67](https://github.com/VCityTeam/PEPR-VDBI/tree/d70ef67b1900291b74fd0016c558b445f0c9c712/data-analysis)
+
+### PEPR VDBI project calls
+
+1. Manually copy all text (with the exception of major section headers) from the following three sections of each project call:
+   - Resume (en)
+   - Resume (fr)
+   - Sections 2.1 and 2.2 regarding WP descriptions
+2. Texts are aggregated in the [./test-data/](./test-data/) folder as `.txt` files
+
+### PEPR Recyclage
+
+1. Copy all text (with the exception of titles and section headers) from the following three sections of each project [website](https://www.pepr-recyclage.fr/):
+   - Excerpt (en)
+     - Project title (en)
+     - Project description (en)
+     - Keywords (en)
+   - Tasks (en)
+   - Consortium (en)
+2. For projects still under construction phases such as 'Soon to come' are removed.
+3. Texts are aggregated in the `pepr_recyclage_project_XXX.txt` files
