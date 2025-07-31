@@ -10,9 +10,9 @@
     "description": "clean PEPR VDBI WP project description tokens",
     "input_dir": "test-data/private/project_wps_en_wordcloud_stage_0/",
     "output_dir": "test-data/private/output/project_wps_en/",
+    "limit": 50,
     "params": {
-      "stop_words_path": "test-data/configs/wordclouds/stop_words_english.csv",
-      "limit": 50
+      "stop_words_path": "test-data/configs/wordclouds/stop_words_english.csv"
     }
   }
 ]

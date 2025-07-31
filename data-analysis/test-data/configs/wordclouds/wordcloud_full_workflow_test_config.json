@@ -8,18 +8,18 @@
     "activity": "clean",
     "input_dir": "test-data/wordcloud-test_stage_0/",
     "output_dir": "test-data/wordcloud-test_stage_1/",
+    "limit": 50,
     "params": {
-      "stop_words_path": "test-data/configs/wordclouds/stop_words_english.csv",
-      "limit": 50
+      "stop_words_path": "test-data/configs/wordclouds/stop_words_english.csv"
     }
   },
   {
     "activity": "clean",
     "input_dir": "test-data/wordcloud-test_stage_0/",
     "output_dir": "test-data/wordcloud-test_stage_1/",
+    "limit": 100,
     "params": {
-      "stop_words_path": "test-data/configs/wordclouds/stop_words_english.csv",
-      "limit": 100
+      "stop_words_path": "test-data/configs/wordclouds/stop_words_english.csv"
     }
   },
   {

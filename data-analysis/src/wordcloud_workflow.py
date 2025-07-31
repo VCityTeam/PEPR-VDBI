@@ -27,47 +27,36 @@ def main():
             For example:
             [
                 {
+                    "activity": "parse",
+                    "input_dir": "./input/wordcloud-test/",
+                    "output_dir": "./wordcloud-test_stage_0/"
+                },
+                {
                     "activity": "clean",
-                    "description": "config for clean wordcloud workflow on PEPR recyclage
-                        website project descriptions",
-                    "inputs": [
-                        "test-data/private/input/wordcloud-clean/wordcloud_financed_project_resume_en.csv",
-                        "test-data/private/input/wordcloud-clean/wordcloud_financed_project_wps_en.csv",
-                        "test-data/input/wordcloud-clean/wordcloud_pepr_recyclage_projects_en.csv"
-                    ],
-                    "input_dir": "test-data/input/wordcloud-clean/",
-                    "output_dir": "test-data/output/wordcloud-cleaned/",
+                    "input_dir": "./wordcloud-test_stage_0/",
+                    "output_dir": "./wordcloud-test_stage_1/",
+                    "limit": 50,
                     "params": {
-                        "stop_words_path":
-                            "test-data/configs/wordclouds/stop_words_english.csv",
-                        "plural_words_path":
-                            "test-data/configs/wordclouds/plural_duplicates_en.csv",
-                        "synonyms_path":
-                            "test-data/configs/wordclouds/synonym_mappings_en.json",
-                        "delimiter": ";"
+                    "stop_words_path": "./configs/wordclouds/stop_words_english.csv"
+                    }
+                },
+                {
+                    "activity": "clean",
+                    "input_dir": "./wordcloud-test_stage_0/",
+                    "output_dir": "./wordcloud-test_stage_1/",
+                    "limit": 100,
+                    "params": {
+                    "stop_words_path": "./configs/wordclouds/stop_words_english.csv"
                     }
                 },
                 {
                     "activity": "compare",
-                    "description": "config for compare wordcloud workflow on PEPR
-                        recyclage website project descriptions",
                     "inputs": [
-                        [
-                            "test-data/input/wordcloud/compare/wordcloud_financed_project_wps_en_cleaned.csv",
-                            "test-data/input/wordcloud/compare/wordcloud_pepr_recyclage_projects_en_cleaned.csv"
-                        ],
-                        [
-                            "test-data/input/wordcloud/compare/wordcloud_financed_project_resume_en_cleaned.csv",
-                            "test-data/input/wordcloud/compare/wordcloud_pepr_recyclage_projects_en_cleaned.csv"
-                        ],
-                        [
-                            "test-data/input/wordcloud/compare/wordcloud_financed_project_resume_en_cleaned.csv",
-                            "test-data/input/wordcloud/compare/wordcloud_financed_project_wps_en_cleaned.csv"
-                        ]
+                        "./wordcloud-test_stage_1/example-text_cleaned_50.csv:./wordcloud-test_stage_1/example-text_cleaned_100.csv"
                     ],
-                    "output_dir": "test-data/output/wordcloud/compared/",
+                    "output_dir": "./output/wordcloud-test/",
                     "params": {
-                        "mode": "intersection"
+                    "mode": "INTERSECTION"
                     }
                 }
             ]""",
@@ -129,6 +118,7 @@ def runWorkflow(config_path: str) -> None:
         parsed_activity_config = []
         inputs = activity_config.get("inputs")
         output_dir = activity_config["output_dir"]
+        limit = activity_config.get("limit", None)
         logging.debug(f"Activity config: {json.dumps(activity_config, indent=2)}")
 
         if "input_dir" in activity_config:
@@ -156,9 +146,9 @@ def runWorkflow(config_path: str) -> None:
         if activity_config.get("activity") == "parse":
             runParse(parsed_activity_config, output_dir)
         elif activity_config.get("activity") == "clean":
-            runClean(parsed_activity_config, output_dir)
+            runClean(parsed_activity_config, output_dir, limit)
         elif activity_config.get("activity") == "compare":
-            runCompare(parsed_activity_config, output_dir)
+            runCompare(parsed_activity_config, output_dir, limit)
         else:
             logging.error(f"Unknown activity type: {activity_config.get('activity')}")
             print(f"Unknown activity type: {activity_config.get('activity')}")
@@ -181,7 +171,7 @@ def runParse(config: list[dict], output_dir: str = "./"):
         write_csv(output_file, [[token] for token in tokens])
 
 
-def runClean(config: list[dict], output_dir: str = "./"):
+def runClean(config: list[dict], output_dir: str = "./", limit: int | None = None):
     """Run clean_wordcount() on one file based on a configuration"""
     for params in config:
         row_params = params.copy()  # deep copy
@@ -200,7 +190,7 @@ def runClean(config: list[dict], output_dir: str = "./"):
         write_word_count(word_counts, output_file)
 
 
-def runCompare(config: list[dict], output_dir: str = "./"):
+def runCompare(config: list[dict], output_dir: str = "./", limit: int | None = None):
     """
     Run compare_wordcount() based on a configuration. Unlike runClean(), two inputs are
     required for comparison. Thus the each input must be formed as a tuple of strings e.g.
@@ -224,11 +214,11 @@ def runCompare(config: list[dict], output_dir: str = "./"):
         strategy = row_params["strategy"] if "strategy" in row_params else "SUM"
         output_file = (
             f"{output_dir}{split_input_filename_1[0]}_{mode}_{strategy}_"
-            f"{split_input_filename_2[0]}.csv"
+            f"{split_input_filename_2[0]}{limit if limit else ""}.csv"
         )
 
         logging.info(f"writing tokens to {output_file}")
-        write_word_count(compared_word_counts, output_file)
+        write_word_count(compared_word_counts, output_file, limit)
 
 
 if __name__ == "__main__":
