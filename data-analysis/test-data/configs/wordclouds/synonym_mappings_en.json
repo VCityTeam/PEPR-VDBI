@@ -1,14 +1,7 @@
 {
-  "data": [
-    "datasets",
-    "dataset"
-  ],
   "health": [
     "healthy",
     "healthyrelated"
-  ],
-  "management": [
-    "manager"
   ],
   "analysis": [
     "analyse",
@@ -28,11 +21,6 @@
   ],
   "planning": [
     "planned"
-  ],
-  "scale": [
-    "multiscale",
-    "singlescale",
-    "largescale"
   ],
   "city": [
     "cities",
@@ -84,8 +72,7 @@
   "recycling": [
     "recycle",
     "recycled",
-    "recyclage",
-    "super-recycling"
+    "recyclage"
   ],
   "recyclability": [
     "recyclable",
@@ -93,15 +80,9 @@
     "non-recyclable",
     "non-recyclable"
   ],
-  "waste": [
-    "ewaste"
-  ],
   "process": [
     "processes",
     "processing"
-  ],
-  "material": [
-    "multimaterial"
   ],
   "recovery": [
     "recover",
@@ -134,11 +115,7 @@
   "economic": [
     "economically"
   ],
-  "energy": [
-    "dual-energy",
-    "low-energy"
-  ],
   "battery": [
-  "batteries"
+    "batteries"
   ]
 }
