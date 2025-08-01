@@ -284,25 +284,12 @@ def write_word_count(
     :limit: limit number of output rows
     """
     output = [[weight, word, "", ""] for word, weight in word_counts.items()]
+    output.sort(key=lambda x: x[0], reverse=True)
     output.insert(0, ["weight", "word", "color", "url"])
 
     limit = len(output) if limit is None else limit + 1  # +1 for header row
     print(f"writing to csv {output_file}")
     write_csv(output_file, output[:limit])
-
-
-def format_word_count(
-    word_counts: dict,
-    limit: int | None = None,
-) -> list[tuple[str, int]]:
-    """
-    Format a word count dictionary to a 2D list.
-    :word_counts: a list of words and corresponding word counts
-    :limit: limit number of output rows
-    """
-    output = [(word, count) for word, count in word_counts.items()]
-    output.sort(key=lambda x: x[1], reverse=True)
-    return output[:limit]
 
 
 # ENUMS #
