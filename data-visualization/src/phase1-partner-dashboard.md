@@ -26,7 +26,7 @@ import { tableToSankeyGraph, sankeyDiagram } from './components/sankey.js';
 
 ```js
 import {
-  project_colors,
+  project_color_scale,
   legal_nature_colors,
   interpolated_legal_nature_color,
 } from './components/color.js';
@@ -75,7 +75,7 @@ function filterResults(d) {
       partner_graph_1_2, 
       {
         width: width,
-        nodeFill: (d) => project_colors.unknown('black')(d.id),
+        nodeFill: (d) => project_color_scale.unknown('black')(d.id),
         linkStroke: (d) => legal_nature_colors(Number(d.path[0][6])),
       }
     )
@@ -104,7 +104,7 @@ const level_1_value = Generators.input(level_1_select);
       partner_graph_2_3, 
       {
         width: width,
-        nodeFill: (d) => project_colors.unknown('black')(d.id),
+        nodeFill: (d) => project_color_scale.unknown('black')(d.id),
         linkStroke: (d) => interpolated_legal_nature_color(
             level_1_value,
             filtered_cjn2_codes)

@@ -79,6 +79,14 @@ export default {
       name: 'D3/Plot Tests',
       pages: [
         {
+          name: 'Plot',
+          path: 'test-plot',
+        },
+        {
+          name: 'Tree',
+          path: 'test-tree',
+        },
+        {
           name: 'Zoomable Sunburst',
           path: 'zoomable-sunburst',
         },
@@ -87,12 +95,8 @@ export default {
           path: 'parallel-sets',
         },
         {
-          name: 'Plot',
-          path: 'test-plot',
-        },
-        {
-          name: 'Tree',
-          path: 'test-tree',
+          name: 'Word Clouds',
+          path: 'word-cloud',
         },
         {
           name: 'Force Diagram, Triple Graph',
