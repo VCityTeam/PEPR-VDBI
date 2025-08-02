@@ -48,8 +48,8 @@ import {
 ```
 ```js
 import {
-  pepr_colors,
-  project_colors,
+  vdbi_color_scheme,
+  project_color_scale,
 } from "./components/color.js";
 ```
 
@@ -528,8 +528,8 @@ const terrain_tip_dots = filtered_terrain_data.flatMap((d) => {
 
 
 const terrain_legend = d3.zip(
-  project_colors.domain(),
-  project_colors.range(),
+  project_color_scale.domain(),
+  project_color_scale.range(),
 );
 
 const mapToFranceLongitude = (index, subdivisions) =>
@@ -636,11 +636,11 @@ const project_force_graph = (width) => forceGraph(
             Plot.geo(regions, {
               stroke: 'white',
               strokeOpacity: 0.5,
-              fill: pepr_colors.blue,
+              fill: vdbi_color_scheme.blue,
               fillOpacity: 0.3,
             }),
             //Plot.geo(departements, {
-            //  stroke: pepr_colors.blue,
+            //  stroke: vdbi_color_scheme.blue,
             //  strokeOpacity: 0.1,
             //}),
             Plot.dot(
@@ -650,7 +650,7 @@ const project_force_graph = (width) => forceGraph(
                 y: "latitude",
                 r: 3,
                 fill: 'black',
-                //stroke: pepr_colors.orange,
+                //stroke: vdbi_color_scheme.orange,
                 //fillOpacity: 0.5,
                 channels: {
                   entity: {
@@ -700,7 +700,7 @@ const project_force_graph = (width) => forceGraph(
                   )[3],
                 x2: "longitude",
                 y2: "latitude",
-                stroke: (d) => project_colors(d.projects.toLocaleUpperCase()),
+                stroke: (d) => project_color_scale(d.projects.toLocaleUpperCase()),
                 markerEnd: "arrow",
                 curve: "bump-y",
               }

@@ -48,8 +48,8 @@ import { projectionMap } from './components/projection-map.js';
 
 ```js
 import {
-  pepr_colors,
-  project_colors
+  vdbi_color_scheme,
+  project_color_scale
 } from './components/color.js';
 ```
 
@@ -264,8 +264,8 @@ const international_terrain_data = [...terrain_data].filter(
 // debugger;
 
 const base_legend = d3.zip(
-  project_colors.domain(),
-  project_colors.range()
+  project_color_scale.domain(),
+  project_color_scale.range()
 );
 
 const france_terrain_legend = base_legend.map((d) => Object.create(d));
@@ -417,7 +417,7 @@ const defaultProjectionFrance = (width, height, marks, caption = '') =>
       Plot.geo(mainland_france_regions, {
         stroke: 'white',
         strokeOpacity: 0.5,
-        fill: pepr_colors.blue,
+        fill: vdbi_color_scheme.blue,
         fillOpacity: 0.3,
       }),
       marks,
@@ -434,7 +434,7 @@ const defaultProjectionIleDeFrance = (width, marks, caption = '') =>
       Plot.geo(ile_de_france_departements, {
         stroke: 'white',
         strokeOpacity: 0.5,
-        fill: pepr_colors.blue,
+        fill: vdbi_color_scheme.blue,
         fillOpacity: 0.3,
       }),
       marks,
@@ -451,7 +451,7 @@ const defaultProjectionItaly = (width, marks, caption = '') =>
       Plot.geo(italy_regions, {
         stroke: 'white',
         strokeOpacity: 0.5,
-        fill: pepr_colors.blue,
+        fill: vdbi_color_scheme.blue,
         fillOpacity: 0.3,
       }),
       marks,
@@ -471,7 +471,7 @@ function generateLineMapMarks(terrain_data, terrain_legend) {
     y1: 'label_y',
     x2: 'longitude',
     y2: 'latitude',
-    stroke: (d) => project_colors(d.projects),
+    stroke: (d) => project_color_scale(d.projects),
     strokeWidth: (d) => (isProjectSelected(d.projects) ? 1 : 0.5),
     strokeOpacity: (d) => (isProjectSelected(d.projects) ? 1 : 0.5),
     markerEnd: 'arrow',
@@ -482,7 +482,7 @@ function generateLineMapMarks(terrain_data, terrain_legend) {
     y: 'latitude',
     r: 3,
     fill: 'black',
-    //stroke: pepr_colors.orange,
+    //stroke: vdbi_color_scheme.orange,
     //fillOpacity: 0.5,
     channels: {
       entity: {
@@ -553,7 +553,7 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
     x: 'longitude',
     y: 'latitude',
     r: 3,
-    fill: pepr_colors.blue,
+    fill: vdbi_color_scheme.blue,
     fillOpacity: 0.5,
     channels: {
       entity: {
@@ -607,7 +607,7 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
       x: 'x',
       y: 'y',
       r: 4,
-      fill: (d) => project_colors(d.projects),
+      fill: (d) => project_color_scale(d.projects),
       fillOpacity: (d) => (isProjectSelected(d.projects) ? 1 : 0.2),
     }
   );

@@ -47,7 +47,7 @@ display(project_graph_data)
 ```
 
 ```js echo
-const project_colors = new Map([
+const project_color_scale = new Map([
   ["#AAED92", "Projet PEPR VDBI"],
   ["#FCF281", "Projet externe"],
   ["#9EDCFA", "Centre Opérationel"],
@@ -68,16 +68,16 @@ const project_graph = new MuralGraph(
     strokeWidth: 5,
     keyMap: (d) => d.label,
     valueMap: (d) => d.type,
-    color: d3.scaleOrdinal([...project_colors.keys()], [...project_colors.keys()]),
+    color: d3.scaleOrdinal([...project_color_scale.keys()], [...project_color_scale.keys()]),
     nodeLabelOpacity: 1,
     linkLabelOpacity: 1,
     nodeLabelOffset: 25,
     legend: circleLegend(
-      [...project_colors.values()],
+      [...project_color_scale.values()],
       {
         keyMap: (d) => d,
         valueMap: (d) => d,
-        color: d3.scaleOrdinal([...project_colors.values()], [...project_colors.keys()]),
+        color: d3.scaleOrdinal([...project_color_scale.values()], [...project_color_scale.keys()]),
         radius: 40,
         lineSeparation: 120,
         text: (d) => d,
