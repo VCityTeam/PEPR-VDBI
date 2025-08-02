@@ -1,7 +1,7 @@
 import { map, merge, rollups, filter } from "d3"
 import { button } from "@observablehq/inputs"
 import { nameByRace } from "fantasy-name-generator"
-import * as htl from "htl"
+import { html } from "htl"
 
 // TODO: mapCounts and mergeCounts need to be reworked with new countEntities
 
@@ -276,9 +276,14 @@ export const exclude = (d) =>
     "Non Renseigné",
   ].includes(d)
 
-export function sparkbar(max, background = "var(--theme-green)", color = "black") {
+export function sparkbar(
+  max,
+  background = "var(--theme-green)",
+  color = "black"
+) {
   // code source: https://observablehq.com/framework/inputs/table
-  return (x) => htl.html`<div style="
+  return (x) => html`<div
+    style="
     background: ${background};
     color: ${color};
     width: ${(100 * x) / max}%;
@@ -287,7 +292,10 @@ export function sparkbar(max, background = "var(--theme-green)", color = "black"
     box-sizing: border-box;
     overflow: visible;
     display: flex;
-    justify-content: start;">${x.toLocaleString("en-US")}`
+    justify-content: start;"
+  >
+    ${x.toLocaleString("en-US")}
+  </div>`
 }
 
 export function filterEmptyArray(data) {
