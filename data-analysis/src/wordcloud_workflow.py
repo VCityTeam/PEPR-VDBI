@@ -187,7 +187,7 @@ def runClean(config: list[dict], output_dir: str = "./", limit: int | None = Non
             + split_input_filename[1]
         )
         logging.info(f"writing tokens to {output_file}")
-        write_word_count(word_counts, output_file)
+        write_word_count(word_counts, output_file, limit)
 
 
 def runCompare(config: list[dict], output_dir: str = "./", limit: int | None = None):

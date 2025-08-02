@@ -70,10 +70,7 @@ def clean_wordcount(
     Once cleaned, the words are counted and returned as a dictionary.
     :param input_path: path to the word count csv file (a single column of words)
     :param stop_words_path: path to the stop words csv file
-    :param plural_words_path: path to the plural words csv file
-    :param synonyms_path: path to the synonyms json file
     :param language: language for stemming
-    :param limit: limit number of output rows
     :param delimiter: csv delimiter
     """
     stop_words = []
