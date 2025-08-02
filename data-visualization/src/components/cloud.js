@@ -9,10 +9,17 @@ import { vdbi_orange_analogic_color_scale } from "./color.js"
  * @param {object} options - configuration options for the word cloud
  * @param {number} options.width - width of the word cloud
  * @param {number} options.height - height of the word cloud
- * @param {string} options.font - font family for the words
+ * @param {function|number} options.valueMap - a function to access the word count of each word
+ * @param {number[]} options.domain - the domain of the values for the words
+ * @param {function|string} options.font - font family for the words
+ * @param {function|string} options.font_style - the default font style for the words
+ * @param {function|string} options.font_weight - the default font weight for the words
+ * @param {number[]} options.font_size_range - the range `[min, max]` of font sizes for the words
+ * @param {function|number} options.font_size - the size of each word, uses `font_size_range` by default
+ * @param {number} options.angle_number - the number of angles used to rotate each word
+ * @param {number} options.angle_width - the distance between each angle
+ * @param {number} options.angle_offset - the offset applied to every angle
  * @param {function} options.rotate - function to determine the rotation of each word
- * @param {number} options.font_size_min - minimum font size for the words
- * @param {number} options.font_size_max - maximum font size for the words
  * @param {function|string} options.color - a color string or function to determine the color of each word
  * @returns {Element} - an SVG element containing the word cloud
  */

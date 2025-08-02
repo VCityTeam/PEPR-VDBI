@@ -10,6 +10,10 @@ export default {
       path: 'phase1-disciplines',
     },
     {
+      name: 'Phase 1 Word clouds',
+      path: 'phase1-project-wordclouds',
+    },
+    {
       name: 'Under Construction',
       pages: [
         {
