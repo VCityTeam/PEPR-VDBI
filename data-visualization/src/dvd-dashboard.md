@@ -154,7 +154,7 @@ const discipline_erc_count = countEntities(
 
 const discipline_erc_pie = donutChart(discipline_erc_count, {
   width: 650,
-  legendLeftMargin: 0,
+  legendWidth: 0,
   fontSize: 18,
   keyMap: (d) => d[0],
   valueMap: (d) => d[1],
@@ -294,7 +294,7 @@ const position_count = d3.rollups(
 ```js
 const position_pie = donutChart(position_count, {
   width: 650,
-  legendLeftMargin: 0,
+  legendWidth: 0,
   fontSize: 18,
   keyMap: (d) => d[0],
   valueMap: (d) => d[1],
