@@ -293,7 +293,7 @@ function default_pie_options(width, left_margin = 110) {
       .domain(category_color_map.keys())
       .range(category_color_map.values())
       .unknown("grey"),
-    legendLeftMargin: left_margin,
+    legendWidth: left_margin,
   }
 }
 ```
