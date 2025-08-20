@@ -3,8 +3,8 @@ theme: [dashboard, light]
 sql:
   general_partners: ./data/partners_general.csv
   aap_partners: ./data/private/partenaires_aap2023.csv
-  terrains: ./data/project_summary_terrain_locations.csv
-  projects: ./data/private/project_summary.csv
+  terrain_locations: ./data/project_summary_terrain_locations.csv
+  project_summaries: ./data/private/project_summary.csv
   project_terrains_by_scale: ./data/private/project_summary_terrains.csv
 ---
 
@@ -55,11 +55,15 @@ import { vdbi_color_scheme, project_color_scale } from "./components/color.js"
 ```
 
 ```js
+import { vectorFromArray } from "npm:apache-arrow"
+```
+
+```js
 const selected_project = view(
   Inputs.select(
     [
       "All",
-      ...[...(await sql`select "Nom projet" from projects`)].map((d) =>
+      ...[...(await sql`select "Nom projet" from project_summaries`)].map((d) =>
         d["Nom projet"].trim()
       ),
     ],
@@ -75,9 +79,11 @@ const selected_project = view(
 
 display(
   copyTableToClipboardButton(
-    terrain_data,
-    null,
-    "Copy project terrain city locations data to clipboard"
+    france_terrain_data,
+    {
+      label: "Copy project terrain city locations data to clipboard",
+      delimeter: ";",
+    }
   )
 )
 ```
@@ -149,9 +155,142 @@ display(
   </div>
 </div>
 
+
+## Projects by Partner locations
+
+<div class="grid grid-cols-3">
+  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
+    ${resize(
+      (width, height) => defaultProjectionFrance(
+        width,
+        height - 15,
+        generateLineMapMarks(france_terrain_data, france_terrain_legend),
+        "- Project terrains by city and Île-de-France, France"
+      )
+    )}
+
+  </div>
+  <div class="card" style="padding: 10px; overflow: hidden;">
+    ${resize(
+      (width) => defaultProjectionIleDeFrance(
+        width,
+        generateLineMapMarks(ile_de_france_terrain_data, idf_terrain_legend),
+        "- Project terrains by city, Île-de-France"
+      )
+    )}
+
+  </div>
+  <div class="card" style="padding: 10px; overflow: hidden;">
+    ${resize(
+      (width) => defaultProjectionItaly(
+        width,
+        generateLineMapMarks(international_terrain_data, italy_terrain_legend),
+        "- Project terrains by city, Italy"
+      )
+    )}
+
+  </div>
+  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
+    ${resize(
+      (width, height) => defaultProjectionFrance(
+        width,
+        height - 15,
+        generateDotMapMarks(france_terrain_data, france_terrain_legend, 0.2),
+        "- Project terrains by city and Île-de-France, France"
+      )
+    )}
+
+  </div>
+  <div class="card" style="padding: 10px; overflow: hidden;">
+    ${resize(
+      (width) => defaultProjectionIleDeFrance(
+        width,
+        generateDotMapMarks(ile_de_france_terrain_data, idf_terrain_legend, 0.015),
+        "- Project terrains by city, Île-de-France"
+      )
+    )}
+
+  </div>
+  <div class="card" style="padding: 10px; overflow: hidden;">
+    ${resize(
+      (width) => defaultProjectionItaly(
+        width,
+        generateDotMapMarks(international_terrain_data, italy_terrain_legend, 0.1),
+        "- Project terrains by city, Italy"
+      )
+    )}
+
+  </div>
+</div>
+
 <!-- Initial data integration -->
 
-```sql id=terrain_data
+```sql
+SELECT
+  terrain,
+  raw_data->>'addresstype' as addresstype,
+  raw_data->>'$.address.city' as city,
+  raw_data->>'$.address.municipality' as municipality,
+  raw_data->>'$.address.town' as town,
+  raw_data->>'$.address.village' as village,
+  raw_data->>'$.address.local_authority' as local_authority,
+  raw_data->>'$.address.county' as county,
+  raw_data->>'$.address.state' as "state",
+  raw_data->>'$.address.postcode' as postcode,
+  raw_data->>'$.address.region' as region,
+FROM terrain_locations;
+```
+
+```sql
+SELECT
+  terrain,
+  json_keys(raw_data->'address') as keys,
+  raw_data->'address' as "address",
+FROM terrain_locations;
+```
+
+```sql
+SELECT
+  terrain,
+  case
+    when json_exists(raw_data, '$.address.city') then raw_data->>'$.address.city'
+    when json_exists(raw_data, '$.address.town') then raw_data->>'$.address.town'
+    when json_exists(raw_data, '$.address.village') then raw_data->>'$.address.village'
+    when json_exists(raw_data, '$.address.municipality') then raw_data->>'$.address.municipality'
+    when json_exists(raw_data, '$.address.local_authority') then raw_data->>'$.address.local_authority'
+    when json_exists(raw_data, '$.address.county') then raw_data->>'$.address.county'
+    when json_exists(raw_data, '$.address.state') then raw_data->>'$.address.state'
+    when json_exists(raw_data, '$.address.postcode') then raw_data->>'$.address.postcode'
+    when json_exists(raw_data, '$.address.region') then raw_data->>'$.address.region'
+  end as name,
+  case
+    when json_exists(raw_data, '$.address.city') then 'city'
+    when json_exists(raw_data, '$.address.town') then 'town'
+    when json_exists(raw_data, '$.address.village') then 'village'
+    when json_exists(raw_data, '$.address.municipality') then 'municipality'
+    when json_exists(raw_data, '$.address.local_authority') then 'local_authority'
+    when json_exists(raw_data, '$.address.county') then 'county'
+    when json_exists(raw_data, '$.address.state') then 'state'
+    when json_exists(raw_data, '$.address.postcode') then 'postcode'
+    when json_exists(raw_data, '$.address.region') then 'region'
+  end as found_type,
+  raw_data->>'addresstype' as type,
+FROM terrain_locations;
+```
+
+```sql
+select first(json_keys(raw_data)) from terrain_locations
+```
+
+```sql
+select * from terrain_locations
+```
+
+```sql
+select * from project_terrains_by_scale
+```
+
+```sql id=terrain_locations_by_city
 -- clean data
 alter table project_terrains_by_scale
   add column city varchar;
@@ -159,50 +298,49 @@ update project_terrains_by_scale
   set city = terrain;
 
 update project_terrains_by_scale
-  set terrain = replace(city, 'Commune de ', '');
+  set city = replace(city, 'Commune de ', '');
 update project_terrains_by_scale
-  set terrain = replace(city, 'Ville de ', '');
+  set city = replace(city, 'Ville de ', '');
 update project_terrains_by_scale
-  set terrain = replace(city, 'Métropole d''', '');
+  set city = replace(city, 'Métropole d''', '');
 update project_terrains_by_scale
-  set terrain = replace(city, 'Métropole de ', '');
+  set city = replace(city, 'Métropole de ', '');
 update project_terrains_by_scale
-  set terrain = replace(city, 'Métropole européenne de ', '');
+  set city = replace(city, 'Métropole européenne de ', '');
 update project_terrains_by_scale
-  set terrain = replace(city, 'Métropole Européenne de ', '');
+  set city = replace(city, 'Métropole Européenne de ', '');
 update project_terrains_by_scale
-  set terrain = replace(city, 'Aix-Marseille-Provence', 'Marseille');
+  set city = replace(city, 'Aix-Marseille-Provence', 'Marseille');
 
-update terrains
-  set terrain = replace(terrain, 'Commune de ', '');
-update terrains
-  set terrain = replace(terrain, 'Ville de ', '');
-update terrains
-  set terrain = replace(terrain, 'Métropole d''', '');
-update terrains
-  set terrain = replace(terrain, 'Métropole de ', '');
-update terrains
-  set terrain = replace(terrain, 'Métropole européenne de ', '');
-update terrains
-  set terrain = replace(terrain, 'Métropole Européenne de ', '');
-update terrains
-  set terrain = replace(terrain, 'Aix-Marseille-Provence', 'Marseille');
+alter table terrain_locations
+  add column city varchar;
+update terrain_locations
+  set city = terrain;
 
-with project_terrain_map as (
-    select
-      acronyme,
-      terrain,
-    from project_terrains_by_scale
-    group by all
-  )
+update terrain_locations
+  set city = replace(city, 'Commune de ', '');
+update terrain_locations
+  set city = replace(city, 'Ville de ', '');
+update terrain_locations
+  set city = replace(city, 'Métropole d''', '');
+update terrain_locations
+  set city = replace(city, 'Métropole de ', '');
+update terrain_locations
+  set city = replace(city, 'Métropole européenne de ', '');
+update terrain_locations
+  set city = replace(city, 'Métropole Européenne de ', '');
+update terrain_locations
+  set city = replace(city, 'Aix-Marseille-Provence', 'Marseille');
+
 select distinct
-  terrains.terrain,
-  list_distinct(list(project_terrain_map.acronyme)) as projects,
-  first(terrains.lat) as latitude,
-  first(terrains.lon) as longitude,
-from terrains
-join project_terrain_map
-on project_terrain_map.terrain = terrains.terrain
+  terrain_locations.city,
+  -- list_distinct(list(terrain_locations.terrain)) as terrains,
+  list_distinct(list(project_terrains_by_scale.acronyme)) as projects,
+  first(terrain_locations.latitude) as latitude,
+  first(terrain_locations.longitude) as longitude,
+from terrain_locations
+join project_terrains_by_scale
+on project_terrains_by_scale.city = terrain_locations.city
 group by all
 ```
 
@@ -304,11 +442,11 @@ const ile_de_france_bbox = {
   max_y: 49.24342474094858,
 }
 
-const france_terrain_data = [...terrain_data]
+const france_terrain_data = [...terrain_data_by_city]
   .filter(
     (d) =>
       // filter missing data
-      d.terrain &&
+      d.city &&
       d.longitude &&
       d.latitude &&
       // keep projects within france
@@ -318,30 +456,30 @@ const france_terrain_data = [...terrain_data]
   )
   .map((d) => d.toJSON()) // this is only to make debugging easier, should be removed at scale
 
-const ile_de_france_terrain_data = [...terrain_data].filter(
+const ile_de_france_terrain_data = [...terrain_data_by_city].filter(
   (d) =>
-    d.terrain != "Île-de-France" &&
+    d.city != "Île-de-France" &&
     inBBox(d.longitude, d.latitude, ile_de_france_bbox)
 )
 
 france_terrain_data.push({
-  terrain: "Île-de-France",
-  projects: [
+  city: "Île-de-France",
+  projects: vectorFromArray([
     ...new Set(
-      [...terrain_data]
-        .filter((d) => d.terrain == "Île-de-France")
+      [...terrain_data_by_city]
+        .filter((d) => d.city == "Île-de-France")
         .flatMap((d) => [...d.projects])
     ),
     ...new Set(ile_de_france_terrain_data.flatMap((d) => [...d.projects])),
-  ],
+  ]),
   latitude: d3.mean([ile_de_france_bbox.min_y, ile_de_france_bbox.max_y]),
   longitude: d3.mean([ile_de_france_bbox.min_x, ile_de_france_bbox.max_x]),
 })
 
-const international_terrain_data = [...terrain_data].filter(
+const international_terrain_data = [...terrain_data_by_city].filter(
   (d) =>
     // filter missing data
-    d.terrain &&
+    d.city &&
     d.longitude &&
     d.latitude &&
     // keep projects outside of france
@@ -431,11 +569,11 @@ const terrain_tips = (data) =>
   data.map((d) => {
     let tip_anchor = "bottom"
 
-    if (terrain_anchor_map.has(d.terrain)) {
-      tip_anchor = terrain_anchor_map.get(d.terrain)
+    if (terrain_anchor_map.has(d.city)) {
+      tip_anchor = terrain_anchor_map.get(d.city)
     }
 
-    return Plot.tip([d.terrain], {
+    return Plot.tip([d.city], {
       x: d.longitude,
       y: d.latitude,
       textPadding: 1,
@@ -466,7 +604,7 @@ const terrain_tip_dots = (data, legend, delta) =>
         const data = { ...d }
         data.projects = projects[index]
         data.project_index = index
-        data.x = terrain_tip_dots_float_left.includes(data.terrain)
+        data.x = terrain_tip_dots_float_left.includes(data.city)
           ? data.longitude - delta - index * delta
           : data.longitude + delta + index * delta
         data.y = data.latitude
@@ -584,7 +722,7 @@ function generateLineMapMarks(terrain_data, terrain_legend) {
     //fillOpacity: 0.5,
     channels: {
       entity: {
-        value: "terrain",
+        value: "city",
         label: "City",
       },
       count: {
@@ -728,73 +866,6 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
 }
 ```
 
-## Projects by Partner locations
-
-<div class="grid grid-cols-3">
-  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
-    ${resize(
-      (width, height) => defaultProjectionFrance(
-        width,
-        height - 15,
-        generateLineMapMarks(france_terrain_data, france_terrain_legend),
-        "- Project terrains by city and Île-de-France, France"
-      )
-    )}
-
-  </div>
-  <div class="card" style="padding: 10px; overflow: hidden;">
-    ${resize(
-      (width) => defaultProjectionIleDeFrance(
-        width,
-        generateLineMapMarks(ile_de_france_terrain_data, idf_terrain_legend),
-        "- Project terrains by city, Île-de-France"
-      )
-    )}
-
-  </div>
-  <div class="card" style="padding: 10px; overflow: hidden;">
-    ${resize(
-      (width) => defaultProjectionItaly(
-        width,
-        generateLineMapMarks(international_terrain_data, italy_terrain_legend),
-        "- Project terrains by city, Italy"
-      )
-    )}
-
-  </div>
-  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
-    ${resize(
-      (width, height) => defaultProjectionFrance(
-        width,
-        height - 15,
-        generateDotMapMarks(france_terrain_data, france_terrain_legend, 0.2),
-        "- Project terrains by city and Île-de-France, France"
-      )
-    )}
-
-  </div>
-  <div class="card" style="padding: 10px; overflow: hidden;">
-    ${resize(
-      (width) => defaultProjectionIleDeFrance(
-        width,
-        generateDotMapMarks(ile_de_france_terrain_data, idf_terrain_legend, 0.015),
-        "- Project terrains by city, Île-de-France"
-      )
-    )}
-
-  </div>
-  <div class="card" style="padding: 10px; overflow: hidden;">
-    ${resize(
-      (width) => defaultProjectionItaly(
-        width,
-        generateDotMapMarks(international_terrain_data, italy_terrain_legend, 0.1),
-        "- Project terrains by city, Italy"
-      )
-    )}
-
-  </div>
-</div>
-
 <!-- debugging info -->
 
 ```js
@@ -810,12 +881,12 @@ console.debug(
   [...(await sql`select * from aap_partners`)].map((d) => d.toJSON())
 )
 console.debug(
-  "terrains",
-  [...(await sql`select * from terrains`)].map((d) => d.toJSON())
+  "terrain_locations",
+  [...(await sql`select * from terrain_locations`)].map((d) => d.toJSON())
 )
 console.debug(
-  "projects",
-  [...(await sql`select * from projects`)].map((d) => d.toJSON())
+  "project_summaries",
+  [...(await sql`select * from project_summaries`)].map((d) => d.toJSON())
 )
 console.debug(
   "project_terrains_by_scale",
@@ -827,8 +898,12 @@ console.debug(
 
 ```js
 console.debug(
-  "terrain_data",
-  [...terrain_data].map((d) => d.toJSON())
+  "terrain_data_by_city",
+  [...terrain_data_by_city].map((d) => d.toJSON())
+)
+console.debug(
+  "terrain_data_by_project",
+  [...terrain_data_by_project].map((d) => d.toJSON())
 )
 console.debug("france_terrain_data", [...france_terrain_data])
 console.debug(

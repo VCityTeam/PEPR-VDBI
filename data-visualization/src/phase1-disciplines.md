@@ -143,11 +143,7 @@ console.debug("selected_project_data", selected_project_data)
     <!-- $ -->
     <h3>*Groups are defined by the CNU</h3>
     <!-- <h3>*Les regroupements des sections est définis par le CNU</h3> -->
-    ${copyTableToClipboardButton(
-      selected_project_data.cnu_count_by_category,
-      null,
-      "Copy data to clipboard"
-    )}
+    ${copyTableToClipboardButton(selected_project_data.cnu_count_by_category)}
     <!-- $ -->
   </div>
   <div class="card">
@@ -169,11 +165,7 @@ console.debug("selected_project_data", selected_project_data)
       }
     ))}
     <!-- $ -->
-    ${copyTableToClipboardButton(
-      selected_project_data.discipline_erc_count,
-      null,
-      "Copy data to clipboard"
-    )}
+    ${copyTableToClipboardButton(selected_project_data.discipline_erc_count)}
     <!-- $ -->
   </div>
 </div>
