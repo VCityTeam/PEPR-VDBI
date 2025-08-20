@@ -372,11 +372,7 @@ const filtered_partner_data_value = Generators.input(
         Inputs.table(consensus_search_result, { width: width, layout: 'auto' })
       )
     }
-    ${copyTableToClipboardButton(
-      consensus_search_result,
-      null,
-      'Copy data to clipboard'
-    )}
+    ${copyTableToClipboardButton(consensus_search_result)}
     
   </div>
   <div class="card" style="padding: 0;">
@@ -391,11 +387,7 @@ const filtered_partner_data_value = Generators.input(
         Inputs.table(no_result_search_result, { width: width, layout: 'auto' })
       )
     }
-    ${copyTableToClipboardButton(
-      no_result_search_result,
-      null,
-      'Copy data to clipboard'
-    )}
+    ${copyTableToClipboardButton(no_result_search_result)}
     
   </div>
   <div class="card" style="padding: 0;">
@@ -410,11 +402,7 @@ const filtered_partner_data_value = Generators.input(
         Inputs.table(outlier_search_result, { width: width, layout: 'auto' })
       )
     }
-    ${copyTableToClipboardButton(
-      outlier_search_result,
-      null,
-      'Copy data to clipboard'
-    )}
+    ${copyTableToClipboardButton(outlier_search_result)}
     
   </div>
 </div>

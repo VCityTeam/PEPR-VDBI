@@ -1,6 +1,7 @@
 import logging
 import sys
 import csv
+import json
 from utils import initDefaultLogger
 from geopy.geocoders import Nominatim
 
@@ -14,8 +15,9 @@ def main():
         [
             # "project",
             "terrain",
-            "lat",
-            "lon",
+            "latitude",
+            "longitude",
+            "raw_data",
         ]
     ]
 
@@ -40,22 +42,22 @@ def main():
             logging.warning(f"terrain not found in terrain: {terrain}")
             continue
 
-        terrain_geodata = geolocator.geocode(terrain)
-        logging.debug(f"terrain_geodata from nominatim: {terrain_geodata}")
+        response = geolocator.geocode(terrain, addressdetails=True)
+        logging.debug(f"response from nominatim: {response.raw}")  # type: ignore
 
-        if terrain_geodata is None:
+        if response is None:
             logging.warning(f"data not found for terrain: {terrain}")
             continue
 
-        partner_data += [
+        partner_data.append(
             [
                 # project,
                 terrain,
-                # terrain_geodata[0]["name"] if terrain_geodata else terrain,
-                terrain_geodata.latitude if terrain_geodata else None,  # type: ignore
-                terrain_geodata.longitude if terrain_geodata else None,  # type: ignore
+                response.latitude,  # type: ignore
+                response.longitude,  # type: ignore
+                json.dumps(response.raw),  # type: ignore
             ]
-        ]
+        )
 
     logging.info("Writing data to stdout")
     writer = csv.writer(sys.stdout)

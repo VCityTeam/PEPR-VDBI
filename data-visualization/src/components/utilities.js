@@ -352,15 +352,16 @@ export function getAttributeByPath(obj, path) {
  *
  * @param {object[]} data - the data to be copied, rows should contain keys
  *  corresponding to the columns of the table
- * @param {Array|null} columns - a list of columns to be copied, if null all columns
+ * @param {object} options - button options
+ * @param {Array|null} options.columns - a list of columns to be copied, if null all columns
  *  will be copied
- * @param {String} label - button label
+ * @param {String} options.label - button label
+ * @param {String} options.delimeter -
  * @returns {button} - a button element that copies the data to the clipboard
  */
 export function copyTableToClipboardButton(
   data,
-  columns = null,
-  label = "Copy to clipboard"
+  { columns = null, label = "Copy to clipboard", delimeter = "," }
 ) {
   if (columns === null) columns = Object.keys(data[0])
 
@@ -369,7 +370,8 @@ export function copyTableToClipboardButton(
     reduce: () =>
       navigator.clipboard.writeText(
         data.reduce(
-          (a, v) => a + columns.map((col) => v[col] || "").join(",") + "\n",
+          (a, v) =>
+            a + columns.map((col) => v[col] || "").join(delimeter) + "\n",
           columns.join(",") + "\n"
         )
       ),
