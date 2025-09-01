@@ -79,10 +79,10 @@ const selected_project = view(
 
 display(
   copyTableToClipboardButton(
-    france_terrain_data,
+    [... await sql`select * from terrain_locations`],
     {
       label: "Copy project terrain city locations data to clipboard",
-      delimeter: ";",
+      // delimeter: ";",
     }
   )
 )
@@ -225,33 +225,75 @@ display(
 
 <!-- Initial data integration -->
 
-```sql
-SELECT
-  terrain,
-  raw_data->>'addresstype' as addresstype,
-  raw_data->>'$.address.city' as city,
-  raw_data->>'$.address.municipality' as municipality,
-  raw_data->>'$.address.town' as town,
-  raw_data->>'$.address.village' as village,
-  raw_data->>'$.address.local_authority' as local_authority,
-  raw_data->>'$.address.county' as county,
-  raw_data->>'$.address.state' as "state",
-  raw_data->>'$.address.postcode' as postcode,
-  raw_data->>'$.address.region' as region,
-FROM terrain_locations;
+```sql id=terrain_data_by_location
+-- merge data on a location_id
+-- (a simplified terrain label for merging locations at the city level)
+
+alter table project_terrains_by_scale
+  add column location_id varchar;
+update project_terrains_by_scale
+  set location_id = terrain;
+
+update project_terrains_by_scale
+  set location_id = replace(location_id, 'Commune de ', '');
+update project_terrains_by_scale
+  set location_id = replace(location_id, 'Ville de ', '');
+update project_terrains_by_scale
+  set location_id = replace(location_id, 'Métropole d''', '');
+update project_terrains_by_scale
+  set location_id = replace(location_id, 'Métropole de ', '');
+update project_terrains_by_scale
+  set location_id = replace(location_id, 'Métropole européenne de ', '');
+update project_terrains_by_scale
+  set location_id = replace(location_id, 'Métropole Européenne de ', '');
+update project_terrains_by_scale
+  set location_id = replace(location_id, 'Aix-Marseille-Provence', 'Marseille');
+
+alter table terrain_locations
+  add column location_id varchar;
+update terrain_locations
+  set location_id = terrain;
+
+update terrain_locations
+  set location_id = replace(location_id, 'Commune de ', '');
+update terrain_locations
+  set location_id = replace(location_id, 'Ville de ', '');
+update terrain_locations
+  set location_id = replace(location_id, 'Métropole d''', '');
+update terrain_locations
+  set location_id = replace(location_id, 'Métropole de ', '');
+update terrain_locations
+  set location_id = replace(location_id, 'Métropole européenne de ', '');
+update terrain_locations
+  set location_id = replace(location_id, 'Métropole Européenne de ', '');
+update terrain_locations
+  set location_id = replace(location_id, 'Aix-Marseille-Provence', 'Marseille');
+
+select distinct
+  terrain_locations.location_id,
+  -- list_distinct(list(terrain_locations.terrain)) as terrains,
+  list_distinct(list(project_terrains_by_scale.acronyme)) as projects,
+  first(terrain_locations.latitude) as latitude,
+  first(terrain_locations.longitude) as longitude,
+from terrain_locations
+join project_terrains_by_scale
+on project_terrains_by_scale.location_id = terrain_locations.location_id
+group by all
 ```
 
-```sql
-SELECT
-  terrain,
-  json_keys(raw_data->'address') as keys,
-  raw_data->'address' as "address",
-FROM terrain_locations;
-```
+```sql id=terrain_osm_locations
+-- merge data on a location_id
+-- (a simplified terrain label for merging locations at the city level)
 
-```sql
-SELECT
+-- with OSM label and type data using the first label found in the following address types:
+-- [city, town, village, municipality, local_authority, county, state, postcode, region]
+-- also store the original address type
+
+select distinct
   terrain,
+  location_id,
+  latitude,
+  longitude,
   case
     when json_exists(raw_data, '$.address.city') then raw_data->>'$.address.city'
     when json_exists(raw_data, '$.address.town') then raw_data->>'$.address.town'
@@ -262,7 +304,7 @@ SELECT
     when json_exists(raw_data, '$.address.state') then raw_data->>'$.address.state'
     when json_exists(raw_data, '$.address.postcode') then raw_data->>'$.address.postcode'
     when json_exists(raw_data, '$.address.region') then raw_data->>'$.address.region'
-  end as name,
+  end as osm_id,
   case
     when json_exists(raw_data, '$.address.city') then 'city'
     when json_exists(raw_data, '$.address.town') then 'town'
@@ -273,75 +315,25 @@ SELECT
     when json_exists(raw_data, '$.address.state') then 'state'
     when json_exists(raw_data, '$.address.postcode') then 'postcode'
     when json_exists(raw_data, '$.address.region') then 'region'
-  end as found_type,
-  raw_data->>'addresstype' as type,
-FROM terrain_locations;
-```
+  end as osm_id_type,
+  raw_data->>'addresstype' as osm_type,
+FROM terrain_locations
 
-```sql
-select first(json_keys(raw_data)) from terrain_locations
-```
-
-```sql
-select * from terrain_locations
-```
-
-```sql
-select * from project_terrains_by_scale
-```
-
-```sql id=terrain_locations_by_city
--- clean data
-alter table project_terrains_by_scale
-  add column city varchar;
-update project_terrains_by_scale
-  set city = terrain;
-
-update project_terrains_by_scale
-  set city = replace(city, 'Commune de ', '');
-update project_terrains_by_scale
-  set city = replace(city, 'Ville de ', '');
-update project_terrains_by_scale
-  set city = replace(city, 'Métropole d''', '');
-update project_terrains_by_scale
-  set city = replace(city, 'Métropole de ', '');
-update project_terrains_by_scale
-  set city = replace(city, 'Métropole européenne de ', '');
-update project_terrains_by_scale
-  set city = replace(city, 'Métropole Européenne de ', '');
-update project_terrains_by_scale
-  set city = replace(city, 'Aix-Marseille-Provence', 'Marseille');
-
-alter table terrain_locations
-  add column city varchar;
-update terrain_locations
-  set city = terrain;
-
-update terrain_locations
-  set city = replace(city, 'Commune de ', '');
-update terrain_locations
-  set city = replace(city, 'Ville de ', '');
-update terrain_locations
-  set city = replace(city, 'Métropole d''', '');
-update terrain_locations
-  set city = replace(city, 'Métropole de ', '');
-update terrain_locations
-  set city = replace(city, 'Métropole européenne de ', '');
-update terrain_locations
-  set city = replace(city, 'Métropole Européenne de ', '');
-update terrain_locations
-  set city = replace(city, 'Aix-Marseille-Provence', 'Marseille');
-
-select distinct
-  terrain_locations.city,
-  -- list_distinct(list(terrain_locations.terrain)) as terrains,
-  list_distinct(list(project_terrains_by_scale.acronyme)) as projects,
-  first(terrain_locations.latitude) as latitude,
-  first(terrain_locations.longitude) as longitude,
-from terrain_locations
-join project_terrains_by_scale
-on project_terrains_by_scale.city = terrain_locations.city
-group by all
+-- select distinct
+--   osm_id,
+--   osm_id_type,
+--   osm_type,
+--   -- project_terrains_by_scale.acronyme as project,
+--   -- terrain_osm_locations.location_id,
+--   terrain_osm_locations.terrain,
+--   -- list_distinct(list(project_terrains_by_scale.acronyme)) as projects,
+--   first(terrain_osm_locations.latitude) as latitude,
+--   first(terrain_osm_locations.longitude) as longitude,
+-- from terrain_osm_locations, project_terrains_by_scale
+-- where
+--   project_terrains_by_scale.location_id = terrain_osm_locations.location_id
+--   and not terrain_osm_locations.osm_type = terrain_osm_locations.osm_id_type
+-- group by all
 ```
 
 ```js
@@ -442,11 +434,11 @@ const ile_de_france_bbox = {
   max_y: 49.24342474094858,
 }
 
-const france_terrain_data = [...terrain_data_by_city]
+const france_terrain_data = [...terrain_data_by_location]
   .filter(
     (d) =>
       // filter missing data
-      d.city &&
+      d.location_id &&
       d.longitude &&
       d.latitude &&
       // keep projects within france
@@ -456,18 +448,18 @@ const france_terrain_data = [...terrain_data_by_city]
   )
   .map((d) => d.toJSON()) // this is only to make debugging easier, should be removed at scale
 
-const ile_de_france_terrain_data = [...terrain_data_by_city].filter(
+const ile_de_france_terrain_data = [...terrain_data_by_location].filter(
   (d) =>
-    d.city != "Île-de-France" &&
+    d.location_id != "Île-de-France" &&
     inBBox(d.longitude, d.latitude, ile_de_france_bbox)
 )
 
 france_terrain_data.push({
-  city: "Île-de-France",
+  location_id: "Île-de-France",
   projects: vectorFromArray([
     ...new Set(
-      [...terrain_data_by_city]
-        .filter((d) => d.city == "Île-de-France")
+      [...terrain_data_by_location]
+        .filter((d) => d.location_id == "Île-de-France")
         .flatMap((d) => [...d.projects])
     ),
     ...new Set(ile_de_france_terrain_data.flatMap((d) => [...d.projects])),
@@ -476,10 +468,10 @@ france_terrain_data.push({
   longitude: d3.mean([ile_de_france_bbox.min_x, ile_de_france_bbox.max_x]),
 })
 
-const international_terrain_data = [...terrain_data_by_city].filter(
+const international_terrain_data = [...terrain_data_by_location].filter(
   (d) =>
     // filter missing data
-    d.city &&
+    d.location_id &&
     d.longitude &&
     d.latitude &&
     // keep projects outside of france
@@ -569,11 +561,11 @@ const terrain_tips = (data) =>
   data.map((d) => {
     let tip_anchor = "bottom"
 
-    if (terrain_anchor_map.has(d.city)) {
-      tip_anchor = terrain_anchor_map.get(d.city)
+    if (terrain_anchor_map.has(d.location_id)) {
+      tip_anchor = terrain_anchor_map.get(d.location_id)
     }
 
-    return Plot.tip([d.city], {
+    return Plot.tip([d.location_id], {
       x: d.longitude,
       y: d.latitude,
       textPadding: 1,
@@ -604,7 +596,7 @@ const terrain_tip_dots = (data, legend, delta) =>
         const data = { ...d }
         data.projects = projects[index]
         data.project_index = index
-        data.x = terrain_tip_dots_float_left.includes(data.city)
+        data.x = terrain_tip_dots_float_left.includes(data.location_id)
           ? data.longitude - delta - index * delta
           : data.longitude + delta + index * delta
         data.y = data.latitude
@@ -722,7 +714,7 @@ function generateLineMapMarks(terrain_data, terrain_legend) {
     //fillOpacity: 0.5,
     channels: {
       entity: {
-        value: "city",
+        value: "location_id",
         label: "City",
       },
       count: {
@@ -898,12 +890,8 @@ console.debug(
 
 ```js
 console.debug(
-  "terrain_data_by_city",
-  [...terrain_data_by_city].map((d) => d.toJSON())
-)
-console.debug(
-  "terrain_data_by_project",
-  [...terrain_data_by_project].map((d) => d.toJSON())
+  "terrain_data_by_location",
+  [...terrain_data_by_location].map((d) => d.toJSON())
 )
 console.debug("france_terrain_data", [...france_terrain_data])
 console.debug(

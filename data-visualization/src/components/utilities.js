@@ -361,7 +361,7 @@ export function getAttributeByPath(obj, path) {
  */
 export function copyTableToClipboardButton(
   data,
-  { columns = null, label = "Copy to clipboard", delimeter = "," }
+  { columns = null, label = "Copy to clipboard", delimeter = "," } = {}
 ) {
   if (columns === null) columns = Object.keys(data[0])
 
@@ -372,7 +372,7 @@ export function copyTableToClipboardButton(
         data.reduce(
           (a, v) =>
             a + columns.map((col) => v[col] || "").join(delimeter) + "\n",
-          columns.join(",") + "\n"
+          columns.join(delimeter) + "\n"
         )
       ),
   })
