@@ -115,11 +115,7 @@ console.debug("selected_project_data", selected_project_data)
     <!-- $ -->
     <h3>CNU group color legend</h3>
     <div>${cnu_plot_legend}</div>
-    ${copyTableToClipboardButton(
-      selected_project_data.cnu_count,
-        null,
-        "Copy data to clipboard"
-    )}
+    ${copyTableToClipboardButton(selected_project_data.cnu_count)}
     <!-- $ -->
   </div>
   <div class="card">
