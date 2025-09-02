@@ -79,10 +79,20 @@ const selected_project = view(
 
 display(
   copyTableToClipboardButton(
-    [... await sql`select * from terrain_locations`],
+    [...terrain_data_by_city],
     {
-      label: "Copy project terrain city locations data to clipboard",
-      // delimeter: ";",
+      label: "Copy terrain data by location to clipboard",
+      delimeter: ";",
+    }
+  )
+)
+
+display(
+  copyTableToClipboardButton(
+    [...terrain_data],
+    {
+      label: "Copy terrain and scale data to clipboard",
+      delimeter: ",",
     }
   )
 )
@@ -155,7 +165,6 @@ display(
   </div>
 </div>
 
-
 ## Projects by Partner locations
 
 <div class="grid grid-cols-3">
@@ -225,115 +234,121 @@ display(
 
 <!-- Initial data integration -->
 
-```sql id=terrain_data_by_location
--- merge data on a location_id
--- (a simplified terrain label for merging locations at the city level)
+```sql id=terrain_data
+-- merge osm data with terrain+scale data
 
-alter table project_terrains_by_scale
-  add column location_id varchar;
-update project_terrains_by_scale
-  set location_id = terrain;
-
-update project_terrains_by_scale
-  set location_id = replace(location_id, 'Commune de ', '');
-update project_terrains_by_scale
-  set location_id = replace(location_id, 'Ville de ', '');
-update project_terrains_by_scale
-  set location_id = replace(location_id, 'Métropole d''', '');
-update project_terrains_by_scale
-  set location_id = replace(location_id, 'Métropole de ', '');
-update project_terrains_by_scale
-  set location_id = replace(location_id, 'Métropole européenne de ', '');
-update project_terrains_by_scale
-  set location_id = replace(location_id, 'Métropole Européenne de ', '');
-update project_terrains_by_scale
-  set location_id = replace(location_id, 'Aix-Marseille-Provence', 'Marseille');
-
-alter table terrain_locations
-  add column location_id varchar;
-update terrain_locations
-  set location_id = terrain;
-
-update terrain_locations
-  set location_id = replace(location_id, 'Commune de ', '');
-update terrain_locations
-  set location_id = replace(location_id, 'Ville de ', '');
-update terrain_locations
-  set location_id = replace(location_id, 'Métropole d''', '');
-update terrain_locations
-  set location_id = replace(location_id, 'Métropole de ', '');
-update terrain_locations
-  set location_id = replace(location_id, 'Métropole européenne de ', '');
-update terrain_locations
-  set location_id = replace(location_id, 'Métropole Européenne de ', '');
-update terrain_locations
-  set location_id = replace(location_id, 'Aix-Marseille-Provence', 'Marseille');
-
-select distinct
-  terrain_locations.location_id,
-  -- list_distinct(list(terrain_locations.terrain)) as terrains,
-  list_distinct(list(project_terrains_by_scale.acronyme)) as projects,
-  first(terrain_locations.latitude) as latitude,
-  first(terrain_locations.longitude) as longitude,
-from terrain_locations
-join project_terrains_by_scale
-on project_terrains_by_scale.location_id = terrain_locations.location_id
-group by all
-```
-
-```sql id=terrain_osm_locations
--- merge data on a location_id
--- (a simplified terrain label for merging locations at the city level)
-
--- with OSM label and type data using the first label found in the following address types:
--- [city, town, village, municipality, local_authority, county, state, postcode, region]
--- also store the original address type
-
-select distinct
-  terrain,
-  location_id,
+select
+  acronyme as project_acronyme,
+  terrain_locations.terrain,
+  echelle as échelle,
   latitude,
   longitude,
-  case
-    when json_exists(raw_data, '$.address.city') then raw_data->>'$.address.city'
-    when json_exists(raw_data, '$.address.town') then raw_data->>'$.address.town'
-    when json_exists(raw_data, '$.address.village') then raw_data->>'$.address.village'
-    when json_exists(raw_data, '$.address.municipality') then raw_data->>'$.address.municipality'
-    when json_exists(raw_data, '$.address.local_authority') then raw_data->>'$.address.local_authority'
-    when json_exists(raw_data, '$.address.county') then raw_data->>'$.address.county'
-    when json_exists(raw_data, '$.address.state') then raw_data->>'$.address.state'
-    when json_exists(raw_data, '$.address.postcode') then raw_data->>'$.address.postcode'
-    when json_exists(raw_data, '$.address.region') then raw_data->>'$.address.region'
-  end as osm_id,
-  case
-    when json_exists(raw_data, '$.address.city') then 'city'
-    when json_exists(raw_data, '$.address.town') then 'town'
-    when json_exists(raw_data, '$.address.village') then 'village'
-    when json_exists(raw_data, '$.address.municipality') then 'municipality'
-    when json_exists(raw_data, '$.address.local_authority') then 'local_authority'
-    when json_exists(raw_data, '$.address.county') then 'county'
-    when json_exists(raw_data, '$.address.state') then 'state'
-    when json_exists(raw_data, '$.address.postcode') then 'postcode'
-    when json_exists(raw_data, '$.address.region') then 'region'
-  end as osm_id_type,
-  raw_data->>'addresstype' as osm_type,
-FROM terrain_locations
+  -- raw_data->>'osm_id' as osm_id,
+  -- raw_data->>'osm_type' as osm_type,
+  -- raw_data->>'name' as osm_name,
+  raw_data->>'addresstype' as osm_address_type,
+  -- case
+  --   when json_exists(raw_data, '$.address.city')
+  --     then raw_data->>'$.address.city'
+  --   when json_exists(raw_data, '$.address.town')
+  --     then raw_data->>'$.address.town'
+  --   when json_exists(raw_data, '$.address.village')
+  --     then raw_data->>'$.address.village'
+  --   when json_exists(raw_data, '$.address.municipality')
+  --     then raw_data->>'$.address.municipality'
+  --   else null
+  -- end as osm_city_name,
+  -- case
+  --   when json_exists(raw_data, '$.address.local_authority')
+  --     then raw_data->>'$.address.local_authority'
+  --   when json_exists(raw_data, '$.address.county')
+  --     then raw_data->>'$.address.county'
+  --   when json_exists(raw_data, '$.address.state')
+  --     then raw_data->>'$.address.state'
+  --   when json_exists(raw_data, '$.address.region')
+  --     then raw_data->>'$.address.region'
+  --   else null
+  -- end as osm_agglomeration_name,
+  -- case
+  --   when json_exists(raw_data, '$.address.city') then 'city'
+  --   when json_exists(raw_data, '$.address.town') then 'town'
+  --   when json_exists(raw_data, '$.address.village') then 'village'
+  --   when json_exists(raw_data, '$.address.municipality') then 'municipality'
+  --   else null
+  -- end as osm_city_type,
+  -- case
+  --   when json_exists(raw_data, '$.address.local_authority') then 'local_authority'
+  --   when json_exists(raw_data, '$.address.county') then 'county'
+  --   when json_exists(raw_data, '$.address.state') then 'state'
+  --   when json_exists(raw_data, '$.address.region') then 'region'
+  --   else null
+  -- end as osm_agglomeration_type,
+  commentaire,
+from terrain_locations, project_terrains_by_scale
+where terrain_locations.terrain = project_terrains_by_scale.terrain
+```
 
--- select distinct
---   osm_id,
---   osm_id_type,
---   osm_type,
---   -- project_terrains_by_scale.acronyme as project,
---   -- terrain_osm_locations.location_id,
---   terrain_osm_locations.terrain,
---   -- list_distinct(list(project_terrains_by_scale.acronyme)) as projects,
---   first(terrain_osm_locations.latitude) as latitude,
---   first(terrain_osm_locations.longitude) as longitude,
--- from terrain_osm_locations, project_terrains_by_scale
--- where
---   project_terrains_by_scale.location_id = terrain_osm_locations.location_id
---   and not terrain_osm_locations.osm_type = terrain_osm_locations.osm_id_type
--- group by all
+```sql id=terrain_data_by_city
+-- merge data on a terrain_label
+-- (a simplified terrain label for merging locations at the city level)
+
+with
+  labeled_terrain_locations as (
+    select distinct
+      terrain,
+      case
+        when instr(terrain, ' Méditerranée Métropole') > 0
+          then replace(terrain, ' Méditerranée Métropole', '')
+        when instr(terrain, 'Aix-Marseille-Provence') > 0
+          then replace(terrain, 'Aix-Marseille-Provence', 'Marseille')
+        when instr(terrain, 'Métropole du Grand Paris') > 0
+          then replace(terrain, 'Métropole du Grand Paris', 'Paris')
+        when instr(terrain, 'Métropole Européenne de ') > 0
+          then replace(terrain, 'Métropole Européenne de ', '')
+        when instr(terrain, 'Métropole d''') > 0
+          then replace(terrain, 'Métropole d''', '')
+        when instr(terrain, 'Métropole de ') > 0
+          then replace(terrain, 'Métropole de ', '')
+        when instr(terrain, ' Métropole') > 0
+          then replace(terrain, ' Métropole', '')
+        else terrain
+      end as terrain_label,
+      latitude,
+      longitude,
+    FROM terrain_locations
+  ),
+  labeled_project_terrains_by_scale as (
+    select
+      *,
+      case
+        when instr(terrain, ' Méditerranée Métropole') > 0
+          then replace(terrain, ' Méditerranée Métropole', '')
+        when instr(terrain, 'Aix-Marseille-Provence') > 0
+          then replace(terrain, 'Aix-Marseille-Provence', 'Marseille')
+        when instr(terrain, 'Métropole du Grand Paris') > 0
+          then replace(terrain, 'Métropole du Grand Paris', 'Paris')
+        when instr(terrain, 'Métropole Européenne de ') > 0
+          then replace(terrain, 'Métropole Européenne de ', '')
+        when instr(terrain, 'Métropole d''') > 0
+          then replace(terrain, 'Métropole d''', '')
+        when instr(terrain, 'Métropole de ') > 0
+          then replace(terrain, 'Métropole de ', '')
+        when instr(terrain, ' Métropole') > 0
+          then replace(terrain, ' Métropole', '')
+        else terrain
+      end as terrain_label,
+    from project_terrains_by_scale
+  )
+select distinct
+  labeled_terrain_locations.terrain_label,
+  -- list_distinct(list(labeled_terrain_locations.terrain)) as terrains,
+  list_distinct(list(labeled_project_terrains_by_scale.acronyme)) as projects,
+  first(labeled_terrain_locations.latitude) as latitude,
+  first(labeled_terrain_locations.longitude) as longitude,
+from labeled_terrain_locations
+join labeled_project_terrains_by_scale
+on labeled_project_terrains_by_scale.terrain_label = labeled_terrain_locations.terrain_label
+group by all
 ```
 
 ```js
@@ -434,11 +449,11 @@ const ile_de_france_bbox = {
   max_y: 49.24342474094858,
 }
 
-const france_terrain_data = [...terrain_data_by_location]
+const france_terrain_data = [...terrain_data_by_city]
   .filter(
     (d) =>
       // filter missing data
-      d.location_id &&
+      d.terrain_label &&
       d.longitude &&
       d.latitude &&
       // keep projects within france
@@ -448,18 +463,18 @@ const france_terrain_data = [...terrain_data_by_location]
   )
   .map((d) => d.toJSON()) // this is only to make debugging easier, should be removed at scale
 
-const ile_de_france_terrain_data = [...terrain_data_by_location].filter(
+const ile_de_france_terrain_data = [...terrain_data_by_city].filter(
   (d) =>
-    d.location_id != "Île-de-France" &&
+    d.terrain_label != "Île-de-France" &&
     inBBox(d.longitude, d.latitude, ile_de_france_bbox)
 )
 
 france_terrain_data.push({
-  location_id: "Île-de-France",
+  terrain_label: "Île-de-France",
   projects: vectorFromArray([
     ...new Set(
-      [...terrain_data_by_location]
-        .filter((d) => d.location_id == "Île-de-France")
+      [...terrain_data_by_city]
+        .filter((d) => d.terrain_label == "Île-de-France")
         .flatMap((d) => [...d.projects])
     ),
     ...new Set(ile_de_france_terrain_data.flatMap((d) => [...d.projects])),
@@ -468,10 +483,10 @@ france_terrain_data.push({
   longitude: d3.mean([ile_de_france_bbox.min_x, ile_de_france_bbox.max_x]),
 })
 
-const international_terrain_data = [...terrain_data_by_location].filter(
+const international_terrain_data = [...terrain_data_by_city].filter(
   (d) =>
     // filter missing data
-    d.location_id &&
+    d.terrain_label &&
     d.longitude &&
     d.latitude &&
     // keep projects outside of france
@@ -561,11 +576,11 @@ const terrain_tips = (data) =>
   data.map((d) => {
     let tip_anchor = "bottom"
 
-    if (terrain_anchor_map.has(d.location_id)) {
-      tip_anchor = terrain_anchor_map.get(d.location_id)
+    if (terrain_anchor_map.has(d.terrain_label)) {
+      tip_anchor = terrain_anchor_map.get(d.terrain_label)
     }
 
-    return Plot.tip([d.location_id], {
+    return Plot.tip([d.terrain_label], {
       x: d.longitude,
       y: d.latitude,
       textPadding: 1,
@@ -596,7 +611,7 @@ const terrain_tip_dots = (data, legend, delta) =>
         const data = { ...d }
         data.projects = projects[index]
         data.project_index = index
-        data.x = terrain_tip_dots_float_left.includes(data.location_id)
+        data.x = terrain_tip_dots_float_left.includes(data.terrain_label)
           ? data.longitude - delta - index * delta
           : data.longitude + delta + index * delta
         data.y = data.latitude
@@ -714,7 +729,7 @@ function generateLineMapMarks(terrain_data, terrain_legend) {
     //fillOpacity: 0.5,
     channels: {
       entity: {
-        value: "location_id",
+        value: "terrain_label",
         label: "City",
       },
       count: {
@@ -890,8 +905,8 @@ console.debug(
 
 ```js
 console.debug(
-  "terrain_data_by_location",
-  [...terrain_data_by_location].map((d) => d.toJSON())
+  "terrain_data_by_city",
+  [...terrain_data_by_city].map((d) => d.toJSON())
 )
 console.debug("france_terrain_data", [...france_terrain_data])
 console.debug(
