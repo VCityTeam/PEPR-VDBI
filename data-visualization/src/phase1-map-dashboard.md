@@ -1,6 +1,7 @@
 ---
 theme: [dashboard, light]
 sql:
+  # annex_partners: ./data/partners_by_project_annex.csv
   general_partners: ./data/partners_general.csv
   aap_partners: ./data/private/partenaires_aap2023.csv
   terrain_locations: ./data/project_summary_terrain_locations.csv
@@ -78,23 +79,17 @@ const selected_project = view(
 )
 
 display(
-  copyTableToClipboardButton(
-    [...terrain_data_by_city],
-    {
-      label: "Copy terrain data by location to clipboard",
-      delimeter: ";",
-    }
-  )
+  copyTableToClipboardButton([...terrain_data_by_city], {
+    label: "Copy terrain data by location to clipboard",
+    delimeter: ";",
+  })
 )
 
 display(
-  copyTableToClipboardButton(
-    [...terrain_data],
-    {
-      label: "Copy terrain and scale data to clipboard",
-      delimeter: ",",
-    }
-  )
+  copyTableToClipboardButton([...terrain_data], {
+    label: "Copy terrain and scale data to clipboard",
+    delimeter: ",",
+  })
 )
 ```
 
@@ -165,10 +160,90 @@ display(
   </div>
 </div>
 
+```sql id=all_partner_data
+-- Clean tables
+UPDATE general_partners
+  SET project_name = 'RESILIENCE'
+  WHERE project_name = 'RÉSILIENCE';
+UPDATE general_partners
+  SET project_name = 'NEO'
+  WHERE project_name = 'NÉO';
+
+-- merge tables
+-- WITH
+--   union_all AS (
+--     SELECT *
+--     FROM aap_partners
+--     UNION
+--     SELECT *
+--     FROM annex_partners
+--     UNION
+--     SELECT *
+--     FROM general_partners
+--   )
+SELECT
+  siret,
+  -- list_distinct(list(siren)) as sirens,
+  -- siren,
+  -- list_distinct(list(project_name)) as projects,
+  -- nom_complet,
+  -- nature_juridique,
+  -- libelle_commune,
+  -- commune,
+  latitude,
+  longitude,
+  -- first(latitude) as latitude,
+  -- first(longitude) as longitude,
+  -- code_postal,
+  -- region,
+  -- list_distinct(list(project_coordinator)) AS project_coordinator,
+  -- list_distinct(list(source)) AS sources,
+  -- list_distinct(list(source_label)) AS source_labels,
+  count() as count,
+FROM general_partners
+-- FROM union_all
+GROUP BY ALL;
+```
+
+```js
+// const filtered_partner_data = [...all_partner_data].filter();
+// const partners_by_city = d3.groups([...all_partner_data], (d) =>
+//   d.code_postal ? d.code_postal.slice(0, 2) : null
+// )
+```
+
+```js
+console.debug("[...all_partner_data]", [...all_partner_data].map((d) => d.toJSON()))
+const test_plot = (width, height) =>
+  defaultProjectionFrance(
+    width,
+    height,
+    [
+      Plot.dot(
+        [...all_partner_data],
+        Plot.hexbin(
+          {
+            r: "count",
+            fill: "count",
+          },
+          {
+            x: "longitude",
+            y: "latitude",
+            // stroke: vdbi_color_scheme.orange,
+            fill: vdbi_color_scheme.blue,
+          }
+        )
+      ),
+      ...terrain_tips(france_terrain_data),
+    ],
+    "- Project partners, France"
+  )
+```
+
 ## Projects by Partner locations
 
 <div class="grid grid-cols-3">
-  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
+  <!-- <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
     ${resize(
       (width, height) => defaultProjectionFrance(
         width,
@@ -177,6 +252,11 @@ display(
         "- Project terrains by city and Île-de-France, France"
       )
     )}
+
+  </div>
+-->
+  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
+    ${resize((width, height) => test_plot(width, height))}
 
   </div>
   <div class="card" style="padding: 10px; overflow: hidden;">
@@ -461,7 +541,7 @@ const france_terrain_data = [...terrain_data_by_city]
       // separate out ile-de-france data
       !inBBox(d.longitude, d.latitude, ile_de_france_bbox)
   )
-  .map((d) => d.toJSON()) // this is only to make debugging easier, should be removed at scale
+  .map((d) => d.toJSON()) // this is only to make debugging easier, should be removed
 
 const ile_de_france_terrain_data = [...terrain_data_by_city].filter(
   (d) =>
@@ -647,6 +727,7 @@ const defaultProjection = (
     caption: caption,
     projection: {
       type: "azimuthal-equidistant",
+      // type: "albers",
       domain: domain,
     },
     marks: [...marks],
