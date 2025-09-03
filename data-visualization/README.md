@@ -1,8 +1,14 @@
 # Data Visualization
 
-This is an [Observable Framework](https://observablehq.com/framework) project. To start the local preview server, run:
+This is an [Observable Framework](https://observablehq.com/framework) project.
+Before running, you must have the following prerequisites installed:
 
-```
+- [node.js](https://nodejs.org/)
+- [python](https://www.python.org/)
+
+To start the local preview server, run:
+
+```bash
 npm run dev
 ```
 
@@ -12,21 +18,18 @@ For more, see <https://observablehq.com/framework/getting-started>.
 
 ## Project structure
 
-A typical Framework project looks like this:
-
 ```ini
 .
-├─ docs
-│  ├─ components
-│  │  └─ timeline.js           # an importable module
-│  ├─ data
-│  │  ├─ launches.csv.js       # a data loader
-│  │  └─ events.json           # a static data file
-│  ├─ example-dashboard.md     # a page
+├─ src
+│  ├─ components               # js scripts
+│  ├─ data                     # data loaders and static data files
+│  ├─ *.md                     # a page
 │  ├─ example-report.md        # another page
 │  └─ index.md                 # the home page
 ├─ .gitignore
 ├─ observablehq.config.ts      # the project config file
+├─ eslint.config.ts
+├─ .markdownlint.json
 ├─ package.json
 └─ README.md
 ```

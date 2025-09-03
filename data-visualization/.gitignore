@@ -4,3 +4,4 @@ src/.observablehq/cache/
 node_modules/
 yarn-error.log
 jsdoc
+.venv
