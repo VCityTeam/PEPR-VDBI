@@ -24,10 +24,10 @@ flowchart TD
 # Visualization results
 
 ```js
-import { searchOrcid } from "./components/orcid.js" 
+import { searchOrcid } from "/components/orcid.js"
 
 // const access_token_reponse = FileAttachment(
-//   "./data/fetch-orcid-access-token.json"
+//   "/data/fetch-orcid-access-token.json"
 // ).json();
 ```
 
@@ -36,10 +36,10 @@ import { searchOrcid } from "./components/orcid.js"
 const response = await searchOrcid(
   "vinasco",
   // access_token_reponse.access_token,
-  "38be4302-f5de-4e69-9e51-44df3ab2f1c2",
-);
+  "38be4302-f5de-4e69-9e51-44df3ab2f1c2"
+)
 ```
 
 ```js
-display(response);
+display(response)
 ```

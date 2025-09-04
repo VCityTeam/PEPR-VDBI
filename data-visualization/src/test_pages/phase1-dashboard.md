@@ -11,84 +11,76 @@ import {
   getLabSheet,
   resolvePhase1Entities,
   resolveLaboEntities,
-} from "./components/240117-proposals-labs-establishments.js";
+} from "/components/240117-proposals-labs-establishments.js"
 import {
   getProductSheet,
   resolveProjectEntities,
-} from "./components/240108-proposals-keywords.js";
-import { mapProjectsToRDFGraph } from "./components/graph.js";
-import {
-  mapCounts,
-  mergeCounts,
-  countEntities
-} from "./components/utilities.js";
+} from "/components/240108-proposals-keywords.js"
+import { mapProjectsToRDFGraph } from "/components/graph.js"
+import { mapCounts, mergeCounts, countEntities } from "/components/utilities.js"
 ```
 
 ```js
 const workbook1 = FileAttachment(
-  "./data/private/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx"
-).xlsx();
+  "/data/private/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx"
+).xlsx()
 
 const workbook2 = FileAttachment(
-  "./data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
-).xlsx();
+  "/data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
+).xlsx()
 ```
 
 ```js
-const anonymize = false;
-const anonymizeDict = new Map();
+const anonymize = false
+const anonymizeDict = new Map()
 const projects_product = resolveProjectEntities(
   getProductSheet(workbook1),
   anonymize,
   anonymizeDict
-);
+)
 const projects_phase_1 = resolvePhase1Entities(
   getPhase1Sheet(workbook2),
   anonymize,
   anonymizeDict
-);
+)
 
 const city_data = getVillesSheet(workbook2).map((d) => {
   return {
     etablissement: [d["Etablissements"]],
     lieu: [d["Lieu"]],
-  };
-});
+  }
+})
 ```
 
 ```js
 const sorted_partner_counts = countEntities(
   projects_phase_1,
   (project) => project.partenaires
-);
+)
 display(projects_phase_1)
 display(sorted_partner_counts)
 const sorted_keyword_counts = countEntities(
   projects_product,
   (project) => project.motClefs
-);
+)
 
 const sorted_establishment_owner_counts = countEntities(
   projects_phase_1,
   (project) => project.etablissements.slice(0, 1)
-);
+)
 
 const sorted_establishment_partner_counts = countEntities(
   projects_phase_1,
   (project) => project.etablissements.slice(1)
-);
+)
 
-const establishment_counts = [];
+const establishment_counts = []
 const establishment_counts_mapped = mapCounts(
   [sorted_establishment_owner_counts, sorted_establishment_partner_counts],
   ["owner", "partner"]
 ).forEach((d) => {
-  establishment_counts.push([
-    d[0],
-    d[1],
-    d.type,
-  ])
-});
+  establishment_counts.push([d[0], d[1], d.type])
+})
 // TODO: mapCounts and mergeCounts need to be reworked with new countEntities
 
 const total_establishment_counts = d3.sort(
@@ -96,68 +88,60 @@ const total_establishment_counts = d3.sort(
     .rollup(
       establishment_counts,
       (D) => {
-        let count = 0;
+        let count = 0
         D.forEach((d) => {
-          count = count + d[1];
-        });
-        return [
-          D[0][0],
-          count,
-          "total",
-        ];
+          count = count + d[1]
+        })
+        return [D[0][0], count, "total"]
       },
       (d) => d[0]
     )
     .values(),
   (d) => d[0]
-);
+)
 
 const sorted_establishment_counts = d3.sort(
   establishment_counts.concat(total_establishment_counts),
   (d) => d[1],
   (d) => d[0]
-);
-console.log("sorted_establishment_counts", sorted_establishment_counts);
+)
+console.log("sorted_establishment_counts", sorted_establishment_counts)
 const city_count = countEntities(
   city_data,
   (establishment) => establishment.lieu
-);
+)
 
 const lab_owner_count = countEntities(projects_phase_1, (project) =>
   project.laboratoires.slice(0, 1)
-);
+)
 
 const lab_partner_count = countEntities(projects_phase_1, (project) =>
   project.laboratoires.slice(1)
-);
+)
 
 const lab_counts = mapCounts(
   [lab_owner_count, lab_partner_count],
   ["owner", "partner"]
-);
+)
 
 const total_lab_counts = d3.sort(
   d3
     .rollup(
       lab_counts,
       (D) => {
-        let count = 0;
+        let count = 0
         D.forEach((d) => {
-          count = count + d[1];
-        });
-        return [
-          D[0][0],
-          count,
-          "total",
-        ];
+          count = count + d[1]
+        })
+        return [D[0][0], count, "total"]
       },
       (d) => d[0]
     )
     .values(),
   (d) => d[0]
-);
+)
 
-const sorted_lab_counts = [];
+const sorted_lab_counts = []
 
 d3.sort(
   mergeCounts(
@@ -166,23 +150,11 @@ d3.sort(
   ).values(),
   (d) => d[0]
 ).forEach((d) => {
-  sorted_lab_counts.push([
-    d.entity,
-    d.owner_count,
-    "owner",
-  ]);
-  sorted_lab_counts.push([
-    d.entity,
-    d.partner_count,
-    "partner",
-  ]);
-  sorted_lab_counts.push([
-    d.entity,
-    d.total_count,
-    "total",
-  ]);
-});
-display(sorted_lab_counts);
+  sorted_lab_counts.push([d.entity, d.owner_count, "owner"])
+  sorted_lab_counts.push([d.entity, d.partner_count, "partner"])
+  sorted_lab_counts.push([d.entity, d.total_count, "total"])
+})
+display(sorted_lab_counts)
 ```
 
 <div class="grid grid-cols-4">

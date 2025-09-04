@@ -49,49 +49,49 @@ import {
   getLabSheet,
   resolvePhase1Entities,
   resolveLaboEntities,
-} from "./components/240117-proposals-labs-establishments.js";
+} from "/components/240117-proposals-labs-establishments.js"
 import {
   getProductSheet,
   resolveProjectEntities,
-} from "./components/240108-proposals-keywords.js";
-import { mapProjectsToRDFGraph } from "./components/graph.js";
-import { mapCounts, mergeCounts } from "./components/utilities.js";
+} from "/components/240108-proposals-keywords.js"
+import { mapProjectsToRDFGraph } from "/components/graph.js"
+import { mapCounts, mergeCounts } from "/components/utilities.js"
 ```
 
 ```js
 const workbook1 = FileAttachment(
-  "./data/private/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx"
-).xlsx();
+  "/data/private/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx"
+).xlsx()
 const workbook2 = FileAttachment(
-  "./data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
-).xlsx();
+  "/data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
+).xlsx()
 ```
 
 ```js
-const anonymize = false;
-const acronymousDict = new Map();
+const anonymize = false
+const acronymousDict = new Map()
 const projects_product = resolveProjectEntities(
   getProductSheet(workbook1),
   anonymize,
   acronymousDict
-);
+)
 const projects_phase_1 = resolvePhase1Entities(
   getPhase1Sheet(workbook2),
-  anonymize,  
+  anonymize,
   acronymousDict
-);
+)
 ```
 
 Projects from product workbook:
 
 ```js echo
-display(projects_product);
+display(projects_product)
 ```
 
 Projects from laboratory workbook:
 
 ```js echo
-display(projects_phase_1);
+display(projects_phase_1)
 ```
 
 ## Simple XBar plot - count keywords
@@ -101,18 +101,13 @@ Map-group-reduce-sort the keywords of each project to an array and count the occ
 ```js echo
 function countEntities(data, mapFunction) {
   // flatten (map to array then merge) entities
-  const entity_list = d3.merge(
-    d3.map(
-      data,
-      (d) => mapFunction(d)
-    )
-  );
+  const entity_list = d3.merge(d3.map(data, (d) => mapFunction(d)))
   // group by entity then reduce to a count with d3.rollup()
   const entityCounts = d3.rollup(
     entity_list,
     (D) => D.length,
     (d) => d
-  );
+  )
   // map entityCounts to a [{x: entity, y: count}] data structure
   const formatted_entity_counts = d3.map(
     entityCounts.entries(),
@@ -120,18 +115,18 @@ function countEntities(data, mapFunction) {
       return {
         entity: key,
         count: value,
-      };
+      }
     }
-  );
+  )
   // sort by entity and return
-  return d3.sort(formatted_entity_counts, (d) => d.entity);
+  return d3.sort(formatted_entity_counts, (d) => d.entity)
 }
 
 const sorted_keyword_counts = countEntities(
   projects_product,
   (project) => project.motClefs
-);
-display(sorted_keyword_counts);
+)
+display(sorted_keyword_counts)
 ```
 
 Plot the occurrences to a simple bar chart with the following features:
@@ -167,7 +162,7 @@ display(
       }),
     ],
   })
-);
+)
 ```
 
 ## Sorted Grouped XBar plot - count project universities and partners
@@ -185,8 +180,8 @@ A count of establishment owners (or a count of projects per establishment owner)
 const sorted_establishment_owner_counts = countEntities(
   projects_phase_1,
   (project) => project.etablissements.slice(0, 1)
-);
-display(sorted_establishment_owner_counts);
+)
+display(sorted_establishment_owner_counts)
 ```
 
 A count of establishment partners (or a count of projects per establishment partner)
@@ -195,8 +190,8 @@ A count of establishment partners (or a count of projects per establishment part
 const sorted_establishment_partner_counts = countEntities(
   projects_phase_1,
   (project) => project.etablissements.slice(1)
-);
-display(sorted_establishment_partner_counts);
+)
+display(sorted_establishment_partner_counts)
 ```
 
 <!-- A count of partners per establishment (using the graph).
@@ -214,28 +209,28 @@ Combine counts to one array and calculate count totals
 const establishment_counts = mapCounts(
   [sorted_establishment_owner_counts, sorted_establishment_partner_counts],
   ["owner", "partner"]
-);
+)
 
 const total_establishment_counts = d3.sort(
   d3
     .rollup(
       establishment_counts,
       (D) => {
-        let count = 0;
+        let count = 0
         D.forEach((d) => {
-          count = count + d.count;
-        });
+          count = count + d.count
+        })
         return {
           entity: D[0].entity,
           count: count,
           type: "total",
-        };
+        }
       },
       (d) => d.entity
     )
     .values(),
   (d) => d.entity
-);
+)
 ```
 
 Merge counts into one dataset
@@ -245,8 +240,8 @@ const sorted_establishment_counts = d3.sort(
   establishment_counts.concat(total_establishment_counts),
   (d) => d.count,
   (d) => d.entity
-);
-display(sorted_establishment_counts);
+)
+display(sorted_establishment_counts)
 ```
 
 ... and plot data
@@ -280,7 +275,7 @@ display(
       }),
     ],
   })
-);
+)
 ```
 
 ## Sorted YBar plot - count project cities
@@ -292,9 +287,9 @@ const city_data = getVillesSheet(workbook2).map((d) => {
   return {
     etablissement: [d["Etablissements"]],
     lieu: [d["Lieu"]],
-  };
-});
-display(city_data);
+  }
+})
+display(city_data)
 ```
 
 A count of project cities
@@ -303,8 +298,8 @@ A count of project cities
 const city_count = countEntities(
   city_data,
   (establishment) => establishment.lieu
-);
-display(city_count);
+)
+display(city_count)
 ```
 
 Plot data
@@ -333,7 +328,7 @@ display(
       }),
     ],
   })
-);
+)
 ```
 
 ## Sorted YLine plot - count project laboratories (project owners and partners)
@@ -352,8 +347,8 @@ A count of lab project owners
 ```js echo
 const lab_owner_count = countEntities(projects_phase_1, (project) =>
   project.laboratoires.slice(0, 1)
-);
-display(lab_owner_count);
+)
+display(lab_owner_count)
 ```
 
 A count of lab project partners
@@ -361,8 +356,8 @@ A count of lab project partners
 ```js echo
 const lab_partner_count = countEntities(projects_phase_1, (project) =>
   project.laboratoires.slice(1)
-);
-display(lab_partner_count);
+)
+display(lab_partner_count)
 ```
 
 Combine counts to one array and calculate count totals
@@ -371,28 +366,28 @@ Combine counts to one array and calculate count totals
 const lab_counts = mapCounts(
   [lab_owner_count, lab_partner_count],
   ["owner", "partner"]
-);
+)
 
 const total_lab_counts = d3.sort(
   d3
     .rollup(
       lab_counts,
       (D) => {
-        let count = 0;
+        let count = 0
         D.forEach((d) => {
-          count = count + d.count;
-        });
+          count = count + d.count
+        })
         return {
           entity: D[0].entity,
           count: count,
           type: "total",
-        };
+        }
       },
       (d) => d.entity
     )
     .values(),
   (d) => d.entity
-);
+)
 ```
 
 Group counts together
@@ -404,7 +399,7 @@ Group counts together
 //   // (d) => d.count,
 // );
 
-const sorted_lab_counts = [];
+const sorted_lab_counts = []
 
 d3.sort(
   mergeCounts(
@@ -417,19 +412,19 @@ d3.sort(
     entity: d.entity,
     count: d.owner_count,
     type: "owner",
-  });
+  })
   sorted_lab_counts.push({
     entity: d.entity,
     count: d.partner_count,
     type: "partner",
-  });
+  })
   sorted_lab_counts.push({
     entity: d.entity,
     count: d.total_count,
     type: "total",
-  });
-});
-display(sorted_lab_counts);
+  })
+})
+display(sorted_lab_counts)
 ```
 
 ... and plot data
@@ -463,5 +458,5 @@ display(
       }),
     ],
   })
-);
+)
 ```

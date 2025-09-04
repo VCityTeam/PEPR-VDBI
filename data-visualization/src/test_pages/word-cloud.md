@@ -1,6 +1,6 @@
 ---
 sql:
-  integreen_wps_en_cleaned: "data/private/integreen_wps_en_cleaned.csv"
+  integreen_wps_en_cleaned: "/data/private/integreen_wps_en_cleaned.csv"
 ---
 
 ```js
@@ -102,11 +102,11 @@ const formatted_words = [...integreen_words].map((d) => d.toJSON())
 ```
 
 ```js
-import { vdbi_orange_analogic_color_scale } from "./components/color.js"
+import { vdbi_orange_analogic_color_scale } from "/components/color.js"
 ```
 
 ```js
-import { copySVGToClipboardButton } from "./components/utilities.js"
+import { copySVGToClipboardButton } from "/components/utilities.js"
 ```
 
 container_2:
@@ -193,7 +193,7 @@ function generateWordCloud(
 # Again, but from imported code
 
 ```js echo
-import { wordCloud } from "./components/cloud.js"
+import { wordCloud } from "/components/cloud.js"
 ```
 
 ```js

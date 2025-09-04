@@ -1,27 +1,24 @@
 ---
 theme: [dashboard, light]
 sql:
-  annex_partners: ./data/partners_by_project_annex.csv
-  general_partners: ./data/partners_general.csv
-  aap_partners: ./data/partners_aap2023.csv
-  cjn1: ./data/cj_septembre_2022_n1.csv
-  cjn2: ./data/cj_septembre_2022_n2.csv
-  cjn3: ./data/cj_septembre_2022_n3.csv
+  annex_partners: /data/partners_by_project_annex.csv
+  general_partners: /data/partners_general.csv
+  aap_partners: /data/partners_aap2023.csv
+  cjn1: /data/cj_septembre_2022_n1.csv
+  cjn2: /data/cj_septembre_2022_n2.csv
+  cjn3: /data/cj_septembre_2022_n3.csv
 ---
 
 ```js
-import { projectionMap } from './components/projection-map.js';
+import { projectionMap } from "/components/projection-map.js"
 ```
 
 ```js
-import {
-  cropText,
-  copyTableToClipboardButton,
-} from './components/utilities.js';
+import { cropText, copyTableToClipboardButton } from "/components/utilities.js"
 ```
 
 ```js
-import { tableToSankeyGraph, sankeyDiagram } from './components/sankey.js';
+import { tableToSankeyGraph, sankeyDiagram } from "/components/sankey.js"
 ```
 
 ```js
@@ -29,24 +26,27 @@ import {
   project_color_scale,
   legal_nature_colors,
   interpolated_legal_nature_color,
-} from './components/color.js';
+} from "/components/color.js"
 ```
 
 # Phase 1 Partners
 
 ```js
 const filter_no_result = view(
-  Inputs.toggle({ label: 'Filter results with no SIREN', value: true })
-);
+  Inputs.toggle({ label: "Filter results with no SIREN", value: true })
+)
 const filter_annex_data = view(
-  Inputs.toggle({ label: 'Filter annex data', value: false })
-);
+  Inputs.toggle({ label: "Filter annex data", value: false })
+)
 const filter_general_data = view(
-  Inputs.toggle({ label: 'Filter AAP generality data source', value: false })
-);
+  Inputs.toggle({ label: "Filter AAP generality data source", value: false })
+)
 const filter_aap_data = view(
-  Inputs.toggle({ label: 'Filter AAP partenaires_aap2023 data source', value: false })
-);
+  Inputs.toggle({
+    label: "Filter AAP partenaires_aap2023 data source",
+    value: false,
+  })
+)
 ```
 
 ```js
@@ -54,13 +54,16 @@ function filterResults(d) {
   if (filter_no_result && !d.siren) {
     return false
   }
-  if (filter_annex_data && d.sources.includes('financed_annex_partners_by_project')) {
+  if (
+    filter_annex_data &&
+    d.sources.includes("financed_annex_partners_by_project")
+  ) {
     return false
   }
-  if (filter_general_data && d.sources.includes('generality')) {
+  if (filter_general_data && d.sources.includes("generality")) {
     return false
   }
-  if (filter_aap_data && d.sources.includes('partenaires_aap2023')) {
+  if (filter_aap_data && d.sources.includes("partenaires_aap2023")) {
     return false
   }
   return true
@@ -87,12 +90,12 @@ function filterResults(d) {
 const level_1_select = Inputs.select(
   new Set(partners_by_legal_nature_level_data.map((d) => d.cjn1_code)),
   {
-    label: 'Select level 1 legal nature',
+    label: "Select level 1 legal nature",
     value: 0,
   }
-);
+)
 
-const level_1_value = Generators.input(level_1_select);
+const level_1_value = Generators.input(level_1_select)
 ```
 
 <div class="card">
@@ -242,79 +245,79 @@ on cjn1.Code = floor(aggregate_partners.nature_juridique / 1000)
 ```
 
 ```js
-const world = FileAttachment('./data/world.json').json();
+const world = FileAttachment("/data/world.json").json()
 ```
 
 ```js
-const regions = await FileAttachment('./data/france_regions.json').json();
-regions.features = regions.features.filter((d) => d.properties.nom != 'Corse');
+const regions = await FileAttachment("/data/france_regions.json").json()
+regions.features = regions.features.filter((d) => d.properties.nom != "Corse")
 ```
 
 ```js
-const departements = FileAttachment('./data/france_departements.json').json();
+const departements = FileAttachment("/data/france_departements.json").json()
 ```
 
 ```js
-const filtered_partner_data = [...all_partner_data].filter(filterResults);
+const filtered_partner_data = [...all_partner_data].filter(filterResults)
 ```
 
 ```js
-const filtered_legal_natures = [...legal_natures].filter(filterResults);
+const filtered_legal_natures = [...legal_natures].filter(filterResults)
 ```
 
 ```js
 const partners_by_legal_nature_level_data = filtered_legal_natures.map((d) => {
-  const datum = { ...d };
-  datum.level_3_label = `(Code ${datum.cjn3_code}) ${datum.cjn3_label}`;
-  datum.level_2_label = `(Code ${datum.cjn2_code}) ${datum.cjn2_label}`;
-  datum.level_1_label = `(Code ${datum.cjn1_code}) ${datum.cjn1_label}`;
-  return datum;
-});
+  const datum = { ...d }
+  datum.level_3_label = `(Code ${datum.cjn3_code}) ${datum.cjn3_label}`
+  datum.level_2_label = `(Code ${datum.cjn2_code}) ${datum.cjn2_label}`
+  datum.level_1_label = `(Code ${datum.cjn1_code}) ${datum.cjn1_label}`
+  return datum
+})
 ```
 
 ```js
 const partner_graph_1_2 = tableToSankeyGraph(
   partners_by_legal_nature_level_data,
   [
-    'level_1_label',
-    'level_2_label',
+    "level_1_label",
+    "level_2_label",
     // "level_3_label",
-    'project_name',
+    "project_name",
   ]
-);
-console.debug('partner_graph_1_2', partner_graph_1_2);
+)
+console.debug("partner_graph_1_2", partner_graph_1_2)
 ```
 
 ```js
 const filtered_partners_by_legal_nature_level_data =
   partners_by_legal_nature_level_data.filter(
     (d) => d.cjn1_code == level_1_value
-  );
+  )
 
 const partner_graph_2_3 = tableToSankeyGraph(
   filtered_partners_by_legal_nature_level_data,
   [
     // "level_1_label",
-    'level_2_label',
-    'level_3_label',
-    'project_name',
+    "level_2_label",
+    "level_3_label",
+    "project_name",
   ]
-);
+)
 
 const filtered_cjn2_codes = [
   ...new Set(
     filtered_partners_by_legal_nature_level_data.map((d) => d.cjn2_code % 10)
   ),
-];
+]
 
-console.debug('partner_graph_2_3', partner_graph_2_3);
-console.debug('filtered_cjn2_codes', filtered_cjn2_codes);
+console.debug("partner_graph_2_3", partner_graph_2_3)
+console.debug("filtered_cjn2_codes", filtered_cjn2_codes)
 ```
 
 ```js
 const partners_by_city = d3.groups(filtered_partner_data, (d) =>
   d.code_postal ? d.code_postal.slice(0, 2) : null
-);
+)
 ```
 
 ```js
@@ -325,19 +328,19 @@ const legal_nature_plot_config = (data, width, height = undefined) => {
     marginBottom: 60,
     x: {
       tickRotate: -20,
-      label: 'Legal nature',
+      label: "Legal nature",
       tickFormat: (d) => cropText(d, 15),
     },
     y: {
       grid: true,
-      label: 'Occurences',
+      label: "Occurences",
     },
     marks: [
       Plot.barY(data, {
         x: (d) => d[0],
         y: (d) => d[1],
         fill: (d) => d[1],
-        sort: { x: 'x' },
+        sort: { x: "x" },
         tip: {
           format: {
             fill: false,
@@ -346,15 +349,15 @@ const legal_nature_plot_config = (data, width, height = undefined) => {
         },
       }),
     ],
-  };
-};
+  }
+}
 ```
 
 ```js
-const filtered_partner_data_search = Inputs.search(filtered_partner_data);
+const filtered_partner_data_search = Inputs.search(filtered_partner_data)
 const filtered_partner_data_value = Generators.input(
   filtered_partner_data_search
-);
+)
 ```
 
 ## Partner label data quality
@@ -408,18 +411,18 @@ const filtered_partner_data_value = Generators.input(
 </div>
 
 ```js
-const no_result_search = Inputs.search(no_results);
-const no_result_search_result = Generators.input(no_result_search);
+const no_result_search = Inputs.search(no_results)
+const no_result_search_result = Generators.input(no_result_search)
 ```
 
 ```js
-const outlier_search = Inputs.search(outliers);
-const outlier_search_result = Generators.input(outlier_search);
+const outlier_search = Inputs.search(outliers)
+const outlier_search_result = Generators.input(outlier_search)
 ```
 
 ```js
-const consensus_search = Inputs.search(consensus);
-const consensus_search_result = Generators.input(consensus_search);
+const consensus_search = Inputs.search(consensus)
+const consensus_search_result = Generators.input(consensus_search)
 ```
 
 ```sql id=no_results
@@ -560,33 +563,33 @@ where length(sources) == 3 and nom_complet is not null
 ```
 
 ```js
-const debug = true;
+const debug = true
 
 if (debug) {
-  display('annex_partners');
-  display(Inputs.table(await sql`select * from annex_partners`));
-  display([...(await sql`select * from annex_partners`)].length);
-  display('general_partners');
-  display(Inputs.table(await sql`select * from general_partners`));
-  display([...(await sql`select * from general_partners`)].length);
-  display('aap_partners');
-  display(Inputs.table(await sql`select * from aap_partners`));
-  display([...(await sql`select * from aap_partners`)].length);
+  display("annex_partners")
+  display(Inputs.table(await sql`select * from annex_partners`))
+  display([...(await sql`select * from annex_partners`)].length)
+  display("general_partners")
+  display(Inputs.table(await sql`select * from general_partners`))
+  display([...(await sql`select * from general_partners`)].length)
+  display("aap_partners")
+  display(Inputs.table(await sql`select * from aap_partners`))
+  display([...(await sql`select * from aap_partners`)].length)
 
-  display('all_partner_data');
-  display(Inputs.table(all_partner_data));
-  display('filtered_partner_data');
-  display(Inputs.table(filtered_partner_data));
-  display('legal_natures');
-  display(Inputs.table(legal_natures));
-  display('filtered_legal_natures');
-  display(Inputs.table(filtered_legal_natures));
+  display("all_partner_data")
+  display(Inputs.table(all_partner_data))
+  display("filtered_partner_data")
+  display(Inputs.table(filtered_partner_data))
+  display("legal_natures")
+  display(Inputs.table(legal_natures))
+  display("filtered_legal_natures")
+  display(Inputs.table(filtered_legal_natures))
 
   // display("questionable_labels")
   // display(questionable_labels)
 }
-console.debug('partners_by_city', partners_by_city);
-console.debug('world', world);
-console.debug('regions', regions);
-console.debug('departements', departements);
+console.debug("partners_by_city", partners_by_city)
+console.debug("world", world)
+console.debug("regions", regions)
+console.debug("departements", departements)
 ```

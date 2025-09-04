@@ -47,19 +47,19 @@ import {
   getProductSheet,
   resolveProjectEntities,
   projectColorMap,
-} from "./components/240108-proposals-keywords.js";
+} from "/components/240108-proposals-keywords.js"
 import {
   mapProjectsToRDFGraph,
   filterLinks,
   forceGraph,
-} from "./components/graph.js";
+} from "/components/graph.js"
 
 const workbook1 = FileAttachment(
-  "./data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
-).xlsx();
+  "/data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
+).xlsx()
 const workbook2 = FileAttachment(
-  "./data/private/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx"
-).xlsx();
+  "/data/private/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx"
+).xlsx()
 ```
 
 **Input data:**
@@ -68,14 +68,14 @@ Using the transformation proposed in the imported components we can extract the 
 This transformation produces the following hierarchy: `root -> Project Acronym -> Project attribute (keywords, titles, etc.) -> ...`
 
 ```js echo
-const anonymize = false;
-const anonymizeDict = new Map();
+const anonymize = false
+const anonymizeDict = new Map()
 const productData = resolveProjectEntities(
   getProductSheet(workbook2),
   anonymize,
   anonymizeDict
-);
-display(productData);
+)
+display(productData)
 ```
 
 # Visualization results
@@ -97,11 +97,11 @@ Once integrated the following information is desired for visualization:
 ... We can also map the data to a graph hierarchy
 
 ```js echo
-const productGraph = mapProjectsToRDFGraph(productData, projectColorMap);
+const productGraph = mapProjectsToRDFGraph(productData, projectColorMap)
 ```
 
 ```js
-display(productGraph);
+display(productGraph)
 ```
 
 ```js echo
@@ -111,11 +111,11 @@ const productForceGraph = forceGraph(productGraph, {
   valueMap: (d) => d.color,
   r: 3,
   fontSize: 8,
-});
+})
 ```
 
 ```js
-display(productForceGraph);
+display(productForceGraph)
 ```
 
 ## Force Directed Graph - projects and keywords
@@ -123,21 +123,19 @@ display(productForceGraph);
 **Filtered graph nodes and links:**
 
 ```js
-const filter_input = Inputs.select(
-  Object.keys(productData[0]).slice(1)
-);
-const filter_value = Generators.input(filter_input);
+const filter_input = Inputs.select(Object.keys(productData[0]).slice(1))
+const filter_value = Generators.input(filter_input)
 ```
 
 ```js echo
 const filteredProductGraph = filterLinks(
   productGraph,
   (d) => d.label == filter_value
-);
+)
 ```
 
 ```js
-display(filteredProductGraph);
+display(filteredProductGraph)
 ```
 
 ```js echo
@@ -148,7 +146,7 @@ const filteredProductForceGraph = forceGraph(filteredProductGraph, {
   r: 2,
   fontSize: 8,
   typeList: projectColorMap,
-});
+})
 ```
 
 <div>${filter_input}</div>

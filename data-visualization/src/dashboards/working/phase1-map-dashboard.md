@@ -1,12 +1,12 @@
 ---
 theme: [dashboard, light]
 sql:
-  # annex_partners: ./data/partners_by_project_annex.csv
-  general_partners: ./data/partners_general.csv
-  aap_partners: ./data/private/partenaires_aap2023.csv
-  terrain_locations: ./data/project_summary_terrain_locations.csv
-  project_summaries: ./data/private/project_summary.csv
-  project_terrains_by_scale: ./data/private/project_summary_terrains.csv
+  # annex_partners: /data/partners_by_project_annex.csv
+  general_partners: /data/partners_general.csv
+  aap_partners: /data/private/partenaires_aap2023.csv
+  terrain_locations: /data/project_summary_terrain_locations.csv
+  project_summaries: /data/private/project_summary.csv
+  project_terrains_by_scale: /data/private/project_summary_terrains.csv
 ---
 
 # Phase 1 Cartography
@@ -21,7 +21,7 @@ import {
   countEntities,
   sparkbar,
   copyTableToClipboardButton,
-} from "./components/utilities.js"
+} from "/components/utilities.js"
 ```
 
 ```js
@@ -36,7 +36,7 @@ import {
   resolveInstitutionEntities,
   getColumnOptions,
   filterOnInput,
-} from "./components/phase1-dashboard.js"
+} from "/components/phase1-dashboard.js"
 ```
 
 ```js
@@ -44,15 +44,15 @@ import {
   forceGraph,
   mapTableToPropertyGraphLinks,
   mapTableToTriples,
-} from "./components/graph.js"
+} from "/components/graph.js"
 ```
 
 ```js
-import { projectionMap } from "./components/projection-map.js"
+import { projectionMap } from "/components/projection-map.js"
 ```
 
 ```js
-import { vdbi_color_scheme, project_color_scale } from "./components/color.js"
+import { vdbi_color_scheme, project_color_scale } from "/components/color.js"
 ```
 
 ```js
@@ -213,7 +213,10 @@ GROUP BY ALL;
 ```
 
 ```js
-console.debug("[...all_partner_data]", [...all_partner_data].map((d) => d.toJSON()))
+console.debug(
+  "[...all_partner_data]",
+  [...all_partner_data].map((d) => d.toJSON())
+)
 const test_plot = (width, height) =>
   defaultProjectionFrance(
     width,
@@ -433,12 +436,12 @@ group by all
 
 ```js
 const workbook1 = FileAttachment(
-  "./data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
+  "/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
 ).xlsx()
 ```
 
 ```js
-const france_regions = await FileAttachment("./data/france_regions.json").json()
+const france_regions = await FileAttachment("/data/france_regions.json").json()
 const mainland_france_regions = {
   type: "FeatureCollection",
   features: france_regions.features.filter(
@@ -455,7 +458,7 @@ const ile_de_france_region = {
 
 ```js
 const france_departements = await FileAttachment(
-  "./data/france_departements.json"
+  "/data/france_departements.json"
 ).json()
 const ile_de_france_departements = {
   type: "FeatureCollection",
@@ -464,11 +467,11 @@ const ile_de_france_departements = {
 ```
 
 ```js
-const europe = FileAttachment("./data/europe.geo.json").json()
+const europe = FileAttachment("/data/europe.geo.json").json()
 ```
 
 ```js
-const italy_regions = FileAttachment("./data/italy_regions.json").json()
+const italy_regions = FileAttachment("/data/italy_regions.json").json()
 ```
 
 ```js

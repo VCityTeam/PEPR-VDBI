@@ -3,12 +3,12 @@ theme: [dashboard, light]
 ---
 
 ```js
-const debug = false;
+const debug = false
 ```
 
 # Phase 1 Proposed Post Financing
 
-Aggregated financing data by project for proposed personnel contract with requested financial assistance for non-civil servant roles. 
+Aggregated financing data by project for proposed personnel contract with requested financial assistance for non-civil servant roles.
 
 <div class="warning" label="Data visualization notice">
   Data visualizations are unverified and errors may exist. Regard these data visualizations as estimations and not a "ground truth". Note the following:
@@ -24,6 +24,7 @@ Aggregated financing data by project for proposed personnel contract with reques
 </div>
 
 Also the following mapping is made between post descriptions and post categories, i.e., if a description contains one of the following tokens, it will be categorized as follows:
+
 ```mermaid
 ---
 title: Mapping between post description and post categories
@@ -87,27 +88,19 @@ flowchart TD
 ```
 
 ```js
-import {
-  resolveProjectFinancingEntities,
-} from "./components/financing.js";
-import {
-  sparkbar,
-  countEntities,
-  cropText,
-} from "./components/utilities.js";
-import {
-  donutChart
-} from "./components/pie-chart.js";
+import { resolveProjectFinancingEntities } from "/components/financing.js"
+import { sparkbar, countEntities, cropText } from "/components/utilities.js"
+import { donutChart } from "/components/pie-chart.js"
 ```
 
 ```js
 const category_color_map = new Map([
-  ['IR', d3.schemeCategory10[0]],
-  ['Doctorant', d3.schemeCategory10[1]],
-  ['Postdoctorant', d3.schemeCategory10[2]],
-  ['IE', d3.schemeCategory10[2]],
-  ['AI', d3.schemeCategory10[3]],
-  ['Tech', d3.schemeCategory10[4]],
+  ["IR", d3.schemeCategory10[0]],
+  ["Doctorant", d3.schemeCategory10[1]],
+  ["Postdoctorant", d3.schemeCategory10[2]],
+  ["IE", d3.schemeCategory10[2]],
+  ["AI", d3.schemeCategory10[3]],
+  ["Tech", d3.schemeCategory10[4]],
 ])
 
 function default_personnel_table_config(data, width) {
@@ -131,50 +124,37 @@ function default_personnel_table_config(data, width) {
       "total_cost",
     ],
     header: {
-      "description": "Post description",
-      "type_contract": "Contract type",
-      "type_post": "Contract category",
-      "employer": "Employer",
-      "months": "Contract length (months)",
-      "cost": "Unitary cost",
-      "assistance": "Financial assistance requested",
-      "support": "Support cost",
-      "total_cost": "Total cost",
+      description: "Post description",
+      type_contract: "Contract type",
+      type_post: "Contract category",
+      employer: "Employer",
+      months: "Contract length (months)",
+      cost: "Unitary cost",
+      assistance: "Financial assistance requested",
+      support: "Support cost",
+      total_cost: "Total cost",
     },
     align: {
       total_cost: "left",
     },
     format: {
-      cost: sparkbar(
-        d3.max(data, (d) => d.cost)
-      ),
-      assistance: sparkbar(
-        d3.max(data, (d) => d.assistance)
-      ),
-      support: sparkbar(
-        d3.max(data, (d) => d.support)
-      ),
-      total_cost: sparkbar(
-        d3.max(data, (d) => d.total_cost)
-      ),
-    }
-  };
+      cost: sparkbar(d3.max(data, (d) => d.cost)),
+      assistance: sparkbar(d3.max(data, (d) => d.assistance)),
+      support: sparkbar(d3.max(data, (d) => d.support)),
+      total_cost: sparkbar(d3.max(data, (d) => d.total_cost)),
+    },
+  }
 }
 
 const default_partner_table_config = {
-  columns: [
-    "complete_name",
-    "name",
-    "type",
-    "siret",
-  ],
+  columns: ["complete_name", "name", "type", "siret"],
   header: {
-    "complete_name": "Complete name",
-    "name": "Name",
-    "type": "Type",
-    "siret": "SIRET",
+    complete_name: "Complete name",
+    name: "Name",
+    type: "Type",
+    siret: "SIRET",
   },
-};
+}
 
 function default_x_plot_options(label, data, width, height) {
   return {
@@ -194,7 +174,7 @@ function default_x_plot_options(label, data, width, height) {
     },
     color: {
       type: "linear",
-      scheme: "Blues"
+      scheme: "Blues",
     },
     marks: [
       Plot.barX(data, {
@@ -204,34 +184,30 @@ function default_x_plot_options(label, data, width, height) {
         stroke: "black",
         strokeOpacity: 0.1,
         // sort: {y: "y"},
-        sort: {y: "-x"},
+        sort: { y: "-x" },
         tip: {
           format: {
             fill: false,
           },
           lineWidth: 25,
-          textOverflow: "ellipsis-end"
-        }
+          textOverflow: "ellipsis-end",
+        },
       }),
       Plot.barX(
-        data, 
+        data,
         Plot.pointerY({
           x: (d) => d[1],
           y: (d) => d[0],
           fill: "white",
           opacity: 0.5,
-        }),
+        })
       ),
     ],
-  }; 
-};
+  }
+}
 
-function default_employer_plot_options(
-    data,
-    width,
-    height = 500,
-  ) {
-  const max = d3.max(data.map((e) => e[1]));
+function default_employer_plot_options(data, width, height = 500) {
+  const max = d3.max(data.map((e) => e[1]))
   return {
     width: width,
     height: height,
@@ -248,7 +224,7 @@ function default_employer_plot_options(
     },
     color: {
       type: "linear",
-      scheme: "Blues"
+      scheme: "Blues",
     },
     marks: [
       Plot.barY(data, {
@@ -258,28 +234,28 @@ function default_employer_plot_options(
         stroke: "black",
         strokeOpacity: 0.5,
         // sort: {x: "-y"},
-        sort: {x: "x"},
-        channels: {Siret: (d) => d[0]},
+        sort: { x: "x" },
+        channels: { Siret: (d) => d[0] },
         tip: {
           format: {
             fill: false,
           },
           lineWidth: 25,
-          textOverflow: "ellipsis-end"
-        }
+          textOverflow: "ellipsis-end",
+        },
       }),
       Plot.barY(
-        data, 
+        data,
         Plot.pointerX({
           x: (d) => d[2],
           y: (d) => d[1],
           fill: "white",
           opacity: 0.5,
-        }),
+        })
       ),
     ],
-  }; 
-};
+  }
+}
 
 function default_pie_options(width, left_margin = 110) {
   return {
@@ -313,15 +289,15 @@ const all_data = {
     WHAOU_data.personnel,
   ]),
   partners: d3.merge([
-      inteGREEN_data.partners,
-      VILLEGARDEN_data.partners,
-      NEO_data.partners,
-      RESILIENCE_data.partners,
-      TRACES_data.partners,
-      URBHEALTH_data.partners,
-      VFpp_data.partners,
-      WHAOU_data.partners,
-    ]),
+    inteGREEN_data.partners,
+    VILLEGARDEN_data.partners,
+    NEO_data.partners,
+    RESILIENCE_data.partners,
+    TRACES_data.partners,
+    URBHEALTH_data.partners,
+    VFpp_data.partners,
+    WHAOU_data.partners,
+  ]),
 }
 
 // const all_description_count = d3.rollups(
@@ -336,11 +312,13 @@ const all_data = {
 //   (d) => d.type_contract,
 // ).filter((d) => d[0]);
 
-const all_type_post_count = d3.rollups(
-  all_data.personnel,
-  (D) => D.length,
-  (d) => d.type_post,
-).filter((d) => d[0]);
+const all_type_post_count = d3
+  .rollups(
+    all_data.personnel,
+    (D) => D.length,
+    (d) => d.type_post
+  )
+  .filter((d) => d[0])
 
 // const all_employer_count_by_name = d3.rollups(
 //   all_data.personnel,
@@ -348,35 +326,36 @@ const all_type_post_count = d3.rollups(
 //   (d) => d.employer.toLocaleUpperCase(),
 // ).filter((d) => d[0]);
 
-const all_employer_count_by_siret = d3.rollups(
-  all_data.personnel,
-  (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-  (d) => d.employer_id,
-)
+const all_employer_count_by_siret = d3
+  .rollups(
+    all_data.personnel,
+    (D) => [D.length, D[0].employer.toLocaleUpperCase()],
+    (d) => d.employer_id
+  )
   .filter((d) => d[0])
-  .map((d) => d3.merge([[d[0]], d[1]]));
+  .map((d) => d3.merge([[d[0]], d[1]]))
 
 const all_employer_count_by_siret_by_name = d3.rollups(
   all_employer_count_by_siret,
   (D) => d3.sum(D, (d) => d[1]),
-  (d) => d[2],
+  (d) => d[2]
 )
 
 if (debug) {
-    display("all_data");
-    display(all_data);
-    // display("all_description_count");
-    // display(all_description_count);
-    // display("all_type_contract_count");
-    // display(all_type_contract_count);
-    display("all_type_post_count");
-    display(all_type_post_count);
-    display("all_employer_count_by_siret");
-    display(all_employer_count_by_siret);
-    display("all_employer_count_by_siret_by_name");
-    display(all_employer_count_by_siret_by_name);
-    display("all_employer_count_by_siret");
-    display(all_employer_count_by_siret);
+  display("all_data")
+  display(all_data)
+  // display("all_description_count");
+  // display(all_description_count);
+  // display("all_type_contract_count");
+  // display(all_type_contract_count);
+  display("all_type_post_count")
+  display(all_type_post_count)
+  display("all_employer_count_by_siret")
+  display(all_employer_count_by_siret)
+  display("all_employer_count_by_siret_by_name")
+  display(all_employer_count_by_siret_by_name)
+  display("all_employer_count_by_siret")
+  display(all_employer_count_by_siret)
 }
 ```
 
@@ -647,29 +626,35 @@ if (debug) {
 
 ```js
 const inteGREEN_workbook = FileAttachment(
-  "./data/private/inteGREEN_France2030_aap_pepr_vdbi_2023_AnnexeFinanciere.xlsx"
-).xlsx();
+  "/data/private/inteGREEN_France2030_aap_pepr_vdbi_2023_AnnexeFinanciere.xlsx"
+).xlsx()
 ```
 
 ```js
-const inteGREEN_data = resolveProjectFinancingEntities(inteGREEN_workbook, 'inteGREEN');
-
-const inteGREEN_type_post_count = d3.rollups(
-  inteGREEN_data.personnel,
-  (D) => D.length,
-  (d) => d.type_post,
-).filter((d) => d[0]);
-
-const inteGREEN_employer_count = d3.rollups(
-  inteGREEN_data.personnel,
-  (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-  (d) => d.employer_id,
+const inteGREEN_data = resolveProjectFinancingEntities(
+  inteGREEN_workbook,
+  "inteGREEN"
 )
+
+const inteGREEN_type_post_count = d3
+  .rollups(
+    inteGREEN_data.personnel,
+    (D) => D.length,
+    (d) => d.type_post
+  )
   .filter((d) => d[0])
-  .map((d) => d3.merge([[d[0]], d[1]]));
+
+const inteGREEN_employer_count = d3
+  .rollups(
+    inteGREEN_data.personnel,
+    (D) => [D.length, D[0].employer.toLocaleUpperCase()],
+    (d) => d.employer_id
+  )
+  .filter((d) => d[0])
+  .map((d) => d3.merge([[d[0]], d[1]]))
 
 if (debug) {
-  display(inteGREEN_data);
+  display(inteGREEN_data)
 }
 ```
 
@@ -745,29 +730,35 @@ if (debug) {
 
 ```js
 const VILLEGARDEN_workbook = FileAttachment(
-  "./data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_VILLEGARDEN_07_02_2024.xlsx"
-).xlsx();
+  "/data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_VILLEGARDEN_07_02_2024.xlsx"
+).xlsx()
 ```
 
 ```js
-const VILLEGARDEN_data = resolveProjectFinancingEntities(VILLEGARDEN_workbook, 'VILLEGARDEN');
-
-const VILLEGARDEN_type_post_count = d3.rollups(
-  VILLEGARDEN_data.personnel,
-  (D) => D.length,
-  (d) => d.type_post,
-).filter((d) => d[0]);
-
-const VILLEGARDEN_employer_count = d3.rollups(
-  VILLEGARDEN_data.personnel,
-  (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-  (d) => d.employer_id,
+const VILLEGARDEN_data = resolveProjectFinancingEntities(
+  VILLEGARDEN_workbook,
+  "VILLEGARDEN"
 )
+
+const VILLEGARDEN_type_post_count = d3
+  .rollups(
+    VILLEGARDEN_data.personnel,
+    (D) => D.length,
+    (d) => d.type_post
+  )
   .filter((d) => d[0])
-  .map((d) => d3.merge([[d[0]], d[1]]));
+
+const VILLEGARDEN_employer_count = d3
+  .rollups(
+    VILLEGARDEN_data.personnel,
+    (D) => [D.length, D[0].employer.toLocaleUpperCase()],
+    (d) => d.employer_id
+  )
+  .filter((d) => d[0])
+  .map((d) => d3.merge([[d[0]], d[1]]))
 
 if (debug) {
-  display(VILLEGARDEN_data);
+  display(VILLEGARDEN_data)
 }
 ```
 
@@ -843,29 +834,32 @@ if (debug) {
 
 ```js
 const NEO_workbook = FileAttachment(
-  "./data/private/NEO_AnnexeFinanciere_totale_finale.xlsx"
-).xlsx();
+  "/data/private/NEO_AnnexeFinanciere_totale_finale.xlsx"
+).xlsx()
 ```
 
 ```js
-const NEO_data = resolveProjectFinancingEntities(NEO_workbook, 'NEO');
+const NEO_data = resolveProjectFinancingEntities(NEO_workbook, "NEO")
 
-const NEO_type_post_count = d3.rollups(
-  NEO_data.personnel,
-  (D) => D.length,
-  (d) => d.type_post,
-).filter((d) => d[0]);
-
-const NEO_employer_count = d3.rollups(
-  NEO_data.personnel,
-  (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-  (d) => d.employer_id,
-)
+const NEO_type_post_count = d3
+  .rollups(
+    NEO_data.personnel,
+    (D) => D.length,
+    (d) => d.type_post
+  )
   .filter((d) => d[0])
-  .map((d) => d3.merge([[d[0]], d[1]]));
+
+const NEO_employer_count = d3
+  .rollups(
+    NEO_data.personnel,
+    (D) => [D.length, D[0].employer.toLocaleUpperCase()],
+    (d) => d.employer_id
+  )
+  .filter((d) => d[0])
+  .map((d) => d3.merge([[d[0]], d[1]]))
 
 if (debug) {
-  display(NEO_data);
+  display(NEO_data)
 }
 ```
 
@@ -941,29 +935,35 @@ if (debug) {
 
 ```js
 const RESILIENCE_workbook = FileAttachment(
-  "./data/private/PEPR_RESILIENCE_07022024.xlsx"
-).xlsx();
+  "/data/private/PEPR_RESILIENCE_07022024.xlsx"
+).xlsx()
 ```
 
 ```js
-const RESILIENCE_data = resolveProjectFinancingEntities(RESILIENCE_workbook, 'RESILIENCE');
-
-const RESILIENCE_type_post_count = d3.rollups(
-  RESILIENCE_data.personnel,
-  (D) => D.length,
-  (d) => d.type_post,
-).filter((d) => d[0]);
-
-const RESILIENCE_employer_count = d3.rollups(
-  RESILIENCE_data.personnel,
-  (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-  (d) => d.employer_id,
+const RESILIENCE_data = resolveProjectFinancingEntities(
+  RESILIENCE_workbook,
+  "RESILIENCE"
 )
+
+const RESILIENCE_type_post_count = d3
+  .rollups(
+    RESILIENCE_data.personnel,
+    (D) => D.length,
+    (d) => d.type_post
+  )
   .filter((d) => d[0])
-  .map((d) => d3.merge([[d[0]], d[1]]));
+
+const RESILIENCE_employer_count = d3
+  .rollups(
+    RESILIENCE_data.personnel,
+    (D) => [D.length, D[0].employer.toLocaleUpperCase()],
+    (d) => d.employer_id
+  )
+  .filter((d) => d[0])
+  .map((d) => d3.merge([[d[0]], d[1]]))
 
 if (debug) {
-  display(RESILIENCE_data);
+  display(RESILIENCE_data)
 }
 ```
 
@@ -1039,29 +1039,32 @@ if (debug) {
 
 ```js
 const TRACES_workbook = FileAttachment(
-  "./data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_TRACES.xlsx"
-).xlsx();
+  "/data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_TRACES.xlsx"
+).xlsx()
 ```
 
 ```js
-const TRACES_data = resolveProjectFinancingEntities(TRACES_workbook, 'TRACES');
+const TRACES_data = resolveProjectFinancingEntities(TRACES_workbook, "TRACES")
 
-const TRACES_type_post_count = d3.rollups(
-  TRACES_data.personnel,
-  (D) => D.length,
-  (d) => d.type_post,
-).filter((d) => d[0]);
-
-const TRACES_employer_count = d3.rollups(
-  TRACES_data.personnel,
-  (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-  (d) => d.employer_id,
-)
+const TRACES_type_post_count = d3
+  .rollups(
+    TRACES_data.personnel,
+    (D) => D.length,
+    (d) => d.type_post
+  )
   .filter((d) => d[0])
-  .map((d) => d3.merge([[d[0]], d[1]]));
+
+const TRACES_employer_count = d3
+  .rollups(
+    TRACES_data.personnel,
+    (D) => [D.length, D[0].employer.toLocaleUpperCase()],
+    (d) => d.employer_id
+  )
+  .filter((d) => d[0])
+  .map((d) => d3.merge([[d[0]], d[1]]))
 
 if (debug) {
-  display(TRACES_data);
+  display(TRACES_data)
 }
 ```
 
@@ -1137,29 +1140,35 @@ if (debug) {
 
 ```js
 const URBHEALTH_workbook = FileAttachment(
-  "./data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_URBHEALTH_2024_02_05.xlsx"
-).xlsx();
+  "/data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_URBHEALTH_2024_02_05.xlsx"
+).xlsx()
 ```
 
 ```js
-const URBHEALTH_data = resolveProjectFinancingEntities(URBHEALTH_workbook, 'URBHEALTH');
-
-const URBHEALTH_type_post_count = d3.rollups(
-  URBHEALTH_data.personnel,
-  (D) => D.length,
-  (d) => d.type_post,
-).filter((d) => d[0]);
-
-const URBHEALTH_employer_count = d3.rollups(
-  URBHEALTH_data.personnel,
-  (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-  (d) => d.employer_id,
+const URBHEALTH_data = resolveProjectFinancingEntities(
+  URBHEALTH_workbook,
+  "URBHEALTH"
 )
+
+const URBHEALTH_type_post_count = d3
+  .rollups(
+    URBHEALTH_data.personnel,
+    (D) => D.length,
+    (d) => d.type_post
+  )
   .filter((d) => d[0])
-  .map((d) => d3.merge([[d[0]], d[1]]));
+
+const URBHEALTH_employer_count = d3
+  .rollups(
+    URBHEALTH_data.personnel,
+    (D) => [D.length, D[0].employer.toLocaleUpperCase()],
+    (d) => d.employer_id
+  )
+  .filter((d) => d[0])
+  .map((d) => d3.merge([[d[0]], d[1]]))
 
 if (debug) {
-  display(URBHEALTH_data);
+  display(URBHEALTH_data)
 }
 ```
 
@@ -1235,29 +1244,32 @@ if (debug) {
 
 ```js
 const VFpp_workbook = FileAttachment(
-  "./data/private/VF2PLUS_France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_global.xlsx"
-).xlsx();
+  "/data/private/VF2PLUS_France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_global.xlsx"
+).xlsx()
 ```
 
 ```js
-const VFpp_data = resolveProjectFinancingEntities(VFpp_workbook, 'VF++');
+const VFpp_data = resolveProjectFinancingEntities(VFpp_workbook, "VF++")
 
-const VFpp_type_post_count = d3.rollups(
-  VFpp_data.personnel,
-  (D) => D.length,
-  (d) => d.type_post,
-).filter((d) => d[0]);
-
-const VFpp_employer_count = d3.rollups(
-  VFpp_data.personnel,
-  (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-  (d) => d.employer_id,
-)
+const VFpp_type_post_count = d3
+  .rollups(
+    VFpp_data.personnel,
+    (D) => D.length,
+    (d) => d.type_post
+  )
   .filter((d) => d[0])
-  .map((d) => d3.merge([[d[0]], d[1]]));
+
+const VFpp_employer_count = d3
+  .rollups(
+    VFpp_data.personnel,
+    (D) => [D.length, D[0].employer.toLocaleUpperCase()],
+    (d) => d.employer_id
+  )
+  .filter((d) => d[0])
+  .map((d) => d3.merge([[d[0]], d[1]]))
 
 if (debug) {
-  display(VFpp_data);
+  display(VFpp_data)
 }
 ```
 
@@ -1333,29 +1345,32 @@ if (debug) {
 
 ```js
 const WHAOU_workbook = FileAttachment(
-  "./data/private/WHAOU_PEPR_VDBI_AnnexeFinanciere.xlsx"
-).xlsx();
+  "/data/private/WHAOU_PEPR_VDBI_AnnexeFinanciere.xlsx"
+).xlsx()
 ```
 
 ```js
-const WHAOU_data = resolveProjectFinancingEntities(WHAOU_workbook, 'WHAOU');
+const WHAOU_data = resolveProjectFinancingEntities(WHAOU_workbook, "WHAOU")
 
-const WHAOU_type_post_count = d3.rollups(
-  WHAOU_data.personnel,
-  (D) => D.length,
-  (d) => d.type_post,
-).filter((d) => d[0]);
-
-const WHAOU_employer_count = d3.rollups(
-  WHAOU_data.personnel,
-  (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-  (d) => d.employer_id,
-)
+const WHAOU_type_post_count = d3
+  .rollups(
+    WHAOU_data.personnel,
+    (D) => D.length,
+    (d) => d.type_post
+  )
   .filter((d) => d[0])
-  .map((d) => d3.merge([[d[0]], d[1]]));
+
+const WHAOU_employer_count = d3
+  .rollups(
+    WHAOU_data.personnel,
+    (D) => [D.length, D[0].employer.toLocaleUpperCase()],
+    (d) => d.employer_id
+  )
+  .filter((d) => d[0])
+  .map((d) => d3.merge([[d[0]], d[1]]))
 
 if (debug) {
-  display(WHAOU_data);
+  display(WHAOU_data)
 }
 ```
 

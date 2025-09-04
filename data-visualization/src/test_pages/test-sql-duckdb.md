@@ -2,22 +2,24 @@
 title: Researcher Dashboard
 theme: [light]
 sql:
-  ann: ./data/partners_by_project_annex.csv
-  aap: ./data/partners_aap2023.csv
-  gen: ./data/partners_general.csv
+  ann: /data/partners_by_project_annex.csv
+  aap: /data/partners_aap2023.csv
+  gen: /data/partners_general.csv
 ---
 
 # Phase 1 Actors
 
 The purpose of this test is to understand the process and limitations of integrating and
 manipulating data using the Observable Framework and DuckDB:
+
 - [SQL code block documentation](https://observablehq.com/framework/sql)
 - [Observable DuckDB documentation](https://observablehq.com/framework/lib/duckdb)
 
 The test will load and merge 3 different CSVs concerning project and partner information:
-  - `./data/partners_by_project_annex.csv`
-  - `./data/partners_aap2023.csv`
-  - `./data/partners_general.csv`
+
+- `./data/partners_by_project_annex.csv`
+- `./data/partners_aap2023.csv`
+- `./data/partners_general.csv`
 
 ```sql echo
 SHOW TABLES
@@ -46,10 +48,13 @@ SELECT * FROM partners
 ```sql
 SELECT * FROM ann
 ```
+
 ```sql id=[{count_ann}]
 SELECT count() as count_ann FROM ann
 ```
+
 count_ann
+
 ```js
 count_ann
 ```
@@ -59,10 +64,13 @@ count_ann
 ```sql
 SELECT * FROM aap
 ```
+
 ```sql id=[{count_aap}]
 SELECT count() as count_aap FROM aap
 ```
+
 count_aap
+
 ```js
 count_aap
 ```
@@ -76,7 +84,9 @@ SELECT * FROM gen
 ```sql id=[{count_gen}]
 SELECT count() as count_gen FROM gen
 ```
+
 count_gen
+
 ```js
 count_gen
 ```
@@ -172,13 +182,13 @@ ORDER BY project_name ASC;
 ```
 
 ```js
-await visibility(); // stall so the partners table is created in time (hopefully)
+await visibility() // stall so the partners table is created in time (hopefully)
 
 const total_partner_counts = await sql`
   SELECT project_name, count() AS partner_count, 'total' AS source
   FROM partners
   GROUP BY project_name
-  ORDER BY project_name ASC;`;
+  ORDER BY project_name ASC;`
 
 const all_counts = d3.merge([
   total_partner_counts,
@@ -186,20 +196,22 @@ const all_counts = d3.merge([
   aap_partner_counts,
   gen_partner_counts,
 ])
-display(Plot.plot({
-  marginBottom: 50,
-  fill: {legend: true},
-  x: {
-    tickRotate: 50,
-  },
-  marks: [
-    Plot.barY(all_counts, {
-      fill: "source",
-      fx: "project_name",
-      x: "source",
-      y: "partner_count",
-      tip: true
-    }),
-  ]
-}));
+display(
+  Plot.plot({
+    marginBottom: 50,
+    fill: { legend: true },
+    x: {
+      tickRotate: 50,
+    },
+    marks: [
+      Plot.barY(all_counts, {
+        fill: "source",
+        fx: "project_name",
+        x: "source",
+        y: "partner_count",
+        tip: true,
+      }),
+    ],
+  })
+)
 ```

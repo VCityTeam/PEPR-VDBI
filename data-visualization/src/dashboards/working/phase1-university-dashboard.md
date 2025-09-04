@@ -9,7 +9,7 @@ theme: [dashboard, light]
 import {
   countEntities,
   addEntityProjectOwnerAndPartnerCounts,
-} from "./components/utilities.js";
+} from "/components/utilities.js"
 import {
   getGeneraliteSheet,
   getChercheurSheet,
@@ -22,18 +22,18 @@ import {
   getColumnOptions,
   filterOnInput,
   getFilterableCountPlot,
-} from "./components/phase1-dashboard.js";
+} from "/components/phase1-dashboard.js"
 ```
 
 ```js
 const workbook1 = FileAttachment(
-  "./data/private/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
-).xlsx();
+  "/data/private/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
+).xlsx()
 ```
 
 ```js
-const anonymize = false;
-const anonymizeDict = new Map();
+const anonymize = false
+const anonymizeDict = new Map()
 // resolveGeneraliteEntities -> @return:
 // {
 //    acronyme: string,
@@ -59,28 +59,28 @@ const project_data = resolveGeneraliteEntities(
   getGeneraliteSheet(workbook1),
   anonymize,
   anonymizeDict
-);
+)
 const researcher_data = resolveChercheursEntities(
   getChercheurSheet(workbook1),
   anonymize,
   anonymizeDict
-);
+)
 const laboratory_data = resolveLaboratoireEntities(
   getLaboSheet(workbook1),
   anonymize,
   anonymizeDict
-);
+)
 const university_data = resolveEtablissementEntities(
   getEtablissementSheet(workbook1),
   anonymize,
   anonymizeDict
-);
-display("project_data");
-display(project_data);
+)
+display("project_data")
+display(project_data)
 // display("researcher_data");
 // display(researcher_data);
-display("laboratory_data");
-display(laboratory_data);
+display("laboratory_data")
+display(laboratory_data)
 // display("university_data");
 // display(university_data);
 ```
@@ -91,8 +91,8 @@ addEntityProjectOwnerAndPartnerCounts(
   laboratory_data,
   (project) => project.laboratoires.slice(0, 1),
   (project) => project.laboratoires.slice(1),
-  (lab) => lab.laboratoire,
-);
+  (lab) => lab.laboratoire
+)
 
 // export function addEntityProjectOwnerAndPartnerCounts(
 //   source_data,
@@ -129,16 +129,16 @@ const university_auditioned_input = Inputs.select(
     value: "All",
     label: "Auditioned?",
   }
-);
+)
 const university_financed_input = Inputs.select(
   getColumnOptions(project_data, "finance"),
   {
     value: "All",
     label: "Financed?",
   }
-);
-const university_auditioned = Generators.input(university_auditioned_input);
-const university_financed = Generators.input(university_financed_input);
+)
+const university_auditioned = Generators.input(university_auditioned_input)
+const university_financed = Generators.input(university_financed_input)
 
 // university by project sort select inputs
 const university_sort_input = Inputs.select(
@@ -150,8 +150,8 @@ const university_sort_input = Inputs.select(
     value: false,
     label: "Sort by",
   }
-);
-const university_sort = Generators.input(university_sort_input);
+)
+const university_sort = Generators.input(university_sort_input)
 
 // laboratory by project filter select inputs
 const laboratory_auditioned_input = Inputs.select(
@@ -160,16 +160,16 @@ const laboratory_auditioned_input = Inputs.select(
     value: "All",
     label: "Auditioned?",
   }
-);
+)
 const laboratory_financed_input = Inputs.select(
   getColumnOptions(project_data, "finance"),
   {
     value: "All",
     label: "Financed?",
   }
-);
-const laboratory_auditioned = Generators.input(laboratory_auditioned_input);
-const laboratory_financed = Generators.input(laboratory_financed_input);
+)
+const laboratory_auditioned = Generators.input(laboratory_auditioned_input)
+const laboratory_financed = Generators.input(laboratory_financed_input)
 
 // laboratory by project sort select inputs
 const laboratory_sort_input = Inputs.select(
@@ -181,19 +181,19 @@ const laboratory_sort_input = Inputs.select(
     value: false,
     label: "Sort by",
   }
-);
-const laboratory_sort = Generators.input(laboratory_sort_input);
+)
+const laboratory_sort = Generators.input(laboratory_sort_input)
 ```
 
 ```js
 // helper functions to access input field criteria
-const critera_functions = [d => d.auditionne, d => d.finance];
+const critera_functions = [(d) => d.auditionne, (d) => d.finance]
 
 // group by university project owner
 const projects_by_university_project_owner = d3.groups(
   project_data,
   (d) => d.etablissements[0]
-);
+)
 // display(projects_by_university_project_owner);
 
 // for every group of projects by university map...
@@ -205,15 +205,15 @@ const filtered_projects_by_university_project_owner = d3.map(
       D[1],
       [university_auditioned, university_financed],
       critera_functions
-    );
+    )
     // ... and reformat for plot
     return {
       entity: D[0],
       projects: filtered_projects,
       project_count: filtered_projects.length,
-    };
+    }
   }
-);
+)
 // display(filtered_projects_by_university_project_owner);
 ```
 
@@ -224,9 +224,9 @@ const filtered_projects_by_university_project_owner = d3.map(
 const projects_by_laboratory_project_owner = d3.groups(
   project_data,
   (d) => d.laboratoires[0]
-);
-display("projects_by_laboratory_project_owner");
-display(projects_by_laboratory_project_owner);
+)
+display("projects_by_laboratory_project_owner")
+display(projects_by_laboratory_project_owner)
 
 // for every group of project owner by laboratory map...
 const filtered_projects_by_laboratory_project_owner = d3.map(
@@ -237,17 +237,17 @@ const filtered_projects_by_laboratory_project_owner = d3.map(
       D[1],
       [laboratory_auditioned, laboratory_financed],
       critera_functions
-    );
+    )
     // ... and reformat for plot
     return {
       entity: D[0],
       projects: filtered_projects,
       project_count: filtered_projects.length,
-    };
+    }
   }
-);
-display("filtered_projects_by_laboratory_project_owner");
-display(filtered_projects_by_laboratory_project_owner);
+)
+display("filtered_projects_by_laboratory_project_owner")
+display(filtered_projects_by_laboratory_project_owner)
 ```
 
 ```js
@@ -262,22 +262,32 @@ const filtered_projects_by_university_project_owner_plot = Plot.plot({
     grid: true,
     axis: "top",
     label: "Project count",
-    domain: [0, Math.max(...filtered_projects_by_university_project_owner.map((d) => d.project_count)) + 1], // set domain from 0 to max project count value + 1
+    domain: [
+      0,
+      Math.max(
+        ...filtered_projects_by_university_project_owner.map(
+          (d) => d.project_count
+        )
+      ) + 1,
+    ], // set domain from 0 to max project count value + 1
   },
   y: {
-    tickFormat: (d) => d.length > 50 ? d.slice(0, 48).concat("...") : d, // cut off long tick labels
+    tickFormat: (d) => (d.length > 50 ? d.slice(0, 48).concat("...") : d), // cut off long tick labels
     label: "University",
   },
   marks: [
     Plot.barX(filtered_projects_by_university_project_owner, {
       x: "project_count",
       y: "entity",
-      fill: d3.map(filtered_projects_by_university_project_owner, (d) => d.project_count + 2), // shift up the color values to be more visible
-      sort: {y: university_sort ? "y" : "-x"},
+      fill: d3.map(
+        filtered_projects_by_university_project_owner,
+        (d) => d.project_count + 2
+      ), // shift up the color values to be more visible
+      sort: { y: university_sort ? "y" : "-x" },
       tip: true,
     }),
   ],
-});
+})
 
 // const filtered_projects_by_laboratory_project_owner_plot = Plot.plot({
 //   height: filtered_projects_by_laboratory_project_owner.length * 20, // assure adequate horizontal space for each line
@@ -307,9 +317,8 @@ const filtered_projects_by_university_project_owner_plot = Plot.plot({
 //   ],
 // });
 
-const filtered_projects_by_laboratory_project_owner_plot = getFilterableCountPlot(
-  filtered_projects_by_laboratory_project_owner,
-);
+const filtered_projects_by_laboratory_project_owner_plot =
+  getFilterableCountPlot(filtered_projects_by_laboratory_project_owner)
 ```
 
 <div class="grid grid-cols-2">
