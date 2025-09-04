@@ -8,23 +8,23 @@ import {
   cropText,
   exclude,
   copyTableToClipboardButton,
-} from "./components/utilities.js"
+} from "/components/utilities.js"
 ```
 
 ```js
-import { extractPhase1Workbook } from "./components/phase1-dashboard.js"
+import { extractPhase1Workbook } from "/components/phase1-dashboard.js"
 ```
 
 ```js
-import { donutChart } from "./components/pie-chart.js"
+import { donutChart } from "/components/pie-chart.js"
 ```
 
 ```js
-import { cnu_category_map } from "./components/cnu.js"
+import { cnu_category_map } from "/components/cnu.js"
 ```
 
 ```js
-import { getCategoryFromCNU, colorCNU } from "./components/color.js"
+import { getCategoryFromCNU, colorCNU } from "/components/color.js"
 ```
 
 # Researcher Disciplines by Project
@@ -177,19 +177,20 @@ const cnu_plot_legend_options = {
   type: "log",
 }
 
-const cnu_plot_legend = resize((width) => 
-  htl.html`${Plot.legend({
-    label: "Droit, économie et gestion",
-    marginLeft: cnu_plot_legend_options.marginLeft,
-    marginRight: cnu_plot_legend_options.marginRight,
-    width: width,
-    color: {
-      domain: cnu_plot_legend_options.domain,
-      range: cnu_plot_legend_options.range,
-      type: cnu_plot_legend_options.type,
-      scheme: "Reds",
-    },
-  })}
+const cnu_plot_legend = resize(
+  (width) =>
+    htl.html`${Plot.legend({
+      label: "Droit, économie et gestion",
+      marginLeft: cnu_plot_legend_options.marginLeft,
+      marginRight: cnu_plot_legend_options.marginRight,
+      width: width,
+      color: {
+        domain: cnu_plot_legend_options.domain,
+        range: cnu_plot_legend_options.range,
+        type: cnu_plot_legend_options.type,
+        scheme: "Reds",
+      },
+    })}
   ${Plot.legend({
     label: "Lettres et sciences humaines",
     marginLeft: cnu_plot_legend_options.marginLeft,
@@ -255,8 +256,8 @@ const cnu_plot_legend = resize((width) =>
 
 ```js
 const workbook1 = await FileAttachment(
-  "./data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
-  // './data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx'
+  "/data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
+  // '/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx'
 ).xlsx()
 
 const phase_1_data = extractPhase1Workbook(workbook1, false)
@@ -494,7 +495,6 @@ function formatResearcherDataByProject(
   }
 }
 ```
-
 
 ### Percent Summary
 

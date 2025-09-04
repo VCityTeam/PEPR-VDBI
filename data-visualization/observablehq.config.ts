@@ -7,46 +7,46 @@ export default {
   pages: [
     {
       name: 'Phase 1 Researchers by discipline',
-      path: 'phase1-disciplines',
+      path: 'dashboards/phase1-disciplines',
     },
     {
       name: 'Phase 1 Word clouds',
-      path: 'phase1-project-wordclouds',
+      path: 'dashboards/phase1-project-wordclouds',
     },
     {
       name: 'Under Construction',
       pages: [
         {
           name: 'Phase 1 Overview',
-          path: 'phase1-overview-dashboard',
+          path: 'dashboards/working/phase1-overview-dashboard',
         },
         {
           name: 'Phase 1 Partners',
-          path: 'phase1-partner-dashboard',
+          path: 'dashboards/working/phase1-partner-dashboard',
         },
         {
           name: 'Phase 1 Cartography',
-          path: 'phase1-map-dashboard',
+          path: 'dashboards/working/phase1-map-dashboard',
         },
         {
           name: 'Phase 1 Financing',
-          path: 'phase1-financing-dashboard',
+          path: 'dashboards/working/phase1-financing-dashboard',
         },
         {
           name: 'Demonstrateurs de la Ville Durable',
-          path: 'dvd-dashboard',
+          path: 'dashboards/working/dvd-dashboard',
         },
         // {
         //   name: 'Phase 1 Researchers',
-        //   path: 'phase1-researcher-dashboard',
+        //   path: 'dashboards/working/phase1-researcher-dashboard',
         // },
         // {
         //   name: 'Phase 1 Laboratories',
-        //   path: 'phase1-laboratory-dashboard',
+        //   path: 'dashboards/working/phase1-laboratory-dashboard',
         // },
         // {
         //   name: 'Phase 1 Institutions',
-        //   path: 'phase1-university-dashboard',
+        //   path: 'dashboards/working/phase1-university-dashboard',
         // },
       ],
     },
@@ -55,27 +55,27 @@ export default {
       pages: [
         {
           name: 'Raw Data',
-          path: 'phase1-data-dashboard',
+          path: 'test_pages/phase1-data-dashboard',
         },
         {
           name: 'Import Excel',
-          path: 'test-excel-import',
+          path: 'test_pages/test-excel-import',
         },
         {
           name: 'SQL and DuckDB',
-          path: 'test-sql-duckdb',
+          path: 'test_pages/test-sql-duckdb',
         },
         {
           name: 'Phase 1 Overview',
-          path: 'phase1-dashboard',
+          path: 'test_pages/phase1-dashboard',
         },
         {
           name: 'Import ORCID',
-          path: 'test-orcid-import',
+          path: 'test_pages/test-orcid-import',
         },
         {
           name: 'Mural Data',
-          path: 'test-mural-data',
+          path: 'test_pages/test-mural-data',
         },
       ],
     },
@@ -84,35 +84,35 @@ export default {
       pages: [
         {
           name: 'Plot',
-          path: 'test-plot',
+          path: 'test_pages/test-plot',
         },
         {
           name: 'Tree',
-          path: 'test-tree',
+          path: 'test_pages/test-tree',
         },
         {
           name: 'Zoomable Sunburst',
-          path: 'zoomable-sunburst',
+          path: 'test_pages/zoomable-sunburst',
         },
         {
           name: 'Parallel Sets',
-          path: 'parallel-sets',
+          path: 'test_pages/parallel-sets',
         },
         {
           name: 'Word Clouds',
-          path: 'word-cloud',
+          path: 'test_pages/word-cloud',
         },
         {
           name: 'Force Diagram, Triple Graph',
-          path: 'test-graph',
+          path: 'test_pages/test-graph',
         },
         {
           name: 'Arc Diagram, Property Graph',
-          path: 'test-arc',
+          path: 'test_pages/test-arc',
         },
         {
           name: 'Import dataESR+Geospatial',
-          path: 'test-esr-import',
+          path: 'test_pages/test-esr-import',
         },
       ],
     },

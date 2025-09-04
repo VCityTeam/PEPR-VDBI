@@ -6,104 +6,99 @@ theme: [dashboard, light]
 # Researcher Dashboard
 
 ```js
-import {
-  countEntities,
-  cropText
-} from "./components/utilities.js";
+import { countEntities, cropText } from "/components/utilities.js"
 import {
   extractPhase1Workbook,
   // getColumnOptions,
   // filterOnInput,
-} from "./components/phase1-dashboard.js";
-import {
-  donutChart
-} from "./components/pie-chart.js";
-import {
-  projectionMap
-} from "./components/projection-map.js";
+} from "/components/phase1-dashboard.js"
+import { donutChart } from "/components/pie-chart.js"
+import { projectionMap } from "/components/projection-map.js"
 import {
   arcDiagramVertical,
   forceGraph,
   mapTableToPropertyGraphLinks,
   sortNodes,
   mapTableToTriples,
-} from "./components/graph.js";
+} from "/components/graph.js"
 ```
 
 ```js
 // function for filtering out unknown values
-const exclude = (d) => ![
-  null,
-  "non renseignée",
-  "Non connue",
-  "non connues",
-  "Non Renseigné"
-].includes(d);
+const exclude = (d) =>
+  ![
+    null,
+    "non renseignée",
+    "Non connue",
+    "non connues",
+    "Non Renseigné",
+  ].includes(d)
 
 const workbook1 = FileAttachment(
-  // "./data/private/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
-  // "./data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx" //outdated
-  // "./data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx" // outdated
-  "./data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
-).xlsx();
+  // "/data/private/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
+  // "/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx" //outdated
+  // "/data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx" // outdated
+  "/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
+).xlsx()
 
 const geocoded_researcher_sites = FileAttachment(
-  "./data/researcher_sites.geocoded.csv"
-).csv();
+  "/data/researcher_sites.geocoded.csv"
+).csv()
 
-const world = FileAttachment("./data/world.json").json();
+const world = FileAttachment("/data/world.json").json()
 ```
 
 ```js
 // format data
-const phase_1_data = extractPhase1Workbook(workbook1, false);
+const phase_1_data = extractPhase1Workbook(workbook1, false)
 ```
 
 ```js
 // join researchers and site tables
 phase_1_data.researchers.forEach((researcher) => {
   // join on Sites
-  const locale = geocoded_researcher_sites.find((d) => d.Sites === researcher.site);
-  if (!locale) return;
+  const locale = geocoded_researcher_sites.find(
+    (d) => d.Sites === researcher.site
+  )
+  if (!locale) return
 
   // join coordinates, result_name, result_score, and result_status
-  researcher.latitude = locale.latitude;
-  researcher.longitude = locale.longitude;
-  researcher.geo_result_name = locale.result_name;
-  researcher.geo_result_status = locale.result_status;
-  researcher.geo_result_score = locale.result_score;
-});
+  researcher.latitude = locale.latitude
+  researcher.longitude = locale.longitude
+  researcher.geo_result_name = locale.result_name
+  researcher.geo_result_status = locale.result_status
+  researcher.geo_result_score = locale.result_score
+})
 
-console.debug("phase_1_data.researchers", phase_1_data.researchers);
-console.debug("geocoded_researcher_sites", geocoded_researcher_sites);
-
+console.debug("phase_1_data.researchers", phase_1_data.researchers)
+console.debug("geocoded_researcher_sites", geocoded_researcher_sites)
 
 // Filter financed
 const financed_input = Inputs.toggle(phase_1_data.researchers, {
   label: "Filter Financed Projects",
-  value: true
-});
+  value: true,
+})
 
-const financed = Generators.input(financed_input);
+const financed = Generators.input(financed_input)
 ```
 
 ```js
 // global search //
 const global_search_input = Inputs.search(phase_1_data.researchers, {
-  placeholder: "Search dataset..."
-});
+  placeholder: "Search dataset...",
+})
 
-const global_search = Generators.input(global_search_input);
+const global_search = Generators.input(global_search_input)
 ```
 
 ```js
 // display(phase_1_data)
 // Researcher table //
 const researcher_search_input = Inputs.search(global_search, {
-  placeholder: "Search researchers..."
-});
+  placeholder: "Search researchers...",
+})
 
-const researcher_search = Generators.input(researcher_search_input);
+const researcher_search = Generators.input(researcher_search_input)
 ```
 
 ```js
@@ -128,30 +123,30 @@ const researcher_table = Inputs.table(researcher_search, {
   header: {
     // "fullname": "Name",
     // "lastname": "Lastname",
-    "firstname": "Firstname",
-    "position": "Position",
-    "project": "Project(s)",
-    "gender": "Gender",
-    "disciplines": "Discipline(s)",
-    "discipline_erc": "ERC discipline",
-    "cnu": "CNU",
-    "site": "Site",
+    firstname: "Firstname",
+    position: "Position",
+    project: "Project(s)",
+    gender: "Gender",
+    disciplines: "Discipline(s)",
+    discipline_erc: "ERC discipline",
+    cnu: "CNU",
+    site: "Site",
     // "orcid": "ORCiD",
     // "idhal": "idHAL",
-    "lab": "Laboratory",
-    "notes": "Notes",
+    lab: "Laboratory",
+    notes: "Notes",
   },
-});
+})
 ```
 
 ```js
 // ERC Discipline count //
 const discipline_erc_count = countEntities(
-    global_search,
-    (d) => d.discipline_erc
-  )
+  global_search,
+  (d) => d.discipline_erc
+)
   .filter((d) => exclude(d[0]))
-  .sort((a, b) => d3.descending(a[1], b[1]));
+  .sort((a, b) => d3.descending(a[1], b[1]))
 
 const discipline_erc_pie = donutChart(discipline_erc_count, {
   width: 650,
@@ -159,8 +154,8 @@ const discipline_erc_pie = donutChart(discipline_erc_count, {
   fontSize: 18,
   keyMap: (d) => d[0],
   valueMap: (d) => d[1],
-  legend: false
-});
+  legend: false,
+})
 
 // console.debug("discipline_erc_count", discipline_erc_count);
 ```
@@ -170,13 +165,13 @@ const discipline_erc_pie = donutChart(discipline_erc_count, {
 const discipline_count = countEntities(
   global_search,
   (d) => d.disciplines
-).sort((a, b) => d3.descending(a[1], b[1]));
+).sort((a, b) => d3.descending(a[1], b[1]))
 
 const discipline_search_input = Inputs.search(discipline_count, {
-  placeholder: "Search disciplines..."
-});
+  placeholder: "Search disciplines...",
+})
 
-const discipline_search = Generators.input(discipline_search_input);
+const discipline_search = Generators.input(discipline_search_input)
 
 // console.debug("discipline_count", discipline_count);
 ```
@@ -207,32 +202,33 @@ const discipline_plot = Plot.plot({
       y: (d) => d[0],
       x: (d) => d[1],
       fill: (d) => d[1],
-      sort: {y: "-x"},
-      tip: {format: {fill: false}}
+      sort: { y: "-x" },
+      tip: { format: { fill: false } },
     }),
     Plot.barX(
-      discipline_search, 
-      Plot.pointerY({x: (d) => d[1], y: (d) => d[0], opacity: 0.2}),
+      discipline_search,
+      Plot.pointerY({ x: (d) => d[1], y: (d) => d[0], opacity: 0.2 })
     ),
   ],
-});
+})
 ```
 
 ```js
 // CNU count //
-const cnu_count = d3.rollups(
+const cnu_count = d3
+  .rollups(
     global_search,
     (d) => d.length,
     (d) => d.cnu
   )
   .filter((d) => exclude(d[0]))
-  .sort((a, b) => d3.descending(a[1], b[1]));
+  .sort((a, b) => d3.descending(a[1], b[1]))
 
 const cnu_search_input = Inputs.search(cnu_count, {
-  placeholder: "Search CNUs..."
-});
+  placeholder: "Search CNUs...",
+})
 
-const cnu_search = Generators.input(cnu_search_input);
+const cnu_search = Generators.input(cnu_search_input)
 
 // console.debug("cnu_count", cnu_count);
 ```
@@ -262,32 +258,33 @@ const cnu_plot = Plot.plot({
       y: (d) => d[0],
       x: (d) => d[1],
       fill: (d) => d[1],
-      sort: {y: "-x"},
+      sort: { y: "-x" },
       tip: {
         format: {
-          fill: false
+          fill: false,
         },
         lineWidth: 25,
-        textOverflow: "ellipsis-end"
-      }
+        textOverflow: "ellipsis-end",
+      },
     }),
     Plot.barX(
-      cnu_search, 
-      Plot.pointerY({x: (d) => d[1], y: (d) => d[0], opacity: 0.2}),
+      cnu_search,
+      Plot.pointerY({ x: (d) => d[1], y: (d) => d[0], opacity: 0.2 })
     ),
   ],
-});
+})
 ```
 
 ```js
 // Position count //
-const position_count = d3.rollups(
+const position_count = d3
+  .rollups(
     global_search,
     (d) => d.length,
     (d) => d.position
   )
   .filter((d) => exclude(d[0]))
-  .sort((a, b) => d3.descending(a[1], b[1]));
+  .sort((a, b) => d3.descending(a[1], b[1]))
 
 // console.debug("position_count", position_count);
 ```
@@ -299,20 +296,19 @@ const position_pie = donutChart(position_count, {
   fontSize: 18,
   keyMap: (d) => d[0],
   valueMap: (d) => d[1],
-  legend: false
-});
+  legend: false,
+})
 ```
 
 ```js
 // researcher projection map //
 const ok_geocoded_researcher_sites = d3.groups(
   global_search.filter(
-    (d) => d.geo_result_status == "ok" &&
-    exclude(d.site) &&
-    d.geo_result_score > 0.5
+    (d) =>
+      d.geo_result_status == "ok" && exclude(d.site) && d.geo_result_score > 0.5
   ),
   (d) => d.site
-);
+)
 
 const researcher_sites_projection = projectionMap(
   ok_geocoded_researcher_sites,
@@ -321,12 +317,12 @@ const researcher_sites_projection = projectionMap(
     height: 750,
     borderList: [
       topojson.feature(world, world.objects.land),
-      topojson.mesh(world, world.objects.countries, (a, b) => a !== b)
+      topojson.mesh(world, world.objects.countries, (a, b) => a !== b),
     ],
   }
-);
+)
 
-console.debug("ok_geocoded_researcher_sites", ok_geocoded_researcher_sites);
+console.debug("ok_geocoded_researcher_sites", ok_geocoded_researcher_sites)
 ```
 
 ```js
@@ -339,7 +335,7 @@ const graph_columns = new Map([
   ["Position", "position"],
   ["CNU", "cnu"],
   ["Site", "site"],
-]);
+])
 const arc_value_maps = new Map([
   ["id", (d) => d.id],
   ["project", (d) => d.project],
@@ -348,7 +344,7 @@ const arc_value_maps = new Map([
   ["position", (d) => d.position],
   ["cnu", (d) => d.cnu],
   ["site", (d) => d.site],
-]);
+])
 
 const researcher_arcs_by_project_select_input = Inputs.select(
   global_search.flatMap((d) => d.project),
@@ -357,37 +353,36 @@ const researcher_arcs_by_project_select_input = Inputs.select(
     sort: true,
     unique: true,
   }
-);
+)
 
 const researcher_arcs_by_project_select = Generators.input(
   researcher_arcs_by_project_select_input
-);
+)
 
-const researcher_arcs_by_property_select_input = Inputs.select(
-  graph_columns,
-  {
-    label: "Select relationship",
-    sort: true,
-    unique: true,
-  }
-);
+const researcher_arcs_by_property_select_input = Inputs.select(graph_columns, {
+  label: "Select relationship",
+  sort: true,
+  unique: true,
+})
 
 const researcher_arcs_by_property_select = Generators.input(
   researcher_arcs_by_property_select_input
-);
+)
 ```
 
 ```js
-const researcher_arcs_by_project = global_search.filter(
-  (d) => d.project.includes(researcher_arcs_by_project_select)
-);
+const researcher_arcs_by_project = global_search.filter((d) =>
+  d.project.includes(researcher_arcs_by_project_select)
+)
 const researcher_property_links = mapTableToPropertyGraphLinks(
   researcher_arcs_by_project,
   {
     id_key: "id",
     column: [...graph_columns.values()],
   }
-).filter((d) => d.label == researcher_arcs_by_property_select && d.value != null);
+).filter(
+  (d) => d.label == researcher_arcs_by_property_select && d.value != null
+)
 
 // console.debug("researcher_arcs_by_project", researcher_arcs_by_project);
 // console.debug("researcher_property_links", researcher_property_links);
@@ -397,22 +392,19 @@ const researcher_property_links = mapTableToPropertyGraphLinks(
 const arc_sort_map = sortNodes(
   {
     nodes: researcher_arcs_by_project,
-    links: researcher_property_links
+    links: researcher_property_links,
   },
   {
     keyMap: (d) => d.id,
-    valueMap: arc_value_maps.get(researcher_arcs_by_property_select)
+    valueMap: arc_value_maps.get(researcher_arcs_by_property_select),
   }
-);
+)
 
-const arc_sort_input = Inputs.select(
-  arc_sort_map,
-  {
-    label: "Sort",
-    sort: true,
-    unique: true,
-  }
-);
+const arc_sort_input = Inputs.select(arc_sort_map, {
+  label: "Sort",
+  sort: true,
+  unique: true,
+})
 
 // const arc_sort = Generators.input(
 //   arc_sort_input
@@ -421,8 +413,9 @@ const arc_sort_input = Inputs.select(
 const arc_diagram = arcDiagramVertical(
   {
     nodes: researcher_arcs_by_project,
-    links: researcher_property_links
-  }, {
+    links: researcher_property_links,
+  },
+  {
     width: 600,
     height: 650,
     marginLeft: 30,
@@ -433,37 +426,36 @@ const arc_diagram = arcDiagramVertical(
     keyMap: (d) => d.id,
     valueMap: arc_value_maps.get(researcher_arcs_by_property_select),
   }
-);
+)
 
-arc_sort_input.addEventListener("input", () => arc_diagram.update(arc_sort_input.value));
-arc_diagram.update(arc_sort_input.value);
+arc_sort_input.addEventListener("input", () =>
+  arc_diagram.update(arc_sort_input.value)
+)
+arc_diagram.update(arc_sort_input.value)
 ```
 
 ```js
 // researcher triples //
 const researcher_triples_predicate_select_input = Inputs.select(
-  // we don't use global search here in case 0 results are returned by the search 
+  // we don't use global search here in case 0 results are returned by the search
   Object.keys(phase_1_data.researchers[0]),
   {
     label: "Select property",
     sort: true,
     unique: true,
   }
-);
+)
 
 const researcher_triples_predicate_select = Generators.input(
   researcher_triples_predicate_select_input
-);
+)
 ```
 
 ```js
-const researcher_triples = mapTableToTriples(
-  global_search, {
-    id_key: "id",
-    column: [...graph_columns.values()],
-  }
-);
-
+const researcher_triples = mapTableToTriples(global_search, {
+  id_key: "id",
+  column: [...graph_columns.values()],
+})
 
 const filtered_researcher_triples = {
   nodes: researcher_triples.nodes.filter(
@@ -471,33 +463,29 @@ const filtered_researcher_triples = {
   ),
   links: researcher_triples.links.filter(
     ({ label }) => label == researcher_triples_predicate_select
-  )
+  ),
 }
 
 const color = d3
   .scaleOrdinal()
   .domain(["id", researcher_triples_predicate_select])
   .range(
-    d3
-      .quantize(d3.interpolatePlasma, 2)
-      // .reverse()
+    d3.quantize(d3.interpolatePlasma, 2)
+    // .reverse()
   )
-  .unknown("#aaa");
+  .unknown("#aaa")
 
-console.debug("researcher_triples", researcher_triples);
-console.debug("color", color);
+console.debug("researcher_triples", researcher_triples)
+console.debug("color", color)
 
-const researcher_force_graph = forceGraph(
-  filtered_researcher_triples,
-  {
-    id: "researcher_force_graph",
-    width: 1300,
-    height: 1300,
-    color: color,
-    nodeLabelOpacity: 0.2,
-    linkLabelOpacity: 0,
-  }
-);
+const researcher_force_graph = forceGraph(filtered_researcher_triples, {
+  id: "researcher_force_graph",
+  width: 1300,
+  height: 1300,
+  color: color,
+  nodeLabelOpacity: 0.2,
+  linkLabelOpacity: 0,
+})
 ```
 
 <div class="warning" label="Data visualization notice">
@@ -513,6 +501,7 @@ const researcher_force_graph = forceGraph(
 </div>
 
 ### Dashboard Search
+
 <div>${global_search_input}</div>
 <div class="grid grid-cols-3">
   <!-- <div class="card grid-colspan-2">

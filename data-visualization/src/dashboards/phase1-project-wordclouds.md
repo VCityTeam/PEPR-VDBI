@@ -1,14 +1,14 @@
 ---
 theme: [dashboard, light]
 sql:
-  integreen_wps_en_cleaned: "data/private/integreen_wps_en_cleaned.csv"
-  neo_wps_en_cleaned: "data/private/neo_wps_en_cleaned.csv"
-  resilience_wps_en_cleaned: "data/private/resilience_wps_en_cleaned.csv"
-  traces_wps_en_cleaned: "data/private/traces_wps_en_cleaned.csv"
-  urbhealth_wps_en_cleaned: "data/private/urbhealth_wps_en_cleaned.csv"
-  vfpp_wps_en_cleaned: "data/private/vfpp_wps_en_cleaned.csv"
-  villegarden_wps_en_cleaned: "data/private/villegarden_wps_en_cleaned.csv"
-  whaou_wps_en_cleaned: "data/private/whaou_wps_en_cleaned.csv"
+  integreen_wps_en_cleaned: "/data/private/integreen_wps_en_cleaned.csv"
+  neo_wps_en_cleaned: "/data/private/neo_wps_en_cleaned.csv"
+  resilience_wps_en_cleaned: "/data/private/resilience_wps_en_cleaned.csv"
+  traces_wps_en_cleaned: "/data/private/traces_wps_en_cleaned.csv"
+  urbhealth_wps_en_cleaned: "/data/private/urbhealth_wps_en_cleaned.csv"
+  vfpp_wps_en_cleaned: "/data/private/vfpp_wps_en_cleaned.csv"
+  villegarden_wps_en_cleaned: "/data/private/villegarden_wps_en_cleaned.csv"
+  whaou_wps_en_cleaned: "/data/private/whaou_wps_en_cleaned.csv"
 ---
 
 # Phase 1 Project Word Clouds
@@ -140,18 +140,18 @@ const selected_angle_offset_value = Generators.input(selected_angle_offset)
 <!-- imports -->
 
 ```js
-import { wordCloud } from "./components/cloud.js"
+import { wordCloud } from "/components/cloud.js"
 ```
 
 ```js
-import { copySVGToClipboardButton } from "./components/utilities.js"
+import { copySVGToClipboardButton } from "/components/utilities.js"
 ```
 
 ```js
 import {
   vdbi_orange_analogic_color_scale,
   vdbi_blue_analogic_color_scale,
-} from "./components/color.js"
+} from "/components/color.js"
 ```
 
 <!-- word counts -->

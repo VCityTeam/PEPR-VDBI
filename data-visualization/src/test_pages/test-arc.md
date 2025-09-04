@@ -33,22 +33,17 @@ flowchart TD
 ```
 
 ```js
-import {
-  countEntities,
-  cropText
-} from "./components/utilities.js";
-import {
-  extractPhase1Workbook,
-} from "./components/phase1-dashboard.js";
+import { countEntities, cropText } from "/components/utilities.js"
+import { extractPhase1Workbook } from "/components/phase1-dashboard.js"
 import {
   arcDiagramVertical,
   mapTableToPropertyGraphLinks,
-  sortNodes
-} from "./components/graph.js";
+  sortNodes,
+} from "/components/graph.js"
 
 const workbook = FileAttachment(
-  "./data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
-).xlsx();
+  "/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
+).xlsx()
 ```
 
 ### Input data
@@ -63,23 +58,26 @@ For this experiment we will use the researcher table.
 To reduce the amount of information displayed we apply a filter to retain only researchers from the `VF++` project.
 
 ```js echo
-const anonymize = false;
-const anonymizeDict = new Map();
-const researcher_data = extractPhase1Workbook(workbook, false)
-  .researchers.filter((d) => d.project.includes("VF++"));
+const anonymize = false
+const anonymizeDict = new Map()
+const researcher_data = extractPhase1Workbook(
+  workbook,
+  false
+).researchers.filter((d) => d.project.includes("VF++"))
 ```
 
 ```js
-display(researcher_data);
+display(researcher_data)
 ```
 
 ## Transformation to Property Graph
 
 Map the elements of an array of objects (a table) to a graph with the following rules:
+
 - Each object (row) is treated as a node with the properties (columns) of the object
 - A link is created between nodes that share the same primitive property values
 - A link is created between nodes with Array properties that share the same elements
-- A link is **NOT** created between nodes with properties that are JS `Object`s *(for now)*
+- A link is **NOT** created between nodes with properties that are JS `Object`s _(for now)_
 - Links contain:
   - a `source` property
   - a `target` property
@@ -93,26 +91,24 @@ Map the elements of an array of objects (a table) to a graph with the following 
 </div>
 
 The properties are selected for generating links:
+
 - `fullname`
 - `position`
 
 To reduce the size of the visualized data we filter on researcher positions as well for this test.
+
 ```js echo
 const researcher_links = mapTableToPropertyGraphLinks(researcher_data, {
-    id_key: "fullname",
-    columns: [
-      "fullname",
-      "position",
-    ]
-  }
-).filter((d) => d.label == "position");
+  id_key: "fullname",
+  columns: ["fullname", "position"],
+}).filter((d) => d.label == "position")
 ```
 
 ```js
-display(researcher_links);
+display(researcher_links)
 ```
 
-## Arc Diagram 
+## Arc Diagram
 
 An arc diagram is generated from an adaptation of the canonical [arc diagram example](https://observablehq.com/@d3/arc-diagram).
 A legend is added as well to distinguish arc values.
@@ -122,75 +118,78 @@ display(
   arcDiagramVertical(
     {
       nodes: researcher_data,
-      links: researcher_links
-    }, {
+      links: researcher_links,
+    },
+    {
       width: 600,
       marginLeft: 150,
       marginRight: 200,
       keyMap: (d) => d.fullname,
-      valueMap: (d) => d.position
+      valueMap: (d) => d.position,
     }
   )
-);
+)
 ```
 
-## Sortable Arc Diagram 
+## Sortable Arc Diagram
 
 The order of nodes can be sorted on an arc diagram.
 Currently 4 sort modalities are proposed:
+
 1. `input`: No sort
 2. `by name`: alphabetically, based on node id
 3. `by property`: based on a node property
 4. `by degree`: based on the degree of arcs per node
 
 The node sort order is produced by `sortNodes()`
+
 ```js echo
 const arc_sort_map = sortNodes(
   {
     nodes: researcher_data,
-    links: researcher_links
+    links: researcher_links,
   },
   {
     keyMap: (d) => d.fullname,
-    valueMap: (d) => d.position
+    valueMap: (d) => d.position,
   }
-);
+)
 ```
 
 ```js
-display(arc_sort_map);
+display(arc_sort_map)
 ```
 
 ```js echo
-const sort_select_input = Inputs.select(
-  arc_sort_map,
-  {
-    label: "Sort",
-    sort: true,
-    unique: true,
-  }
-);
+const sort_select_input = Inputs.select(arc_sort_map, {
+  label: "Sort",
+  sort: true,
+  unique: true,
+})
 
 const sortable_arc_diagram = arcDiagramVertical(
   {
     nodes: researcher_data,
-    links: researcher_links
-  }, {
+    links: researcher_links,
+  },
+  {
     width: 700,
     marginLeft: 230,
     marginRight: 200,
     keyMap: (d) => d.fullname,
     valueMap: (d) => d.position,
   }
-);
+)
 
 // This doesn't work with Observable.Generator (or at least we don't understand how)
 // without regenerating the svg and missing the update() function.
-sort_select_input.addEventListener("input", () => sortable_arc_diagram.update(sort_select_input.value));
-sortable_arc_diagram.update(sort_select_input.value);
+sort_select_input.addEventListener("input", () =>
+  sortable_arc_diagram.update(sort_select_input.value)
+)
+sortable_arc_diagram.update(sort_select_input.value)
 ```
 
 ```js
-display(sort_select_input);
-display(sortable_arc_diagram);
+display(sort_select_input)
+display(sortable_arc_diagram)
 ```

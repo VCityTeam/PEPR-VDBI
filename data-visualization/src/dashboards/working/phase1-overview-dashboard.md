@@ -1,12 +1,11 @@
 ---
 theme: [dashboard, light]
 sql:
-  general_partners: ./data/partners_general.csv
-  aap_partners: ./data/private/partenaires_aap2023.csv
-  terrains: ./data/project_terrains.csv
-  project_summary: ./data/private/project_summary.csv
+  general_partners: /data/partners_general.csv
+  aap_partners: /data/private/partenaires_aap2023.csv
+  terrains: /data/project_terrains.csv
+  project_summary: /data/private/project_summary.csv
 ---
-
 
 # Phase 1 Overview
 
@@ -15,11 +14,9 @@ sql:
 </div>
 
 ```js
-import {
-  countEntities,
-  sparkbar,
-} from "./components/utilities.js";
+import { countEntities, sparkbar } from "/components/utilities.js"
 ```
+
 ```js
 import {
   getGeneralSheet,
@@ -32,58 +29,55 @@ import {
   resolveInstitutionEntities,
   getColumnOptions,
   filterOnInput,
-} from "./components/phase1-dashboard.js";
+} from "/components/phase1-dashboard.js"
 ```
+
 ```js
 import {
   forceGraph,
   mapTableToPropertyGraphLinks,
   mapTableToTriples,
-} from "./components/graph.js";
+} from "/components/graph.js"
 ```
+
 ```js
-import {
-  projectionMap
-} from "./components/projection-map.js";
+import { projectionMap } from "/components/projection-map.js"
 ```
+
 ```js
-import {
-  vdbi_color_scheme,
-  project_color_scale,
-} from "./components/color.js";
+import { vdbi_color_scheme, project_color_scale } from "/components/color.js"
 ```
 
 <!-- debugging info -->
 
 ```js
-console.debug("project_data", project_data);
-console.debug("researcher_data", researcher_data);
-console.debug("laboratory_data", laboratory_data);
-console.debug("university_data", university_data);
-console.debug("partner_data", partner_data);
-console.debug("general_partners", [...await sql`select * from general_partners`]);
-console.debug("aap_partners", [...await sql`select * from aap_partners`]);
-console.debug("terrains", [...await sql`select * from terrains`]);
-console.debug("terrain_data", [...terrain_data]);
-console.debug("ile_de_france_terrain_data", ile_de_france_terrain_data);
+console.debug("project_data", project_data)
+console.debug("researcher_data", researcher_data)
+console.debug("laboratory_data", laboratory_data)
+console.debug("university_data", university_data)
+console.debug("partner_data", partner_data)
+console.debug("general_partners", [
+  ...(await sql`select * from general_partners`),
+])
+console.debug("aap_partners", [...(await sql`select * from aap_partners`)])
+console.debug("terrains", [...(await sql`select * from terrains`)])
+console.debug("terrain_data", [...terrain_data])
+console.debug("ile_de_france_terrain_data", ile_de_france_terrain_data)
 ```
 
 ```js
 // which terrain results are outside mainland france bbox?
 const mainland_france_bbox = {
-  'min_x': -5.273438,
-  'max_x': 8.833008,
-  'min_y': 42.228517,
-  'max_y': 51.261915
-};
+  min_x: -5.273438,
+  max_x: 8.833008,
+  min_y: 42.228517,
+  max_y: 51.261915,
+}
 
-[...terrain_data].filter(
-  (d) => !inBBox(d.longitude, d.latitude, mainland_france_bbox)
-).forEach(
-  (d) => console.warn("terrain outside of france?", d.toJSON())
-);
+;[...terrain_data]
+  .filter((d) => !inBBox(d.longitude, d.latitude, mainland_france_bbox))
+  .forEach((d) => console.warn("terrain outside of france?", d.toJSON()))
 ```
-
 
 <!-- Initial data integration -->
 
@@ -112,62 +106,78 @@ group by all
 ```
 
 ```js
-  // "./data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
+// "/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
 const workbook1 = FileAttachment(
-  "./data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
-).xlsx();
-```
-```js
-const regions = FileAttachment("./data/france_regions.json").json();
-```
-```js
-const departements = FileAttachment("./data/france_departements.json").json();
+  "/data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
+).xlsx()
 ```
 
 ```js
-const anonymize = false;
-const anonymizeDict = new Map();
+const regions = FileAttachment("/data/france_regions.json").json()
+```
+
+```js
+const departements = FileAttachment("/data/france_departements.json").json()
+```
+
+```js
+const anonymize = false
+const anonymizeDict = new Map()
 
 const project_data = resolveGeneralEntities(
   getGeneralSheet(workbook1),
   anonymize,
   anonymizeDict
-);
-const financed_project_data = project_data.filter((d) => d.financed);
+)
+const financed_project_data = project_data.filter((d) => d.financed)
 const researcher_data = resolveResearcherEntities(
   getResearcherSheet(workbook1),
   anonymize,
   anonymizeDict
-);
-const financed_researcher_data = researcher_data.filter((d) => d.financed);
+)
+const financed_researcher_data = researcher_data.filter((d) => d.financed)
 
-const laboratory_data = new Set(d3.merge(project_data.map((d) => d.labs)).sort());
+const laboratory_data = new Set(
+  d3.merge(project_data.map((d) => d.labs)).sort()
+)
 const auditioned_laboratory_data = new Set(
   d3.merge(project_data.filter((d) => d.auditioned).map((d) => d.labs)).sort()
-);
+)
 const financed_laboratory_data = new Set(
   d3.merge(financed_project_data.map((d) => d.labs)).sort()
-);
+)
 // const laboratory_data = resolveLabEntities(
 //   getLabSheet(workbook1),
 //   anonymize,
 //   anonymizeDict
 // );
-const university_data = new Set(d3.merge(project_data.map((d) => d.institutions)).sort());
+const university_data = new Set(
+  d3.merge(project_data.map((d) => d.institutions)).sort()
+)
 const auditioned_university_data = new Set(
-  d3.merge(project_data.filter((d) => d.auditioned).map((d) => d.institutions)).sort()
-);
-const financed_university_data = new Set(d3.merge(financed_project_data.map((d) => d.institutions)).sort());
+  d3
+    .merge(project_data.filter((d) => d.auditioned).map((d) => d.institutions))
+    .sort()
+)
+const financed_university_data = new Set(
+  d3.merge(financed_project_data.map((d) => d.institutions)).sort()
+)
 // const university_data = resolveInstitutionEntities(
 //   getInstitutionSheet(workbook1),
 //   anonymize,
 //   anonymizeDict
 // );
-const partner_data = new Set(d3.merge(project_data.map((d) => d.partners)).sort());
+const partner_data = new Set(
+  d3.merge(project_data.map((d) => d.partners)).sort()
+)
 const auditioned_partner_data = new Set(
-  d3.merge(project_data.filter((d) => d.auditioned).map((d) => d.partners)).sort()
-);
-const financed_partner_data = new Set(d3.merge(financed_project_data.map((d) => d.partners)).sort());
+  d3
+    .merge(project_data.filter((d) => d.auditioned).map((d) => d.partners))
+    .sort()
+)
+const financed_partner_data = new Set(
+  d3.merge(financed_project_data.map((d) => d.partners)).sort()
+)
 ```
 
 ```js
@@ -176,50 +186,47 @@ const auditioned_project_count = d3.reduce(
   project_data,
   (p, v) => p + (v.auditioned ? 1 : 0),
   0
-);
+)
 const financed_project_count = d3.reduce(
   project_data,
   (p, v) => p + (v.financed ? 1 : 0),
   0
-);
+)
 ```
 
 <!-- DETAILED COUNTS -->
 
 ```js
 // helper functions to access input field criteria
-const critera_functions = [d => d.auditioned, d => d.financed];
-const auditioned_options = getColumnOptions(project_data, "auditioned");
-const financed_options = getColumnOptions(project_data, "financed");
+const critera_functions = [(d) => d.auditioned, (d) => d.financed]
+const auditioned_options = getColumnOptions(project_data, "auditioned")
+const financed_options = getColumnOptions(project_data, "financed")
 
-const auditionedInput = () => Inputs.select(
-  auditioned_options,
-  {
+const auditionedInput = () =>
+  Inputs.select(auditioned_options, {
     value: true,
     label: "Auditioned?",
-  }
-);
+  })
 
-const financedInput = () => Inputs.select(
-  financed_options,
-  {
+const financedInput = () =>
+  Inputs.select(financed_options, {
     value: true,
     label: "Financed?",
-  }
-);
+  })
 
-const sortInput = (label="") => Inputs.select(
-  new Map([
-    ["Project name ⇧", "x"],
-    ["Project name ⇩", "-x"],
-    [`${label} count ⇧`, "y"],
-    [`${label} count ⇩`, "-y"],
-  ]),
-  {
-    value: "x",
-    label: "Sort by",
-  }
-);
+const sortInput = (label = "") =>
+  Inputs.select(
+    new Map([
+      ["Project name ⇧", "x"],
+      ["Project name ⇩", "-x"],
+      [`${label} count ⇧`, "y"],
+      [`${label} count ⇩`, "-y"],
+    ]),
+    {
+      value: "x",
+      label: "Sort by",
+    }
+  )
 
 const countPlot = (width, label, data, sort_value, accessor_function) => {
   return Plot.plot({
@@ -243,11 +250,11 @@ const countPlot = (width, label, data, sort_value, accessor_function) => {
         x: "acronyme",
         y: accessor_function,
         fill: accessor_function,
-        sort: {x: sort_value},
+        sort: { x: sort_value },
         tip: true,
       }),
     ],
-  });
+  })
 }
 ```
 
@@ -255,19 +262,21 @@ const countPlot = (width, label, data, sort_value, accessor_function) => {
 
 ```js
 // project_laboratories by project filter select inputs
-const project_laboratories_auditioned_input = auditionedInput();
-const project_laboratories_financed_input = financedInput();
+const project_laboratories_auditioned_input = auditionedInput()
+const project_laboratories_financed_input = financedInput()
 
 const project_laboratories_auditioned = Generators.input(
   project_laboratories_auditioned_input
-);
+)
 const project_laboratories_financed = Generators.input(
   project_laboratories_financed_input
-);
+)
 
 // project_laboratories by project sort select inputs
-const project_laboratories_sort_input = sortInput("Laboratory");
-const project_laboratories_sort = Generators.input(project_laboratories_sort_input);
+const project_laboratories_sort_input = sortInput("Laboratory")
+const project_laboratories_sort = Generators.input(
+  project_laboratories_sort_input
+)
 ```
 
 ```js
@@ -275,28 +284,30 @@ const filtered_projects_laboratories = filterOnInput(
   project_data,
   [project_laboratories_auditioned, project_laboratories_financed],
   critera_functions
-);
+)
 
-console.debug("filtered_projects_laboratories", filtered_projects_laboratories);
+console.debug("filtered_projects_laboratories", filtered_projects_laboratories)
 ```
 
 <!-- UNIVERSITY COUNT -->
 
 ```js
 // project_universities by project filter select inputs
-const project_universities_auditioned_input = auditionedInput();
-const project_universities_financed_input = financedInput();
+const project_universities_auditioned_input = auditionedInput()
+const project_universities_financed_input = financedInput()
 
 const project_universities_auditioned = Generators.input(
   project_universities_auditioned_input
-);
+)
 const project_universities_financed = Generators.input(
   project_universities_financed_input
-);
+)
 
 // project_universities by project sort select inputs
-const project_universities_sort_input = sortInput("University");
-const project_universities_sort = Generators.input(project_universities_sort_input);
+const project_universities_sort_input = sortInput("University")
+const project_universities_sort = Generators.input(
+  project_universities_sort_input
+)
 ```
 
 ```js
@@ -304,28 +315,28 @@ const filtered_projects_universities = filterOnInput(
   project_data,
   [project_universities_auditioned, project_universities_financed],
   critera_functions
-);
+)
 
-console.debug("filtered_projects_universities", filtered_projects_universities);
+console.debug("filtered_projects_universities", filtered_projects_universities)
 ```
 
 <!-- PARTNER COUNT -->
 
 ```js
 // project_partners by project filter select inputs
-const project_partners_auditioned_input = auditionedInput();
-const project_partners_financed_input = financedInput();
+const project_partners_auditioned_input = auditionedInput()
+const project_partners_financed_input = financedInput()
 
 const project_partners_auditioned = Generators.input(
   project_partners_auditioned_input
-);
+)
 const project_partners_financed = Generators.input(
   project_partners_financed_input
-);
+)
 
 // project_partners by project sort select inputs
-const project_partners_sort_input = sortInput("Socio-economic partner");
-const project_partners_sort = Generators.input(project_partners_sort_input);
+const project_partners_sort_input = sortInput("Socio-economic partner")
+const project_partners_sort = Generators.input(project_partners_sort_input)
 ```
 
 ```js
@@ -333,11 +344,10 @@ const filtered_projects_partners = filterOnInput(
   project_data,
   [project_partners_auditioned, project_partners_financed],
   critera_functions
-);
+)
 
-console.debug("filtered_projects_partners", filtered_projects_partners);
+console.debug("filtered_projects_partners", filtered_projects_partners)
 ```
-
 
 <div class="grid grid-cols-4">
   <div class="card">
@@ -419,7 +429,6 @@ console.debug("filtered_projects_partners", filtered_projects_partners);
   </div>
 </div>
 
-
 <!-- Project terrain map -->
 
 ```js
@@ -427,128 +436,118 @@ console.debug("filtered_projects_partners", filtered_projects_partners);
 const inBBox = (
   longitude,
   latitude,
-  {
-    min_x = -180,
-    max_x = 180,
-    min_y = -180,
-    max_y = 180
-  }) =>
-  min_x < longitude && longitude < max_x &&
-  min_y < latitude && latitude < max_y
+  { min_x = -180, max_x = 180, min_y = -180, max_y = 180 }
+) =>
+  min_x < longitude && longitude < max_x && min_y < latitude && latitude < max_y
 ```
 
 ```js
-
 const ile_de_france_bbox = {
-  'min_x': 1.4425891164457563,
-  'max_x': 3.559891742088918,
-  'min_y': 48.120414136323795,
-  'max_y': 49.24342474094858
-};
+  min_x: 1.4425891164457563,
+  max_x: 3.559891742088918,
+  min_y: 48.120414136323795,
+  max_y: 49.24342474094858,
+}
 
-const filtered_terrain_data = [...terrain_data].filter(
-  (d) => 
-    d.terrain &&
-    d.longitude &&
-    d.latitude &&
-    inBBox(d.longitude, d.latitude, mainland_france_bbox)
-).map((d) => { // TODO: just add idf terrain, then update the project data
-  const datum = {...d};
-  if (inBBox(d.longitude, d.latitude, ile_de_france_bbox)) {
-    datum.terrain = 'Île-de-France';
-    datum.longitude = ((ile_de_france_bbox.max_x - ile_de_france_bbox.min_x) / 2)
-      + ile_de_france_bbox.min_x;
-    datum.latitude = ((ile_de_france_bbox.max_y - ile_de_france_bbox.min_y) / 2)
-      + ile_de_france_bbox.min_y;
-  }
-  return datum;
-});
+const filtered_terrain_data = [...terrain_data]
+  .filter(
+    (d) =>
+      d.terrain &&
+      d.longitude &&
+      d.latitude &&
+      inBBox(d.longitude, d.latitude, mainland_france_bbox)
+  )
+  .map((d) => {
+    // TODO: just add idf terrain, then update the project data
+    const datum = { ...d }
+    if (inBBox(d.longitude, d.latitude, ile_de_france_bbox)) {
+      datum.terrain = "Île-de-France"
+      datum.longitude =
+        (ile_de_france_bbox.max_x - ile_de_france_bbox.min_x) / 2 +
+        ile_de_france_bbox.min_x
+      datum.latitude =
+        (ile_de_france_bbox.max_y - ile_de_france_bbox.min_y) / 2 +
+        ile_de_france_bbox.min_y
+    }
+    return datum
+  })
 
-const ile_de_france_terrain_data = [...terrain_data].filter(
-  (d) => inBBox(d.longitude, d.latitude, ile_de_france_bbox));
+const ile_de_france_terrain_data = [...terrain_data].filter((d) =>
+  inBBox(d.longitude, d.latitude, ile_de_france_bbox)
+)
 
 const terrain_anchor_map = new Map([
-  ['Saclay Cachan', 'top-right'],
-  ['Lyon', 'top-right'],
-  ['Plauzat', 'top-right'],
-  ['Marseille', 'top-left'],
-  ['Paris', 'top-left'],
-  ['Aix Marseille Provence', 'bottom-left'],
-  ['Villeurbanne', 'bottom-left'],
-]);
+  ["Saclay Cachan", "top-right"],
+  ["Lyon", "top-right"],
+  ["Plauzat", "top-right"],
+  ["Marseille", "top-left"],
+  ["Paris", "top-left"],
+  ["Aix Marseille Provence", "bottom-left"],
+  ["Villeurbanne", "bottom-left"],
+])
 
 const terrain_tips = filtered_terrain_data.map((d) => {
-
-  let tip_anchor = 'bottom';
+  let tip_anchor = "bottom"
 
   if (terrain_anchor_map.has(d.terrain)) {
-    tip_anchor = terrain_anchor_map.get(d.terrain);
+    tip_anchor = terrain_anchor_map.get(d.terrain)
   }
 
-  return Plot.tip(
-    [d.terrain],
-    {
-      x: d.longitude,
-      y: d.latitude,
-      textPadding: 1,
-      strokeOpacity: 0,
-      fillOpacity: 0.5,
-      fontSize: 12,
-      fontWeight: 'bold',
-      anchor: tip_anchor,
-    }
-  );
-});
+  return Plot.tip([d.terrain], {
+    x: d.longitude,
+    y: d.latitude,
+    textPadding: 1,
+    strokeOpacity: 0,
+    fillOpacity: 0.5,
+    fontSize: 12,
+    fontWeight: "bold",
+    anchor: tip_anchor,
+  })
+})
 
 const terrain_tip_dots_float_left = [
-  'Lyon',
-  'Thiers',
-  'Plauzat',
-  'Saclay Cachan',
-];
+  "Lyon",
+  "Thiers",
+  "Plauzat",
+  "Saclay Cachan",
+]
 
-const terrain_tip_dots = filtered_terrain_data.flatMap((d) => {
+const terrain_tip_dots = filtered_terrain_data
+  .flatMap((d) => {
+    const indexed_projects = []
+    const projects = d.projects.toJSON()
 
-  const indexed_projects = [];
-  const projects = d.projects.toJSON();
-  
-  for (let index = 0; index < projects.length; index++) {
-    const data = {...d};
-    data.projects = projects[index];
-    data.project_index = index;
-    data.x = terrain_tip_dots_float_left.includes(data.terrain) ?
-      data.longitude - 0.2 - (index * 0.2) :
-      data.longitude + 0.2 + (index * 0.2);
-    data.y = data.latitude;
-    indexed_projects.push(data);
-  }
+    for (let index = 0; index < projects.length; index++) {
+      const data = { ...d }
+      data.projects = projects[index]
+      data.project_index = index
+      data.x = terrain_tip_dots_float_left.includes(data.terrain)
+        ? data.longitude - 0.2 - index * 0.2
+        : data.longitude + 0.2 + index * 0.2
+      data.y = data.latitude
+      indexed_projects.push(data)
+    }
 
-  return indexed_projects;
-}).filter((d) => !!d);
-
+    return indexed_projects
+  })
+  .filter((d) => !!d)
 
 const terrain_legend = d3.zip(
   project_color_scale.domain(),
-  project_color_scale.range(),
-);
+  project_color_scale.range()
+)
 
 const mapToFranceLongitude = (index, subdivisions) =>
-  d3.scaleLinear(
-    [0, subdivisions],
-    [-4, 9.5]
-  )(index);
+  d3.scaleLinear([0, subdivisions], [-4, 9.5])(index)
 
 for (let index = 0; index < terrain_legend.length; index++) {
-  terrain_legend[index].push(
-    mapToFranceLongitude(index, terrain_legend.length)
-  );
-  terrain_legend[index].push(52);
+  terrain_legend[index].push(mapToFranceLongitude(index, terrain_legend.length))
+  terrain_legend[index].push(52)
 }
 
 console.debug("terrain_tip_dots", terrain_tip_dots)
 console.debug("terrain_legend", terrain_legend)
 ```
-
 
 <!-- PROJECT KNOWLEDGE GRAPH -->
 
@@ -558,11 +557,11 @@ const project_predicates = new Map([
   ["Laboratories", "labs"],
   ["Partners", "partners"],
   ["Universities", "institutions"],
-]);
+])
 
 // project triples //
 const project_triples_predicate_select_input = Inputs.select(
-  // we don't use global search here in case 0 results are returned by the search 
+  // we don't use global search here in case 0 results are returned by the search
   // Object.keys(project_data[0]),
   project_predicates,
   {
@@ -570,29 +569,32 @@ const project_triples_predicate_select_input = Inputs.select(
     sort: true,
     unique: true,
   }
-);
+)
 
 const project_triples_predicate_select = Generators.input(
   project_triples_predicate_select_input
-);
+)
 ```
 
 ```js
-const project_triples = mapTableToTriples(
-  financed_project_data, {
-    id_key: "acronyme",
-    column: [...project_predicates.values()],
-  }
-);
+const project_triples = mapTableToTriples(financed_project_data, {
+  id_key: "acronyme",
+  column: [...project_predicates.values()],
+})
 
 const filtered_project_triples = {
   nodes: project_triples.nodes.filter(
-    ({ type }) => project_triples_predicate_select == "" || type == project_triples_predicate_select || type == "acronyme"
+    ({ type }) =>
+      project_triples_predicate_select == "" ||
+      type == project_triples_predicate_select ||
+      type == "acronyme"
   ),
-  links: project_triples.links.filter(
-    ({ label }) => project_triples_predicate_select == "" ? true : label == project_triples_predicate_select
-  )
-};
+  links: project_triples.links.filter(({ label }) =>
+    project_triples_predicate_select == ""
+      ? true
+      : label == project_triples_predicate_select
+  ),
+}
 
 const color = d3
   .scaleOrdinal(d3.schemeSet2)
@@ -600,24 +602,22 @@ const color = d3
   // .range(
   //   d3
   //     .quantize(d3.interpolatePlasma, 4)
-      // .reverse()
+  // .reverse()
   // )
-  .unknown("#aaa");
+  .unknown("#aaa")
 
-console.debug("project_triples", project_triples);
-console.debug("color", color);
+console.debug("project_triples", project_triples)
+console.debug("color", color)
 
-const project_force_graph = (width) => forceGraph(
-  filtered_project_triples,
-  {
+const project_force_graph = (width) =>
+  forceGraph(filtered_project_triples, {
     id: "project_force_graph",
     width: width,
     height: width - 50,
     color: color,
     nodeLabelOpacity: 0.2,
     linkLabelOpacity: 0,
-  }
-);
+  })
 ```
 
 <div class="grid grid-cols-2">
@@ -739,33 +739,22 @@ const project_force_graph = (width) => forceGraph(
   </div>
 </div>
 
-
 <!-- PROJECT FINANCING -->
 
 ```js
 // create auditioned filter input
-const project_auditioned_input = Inputs.select(
-  auditioned_options,
-  {
-    value: "All",
-    label: "Auditioned?",
-  }
-);
-const projects_auditioned = Generators.input(
-  project_auditioned_input
-);
+const project_auditioned_input = Inputs.select(auditioned_options, {
+  value: "All",
+  label: "Auditioned?",
+})
+const projects_auditioned = Generators.input(project_auditioned_input)
 
 // create financed filter input
-const project_financed_input = Inputs.select(
-  financed_options,
-  {
-    value: "All",
-    label: "Financed?",
-  }
-);
-const projects_financed = Generators.input(
-  project_financed_input
-);
+const project_financed_input = Inputs.select(financed_options, {
+  value: "All",
+  label: "Financed?",
+})
+const projects_financed = Generators.input(project_financed_input)
 
 // create grade filter input
 const project_grade_input = Inputs.select(
@@ -774,10 +763,8 @@ const project_grade_input = Inputs.select(
     value: "All",
     label: "Grade",
   }
-);
-const project_grades = Generators.input(
-  project_grade_input
-);
+)
+const project_grades = Generators.input(project_grade_input)
 
 // create challenge filter input
 const project_challenge_input = Inputs.select(
@@ -786,10 +773,8 @@ const project_challenge_input = Inputs.select(
     value: "All",
     label: "Challenge",
   }
-);
-const project_challenge = Generators.input(
-  project_challenge_input
-);
+)
+const project_challenge = Generators.input(project_challenge_input)
 ```
 
 ```js
@@ -798,15 +783,15 @@ const filtered_project_data = filterOnInput(
   project_data,
   [projects_auditioned, projects_financed, project_grades, project_challenge],
   [(d) => d.auditioned, (d) => d.financed, (d) => d.grade, (d) => d.challenge]
-);
+)
 ```
 
 ```js
 // create search input
 const project_search_input = Inputs.search(filtered_project_data, {
-  placeholder: "Search projects..."
-});
-const projects_search = Generators.input(project_search_input);
+  placeholder: "Search projects...",
+})
+const projects_search = Generators.input(project_search_input)
 ```
 
 ```js
@@ -837,11 +822,10 @@ const project_table = Inputs.table(projects_search, {
     budget: "left",
   },
   format: {
-    budget: sparkbar(d3.max(projects_search, d => d.budget)),
+    budget: sparkbar(d3.max(projects_search, (d) => d.budget)),
   },
-});
+})
 ```
-
 
 <div class="grid grid-cols-2">
   <div class="card">

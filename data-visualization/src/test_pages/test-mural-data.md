@@ -1,8 +1,8 @@
 ---
 theme: [light]
 sql:
-  mural_data: ./data/private/Cartographie PEPR VDBI-1748339060380.csv
-  # mural_data: ./data/private/Cartographie PEPR VDBI-1748013777151.csv
+  mural_data: /data/private/Cartographie PEPR VDBI-1748339060380.csv
+  # mural_data: /data/private/Cartographie PEPR VDBI-1748013777151.csv
 ---
 
 ```js
@@ -11,8 +11,8 @@ import {
   MuralGraph,
   mapTableToPropertyGraphLinks,
   mapTableToTriples,
-} from "./components/graph.js"
-import { circleLegend } from "./components/legend.js"
+} from "/components/graph.js"
+import { circleLegend } from "/components/legend.js"
 ```
 
 # Mural link editor
@@ -111,7 +111,7 @@ const mural_links = (async function* () {
 ```
 
 ```js
-import { copyTableToClipboardButton } from "./components/utilities.js"
+import { copyTableToClipboardButton } from "/components/utilities.js"
 ```
 
 ```js

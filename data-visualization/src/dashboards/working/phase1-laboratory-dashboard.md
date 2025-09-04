@@ -10,7 +10,7 @@ import {
   addEntityProjectOwnerAndPartnerCounts,
   joinOnKeys,
   joinOnOwnerPartnerKeys,
-} from "./components/utilities.js";
+} from "/components/utilities.js"
 import {
   getGeneraliteSheet,
   getChercheurSheet,
@@ -23,18 +23,18 @@ import {
   getColumnOptions,
   filterOnInput,
   getSortableCountPlot,
-} from "./components/phase1-dashboard.js";
+} from "/components/phase1-dashboard.js"
 ```
 
 ```js
 const workbook1 = FileAttachment(
-  "./data/private/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
-).xlsx();
+  "/data/private/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx"
+).xlsx()
 ```
 
 ```js
-const anonymize = false;
-const anonymizeDict = new Map();
+const anonymize = false
+const anonymizeDict = new Map()
 // resolveGeneraliteEntities -> @return:
 // {
 //    acronyme: string,
@@ -60,28 +60,28 @@ const project_data = resolveGeneraliteEntities(
   getGeneraliteSheet(workbook1),
   anonymize,
   anonymizeDict
-);
+)
 const researcher_data = resolveChercheursEntities(
   getChercheurSheet(workbook1),
   anonymize,
   anonymizeDict
-);
+)
 const laboratory_data = resolveLaboratoireEntities(
   getLaboSheet(workbook1),
   anonymize,
   anonymizeDict
-);
+)
 const university_data = resolveEtablissementEntities(
   getEtablissementSheet(workbook1),
   anonymize,
   anonymizeDict
-);
-display("project_data");
-display(project_data);
+)
+display("project_data")
+display(project_data)
 // display("researcher_data");
 // display(researcher_data);
-display("laboratory_data");
-display(laboratory_data);
+display("laboratory_data")
+display(laboratory_data)
 // display("university_data");
 // display(university_data);
 ```
@@ -104,16 +104,16 @@ const laboratory_auditioned_input = Inputs.select(
     value: "All",
     label: "Auditioned?",
   }
-);
+)
 const laboratory_financed_input = Inputs.select(
   getColumnOptions(project_data, "finance"),
   {
     value: "All",
     label: "Financed?",
   }
-);
-const laboratory_auditioned = Generators.input(laboratory_auditioned_input);
-const laboratory_financed = Generators.input(laboratory_financed_input);
+)
+const laboratory_auditioned = Generators.input(laboratory_auditioned_input)
+const laboratory_financed = Generators.input(laboratory_financed_input)
 
 // laboratory by project sort select inputs
 const laboratory_sort_input = Inputs.select(
@@ -125,13 +125,13 @@ const laboratory_sort_input = Inputs.select(
     value: false,
     label: "Sort by",
   }
-);
-const laboratory_sort = Generators.input(laboratory_sort_input);
+)
+const laboratory_sort = Generators.input(laboratory_sort_input)
 ```
 
 ```js
 // helper functions to access input field criteria
-const critera_functions = [d => d.auditionne, d => d.finance];
+const critera_functions = [(d) => d.auditionne, (d) => d.finance]
 
 // format laboratory project owner data
 
@@ -147,7 +147,7 @@ joinOnOwnerPartnerKeys(
   "laboratoires",
   laboratory_data,
   "projects",
-  "laboratoire",
+  "laboratoire"
   // (di) => {
   //   const filtered_owner_projects = filterOnInput(
   //     project_data,
@@ -170,13 +170,13 @@ joinOnOwnerPartnerKeys(
   //   );
   //   di.partner_projects = filtered_partner_projects;
   // }
-);
+)
 
 // group by laboratory project
 const projects_by_laboratory_project_owner = d3.groups(
   project_data,
   (d) => d.laboratoires[0]
-);
+)
 
 // const labcounts = countEntities(project_data, (d) => d.laboratoires.slice(1));
 // display(labcounts);
@@ -190,55 +190,53 @@ const filtered_projects_by_laboratory_project_owner = d3.map(
       D[1],
       [laboratory_auditioned, laboratory_financed],
       critera_functions
-    );
+    )
     // ... and reformat for plot
     return {
       entity: D[0],
-      projects: filtered_projects
-    };
+      projects: filtered_projects,
+    }
   }
-);
+)
 
-display("filtered_projects_by_laboratory_project_owner");
-display(filtered_projects_by_laboratory_project_owner);
+display("filtered_projects_by_laboratory_project_owner")
+display(filtered_projects_by_laboratory_project_owner)
 
 // for every group of project owner by laboratory map...
-laboratory_data.forEach(
-  (d) => {
-    // ... a filter on the auditionne and finance fields iff specified in the university_project_stage input
-    const filtered_projects = filterOnInput(
-      d.projects,
-      [laboratory_auditioned, laboratory_financed],
-      critera_functions
-    );
-    // ... and reformat for plot
-    d.projects = filtered_projects;
-  }
-);
-display("laboratory_data");
-display(laboratory_data);
+laboratory_data.forEach((d) => {
+  // ... a filter on the auditionne and finance fields iff specified in the university_project_stage input
+  const filtered_projects = filterOnInput(
+    d.projects,
+    [laboratory_auditioned, laboratory_financed],
+    critera_functions
+  )
+  // ... and reformat for plot
+  d.projects = filtered_projects
+})
+display("laboratory_data")
+display(laboratory_data)
 ```
 
 ```js
 function getSortable2MarkCountPlot(
   data,
   {
-    x1 = 'count',
-    y1 = 'type',
-    x2 = 'count',
-    y2 = 'type',
+    x1 = "count",
+    y1 = "type",
+    x2 = "count",
+    y2 = "type",
     width = 1500,
     row_height = 17,
     margin_left = 60,
     margin_right = 140,
-    color_scheme = 'Plasma',
-    x_label = 'Occurrences',
+    color_scheme = "Plasma",
+    x_label = "Occurrences",
     domain_min = 0,
     domain_max = Math.max(...data.map((d) => d[x1])) + 1,
     y_tick_format_cuttoff = 25, // cut off label after this many characters
-    y_label = 'Entity',
-    sort_criteria = '-x',
-    tip = true
+    y_label = "Entity",
+    sort_criteria = "-x",
+    tip = true,
   }
 ) {
   return Plot.plot({
@@ -251,7 +249,7 @@ function getSortable2MarkCountPlot(
     },
     x: {
       grid: true,
-      axis: 'top',
+      axis: "top",
       label: x_label,
       // domain useful for constraining ticks between 0 and max occurrences + 1
       domain: [domain_min, domain_max],
@@ -279,7 +277,7 @@ function getSortable2MarkCountPlot(
     //     tip: tip,
     //   }),
     // ],
-  });
+  })
 }
 // const filtered_projects_by_laboratory_project_owner_plot = getSortable2MarkCountPlot(
 //   filtered_projects_by_laboratory_project_owner,

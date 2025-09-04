@@ -7,7 +7,6 @@ theme: light
 
 Visualize the first sheet from the phase 1 Excel document using trees and dendrogram diagrams.
 
-
 ## Data integration
 
 Take the data imported from the [initial-import-test](./initial-import-test) and transform the table into a tree formalism.
@@ -47,19 +46,19 @@ flowchart TD
 import {
   getProductSheet,
   resolveProjectEntities,
-} from "./components/240108-proposals-keywords.js";
+} from "/components/240108-proposals-keywords.js"
 import {
   mapEntitesToProjectTree,
   mapEntitesToProductToProjectTree,
   collapsableRadialDendrogram,
-} from "./components/radial-dendrogram.js";
+} from "/components/radial-dendrogram.js"
 
 const workbook1 = FileAttachment(
-  "./data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
-).xlsx();
+  "/data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
+).xlsx()
 const workbook2 = FileAttachment(
-  "./data/private/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx"
-).xlsx();
+  "/data/private/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx"
+).xlsx()
 ```
 
 **Input data:**
@@ -68,8 +67,8 @@ Using the transformation proposed in the imported components we can extract the 
 This transformation produces the following hierarchy: `root -> Project Acronym -> Project attribute (keywords, titles, etc.) -> ...`
 
 ```js echo
-const productData = resolveProjectEntities(getProductSheet(workbook2));
-display(productData);
+const productData = resolveProjectEntities(getProductSheet(workbook2))
+display(productData)
 ```
 
 # Visualization results
@@ -91,8 +90,8 @@ Once integrated the following information is desired for visualization:
 We can map the dataset to a tree hierarchy...
 
 ```js echo
-const productTree = mapEntitesToProjectTree(productData);
-display(productTree);
+const productTree = mapEntitesToProjectTree(productData)
+display(productTree)
 ```
 
 We can display our tree dataset using a dendrogram. This dendrogram implements the following features:
@@ -111,8 +110,8 @@ const collapsableRadialProducts = collapsableRadialDendrogram(productTree, {
   fontsize: 15,
   depth: 150,
   duration: 500,
-});
-display(collapsableRadialProducts);
+})
+display(collapsableRadialProducts)
 ```
 
 ### Dendrogram: Products/results → Actions and solutions → Project acronym
@@ -133,8 +132,8 @@ flowchart LR
 ```
 
 ```js echo
-const productProjectTree = mapEntitesToProductToProjectTree(productData);
-display(productProjectTree);
+const productProjectTree = mapEntitesToProductToProjectTree(productData)
+display(productProjectTree)
 ```
 
 ```js echo
@@ -150,6 +149,6 @@ const collapsableRadialProducts = collapsableRadialDendrogram(
     depth: 150,
     duration: 500,
   }
-);
-display(collapsableRadialProducts);
+)
+display(collapsableRadialProducts)
 ```
