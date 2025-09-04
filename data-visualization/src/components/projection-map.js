@@ -23,7 +23,7 @@ export function projectionMap(
     /*
      * list of Plot.geo compatible borders. For example:
      * ```js
-     * const world = FileAttachment("./data/world.json").json();
+     * const world = FileAttachment("/data/world.json").json();
      * const borders = [
      *   topojson.feature(world, world.objects.land),
      *   topojson.mesh(world, world.objects.countries, (a, b) => a !== b)
@@ -31,14 +31,14 @@ export function projectionMap(
      * ```
      */
     borderList = [], // list of borders to draw
-    borderListStrokes = borderList.map(() => 'var(--theme-foreground-faint)'), // list of border colors; use 'var(--theme-foreground-faint)' for default
+    borderListStrokes = borderList.map(() => "var(--theme-foreground-faint)"), // list of border colors; use 'var(--theme-foreground-faint)' for default
     borderListStrokeOpacity = borderList.map(() => 1),
-    projectionType = 'azimuthal-equidistant',
+    projectionType = "azimuthal-equidistant",
     projectionDomain = d3.geoCircle().center([2, 47]).radius(5)(), // centered on France
-    stroke = '#f43f5e',
-    fill = '#f43f5e',
+    stroke = "#f43f5e",
+    fill = "#f43f5e",
     fillOpacity = 0.5,
-    entity_label = 'City',
+    entity_label = "City",
     channels = {
       entity: {
         value: keyMap,
@@ -46,15 +46,15 @@ export function projectionMap(
       },
       count: {
         value: valueMap,
-        label: 'Occurences',
+        label: "Occurences",
       },
       longitude: {
         value: lonMap,
-        label: 'Lon',
+        label: "Lon",
       },
       latitude: {
         value: latMap,
-        label: 'Lat',
+        label: "Lat",
       },
     },
     tip = {
@@ -99,16 +99,16 @@ export function projectionMap(
     borderList,
     borderListStrokes,
     borderListStrokeOpacity
-  );
+  )
   bordersToDraw.forEach((borderAndStroke) => {
     marks.push(
       Plot.geo(borderAndStroke[0], {
         stroke: borderAndStroke[1],
         strokeOpacity: borderAndStroke[2],
       })
-    );
-  });
-  console.debug('bordersToDraw', bordersToDraw);
+    )
+  })
+  console.debug("bordersToDraw", bordersToDraw)
 
   return Plot.plot({
     width: width,
@@ -118,5 +118,5 @@ export function projectionMap(
       domain: projectionDomain,
     },
     marks: marks,
-  });
+  })
 }

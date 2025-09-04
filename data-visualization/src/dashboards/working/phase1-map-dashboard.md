@@ -95,23 +95,36 @@ display(
 
 ## Projects by Terrain
 
+```js
+const terrain_legend_type = view(
+  Inputs.toggle({
+    label: "Remove legend lines?",
+    value: false,
+  })
+)
+```
+
 <div class="grid grid-cols-3">
   <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
-    ${resize(
-      (width, height) => defaultProjectionFrance(
+    ${resize((width, height) =>
+      defaultProjectionFrance(
         width,
         height - 15,
-        generateLineMapMarks(france_terrain_data, france_terrain_legend),
+        terrain_legend_type
+        ? generateDotMapMarks(france_terrain_data, france_terrain_legend, 0.2)
+        : generateLineMapMarks(france_terrain_data, france_terrain_legend),
         "- Project terrains by city and Île-de-France, France"
-      )
-    )}
+      ))
+    }
 
   </div>
   <div class="card" style="padding: 10px; overflow: hidden;">
     ${resize(
       (width) => defaultProjectionIleDeFrance(
         width,
-        generateLineMapMarks(ile_de_france_terrain_data, idf_terrain_legend),
+        terrain_legend_type
+        ? generateDotMapMarks(ile_de_france_terrain_data, idf_terrain_legend, 0.015)
+        : generateLineMapMarks(ile_de_france_terrain_data, idf_terrain_legend),
         "- Project terrains by city, Île-de-France"
       )
     )}
@@ -121,39 +134,10 @@ display(
     ${resize(
       (width) => defaultProjectionItaly(
         width,
-        generateLineMapMarks(international_terrain_data, italy_terrain_legend),
-        "- Project terrains by city, Italy"
-      )
-    )}
-
-  </div>
-  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
-    ${resize(
-      (width, height) => defaultProjectionFrance(
-        width,
-        height - 15,
-        generateDotMapMarks(france_terrain_data, france_terrain_legend, 0.2),
-        "- Project terrains by city and Île-de-France, France"
-      )
-    )}
-
-  </div>
-  <div class="card" style="padding: 10px; overflow: hidden;">
-    ${resize(
-      (width) => defaultProjectionIleDeFrance(
-        width,
-        generateDotMapMarks(ile_de_france_terrain_data, idf_terrain_legend, 0.015),
-        "- Project terrains by city, Île-de-France"
-      )
-    )}
-
-  </div>
-  <div class="card" style="padding: 10px; overflow: hidden;">
-    ${resize(
-      (width) => defaultProjectionItaly(
-        width,
-        generateDotMapMarks(international_terrain_data, italy_terrain_legend, 0.1),
-        "- Project terrains by city, Italy"
+        terrain_legend_type
+        ? generateDotMapMarks(international_terrain_data, italy_terrain_legend, 0.1)
+        : generateLineMapMarks(international_terrain_data, italy_terrain_legend),
+        "- TRACES terrains by city, Italy"
       )
     )}
 
@@ -186,6 +170,7 @@ SELECT
   -- list_distinct(list(siren)) as sirens,
   -- siren,
   -- list_distinct(list(project_name)) as projects,
+  project_name,
   -- nom_complet,
   -- nature_juridique,
   -- libelle_commune,
@@ -194,125 +179,159 @@ SELECT
   longitude,
   -- first(latitude) as latitude,
   -- first(longitude) as longitude,
-  -- code_postal,
+  code_postal,
   -- region,
   -- list_distinct(list(project_coordinator)) AS project_coordinator,
   -- list_distinct(list(source)) AS sources,
   -- list_distinct(list(source_label)) AS source_labels,
-  count() as count,
+  -- count() as count,
 FROM general_partners
 -- FROM union_all
-GROUP BY ALL;
+-- GROUP BY ALL;
 ```
 
 ```js
+// debugger;
 // const filtered_partner_data = [...all_partner_data].filter();
-// const partners_by_city = d3.groups([...all_partner_data], (d) =>
-//   d.code_postal ? d.code_postal.slice(0, 2) : null
+const partners_by_code = new Map(
+  d3.rollups(
+    [...all_partner_data],
+    (D) =>
+      D.reduce(
+        (a, v) =>
+          selected_project == "All" || v.project_name == selected_project
+            ? a + 1
+            : a,
+        0
+      ),
+    (d) => (d.code_postal ? d.code_postal.slice(0, 2) : null)
+  )
+)
+// partners_by_code.forEach((d) =>
+//   france_departements.features.find(
+//     ({ properties }) => properties.code == d[0]
+//   ).partner_count = d[1].map((d) => d.count)
 // )
 ```
 
 ```js
 console.debug(
-  "[...all_partner_data]",
+  "all_partner_data",
   [...all_partner_data].map((d) => d.toJSON())
 )
-const test_plot = (width, height) =>
-  defaultProjectionFrance(
-    width,
-    height,
-    [
-      Plot.dot(
-        [...all_partner_data],
-        Plot.hexbin(
-          {
-            r: "count",
-            fill: "count",
-          },
-          {
-            x: "longitude",
-            y: "latitude",
-            // stroke: vdbi_color_scheme.orange,
-            fill: vdbi_color_scheme.blue,
-          }
-        )
-      ),
-      ...terrain_tips(france_terrain_data),
+console.debug("partners_by_code", partners_by_code)
+
+const choropleth_france = (width, height) =>
+  Plot.plot({
+    width: d3.max([width, height]),
+    height: d3.max([width, height]) - 40,
+    caption: "- Project socio-economic partners by department and Île-de-France, France",
+    color: {
+      // scheme: "Oranges",
+      scheme: "Blues",
+      label: "# of Socioeconomic Partners",
+      legend: true,
+    },
+    projection: {
+      type: "azimuthal-equidistant",
+      domain: d3
+        .geoCircle()
+        .center(d3.geoCentroid(mainland_france_regions))
+        .radius(5)(),
+    },
+    marks: [
+      Plot.geo(mainland_france_departements, {
+        // fill: vdbi_color_scheme.blue,
+        // fill: vdbi_color_scheme.orange,
+        fill: ({ properties }) => partners_by_code.get(properties.code),
+        // strokeOpacity: 0,
+        // fillOpacity: (d) => partners_by_code.get(d.properties.code),
+      }),
+      Plot.geo(mainland_france_departements, {
+        stroke: vdbi_color_scheme.blue,
+        strokeWidth: 0.1,
+      }),
+      Plot.geo(mainland_france_regions, {
+        stroke: vdbi_color_scheme.blue,
+      }),
     ],
-    "- Project partners, France"
-  )
+  })
+
+const choropleth_idf = (width) =>
+  Plot.plot({
+    width: width,
+    caption: "- Project socio-economic partners by department, Île-de-France",
+    color: {
+      // scheme: "Oranges",
+      scheme: "Blues",
+      label: "# of Socioeconomic Partners",
+      legend: true,
+    },
+    projection: {
+      type: "azimuthal-equidistant",
+      domain: d3
+        .geoCircle()
+        .center(d3.geoCentroid(idf_departements))
+        .radius(0.8)(),
+    },
+    marks: [
+      Plot.geo(idf_departements, {
+        // fill: vdbi_color_scheme.blue,
+        // fill: vdbi_color_scheme.orange,
+        fill: ({ properties }) => partners_by_code.get(properties.code),
+        // strokeOpacity: 0,
+        // fillOpacity: (d) => partners_by_code.get(d.properties.code),
+      }),
+      Plot.geo(idf_departements, {
+        stroke: vdbi_color_scheme.blue,
+        strokeWidth: 0.1,
+      }),
+      Plot.geo(idf_departements, {
+        stroke: vdbi_color_scheme.blue,
+      }),
+    ],
+  })
+
+// const test_plot_hexbin = (width, height) =>
+//   defaultProjectionFrance(
+//     width,
+//     height,
+//     [
+//       Plot.dot(
+//         [...all_partner_data],
+//         Plot.hexbin(
+//           {
+//             r: "count",
+//             fill: "count",
+//             // opacity: "count",
+//           },
+//           {
+//             x: "longitude",
+//             y: "latitude",
+//             // stroke: vdbi_color_scheme.orange,
+//             fill: vdbi_color_scheme.blue,
+//             // binWidth: 15,
+//           }
+//         )
+//       ),
+//       ...terrain_tips(france_terrain_data),
+//     ],
+//     "- Project partners, France"
+//   )
 ```
 
 ## Projects by Partner locations
 
 <div class="grid grid-cols-3">
-  <!-- <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
-    ${resize(
-      (width, height) => defaultProjectionFrance(
-        width,
-        height - 15,
-        generateLineMapMarks(france_terrain_data, france_terrain_legend),
-        "- Project terrains by city and Île-de-France, France"
-      )
-    )}
-
-  </div>
--->
   <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
-    ${resize((width, height) => test_plot(width, height))}
+    ${resize((width, height) => choropleth_france(width, height))}
 
   </div>
-  <div class="card" style="padding: 10px; overflow: hidden;">
-    ${resize(
-      (width) => defaultProjectionIleDeFrance(
-        width,
-        generateLineMapMarks(ile_de_france_terrain_data, idf_terrain_legend),
-        "- Project terrains by city, Île-de-France"
-      )
-    )}
+  <div class="card" style="padding: 10px;">
+    ${resize((width) => choropleth_idf(width))}
 
   </div>
-  <div class="card" style="padding: 10px; overflow: hidden;">
-    ${resize(
-      (width) => defaultProjectionItaly(
-        width,
-        generateLineMapMarks(international_terrain_data, italy_terrain_legend),
-        "- Project terrains by city, Italy"
-      )
-    )}
-
-  </div>
-  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
-    ${resize(
-      (width, height) => defaultProjectionFrance(
-        width,
-        height - 15,
-        generateDotMapMarks(france_terrain_data, france_terrain_legend, 0.2),
-        "- Project terrains by city and Île-de-France, France"
-      )
-    )}
-
-  </div>
-  <div class="card" style="padding: 10px; overflow: hidden;">
-    ${resize(
-      (width) => defaultProjectionIleDeFrance(
-        width,
-        generateDotMapMarks(ile_de_france_terrain_data, idf_terrain_legend, 0.015),
-        "- Project terrains by city, Île-de-France"
-      )
-    )}
-
-  </div>
-  <div class="card" style="padding: 10px; overflow: hidden;">
-    ${resize(
-      (width) => defaultProjectionItaly(
-        width,
-        generateDotMapMarks(international_terrain_data, italy_terrain_legend, 0.1),
-        "- Project terrains by city, Italy"
-      )
-    )}
-
-  </div>
+  
 </div>
 
 <!-- Initial data integration -->
@@ -441,6 +460,11 @@ const workbook1 = FileAttachment(
 ```
 
 ```js
+const europe = await FileAttachment("/data/europe.geo.json").json()
+const france = europe.features.find((d) => (d.properties.name = "France"))
+```
+
+```js
 const france_regions = await FileAttachment("/data/france_regions.json").json()
 const mainland_france_regions = {
   type: "FeatureCollection",
@@ -457,17 +481,46 @@ const ile_de_france_region = {
 ```
 
 ```js
+const corse_department_codes = ["2A", "2B"]
+const idf_department_codes = ["95", "94", "93", "92", "91", "78", "77", "75"]
+
 const france_departements = await FileAttachment(
   "/data/france_departements.json"
 ).json()
-const ile_de_france_departements = {
-  type: "FeatureCollection",
-  features: france_departements.features,
-}
-```
 
-```js
-const europe = FileAttachment("/data/europe.geo.json").json()
+const mainland_france_departements = {
+  type: "FeatureCollection",
+  features: france_departements.features.filter(
+    (d) => !corse_department_codes.includes(d.properties.code)
+  ),
+}
+
+const mainland_france_departements_by_idf = d3.group(
+  mainland_france_departements.features,
+  (d) => idf_department_codes.includes(d.properties.code)
+)
+
+const mainland_france_departements_no_idf = {
+  type: "FeatureCollection",
+  features: mainland_france_departements_by_idf.get(false),
+}
+
+const idf_departements = {
+  type: "FeatureCollection",
+  features: mainland_france_departements_by_idf.get(true),
+}
+
+console.debug(
+  "mainland_france_departements_by_idf",
+  mainland_france_departements_by_idf
+)
+
+console.debug(
+  "mainland_france_departements_no_idf",
+  mainland_france_departements_no_idf
+)
+
+console.debug("idf_departements", idf_departements)
 ```
 
 ```js
@@ -758,7 +811,7 @@ const defaultProjectionIleDeFrance = (width, marks, caption = "") =>
     width,
     width,
     [
-      Plot.geo(ile_de_france_departements, {
+      Plot.geo(france_departements, {
         stroke: "white",
         strokeOpacity: 0.5,
         fill: vdbi_color_scheme.blue,
@@ -1006,6 +1059,7 @@ console.debug("france_regions", france_regions)
 console.debug("mainland_france_regions", mainland_france_regions)
 console.debug("ile_de_france_region", ile_de_france_region)
 console.debug("france_departements", france_departements)
-console.debug("ile_de_france_departements", ile_de_france_departements)
+console.debug("france_departements", france_departements)
 console.debug("europe", europe)
+console.debug("france", france)
 ```
