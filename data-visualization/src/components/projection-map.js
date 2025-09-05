@@ -80,7 +80,7 @@ export const france_projection = {
   //   .radius(5)(),
 }
 
-export const idf_projection = {
+export const paris_projection = {
   type: "azimuthal-equidistant",
   domain: d3.geoCircle().center([2.35, 48.85]).radius(0.2)(),
   // domain: d3
@@ -95,13 +95,25 @@ export const idf_projection = {
   //   .radius(0.2)(),
 }
 
+export const idf_projection = {
+  type: "azimuthal-equidistant",
+  domain: d3
+    .geoCircle()
+    .center(
+      d3.geoCentroid(
+        france_regions_geojson.features.find((d) => d.properties.code === "11")
+      )
+    )
+    .radius(0.8)(),
+}
+
 export const italy_projection = {
   type: "azimuthal-equidistant",
   domain: d3.geoCircle().center([13, 43.5]).radius(2)(),
   // domain: d3
   //   .geoCircle()
   //   .center(d3.geoCentroid(italy_regions_geojson))
-  //   .radius(5)(),
+  //   .radius(2)(),
 }
 
 // default map marks
@@ -119,32 +131,22 @@ export const default_mainland_france_marks = [
   }),
 ]
 
-export function generateMainlandFranceChoroplethMarks(
-  region_fill = null,
-  department_fill = null
-) {
-  return [
-    Plot.geo(mainland_france_departements_geojson, {
-      stroke: vdbi_color_scheme.blue,
-      strokeWidth: 0.1,
-      fill: department_fill,
-    }),
-    Plot.geo(mainland_france_regions_geojson, {
-      stroke: vdbi_color_scheme.blue,
-      fill: region_fill,
-    }),
-  ]
-}
+export const mainland_france_choropleth_marks = [
+  Plot.geo(mainland_france_departements_geojson, {
+    stroke: vdbi_color_scheme.blue,
+    strokeWidth: 0.1,
+  }),
+  Plot.geo(mainland_france_regions_geojson, {
+    stroke: vdbi_color_scheme.blue,
+  }),
+]
 
-export function generateIDFChoroplethMarks(department_fill = null) {
-  return [
-    Plot.geo(idf_departements_geojson, {
-      stroke: vdbi_color_scheme.blue,
-      strokeWidth: 0.1,
-      fill: department_fill,
-    }),
-  ]
-}
+export const idf_choropleth_marks = [
+  Plot.geo(idf_departements_geojson, {
+    stroke: vdbi_color_scheme.blue,
+    // strokeWidth: 0.1,
+  }),
+]
 
 /**
  * Create projection map from a dataset geocoded by:
