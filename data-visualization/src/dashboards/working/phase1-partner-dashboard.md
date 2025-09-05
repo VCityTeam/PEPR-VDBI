@@ -121,6 +121,7 @@ const level_1_value = Generators.input(level_1_select)
     ${filtered_partner_data_search}
   </div>
   ${Inputs.table(filtered_partner_data_value)}
+  ${copyTableToClipboardButton(filtered_partner_data_value, { delimeter: ";" })}
 </div>
 
 ```sql id=all_partner_data
@@ -145,7 +146,7 @@ WITH
     FROM general_partners
   )
 SELECT
-  -- siret,
+  siret,
   siren,
   project_name,
   nom_complet,
@@ -174,16 +175,6 @@ UPDATE general_partners
 
 -- merge tables
 WITH
-  union_all AS (
-    SELECT *
-    FROM aap_partners
-    UNION
-    SELECT *
-    FROM annex_partners
-    UNION
-    SELECT *
-    FROM general_partners
-  ),
   aggregate_partners as (
     SELECT
       project_name,
@@ -192,7 +183,16 @@ WITH
       siren,
       list_distinct(list(source)) AS sources,
       count() as count,
-    FROM union_all
+    FROM (
+    SELECT *
+    FROM aap_partners
+    UNION
+    SELECT *
+    FROM annex_partners
+    UNION
+    SELECT *
+    FROM general_partners
+  )
     GROUP BY all
   )
 SELECT
@@ -335,13 +335,13 @@ const filtered_partner_data_value = Generators.input(
         Inputs.table(consensus_search_result, { width: width, layout: 'auto' })
       )
     }
-    ${copyTableToClipboardButton(consensus_search_result)}
+    ${copyTableToClipboardButton(consensus_search_result, { delimeter: ";" })}
     
   </div>
   <div class="card" style="padding: 0;">
     <div style="padding: 1em;">
       <h2>
-        Labels with no siren/siret: ${[...no_results].length}/${[...all_partner_data].length}
+        Labels with no siren/siret: ${[...no_results].length}
       </h2>
       <div>${no_result_search}</div>
     </div>
@@ -350,7 +350,7 @@ const filtered_partner_data_value = Generators.input(
         Inputs.table(no_result_search_result, { width: width, layout: 'auto' })
       )
     }
-    ${copyTableToClipboardButton(no_result_search_result)}
+    ${copyTableToClipboardButton(no_result_search_result, { delimeter: ";" })}
     
   </div>
   <div class="card" style="padding: 0;">
@@ -365,7 +365,7 @@ const filtered_partner_data_value = Generators.input(
         Inputs.table(outlier_search_result, { width: width, layout: 'auto' })
       )
     }
-    ${copyTableToClipboardButton(outlier_search_result)}
+    ${copyTableToClipboardButton(outlier_search_result, { delimeter: ";" })}
     
   </div>
 </div>
@@ -399,6 +399,7 @@ with
       siren,
       source,
       source_label,
+      project_name,
     FROM annex_partners
     where siren is null
     UNION
@@ -406,6 +407,7 @@ with
       siren,
       source,
       source_label,
+      project_name,
     FROM general_partners
     where siren is null
     UNION
@@ -413,12 +415,14 @@ with
       siren,
       source,
       source_label,
+      project_name,
     FROM aap_partners
     where siren is null
   )
 select
   -- siren,
   source_label,
+  project_name,
   list(source) as sources,
 from union_all
 group by all

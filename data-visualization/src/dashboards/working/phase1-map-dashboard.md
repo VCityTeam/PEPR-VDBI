@@ -61,8 +61,11 @@ import {
   italy_regions_geojson,
   france_projection,
   idf_projection,
+  paris_projection,
   italy_projection,
   default_mainland_france_marks,
+  mainland_france_choropleth_marks,
+  idf_choropleth_marks,
 } from "/components/projection-map.js"
 ```
 
@@ -92,18 +95,24 @@ const selected_project = view(
     }
   )
 )
+```
 
+```js
 display(
   copyTableToClipboardButton([...terrain_data_by_city], {
     label: "Copy terrain data by location to clipboard",
     delimeter: ";",
   })
 )
-
 display(
   copyTableToClipboardButton([...terrain_data], {
     label: "Copy terrain and scale data to clipboard",
-    delimeter: ",",
+  })
+)
+display(
+  copyTableToClipboardButton([...all_partner_data], {
+    label: "Copy partner data by project to clipboard",
+    delimeter: ";",
   })
 )
 ```
@@ -162,18 +171,16 @@ const terrain_legend_type = view(
 ## Projects by Partner locations
 
 <div class="grid grid-cols-3">
-  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
-    ${resize((width, height) => choropleth_france(width, height))}
+  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 12px;">
+    ${resize((width, height) => choroplethFrance(width, height))}
 
   </div>
-  <div class="card" style="padding: 10px;">
-    ${resize((width) => choropleth_idf(width))}
+  <div class="card" style="padding: 12px;">
+    ${resize((width) => choroplethIdf(width))}
 
   </div>
   
 </div>
-
-
 
 <!-- Initial data integration -->
 
@@ -201,9 +208,6 @@ const partners_by_code = new Map(
 // )
 ```
 
-
-
-
 ```sql id=all_partner_data
 -- Clean tables
 UPDATE general_partners
@@ -226,12 +230,12 @@ UPDATE general_partners
 --     FROM general_partners
 --   )
 SELECT
+  nom_complet,
   siret,
-  -- list_distinct(list(siren)) as sirens,
   -- siren,
+  -- list_distinct(list(siren)) as sirens,
   -- list_distinct(list(project_name)) as projects,
   project_name,
-  -- nom_complet,
   -- nature_juridique,
   -- libelle_commune,
   -- commune,
@@ -249,7 +253,6 @@ FROM general_partners
 -- FROM union_all
 -- GROUP BY ALL;
 ```
-
 
 ```sql id=terrain_data
 -- merge osm data with terrain+scale data
@@ -617,13 +620,7 @@ const terrain_tip_dots = (data, legend, delta) =>
 ```js
 // generate geo projection plot functions
 
-const defaultProjection = (
-  width,
-  height,
-  projection,
-  marks,
-  caption = "",
-) =>
+const defaultProjection = (width, height, projection, marks, caption = "") =>
   Plot.plot({
     width: width,
     height: height,
@@ -638,14 +635,14 @@ const defaultProjectionFrance = (width, height, marks, caption = "") =>
     height,
     france_projection,
     default_mainland_france_marks.concat(marks),
-    caption,
+    caption
   )
 
 const defaultProjectionIleDeFrance = (width, marks, caption = "") =>
   defaultProjection(
     width,
     width,
-    idf_projection,
+    paris_projection,
     [
       Plot.geo(france_departements_geojson, {
         stroke: "white",
@@ -655,7 +652,7 @@ const defaultProjectionIleDeFrance = (width, marks, caption = "") =>
       }),
       marks,
     ],
-    caption,
+    caption
   )
 
 const defaultProjectionItaly = (width, marks, caption = "") =>
@@ -672,7 +669,7 @@ const defaultProjectionItaly = (width, marks, caption = "") =>
       }),
       marks,
     ],
-    caption,
+    caption
   )
 
 // generate plot marks for each visualisation method
@@ -846,75 +843,54 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
 ```
 
 ```js
-const choropleth_france = (width, height) =>
+const choroplethFrance = (width, height) =>
   Plot.plot({
-    width: d3.max([width, height]),
-    height: d3.max([width, height]) - 40,
+    width: width,
+    height: height - 60,
     caption:
-      "- Project socio-economic partners by department and Île-de-France, France",
+      "- Project socio-economic partners by department and Île-de-France, France. *Color scale is logarithmic",
     color: {
-      // scheme: "Oranges",
       scheme: "Blues",
       label: "# of Socioeconomic Partners",
       legend: true,
+      type: "log",
+      // nice: true,
     },
-    projection: {
-      type: "azimuthal-equidistant",
-      domain: d3
-        .geoCircle()
-        .center(d3.geoCentroid(mainland_france_regions_geojson))
-        .radius(5)(),
-    },
+    projection: france_projection,
     marks: [
       Plot.geo(mainland_france_departements_geojson, {
-        // fill: vdbi_color_scheme.blue,
-        // fill: vdbi_color_scheme.orange,
+        channels: {
+          Department: ({ properties }) => properties.nom,
+        },
+        tip: true,
         fill: ({ properties }) => partners_by_code.get(properties.code),
-        // strokeOpacity: 0,
-        // fillOpacity: (d) => partners_by_code.get(d.properties.code),
+        strokeOpacity: 0,
       }),
-      Plot.geo(mainland_france_departements_geojson, {
-        stroke: vdbi_color_scheme.blue,
-        strokeWidth: 0.1,
-      }),
-      Plot.geo(mainland_france_regions_geojson, {
-        stroke: vdbi_color_scheme.blue,
-      }),
+      [...mainland_france_choropleth_marks],
     ],
   })
 
-const choropleth_idf = (width) =>
+const choroplethIdf = (width) =>
   Plot.plot({
     width: width,
     caption: "- Project socio-economic partners by department, Île-de-France",
     color: {
-      // scheme: "Oranges",
       scheme: "Blues",
       label: "# of Socioeconomic Partners",
       legend: true,
+      // type: "log",
+      nice: true,
     },
-    projection: {
-      type: "azimuthal-equidistant",
-      domain: d3
-        .geoCircle()
-        .center(d3.geoCentroid(idf_departements_geojson))
-        .radius(0.8)(),
-    },
+    projection: idf_projection,
     marks: [
       Plot.geo(idf_departements_geojson, {
-        // fill: vdbi_color_scheme.blue,
-        // fill: vdbi_color_scheme.orange,
+        channels: {
+          Department: ({ properties }) => properties.nom,
+        },
+        tip: true,
         fill: ({ properties }) => partners_by_code.get(properties.code),
-        // strokeOpacity: 0,
-        // fillOpacity: (d) => partners_by_code.get(d.properties.code),
       }),
-      Plot.geo(idf_departements_geojson, {
-        stroke: vdbi_color_scheme.blue,
-        strokeWidth: 0.1,
-      }),
-      Plot.geo(idf_departements_geojson, {
-        stroke: vdbi_color_scheme.blue,
-      }),
+      [...idf_choropleth_marks],
     ],
   })
 ```
