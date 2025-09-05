@@ -48,7 +48,22 @@ import {
 ```
 
 ```js
-import { projectionMap } from "/components/projection-map.js"
+import {
+  europe_geojson,
+  france_geojson,
+  france_regions_geojson,
+  mainland_france_regions_geojson,
+  idf_region_geojson,
+  france_departements_geojson,
+  mainland_france_departements_geojson,
+  mainland_france_departements_no_idf_geojson,
+  idf_departements_geojson,
+  italy_regions_geojson,
+  france_projection,
+  idf_projection,
+  italy_projection,
+  default_mainland_france_marks,
+} from "/components/projection-map.js"
 ```
 
 ```js
@@ -125,7 +140,7 @@ const terrain_legend_type = view(
         terrain_legend_type
         ? generateDotMapMarks(ile_de_france_terrain_data, idf_terrain_legend, 0.015)
         : generateLineMapMarks(ile_de_france_terrain_data, idf_terrain_legend),
-        "- Project terrains by city, Île-de-France"
+        "- Project terrains by city, Grand Métropole de Paris"
       )
     )}
 
@@ -143,6 +158,51 @@ const terrain_legend_type = view(
 
   </div>
 </div>
+
+## Projects by Partner locations
+
+<div class="grid grid-cols-3">
+  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
+    ${resize((width, height) => choropleth_france(width, height))}
+
+  </div>
+  <div class="card" style="padding: 10px;">
+    ${resize((width) => choropleth_idf(width))}
+
+  </div>
+  
+</div>
+
+
+
+<!-- Initial data integration -->
+
+```js
+// debugger;
+// const filtered_partner_data = [...all_partner_data].filter();
+const partners_by_code = new Map(
+  d3.rollups(
+    [...all_partner_data],
+    (D) =>
+      D.reduce(
+        (a, v) =>
+          selected_project == "All" || v.project_name == selected_project
+            ? a + 1
+            : a,
+        0
+      ),
+    (d) => (d.code_postal ? d.code_postal.slice(0, 2) : null)
+  )
+)
+// partners_by_code.forEach((d) =>
+//   france_departements_geojson.features.find(
+//     ({ properties }) => properties.code == d[0]
+//   ).partner_count = d[1].map((d) => d.count)
+// )
+```
+
+
+
 
 ```sql id=all_partner_data
 -- Clean tables
@@ -190,151 +250,6 @@ FROM general_partners
 -- GROUP BY ALL;
 ```
 
-```js
-// debugger;
-// const filtered_partner_data = [...all_partner_data].filter();
-const partners_by_code = new Map(
-  d3.rollups(
-    [...all_partner_data],
-    (D) =>
-      D.reduce(
-        (a, v) =>
-          selected_project == "All" || v.project_name == selected_project
-            ? a + 1
-            : a,
-        0
-      ),
-    (d) => (d.code_postal ? d.code_postal.slice(0, 2) : null)
-  )
-)
-// partners_by_code.forEach((d) =>
-//   france_departements.features.find(
-//     ({ properties }) => properties.code == d[0]
-//   ).partner_count = d[1].map((d) => d.count)
-// )
-```
-
-```js
-console.debug(
-  "all_partner_data",
-  [...all_partner_data].map((d) => d.toJSON())
-)
-console.debug("partners_by_code", partners_by_code)
-
-const choropleth_france = (width, height) =>
-  Plot.plot({
-    width: d3.max([width, height]),
-    height: d3.max([width, height]) - 40,
-    caption: "- Project socio-economic partners by department and Île-de-France, France",
-    color: {
-      // scheme: "Oranges",
-      scheme: "Blues",
-      label: "# of Socioeconomic Partners",
-      legend: true,
-    },
-    projection: {
-      type: "azimuthal-equidistant",
-      domain: d3
-        .geoCircle()
-        .center(d3.geoCentroid(mainland_france_regions))
-        .radius(5)(),
-    },
-    marks: [
-      Plot.geo(mainland_france_departements, {
-        // fill: vdbi_color_scheme.blue,
-        // fill: vdbi_color_scheme.orange,
-        fill: ({ properties }) => partners_by_code.get(properties.code),
-        // strokeOpacity: 0,
-        // fillOpacity: (d) => partners_by_code.get(d.properties.code),
-      }),
-      Plot.geo(mainland_france_departements, {
-        stroke: vdbi_color_scheme.blue,
-        strokeWidth: 0.1,
-      }),
-      Plot.geo(mainland_france_regions, {
-        stroke: vdbi_color_scheme.blue,
-      }),
-    ],
-  })
-
-const choropleth_idf = (width) =>
-  Plot.plot({
-    width: width,
-    caption: "- Project socio-economic partners by department, Île-de-France",
-    color: {
-      // scheme: "Oranges",
-      scheme: "Blues",
-      label: "# of Socioeconomic Partners",
-      legend: true,
-    },
-    projection: {
-      type: "azimuthal-equidistant",
-      domain: d3
-        .geoCircle()
-        .center(d3.geoCentroid(idf_departements))
-        .radius(0.8)(),
-    },
-    marks: [
-      Plot.geo(idf_departements, {
-        // fill: vdbi_color_scheme.blue,
-        // fill: vdbi_color_scheme.orange,
-        fill: ({ properties }) => partners_by_code.get(properties.code),
-        // strokeOpacity: 0,
-        // fillOpacity: (d) => partners_by_code.get(d.properties.code),
-      }),
-      Plot.geo(idf_departements, {
-        stroke: vdbi_color_scheme.blue,
-        strokeWidth: 0.1,
-      }),
-      Plot.geo(idf_departements, {
-        stroke: vdbi_color_scheme.blue,
-      }),
-    ],
-  })
-
-// const test_plot_hexbin = (width, height) =>
-//   defaultProjectionFrance(
-//     width,
-//     height,
-//     [
-//       Plot.dot(
-//         [...all_partner_data],
-//         Plot.hexbin(
-//           {
-//             r: "count",
-//             fill: "count",
-//             // opacity: "count",
-//           },
-//           {
-//             x: "longitude",
-//             y: "latitude",
-//             // stroke: vdbi_color_scheme.orange,
-//             fill: vdbi_color_scheme.blue,
-//             // binWidth: 15,
-//           }
-//         )
-//       ),
-//       ...terrain_tips(france_terrain_data),
-//     ],
-//     "- Project partners, France"
-//   )
-```
-
-## Projects by Partner locations
-
-<div class="grid grid-cols-3">
-  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
-    ${resize((width, height) => choropleth_france(width, height))}
-
-  </div>
-  <div class="card" style="padding: 10px;">
-    ${resize((width) => choropleth_idf(width))}
-
-  </div>
-  
-</div>
-
-<!-- Initial data integration -->
 
 ```sql id=terrain_data
 -- merge osm data with terrain+scale data
@@ -457,74 +372,6 @@ group by all
 const workbook1 = FileAttachment(
   "/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
 ).xlsx()
-```
-
-```js
-const europe = await FileAttachment("/data/europe.geo.json").json()
-const france = europe.features.find((d) => (d.properties.name = "France"))
-```
-
-```js
-const france_regions = await FileAttachment("/data/france_regions.json").json()
-const mainland_france_regions = {
-  type: "FeatureCollection",
-  features: france_regions.features.filter(
-    (d) => d.properties.code > 10 && d.properties.nom != "Corse"
-  ),
-}
-const ile_de_france_region = {
-  type: "Feature",
-  feature: mainland_france_regions.features.find(
-    (d) => d.properties.code == 11
-  ),
-}
-```
-
-```js
-const corse_department_codes = ["2A", "2B"]
-const idf_department_codes = ["95", "94", "93", "92", "91", "78", "77", "75"]
-
-const france_departements = await FileAttachment(
-  "/data/france_departements.json"
-).json()
-
-const mainland_france_departements = {
-  type: "FeatureCollection",
-  features: france_departements.features.filter(
-    (d) => !corse_department_codes.includes(d.properties.code)
-  ),
-}
-
-const mainland_france_departements_by_idf = d3.group(
-  mainland_france_departements.features,
-  (d) => idf_department_codes.includes(d.properties.code)
-)
-
-const mainland_france_departements_no_idf = {
-  type: "FeatureCollection",
-  features: mainland_france_departements_by_idf.get(false),
-}
-
-const idf_departements = {
-  type: "FeatureCollection",
-  features: mainland_france_departements_by_idf.get(true),
-}
-
-console.debug(
-  "mainland_france_departements_by_idf",
-  mainland_france_departements_by_idf
-)
-
-console.debug(
-  "mainland_france_departements_no_idf",
-  mainland_france_departements_no_idf
-)
-
-console.debug("idf_departements", idf_departements)
-```
-
-```js
-const italy_regions = FileAttachment("/data/italy_regions.json").json()
 ```
 
 ```js
@@ -773,19 +620,15 @@ const terrain_tip_dots = (data, legend, delta) =>
 const defaultProjection = (
   width,
   height,
+  projection,
   marks,
   caption = "",
-  domain = d3.geoCircle().center([2, 47]).radius(5)()
 ) =>
   Plot.plot({
     width: width,
     height: height,
     caption: caption,
-    projection: {
-      type: "azimuthal-equidistant",
-      // type: "albers",
-      domain: domain,
-    },
+    projection: projection,
     marks: [...marks],
   })
 
@@ -793,25 +636,18 @@ const defaultProjectionFrance = (width, height, marks, caption = "") =>
   defaultProjection(
     width,
     height,
-    [
-      Plot.geo(mainland_france_regions, {
-        stroke: "white",
-        strokeOpacity: 0.5,
-        fill: vdbi_color_scheme.blue,
-        fillOpacity: 0.3,
-      }),
-      marks,
-    ],
+    france_projection,
+    default_mainland_france_marks.concat(marks),
     caption,
-    d3.geoCircle().center([2, 47.4]).radius(5)()
   )
 
 const defaultProjectionIleDeFrance = (width, marks, caption = "") =>
   defaultProjection(
     width,
     width,
+    idf_projection,
     [
-      Plot.geo(france_departements, {
+      Plot.geo(france_departements_geojson, {
         stroke: "white",
         strokeOpacity: 0.5,
         fill: vdbi_color_scheme.blue,
@@ -820,15 +656,15 @@ const defaultProjectionIleDeFrance = (width, marks, caption = "") =>
       marks,
     ],
     caption,
-    d3.geoCircle().center([2.35, 48.85]).radius(0.2)()
   )
 
 const defaultProjectionItaly = (width, marks, caption = "") =>
   defaultProjection(
     width,
     width,
+    italy_projection,
     [
-      Plot.geo(italy_regions, {
+      Plot.geo(italy_regions_geojson, {
         stroke: "white",
         strokeOpacity: 0.5,
         fill: vdbi_color_scheme.blue,
@@ -837,7 +673,6 @@ const defaultProjectionItaly = (width, marks, caption = "") =>
       marks,
     ],
     caption,
-    d3.geoCircle().center([13, 43.5]).radius(1.1)()
   )
 
 // generate plot marks for each visualisation method
@@ -1010,6 +845,80 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
 }
 ```
 
+```js
+const choropleth_france = (width, height) =>
+  Plot.plot({
+    width: d3.max([width, height]),
+    height: d3.max([width, height]) - 40,
+    caption:
+      "- Project socio-economic partners by department and Île-de-France, France",
+    color: {
+      // scheme: "Oranges",
+      scheme: "Blues",
+      label: "# of Socioeconomic Partners",
+      legend: true,
+    },
+    projection: {
+      type: "azimuthal-equidistant",
+      domain: d3
+        .geoCircle()
+        .center(d3.geoCentroid(mainland_france_regions_geojson))
+        .radius(5)(),
+    },
+    marks: [
+      Plot.geo(mainland_france_departements_geojson, {
+        // fill: vdbi_color_scheme.blue,
+        // fill: vdbi_color_scheme.orange,
+        fill: ({ properties }) => partners_by_code.get(properties.code),
+        // strokeOpacity: 0,
+        // fillOpacity: (d) => partners_by_code.get(d.properties.code),
+      }),
+      Plot.geo(mainland_france_departements_geojson, {
+        stroke: vdbi_color_scheme.blue,
+        strokeWidth: 0.1,
+      }),
+      Plot.geo(mainland_france_regions_geojson, {
+        stroke: vdbi_color_scheme.blue,
+      }),
+    ],
+  })
+
+const choropleth_idf = (width) =>
+  Plot.plot({
+    width: width,
+    caption: "- Project socio-economic partners by department, Île-de-France",
+    color: {
+      // scheme: "Oranges",
+      scheme: "Blues",
+      label: "# of Socioeconomic Partners",
+      legend: true,
+    },
+    projection: {
+      type: "azimuthal-equidistant",
+      domain: d3
+        .geoCircle()
+        .center(d3.geoCentroid(idf_departements_geojson))
+        .radius(0.8)(),
+    },
+    marks: [
+      Plot.geo(idf_departements_geojson, {
+        // fill: vdbi_color_scheme.blue,
+        // fill: vdbi_color_scheme.orange,
+        fill: ({ properties }) => partners_by_code.get(properties.code),
+        // strokeOpacity: 0,
+        // fillOpacity: (d) => partners_by_code.get(d.properties.code),
+      }),
+      Plot.geo(idf_departements_geojson, {
+        stroke: vdbi_color_scheme.blue,
+        strokeWidth: 0.1,
+      }),
+      Plot.geo(idf_departements_geojson, {
+        stroke: vdbi_color_scheme.blue,
+      }),
+    ],
+  })
+```
+
 <!-- debugging info -->
 
 ```js
@@ -1053,13 +962,9 @@ console.debug(
 ```
 
 ```js
-console.debug("france_terrain_legend", france_terrain_legend)
-console.debug("idf_terrain_legend", idf_terrain_legend)
-console.debug("france_regions", france_regions)
-console.debug("mainland_france_regions", mainland_france_regions)
-console.debug("ile_de_france_region", ile_de_france_region)
-console.debug("france_departements", france_departements)
-console.debug("france_departements", france_departements)
-console.debug("europe", europe)
-console.debug("france", france)
+console.debug(
+  "all_partner_data",
+  [...all_partner_data].map((d) => d.toJSON())
+)
+console.debug("partners_by_code", partners_by_code)
 ```

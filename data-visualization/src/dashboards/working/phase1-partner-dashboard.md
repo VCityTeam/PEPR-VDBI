@@ -9,9 +9,6 @@ sql:
   cjn3: /data/cj_septembre_2022_n3.csv
 ---
 
-```js
-import { projectionMap } from "/components/projection-map.js"
-```
 
 ```js
 import { cropText, copyTableToClipboardButton } from "/components/utilities.js"
@@ -118,30 +115,6 @@ const level_1_value = Generators.input(level_1_select)
 
 </div>
 
-<div class="card">
-  <h1>Partner sites by city</h1>
-  ${
-    resize((width) => 
-      projectionMap(
-        partners_by_city,
-        {
-          width: width,
-          height: width,
-          entity_label: "Departement",
-          borderList: [
-            regions,
-            departements,
-          ],
-          borderListStrokeOpacity: [
-            1,
-            0.3,
-          ],
-        }
-      )
-    )
-  }
-</div>
-
 <div class="card" style="padding: 0;">
   <div style="padding: 1em">
     <h2>All filtered partner data</h2>
@@ -242,19 +215,6 @@ join cjn2
 on cjn2.Code = floor(aggregate_partners.nature_juridique / 100)
 join cjn1
 on cjn1.Code = floor(aggregate_partners.nature_juridique / 1000)
-```
-
-```js
-const world = FileAttachment("/data/world.json").json()
-```
-
-```js
-const regions = await FileAttachment("/data/france_regions.json").json()
-regions.features = regions.features.filter((d) => d.properties.nom != "Corse")
-```
-
-```js
-const departements = FileAttachment("/data/france_departements.json").json()
 ```
 
 ```js
@@ -588,8 +548,4 @@ if (debug) {
   // display("questionable_labels")
   // display(questionable_labels)
 }
-console.debug("partners_by_city", partners_by_city)
-console.debug("world", world)
-console.debug("regions", regions)
-console.debug("departements", departements)
 ```
