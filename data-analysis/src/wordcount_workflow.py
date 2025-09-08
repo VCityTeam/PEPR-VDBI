@@ -5,7 +5,7 @@ import logging
 from utils import read_file, write_csv
 from wordcount import (
     tokenize_text,
-    clean_wordcount,
+    clean_and_count_words,
     compare_wordcounts,
     write_word_count,
 )
@@ -172,13 +172,13 @@ def runParse(config: list[dict], output_dir: str = "./"):
 
 
 def runClean(config: list[dict], output_dir: str = "./", limit: int | None = None):
-    """Run clean_wordcount() on one file based on a configuration"""
+    """Run clean_and_count_words() on one file based on a configuration"""
     for params in config:
         row_params = params.copy()  # deep copy
         input_path = row_params["input_path"]
 
-        logging.info(f"running clean_wordcount() on {input_path}")
-        word_counts = clean_wordcount(**row_params)
+        logging.info(f"running clean_and_count_words() on {input_path}")
+        word_counts = clean_and_count_words(**row_params)
 
         split_input_filename = os.path.splitext(os.path.basename(input_path))
         output_file = (
