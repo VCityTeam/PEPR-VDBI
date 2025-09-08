@@ -98,13 +98,13 @@ const selected_color = Inputs.select(
   }
 )
 
-const selected_font_size_min = Inputs.range([1, 200], {
+const selected_font_size_min = Inputs.range([1, 300], {
   label: "Font size minimum",
   step: 1,
   value: 10,
 })
 
-const selected_font_size_max = Inputs.range([1, 200], {
+const selected_font_size_max = Inputs.range([1, 300], {
   label: "Font size minimum",
   step: 1,
   value: 100,
