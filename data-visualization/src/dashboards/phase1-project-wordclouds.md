@@ -58,9 +58,10 @@ const cloud = resize((width) =>
 
 ```js
 const _invalidator_2 = refresh
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+await sleep(500)
 const getSVG = () => d3.select("svg").node()
 while (!getSVG()) {
-  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
   await sleep(500)
 }
 const copy_button = copySVGToClipboardButton(getSVG())

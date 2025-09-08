@@ -14,7 +14,7 @@ export const vdbi_orange_analogic_color_scheme = [
   // "#ffe6bf",
   // "#ffd9bf",
   // "#ffcc80",
-  "#ffb380",
+  // "#ffb380",
   "#ff9900",
   "#ff6600",
   "#b36b00",
@@ -28,7 +28,7 @@ export const vdbi_blue_analogic_color_scheme = [
   "#80c6ff",
   "#0064b5",
   "#00467f",
-  "#1b17b0",
+  // "#1b17b0",
   "#13107b",
 ]
 
