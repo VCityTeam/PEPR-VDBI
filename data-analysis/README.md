@@ -5,8 +5,8 @@
 ### Tools and resources
 - https://elex.is/tools-and-services/
 
-### Tests
-- [Wordclouds](wordclouds.md)
+### Tests and implementations
+- [Wordcounts](wordcount.md)
 
 ### Literature
 
