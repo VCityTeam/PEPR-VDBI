@@ -55,7 +55,7 @@ def tokenize_text(
     return [token for token in tokens]
 
 
-def clean_wordcount(
+def clean_and_count_words(
     input_path: str,
     stop_words_path: str = "stop_words_en.csv",
     language: str = "eng",
