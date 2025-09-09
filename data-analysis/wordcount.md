@@ -13,7 +13,7 @@ This page describes the process for counting and comparing the word used in plai
   - [Word count comparison](#word-count-comparison)
 - [To Run](#to-run)
 - [Produced word counts](#produced-word-counts)
-  - [PEPR VDBI Phase 1 project work package descriptions](#pepr-vdbi-phase-1-project-work-package-descriptions)
+  - [PEPR VDBI Phase 1 project work package comparison](#pepr-vdbi-phase-1-project-work-package-comparison)
   - [Comparison between PEPR VDBI and PEPR Recyclage project descriptions](#comparison-between-pepr-vdbi-and-pepr-recyclage-project-descriptions)
 
 ## Method
@@ -69,10 +69,21 @@ Compare two word counts by:
 
 ## To Run
 
+
+Before running, you must have [UV](https://docs.astral.sh/uv/) installed for managing python dependencies.
+Alternatively, you may install python directly [python](https://www.python.org/).
+
+After installing the prerequisites, install the required npm and python libraries:
+
+```bash
+uv sync
+source .venv/bin/activate
+```
+
 Use the workflow script for automating the pipeline
 
 ```bash
-python src/wordcount_workflow.py test-data/configs/wordcounts/wordcount_full_workflow_test_config.json
+uv run src/wordcount_workflow.py test-data/configs/wordcount/full_workflow_test_config.json
 ```
 
 **Usage:**
@@ -102,7 +113,7 @@ positional arguments:
                            "output_dir": "./wordcount-test_stage_1/",
                            "limit": 50,
                            "params": {
-                           "stop_words_path": "./configs/wordcounts/stop_words_english.csv"
+                           "stop_words_path": "./configs/wordcount/stop_words_english.csv"
                            }
                         },
                         {
@@ -111,7 +122,7 @@ positional arguments:
                            "output_dir": "./wordcount-test_stage_1/",
                            "limit": 100,
                            "params": {
-                           "stop_words_path": "./configs/wordcounts/stop_words_english.csv"
+                           "stop_words_path": "./configs/wordcount/stop_words_english.csv"
                            }
                         },
                         {
@@ -140,20 +151,24 @@ This section documents how different word count datasets were produced.
 > Some of the input textes contain sensitive information and are not available on Github.
 > Reach out to the repository maintainer if you believe you should have access to these files.
 
-### PEPR VDBI Phase 1 project work package descriptions
+### PEPR VDBI Phase 1 project work package comparison
+
+This dataset was initially created to test the new `nltk` integration and create word clouds for the [Journées Scientifiques PEPR VDBI 2025](https://pepr-vdbi.fr/evenements/journees-scientifiques-annuelles-villes-durables-batiments-innovants-2024-1) (JS)
 
 The input texts were sourced by
 1. Manually copying all text (with the exception of major section headers) from Sections 2.1 and 2.2 of each project call regarding WP descriptions.
 2. Texts were aggregated in the [./test-data/private/input/](./test-data/private/input/) folder as `.txt` files
 
-This dataset was initially created to test the new `nltk` integration and create word clouds for the [Journées Scientifiques PEPR VDBI 2025](https://pepr-vdbi.fr/evenements/journees-scientifiques-annuelles-villes-durables-batiments-innovants-2024-1)
-No comparison was done for this dataset.
+Once counted, the project description word counts were grouped based on their respective "Regards croisés" sessions of the JS.
+Each group's word counts were compared through the sum of their intersections.
 
 This [config](./test-data/configs/wordcount/wordcount_VDBI_project_workflow_config.json) was used to create the dataset.
 
+The results are available in [test-data/output/js_roundtable](./test-data/output/js_roundtable/).
+
 ### Comparison between PEPR VDBI and PEPR Recyclage project descriptions
 
-This was done using the deprecated intersection comparison workflow from [d70ef67](https://github.com/VCityTeam/PEPR-VDBI/tree/d70ef67b1900291b74fd0016c558b445f0c9c712/data-analysis) with [this configuration](https://github.com/VCityTeam/PEPR-VDBI/blob/d70ef67b1900291b74fd0016c558b445f0c9c712/data-analysis/test-data/configs/wordcounts/wordcount_compare_workflow_config.json)
+This was done using the deprecated intersection comparison workflow from [d70ef67](https://github.com/VCityTeam/PEPR-VDBI/tree/d70ef67b1900291b74fd0016c558b445f0c9c712/data-analysis) with [this configuration](https://github.com/VCityTeam/PEPR-VDBI/blob/d70ef67b1900291b74fd0016c558b445f0c9c712/data-analysis/test-data/configs/wordcount/wordcount_compare_workflow_config.json)
 
 The initial texts from each PEPR were extracted as follows:
 

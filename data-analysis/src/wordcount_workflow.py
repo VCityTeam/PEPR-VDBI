@@ -37,7 +37,7 @@ def main():
                     "output_dir": "./wordcount-test_stage_1/",
                     "limit": 50,
                     "params": {
-                    "stop_words_path": "./configs/wordcounts/stop_words_english.csv"
+                    "stop_words_path": "./configs/wordcount/stop_words_english.csv"
                     }
                 },
                 {
@@ -46,7 +46,7 @@ def main():
                     "output_dir": "./wordcount-test_stage_1/",
                     "limit": 100,
                     "params": {
-                    "stop_words_path": "./configs/wordcounts/stop_words_english.csv"
+                    "stop_words_path": "./configs/wordcount/stop_words_english.csv"
                     }
                 },
                 {
