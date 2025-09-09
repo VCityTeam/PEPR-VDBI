@@ -10,7 +10,7 @@
     "output_dir": "test-data/wordcount-test_stage_1/",
     "limit": 50,
     "params": {
-      "stop_words_path": "test-data/configs/wordcounts/stop_words_english.csv"
+      "stop_words_path": "test-data/configs/wordcount/stop_words_english.csv"
     }
   },
   {
@@ -19,7 +19,7 @@
     "output_dir": "test-data/wordcount-test_stage_1/",
     "limit": 100,
     "params": {
-      "stop_words_path": "test-data/configs/wordcounts/stop_words_english.csv"
+      "stop_words_path": "test-data/configs/wordcount/stop_words_english.csv"
     }
   },
   {
