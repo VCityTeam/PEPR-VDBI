@@ -9,6 +9,9 @@ sql:
   vfpp_wps_en_cleaned: "/data/private/vfpp_wps_en_cleaned.csv"
   villegarden_wps_en_cleaned: "/data/private/villegarden_wps_en_cleaned.csv"
   whaou_wps_en_cleaned: "/data/private/whaou_wps_en_cleaned.csv"
+  js_vdbi_2025_roundtable_1: "/data/js_vdbi_2025_roundtable_1.csv"
+  js_vdbi_2025_roundtable_2: "/data/js_vdbi_2025_roundtable_2.csv"
+  js_vdbi_2025_roundtable_3: "/data/js_vdbi_2025_roundtable_3.csv"
 ---
 
 # Phase 1 Project Word Clouds
@@ -83,6 +86,9 @@ const selected_project = Inputs.select(
     ["vfpp work package words (EN)", vfpp_words],
     ["villegarden work package words (EN)", villegarden_words],
     ["whaou work package words (EN)", whaou_words],
+    // ["JS VDBI 2025 Roundtable 1 (EN)", js_vdbi_2025_roundtable_1],
+    // ["JS VDBI 2025 Roundtable 2 (EN)", js_vdbi_2025_roundtable_2],
+    // ["JS VDBI 2025 Roundtable 3 (EN)", js_vdbi_2025_roundtable_3],
   ]),
   {
     label: "Select project",
