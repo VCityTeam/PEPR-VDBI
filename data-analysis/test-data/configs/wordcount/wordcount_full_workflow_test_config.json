@@ -1,0 +1,35 @@
+[
+  {
+    "activity": "parse",
+    "input_dir": "test-data/input/wordcount-test/",
+    "output_dir": "test-data/wordcount-test_stage_0/"
+  },
+  {
+    "activity": "clean",
+    "input_dir": "test-data/wordcount-test_stage_0/",
+    "output_dir": "test-data/wordcount-test_stage_1/",
+    "limit": 50,
+    "params": {
+      "stop_words_path": "test-data/configs/wordcounts/stop_words_english.csv"
+    }
+  },
+  {
+    "activity": "clean",
+    "input_dir": "test-data/wordcount-test_stage_0/",
+    "output_dir": "test-data/wordcount-test_stage_1/",
+    "limit": 100,
+    "params": {
+      "stop_words_path": "test-data/configs/wordcounts/stop_words_english.csv"
+    }
+  },
+  {
+    "activity": "compare",
+    "inputs": [
+      "test-data/wordcount-test_stage_1/example-text_cleaned_50.csv:test-data/wordcount-test_stage_1/example-text_cleaned_100.csv"
+    ],
+    "output_dir": "test-data/output/wordcount-test/",
+    "params": {
+      "mode": "INTERSECTION"
+    }
+  }
+]

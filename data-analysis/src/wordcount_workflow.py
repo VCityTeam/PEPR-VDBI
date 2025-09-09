@@ -28,33 +28,33 @@ def main():
             [
                 {
                     "activity": "parse",
-                    "input_dir": "./input/wordcloud-test/",
-                    "output_dir": "./wordcloud-test_stage_0/"
+                    "input_dir": "./input/wordcount-test/",
+                    "output_dir": "./wordcount-test_stage_0/"
                 },
                 {
                     "activity": "clean",
-                    "input_dir": "./wordcloud-test_stage_0/",
-                    "output_dir": "./wordcloud-test_stage_1/",
+                    "input_dir": "./wordcount-test_stage_0/",
+                    "output_dir": "./wordcount-test_stage_1/",
                     "limit": 50,
                     "params": {
-                    "stop_words_path": "./configs/wordclouds/stop_words_english.csv"
+                    "stop_words_path": "./configs/wordcounts/stop_words_english.csv"
                     }
                 },
                 {
                     "activity": "clean",
-                    "input_dir": "./wordcloud-test_stage_0/",
-                    "output_dir": "./wordcloud-test_stage_1/",
+                    "input_dir": "./wordcount-test_stage_0/",
+                    "output_dir": "./wordcount-test_stage_1/",
                     "limit": 100,
                     "params": {
-                    "stop_words_path": "./configs/wordclouds/stop_words_english.csv"
+                    "stop_words_path": "./configs/wordcounts/stop_words_english.csv"
                     }
                 },
                 {
                     "activity": "compare",
                     "inputs": [
-                        "./wordcloud-test_stage_1/example-text_cleaned_50.csv:./wordcloud-test_stage_1/example-text_cleaned_100.csv"
+                        "./wordcount-test_stage_1/example-text_cleaned_50.csv:./wordcount-test_stage_1/example-text_cleaned_100.csv"
                     ],
-                    "output_dir": "./output/wordcloud-test/",
+                    "output_dir": "./output/wordcount-test/",
                     "params": {
                     "mode": "INTERSECTION"
                     }
@@ -70,7 +70,7 @@ def main():
     parser.add_argument(
         "-l",
         "--log",
-        default="wordcloud-workflow.log",
+        default="wordcount-workflow.log",
         help="Specify the logging file",
     )
 

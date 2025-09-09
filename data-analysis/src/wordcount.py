@@ -61,7 +61,7 @@ def clean_and_count_words(
     language: str = "eng",
     delimiter: str = ",",
 ) -> dict[str, int]:
-    """Clean wordcloud data by
+    """Clean wordcount data by
     1. Lemmatizing words using nltk.stem.WordNetLemmatizer
     2. Mapping words to lower case
     3. removing digits
