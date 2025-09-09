@@ -138,7 +138,7 @@ This section documents how different word count datasets were produced.
 
 ### Comparison between PEPR VDBI and PEPR Recyclage project descriptions
 
-This was done using the deprecated intersection comparison workflow from [d70ef67](https://github.com/VCityTeam/PEPR-VDBI/tree/d70ef67b1900291b74fd0016c558b445f0c9c712/data-analysis) with [this configuration](https://github.com/VCityTeam/PEPR-VDBI/blob/d70ef67b1900291b74fd0016c558b445f0c9c712/data-analysis/test-data/configs/wordclouds/wordcloud_compare_workflow_config.json)
+This was done using the deprecated intersection comparison workflow from [d70ef67](https://github.com/VCityTeam/PEPR-VDBI/tree/d70ef67b1900291b74fd0016c558b445f0c9c712/data-analysis) with [this configuration](https://github.com/VCityTeam/PEPR-VDBI/blob/d70ef67b1900291b74fd0016c558b445f0c9c712/data-analysis/test-data/configs/wordcounts/wordcount_compare_workflow_config.json)
 
 The initial texts from each PEPR were extracted as follows:
 
@@ -172,4 +172,4 @@ This dataset uses the same WP descriptions from the [PEPR VDBI project calls](#p
 It was initially created to test the new `nltk` integration and create word clouds for the [Journées Scientifiques PEPR VDBI 2025](https://pepr-vdbi.fr/evenements/journees-scientifiques-annuelles-villes-durables-batiments-innovants-2024-1)
 No comparison was done during this experiment.
 
-This [config](./test-data/configs/wordcount/wordcloud_VDBI_project_workflow_config.json) was used to create the dataset.
+This [config](./test-data/configs/wordcount/wordcount_VDBI_project_workflow_config.json) was used to create the dataset.

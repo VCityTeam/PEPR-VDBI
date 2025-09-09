@@ -3,16 +3,16 @@
     "activity": "parse",
     "description": "tokenize PEPR VDBI WP project descriptions",
     "input_dir": "test-data/private/input/project_wps_en/",
-    "output_dir": "test-data/private/project_wps_en_wordcloud_stage_0/"
+    "output_dir": "test-data/private/project_wps_en_wordcount_stage_0/"
   },
   {
     "activity": "clean",
     "description": "clean PEPR VDBI WP project description tokens",
-    "input_dir": "test-data/private/project_wps_en_wordcloud_stage_0/",
+    "input_dir": "test-data/private/project_wps_en_wordcount_stage_0/",
     "output_dir": "test-data/private/output/project_wps_en/",
     "limit": 50,
     "params": {
-      "stop_words_path": "test-data/configs/wordclouds/stop_words_english.csv"
+      "stop_words_path": "test-data/configs/wordcounts/stop_words_english.csv"
     }
   }
 ]
