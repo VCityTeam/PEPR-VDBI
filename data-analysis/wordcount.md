@@ -13,8 +13,8 @@ This page describes the process for counting and comparing the word used in plai
   - [Word count comparison](#word-count-comparison)
 - [To Run](#to-run)
 - [Produced word counts](#produced-word-counts)
-  - [Comparison between PEPR VDBI and PEPR Recyclage project descriptions](#comparison-between-pepr-vdbi-and-pepr-recyclage-project-descriptions)
   - [PEPR VDBI Phase 1 project work package descriptions](#pepr-vdbi-phase-1-project-work-package-descriptions)
+  - [Comparison between PEPR VDBI and PEPR Recyclage project descriptions](#comparison-between-pepr-vdbi-and-pepr-recyclage-project-descriptions)
 
 ## Method
 
@@ -136,6 +136,21 @@ options:
 
 This section documents how different word count datasets were produced.
 
+> [!WARNING]
+> Some of the input textes contain sensitive information and are not available on Github.
+> Reach out to the repository maintainer if you believe you should have access to these files.
+
+### PEPR VDBI Phase 1 project work package descriptions
+
+The input texts were sourced by
+1. Manually copying all text (with the exception of major section headers) from Sections 2.1 and 2.2 of each project call regarding WP descriptions.
+2. Texts were aggregated in the [./test-data/private/input/](./test-data/private/input/) folder as `.txt` files
+
+This dataset was initially created to test the new `nltk` integration and create word clouds for the [Journées Scientifiques PEPR VDBI 2025](https://pepr-vdbi.fr/evenements/journees-scientifiques-annuelles-villes-durables-batiments-innovants-2024-1)
+No comparison was done for this dataset.
+
+This [config](./test-data/configs/wordcount/wordcount_VDBI_project_workflow_config.json) was used to create the dataset.
+
 ### Comparison between PEPR VDBI and PEPR Recyclage project descriptions
 
 This was done using the deprecated intersection comparison workflow from [d70ef67](https://github.com/VCityTeam/PEPR-VDBI/tree/d70ef67b1900291b74fd0016c558b445f0c9c712/data-analysis) with [this configuration](https://github.com/VCityTeam/PEPR-VDBI/blob/d70ef67b1900291b74fd0016c558b445f0c9c712/data-analysis/test-data/configs/wordcounts/wordcount_compare_workflow_config.json)
@@ -144,15 +159,11 @@ The initial texts from each PEPR were extracted as follows:
 
 **PEPR VDBI project calls**
 
-1. Manually copy all text (with the exception of major section headers) from the following three sections of each project call:
+1. Manually copying all text (with the exception of major section headers) from the following three sections of each project call:
    - Resume (en)
    - Resume (fr)
    - Sections 2.1 and 2.2 regarding WP descriptions
-2. Texts are aggregated in the [./test-data/private/input/](./test-data/private/input/) folder as `.txt` files
-
-> [!WARNING]
-> These files contain sensitive information and are not available on Github.
-> Reach out to the repository maintainer if you believe you should have access to these files.
+2. Texts were aggregated in the [./test-data/private/input/](./test-data/private/input/) folder as `.txt` files
 
 **PEPR Recyclage**
 
@@ -164,12 +175,4 @@ The initial texts from each PEPR were extracted as follows:
    - Tasks (en)
    - Consortium (en)
 2. Projects still under construction phases such as 'Soon to come' are removed.
-3. Texts are aggregated in the `pepr_recyclage_project_XXX.txt` files
-
-### PEPR VDBI Phase 1 project work package descriptions
-
-This dataset uses the same WP descriptions from the [PEPR VDBI project calls](#pepr-vdbi-project-calls).
-It was initially created to test the new `nltk` integration and create word clouds for the [Journées Scientifiques PEPR VDBI 2025](https://pepr-vdbi.fr/evenements/journees-scientifiques-annuelles-villes-durables-batiments-innovants-2024-1)
-No comparison was done during this experiment.
-
-This [config](./test-data/configs/wordcount/wordcount_VDBI_project_workflow_config.json) was used to create the dataset.
+3. Texts are aggregated in the [pepr_recyclage_project_XXX.txt](./test-data/input/pepr_recyclage/) folder

@@ -1,0 +1,28 @@
+Plastics, recycling, recyclability and reuse of polymer/plastics
+
+
+In the context of the circular economy, it is crucial to develop new concepts to improve the recycling of post-consumer polymer materials and the incorporation of recycled materials into goods and products. The aim is to respond to a major societal challenge: the preservation of resources.
+
+A number of issues concerning plastics recycling were identified during the analysis of the state of the art. Firstly, the presence of contaminants and the disassembly of complex structures appear to hinder the development of mechanical recycling. On the other hand, tertiary or chemical recycling is still in its infancy, and fundamental knowledge in this field is needed to enable its deployment on different scales. Finally, more cross-disciplinary approaches including eco-design, flow analysis and the interplay of players need to be taken into account in all future developments.
+
+recycling, recyclability, reuse, polymers, plastics, eco-design, contaminant, disassembly, chemical recycling
+
+
+Contaminants in plastics
+
+
+
+Dismantling and disassembling complex structures
+
+
+
+Tertiary recycling (chemical)
+
+
+
+
+Build fundamental knowledge in the field of polymer recycling, so as to make the French scientific community in this field one of the world leaders. These targeted projects will form the backbone of large-scale collaborative projects in France and Europe.
+
+Develop new technologies that create local value, reduce France’s dependence on external resources and boost employment. Various advanced technologies will be considered in the project: 1) solvent extraction (green solvent, subcritical or supercritical conditions); 2- delamination technologies; 3- catalysis for recycling and 4- extrusion/coextrusion for recycling.
+
+To structure the French scientific community in the field of materials recycling by integrating social and human sciences, economics and law, as well as polymerists, engineers, toxicologists and data scientists. The aim is to provide a systemic vision of the possible development of plastic recycling.

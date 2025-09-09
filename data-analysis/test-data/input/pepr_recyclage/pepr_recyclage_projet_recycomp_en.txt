@@ -1,0 +1,32 @@
+Recycomp, nouvelle génération de CMO recyclables à partir de matières premières de recyclage : vers une économie circulaire
+
+
+
+Often of fossil origin, most of the components of organic matrix composites (OMC) cannot be easily separated from one another. They are therefore difficult to recycle. OMCs were developed at a time when eco-design and waste recycling were not mandated by legislation. Most composites therefore end up in landfill or are incinerated, undermining their environmental assessment. Waste management in the EU identifies five successive stages, including prevention, preparation for reuse and recycling. The RecyComp project aims to contribute to these three stages.
+
+Prevention: improve the recyclability of composites by designing them with adhesive solutions derived from sustainable resources that are thermolabile, stimuli-reactive, soluble in green solvents or offer depolymerization capabilities.
+Preparing for reuse: maximizing the number of recycled/recyclable components, minimizing the number of components and facilitating end-of-life recycling.
+Recycling: ensure dismantling and separation using innovative technologies such as subcritical and supercritical solvolysis or solvolysis in twin-screw extruders to produce recycled raw materials (RPMs), and replace difficult-to-recycle matrices with easily recyclable ones.
+Composites, recycling, recyclability, carbon fibers and natural fibers, sustainable chemistry, circular economy
+
+
+
+CMO recycling and functionalization of recycled fibers
+Cyril AYMONIER (ICMCB)
+
+This task is to address the recycling of end-of-life composites (historical waste), with solvolysis as the targeted technology, in order to be able to produce recycled raw materials (recycled functional fibers but also monomers/oligomers from the polymer matrix). This is achieved by using green solvents, notably in a twin-screw extruder, under pressure and temperature.
+
+New generation of recyclable composites from recycled raw materials (CMO)
+Isabelle CAPRON (BIA)
+
+In this task, the recycled materials from Task 1 are used as secondary raw materials to produce new multi-material composites with improved recyclability, a better carbon footprint and satisfactory performance. Various sub-tasks focus on the design and production, at laboratory scale, of prototypes or multi-layer systems, fully representative of the targeted recyclable composite systems. The quality of interfaces between components and the cohesion between layers are addressed through the development and implementation of specific and original characterization tests.
+
+
+
+By contributing to the prevention, preparation for reuse and recycling of used CMOs, the RecyComp project will improve resource recovery, paving the way for the circular economy. Significant effects are expected rapidly for industrial sectors by maximizing recycling and taking into account waste management policies based on “extended producer responsibility” (EPR).
+
+During the RecyComp project, a Life Cycle Sustainability Assessment (LCSA) of CMOs will be carried out, including a Techno-Economic Assessment (TEA) and thus covering environmental, economic and social aspects of sustainability, based on the Life Cycle Assessment (LCA) standardized by the International Organization for Standardization (ISO) and harmonized by the European Commission under the name of Product Environmental Footprint (PEF). At the same time, the economic feasibility of the technological solutions developed will be studied. The RecyComp consortium’s efforts will be aimed at finding the best solutions for a circular economy.
+
+Acquiring knowledge to obtain new generations of recyclable organic matrix composites (OMCs) from recycled raw materials.
+
+Training through research: 4 PhD students, 3 post-docs in 7 different partner laboratories (among the 9 project partners).
