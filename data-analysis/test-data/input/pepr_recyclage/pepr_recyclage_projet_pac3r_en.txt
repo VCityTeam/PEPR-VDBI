@@ -1,0 +1,68 @@
+PAC3R, PACkaging, Recycling, Recyclability, Re-use of papers and cardboards
+
+
+
+The research focuses on the different outgoing flows from paper and cardboard recycling plants: recycled fibers (known as accepted fibers), liquid rejects and solid rejects, and aims to develop new, more sustainable recycling or recovery processes for each.
+
+For the accepted fraction, the aim is to improve inter-fiber bonds in the dry state, while maintaining repulping properties. The aim of this improvement is to limit the use of additives and thus minimize the associated costs and rejects.
+
+For the liquid waste fraction, the aim is to develop a biorefinery integrated into a recycling unit. The starch present in used cardboard, which accumulates in the process water during recycling, is eliminated to avoid clogging the circuits, but is not currently recovered. The extraction and recovery of these compounds, in polymer or monomer form, could be applied to “secondary” biomass.
+
+For the solid fraction, the aim is to develop alternatives to current recovery methods that are better adapted to the mixtures and conditions of the materials. The production of microfibrillated cellulose (reinforcement, rheological agent), regenerated cellulose (aerogels) or cross-linked cellulose (resins) is envisaged to take advantage of the damaged state of lignocellulosic fibers. For plastic-intensive waste, other thermoconversion routes are being considered to improve energy yields and diversify co-products.
+
+The socio-environmental and economic impacts of all these flows will be studied.
+
+Paper-Cardboard, Packaging, Lignocellulosic fibers, Recycling, Recovery, Biorefinery, Physicochemical separation, Upcycling, Green chemical processes, Enzymatic processes, Thermoconversion, Life cycle assessment, Best Available Technique, Innovative ecosystem.
+
+
+Upcycling of the accepted fiber fraction from cardboard recycling and recovery of fibrous rejects
+nathalie.marlin@grenoble-inp.fr
+
+Reinforce the mechanical properties of recycled paper without adding starch, while retaining its repulping properties.
+Enhance the value of fibrous waste by taking advantage of its morphological state
+Development of a new type of biorefinery from “urban forests”: recovered paper and cardboard
+christine.chirat@grenoble-inp.fr
+
+Extract starch from cardboard during recycling, and recover it to avoid its accumulation in process water
+
+Cellulose and carbon aerogels
+romain.sescousse@mines-albi.fr
+
+Adding value to fibrous waste: producing porous materials
+
+Recovering complex, non-recyclable fibrous waste by thermal methods
+marion.carrier@mines-albi.fr
+
+Propose efficient thermoconversion processes
+
+Environmental and economic impact of new processes and materials developed
+valerie.laforest@emse.fr
+
+Report on the impact of new processes and products on the local ecosystem
+
+
+Understand the impact of multi-scale contaminants (lignin and hemicellulose, mineral fillers and plastics) on the production and quality of high value-added cellulose derivatives.
+
+Deepen our understanding of the interactions between the various constituents and contaminants of paper and cardboard (plastics, minerals, organics and lignocellulosics) during thermochemical separation and recovery processes.
+
+Develop knowledge of inter-fiber interactions in dry and wet states, on untreated and functionalized fibers, and in the presence or absence of additives.
+
+Propose methods for separating, extracting and recovering waste components that are better suited to plastic-mineral-fiber mixtures, taking advantage of the state of the material.
+
+Propose more viable recycling processes: limit waste, the use of additives and extend the life of lignocellulosic fibers.
+
+Provide an overall economic, environmental and societal analysis of the processes and new products developed.
+
+The processes and products developed as part of this research project are intended to replace those currently available on the market.
+
+In the case of processes, the ambition is to improve their efficiency while reducing their consumption of energy, water and chemicals. For products, the aim is to market materials derived from waste, offering performance comparable to that of products derived from virgin resources. In other words, the aim is to promote the removal of waste from the recycling process, by offering high value-added products that are competitive with those on the market.
+
+A study dedicated to assessing the environmental impact of these alternative processes and products is being carried out throughout the project.
+
+4 PhDs in Materials, Mechanical, Energy and Process Engineering (IMEP 2 and MEGeP graduate schools).
+
+1 post-doctorate in Materials, Mechanical, Energy and Process Engineeringu
+
+1 PhD in Environmental Sciences and Engineering (Ecole doctorale SIS)
+
+1 post-doctorate in Environmental Sciences and Engineering
