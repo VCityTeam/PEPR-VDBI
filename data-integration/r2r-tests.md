@@ -50,9 +50,8 @@ This test will attempt to:
 - install [R2R lite dependencies](https://r2r-docs.sciphi.ai/self-hosting/installation/light#prerequisites)
 
   - Python 3.12 or higher
-    - This documentation uses a recommended but optional unix python/venv version manager: [pyenv](https://github.com/pyenv/pyenv)
+    - This documentation uses a recommended but optional unix python/venv version manager: [UV](https://docs.astral.sh/uv/)
     - Specifically Python Version `3.12.9` is used.
-  - pip (Python package manager)
   - Git?
   - Postgres + pgvector. These tests use docker for running Postgres with the pgvector extension
 
@@ -65,7 +64,7 @@ This test will attempt to:
 1. (Optional) start with a clean python environment using [venv](https://docs.python.org/3/library/venv.html):
 
    ```bash
-   python -m venv venv
+   uv sync
    source ./venv/bin/activate
    ```
 

@@ -1,21 +1,23 @@
 # AI-based Automated Data Integration Experiments <!-- omit in toc -->
 
-Tests for converting unstructured text to structured text
+Tests for converting unstructured text to structured data
 
-## Table of contents <!-- omit in toc -->
+**Table of contents**
 
-- [1. Step 1 - PDF to unstructured text](#1-step-1---pdf-to-unstructured-text)
+- [1. PDF to unstructured text](#1-pdf-to-unstructured-text)
   - [1.1. Dependencies](#11-dependencies)
   - [1.2. pypdf tests](#12-pypdf-tests)
-- [2. Step 2 - unstructured text to structured text via GPT](#2-step-2---unstructured-text-to-structured-text-via-gpt)
+- [2. Unstructured text to structured text via GPT](#2-unstructured-text-to-structured-text-via-gpt)
   - [2.1. Ollama](#21-ollama)
   - [2.2. Workflow](#22-workflow)
   - [2.3. RAG tests](#23-rag-tests)
 - [See also](#see-also)
 
+
+**Proposed method for RAG-based document querying**
+
 ```mermaid
 ---
-title: Proposed method for RAG-based document querying
 config:
   theme: forest
 ---
@@ -55,7 +57,7 @@ flowchart LR
   B -->|"2-Embed with (by semantic meaning)"| LLM
   I -->|2-Embed with| LLM
   LLM -->|"3-Store (multimodal?) embeddings"| VS
-  
+
   %% Use multiquery rewriting?
   Q1 -->|4-Send query| R
   Q2 -->|4-Send query| R
@@ -72,7 +74,7 @@ flowchart LR
 > Most document data used for testing is private.
 > Contact the repository owners to get access if you believe you need it.
 
-## 1. Step 1 - PDF to unstructured text
+## 1. PDF to unstructured text
 
 **RQ1 (Research question):** What is the best open source PDF to text tool or library for transforming pdf files to text?
 
@@ -92,8 +94,6 @@ flowchart LR
 | [marker-pdf](https://pypi.org/project/marker-pdf/) | Python Library | a pipeline of deep-learning models |
 | [pd3f](https://github.com/pd3f/pd3f)               | CLI tool       | no french support? Is it mature?   |
 
-
-
 > [!NOTE]
 > On **Windows**, when exporting text files from other programs or writing to files from python, keep in mind that the **UTF-8** encoding is not always used.
 > When visualizing the content of these files in vscode or in terminals, accent characers may be replaced by unknown symbols.
@@ -101,12 +101,16 @@ flowchart LR
 TODO: https://askubuntu.com/questions/50170/how-to-convert-pdf-to-image
 
 ### 1.1. Dependencies
+
 - [Python](https://www.python.org/downloads/) v3.8+
   - It is recommended to use a virtual python environment. See [here](https://docs.python.org/3/library/venv.html#how-venvs-work) for more information on how to manage a python venv
+
 ```bash
 python -m venv venv
 ```
+
 To activate the virtual environment:
+
 - On Linux
   ```bash
   source venv/bin/activate
@@ -116,20 +120,20 @@ To activate the virtual environment:
   ./venv/Scripts/activate.bat
   ```
 
-
 After installing python, (and optionally activating a venv) install required python libraries
+
 ```bash
 pip install -r src/requirements.txt
 ```
 
-
 ### 1.2. pypdf tests
 
 Dependency:
+
 - [pypdf](https://github.com/py-pdf/pypdf)
 
-
 #### 1.2.1. Test: simple pdf to text conversion
+
 ```bash
 python src/pypdf_test.py test-data/résumé-thèse-fr.pdf test-data/pypdf_test.txt
 ```
@@ -138,16 +142,19 @@ python src/pypdf_test.py test-data/résumé-thèse-fr.pdf test-data/pypdf_test.t
 > The test script can be customized. Use `python src/pypdf_test.py -h` to see the documentation.
 
 Notes:
+
 - seems to have a good output
 - no formatting is retained (i.e., headers, bold, color, etc.)
 - perhaps markdown would be better if possible to retain some semi-structured text?
 
 #### 1.2.2. Test: pdf with table to text conversion
+
 ```bash
 python src/pypdf_test.py test-data/résumé-thèse-tableau-fr.pdf test-data/pypdf_table_test.txt
 ```
 
 Notes:
+
 - table has poor formatting
   - newlines in table cells are represented as newlines in output text
   - separation between consecutive cells is represented by just a space
@@ -155,6 +162,7 @@ Notes:
 - again perhaps markdown is better?
 
 #### 1.2.3. Test: Convert PEPR Résumés des lettres d’intention
+
 Download and transform the PDF of project motivation letters.
 
 ```bash
@@ -163,11 +171,13 @@ python src/pypdf_test.py test-data/input/_231006b_Carnet_VDBI_resumes_des_intent
 ```
 
 Notes:
+
 - formatting for headers, footers, and tables is lost (as expected)
 - conversion is relatively fast for such a long pdf
-- it will be interesting to see how these formatting issues impact results 
+- it will be interesting to see how these formatting issues impact results
 
-## 2. Step 2 - unstructured text to structured text via GPT
+## 2. Unstructured text to structured text via GPT
+
 **RQ2:** What prompts provide the best results for answering the natural language questions posed in the [proposed method](#unstructured-text-to-structured-text-tests)
 
 **Tentative candidates:**
@@ -177,7 +187,9 @@ Notes:
 | [Ollama](https://github.com/ollama/ollama/) | Python Library |         |
 
 ### 2.1. Ollama
+
 Proposed model: **Mistral**
+
 - open source
 - seems to have decent French language (and multi-language) support (also produced by a French company based in Paris, so I would hope so)
 - seems to have a [good balance](https://medium.com/@periphanos.a/mistral-vs-gpt-4-a-comparative-analysis-in-size-cost-and-mmlu-performance-de320060388d) of resource usage vs performance compared to larger models like chatGPT
@@ -185,6 +197,7 @@ Proposed model: **Mistral**
 New dependency: **[Ollama](https://github.com/ollama/ollama)** (Open LLaMa) which supports local Mistral and Mixtral models
 
 Start Ollama with the mistral model and no history to run tests
+
 ```bash
 ollama run mistral
 >>> /set nohistory
@@ -193,14 +206,15 @@ ollama run mistral
 #### 2.1.1. Test: simple keyword extraction in french
 
 Note that [deepl.com](https://www.deepl.com/) translates the keywords listed in the top of the documents as :
-> 3D data, spatio-temporal data, urban data, data integration, data transformation, ontologies, knowledge graphs, conceptual models, model-based, data standards
 
+> 3D data, spatio-temporal data, urban data, data integration, data transformation, ontologies, knowledge graphs, conceptual models, model-based, data standards
 
 For this prompt replace the occurrence of `[text]` with the contents of [pypdf_test.txt](./test-data/pypdf_test.txt)
 
 > Quelles sont les mots clès dans le texte suivant ? : [text]
 
 Output:
+
 ```
 Keywords: urban data, heterogeneous data integration, 3D data, spatio-temporal data, semantic web, ontologies, knowledge graphs, conceptual models, Model-Driven Architecture (MDA), data
 transformation, interoperability, computational representation, data validation.
@@ -208,11 +222,12 @@ transformation, interoperability, computational representation, data validation.
 Explanation: The text is about a research thesis focusing on the integration of heterogeneous, n-dimensional urban data for creating more comprehensive views of urban landscapes and their
 evolution. The key challenges addressed in the thesis are ensuring compatibility with evolving urban data norms and minimizing data loss during transformations between different data formats. The
 proposed approach uses semantic modeling based on models and preserves underlying conceptual models, which allows for adaptability and maintainability while enabling interoperability with other
-open data sources. Additionally, the thesis discusses the transformation of urban data models into computational representations and their application in data validation processes to ensure high-quality transformed      
+open data sources. Additionally, the thesis discusses the transformation of urban data models into computational representations and their application in data validation processes to ensure high-quality transformed
 data. The ultimate goal is to enable easy reuse of integrated urban data by applications such as digital twins for providing more complete views of evolving urban landscapes.
 ```
 
 Notes:
+
 - response in english even though prompt and text are in french
 - keywords seem to be accurately taken and translated from keyword section with several additions proposed
 - explanation was not asked for but provided
@@ -228,8 +243,9 @@ For this prompt replace the occurrence of `[text]` with the contents of [pypdf_t
 > What are the keywords in the following text? : [text]
 
 Output:
+
 ```
-Keywords: urban data integration, heterogeneous multi-dimensional data, Urban Data, 3D data, spatio-temporal data, urban models, semantic modeling, model-driven architecture, data transformation,       
+Keywords: urban data integration, heterogeneous multi-dimensional data, Urban Data, 3D data, spatio-temporal data, urban models, semantic modeling, model-driven architecture, data transformation,
 standardization, interoperability, computationally representable models, ontologies, knowledge graphs.
 
 Additionally, some specific terms related to the context of the text are:
@@ -248,6 +264,7 @@ Additionally, some specific terms related to the context of the text are:
 ```
 
 Notes:
+
 - like in test 1.1 keywords are largely taken from keyword section in the text and translated with several additions
 - I like the proposal of new keywords "related to the context of the text"
 - given these two points, this response "seems" better than the output of test 1.1
@@ -271,27 +288,30 @@ python src/ollama_test.py \
 ```
 
 > [!TIP]
-> - The test script can be customized. Use `python src/ollama_test.py -h` to see the documentation. 
+>
+> - The test script can be customized. Use `python src/ollama_test.py -h` to see the documentation.
 > - Also, you can use just `ollama serve` (without the `&`) in another terminal session to be able to view ollama API calls in real time
 
-#### 2.1.4 Test: Pagoda LIRIS Ollama Service 
+#### 2.1.4 Test: Pagoda LIRIS Ollama Service
+
 This test will examine the functionality of the [Ollama service hosted with on the Pagoda3](https://ollama-ui.pagoda.liris.cnrs.fr/).
-As instructed by [Olivier MBAREK](mailto:olivier.mbarek@univ-lyon1.fr), the http interface is accesible with the Ollama Python library (see test [1.2.1.3](#1213-test-ollama-serverpython)). 
+As instructed by [Olivier MBAREK](mailto:olivier.mbarek@univ-lyon1.fr), the http interface is accesible with the Ollama Python library (see test [1.2.1.3](#1213-test-ollama-serverpython)).
 
 > The interface [Ollama-UI] is that of the OpenWebui project in its latest version (0.5.4), but it is evolving rapidly.
 > This interface also allows you to use the ollama APIs via a token key.
 >
 > This token is available in the account settings (settings -> Account -> API keys).
-> 
+>
 > APIs for routes are documented at https://ollama-ui.pagoda.liris.cnrs.fr/docs, but only work on Chrome/Chromium and similar.
-> 
+>
 > If you wish to use the ollama python client (ollama-python)
 > you need to configure the client as follows.
-> 
+>
 > Translated with DeepL.com (free version)
 
 The following client configuration is used, where the `[JWT token]` string is replaced by a valid JWT token
 For example:
+
 ```py
 from ollama import Client
 
@@ -302,6 +322,7 @@ client = Client(
 ```
 
 The [ollama_test.py](src/ollama_test.py) script is adapted to use this code with if a hostname and token are provided:
+
 ```bash
 python src/ollama_test.py \
   -s
@@ -323,24 +344,29 @@ Thus the `-s` flag was added to the test script.
 This test will examine how we can set up initial data workflows (or data pipelines) for extracting knowledge from multiple pdfs using python.
 
 The proposed workflow does the following for each input file:
+
 - step 1: Read a project proposal (PDF), transform its contents to text
 - step 2: excecute a chain of GPT prompts on the text.
-The following script can be used to run a series of ollama prompts based on a configuration file.
+  The following script can be used to run a series of ollama prompts based on a configuration file.
+
 ```bash
 python src/workflow_test.py test-data/configs/workflow_0_config.json
 ```
+
 > [!TIP]
+>
 > - The test script can be customized. Use `python src/workflow_test.py -h` to see the documentation.
-> - Check the logs when running to see progress in real time (located in `workflow-test.log` by default) 
+> - Check the logs when running to see progress in real time (located in `workflow-test.log` by default)
 
 > [!WARNING]
 > This configuration requires a PDF not provided in the repository
 
 This test uses the configuration file [test-data/configs/workflow_0_config.json](test-data/configs/workflow_0_config.json) which features several prompts:
+
 1. extract keywords
 2. extract short abstract
 3. extract partner
-4. (not yet implemented) extract external partners 
+4. (not yet implemented) extract external partners
 5. extract laboratories
 6. extract disciplines
 
@@ -348,7 +374,8 @@ The configuration will output to the `test-data/workflow-test/VILLEGARDEN` folde
 
 #### 2.2.2. Test: Structured Python data workflow
 
-Same test as above but using the configuration file [test-data/configs/workflow_1_config.json](test-data/configs/workflow_1_config.json) which proposes structuring prompt outputs as JSON. 
+Same test as above but using the configuration file [test-data/configs/workflow_1_config.json](test-data/configs/workflow_1_config.json) which proposes structuring prompt outputs as JSON.
+
 ```bash
 python src/workflow_test.py test-data/configs/workflow_1_config.json
 ```
@@ -356,9 +383,10 @@ python src/workflow_test.py test-data/configs/workflow_1_config.json
 #### 2.2.3. Test: Initial prompt optimization test
 
 Same test as above but using the configuration file [test-data/configs/workflow_2_config.json](test-data/configs/workflow_2_config.json) which proposes a more developed prompt featuring:
-- Setting a context for the GPT i.e., *"You are the scientific project manager of the project proposal below"*
-- Clarifying a search perimeter i.e., *"Search only in the sections 1 'Context' and section 2 'Detailed project description'."*
-- Asking for a formatted output i.e., *"Formulate your response as a bulleted list"*
+
+- Setting a context for the GPT i.e., _"You are the scientific project manager of the project proposal below"_
+- Clarifying a search perimeter i.e., _"Search only in the sections 1 'Context' and section 2 'Detailed project description'."_
+- Asking for a formatted output i.e., _"Formulate your response as a bulleted list"_
 
 ```bash
 python src/workflow_test.py test-data/configs/workflow_2_config.json
@@ -392,6 +420,7 @@ python src/workflow_test.py test-data/configs/workflow_4_config.json
 #### 2.2.7. Test: TEMPERATURE and top parameters test
 
 Test ORCID and IdHAL extraction of the following modelfiles:
+
 - [llama3-json1-creative-default](test-data/modelfiles/llama3-json1-creative-default)
 - [llama3-json1-creative-diverse](test-data/modelfiles/llama3-json1-creative-diverse)
 - [llama3-json1-creative-focused](test-data/modelfiles/llama3-json1-creative-focused)
@@ -403,10 +432,11 @@ Test ORCID and IdHAL extraction of the following modelfiles:
 - [llama3-json1-unoriginal-focused](test-data/modelfiles/llama3-json1-unoriginal-focused)
 
 These modelfiles use differente `temperature`, `top_k`, `top_p` to change see how these parameters effect the generation of JSON:
-- 'creative' models use a `temperature` of *0.9*
-- 'unoriginal' models use a `temperature` of *0.6*
-- 'diverse' models use a `top_k` and `top_p` of *100* and *0.95* respectively 
-- 'focused' models use a `top_k` and `top_p` of *10* and *0.5* respectively 
+
+- 'creative' models use a `temperature` of _0.9_
+- 'unoriginal' models use a `temperature` of _0.6_
+- 'diverse' models use a `top_k` and `top_p` of _100_ and _0.95_ respectively
+- 'focused' models use a `top_k` and `top_p` of _10_ and _0.5_ respectively
 
 Additionally, conversation examples are used to provided to the model of how it should respond. The user prompt features a page of text from VILLEGARDEN project containing resercher names and their ORCIDs/IdHal. The assistant response features an example of what the expected corresponding JSON output should be.
 
@@ -416,6 +446,7 @@ python src/workflow_test.py test-data/configs/workflow_5_config.json
 
 TODO: run test and add notes
 TODO:
+
 - tester formattage des prompts pour:
   - sortie structure pour data viz
   - impact de structure des prompts
@@ -423,7 +454,6 @@ TODO:
 - ollama modelfile:
   - model parameters
   - templates
-
 
 ### 2.3. RAG tests
 
@@ -442,12 +472,13 @@ TODO:
 > [!TIP]
 > See [here](./feasability-notes-GPT-data-integration.md#retrieval-augmented-generation-for-knowledge-intensive-nlp-tasks) for more information about RAG
 
-#### 2.3.1. Test: Langchain with single document and semi-structured data 
+#### 2.3.1. Test: Langchain with single document and semi-structured data
 
 Code adapted from the ollama [langchain-python-rag-document](https://github.com/ollama/ollama/tree/v0.5.5/examples/langchain-python-rag-document) example.
 Test Langchain for RAG ollama queries with workspace configuration.
 
 Summary of results:
+
 - Results 2.2 to 2.4 seem to indicate that including important syntactic information for identifying relevant tokens is beneficial to finding said tokens. I.e., "Given that there are 34 ORCiDs, and ORCiDs are strings of characters with the form `xxxx-xxxx-xxxx-xxxx, ..."
   - It seems to be better to place this information in the user query itself and not in the template
   - Placing some information about the context (the pdf in this case) does seem to benefit the recall of ORCiDs
@@ -455,7 +486,6 @@ Summary of results:
   - Is this configurable with langchain (or other libraries)?
 - The text extraction process of a table in a pdf may remove enough of the table structure that RAG is not possible for queries that require crossing information across columns and rows. See the notes of Results 2.1
   - An approach for overcoming this may be to use image recognition instead of NLP
- 
 
 **$F$ score calculations:**
 
@@ -475,14 +505,14 @@ pie
   "True negatives" : 11
   "False negatives" : 5
 ```
-  - Precision: 1
-  - Recall: 0,85294
-  - $F_1$ score: 0,92063
-  - Adjusting for a more important recall with $\beta=2$: 0,87879
-    - 2 is a common weight for $\beta$ when recall is important [[source]](https://en.wikipedia.org/wiki/F-score#F%CE%B2_score)
-    - The precision of identifying ids in general seems to be very good. All retrieved items in this result are well formed and are not hallucinations.
-    - Becuase of this recall seems to be more important here.
 
+- Precision: 1
+- Recall: 0,85294
+- $F_1$ score: 0,92063
+- Adjusting for a more important recall with $\beta=2$: 0,87879
+  - 2 is a common weight for $\beta$ when recall is important [[source]](https://en.wikipedia.org/wiki/F-score#F%CE%B2_score)
+  - The precision of identifying ids in general seems to be very good. All retrieved items in this result are well formed and are not hallucinations.
+  - Becuase of this recall seems to be more important here.
 
 ```mermaid
 ---
@@ -494,22 +524,27 @@ pie
   "True negatives" : 10
   "False negatives" : 9
 ```
-  - Precision: 0,80645
-  - Recall: 0,83333
-  - $F_1$ score: 0,81967
-  - Adjusting for a more important recall with $\beta=2$: 0,82781
-    - The precision of identifying ids (where both RNSR#s and ORCiDs are considered good) in general seems to be very good. All retrieved items are well formed and are not hallucinations.
-    - Recall seems to be important here as we can systematically filter out RNSR# ids from ORCiDs in post processing.
+
+- Precision: 0,80645
+- Recall: 0,83333
+- $F_1$ score: 0,81967
+- Adjusting for a more important recall with $\beta=2$: 0,82781
+  - The precision of identifying ids (where both RNSR#s and ORCiDs are considered good) in general seems to be very good. All retrieved items are well formed and are not hallucinations.
+  - Recall seems to be important here as we can systematically filter out RNSR# ids from ORCiDs in post processing.
 
 To run the tests, first install new dependencies.
+
 > [!WARNING]
 > Note that these dependencies do not seem to work on **Windows** as of initial testing
+
 ```bash
 pip install -r src/langchain-requirements.txt
 ```
-Additionally Chroma (a dependency) requires sqlite3 >= 3.35.0. Follow [these instructions](https://docs.trychroma.com/troubleshooting#sqlite) to fulfull this dependency 
+
+Additionally Chroma (a dependency) requires sqlite3 >= 3.35.0. Follow [these instructions](https://docs.trychroma.com/troubleshooting#sqlite) to fulfull this dependency
 
 To run the test use the following commands. This will serve Ollama analyze a split version of the VILLEGARDEN pdf (this version only contains the first 5 pages with tabular information). Once the pdf is analyzed, you may send prompts regarding the pdf.
+
 ```bash
 ollama serve &
 python src/langchain-manager.py -i test-data/input/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables.pdf
@@ -518,12 +553,14 @@ python src/langchain-manager.py -i test-data/input/_VILLEGARDEN_KAUFMANN_AAP_FRA
 When the `Query: ` prompt appears, enter your query and return to send it. Sending `exit` will close the program.
 
 This test uses the following template to contextualize the pdf document, where the pdf text is replaced by the `{context}` token and a user query is replaced by the `{question}` token:
+
 > Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer. Use three sentences maximum and keep the answer as concise as possible.
 > `{context}`
 > Question: `{question}`
 > Helpful Answer:
 
 Results:
+
 1.  Result 1.1
     ```json
     {
@@ -554,11 +591,13 @@ Results:
     ```
 
 Comments:
+
 - The template takes too much focus away from the context, the importance of responding incorrectly takes too much precedence to extract any information.
 - Perhaps reducing the context will improve the quality of responses
-- Also specifying the context in the template 
+- Also specifying the context in the template
 
 The template is now modified to the following text, which provides general information about the context:
+
 ```
 Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information about the research units and researchers involved in the project. Keep the answer as concise as possible.
 {context}
@@ -600,7 +639,7 @@ Results:
     - These ORCiDs are valid and indeed in the table.
       - 0000-0003-0817-5860: Laure Vidal-Beaudet
       - 0000-0002-4171-1701: Eric Charmes
-3.  Result 2.4
+4.  Result 2.4
     ```json
     {
       "query": "Given that there are 34 ORCiDs, and ORCiDs are strings of characters with the form `xxxx-xxxx-xxxx-xxxx`, what are the ORCiDs in the text?",
@@ -737,11 +776,13 @@ Results:
       - Assuming tokenization is made on this heterogeneous "structure", text prediction may be disuaded from generating ids from the less common "structures".
 
 The template is updated, adding specific information about the pdf, its form, where to find relevant information in the pdf, and what structure it should have:
+
 ```bash
 python src/langchain-manager.py -i test-data/input/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information (in english and french) about the research units and researchers involved in the project. The information is presented in the form of a table with 5 columns. The 4th column contains the names of researchers in the project. The 5th and final column contains the ORCiD or IdHAL identifier associated with each researcher. ORCiD identifiers are strings of characters with the form 'xxxx-xxxx-xxxx-xxxx' where 'x' can be a number and sometimes an uppercase letter. IdHAL identifiers are strings of characters that typically take the form of 'firstname-lastname', where 'firstname' is the first name of the researcher and 'lastname' is the last name of the researcher. Keep the answer as concise as possible.\n{context}\nQuestion: {question}\nHelpful Answer:"
 ```
 
 Results:
+
 1.  Result 3.1
     ```json
     {
@@ -804,11 +845,13 @@ Results:
     - all of these RNSR#s and ORCiDs exist in the pdf.
 
 IdHAL information is removed from the template (to focus on ORCiDs). ORCiDs tokens are updated to match the same capitalization used in the pdf:
+
 ```bash
 python src/langchain-manager.py -i test-data/input/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information (in english and french) about the research units and researchers involved in the project. The information is presented in the form of a table with 5 columns. The 4th column contains the names of researchers in the project. The 5th and final column contains the Orcid or IdHAL identifier associated with each researcher. Orcid identifiers are strings of characters with the form 'xxxx-xxxx-xxxx-xxxx' where 'x' can be a number and sometimes an uppercase letter. Keep the answer as concise as possible.\n{context}\nQuestion: {question}\nHelpful Answer:"
 ```
 
 Results:
+
 1.  Result 4.1
     ```json
     {
@@ -823,6 +866,7 @@ Results:
       "result": "There is no researcher named "Bernard Kaufmann" listed in the table. Therefore, there is no ORCID corresponding to him."
     }
     - Lots of hallucinating so far. Could be related to tokenization of table. Too much structure is lost.
+    ```
 3.  Result 4.3
     ```json
     {
@@ -862,6 +906,7 @@ Results:
     ```
 
 Changing the model to `llama3.1:8b`. This may require installing the latest version of Ollama and pulling the image. For Linux:
+
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
 ollama pull llama3.1:8b
@@ -877,6 +922,7 @@ python src/langchain-manager.py -i test-data/input/_VILLEGARDEN_KAUFMANN_AAP_FRA
 ```
 
 Result 5.1
+
 ```json
 {
   "query": "What is the ORCiD corresponding to the researcher, 'Bernard Kaufmann'?",
@@ -885,17 +931,19 @@ Result 5.1
 ```
 
 Changing the model to `mistral:7b` and slightly simplifying the orcid column.
+
 ```bash
 python src/langchain-manager.py -i test-data/input/_VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI_tables-3.pdf -m mistral:7b -t "Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information (in english and french) about the research units and researchers involved in the project. The information is presented in the form of a table with 5 columns. The 4th column contains the names of researchers in the project. The 5th column contains the Orcid identifier associated with each researcher. Orcid identifiers are strings of characters with the form 'xxxx-xxxx-xxxx-xxxx' where 'x' can be a number and sometimes an uppercase letter. Keep the answer as concise as possible.\n{context}\nQuestion: {question}\nHelpful Answer:"
 ```
 
 Result 6.1
+
 ```json
 {
   "query": "What is the ORCiD corresponding to the researcher, 'Bernard Kaufmann'?",
   "result": "According to the table, Bernard Kaufmann's OrcID is not listed. To find his OrcID, you would need to look at the list of researchers and their associated OrcIDs in the 4th column. \n\nHowever, if we can assume that Bernard Kaufmann is indeed a researcher involved in this project (based on the context provided), then he does not have an OrcID listed among the other researchers' identifiers."
 }
-```  
+```
 
 - TODO: test placing less context information in the template, and more in the query
 - TODO: test asking for a structured output (e.g., JSON or CSV)
@@ -903,8 +951,8 @@ Result 6.1
 - TODO: Once templates/queries are stable test with larger contexts (larger pdfs, the online example is able to query a document of 100+ pages)
 - TODO: Once templates/queries are stable test with different models (e.g. Llama3.1 and Mistral). It is not clear which model works best for our use case.
 
-
 #### 2.3.2. [Test R2R](./r2r-tests.md)
-Tests moved to [r2r-tests.md](./r2r-tests.md) to better accomodate their length 
+
+Tests moved to [r2r-tests.md](./r2r-tests.md) to better accomodate their length
 
 ## [See also](../docs/README.md#data-integraion)

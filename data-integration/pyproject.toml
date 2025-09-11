@@ -1,0 +1,9 @@
+[project]
+name = "data-integration"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "r2r[core]>=3.6.6",
+]
