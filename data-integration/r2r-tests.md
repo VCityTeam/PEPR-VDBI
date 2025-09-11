@@ -7,7 +7,7 @@ Non R2R specific tests are located [here](./README.md).
 - [Table of contents](#table-of-contents)
 - [2.3.2 Test R2R Light](#232-test-r2r-light)
   - [Preliminaries](#preliminaries)
-  - [Install](#install)
+  - [Installation](#installation)
   - [Results 2.3.2.1](#results-2321)
   - [Results 2.3.2.2](#results-2322)
   - [Perspective tests](#perspective-tests)
@@ -42,44 +42,29 @@ This test will attempt to:
 - Note that these instructions are run from a **WSL 2 Ubuntu** Bash shell
 - The R2R documentation followed uses the `llama3.1:7b` model for generating query responses, however memory limitations were encountered when using this model (possibly due to WSL?). Instead the `llama3.2:3b` model is proposed for its lightweight size.
 
-### Install
+### Installation
 
-#### Install dependencies
+#### Dependencies
 
 - install [Docker](https://docs.docker.com/engine/install/)
 - install [R2R lite dependencies](https://r2r-docs.sciphi.ai/self-hosting/installation/light#prerequisites)
 
   - Python 3.12 or higher
-    - This documentation uses a recommended but optional unix python/venv version manager: [UV](https://docs.astral.sh/uv/)
-    - Specifically Python Version `3.12.9` is used.
-  - Git?
+    - This documentation uses a recommended but optional unix python/venv version manager: [uv](https://docs.astral.sh/uv/)
   - Postgres + pgvector. These tests use docker for running Postgres with the pgvector extension
 
-    ```bash
-    docker pull pgvector/pgvector:pg17
-    ```
+#### [Install R2R](https://r2r-docs.sciphi.ai/self-hosting/installation/light#install-the-extra-dependencies) (light) and Ollama
 
-#### Install and setup R2R
-
-1. (Optional) start with a clean python environment using [venv](https://docs.python.org/3/library/venv.html):
+1. Install depndencies and activate python virtual environment:
 
    ```bash
    uv sync
-   source ./venv/bin/activate
+   source .venv/bin/activate
    ```
 
 2. [Setup ollama](https://r2r-docs.sciphi.ai/self-hosting/local-rag#preparing-local-llms)
 
-   Prepare a modelfile with a larger context window than the default and add it to the manifest:
-
-   ```bash
-   mkdir test-data # only if this folder doesn't already exist
-   mkdir test-data/modelfiles # only if this folder doesn't already exist
-   echo 'FROM llama3.2:3b
-   PARAMETER num_ctx 16000' > ./test-data/modelfiles/r2r_test2321
-   ```
-
-   Add modelfile and pull models
+   Add the modelfile at [./test-data/modelfiles/r2r_test2321](./test-data/modelfiles/r2r_test2321) and pull models
 
    ```bash
    ollama pull llama3.2:3b
@@ -87,93 +72,30 @@ This test will attempt to:
    ollama pull mxbai-embed-large
    ```
 
-3. [Install R2R](https://r2r-docs.sciphi.ai/self-hosting/installation/light#install-the-extra-dependencies) (light)
+3. [Setup Postgres+pgvector](https://r2r-docs.sciphi.ai/self-hosting/configuration/postgres) (our vector store)
 
-   ```bash
-   pip install 'r2r[core]'
-   ```
+   1. Open the [default R2R toml configuration](./test-data/configs/r2r_config.toml) and modify the `password` field of the `[database]` section to something more secure.
+   2. Create a `.env` file as follows with the modified password
 
-4. [Setup Postgres+pgvector](https://r2r-docs.sciphi.ai/self-hosting/configuration/postgres) (our vector store)
-   Create a custom r2r configuration file with postgres config.
+      ```bash
+      touch src/.env
+      echo "POSTGRES_PASSWORD=[YOUR PASSWORD HERE]" > src/.env
+      ```
 
-   ```bash
-   touch ./test-data/configs/r2r_config.toml
-   ```
+   3. Launch the vector store with docker compose:
 
-   This example configuration is based on the default [Ollama configuration file](https://r2r-docs.sciphi.ai/self-hosting/local-rag#configuration).
+      ```bash
+      docker compose -f src/docker-compose.yml -d up
+      ```
 
-   ```toml
-   [app]
-   # LLM used for internal operations, like deriving conversation names
-   fast_llm = "ollama/llama3.2:3b"
-
-   # LLM used for user-facing output, like RAG replies
-   quality_llm = "ollama/llama3.2:3b"
-
-   [completion]
-   provider = "litellm"
-   concurrent_request_limit = 1
-
-     [completion.generation_config]
-     model = "ollama/llama3.2:3b"
-     temperature = 0.1
-     top_p = 1
-     max_tokens_to_sample = 1_024
-     stream = false
-     add_generation_kwargs = { }
-
-   [database]
-   provider = "postgres"  # currently only `postgres` is supported
-
-   # Optional parameters (typically set in the environment instead):
-   user     = "user"
-   password = "password"
-   host     = "localhost"
-   port     = 5432           # Use a numeric port (not quoted)
-   db_name  = "vector_store"
-   # not specified here, but note: `app.project_name` sets the root path (schema/prefix) to all R2R tables.
-
-   [embedding]
-   provider = "ollama"
-   base_model = "mxbai-embed-large"
-   base_dimension = 1_024
-   batch_size = 128
-   add_title_as_prefix = true
-   concurrent_request_limit = 32
-
-   [completion_embedding]
-   provider = "ollama"
-   base_model = "mxbai-embed-large"
-   base_dimension = 1_024
-   batch_size = 128
-   add_title_as_prefix = true
-   concurrent_request_limit = 2
-
-   [ingestion]
-   excluded_parsers = [ "mp4" ]
-   ```
-
-   Launch a postgres db with docker:
-
-   ```bash
-   docker run \
-    --name postgres-r2r-test \
-    -d \
-    -p 5432:5432 \
-    -e POSTGRES_USER=user \
-    -e POSTGRES_PASSWORD=password \
-    -e POSTGRES_DB=vector_store \
-    pgvector/pgvector:pg17
-   ```
-
-5. [Run R2R](https://r2r-docs.sciphi.ai/self-hosting/installation/light#running-r2r) with [our custom config](https://r2r-docs.sciphi.ai/self-hosting/configuration/overview#server-side-configuration)
+4. [Run R2R](https://r2r-docs.sciphi.ai/self-hosting/installation/light#running-r2r) with [our custom config](https://r2r-docs.sciphi.ai/self-hosting/configuration/overview#server-side-configuration)
 
    ```bash
    export R2R_CONFIG_PATH=$PWD/test-data/configs/r2r_config.toml
    python -m r2r.serve
    ```
 
-6. Verify the installation by accessing the R2R API at [http://localhost:7272/v3/health](http://localhost:7272/v3/health) or send a curl:
+5. Verify the installation by accessing the R2R API at [http://localhost:7272/v3/health](http://localhost:7272/v3/health) or send a curl:
 
    ```bash
    curl http://localhost:7272/v3/health
@@ -188,81 +110,81 @@ chmod +x up_test_r2r.sh
 
 #### Ingest file(s) and setup prompts
 
-1.  Use the following one liner to ingest files. For example, to ingest a pdf file located here `./test-data/input/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf`
+1. Use the following one liner to ingest files. For example, to ingest a pdf file located here `./test-data/input/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf`
 
-    ```bash
-    python -c "from r2r import R2RClient;c = R2RClient();c.set_base_url('http://localhost:7272');c.documents.create(file_path='./test-data/input/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf', ingestion_mode='fast')"
-    ```
+   ```bash
+   python -c "from r2r import R2RClient;c = R2RClient();c.set_base_url('http://localhost:7272');c.documents.create(file_path='./test-data/input/VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf', ingestion_mode='fast')"
+   ```
 
-2.  Check the file was correctly ingested.
+2. Check the file was correctly ingested.
 
-    ```bash
-    curl -X GET http://localhost:7272/v3/documents | less
-    ```
+   ```bash
+   curl -X GET http://localhost:7272/v3/documents | less
+   ```
 
-    You should see something like this (after pretty printing):
+   You should see something like this (after pretty printing):
 
-    ```json
-    {
-      "results": [
-        {
-          "id": "b6e9bf87-5ce3-555b-b899-7b8b50fe9987",
-          "collection_ids": ["122fdf6a-e116-546b-a8f6-e4cb2e2c0a09"],
-          "owner_id": "2acb499e-8428-543b-bd85-0d9098718220",
-          "document_type": "pdf",
-          "metadata": { "version": "v0" },
-          "title": "VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf",
-          "version": "v0",
-          "size_in_bytes": 3148204,
-          "ingestion_status": "success",
-          "extraction_status": "pending",
-          "created_at": "2025-03-03T20:39:08.086026Z",
-          "updated_at": "2025-03-03T20:39:08.097748Z",
-          "ingestion_attempt_number": null,
-          "summary": null,
-          "summary_embedding": null,
-          "total_tokens": 64716
-        }
-      ],
-      "total_entries": 1
-    }
-    ```
+   ```json
+   {
+     "results": [
+       {
+         "id": "b6e9bf87-5ce3-555b-b899-7b8b50fe9987",
+         "collection_ids": ["122fdf6a-e116-546b-a8f6-e4cb2e2c0a09"],
+         "owner_id": "2acb499e-8428-543b-bd85-0d9098718220",
+         "document_type": "pdf",
+         "metadata": { "version": "v0" },
+         "title": "VILLEGARDEN_KAUFMANN_AAP_FRANCE2023_PEPR_VDBI fr.pdf",
+         "version": "v0",
+         "size_in_bytes": 3148204,
+         "ingestion_status": "success",
+         "extraction_status": "pending",
+         "created_at": "2025-03-03T20:39:08.086026Z",
+         "updated_at": "2025-03-03T20:39:08.097748Z",
+         "ingestion_attempt_number": null,
+         "summary": null,
+         "summary_embedding": null,
+         "total_tokens": 64716
+       }
+     ],
+     "total_entries": 1
+   }
+   ```
 
-    Verify the chunks of your pdf
+   Verify the chunks of your pdf
 
-    ```bash
-    curl -X GET http://localhost:7272/v3/documents/b6e9bf87-5ce3-555b-b899-7b8b50fe9987/chunks | less
-    ```
+   ```bash
+   curl -X GET http://localhost:7272/v3/documents/b6e9bf87-5ce3-555b-b899-7b8b50fe9987/chunks | less
+   ```
 
-    > [!TIP]
-    > Check out the [API](https://r2r-docs.sciphi.ai/api-and-sdks/introduction) for more commands. Note that when running commands on a local R2R instance, you don't need to include the authorization bearer token in the request header.
+   > [!TIP]
+   > Check out the [API](https://r2r-docs.sciphi.ai/api-and-sdks/introduction) for more commands. Note that when running commands on a local R2R instance, you don't need to include the authorization bearer token in the request header.
 
-3.  Create a system prompt
+3. Create a system prompt
 
-    ```bash
-    curl -X POST http://localhost:7272/v3/prompts \
-      -H "Content-Type: application/json" \
-      -d '{
-           "name": "system",
-           "template": "You are a helpful agent.",
-           "input_types": {}
-         }'
-    ```
+   ```bash
+   curl -X POST http://localhost:7272/v3/prompts \
+     -H "Content-Type: application/json" \
+     -d '{
+          "name": "system",
+          "template": "You are a helpful agent.",
+          "input_types": {}
+        }'
+   ```
 
-4.  [Create a RAG prompt](https://r2r-docs.sciphi.ai/self-hosting/configuration/retrieval/prompts)
+4. [Create a RAG prompt](https://r2r-docs.sciphi.ai/self-hosting/configuration/retrieval/prompts)
 
-    ```bash
-    curl -X POST http://localhost:7272/v3/prompts \
-      -H "Content-Type: application/json" \
-      -d '{
-           "name": "rag",
-           "template": "## Task:\nAnswer the query given immediately below given the context which follows later. Use line item references to like [1], [2], ... refer to specifically numbered items in the provided context. Pay close attention to the title of each given source to ensure it is consistent with the query.\n\n### Query:\n{query}\n\n### Context:\n{context}\n\nREMINDER - Use line item references to like [1], [2], ... refer to specifically numbered items in the provided context.\n## Response:",
-           "input_types": {
-             "query": "string",
-             "context": "string"
-           }
-         }'
-    ```
+   ```bash
+   curl -X POST http://localhost:7272/v3/prompts \
+     -H "Content-Type: application/json" \
+     -d '{
+          "name": "rag",
+          "template": "## Task:\nAnswer the query given immediately below given the context which follows later. Use line item references to like [1], [2], ... refer to specifically numbered items in the provided context. Pay close attention to the title of each given source to ensure it is consistent with the query.\n\n### Query:\n{query}\n\n### Context:\n{context}\n\nREMINDER - Use line item references to like [1], [2], ... refer to specifically numbered items in the provided context.\n## Response:",
+          "input_types": {
+            "query": "string",
+            "context": "string"
+          }
+        }'
+   ```
 
 #### Send query
 
@@ -583,6 +505,7 @@ The templates, prompts, and output formats are configured in the file [./test-da
    - prompt:
      > What are the proposed research actions of the NEO project?
    - format:
+
      ```json
      "response_format": {
        "type": "json_object"
@@ -590,9 +513,11 @@ The templates, prompts, and output formats are configured in the file [./test-da
      ```
 
 2. Define research actions as a string
+
    - prompt:
      > What are the proposed research actions of the NEO project?
    - format:
+
      ```json
      "response_format": {
        "type": "json_schema",
