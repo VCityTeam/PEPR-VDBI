@@ -550,3 +550,5 @@ python src/workflow_test.py -m r2r test-data/configs/workflow_2.3.4_config.json
 
 
 ### 2.3.4 Results
+
+![test 2.3.4_graph_result](img/2.3.4_graph_result.png)
