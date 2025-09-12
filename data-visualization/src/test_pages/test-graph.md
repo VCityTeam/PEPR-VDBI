@@ -151,3 +151,26 @@ const filteredProductForceGraph = forceGraph(filteredProductGraph, {
 
 <div>${filter_input}</div>
 <div>${filteredProductForceGraph}</div>
+
+## Test with custom input
+
+```js echo
+const jsonfile = view(
+  Inputs.file({ label: "JSON file", accept: ".json", required: true })
+)
+```
+
+```js
+const user_data = await jsonfile.json()
+display({...user_data})
+display(user_data)
+```
+
+
+<div class="card">
+  ${resize((width) => forceGraph(user_data, {
+      width: width,
+      height: width,
+    }))
+  }<!-- $ -->
+</div>
