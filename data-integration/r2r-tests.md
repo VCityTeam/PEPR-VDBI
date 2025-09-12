@@ -5,33 +5,21 @@ Non R2R specific tests are located [here](./README.md).
 ## Table of contents
 
 - [Table of contents](#table-of-contents)
-- [2.3.2 Test R2R Light](#232-test-r2r-light)
-  - [Preliminaries](#preliminaries)
+- [Preliminaries](#preliminaries)
+- [2.3.2 Test R2R Light installation](#232-test-r2r-light-installation)
   - [Installation](#installation)
   - [Results 2.3.2.1](#results-2321)
   - [Results 2.3.2.2](#results-2322)
   - [Perspective tests](#perspective-tests)
 - [2.3.3 R2R workflow Tests](#233-r2r-workflow-tests)
   - [2.3.3 Method](#233-method)
-  - [2.3.3 Install](#233-install)
   - [2.3.3 Run](#233-run)
 - [2.3.4 R2R workflow Tests with response models](#234-r2r-workflow-tests-with-response-models)
   - [2.3.4 Method](#234-method)
-  - [2.3.4 Install](#234-install)
   - [2.3.4 Run](#234-run)
   - [2.3.4 Results](#234-results)
 
-## 2.3.2 Test [R2R Light](https://r2r-docs.sciphi.ai/self-hosting/installation/light)
-
-This test will attempt to:
-
-- Install R2R and minimal dependencies
-- Ingest a document into R2R's RAG system
-- Perform a query on the document
-- Determine if R2R is a suitable candidate for performing local RAG
-- Determine next steps
-
-### Preliminaries
+## Preliminaries
 
 - R2R has 2 modes: `Light` and `Full`
   - `Light` is recommended for development within smaller teams so that's what we will test here.
@@ -41,6 +29,16 @@ This test will attempt to:
 - The relevant online documentation for each step is presented as needed and is recommended as prerequisite reading.
 - Note that these instructions are run from a **WSL 2 Ubuntu** Bash shell
 - The R2R documentation followed uses the `llama3.1:7b` model for generating query responses, however memory limitations were encountered when using this model (possibly due to WSL?). Instead the `llama3.2:3b` model is proposed for its lightweight size.
+
+## 2.3.2 Test [R2R Light](https://r2r-docs.sciphi.ai/self-hosting/installation/light) installation
+
+This test will attempt to:
+
+- Install R2R and minimal dependencies
+- Ingest a document into R2R's RAG system
+- Perform a query on the document
+- Determine if R2R is a suitable candidate for performing local RAG
+- Determine next steps
 
 ### Installation
 
@@ -425,10 +423,6 @@ Input: `test-data/input/NEO_Document-scientifique_vfin_20240209_avec lettressout
 
 The templates, prompts, and output formats are configured in the file [./test-data/configs/workflow_2.3.3_config.json](test-data/configs/workflow_2.3.3_config.json)
 
-### 2.3.3 Install
-
-- Follow [the setup instructions of the previous test](#install)
-
 ### 2.3.3 Run
 
 Start local services
@@ -532,10 +526,6 @@ The templates, prompts, and output formats are configured in the file [./test-da
      }
      ```
 
-### 2.3.4 Install
-
-- Follow [the setup instructions of the previous test](#install)
-
 ### 2.3.4 Run
 
 Start local services
@@ -547,15 +537,16 @@ Start local services
 Run the workflow.
 
 ```bash
-python src/workflow_test.py -m r2r -t [BEARER TOKEN] test-data/configs/workflow_2.3.4_config.json
+python src/workflow_test.py -m r2r test-data/configs/workflow_2.3.4_config.json
 ```
 
-If using the LIRIS Pagoda3 Ollama service (or another API with authentication), replace `[BEARER TOKEN]` with a valid bearer token
+> [!TIP]
+> If using the LIRIS Pagoda3 Ollama service (or another API with authentication), use the `-t` flag as follows and replace `[BEARER TOKEN]` with a valid bearer token
+>
+> ```bash
+> python src/workflow_test.py -m r2r -t [BEARER TOKEN] test-data/configs/workflow_2.3.4_config.json
+> ```
+> Also, note the warning about proxies in [section 2.3.3 - Run](#233-run) if you have trouble connecting to Pagoda3
 
-```bash
-python src/workflow_test.py -m r2r -t [BEARER TOKEN] test-data/configs/workflow_2.3.4_config.json
-```
-
-Note the warning about proxies in [section 2.3.3 - Run](#233-run) if you have trouble connecting to Pagoda3
 
 ### 2.3.4 Results

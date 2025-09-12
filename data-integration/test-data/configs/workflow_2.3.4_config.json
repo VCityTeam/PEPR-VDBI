@@ -1,7 +1,8 @@
 {
   "output": "test-data/private/output/r2r-test/2.3.4",
   "description": "Ground truth R2R test on 1 pdf RAG",
-  "url": "https://ollama-ui.pagoda.liris.cnrs.fr/",
+  "url": "http://localhost:7272",
+  "_url": "https://ollama-ui.pagoda.liris.cnrs.fr",
   "templates": [
     {
       "name": "rag_test_2_3_2",
@@ -24,7 +25,7 @@
           "type": "json_object"
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "What are the proposed research actions of the NEO project? Structure your response in JSON.",
@@ -34,7 +35,7 @@
           "type": "json_object"
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "What are the proposed research actions of the NEO project?",
@@ -52,7 +53,7 @@
           }
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "What are the proposed research actions of the NEO project? Structure your response in JSON.",
@@ -70,7 +71,7 @@
           }
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "What are the proposed research actions of the NEO project?",
@@ -93,7 +94,7 @@
           }
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "What are the proposed research actions of the NEO project?",
@@ -117,7 +118,7 @@
           }
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "How does the NEO project propose to perform their research actions?",
@@ -127,7 +128,7 @@
           "type": "json_object"
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "Why does the NEO project propose their research actions?",
@@ -137,7 +138,7 @@
           "type": "json_object"
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "What is the research proposal of the NEO project?",
@@ -147,7 +148,7 @@
           "type": "json_object"
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "How does the NEO project propose to perform their research actions?",
@@ -167,7 +168,7 @@
           }
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "Why does the NEO project propose their research actions?",
@@ -187,7 +188,7 @@
           }
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "What is the research proposal of the NEO project?",
@@ -207,7 +208,7 @@
           }
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "What research actions are proposed for which solutions by the NEO project?",
@@ -217,7 +218,7 @@
           "type": "json_object"
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "What research actions are proposed for which solutions by the NEO project?",
@@ -246,7 +247,7 @@
           }
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "What research actions are proposed for which solutions by the NEO project?",
@@ -277,7 +278,7 @@
           }
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "What research actions are proposed for which solutions by the NEO project?",
@@ -301,10 +302,7 @@
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "research_action",
-                      "solution"
-                    ]
+                    "required": ["research_action", "solution"]
                   }
                 }
               }
@@ -312,7 +310,7 @@
           }
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "What are the proposed research products or results of the NEO project?",
@@ -335,7 +333,7 @@
           }
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "What are the proposed research products or results of the NEO project?",
@@ -353,19 +351,13 @@
                     "type": "object",
                     "properties": {
                       "type": {
-                        "enum": [
-                          "product",
-                          "result"
-                        ]
+                        "enum": ["product", "result"]
                       },
                       "description": {
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "type",
-                      "description"
-                    ]
+                    "required": ["type", "description"]
                   }
                 }
               }
@@ -373,7 +365,7 @@
           }
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "What are the proposed research products or results of the NEO project?",
@@ -391,10 +383,7 @@
                     "type": "object",
                     "properties": {
                       "productOrResultType": {
-                        "enum": [
-                          "product",
-                          "result"
-                        ]
+                        "enum": ["product", "result"]
                       },
                       "productOrResultTypeDescription": {
                         "type": "string"
@@ -411,18 +400,103 @@
           }
         }
       },
-      "run": true
+      "run": false
     },
     {
       "prompt": "What are the research products or results by the NEO project? Order your answers by importance.",
+      "description": "Get research products or results as a sorted list of objects with enumerations",
       "rag_generation_config": {
         "response_format": {
-          "type": "json_object",
-          "solutions": {
-            "type": "list",
-            "content": [
-              "string"
-            ]
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "productsOrResults": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "enum": ["product", "result"]
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "importance": {
+                        "type": "integer",
+                        "description": "1 is the most important"
+                      }
+                    },
+                    "required": ["type", "description", "importance"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "What are the research products or results by the NEO project?",
+      "description": "Get research products or results as two lists of objects.",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "products": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": ["products", "results"]
+            }
+          }
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "What are the research products or results by the NEO project?",
+      "description": "Get research products or results as two lists of objects with set cardinalities",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "products": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "results": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": ["products", "results"]
+            }
           }
         }
       },
@@ -430,55 +504,25 @@
     },
     {
       "prompt": "What are the primary and secondary research products or results by the NEO project?",
+      "description": "Get ordered research products as typed objects",
       "rag_generation_config": {
         "response_format": {
-          "type": "json_object",
-          "primary_solution": "string",
-          "secondary_solution": "string"
-        }
-      },
-      "run": false
-    },
-    {
-      "prompt": "What are the urban objects and devices involved by the NEO project?",
-      "rag_generation_config": {
-        "response_format": {
-          "type": "json_object",
-          "objects": {
-            "type": "list",
-            "content": [
-              "string"
-            ]
-          }
-        }
-      },
-      "run": false
-    },
-    {
-      "prompt": "What are the urban objects and devices involved by the NEO project?",
-      "rag_generation_config": {
-        "response_format": {
-          "type": "json_object",
-          "devices": {
-            "type": "list",
-            "content": [
-              "string"
-            ]
-          }
-        }
-      },
-      "run": false
-    },
-    {
-      "prompt": "What are the urban objects and devices involved by the NEO project?",
-      "rag_generation_config": {
-        "response_format": {
-          "type": "json_object",
-          "objects_devices": {
-            "type": "list",
-            "content": [
-              "string"
-            ]
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "primary_product": {
+                  "type": "string",
+                  "description": "a description of the primary research product"
+                },
+                "secondary_product": {
+                  "type": "string",
+                  "description": "a description of the secondary research product"
+                }
+              },
+              "required": ["primary_product", "secondary_product"]
+            }
           }
         }
       },
@@ -486,14 +530,114 @@
     },
     {
       "prompt": "List several keywords to describe the NEO project.",
+      "description": "Get keywords as an array",
       "rag_generation_config": {
         "response_format": {
-          "type": "json_object",
-          "keywords": {
-            "type": "list",
-            "content": [
-              "string"
-            ]
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "a keyword"
+              },
+              "minItems": 1,
+              "description": "A list of keywords"
+            }
+          }
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "List several keywords to describe the NEO project.",
+      "description": "Get keywords as an array, with descriptions",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "a keyword"
+              },
+              "minItems": 1,
+              "description": "A list of keywords"
+            }
+          }
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "List several keywords to describe the NEO project.",
+      "description": "Get keywords as a typed array, with descriptions and",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "keywords": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "a keyword"
+                  },
+                  "minItems": 1,
+                  "description": "A list of keywords"
+                }
+              }
+            }
+          }
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "List 10 keywords to describe the NEO project.",
+      "description": "Get a fixed number of keywords as an array",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 10,
+              "maxItems": 10,
+              "description": "A list of keywords"
+            }
+          }
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "List several keywords to describe the NEO project.",
+      "description": "Get keywords as an array of typed string objects",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "keyword": {
+                    "type": "string"
+                  }
+                },
+                "required": ["keyword"]
+              },
+              "minItems": 1,
+              "description": "A list of keywords"
+            }
           }
         }
       },
@@ -501,18 +645,154 @@
     },
     {
       "prompt": "What are the challenges the NEO project will respond to?",
+      "description": "Get challenges as an array of string enumerations",
       "rag_generation_config": {
         "response_format": {
-          "type": "json_object",
-          "challenges": {
-            "type": "list",
-            "content": [
-              "string"
-            ]
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "La préservation de la biodiversité",
+                  "La ville sobre et frugale",
+                  "Le changement climatique",
+                  "La ville inclusive et équitable",
+                  "La ville durable, santé et bien-être",
+                  "La ville résiliente",
+                  "Les défis émergents, signaux faibles, nouvelles difficulté"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 6,
+              "description": "A list of challenges"
+            }
           }
         }
       },
       "run": false
+    },
+    {
+      "prompt": "What are the challenges the NEO project will respond to?",
+      "description": "Get challenges as an array of string enumerations without duplicates",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "La préservation de la biodiversité",
+                  "La ville sobre et frugale",
+                  "Le changement climatique",
+                  "La ville inclusive et équitable",
+                  "La ville durable, santé et bien-être",
+                  "La ville résiliente",
+                  "Les défis émergents, signaux faibles, nouvelles difficulté"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 6,
+              "uniqueItems": true,
+              "description": "A list of challenges"
+            }
+          }
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "What are the challenges the NEO project will respond to? Order your answers by importance.",
+      "description": "Get challenges as an array of objects containing string enumerations and integer priorities",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "challenge": {
+                    "enum": [
+                      "La préservation de la biodiversité",
+                      "La ville sobre et frugale",
+                      "Le changement climatique",
+                      "La ville inclusive et équitable",
+                      "La ville durable, santé et bien-être",
+                      "La ville résiliente",
+                      "Les défis émergents, signaux faibles, nouvelles difficulté"
+                    ]
+                  },
+                  "priority": {
+                    "type": "integer",
+                    "description": "1 is the most important"
+                  }
+                },
+                "required": ["challenge", "priority"]
+              },
+              "minItems": 1,
+              "maxItems": 6,
+              "description": "A list of challenges"
+            }
+          }
+        }
+      },
+      "run": false
+    },
+    {
+      "prompt": "Create a knowledge graph of the entities of the NEO project",
+      "description": "Create a knowledge graph as a list of nodes and links",
+      "rag_generation_config": {
+        "response_format": {
+          "type": "json_schema",
+          "json_schema": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["id", "label", "type"]
+                  }
+                },
+                "links": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": "string"
+                      },
+                      "target": {
+                        "type": "string"
+                      },
+                      "relationship": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["source", "target", "relationship"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "run": true
     }
   ]
 }
