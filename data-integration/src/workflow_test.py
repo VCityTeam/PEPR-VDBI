@@ -8,6 +8,7 @@ from utils import readFile, writeToFile
 from ollama_test import sendPrompt as sendOllamaPrompt
 from pypdf_test import pdf2list
 from r2r import R2RClient
+from tqdm import tqdm
 
 
 def main():
@@ -24,6 +25,7 @@ def main():
                 "inputs": {
                     string : string
                 },
+                "url": string,
                 "prompts": [
                     {
                         "prompt": string,
@@ -117,7 +119,7 @@ def runWorkflows(
             csv_file = csv.reader(file, delimiter=delimeter)
             for row in csv_file:
                 config.append(row)
-        for row in config[1:]:
+        for row in tqdm(config[1:]):
             logging.info(
                 f"running workflow on line {config.index(row)}"
                 + f"{str(row[0])} {str(row[1])}"
@@ -143,7 +145,7 @@ def runWorkflows(
     elif format == "json":
         config = json.loads(readFile(configuration))
         if mode == "ollama":
-            for input, ranges in config["inputs"].items():
+            for input, ranges in tqdm(config["inputs"].items()):
                 logging.info(f"running workflow on {input} {ranges}")
                 print(f"running workflow on {input} {ranges}")
                 for prompt_config in config["prompts"]:
@@ -162,6 +164,7 @@ def runWorkflows(
                         )
         elif mode == "r2r":
             # initial setup
+            print("creating client connection")
             logging.info(f"creating client connection {config.get("url")}")
             client = R2RClient()
             client.set_base_url(config.get("url"))
@@ -175,8 +178,10 @@ def runWorkflows(
                 R2RCreateTemplates(client, config.get("templates"))
 
             # first ingest files if necessary
+            print("ingesting documents")
             R2RIngestDocuments(client, config.get("inputs"))
 
+            print("running workflow")
             # then run the workflows. Use default values from config if not specified in
             # prompt_config
             prompt_config_stack = config.get("prompts")
@@ -186,7 +191,7 @@ def runWorkflows(
             #     if prompt_config.get("run")
             # ]
             rerun_number = config.get("rerun", 1)
-            for prompt_config in prompt_config_stack:
+            for prompt_config in tqdm(prompt_config_stack):
                 if not prompt_config.get("run", True):
                     continue
                 for run_number in range(rerun_number):
@@ -224,6 +229,7 @@ def R2RCreateTemplates(client: R2RClient, template_configs: list[dict]) -> None:
         client: an R2RClient used to manage the RAG system.
         template_configs: a list of dictionaries containing the template information.
     """
+    logging.debug(f"client.prompts: {client.prompts}")
     existing_templates = [template.name for template in client.prompts.list().results]
     logging.debug(f"existing templates: {existing_templates}")
 
@@ -304,12 +310,21 @@ def runR2RWorkflow(
         search_settings=search_settings,
         rag_generation_config=rag_generation_config,
     ).results  # type: ignore
+    logging.info(f"prompt: {prompt}")
     logging.debug(f"response: {response}")
-    writeToFile(f"{output_path}/response.json", response.to_json())
     writeToFile(
-        f"{output_path}/generated_answer.{"json" if rag_generation_config else "md"}",
-        response.generated_answer,
+        f"{output_path}/response.json", json.dumps(response.to_dict(), indent=2)
     )
+    if rag_generation_config:
+        writeToFile(
+            f"{output_path}/generated_answer.json",
+            json.dumps(json.loads(response.generated_answer), indent=2),
+        )
+    else:
+        writeToFile(
+            f"{output_path}/generated_answer.md",
+            response.generated_answer,
+        )
 
 
 def runOllamaWorkflow(

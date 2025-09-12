@@ -1,13 +1,13 @@
 [project]
 name = "data-integration"
 version = "0.1.0"
-description = "Add your description here"
+description = "Tests for integrating non-structured data sources with LLMs"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "langchain==0.0.261",
-    "ollama==0.2.1",
-    "pypdf==4.2.0",
-    "r2r[core]>=0.1.26",
-    "tqdm==4.66.1",
+    "langchain>=0.3.27",
+    "ollama>=0.3.3",
+    "pypdf>=4.3.1",
+    "r2r[core]>=3.6.6",
+    "tqdm>=4.67.1",
 ]
