@@ -780,11 +780,11 @@
                       "target": {
                         "type": "string"
                       },
-                      "relationship": {
+                      "label": {
                         "type": "string"
                       }
                     },
-                    "required": ["source", "target", "relationship"]
+                    "required": ["source", "target", "label"]
                   }
                 }
               }
