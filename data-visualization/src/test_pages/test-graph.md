@@ -74,7 +74,7 @@ const productData = resolveProjectEntities(
   getProductSheet(workbook2),
   anonymize,
   anonymizeDict
-)
+).slice(0, 15) // limit for better performace
 display(productData)
 ```
 
@@ -162,10 +162,9 @@ const jsonfile = view(
 
 ```js
 const user_data = await jsonfile.json()
-display({...user_data})
+display({ ...user_data })
 display(user_data)
 ```
-
 
 <div class="card">
   ${resize((width) => forceGraph(user_data, {

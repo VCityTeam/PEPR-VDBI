@@ -301,9 +301,9 @@ export class Graph {
       textColor = "black",
       halo = "GhostWhite",
       haloWidth = 0.25,
-      nodeLabelOpacity = 0.2,
-      linkLabelOpacity = 0.2,
-      highlightOpacity = 1,
+      nodeLabelOpacity = 0.4,
+      linkLabelOpacity = 0.3,
+      highlightOpacity = 0.7,
       nodeLabelOffset = 10,
       legend = circleLegend(
         [
@@ -449,7 +449,7 @@ export class Graph {
       .attr("fill", (d) => this.color(this.valueMap(d)))
       .on("pointerup", this.handleNodePointerup())
       .on("pointerdown", this.handleNodePointerdown())
-      .on("pointerenter", this.handleNodePointerenter())
+      .on("pointerenter", this.handleNodePointerEnter())
       .on("pointerout", this.handleNodePointerout())
       .style("pointer-events", "all")
       .call(this.handleDrag(this.simulation))
@@ -465,19 +465,19 @@ export class Graph {
       .data(this.nodes)
       .join("text")
       .text((d) => cropText(this.keyMap(d), this.textLength))
-      .attr("stroke-linejoin", "round")
-      .attr("stroke-width", this.haloWidth)
-      .attr("stroke", this.halo)
-      .attr("paint-order", "stroke")
+    // .attr("stroke-linejoin", "round")
+    // .attr("stroke-width", this.haloWidth)
+    // .attr("stroke", this.halo)
+    // .attr("paint-order", "stroke")
 
     this.getLinkLabels()
       .data(this.links)
       .join("text")
       .text((d) => cropText(this.relationMap(d), this.textLength))
-      .attr("stroke-linejoin", "round")
-      .attr("stroke-width", this.haloWidth)
-      .attr("stroke", this.halo)
-      .attr("paint-order", "stroke")
+    // .attr("stroke-linejoin", "round")
+    // .attr("stroke-width", this.haloWidth)
+    // .attr("stroke", this.halo)
+    // .attr("paint-order", "stroke")
   }
 
   // Getters for the graph elements //
@@ -687,17 +687,21 @@ export class Graph {
   /**
    * function to handle mouseout events on nodes: highlight the hovered node and connected links
    */
-  handleNodePointerenter() {
+  handleNodePointerEnter() {
     return (_event, datum) => {
       this.svg.classed("hover", true)
+
       this.getNodes().classed("highlight", (d) => d === datum)
+      this.getNodeLabelGroup().style("opacity", 1)
       this.getNodeLabels().classed("highlight", (d) => d === datum)
+
       this.getLinks().classed(
         "highlight",
         ({ source, target }) => datum === target || datum === source
       )
+      this.getLinkLabelGroup().style("opacity", 1)
       this.getLinkLabels().classed(
-        "highlight",
+        "secondary",
         ({ source, target }) => datum === target || datum === source
       )
 
@@ -715,8 +719,10 @@ export class Graph {
       this.svg.classed("hover", false)
       this.getNodes().classed("highlight", false)
       this.getNodeLabels().classed("highlight", false)
+      this.getNodeLabelGroup().style("opacity", this.nodeLabelOpacity)
       this.getLinks().classed("highlight", false)
-      this.getLinkLabels().classed("highlight", false)
+      this.getLinkLabels().classed("secondary", false)
+      this.getLinkLabelGroup().style("opacity", this.linkLabelOpacity)
     }
   }
 
