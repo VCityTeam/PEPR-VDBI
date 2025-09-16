@@ -6,20 +6,38 @@ export default {
   root: 'src', // path to the source root for preview
   pages: [
     {
-      name: 'Phase 1 Researchers by discipline',
-      path: 'dashboards/phase1-disciplines',
+      name: 'Home',
+      path: 'index',
     },
     {
-      name: 'Phase 1 Word clouds',
-      path: 'dashboards/phase1-project-wordclouds',
+      name: 'Dashboards',
+      pages: [
+        {
+          name: 'Phase 1 Overview',
+          path: 'dashboards/phase1-overview-dashboard',
+        },
+        {
+          name: 'Phase 1 Researchers by discipline',
+          path: 'dashboards/phase1-disciplines',
+        },
+      ]
+    },
+    {
+      name: 'Data Visualisation Tools',
+      pages: [
+        {
+          name: 'Word clouds',
+          path: 'tools/wordclouds',
+        },
+        {
+          name: 'Knowledge graphs',
+          path: 'tools/graphs',
+        },
+      ]
     },
     {
       name: 'Under Construction',
       pages: [
-        {
-          name: 'Phase 1 Overview',
-          path: 'dashboards/working/phase1-overview-dashboard',
-        },
         {
           name: 'Phase 1 Partners',
           path: 'dashboards/working/phase1-partner-dashboard',
