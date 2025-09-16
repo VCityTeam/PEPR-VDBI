@@ -748,7 +748,7 @@ export class Graph {
 }
 
 /**
- * @deprecated
+ * @deprecated, use the `Graph` class instead
  */
 export function forceGraph(data, options = {}) {
   const graph = new Graph(data, options)
