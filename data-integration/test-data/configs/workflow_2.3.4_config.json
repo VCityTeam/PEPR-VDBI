@@ -1,5 +1,5 @@
 {
-  "output": "test-data/private/output/r2r-test/2.3.4",
+  "output": "test-data/private/output/r2r-tests/2.3.4/2.3.4",
   "description": "Ground truth R2R test on 1 pdf RAG",
   "url": "http://localhost:7272",
   "_url": "https://ollama-ui.pagoda.liris.cnrs.fr",
@@ -25,7 +25,7 @@
           "type": "json_object"
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What are the proposed research actions of the NEO project? Structure your response in JSON.",
@@ -35,7 +35,7 @@
           "type": "json_object"
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What are the proposed research actions of the NEO project?",
@@ -53,7 +53,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What are the proposed research actions of the NEO project? Structure your response in JSON.",
@@ -71,7 +71,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What are the proposed research actions of the NEO project?",
@@ -94,7 +94,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What are the proposed research actions of the NEO project?",
@@ -118,7 +118,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "How does the NEO project propose to perform their research actions?",
@@ -128,7 +128,7 @@
           "type": "json_object"
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "Why does the NEO project propose their research actions?",
@@ -138,7 +138,7 @@
           "type": "json_object"
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What is the research proposal of the NEO project?",
@@ -148,7 +148,7 @@
           "type": "json_object"
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "How does the NEO project propose to perform their research actions?",
@@ -168,7 +168,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "Why does the NEO project propose their research actions?",
@@ -188,7 +188,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What is the research proposal of the NEO project?",
@@ -208,7 +208,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What research actions are proposed for which solutions by the NEO project?",
@@ -218,7 +218,7 @@
           "type": "json_object"
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What research actions are proposed for which solutions by the NEO project?",
@@ -247,7 +247,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What research actions are proposed for which solutions by the NEO project?",
@@ -278,7 +278,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What research actions are proposed for which solutions by the NEO project?",
@@ -310,7 +310,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What are the proposed research products or results of the NEO project?",
@@ -333,7 +333,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What are the proposed research products or results of the NEO project?",
@@ -365,7 +365,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What are the proposed research products or results of the NEO project?",
@@ -400,7 +400,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What are the research products or results by the NEO project? Order your answers by importance.",
@@ -436,7 +436,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What are the research products or results by the NEO project?",
@@ -466,7 +466,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What are the research products or results by the NEO project?",
@@ -500,7 +500,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What are the primary and secondary research products or results by the NEO project?",
@@ -526,7 +526,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "List several keywords to describe the NEO project.",
@@ -547,7 +547,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "List several keywords to describe the NEO project.",
@@ -568,7 +568,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "List several keywords to describe the NEO project.",
@@ -594,7 +594,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "List 10 keywords to describe the NEO project.",
@@ -615,7 +615,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "List several keywords to describe the NEO project.",
@@ -641,7 +641,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What are the challenges the NEO project will respond to?",
@@ -670,7 +670,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What are the challenges the NEO project will respond to?",
@@ -700,7 +700,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "What are the challenges the NEO project will respond to? Order your answers by importance.",
@@ -739,7 +739,7 @@
           }
         }
       },
-      "run": false
+      "run": true
     },
     {
       "prompt": "Create a knowledge graph of the entities of the NEO project",
