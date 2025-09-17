@@ -5,9 +5,7 @@ Mots-clefs Données 3D, données spatio-temporelles, données
 urbaines, intégration des données, transformation des données,
 ontologies, graphes de connaissances, modèles conceptuels, basée-
 modèles, standards de données
-Encadrant Gilles Gesquière
-Co-
-encadrantsJohn Samuel, Sylvie Servigne
+
 Résumé :
 L'urbanisation et l'anthropisation sont des processus de changement dynamiques et
 multiformes qui ont de fortes répercussions sur nos sociétés.

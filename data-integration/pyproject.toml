@@ -5,6 +5,7 @@ description = "Tests for integrating non-structured data sources with LLMs"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "ipykernel>=6.30.1",
     "langchain>=0.3.27",
     "ollama>=0.3.3",
     "pandas>=2.3.2",
