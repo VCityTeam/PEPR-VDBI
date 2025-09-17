@@ -7,3 +7,15 @@ services:
       - POSTGRES_DB=vector_store
     ports:
       - "5432:5432"
+    volumes:
+      - pgvector-data:/var/lib/postgresql/data
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+
+volumes:
+  ollama:
+  pgvector-data:

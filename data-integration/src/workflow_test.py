@@ -178,7 +178,7 @@ def runWorkflows(
                 R2RCreateTemplates(client, config.get("templates"))
 
             # first ingest files if necessary
-            print("ingesting documents")
+            print("updating vector store")
             R2RIngestDocuments(client, config.get("inputs"))
 
             print("running workflow")
@@ -195,9 +195,12 @@ def runWorkflows(
                 if not prompt_config.get("run", True):
                     continue
                 for run_number in range(rerun_number):
+                    # format output path
                     output_suffix = f"_{prompt_config_stack.index(prompt_config)}{
                         f'.{run_number}' if rerun_number > 1 else ''}"
-                    # format output path
+
+                    logging.debug(f"prompt config: {prompt_config}")
+
                     runR2RWorkflow(
                         prompt=prompt_config.get("prompt"),
                         output=(
@@ -266,7 +269,7 @@ def R2RIngestDocuments(client: R2RClient, document_paths: list[str]) -> None:
         document.title for document in client.documents.list().results
     ]
     logging.debug(f"ingested document titles: {ingested_document_titles}")
-    for document_path in document_paths:
+    for document_path in tqdm(document_paths):
         # if document not already ingested, ingest it
         if path.basename(document_path) not in ingested_document_titles:
             logging.info(f"ingesting document: {document_path}")

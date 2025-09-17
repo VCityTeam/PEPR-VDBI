@@ -1,5 +1,5 @@
 {
-  "output": "test-data/private/output/r2r-tests/2.3.4/2.3.4",
+  "output": "test-data/private/output/r2r-tests/2.3.4/prompt",
   "description": "Ground truth R2R test on 1 pdf RAG",
   "url": "http://localhost:7272",
   "_url": "https://ollama-ui.pagoda.liris.cnrs.fr",

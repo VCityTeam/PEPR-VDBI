@@ -15,10 +15,6 @@ Non R2R specific tests are located [here](./README.md).
   - [2.3.3 Method](#233-method)
   - [2.3.3 Run](#233-run)
 - [2.3.4 R2R workflow Tests with response models](#234-r2r-workflow-tests-with-response-models)
-  - [2.3.4 Method](#234-method)
-  - [2.3.4 Run](#234-run)
-  - [2.3.4 Results](#234-results)
-  - [2.3.4 Analysis](#234-analysis)
 
 ## Preliminaries
 
@@ -54,24 +50,14 @@ This test will attempt to:
 
 #### [Install R2R](https://r2r-docs.sciphi.ai/self-hosting/installation/light#install-the-extra-dependencies) (light) and Ollama
 
-1. Install depndencies and activate python virtual environment:
+1. Install dependencies and activate python virtual environment:
 
    ```bash
    uv sync
    source .venv/bin/activate
    ```
 
-2. [Setup ollama](https://r2r-docs.sciphi.ai/self-hosting/local-rag#preparing-local-llms)
-
-   Add the modelfile at [./test-data/modelfiles/r2r_test2321](./test-data/modelfiles/r2r_test2321) and pull models
-
-   ```bash
-   ollama pull llama3.2:3b
-   ollama create llama3.2:3b -f ./test-data/modelfiles/r2r_test2321
-   ollama pull mxbai-embed-large
-   ```
-
-3. [Setup Postgres+pgvector](https://r2r-docs.sciphi.ai/self-hosting/configuration/postgres) (our vector store)
+2. [Setup Postgres+pgvector](https://r2r-docs.sciphi.ai/self-hosting/configuration/postgres) (our vector store)
 
    1. Open the [default R2R toml configuration](./test-data/configs/r2r_config.toml) and modify the `password` field of the `[database]` section to something more secure.
    2. Create a `.env` file as follows with the modified password
@@ -81,20 +67,30 @@ This test will attempt to:
       echo "POSTGRES_PASSWORD=[YOUR PASSWORD HERE]" > src/.env
       ```
 
-   3. Launch the vector store with docker compose:
+3. [Setup ollama](https://r2r-docs.sciphi.ai/self-hosting/local-rag#preparing-local-llms)
 
-      ```bash
-      docker compose -f src/docker-compose.yml -d up
-      ```
+   - Add the modelfile at [./test-data/modelfiles/r2r_test2321](./test-data/modelfiles/r2r_test2321) and pull models
 
-4. [Run R2R](https://r2r-docs.sciphi.ai/self-hosting/installation/light#running-r2r) with [our custom config](https://r2r-docs.sciphi.ai/self-hosting/configuration/overview#server-side-configuration)
+   ```bash
+   ollama pull llama3.2:3b
+   ollama create llama3.2:3b -f ./test-data/modelfiles/r2r_test2321
+   ollama pull mxbai-embed-large
+   ```
+
+4. Launch the vector store with docker compose:
+
+   ```bash
+   docker compose -f src/docker-compose.yml up vector_store -d
+   ```
+
+5. [Run R2R](https://r2r-docs.sciphi.ai/self-hosting/installation/light#running-r2r) with [our custom config](https://r2r-docs.sciphi.ai/self-hosting/configuration/overview#server-side-configuration)
 
    ```bash
    export R2R_CONFIG_PATH=$PWD/test-data/configs/r2r_config.toml
    python -m r2r.serve
    ```
 
-5. Verify the installation by accessing the R2R API at [http://localhost:7272/v3/health](http://localhost:7272/v3/health) or send a curl:
+6. Verify the installation by accessing the R2R API at [http://localhost:7272/v3/health](http://localhost:7272/v3/health) or send a curl:
 
    ```bash
    curl http://localhost:7272/v3/health
@@ -465,266 +461,4 @@ python src/workflow_test.py -m r2r -t [BEARER_TOKEN] test-data/configs/workflow_
 
 This test will examine how R2Rs [response models](https://r2r-docs.sciphi.ai/cookbooks/structured-output) work for generating structured output
 
-### 2.3.4 Method
-
-Each prompt will ask roughly the same question about a VDBI project with minor modifications to examine how these modifications affect the output.
-In this case, prompts will ask questions about the NEO project's "research actions" and the outpout format target is JSON (since it is a widely supported output format by model).
-
-The test configuration (including, prompts, prompt descriptions, prompt templates, and output formats) are configured in the file [./test-data/configs/workflow_2.3.4_config.json](test-data/configs/workflow_2.3.4_config.json).
-
-Test results are output to [test-data/private/output/r2r-tests/2.3.4/](./test-data/private/output/r2r-tests/2.3.4/) by default.
-
-#### Prompts <!-- omit in toc -->
-
-The following parameters are changed between prompts
-
-1. Asking for the prompt to be formatted (e.g., in JSON)
-2. The response format types are changed (e.g., lists, objects). Additionally, in the case of JSON objects
-
-   1. Object hierarchies
-   2. Object keys
-
-3. Define research actions as an object
-
-   - prompt:
-     > What are the proposed research actions of the NEO project?
-   - format:
-
-     ```json
-     "response_format": {
-       "type": "json_object"
-     }
-     ```
-
-4. Define research actions as a string
-
-   - prompt:
-     > What are the proposed research actions of the NEO project?
-   - format:
-
-     ```json
-     "response_format": {
-       "type": "json_schema",
-       "json_schema": {
-         "schema": {
-           "type": "array",
-           "items": {
-             "type": "string"
-           }
-         }
-       }
-     }
-     ```
-
-#### Prompt Template <!-- omit in toc -->
-
-A prompt template is also provided to contextualize each prompt.
-
-```md
-## Task
-
-Answer the query given immediately below given the context which follows later. Output your response in JSON.
-
-### Query
-
-{query}
-
-### Context
-
-{context}
-```
-
-### 2.3.4 Run
-
-Start local services
-
-```bash
-./up_test_r2r.sh
-```
-
-Run the workflow
-
-```bash
-python src/workflow_test.py -m r2r test-data/configs/workflow_2.3.4_config.json
-```
-
-> [!TIP]
-> If using the LIRIS Pagoda3 Ollama service (or another API with authentication), use the `-t` flag as follows and replace `[BEARER TOKEN]` with a valid bearer token
->
-> ```bash
-> python src/workflow_test.py -m r2r -t [BEARER TOKEN] test-data/configs/workflow_2.3.4_config.json
-> ```
->
-> Also, note the warning about proxies in [section 2.3.3 - Run](#233-run) if you have trouble connecting to Pagoda3
-
-### 2.3.4 Results
-
-### 2.3.4 Analysis
-
-The following observations have been made after reviewing the results of the test.
-
-Each prompt is refered to by its (0 indexed) position in the configuration.
-I.e., the first prompt executed is refered to as prompt **0**. It's results are located in the configured output folder location suffixed with the prompt number: [test-data/private/output/r2r-tests/2.3.4/2.3.4_0/](./test-data/private/output/r2r-tests/2.3.4/2.3.4_0/).
-
-Observations are numbered as well.
-
-1. Prompt 3
-
-- This prompt asks for a simple json array using the following configuration:
-
-    ```json
-    {
-      "prompt": "What are the proposed research actions of the NEO project? Structure your response in JSON.",
-      "description": "A basic prompt about research actions as a structured list with a request for JSON structure",
-      "rag_generation_config": {
-        "response_format": {
-          "type": "json_schema",
-          "json_schema": {
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    }
-    ```
-
-- The output seems to represent sentences (verbatim citations even) from the following chunks:
-
-    3rd, 4th, and 5th retrieved chunks (chunks `119`, `60`, `49`) in the input document.
-
-    ```json
-    [
-      "researchActions",
-      "Milestones (M) -",
-      "1. Mobilisation of the FabLab networks and sharing of a common roadmap to answer the issues raised by each use case (6m).",
-      "2. Co-Building of training module between researchers involved in the UC and the in the WP4 (Year 4).",
-      "3. The analysis of the data collected by the different tools deployed by WP2., so that the researchers could be able to compare the different use cases and to discuss the results with the different stakeholders (Year 4).",
-      "Deliveries (D) - D4.1 : Training modules on the three UC; D4.2 : Reflective scientific report on Neo project and urban futures in the context of ecological crises (combining the diversity of stakeholders); D4.3 : Prototyping of data services based on Observil and Terra Forma databases, instruments (sensors); D4.4 : Documentation for replication of work on sensors and data; D4.5 : Participatory",
-      "scientists is a real challenge that we must overcome collectively if we are to better co-construct the city of today and tomorrow. Neo proposes an original approach combining the human and social sciences and the environmental sciences, based on capitalising on data that already exists and is in the process of being structured, and on new data produced in use cases and as part of participative experiments that give the citizen a place.",
-      "The aim of the project is to enable professionals and decision-makers who play a role in urban planning, as well as citizens who are more or less aware of the ecological transition of our cities, to gain a better understanding of their environmental capital and to optimize it through appropriate urban planning, in order to improve the well-being of residents.",
-      "Innovative measures are envisaged to optimize water management in private homes and public spaces, and to co-construct public spaces in",
-      "and building new knowledge on an ongoing basis...",
-      "This involves (i) producing 'digital services' associated with the environmental data acquired (prototyping applications, designing interfaces for using the data for expert and non-expert audiences), (ii) stimulating so-called citizen metrology (Carmes et al., 2023) and co-production of knowledge with urban managers and civil society.",
-      "This arrangement of the NEO project, aimed at hybridizing the knowledge and viewpoints of different user stakeholders, will make it possible to test the replicability of transfer methodologies in the different urban areas of our network of partners."
-    ]
-    ```
-
-#### Observation: Asking for a JSON structure in the prompt may yield more detailed results
-
-Tests 0-3 repeat the same same prompt modifying simply the type of response format and asking for JSON in the prompt.
-
-> [!NOTE]
-> A `json_object` response format type simply requires the response be formatted in JSON with no additional schematic constraints.
->
-> A `json_schema` response format type defines a JSON schema to which the response must conform.
-
-| #   | Prompt                                                                                        | Response format type |
-| --- | --------------------------------------------------------------------------------------------- | -------------------- |
-| 0   | "What are the proposed research actions of the NEO project?"                                  | `json_object`        |
-| 1   | "What are the proposed research actions of the NEO project? Structure your response in JSON." | `json_object`        |
-| 2   | "What are the proposed research actions of the NEO project?"                                  | `json_schema`        |
-| 3   | "What are the proposed research actions of the NEO project? Structure your response in JSON." | `json_schema`        |
-
-Both prompts specifying a JSON format had more detailed and usable response:
-
-- Response 0
-
-  ```json
-  {
-    "researchActions": [
-      "producing digital services associated with environmental data acquired",
-      "stimulating citizen metrology and co-production of knowledge with urban managers and civil society"
-    ]
-  }
-  ```
-
-- Response 1
-
-  ```json
-  {
-    "researchActions": [
-      {
-        "action": "Mobilisation of the FabLab networks and sharing of a common roadmap",
-        "description": "6 months"
-      },
-      {
-        "action": "Co-Building of training module between researchers involved in the UC and WP4",
-        "year": "Year 4"
-      },
-      {
-        "action": "Analysis of data collected by different tools deployed by WP2",
-        "year": "Year 4"
-      }
-    ],
-    "deliverables": [
-      {
-        "deliverable": "Training modules on three Use Cases",
-        "description": "D4.1"
-      },
-      {
-        "deliverable": "Reflective scientific report on Neo project and urban futures in the context of ecological crises",
-        "description": "D4.2"
-      },
-      {
-        "deliverable": "Prototyping of data services based on Observil and Terra Forma databases, instruments (sensors)",
-        "description": "D4.3"
-      },
-      {
-        "deliverable": "Documentation for replication of work on sensors and data",
-        "description": "D4.4"
-      },
-      {
-        "deliverable": "Participatory approach to co-production of knowledge with urban managers and civil society",
-        "description": "D4.5"
-      }
-    ],
-    "applicationAreas": [
-      {
-        "city": "Toulouse",
-        "region": "Rennes",
-        "potentialOtherCities": ["Nantes"]
-      }
-    ],
-    "partners": [
-      {
-        "partner": "Institut d'Am\u00e9nagement et d'Urbanisme de Rennes",
-        "contribution": "expertise and know-how"
-      },
-      {
-        "partner": "Observil national observation network",
-        "contribution": "expertise and know-how"
-      }
-    ]
-  }
-  ```
-
-- Response 2
-
-  ```json
-  []
-  ```
-
-- Response 3
-
-  ```json
-  [
-    "researchActions",
-    "Milestones (M) -",
-    "1. Mobilisation of the FabLab networks and sharing of a common roadmap to answer the issues raised by each use case (6m).",
-    "2. Co-Building of training module between researchers involved in the UC and the in the WP4 (Year 4).",
-    "3. The analysis of the data collected by the different tools deployed by WP2., so that the researchers could be able to compare the different use cases and to discuss the results with the different stakeholders (Year 4).",
-    "Deliveries (D) - D4.1 : Training modules on the three UC; D4.2 : Reflective scientific report on Neo project and urban futures in the context of ecological crises (combining the diversity of stakeholders); D4.3 : Prototyping of data services based on Observil and Terra Forma databases, instruments (sensors); D4.4 : Documentation for replication of work on sensors and data; D4.5 : Participatory",
-    "scientists is a real challenge that we must overcome collectively if we are to better co-construct the city of today and tomorrow. Neo proposes an original approach combining the human and social sciences and the environmental sciences, based on capitalising on data that already exists and is in the process of being structured, and on new data produced in use cases and as part of participative experiments that give the citizen a place.",
-    "The aim of the project is to enable professionals and decision-makers who play a role in urban planning, as well as citizens who are more or less aware of the ecological transition of our cities, to gain a better understanding of their environmental capital and to optimize it through appropriate urban planning, in order to improve the well-being of residents.",
-    "Innovative measures are envisaged to optimize water management in private homes and public spaces, and to co-construct public spaces in",
-    "and building new knowledge on an ongoing basis...",
-    "This involves (i) producing 'digital services' associated with the environmental data acquired (prototyping applications, designing interfaces for using the data for expert and non-expert audiences), (ii) stimulating so-called citizen metrology (Carmes et al., 2023) and co-production of knowledge with urban managers and civil society.",
-    "This arrangement of the NEO project, aimed at hybridizing the knowledge and viewpoints of different user stakeholders, will make it possible to test the replicability of transfer methodologies in the different urban areas of our network of partners."
-  ]
-  ```
-
-![test 2.3.4_graph_result](img/2.3.4_graph_result.png)
+Documentation is available [in this Jupyter notebook](r2r_test_2.3.4_results.ipynb)
