@@ -5,6 +5,7 @@ description = "Tests for integrating non-structured data sources with LLMs"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "codecarbon>=3.0.4",
     "ipykernel>=6.30.1",
     "langchain>=0.3.27",
     "matplotlib>=3.10.6",
