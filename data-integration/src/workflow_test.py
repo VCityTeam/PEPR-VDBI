@@ -3,12 +3,13 @@ import csv
 import json
 import argparse
 import logging
+from tqdm import tqdm
 from datetime import timedelta
 from utils import readFile, writeToFile
 from ollama_test import sendPrompt as sendOllamaPrompt
 from pypdf_test import pdf2list
 from r2r import R2RClient
-from tqdm import tqdm
+from codecarbon import EmissionsTracker
 
 
 def main():
@@ -49,6 +50,12 @@ def main():
         choices=[",", ";", "\t"],
         default=",",
         help="Specify the csv delimeter (only used for 'csv' format)",
+    )
+    parser.add_argument(
+        "--no_emission_tracking",
+        default=True,
+        action="store_false",
+        help="Disable Co2 emission tracker",
     )
     parser.add_argument(
         "-l",
@@ -93,6 +100,7 @@ def main():
         args.delimeter,
         args.mode,
         args.token,
+        args.no_emission_tracking,
     )
 
 
@@ -102,6 +110,7 @@ def runWorkflows(
     delimeter=",",
     mode="ollama",
     token: str | None = None,
+    track_emissions: bool = True,
 ) -> None:
     """Run a series of workflows based on a configuration file in JSON.
     A configuration file must contain an object with the following keys:
@@ -113,6 +122,9 @@ def runWorkflows(
         See runOllamaWorkflow() for more information.
     - "token": a string containing a client authorization (bearer) token.
     """
+    tracker = EmissionsTracker() if track_emissions else None
+    if tracker:
+        tracker.start()
     if format == "csv":
         config = []
         with open(configuration) as file:
@@ -223,6 +235,10 @@ def runWorkflows(
                     )
         else:
             logging.error(f"mode {mode} not recognized")
+    if tracker:
+        emissions_message = f"Emissions {tracker.stop()} kgs"
+        print(emissions_message)
+        logging.info(emissions_message)
 
 
 def R2RCreateTemplates(client: R2RClient, template_configs: list[dict]) -> None:
