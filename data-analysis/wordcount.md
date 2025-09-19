@@ -27,11 +27,12 @@ start@{ shape: circle, label: " " }
   --> in@{ shape: doc, label: "Text file"}
   --> tokenize(Tokenize text)
   --> count("Clean and count words")
-  --> choice@{ shape: diamond, label: "Compare word counts?"}
+  --> choice@{ shape: diamond, label: "Compare word\ncounts?"}
 compare(Compare word counts)
+  --> out@{ shape: doc, label: "Word count dataset"}
   --> stop@{ shape: dbl-circ, label: " " }
 choice -->|yes| compare
-choice -->|no| stop
+choice -->|no| out
 ```
 
 ### Tokenize words
@@ -42,7 +43,7 @@ Words are tokenized using [Natural Language Toolkit's](https://www.nltk.org/) `n
 
 Word tokens are cleaned by:
 
-1. Lemmatizing with [Natural Language Toolkit's](https://www.nltk.org/) `nltk.stem.WordNetLemmatizer` and the default configuration
+1. [Lemmatizing](https://www.ibm.com/think/topics/stemming-lemmatization) with [Natural Language Toolkit's](https://www.nltk.org/) `nltk.stem.WordNetLemmatizer` and the default configuration
 2. Mapping tokens to lower case
 3. Ignoring predefined stop words
 4. Removing tokens that are numeric digits
@@ -68,7 +69,6 @@ Compare two word counts by:
    3. Min
 
 ## To Run
-
 
 Before running, you must have [UV](https://docs.astral.sh/uv/) installed for managing python dependencies.
 Alternatively, you may install python directly [python](https://www.python.org/).
@@ -156,6 +156,7 @@ This section documents how different word count datasets were produced.
 This dataset was initially created to test the new `nltk` integration and create word clouds for the [Journées Scientifiques PEPR VDBI 2025](https://pepr-vdbi.fr/evenements/journees-scientifiques-annuelles-villes-durables-batiments-innovants-2024-1) (JS)
 
 The input texts were sourced by
+
 1. Manually copying all text (with the exception of major section headers) from Sections 2.1 and 2.2 of each project call regarding WP descriptions.
 2. Texts were aggregated in the [./test-data/private/input/](./test-data/private/input/) folder as `.txt` files
 

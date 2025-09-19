@@ -9,7 +9,8 @@ from utils import readFile, writeToFile
 from ollama_test import sendPrompt as sendOllamaPrompt
 from pypdf_test import pdf2list
 from r2r import R2RClient
-from codecarbon import EmissionsTracker
+from codecarbon import OfflineEmissionsTracker
+from codecarbon.output_methods.logger import LoggerOutput
 
 
 def main():
@@ -52,12 +53,6 @@ def main():
         help="Specify the csv delimeter (only used for 'csv' format)",
     )
     parser.add_argument(
-        "--no_emission_tracking",
-        default=True,
-        action="store_false",
-        help="Disable Co2 emission tracker",
-    )
-    parser.add_argument(
         "-l",
         "--log",
         default="workflow-test.log",
@@ -93,6 +88,7 @@ def main():
  \/\_____\    \ \_\   \ \_\ \_\  \ \_\ \_\    \ \_\
   \/_____/     \/_/    \/_/\/_/   \/_/ /_/     \/_/"""
     )
+    LoggerOutput(logging.getLogger())
 
     runWorkflows(
         args.configuration,
@@ -100,7 +96,6 @@ def main():
         args.delimeter,
         args.mode,
         args.token,
-        args.no_emission_tracking,
     )
 
 
@@ -110,7 +105,6 @@ def runWorkflows(
     delimeter=",",
     mode="ollama",
     token: str | None = None,
-    track_emissions: bool = True,
 ) -> None:
     """Run a series of workflows based on a configuration file in JSON.
     A configuration file must contain an object with the following keys:
@@ -122,9 +116,8 @@ def runWorkflows(
         See runOllamaWorkflow() for more information.
     - "token": a string containing a client authorization (bearer) token.
     """
-    tracker = EmissionsTracker() if track_emissions else None
-    if tracker:
-        tracker.start()
+    tracker = OfflineEmissionsTracker()
+
     if format == "csv":
         config = []
         with open(configuration) as file:
@@ -146,6 +139,7 @@ def runWorkflows(
                     str(row[4]),
                     str(row[5]),
                     str(row[6]),
+                    tracker=tracker,
                 )
             elif mode == "r2r":
                 logging.error("r2r mode not implemented")
@@ -173,6 +167,7 @@ def runWorkflows(
                             prompt_config["model"],
                             prompt_config.get("modelfile"),
                             prompt_config.get("format", ""),
+                            tracker=tracker,
                         )
         elif mode == "r2r":
             # initial setup
@@ -187,11 +182,15 @@ def runWorkflows(
 
             # create templates
             if config.get("templates"):
-                R2RCreateTemplates(client, config.get("templates"))
+                R2RCreateTemplates(
+                    client,
+                    config.get("templates"),
+                    tracker=tracker,
+                )
 
             # first ingest files if necessary
             print("updating vector store")
-            R2RIngestDocuments(client, config.get("inputs"))
+            R2RIngestDocuments(client, config.get("inputs"), tracker=tracker)
 
             print("running workflow")
             # then run the workflows. Use default values from config if not specified in
@@ -232,16 +231,15 @@ def runWorkflows(
                             else config.get("rag_generation_config")
                         ),
                         client=client,
+                        tracker=tracker,
                     )
         else:
             logging.error(f"mode {mode} not recognized")
-    if tracker:
-        emissions_message = f"Emissions {tracker.stop()} kgs"
-        print(emissions_message)
-        logging.info(emissions_message)
 
 
-def R2RCreateTemplates(client: R2RClient, template_configs: list[dict]) -> None:
+def R2RCreateTemplates(
+    client: R2RClient, template_configs: list[dict], tracker: OfflineEmissionsTracker
+) -> None:
     """
     Create new templates in the R2R system. Doesn't overwrite existing templates.
     Parameters:
@@ -255,12 +253,17 @@ def R2RCreateTemplates(client: R2RClient, template_configs: list[dict]) -> None:
     for template_config in template_configs:
         # logging.info(type(template_config.get("input_types")))
         if template_config.get("name") not in existing_templates:
+
             logging.info(f"creating template: {template_config.get('name')}")
+
+            tracker.start()
             response = client.prompts.create(
                 template_config.get("name", ""),
                 template=template_config.get("template", ""),
                 input_types=template_config.get("input_types", ""),
             )
+            emission_result = tracker.stop()
+            logging.info(f"Emissions: {emission_result} kgs")
             logging.info(f"template create response: {response}")
         # else:
         #     logging.info(f"updating template: {template_config.get('name')}")
@@ -273,7 +276,9 @@ def R2RCreateTemplates(client: R2RClient, template_configs: list[dict]) -> None:
         #     logging.info(f"template update response: {response}")
 
 
-def R2RIngestDocuments(client: R2RClient, document_paths: list[str]) -> None:
+def R2RIngestDocuments(
+    client: R2RClient, document_paths: list[str], tracker: OfflineEmissionsTracker
+) -> None:
     """
     Ingest a list of documents into the R2R system. Checks if the document has already
     been ingested before ingesting it.
@@ -289,9 +294,13 @@ def R2RIngestDocuments(client: R2RClient, document_paths: list[str]) -> None:
         # if document not already ingested, ingest it
         if path.basename(document_path) not in ingested_document_titles:
             logging.info(f"ingesting document: {document_path}")
+
+            tracker.start()
             response = client.documents.create(
                 file_path=document_path, ingestion_mode="fast"
             )
+            emission_result = tracker.stop()
+            logging.info(f"Emissions: {emission_result} kgs")
             logging.info(f"ingestion response: {response}")
 
 
@@ -301,6 +310,7 @@ def runR2RWorkflow(
     search_settings: dict[str, str],
     rag_generation_config: dict[str, str],
     client: R2RClient,
+    tracker: OfflineEmissionsTracker,
 ) -> None:
     """Run a workflow on a set of input files using R2R. Each workflow assumes the
     relevant documents and prompts have already been created. Then a given list of
@@ -324,11 +334,14 @@ def runR2RWorkflow(
         makedirs(output_path)
 
     # step 1
+    tracker.start()
     response = client.retrieval.rag(
         prompt,
         search_settings=search_settings,
         rag_generation_config=rag_generation_config,
     ).results  # type: ignore
+    emission_result = tracker.stop()
+    logging.info(f"Emissions: {emission_result} kgs")
     logging.info(f"prompt: {prompt}")
     logging.debug(f"response: {response}")
     writeToFile(
@@ -354,6 +367,7 @@ def runOllamaWorkflow(
     model: str,
     modelfile: str,
     format: str,
+    tracker: OfflineEmissionsTracker,
 ) -> None:
     """Run a workflow on a set of input files using Ollama and pypdf. Each workflow will
     transform the input into a json file (unless the file already exists). Then a given
