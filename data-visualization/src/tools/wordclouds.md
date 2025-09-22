@@ -56,29 +56,32 @@ import {
   </div>
 </div>
 <div class="card">${cloud}</div>
-<div class="card">${resize((width) => Plot.plot({
-  width: width,
-  marginLeft: 100,
-  color: {
-    scheme: "Blues",
-  },
-  y: {
-    label: "Word",
-  },
-  x: {
-    grid: true,
-    axis: "both",
-    label: "Occurrences",
-  },
-  marks: [
-    Plot.barX([...selected_project_value], {
-      y: "text",
-      x: "value",
-      fill: "value",
-      sort: { y: "-x" },
-    }),
-  ],
-}))}</div>
+<div class="card">
+  ${resize((width) => Plot.plot({
+    width: width,
+    marginLeft: 100,
+    color: {
+      scheme: "Blues",
+    },
+    y: {
+      label: "Word",
+    },
+    x: {
+      grid: true,
+      axis: "both",
+      label: "Occurrences",
+    },
+    marks: [
+      Plot.barX([...selected_project_value], {
+        y: "text",
+        x: "value",
+        fill: "value",
+        sort: { y: "-x" },
+      }),
+    ],
+  }))}
+  <!-- $ -->
+</div>
 
 ```js
 const _invalidator_1 = refresh

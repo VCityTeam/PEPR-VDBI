@@ -381,22 +381,30 @@ export function copyTableToClipboardButton(
 /**
  * A button for copying an SVG element to the clipboard.
  *
- * @param {Element} element - the element to be copied
+ * @param {Element} element - the element to be copied. Ignored if callback is set
  * @param {String} label - button label
+ * @param {Function} callback - an optional callback function to dynamically return the SVG
  * @returns {button} - a button element that copies the element html to the clipboard
  */
-export function copySVGToClipboardButton(element, label = "Copy to clipboard") {
-  if (!element) {
-    console.warn("copySVGToClipboardButton: element is empty")
+export function copySVGToClipboardButton(
+  element,
+  label = "Copy to clipboard",
+  callback = undefined
+) {
+  if (!element && !callback) {
+    console.warn("copySVGToClipboardButton: element and callback are empty")
     return button(label, { value: null, reduce: () => {} })
   }
+
   // add the xmlns attribute to the element if it is not present
-  if (!element.attributes.getNamedItem("xmlns")) {
+  if (element && !element.attributes.getNamedItem("xmlns")) {
     element.setAttribute("xmlns", "http://www.w3.org/2000/svg")
   }
+
   return button(label, {
     value: null,
-    reduce: () => navigator.clipboard.writeText(element.outerHTML),
+    reduce: () =>
+      navigator.clipboard.writeText(callback ? callback() : element.outerHTML),
   })
 }
 

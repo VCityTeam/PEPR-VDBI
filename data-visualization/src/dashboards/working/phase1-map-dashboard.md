@@ -21,6 +21,7 @@ import {
   countEntities,
   sparkbar,
   copyTableToClipboardButton,
+  copySVGToClipboardButton,
 } from "/components/utilities.js"
 ```
 
@@ -98,22 +99,53 @@ const selected_project = view(
 ```
 
 ```js
-display(
-  copyTableToClipboardButton([...terrain_data_by_city], {
+const copy_to_clipboard_terrain_data_by_city = copyTableToClipboardButton(
+  [...terrain_data_by_city],
+  {
     label: "Copy terrain data by location to clipboard",
     delimeter: ";",
-  })
+  }
 )
-display(
-  copyTableToClipboardButton([...terrain_data], {
+
+const copy_to_clipboard_terrain_data = copyTableToClipboardButton(
+  [...terrain_data],
+  {
     label: "Copy terrain and scale data to clipboard",
-  })
+  }
 )
-display(
-  copyTableToClipboardButton([...all_partner_data], {
+const copy_to_clipboard_all_partner_data = copyTableToClipboardButton(
+  [...all_partner_data],
+  {
     label: "Copy partner data by project to clipboard",
     delimeter: ";",
-  })
+  }
+)
+```
+
+```js
+function getSVGGetter(index) {
+  return () =>
+    d3
+      .selectAll(".map-container svg")
+      .attr("xmlns", "http://www.w3.org/2000/svg")
+      .nodes()[index].outerHTML
+}
+const copy_map_to_clipboard_french = copySVGToClipboardButton(
+  null,
+  "Copy French map to clipboard",
+  getSVGGetter(0)
+)
+
+const copy_map_to_clipboard_idf = copySVGToClipboardButton(
+  null,
+  "Copy Grand Métropole de Paris map to clipboard",
+  getSVGGetter(1)
+)
+
+const copy_map_to_clipboard_italy = copySVGToClipboardButton(
+  null,
+  "Copy Italian map to clipboard",
+  getSVGGetter(2)
 )
 ```
 
@@ -128,8 +160,23 @@ const terrain_legend_type = view(
 )
 ```
 
+<div class="grid grid-cols-2">
+  <div>
+    ${copy_to_clipboard_terrain_data_by_city}
+    ${copy_to_clipboard_terrain_data}
+    ${copy_to_clipboard_all_partner_data}
+    <!-- $ -->
+  </div>
+  <div>
+    ${copy_map_to_clipboard_french}
+    ${copy_map_to_clipboard_idf}
+    ${copy_map_to_clipboard_italy}
+    <!-- $ -->
+  </div>
+</div>
+
 <div class="grid grid-cols-3">
-  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
+  <div class="card map-container grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
     ${resize((width, height) =>
       defaultProjectionFrance(
         width,
@@ -142,7 +189,7 @@ const terrain_legend_type = view(
     }
 
   </div>
-  <div class="card" style="padding: 10px; overflow: hidden;">
+  <div class="card map-container" style="padding: 10px; overflow: hidden;">
     ${resize(
       (width) => defaultProjectionIleDeFrance(
         width,
@@ -154,7 +201,7 @@ const terrain_legend_type = view(
     )}
 
   </div>
-  <div class="card" style="padding: 10px; overflow: hidden;">
+  <div class="card map-container" style="padding: 10px; overflow: hidden;">
     ${resize(
       (width) => defaultProjectionItaly(
         width,
@@ -846,7 +893,7 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
 const choroplethFrance = (width, height) =>
   Plot.plot({
     width: width,
-    height: height - 60,
+    height: Math.max(0, height - 60),
     caption:
       "- Project socio-economic partners by department and Île-de-France, France. *Color scale is logarithmic",
     color: {
