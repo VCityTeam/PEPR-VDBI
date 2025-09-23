@@ -67,6 +67,7 @@ import {
   default_mainland_france_marks,
   mainland_france_choropleth_marks,
   idf_choropleth_marks,
+  italy_choropleth_marks,
 } from "/components/projection-map.js"
 ```
 
@@ -79,13 +80,12 @@ import { vectorFromArray } from "npm:apache-arrow"
 ```
 
 ```js
-const selected_project = view(
+const selected_terrain_project = view(
   Inputs.select(
     [
       "All",
-      ...[...(await sql`select "Nom projet" from project_summaries`)].map((d) =>
-        d["Nom projet"].trim()
-      ),
+      // ...[...(await sql`select "Nom projet" from project_summaries`)]
+      ...[...all_partner_data].map((d) => d.project_name),
     ],
     {
       multiple: false,
@@ -122,33 +122,6 @@ const copy_to_clipboard_all_partner_data = copyTableToClipboardButton(
 )
 ```
 
-```js
-function getSVGGetter(index) {
-  return () =>
-    d3
-      .selectAll(".map-container svg")
-      .attr("xmlns", "http://www.w3.org/2000/svg")
-      .nodes()[index].outerHTML
-}
-const copy_map_to_clipboard_french = copySVGToClipboardButton(
-  null,
-  "Copy French map to clipboard",
-  getSVGGetter(0)
-)
-
-const copy_map_to_clipboard_idf = copySVGToClipboardButton(
-  null,
-  "Copy Grand Métropole de Paris map to clipboard",
-  getSVGGetter(1)
-)
-
-const copy_map_to_clipboard_italy = copySVGToClipboardButton(
-  null,
-  "Copy Italian map to clipboard",
-  getSVGGetter(2)
-)
-```
-
 ## Projects by Terrain
 
 ```js
@@ -160,7 +133,7 @@ const terrain_legend_type = view(
 )
 ```
 
-<div class="grid grid-cols-2">
+<div style="display: flex">
   <div>
     ${copy_to_clipboard_terrain_data_by_city}
     ${copy_to_clipboard_terrain_data}
@@ -176,7 +149,7 @@ const terrain_legend_type = view(
 </div>
 
 <div class="grid grid-cols-3">
-  <div class="card map-container grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
+  <div id="map-container-france" class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
     ${resize((width, height) =>
       defaultProjectionFrance(
         width,
@@ -189,7 +162,7 @@ const terrain_legend_type = view(
     }
 
   </div>
-  <div class="card map-container" style="padding: 10px; overflow: hidden;">
+  <div id="map-container-idf" class="card" style="padding: 10px; overflow: hidden;">
     ${resize(
       (width) => defaultProjectionIleDeFrance(
         width,
@@ -201,7 +174,7 @@ const terrain_legend_type = view(
     )}
 
   </div>
-  <div class="card map-container" style="padding: 10px; overflow: hidden;">
+  <div id="map-container-italy" class="card" style="padding: 10px; overflow: hidden;">
     ${resize(
       (width) => defaultProjectionItaly(
         width,
@@ -217,30 +190,56 @@ const terrain_legend_type = view(
 
 ## Projects by Partner locations
 
+```js
+const selected_partner_project = view(
+  Inputs.select(
+    [
+      "All",
+      // ...[...(await sql`select "Nom projet" from project_summaries`)]
+      ...[...all_partner_data].map((d) => d.project_name),
+    ],
+    {
+      multiple: false,
+      label: "Optionally, select a project to focus on:",
+      unique: true,
+      sort: true,
+      value: "All",
+    }
+  )
+)
+```
+
+<div style="display: flex">
+  ${copy_choropleth_to_clipboard_france}
+  ${copy_choropleth_to_clipboard_idf}
+  <!-- ${copy_choropleth_to_clipboard_italy} -->
+  <!-- $ -->
+</div>
 <div class="grid grid-cols-3">
-  <div class="card grid-colspan-2 grid-rowspan-2" style="padding: 12px;">
+  <div id="choropleth-container-france" class="card grid-colspan-2 grid-rowspan-2" style="padding: 12px;">
     ${resize((width, height) => choroplethFrance(width, height))}
-
+    <!-- $ -->
   </div>
-  <div class="card" style="padding: 12px;">
+  <div id="choropleth-container-idf" class="card" style="padding: 12px;">
     ${resize((width) => choroplethIdf(width))}
-
+    <!-- $ -->
   </div>
-  
+  <!-- <div id="choropleth-container-italy" class="card" style="padding: 12px;">
+    ${resize((width) => choroplethItaly(width))}
+  </div> -->
 </div>
 
 <!-- Initial data integration -->
 
 ```js
-// debugger;
-// const filtered_partner_data = [...all_partner_data].filter();
-const partners_by_code = new Map(
+const terrain_partners_by_code = new Map(
   d3.rollups(
     [...all_partner_data],
     (D) =>
       D.reduce(
         (a, v) =>
-          selected_project == "All" || v.project_name == selected_project
+          selected_terrain_project == "All" ||
+          v.project_name == selected_terrain_project
             ? a + 1
             : a,
         0
@@ -248,11 +247,26 @@ const partners_by_code = new Map(
     (d) => (d.code_postal ? d.code_postal.slice(0, 2) : null)
   )
 )
-// partners_by_code.forEach((d) =>
-//   france_departements_geojson.features.find(
-//     ({ properties }) => properties.code == d[0]
-//   ).partner_count = d[1].map((d) => d.count)
-// )
+```
+
+```js
+const project_partners_by_code = new Map(
+  d3
+    .rollups(
+      [...all_partner_data],
+      (D) =>
+        D.reduce(
+          (a, v) =>
+            selected_partner_project == "All" ||
+            v.project_name == selected_partner_project
+              ? a + 1
+              : a,
+          0
+        ),
+      (d) => (d.code_postal ? d.code_postal.slice(0, 2) : null)
+    )
+    .filter((d) => d[1] > 0)
+)
 ```
 
 ```sql id=all_partner_data
@@ -260,6 +274,9 @@ const partners_by_code = new Map(
 UPDATE general_partners
   SET project_name = 'RESILIENCE'
   WHERE project_name = 'RÉSILIENCE';
+UPDATE general_partners
+  SET project_name = 'NEO'
+  WHERE project_name = 'NÉO';
 UPDATE general_partners
   SET project_name = 'NEO'
   WHERE project_name = 'NÉO';
@@ -535,8 +552,6 @@ const international_terrain_data = [...terrain_data_by_city].filter(
  * - latitude for label and/or symbol
  */
 
-// debugger;
-
 const base_legend = d3.zip(
   project_color_scale.domain(),
   project_color_scale.range()
@@ -722,7 +737,7 @@ const defaultProjectionItaly = (width, marks, caption = "") =>
 // generate plot marks for each visualisation method
 
 const isProjectSelected = (project) =>
-  selected_project == "All" || project == selected_project
+  selected_terrain_project == "All" || project == selected_terrain_project
 
 function generateLineMapMarks(terrain_data, terrain_legend) {
   const links = Plot.link(terrain_tip_dots(terrain_data, terrain_legend, 0.2), {
@@ -894,14 +909,13 @@ const choroplethFrance = (width, height) =>
   Plot.plot({
     width: width,
     height: Math.max(0, height - 60),
-    caption:
-      "- Project socio-economic partners by department and Île-de-France, France. *Color scale is logarithmic",
+    caption: "- Project partners by department and Île-de-France, France. *Colorization uses a logarithmic scale.",
     color: {
       scheme: "Blues",
       label: "# of Socioeconomic Partners",
       legend: true,
       type: "log",
-      // nice: true,
+      // zero: true,
     },
     projection: france_projection,
     marks: [
@@ -910,7 +924,7 @@ const choroplethFrance = (width, height) =>
           Department: ({ properties }) => properties.nom,
         },
         tip: true,
-        fill: ({ properties }) => partners_by_code.get(properties.code),
+        fill: ({ properties }) => project_partners_by_code.get(properties.code),
         strokeOpacity: 0,
       }),
       [...mainland_france_choropleth_marks],
@@ -920,13 +934,12 @@ const choroplethFrance = (width, height) =>
 const choroplethIdf = (width) =>
   Plot.plot({
     width: width,
-    caption: "- Project socio-economic partners by department, Île-de-France",
+    caption: "- Project partners by department, Île-de-France",
     color: {
       scheme: "Blues",
       label: "# of Socioeconomic Partners",
       legend: true,
-      // type: "log",
-      nice: true,
+      zero: true,
     },
     projection: idf_projection,
     marks: [
@@ -935,11 +948,82 @@ const choroplethIdf = (width) =>
           Department: ({ properties }) => properties.nom,
         },
         tip: true,
-        fill: ({ properties }) => partners_by_code.get(properties.code),
+        fill: ({ properties }) => project_partners_by_code.get(properties.code),
       }),
       [...idf_choropleth_marks],
     ],
   })
+
+// const choroplethItaly = (width) =>
+//   Plot.plot({
+//     width: width,
+//     caption: "- Project partners by department, Italy",
+//     color: {
+//       scheme: "Blues",
+//       label: "# of Socioeconomic Partners",
+//       legend: true,
+//       // type: "log",
+//       nice: true,
+//     },
+//     projection: italy_projection,
+//     marks: [
+//       Plot.geo(italy_regions_geojson, {
+//         channels: {
+//           Region: 1
+//           // Region: ({ properties }) => properties.name,
+//         },
+//         tip: true,
+//         fill: ({ properties }) => project_partners_by_code.get(properties.code),
+//       }),
+//       [...italy_choropleth_marks],
+//     ],
+//   })
+```
+
+```js
+function getSVG(selector) {
+  return () =>
+    d3.select(selector).attr("xmlns", "http://www.w3.org/2000/svg").node()
+      .outerHTML
+}
+```
+
+```js
+const copy_map_to_clipboard_french = copySVGToClipboardButton(
+  null,
+  "Copy French map to clipboard",
+  getSVG("#map-container-france svg")
+)
+
+const copy_map_to_clipboard_idf = copySVGToClipboardButton(
+  null,
+  "Copy Grand Métropole de Paris map to clipboard",
+  getSVG("#map-container-idf svg")
+)
+
+const copy_map_to_clipboard_italy = copySVGToClipboardButton(
+  null,
+  "Copy Italian map to clipboard",
+  getSVG("#map-container-italy svg")
+)
+
+const copy_choropleth_to_clipboard_france = copySVGToClipboardButton(
+  null,
+  "Copy French choropleth map to clipboard",
+  getSVG("#choropleth-container-france svg + svg")
+)
+
+const copy_choropleth_to_clipboard_idf = copySVGToClipboardButton(
+  null,
+  "Copy Île-de-France choropleth map to clipboard",
+  getSVG("#choropleth-container-idf svg + svg")
+)
+
+// const copy_choropleth_to_clipboard_italy = copySVGToClipboardButton(
+//   null,
+//   "Copy Italian choropleth map to clipboard",
+//   getSVG("#choropleth-container-italy svg + svg")
+// )
 ```
 
 <!-- debugging info -->
@@ -989,5 +1073,6 @@ console.debug(
   "all_partner_data",
   [...all_partner_data].map((d) => d.toJSON())
 )
-console.debug("partners_by_code", partners_by_code)
+console.debug("terrain_partners_by_code", terrain_partners_by_code)
+console.debug("project_partners_by_code", project_partners_by_code)
 ```

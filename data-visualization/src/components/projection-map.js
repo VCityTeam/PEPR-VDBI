@@ -148,6 +148,13 @@ export const idf_choropleth_marks = [
   }),
 ]
 
+export const italy_choropleth_marks = [
+  Plot.geo(italy_regions_geojson, {
+    stroke: vdbi_color_scheme.blue,
+    // strokeWidth: 0.1,
+  }),
+]
+
 /**
  * Create projection map from a dataset geocoded by:
  * https://adresse.data.gouv.fr/csv
