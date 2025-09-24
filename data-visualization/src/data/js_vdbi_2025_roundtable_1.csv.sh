@@ -1,0 +1,1 @@
+curl -f https://raw.githubusercontent.com/VCityTeam/PEPR-VDBI/refs/heads/master/data-analysis/test-data/output/js_roundtable/vfpp_wps_en_cleaned_INTERSECTION_SUM_integreen_wps_en_cleaned_INTERSECTION_SUM_villegarden_wps_en_cleaned.csv
