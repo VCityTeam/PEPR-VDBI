@@ -1,0 +1,1 @@
+curl -f https://raw.githubusercontent.com/VCityTeam/PEPR-VDBI/refs/heads/master/data-analysis/test-data/output/js_roundtable/urbhealth_wps_en_cleaned_INTERSECTION_SUM_whaou_wps_en_cleaned_INTERSECTION_SUM_resilience_wps_en_cleaned.csv
