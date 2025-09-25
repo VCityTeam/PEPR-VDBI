@@ -21,7 +21,8 @@ import {
   countEntities,
   sparkbar,
   copyTableToClipboardButton,
-  copySVGToClipboardButton,
+  downloadSVGButton,
+  writeToFile,
 } from "/components/utilities.js"
 ```
 
@@ -210,9 +211,9 @@ const selected_partner_project = view(
 ```
 
 <div style="display: flex">
-  ${copy_choropleth_to_clipboard_france}
-  ${copy_choropleth_to_clipboard_idf}
-  <!-- ${copy_choropleth_to_clipboard_italy} -->
+  ${open_choropleth_france}
+  ${open_choropleth_idf}
+  <!-- ${open_choropleth_italy} -->
   <!-- $ -->
 </div>
 <div class="grid grid-cols-3">
@@ -681,12 +682,16 @@ const terrain_tip_dots = (data, legend, delta) =>
 
 ```js
 // generate geo projection plot functions
+const labeled_france_projection = {
+  type: "azimuthal-equidistant",
+  domain: d3.geoCircle().center([2, 47]).radius(5)(),
+}
 
 const defaultProjection = (width, height, projection, marks, caption = "") =>
   Plot.plot({
     width: width,
     height: height,
-    caption: caption,
+    caption: caption.toLocaleString(),
     projection: projection,
     marks: [...marks],
   })
@@ -695,7 +700,7 @@ const defaultProjectionFrance = (width, height, marks, caption = "") =>
   defaultProjection(
     width,
     height,
-    france_projection,
+    labeled_france_projection,
     default_mainland_france_marks.concat(marks),
     caption
   )
@@ -905,18 +910,23 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
 ```
 
 ```js
+const color_config = {
+  scheme: "Blues",
+  label: "Nombre de partenaires",
+  // label: "# of Partners",
+  legend: true,
+  // type: "log",
+  zero: true,
+}
+
 const choroplethFrance = (width, height) =>
   Plot.plot({
     width: width,
-    height: Math.max(0, height - 60),
-    caption: "- Project partners by department and Île-de-France, France. *Colorization uses a logarithmic scale.",
-    color: {
-      scheme: "Blues",
-      label: "# of Socioeconomic Partners",
-      legend: true,
-      type: "log",
-      // zero: true,
-    },
+    height: height - 60,
+    caption:
+      "- Partenaires des projets par département et Île-de-France, France",
+    // "- Project partners by department and Île-de-France, France",
+    color: color_config,
     projection: france_projection,
     marks: [
       Plot.geo(mainland_france_departements_geojson, {
@@ -935,12 +945,7 @@ const choroplethIdf = (width) =>
   Plot.plot({
     width: width,
     caption: "- Project partners by department, Île-de-France",
-    color: {
-      scheme: "Blues",
-      label: "# of Socioeconomic Partners",
-      legend: true,
-      zero: true,
-    },
+    color: color_config,
     projection: idf_projection,
     marks: [
       Plot.geo(idf_departements_geojson, {
@@ -981,48 +986,41 @@ const choroplethIdf = (width) =>
 ```
 
 ```js
-function getSVG(selector) {
-  return () =>
-    d3.select(selector).attr("xmlns", "http://www.w3.org/2000/svg").node()
-      .outerHTML
-}
-```
-
-```js
-const copy_map_to_clipboard_french = copySVGToClipboardButton(
-  null,
-  "Copy French map to clipboard",
-  getSVG("#map-container-france svg")
+const copy_map_to_clipboard_french = downloadSVGButton(
+  "#map-container-france svg",
+  "Download French project terrains map",
+  `${selected_terrain_project}_france_terrains_map.svg`
 )
 
-const copy_map_to_clipboard_idf = copySVGToClipboardButton(
-  null,
-  "Copy Grand Métropole de Paris map to clipboard",
-  getSVG("#map-container-idf svg")
+const copy_map_to_clipboard_idf = downloadSVGButton(
+  "#map-container-idf svg",
+  "Download Grand Métropole de Paris project terrains map",
+  `${selected_terrain_project}_paris_terrains_map.svg`
 )
 
-const copy_map_to_clipboard_italy = copySVGToClipboardButton(
-  null,
-  "Copy Italian map to clipboard",
-  getSVG("#map-container-italy svg")
+const copy_map_to_clipboard_italy = downloadSVGButton(
+  "#map-container-italy svg",
+  "Download Italian project terrains map",
+  `${selected_terrain_project}_italy_terrains_map.svg`
 )
 
-const copy_choropleth_to_clipboard_france = copySVGToClipboardButton(
-  null,
-  "Copy French choropleth map to clipboard",
-  getSVG("#choropleth-container-france svg + svg")
+const open_choropleth_france = downloadSVGButton(
+  "#choropleth-container-france svg",
+  "Download French choropleth partner map",
+  `${selected_partner_project}_france_partner_choropleth.svg`
 )
 
-const copy_choropleth_to_clipboard_idf = copySVGToClipboardButton(
-  null,
-  "Copy Île-de-France choropleth map to clipboard",
-  getSVG("#choropleth-container-idf svg + svg")
+const open_choropleth_idf = downloadSVGButton(
+  "#choropleth-container-idf svg",
+  "Download Île-de-France choropleth partner map",
+  `${selected_partner_project}_idf_partner_choropleth.svg`
 )
 
-// const copy_choropleth_to_clipboard_italy = copySVGToClipboardButton(
-//   null,
-//   "Copy Italian choropleth map to clipboard",
-//   getSVG("#choropleth-container-italy svg + svg")
+// const open_choropleth_italy =
+// downloadSVGButton(
+// "#choropleth-container-italy svg",
+// "Download Italian choropleth partner map",
+//   `${selected_partner_project}_italy_partner_choropleth.svg`
 // )
 ```
 

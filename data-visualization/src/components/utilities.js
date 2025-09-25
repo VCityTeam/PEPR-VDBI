@@ -1,4 +1,4 @@
-import { map, merge, rollups, filter } from "d3"
+import { map, merge, rollups, filter, selectAll, create } from "d3"
 import { button } from "@observablehq/inputs"
 import { nameByRace } from "fantasy-name-generator"
 import { html } from "htl"
@@ -409,6 +409,34 @@ export function copySVGToClipboardButton(
 }
 
 /**
+ * A button for downloading one or many an SVG elements with a d3 selector.
+ *
+ * @param {String} selector - a d3 selector string for returning the svg elements to be downloaded.
+ * @param {String} label - button label
+ * @param {String} filename - downloaded file name
+ * @returns {button} - a button element that copies the element html to the clipboard
+ */
+export function downloadSVGButton(
+  selector,
+  label = "Download",
+  filename = "download.svg"
+) {
+  return button(label, {
+    value: null,
+    reduce: () => {
+      const content = create("svg")
+        .attr("xmlns", "http://www.w3.org/2000/svg")
+        .attr("xmlns:xlink", "http://www.w3.org/1999/xlink")
+      selectAll(selector)
+        .nodes()
+        .forEach((d) => content.html(content.html() + d.outerHTML))
+      console.debug("downloading content with selector: ", selector)
+      writeToFile(content.node().outerHTML, filename, "image/svg+xml")
+    },
+  })
+}
+
+/**
  * Performs an HTTP request.
  * Adapted from
  *
@@ -456,4 +484,29 @@ export function request(method, url, options = {}) {
       }
     }
   })
+}
+
+/**
+ * Generate a button to write a blob to a file
+ * adapted from https://flexiple.com/javascript/javascript-write-to-file-detailed
+ *
+ * @param {any} content - content to write
+ * @param {String} content_type - file content mime type
+ *
+ * @returns {button}
+ */
+export function writeToFile(
+  content,
+  filename = "download.txt",
+  content_type = "text/plain"
+  // content_type = "image/svg+xml",
+) {
+  const data = new Blob([content], { type: content_type })
+  const url = window.URL.createObjectURL(data)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  window.URL.revokeObjectURL(url)
 }
