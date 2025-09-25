@@ -73,11 +73,10 @@ export const italy_regions_geojson = FileAttachment(
 
 export const france_projection = {
   type: "azimuthal-equidistant",
-  domain: d3.geoCircle().center([2, 47]).radius(5)(),
-  // domain: d3
-  //   .geoCircle()
-  //   .center(d3.geoCentroid(mainland_france_regions_geojson))
-  //   .radius(5)(),
+  domain: d3
+    .geoCircle()
+    .center(d3.geoCentroid(mainland_france_regions_geojson))
+    .radius(5)(),
 }
 
 export const paris_projection = {
