@@ -912,11 +912,12 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
 ```js
 const color_config = {
   scheme: "Blues",
-  label: "Nombre de partenaires",
+  label: "Nombre de partenaires " + (selected_partner_project == "All" ? "" : selected_partner_project),
   // label: "# of Partners",
   legend: true,
   // type: "log",
   zero: true,
+  // nice: true,
 }
 
 const choroplethFrance = (width, height) =>

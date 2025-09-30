@@ -424,14 +424,41 @@ export function downloadSVGButton(
   return button(label, {
     value: null,
     reduce: () => {
+      console.debug("downloading content with selector: ", selector)
+      let width = 0
+      let height = 0
       const content = create("svg")
         .attr("xmlns", "http://www.w3.org/2000/svg")
         .attr("xmlns:xlink", "http://www.w3.org/1999/xlink")
+
       selectAll(selector)
         .nodes()
-        .forEach((d) => content.html(content.html() + d.outerHTML))
-      console.debug("downloading content with selector: ", selector)
-      writeToFile(content.node().outerHTML, filename, "image/svg+xml")
+        .forEach((d) => {
+          content.html(content.html() + d.outerHTML)
+
+          width = Math.max(width, Math.floor(d.attributes["width"].value))
+          height += Math.floor(d.attributes["height"].value)
+
+          console.debug(
+            "svg element size: ",
+            Math.floor(d.attributes["width"].value),
+            Math.floor(d.attributes["height"].value)
+          )
+        })
+
+      content
+        .attr("width", width)
+        .attr("height", height)
+        .attr("viewBox", `-5 0 ${width + 5} ${height}`)
+
+      // serialize the svg content
+      const serializer = new XMLSerializer()
+      let source = serializer.serializeToString(content.node())
+
+      //add xml declaration
+      source = '<?xml version="1.0" standalone="no"?>\r\n' + source
+
+      writeToFile(source, filename, "image/svg+xml")
     },
   })
 }
@@ -501,7 +528,7 @@ export function writeToFile(
   content_type = "text/plain"
   // content_type = "image/svg+xml",
 ) {
-  const data = new Blob([content], { type: content_type })
+  const data = new File([content], filename, { type: content_type })
   const url = window.URL.createObjectURL(data)
   const a = document.createElement("a")
   a.href = url
