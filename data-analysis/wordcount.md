@@ -167,6 +167,8 @@ This [config](./test-data/configs/wordcount/wordcount_VDBI_project_workflow_conf
 
 The results are available in [test-data/output/js_roundtable](./test-data/output/js_roundtable/).
 
+<a id="result_2" />
+
 ### Comparison between PEPR VDBI and PEPR Recyclage project descriptions
 
 What are the most commonly used words to describe the PEPR VDBI and Recyclage projects?
@@ -215,3 +217,4 @@ count2 --> compare
 ```
 
 The results are available in the [test-data/output/compare_vdbi_recyclage_projects](test-data/output/compare_vdbi_recyclage_projects/financed_project_resumes_en_cleaned_INTERSECTION_SUM_pepr_recyclage_projets_en_cleaned.csv) folder
+
