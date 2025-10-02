@@ -1,12 +1,19 @@
-# Data analysis
+# Data analysis <!-- omit in toc -->
 
-## Lexiomery
+Data analysis tests for lexicometry and bibliometry
 
-### Tools and resources
-- https://elex.is/tools-and-services/
+- [Lexicometry](#lexicometry)
+  - [Tests and implementations](#tests-and-implementations)
+  - [Tools and resources](#tools-and-resources)
+  - [Literature](#literature)
+
+## Lexicometry
 
 ### Tests and implementations
 - [Wordcounts](wordcount.md)
+
+### Tools and resources
+- https://elex.is/tools-and-services/
 
 ### Literature
 

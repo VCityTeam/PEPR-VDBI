@@ -3,15 +3,19 @@
 Data integration, analysis, and visualization tests for the **Programmes et Équipements Prioritaires de Recherche - Ville Durable et Bâtiment Innovant** (PEPR VDBI) projects
 
 ## [Documentation :memo:](./docs/README.md)
+
 Reports, records, and general documentation (non-technical documentation)
-  
+
 ## [Data integration :ballot_box:](./data-integration)
-Data integration tests with GPTs
+
+Data integration tests with LLMs
 
 ## [Data analysis :abacus:](./data-analysis)
-Data analysis tests for lexiometry and bibliometry
+
+Data analysis tests for lexicometry and bibliometry
 
 ## [Data visualization :bar_chart:](./data-visualization)
+
 Data visualization tests with observable
 
 ## Project Schedule
@@ -57,7 +61,6 @@ gantt
 > [!TIP]
 > See project [milestone](https://github.com/VCityTeam/PEPR-VDBI/milestones) descriptions for more information about specific quarterly/yearly goals.
 
-
 ## Project Goals
 
 ### EN
@@ -84,12 +87,9 @@ gantt
 | O6       | Outil de prévision                                    | Proposition et mise en œuvre d'un outil permettant d'identifier et de projeter les tendances futures dans les communautés de recherche VDBI (et autres).                                                                                                                                            |
 | O7       | Valorisation des réalisations                         | Promotion des réalisations et des résultats sous forme de publications scientifiques, de rapports et de présentations orales.                                                                                                                                                                       |
 
-
-> [!TIP]
-> [Issues](https://github.com/VCityTeam/PEPR-VDBI/issues) are labeled by goal for simplifying searching.
-> 
+> [!TIP] > [Issues](https://github.com/VCityTeam/PEPR-VDBI/issues) are labeled by goal for simplifying searching.
+>
 > For example, use the `label:G1` filter to search for all issues related to G1.
-
 
 ## Project Tasks
 
