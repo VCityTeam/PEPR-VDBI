@@ -280,9 +280,9 @@ def write_word_count(
     :output_file: output file path
     :limit: limit number of output rows
     """
-    output = [[weight, word, "", ""] for word, weight in word_counts.items()]
+    output = [[weight, token, "", ""] for token, weight in word_counts.items()]
     output.sort(key=lambda x: x[0], reverse=True)
-    output.insert(0, ["weight", "word", "color", "url"])
+    output.insert(0, ["value", "text", "color", "url"])
 
     limit = len(output) if limit is None else limit + 1  # +1 for header row
     print(f"writing to csv {output_file}")
