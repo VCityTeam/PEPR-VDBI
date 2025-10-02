@@ -6,8 +6,8 @@
     "output_dir": "test-data/private/project_wps_en_wordcount_stage_0/"
   },
   {
-    "activity": "clean",
-    "description": "clean PEPR VDBI WP project description tokens",
+    "activity": "count",
+    "description": "count PEPR VDBI WP project description tokens",
     "input_dir": "test-data/private/project_wps_en_wordcount_stage_0/",
     "output_dir": "test-data/private/output/project_wps_en/",
     "limit": 50,

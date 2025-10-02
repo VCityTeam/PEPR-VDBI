@@ -1,7 +1,0 @@
-PRAN, Programme de Recherche sur l’Apport du Numérique
-
-
-
-The ‘Digital’ axis of PEPR Recycling is currently under construction. The call for expressions of interest, which closed in November 2024, resulted in several letters of intent from scientists wishing to join the consortium on these research themes, as well as the reflections of the axis carriers and program partners in the creation of this eleventh project.
-
-The PRAN project aims to study the involvement of data science and big data, AI, robotics, automation, signal and image processing, etc. in logistics and sorting processes.

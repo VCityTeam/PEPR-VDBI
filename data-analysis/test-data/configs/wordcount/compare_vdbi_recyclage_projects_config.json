@@ -1,0 +1,31 @@
+[
+  {
+    "description": "parse PEPR VDBI and Recyclage project descriptions",
+    "activity": "parse",
+    "inputs": [
+      "test-data/private/input/pepr_recyclage/pepr_recyclage_projets_en.txt",
+      "test-data/private/input/project_resume_en/financed_project_resumes_en.txt"
+    ],
+    "output_dir": "test-data/private/compare_vdbi_recyclage_projects_stage_0/"
+  },
+  {
+    "description": "count project description tokens",
+    "activity": "count",
+    "input_dir": "test-data/private/compare_vdbi_recyclage_projects_stage_0/",
+    "output_dir": "test-data/private/compare_vdbi_recyclage_projects_stage_1/",
+    "params": {
+      "stop_words_path": "test-data/configs/wordcount/stop_words_english.csv"
+    }
+  },
+  {
+    "description": "get shared project description tokens",
+    "activity": "compare",
+    "inputs": [
+      "test-data/private/compare_vdbi_recyclage_projects_stage_1/financed_project_resumes_en_count.csv:test-data/private/compare_vdbi_recyclage_projects_stage_1/pepr_recyclage_projets_en_count.csv"
+    ],
+    "output_dir": "test-data/output/compare_vdbi_recyclage_projects/",
+    "params": {
+      "mode": "INTERSECTION"
+    }
+  }
+]
