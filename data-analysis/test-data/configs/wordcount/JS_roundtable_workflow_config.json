@@ -1,7 +1,7 @@
 [
   {
-    "activity": "clean",
-    "description": "clean PEPR VDBI WP project description tokens",
+    "activity": "count",
+    "description": "count PEPR VDBI WP project description tokens",
     "input_dir": "test-data/private/project_wps_en_wordcount_stage_0/",
     "output_dir": "test-data/private/output/js_roundtable_stage_1/",
     "params": {
@@ -12,8 +12,8 @@
     "activity": "compare",
     "description": "compare PEPR VDBI WP project description tokens by round table, part 1 - intermediate intersections",
     "inputs": [
-      "test-data/private/output/js_roundtable_stage_1/vfpp_wps_en_cleaned.csv:test-data/private/output/js_roundtable_stage_1/integreen_wps_en_cleaned.csv",
-      "test-data/private/output/js_roundtable_stage_1/urbhealth_wps_en_cleaned.csv:test-data/private/output/js_roundtable_stage_1/whaou_wps_en_cleaned.csv"
+      "test-data/private/output/js_roundtable_stage_1/vfpp_wps_en_count.csv:test-data/private/output/js_roundtable_stage_1/integreen_wps_en_count.csv",
+      "test-data/private/output/js_roundtable_stage_1/urbhealth_wps_en_count.csv:test-data/private/output/js_roundtable_stage_1/whaou_wps_en_count.csv"
     ],
     "output_dir": "test-data/private/output/js_roundtable_stage_2/",
     "params": {
@@ -24,9 +24,9 @@
     "activity": "compare",
     "description": "compare PEPR VDBI WP project description tokens by round table, part 2",
     "inputs": [
-      "test-data/private/output/js_roundtable_stage_2/vfpp_wps_en_cleaned_INTERSECTION_SUM_integreen_wps_en_cleaned.csv:test-data/private/output/js_roundtable_stage_1/villegarden_wps_en_cleaned.csv",
-      "test-data/private/output/js_roundtable_stage_2/urbhealth_wps_en_cleaned_INTERSECTION_SUM_whaou_wps_en_cleaned.csv:test-data/private/output/js_roundtable_stage_1/resilience_wps_en_cleaned.csv",
-      "test-data/private/output/js_roundtable_stage_1/neo_wps_en_cleaned.csv:test-data/private/output/js_roundtable_stage_1/traces_wps_en_cleaned.csv"
+      "test-data/private/output/js_roundtable_stage_2/vfpp_wps_en_count_INTERSECTION_SUM_integreen_wps_en_count.csv:test-data/private/output/js_roundtable_stage_1/villegarden_wps_en_count.csv",
+      "test-data/private/output/js_roundtable_stage_2/urbhealth_wps_en_count_INTERSECTION_SUM_whaou_wps_en_count.csv:test-data/private/output/js_roundtable_stage_1/resilience_wps_en_count.csv",
+      "test-data/private/output/js_roundtable_stage_1/neo_wps_en_count.csv:test-data/private/output/js_roundtable_stage_1/traces_wps_en_count.csv"
     ],
     "output_dir": "test-data/output/js_roundtable/",
     "params": {

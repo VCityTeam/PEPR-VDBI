@@ -21,8 +21,8 @@ def main():
         help="""Specify the configuration file. File must be structured as a JSON array of
             configurations, each specifying the type of activity, the inputs and outputs,
             and the parameters used for the activity. Two types are currently supported:
-            - 'parse': for reading and parsing a text into a word count
-            - 'clean': for cleaning word counts
+            - 'parse': for tokenizing a text
+            - 'count': for lemmatizing, filtering, and counting a list of words
             - 'compare': for comparing word counts
             For example:
             [
@@ -32,7 +32,7 @@ def main():
                     "output_dir": "./wordcount-test_stage_0/"
                 },
                 {
-                    "activity": "clean",
+                    "activity": "count",
                     "input_dir": "./wordcount-test_stage_0/",
                     "output_dir": "./wordcount-test_stage_1/",
                     "limit": 50,
@@ -41,7 +41,7 @@ def main():
                     }
                 },
                 {
-                    "activity": "clean",
+                    "activity": "count",
                     "input_dir": "./wordcount-test_stage_0/",
                     "output_dir": "./wordcount-test_stage_1/",
                     "limit": 100,
@@ -52,7 +52,7 @@ def main():
                 {
                     "activity": "compare",
                     "inputs": [
-                        "./wordcount-test_stage_1/example-text_cleaned_50.csv:./wordcount-test_stage_1/example-text_cleaned_100.csv"
+                        "./wordcount-test_stage_1/example-text_count_50.csv:./wordcount-test_stage_1/example-text_count_100.csv"
                     ],
                     "output_dir": "./output/wordcount-test/",
                     "params": {
@@ -101,15 +101,16 @@ def runWorkflow(config_path: str) -> None:
             [
                 {
                     "activity": str,
-                    "inputs": list,
+                    "inputs": list[str],
                     "input_dir": str (optional),
                     "params": dict,
                 },
                 ...
             ]
-        `input_dir` is not supported by the compare activity. If `input_dir` is specified,
-        all files from the sepecified directory are taken into account and inputs are set
-        to the files in that directory.
+        If `input_dir` is specified, it overwrites `inputs`. `input_dir` is not supported
+        by the compare activity. If `input_dir` is specified, all files from the
+        sepecified directory are taken into account and inputs are set to the files in
+        that directory.
     """
     config = json.loads(read_file(config_path))
     for activity_config in config:
@@ -122,7 +123,7 @@ def runWorkflow(config_path: str) -> None:
         logging.debug(f"Activity config: {json.dumps(activity_config, indent=2)}")
 
         if "input_dir" in activity_config:
-            # If input_dir is specified, set inputs to the files in that directory
+            # If input_dir is specified, overwrite `inputs` to the files in that directory
             input_dir = activity_config["input_dir"]
             if not os.path.exists(input_dir):
                 logging.error(f"Input directory does not exist: {input_dir}")
@@ -145,8 +146,8 @@ def runWorkflow(config_path: str) -> None:
 
         if activity_config.get("activity") == "parse":
             runParse(parsed_activity_config, output_dir)
-        elif activity_config.get("activity") == "clean":
-            runClean(parsed_activity_config, output_dir, limit)
+        elif activity_config.get("activity") == "count":
+            runCount(parsed_activity_config, output_dir, limit)
         elif activity_config.get("activity") == "compare":
             runCompare(parsed_activity_config, output_dir, limit)
         else:
@@ -171,7 +172,7 @@ def runParse(config: list[dict], output_dir: str = "./"):
         write_csv(output_file, [[token] for token in tokens])
 
 
-def runClean(config: list[dict], output_dir: str = "./", limit: int | None = None):
+def runCount(config: list[dict], output_dir: str = "./", limit: int | None = None):
     """Run clean_and_count_words() on one file based on a configuration"""
     for params in config:
         row_params = params.copy()  # deep copy
@@ -182,7 +183,7 @@ def runClean(config: list[dict], output_dir: str = "./", limit: int | None = Non
 
         split_input_filename = os.path.splitext(os.path.basename(input_path))
         output_file = (
-            f"{output_dir}{split_input_filename[0]}_cleaned"
+            f"{output_dir}{split_input_filename[0]}_count"
             + (f"_{row_params["limit"]}" if "limit" in row_params else "")
             + split_input_filename[1]
         )
@@ -192,7 +193,7 @@ def runClean(config: list[dict], output_dir: str = "./", limit: int | None = Non
 
 def runCompare(config: list[dict], output_dir: str = "./", limit: int | None = None):
     """
-    Run compare_wordcount() based on a configuration. Unlike runClean(), two inputs are
+    Run compare_wordcount() based on a configuration. Unlike runCount(), two inputs are
     required for comparison. Thus the each input must be formed as a tuple of strings e.g.
         `["path1","path2"]`
     """

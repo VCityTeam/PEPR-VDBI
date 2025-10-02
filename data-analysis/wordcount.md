@@ -169,26 +169,49 @@ The results are available in [test-data/output/js_roundtable](./test-data/output
 
 ### Comparison between PEPR VDBI and PEPR Recyclage project descriptions
 
-This was done using the deprecated intersection comparison workflow from [d70ef67](https://github.com/VCityTeam/PEPR-VDBI/tree/d70ef67b1900291b74fd0016c558b445f0c9c712/data-analysis) with [this configuration](https://github.com/VCityTeam/PEPR-VDBI/blob/d70ef67b1900291b74fd0016c558b445f0c9c712/data-analysis/test-data/configs/wordcount/wordcount_compare_workflow_config.json)
+What are the most commonly used words to describe the PEPR VDBI and Recyclage projects?
+
+#### Data collection
 
 The initial texts from each PEPR were extracted as follows:
 
-**PEPR VDBI project calls**
+1. PEPR VDBI project calls description extraction
+   1. Copy all text (with the exception of major section headers) from the following three sections of each project call:
+      - Resume (en)
+      - Resume (fr)
+      - Sections 2.1 and 2.2 regarding WP descriptions
+   2. Texts were aggregated in the [test-data/private/input/](./test-data/private/input/) folder as `.txt` files
+2. PEPR Recyclage project description extraction
+   1. Copy all text (with the exception of titles and section headers) from the following three sections of each project [website](https://www.pepr-recyclage.fr/):
+      - Excerpt (en)
+        - Project title (en)
+        - Project description (en)
+        - Keywords (en)
+      - Tasks (en)
+      - Consortium (en)
+   2. Projects still under construction phases such as 'Soon to come' were removed.
+   3. Texts were aggregated in the [test-data/private/input/](./test-data/private/input/) folder as `.txt` files
 
-1. Manually copying all text (with the exception of major section headers) from the following three sections of each project call:
-   - Resume (en)
-   - Resume (fr)
-   - Sections 2.1 and 2.2 regarding WP descriptions
-2. Texts were aggregated in the [./test-data/private/input/](./test-data/private/input/) folder as `.txt` files
+#### Word count generation
 
-**PEPR Recyclage**
+This [configuation file](test-data/configs/wordcount/compare_vdbi_recyclage_projects_config.json) was used to create the dataset. It executes the following activities:
 
-1. Copy all text (with the exception of titles and section headers) from the following three sections of each project [website](https://www.pepr-recyclage.fr/):
-   - Excerpt (en)
-     - Project title (en)
-     - Project description (en)
-     - Keywords (en)
-   - Tasks (en)
-   - Consortium (en)
-2. Projects still under construction phases such as 'Soon to come' are removed.
-3. Texts are aggregated in the [pepr_recyclage_project_XXX.txt](./test-data/input/pepr_recyclage/) folder
+```mermaid
+flowchart LR
+start@{ shape: circle, label: " " }
+start --> in1@{ shape: doc, label: "VDBI project descriptions"}
+start --> in2@{ shape: doc, label: "Recyclage project descriptions"}
+
+
+in1 --> tokenize1(Tokenize text)
+in2 --> tokenize2(Tokenize text)
+
+tokenize1 --> count1(Clean and count project description words)
+tokenize2 --> count2(Clean and count project description words)
+count1 --> compare(Claculate word count intersection)
+count2 --> compare
+  --> out@{ shape: doc, label: "Shared project word count"}
+  --> stop@{ shape: dbl-circ, label: " " }
+```
+
+The results are available in the [test-data/output/compare_vdbi_recyclage_projects](test-data/output/compare_vdbi_recyclage_projects/financed_project_resumes_en_cleaned_INTERSECTION_SUM_pepr_recyclage_projets_en_cleaned.csv) folder
