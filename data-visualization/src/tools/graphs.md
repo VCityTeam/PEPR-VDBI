@@ -6,6 +6,8 @@ theme: light
 import { Graph } from "/components/graph.js"
 ```
 
+# Knowledge Graph Generator
+
 Upload a json file with the following structure:
 
 ```json

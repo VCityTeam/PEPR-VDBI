@@ -21,7 +21,7 @@ import { wordCloud } from "/components/cloud.js"
 ```
 
 ```js
-import { copySVGToClipboardButton } from "/components/utilities.js"
+import { downloadSVGButton } from "/components/utilities.js"
 ```
 
 ```js
@@ -32,11 +32,12 @@ import {
 } from "/components/color.js"
 ```
 
-# Phase 1 Project Word Clouds
+# Word Cloud Generator
 
 <div class="grid card grid-cols-3">
   <div>
-    ${selected_project}
+    ${selected_wordcount}
+    ${uploaded_wordcount}
     ${Inputs.button("Refresh cloud", { reduce: flip })}
     ${copy_button}
     <!-- $ -->
@@ -55,13 +56,17 @@ import {
     <!-- $ -->
   </div>
 </div>
-<div class="card">${cloud}</div>
-<div class="card">
+<div id="word_cloud_container" class="card">${cloud}</div>
+<div id="bar_chart_container" class="card">
+  ${downloadSVGButton("#bar_chart_container svg", "Download chart")}
+  <!-- $ -->
   ${resize((width) => Plot.plot({
     width: width,
     marginLeft: 100,
     color: {
-      scheme: "Blues",
+      scheme: "Oranges",
+      // scheme: "Blues",
+      type: "linear",
     },
     y: {
       label: "Word",
@@ -72,7 +77,7 @@ import {
       label: "Occurrences",
     },
     marks: [
-      Plot.barX([...selected_project_value], {
+      Plot.barX([...selected_wordcount_value], {
         y: "text",
         x: "value",
         fill: "value",
@@ -82,15 +87,16 @@ import {
   }))}
   <!-- $ -->
 </div>
+<div class="card">${Inputs.table(selected_wordcount_value)}</div>
 
 ```js
 const _invalidator_1 = refresh
 
 const cloud = resize((width) =>
   wordCloud(
-    [...selected_project_value]
+    [...selected_wordcount_value]
       .slice(0, selected_word_limit_value)
-      .map((d) => d.toJSON()),
+      .map((d) => (d.toJSON ? d.toJSON() : d)),
     {
       width: width,
       height: width * 0.56,
@@ -108,14 +114,10 @@ const cloud = resize((width) =>
 ```
 
 ```js
-const _invalidator_2 = refresh
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-await sleep(500)
-const getSVG = () => d3.select("svg").node()
-while (!getSVG()) {
-  await sleep(500)
-}
-const copy_button = copySVGToClipboardButton(getSVG())
+const copy_button = downloadSVGButton(
+  "#word_cloud_container svg",
+  "Download cloud"
+)
 ```
 
 ```js
@@ -124,8 +126,12 @@ const flip = () => (refresh.value = !refresh.value)
 ```
 
 ```js
-const selected_project = Inputs.select(
+const selected_wordcount = Inputs.select(
   new Map([
+    [
+      "Uploaded word count",
+      uploaded_wordcount_value ? uploaded_wordcount_value.csv() : [],
+    ],
     ["integreen work package words (EN)", integreen_words],
     ["neo work package words (EN)", neo_words],
     ["resilience work package words (EN)", resilience_words],
@@ -139,14 +145,24 @@ const selected_project = Inputs.select(
     ["JS VDBI 2025 Roundtable 3 (EN)", roundtable_3_words],
   ]),
   {
-    label: "Select project",
+    label: "Select a word count",
   }
 )
+```
 
+```js
+const selected_wordcount_value = Generators.input(selected_wordcount)
+```
+
+```js
+const uploaded_wordcount = Inputs.file({ accept: ".csv" })
+```
+
+```js
 const selected_color = Inputs.select(
   new Map([
-    ["orange", () => vdbi_orange_analogic_color_scale(Math.random())],
-    ["blue", () => vdbi_blue_analogic_color_scale(Math.random())],
+    ["Orange", () => vdbi_orange_analogic_color_scale(Math.random())],
+    ["Blue", () => vdbi_blue_analogic_color_scale(Math.random())],
   ]),
   {
     label: "Select color scheme",
@@ -191,7 +207,7 @@ const selected_word_limit = Inputs.range([1, 100], {
 ```
 
 ```js
-const selected_project_value = Generators.input(selected_project)
+const uploaded_wordcount_value = Generators.input(uploaded_wordcount)
 const selected_color_value = Generators.input(selected_color)
 const selected_font_size_min_value = Generators.input(selected_font_size_min)
 const selected_font_size_max_value = Generators.input(selected_font_size_max)
@@ -202,7 +218,8 @@ const selected_word_limit_value = Generators.input(selected_word_limit)
 ```
 
 ```js
-console.debug("selected_project_value", selected_project_value)
+console.debug("selected_wordcount_value", selected_wordcount_value)
+console.debug("uploaded_wordcount_value", uploaded_wordcount_value)
 console.debug("selected_color_value", selected_color_value)
 console.debug("selected_font_size_min_value", selected_font_size_min_value)
 console.debug("selected_font_size_max_value", selected_font_size_max_value)

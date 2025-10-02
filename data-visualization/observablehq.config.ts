@@ -26,11 +26,11 @@ export default {
       name: 'Data Visualisation Tools',
       pages: [
         {
-          name: 'Word clouds',
+          name: 'Word cloud generator',
           path: 'tools/wordclouds',
         },
         {
-          name: 'Knowledge graphs',
+          name: 'Knowledge graphs generator',
           path: 'tools/graphs',
         },
       ]

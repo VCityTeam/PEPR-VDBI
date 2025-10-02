@@ -28,18 +28,20 @@ export function wordCloud(
   {
     width = 500,
     height = 500,
-    valueMap = (d) => d.value,
+    keyMap = (d) => d.text,
+    valueMap = (d) => Number(d.value),
     domain = [d3.min(data.map(valueMap)), d3.max(data.map(valueMap))],
     font = () =>
       d3.scaleQuantize().range([
         // "Verdana, sans-serif",
         "Trebuchet MS, sans-serif",
-        "Impact, sans-serif",
-        "Georgia, serif",
+        // "Impact, sans-serif",
+        // "Georgia, serif",
         // "Garamond, serif",
       ])(Math.random()),
     font_style = "normal",
-    font_weight = "normal",
+    font_weight = "bold",
+    // font_weight = "normal",
     // font_weight = (d) =>
     //   d3.scaleQuantize(domain, ["lighter", "lighter", "normal", "bold"])(
     //     valueMap(d)
@@ -91,7 +93,7 @@ export function wordCloud(
       .style("fill", color)
       .attr("text-anchor", "middle")
       .attr("transform", (d) => `translate(${[d.x, d.y]})rotate(${d.rotate})`)
-      .text((d) => d.text)
+      .text(keyMap)
   }
 
   cloud.start()
