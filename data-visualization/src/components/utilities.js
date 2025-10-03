@@ -409,6 +409,44 @@ export function copySVGToClipboardButton(
 }
 
 /**
+ * A button for downloading a table as a csv.
+ *
+ * @param {Function} callback - a callback function to get the data to be downloaded,
+ *   rows should contain keys corresponding to the columns of the table
+ * @param {String} label - button label
+ * @param {String} filename - downloaded file name
+ * @returns {button} - a button element that copies the element html to the clipboard
+ */
+export function downloadTableButton(
+  callback,
+  {
+    label = "Download",
+    filename = "download.csv",
+    columns = null,
+    delimeter = ",",
+  } = {}
+) {
+  return button(label, {
+    value: null,
+    reduce: () => {
+      console.debug("downloading data with callback: ", callback())
+      const data = callback()
+
+      if (columns === null) columns = Object.keys(data[0])
+      writeToFile(
+        data.reduce(
+          (a, v) =>
+            a + columns.map((col) => v[col] || "").join(delimeter) + "\n",
+          columns.join(delimeter) + "\n"
+        ),
+        filename,
+        "text/csv"
+      )
+    },
+  })
+}
+
+/**
  * A button for downloading one or many an SVG elements with a d3 selector.
  *
  * @param {String} selector - a d3 selector string for returning the svg elements to be downloaded.
