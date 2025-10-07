@@ -72,7 +72,7 @@ export const italy_regions_geojson = FileAttachment(
 // default map options
 
 export const france_projection = {
-  type: "azimuthal-equidistant",
+  type: "equal-earth",
   domain: d3
     .geoCircle()
     .center(d3.geoCentroid(mainland_france_regions_geojson))
@@ -80,7 +80,7 @@ export const france_projection = {
 }
 
 export const paris_projection = {
-  type: "azimuthal-equidistant",
+  type: "equal-earth",
   domain: d3.geoCircle().center([2.35, 48.85]).radius(0.2)(),
   // domain: d3
   //   .geoCircle()
@@ -95,7 +95,7 @@ export const paris_projection = {
 }
 
 export const idf_projection = {
-  type: "azimuthal-equidistant",
+  type: "equal-earth",
   domain: d3
     .geoCircle()
     .center(
@@ -107,7 +107,7 @@ export const idf_projection = {
 }
 
 export const italy_projection = {
-  type: "azimuthal-equidistant",
+  type: "equal-earth",
   domain: d3.geoCircle().center([13, 43.5]).radius(2)(),
   // domain: d3
   //   .geoCircle()
@@ -184,7 +184,7 @@ export function projectionMap(
     borderList = [], // list of borders to draw
     borderListStrokes = borderList.map(() => "var(--theme-foreground-faint)"), // list of border colors; use 'var(--theme-foreground-faint)' for default
     borderListStrokeOpacity = borderList.map(() => 1),
-    projectionType = "azimuthal-equidistant",
+    projectionType = "equal-earth",
     projectionDomain = d3.geoCircle().center([2, 47]).radius(5)(), // centered on France
     stroke = "#f43f5e",
     fill = "#f43f5e",

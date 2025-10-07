@@ -683,7 +683,7 @@ const terrain_tip_dots = (data, legend, delta) =>
 ```js
 // generate geo projection plot functions
 const labeled_france_projection = {
-  type: "azimuthal-equidistant",
+  type: "equal-earth",
   domain: d3.geoCircle().center([2, 47]).radius(5)(),
 }
 

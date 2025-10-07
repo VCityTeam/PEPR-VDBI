@@ -629,7 +629,7 @@ const project_force_graph = (width) =>
           width: width,
           height: width,
           projection: {
-            type: 'azimuthal-equidistant',
+            type: 'equal-earth',
             domain: d3.geoCircle().center([2, 47]).radius(5)(),
           },
           marks: [
