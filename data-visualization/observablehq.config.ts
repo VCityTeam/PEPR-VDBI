@@ -30,7 +30,7 @@ export default {
           path: 'tools/wordclouds',
         },
         {
-          name: 'Knowledge graphs generator',
+          name: 'Knowledge graph generator',
           path: 'tools/graphs',
         },
       ]
