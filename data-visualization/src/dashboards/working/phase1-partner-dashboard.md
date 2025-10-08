@@ -15,7 +15,7 @@ import { cropText, copyTableToClipboardButton } from "/components/utilities.js"
 ```
 
 ```js
-import { tableToSankeyGraph, sankeyDiagram } from "/components/sankey.js"
+import { parallelSetToGraph, sankeyDiagram } from "/components/sankey.js"
 ```
 
 ```js
@@ -50,6 +50,7 @@ const filter_aap_data = view(
   })
 )
 ```
+${copyTableToClipboardButton(filtered_legal_natures, { delimeter: ";" })}<!-- $ -->
 
 ```js
 function filterResults(d) {
@@ -73,6 +74,21 @@ function filterResults(d) {
 ```
 
 <div class="card">
+  <h2>Legal nature distribution by project</h2>
+  <h3>(Levels 1, 2)</h3>
+  ${resize((width) =>
+    sankeyDiagram(
+      partner_graph_project_2, 
+      {
+        width: width,
+        nodeFill: (d) => project_color_scale.unknown('black')(d.id),
+        linkStroke: (d) => legal_nature_colors(Number(d.path[1][6])),
+      }
+    )
+  )}<!-- $ -->
+</div>
+
+<div class="card">
   <h2>Legal nature distribution</h2>
   <h3>(Levels 1, 2)</h3>
   ${resize((width) =>
@@ -81,16 +97,15 @@ function filterResults(d) {
       {
         width: width,
         nodeFill: (d) => project_color_scale.unknown('black')(d.id),
-        linkStroke: (d) => legal_nature_colors(Number(d.path[0][6])),
+        linkStroke: (d) => legal_nature_colors(Number(d.path[1][6])),
       }
     )
-  )}
-
+  )}<!-- $ -->
 </div>
 
 ```js
 const level_1_select = Inputs.select(
-  new Set(partners_by_legal_nature_level_data.map((d) => d.cjn1_code)),
+  new Set(filtered_legal_natures.map((d) => d.cjn1_code)),
   {
     label: "Select level 1 legal nature",
     value: 0,
@@ -113,7 +128,7 @@ const level_1_value = Generators.input(level_1_select)
         linkStroke: (d) => interpolated_legal_nature_color(
             level_1_value,
             filtered_cjn2_codes)
-          (Number(d.path[0][7])),
+          (Number(d.path[1][7])),
       }
     )
   )}
@@ -183,11 +198,29 @@ WITH
   aggregate_partners as (
     SELECT
       project_name,
+      -- list_distinct(list(project_name)) as project_names,
       nom_complet,
       nature_juridique,
       siren,
-      list_distinct(list(source)) AS sources,
-      count() as count,
+      list_distinct(list(source)) as sources,
+      -- length(list_distinct(list(project_name))) as "count",
+      -- 1 / length(list_distinct(list(project_name))) as "value",
+    FROM (
+    SELECT *
+    FROM aap_partners
+    UNION
+    SELECT *
+    FROM annex_partners
+    UNION
+    SELECT *
+    FROM general_partners
+  )
+    GROUP BY all
+  ),
+  partner_count as (
+    SELECT
+      siren,
+      length(list_distinct(list(project_name))) as "relationships",
     FROM (
     SELECT *
     FROM aap_partners
@@ -201,18 +234,21 @@ WITH
     GROUP BY all
   )
 SELECT
+  -- aggregate_partners.project_names,
   aggregate_partners.project_name,
   aggregate_partners.nom_complet,
   aggregate_partners.nature_juridique,
-  cjn3."Libellé" as "cjn3_label",
+  '(Code ' || cjn3."Code" || ') ' || cjn3."Libellé" as "cjn3_label",
   cjn3."Code" as "cjn3_code",
-  cjn2."Libellé" as "cjn2_label",
+  '(Code ' || cjn2."Code" || ') ' || cjn2."Libellé" as "cjn2_label",
   cjn2."Code" as "cjn2_code",
-  cjn1."Libellé" as "cjn1_label",
+  '(Code ' || cjn1."Code" || ') ' || cjn1."Libellé" as "cjn1_label",
   cjn1."Code" as "cjn1_code",
-  siren,
+  aggregate_partners.siren,
   sources,
-  aggregate_partners.count as "value",
+  partner_count.relationships,
+  1 / partner_count.relationships as "value",
+  'All partners' as total,
 from aggregate_partners
 join cjn3
 on cjn3.Code = aggregate_partners.nature_juridique
@@ -220,6 +256,31 @@ join cjn2
 on cjn2.Code = floor(aggregate_partners.nature_juridique / 100)
 join cjn1
 on cjn1.Code = floor(aggregate_partners.nature_juridique / 1000)
+join partner_count
+on partner_count.siren = aggregate_partners.siren
+```
+
+```sql
+-- Clean tables
+UPDATE general_partners
+  SET project_name = 'RESILIENCE'
+  WHERE project_name = 'RÉSILIENCE';
+UPDATE general_partners
+  SET project_name = 'NEO'
+  WHERE project_name = 'NÉO';
+
+-- merge tables
+-- WITH
+  -- union_all AS (
+    SELECT *
+    FROM aap_partners
+    UNION
+    SELECT *
+    FROM annex_partners
+    UNION
+    SELECT *
+    FROM general_partners
+  -- )
 ```
 
 ```js
@@ -231,22 +292,13 @@ const filtered_legal_natures = [...legal_natures].filter(filterResults)
 ```
 
 ```js
-const partners_by_legal_nature_level_data = filtered_legal_natures.map((d) => {
-  const datum = { ...d }
-  datum.level_3_label = `(Code ${datum.cjn3_code}) ${datum.cjn3_label}`
-  datum.level_2_label = `(Code ${datum.cjn2_code}) ${datum.cjn2_label}`
-  datum.level_1_label = `(Code ${datum.cjn1_code}) ${datum.cjn1_label}`
-  return datum
-})
-```
-
-```js
-const partner_graph_1_2 = tableToSankeyGraph(
-  partners_by_legal_nature_level_data,
+const partner_graph_project_2 = parallelSetToGraph(
+  filtered_partners_by_project,
   [
-    "level_1_label",
-    "level_2_label",
-    // "level_3_label",
+    "total",
+    // "cjn1_label",
+    "cjn2_label",
+    // "cjn3_label",
     "project_name",
   ]
 )
@@ -254,24 +306,39 @@ console.debug("partner_graph_1_2", partner_graph_1_2)
 ```
 
 ```js
-const filtered_partners_by_legal_nature_level_data =
-  partners_by_legal_nature_level_data.filter(
+const partner_graph_1_2 = parallelSetToGraph(
+  filtered_legal_natures,
+  [
+    "total",
+    "cjn1_label",
+    "cjn2_label",
+    // "cjn3_label",
+    "project_name",
+  ]
+)
+console.debug("partner_graph_1_2", partner_graph_1_2)
+```
+
+```js
+const selected_filtered_legal_natures =
+  filtered_legal_natures.filter(
     (d) => d.cjn1_code == level_1_value
   )
 
-const partner_graph_2_3 = tableToSankeyGraph(
-  filtered_partners_by_legal_nature_level_data,
+const partner_graph_2_3 = parallelSetToGraph(
+  selected_filtered_legal_natures,
   [
-    // "level_1_label",
-    "level_2_label",
-    "level_3_label",
-    "project_name",
+    // "total",
+    "cjn1_label",
+    "cjn2_label",
+    "cjn3_label",
+    // "project_name",
   ]
 )
 
 const filtered_cjn2_codes = [
   ...new Set(
-    filtered_partners_by_legal_nature_level_data.map((d) => d.cjn2_code % 10)
+    selected_filtered_legal_natures.map((d) => d.cjn2_code % 10)
   ),
 ]
 

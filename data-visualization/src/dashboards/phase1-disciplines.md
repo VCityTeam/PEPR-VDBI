@@ -131,9 +131,12 @@ console.debug("selected_project_data", selected_project_data)
         valueMap: (d) => d[1],
         colorMap: (d) => d[0],
         color: d3
+          //.scaleOrdinal(d3.schemeSet1.slice(1))
           .scaleOrdinal(d3.schemeCategory10)
           .domain(cnu_category_map.keys())
           .unknown('grey'),
+        //majorLabelText: () => "",
+        //minorLabelText: () => "",
       }
     ))}
     <!-- $ -->

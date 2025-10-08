@@ -192,7 +192,7 @@ const france_plot = Plot.plot({
   height: 800,
   width: 800,
   projection: {
-    type: "azimuthal-equidistant",
+    type: "equal-earth",
     domain: france_circle_domain,
   },
   marks: [
@@ -216,7 +216,7 @@ const france_city_plot = Plot.plot({
   height: 800,
   width: 800,
   projection: {
-    type: "azimuthal-equidistant",
+    type: "equal-earth",
     domain: france_city_circle_domain,
   },
   marks: [

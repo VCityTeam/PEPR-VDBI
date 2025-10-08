@@ -175,6 +175,46 @@ export function mapTableToTriples(
 }
 
 /**
+ * Parse tabular data to a graph object.
+ * Adapted from https://observablehq.com/@d3/nike-quarterly-statement?collection=@d3/d3-sankey
+ * @param {Object[]} data - input table
+ * @param {String} data.source - link source
+ * @param {String} data.target - link target
+ * @param {String} data.value - link target
+ * @param {Object} options - configuration options
+ * @returns {Object<Array, Array>}
+ */
+export function parseTabularGraph(
+  links,
+  {
+    sourceMap = (d) => d.source,
+    targetMap = (d) => d.target,
+    valueMap = (d) => d.value,
+  } = {}
+) {
+  const nodeByName = new Map()
+  for (const link of links) {
+    if (!nodeByName.has(sourceMap(link)))
+      nodeByName.set(sourceMap(link), {
+        name: sourceMap(link),
+        value: valueMap(link),
+      })
+    else {
+      nodeByName.get(sourceMap(link)).value += valueMap(link)
+    }
+    if (!nodeByName.has(targetMap(link)))
+      nodeByName.set(targetMap(link), {
+        name: targetMap(link),
+        value: valueMap(link),
+      })
+    else {
+      nodeByName.get(targetMap(link)).value += valueMap(link)
+    }
+  }
+  return { nodes: Array.from(nodeByName.values()), links }
+}
+
+/**
  * @deprecated, use `mapTableToTriples()` instead
  */
 export function mapProjectsToRDFGraph(projects, colorMap = {}) {
