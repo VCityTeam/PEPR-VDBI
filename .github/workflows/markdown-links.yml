@@ -53,5 +53,6 @@ jobs:
           export FAILURE_THRESHOLD=2
           export warnings=`grep warning validate.logs | wc -l`
           if [ $warnings -gt $FAILURE_THRESHOLD ]; then
+            cat validate.logs
             exit 1;
           fi
