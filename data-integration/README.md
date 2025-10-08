@@ -165,7 +165,7 @@ Notes:
 
 ## 3. Unstructured text to structured text via GPT
 
-**RQ2:** What prompts provide the best results for answering the natural language questions posed in the [proposed method](#unstructured-text-to-structured-text-tests)
+**RQ2:** What prompts provide the best results for answering the natural language questions posed in the [proposed method](#2-pdf-to-unstructured-text)
 
 **Tentative candidates:**
 
@@ -264,7 +264,7 @@ This test will examine how we can call prompts and extract their output programa
 This requires launching Ollama on a local server.
 
 > [!NOTE]
-> Why Ollama? See [these notes]([./feasability-notes-GPT-data-integration.md)
+> Why Ollama? See [these notes](./feasability-notes-GPT-data-integration.md)
 
 ```bash
 ollama serve & # launch ollama server in the background
@@ -282,7 +282,7 @@ python src/ollama_test.py \
 #### 2.1.4 Test: Pagoda LIRIS Ollama Service
 
 This test will examine the functionality of the [Ollama service hosted with on the Pagoda3](https://ollama-ui.pagoda.liris.cnrs.fr/).
-As instructed by [Olivier MBAREK](mailto:olivier.mbarek@univ-lyon1.fr), the http interface is accesible with the Ollama Python library (see test [1.2.1.3](#1213-test-ollama-serverpython)).
+As instructed by [Olivier MBAREK](mailto:olivier.mbarek@univ-lyon1.fr), the http interface is accesible with the Ollama Python library (see test [2.1.3](#213-test-ollama-serverpython)).
 
 > The interface [Ollama-UI] is that of the OpenWebui project in its latest version (0.5.4), but it is evolving rapidly.
 > This interface also allows you to use the ollama APIs via a token key.
@@ -457,7 +457,7 @@ TODO:
 | [Sparrow](https://github.com/katanaml/sparrow)                                                          |                                   |         |
 
 > [!TIP]
-> See [here](./feasability-notes-GPT-data-integration.md#retrieval-augmented-generation-for-knowledge-intensive-nlp-tasks) for more information about RAG
+> See [the references](./references.md#retrieval) for more information about RAG
 
 #### 2.3.1. Test: Langchain with single document and semi-structured data
 
@@ -988,4 +988,4 @@ Result 6.1
 
 Tests moved to [r2r-tests.md](./r2r-tests.md) to better accomodate their length
 
-## 4. [See also](../docs/README.md#data-integraion)
+## 4. [See also](../docs/README.md#data-integration)

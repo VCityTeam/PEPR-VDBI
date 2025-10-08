@@ -3,9 +3,9 @@
 This page describes the process for counting and comparing the word used in plain text files.
 
 > [!TIP]
-> These word counts can be passed to the [word cloud generator tool](/data-visualization/src/dashboards/phase1-project-wordcounts.md) to create word clouds.
+> These word counts can be passed to the [word cloud generator tool](/data-visualization/src/tools/wordclouds.md) to create word clouds.
 
-**Table of contents**
+## Table of contents <!-- omit in toc -->
 
 - [Method](#method)
   - [Tokenize words](#tokenize-words)
@@ -155,15 +155,12 @@ This section documents how different word count datasets were produced.
 
 This dataset was initially created to test the new `nltk` integration and create word clouds for the [Journées Scientifiques PEPR VDBI 2025](https://pepr-vdbi.fr/evenements/journees-scientifiques-annuelles-villes-durables-batiments-innovants-2024-1) (JS)
 
-The input texts were sourced by
-
-1. Manually copying all text (with the exception of major section headers) from Sections 2.1 and 2.2 of each project call regarding WP descriptions.
-2. Texts were aggregated in the [./test-data/private/input/](./test-data/private/input/) folder as `.txt` files
+The input texts were sourced by manually copying all text (with the exception of major section headers) from Sections 2.1 and 2.2 of each project call regarding work package (WP) descriptions.
 
 Once counted, the project description word counts were grouped based on their respective "Regards croisés" sessions of the JS.
 Each group's word counts were compared through the sum of their intersections.
 
-This [config](./test-data/configs/wordcount/wordcount_VDBI_project_workflow_config.json) was used to create the dataset.
+This [config](./test-data/configs/wordcount/JS_roundtable_workflow_config.json) was used to create the dataset.
 
 The results are available in [test-data/output/js_roundtable](./test-data/output/js_roundtable/).
 
@@ -182,7 +179,6 @@ The initial texts from each PEPR were extracted as follows:
       - Resume (en)
       - Resume (fr)
       - Sections 2.1 and 2.2 regarding WP descriptions
-   2. Texts were aggregated in the [test-data/private/input/](./test-data/private/input/) folder as `.txt` files
 2. PEPR Recyclage project description extraction
    1. Copy all text (with the exception of titles and section headers) from the following three sections of each project [website](https://www.pepr-recyclage.fr/):
       - Excerpt (en)
@@ -192,7 +188,6 @@ The initial texts from each PEPR were extracted as follows:
       - Tasks (en)
       - Consortium (en)
    2. Projects still under construction phases such as 'Soon to come' were removed.
-   3. Texts were aggregated in the [test-data/private/input/](./test-data/private/input/) folder as `.txt` files
 
 #### Word count generation
 

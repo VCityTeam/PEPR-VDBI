@@ -5,7 +5,7 @@ theme: light
 
 # Import and visualize Geospatial ESR Open Data
 
-Import and visualize data from the [ESR Open Data](data.enseignementsup-recherche.gouv.fr) using their [API](https://data.enseignementsup-recherche.gouv.fr/api/explore/v2.1/console)
+Import and visualize data from the [ESR Open Data](https://data.enseignementsup-recherche.gouv.fr) using their [API](https://data.enseignementsup-recherche.gouv.fr/api/explore/v2.1/console)
 Also test the Observable Frameworks data loader library.
 
 ## Data integration

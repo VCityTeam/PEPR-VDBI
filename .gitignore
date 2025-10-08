@@ -141,7 +141,8 @@ dist
 
 # python
 __pycache__/
-venv/
+venv
+.venv
 
 # libreoffice
 .~lock.*

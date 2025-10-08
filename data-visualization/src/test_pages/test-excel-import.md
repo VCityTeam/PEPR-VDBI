@@ -10,7 +10,7 @@ Import and visualize the first sheet from the phase 1 Excel document.
 ## Integration process
 
 D3 and the Observable framework can import [`.xlsx` files](https://observablehq.com/framework/lib/xlsx).
-Then the data should be transformed into an array using a [component](./components/240117-proposals-labs-establishments.js).
+Then the data should be transformed into an array using a [component](../components/240117-proposals-labs-establishments.js).
 Columns with obviously identical entities are combined.
 E.g. `Etablissement`, `Etablissement 2`, ... `Etablissement n` are merged into the same column.
 

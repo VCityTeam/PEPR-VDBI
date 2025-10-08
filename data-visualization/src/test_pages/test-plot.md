@@ -9,7 +9,7 @@ Visualize the first sheet from the phase 1 Excel document as a graph.
 
 ## Integration process
 
-Take the data imported from the [initial-import-test](./initial-import-test) and transform the table into a plot.
+Take the data imported from the [initial-import-test](test-excel-import.md) and transform the table into a plot.
 To do this, we need to set up a component to transform the data.
 
 ```mermaid

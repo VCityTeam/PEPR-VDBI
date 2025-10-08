@@ -12,9 +12,9 @@ sql:
 
 # Parallel sets
 
-Example imported from https://observablehq.com/@d3/parallel-sets and adapted for the Observable Framework.
+Example imported from <https://observablehq.com/@d3/parallel-sets> and adapted for the Observable Framework.
 
-[Parallel sets](https://eagereyes.org/publications/Bendix-InfoVis-2005) are like [parallel coordinates](/@d3/parallel-coordinates), but for categorical dimensions. The thickness of each curved line represents a quantity that is repeatedly subdivided by category. This example looks at the _Titanic_ disaster of 1912.
+[Parallel sets](https://eagereyes.org/publications/Bendix-InfoVis-2005) are like [parallel coordinates](https://observablehq.com/@d3/parallel-coordinates), but for categorical dimensions. The thickness of each curved line represents a quantity that is repeatedly subdivided by category. This example looks at the _Titanic_ disaster of 1912.
 
 <div class="tip">
 Code was moved to <code>/src/components/sankey.js</code> in the code repository
@@ -178,7 +178,7 @@ class SankeyDiagram {
 
 # Test with partner category data
 
-Load legal nature data as a hierarchy from INSEE catégories juridiques by level (from https://www.insee.fr/fr/information/2028129)
+Load legal nature data as a hierarchy from INSEE catégories juridiques by level (from <https://www.insee.fr/fr/information/2028129>)
 
 ```js
 display(Inputs.table(all_partner_data))

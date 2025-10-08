@@ -9,7 +9,7 @@ Visualize the first sheet from the phase 1 Excel document using trees and dendro
 
 ## Data integration
 
-Take the data imported from the [initial-import-test](./initial-import-test) and transform the table into a tree formalism.
+Take the data imported from the [initial-import-test](test-excel-import.md) and transform the table into a tree formalism.
 To do this, we need to set up a component to transform the data.
 
 **Input:**

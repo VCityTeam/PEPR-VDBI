@@ -1,6 +1,6 @@
 # R2R tests <!-- omit in toc -->
 
-Non R2R specific tests are located [here](./README.md).
+Non R2R specific tests are located in [the readme](./README.md).
 
 ## Table of contents
 
@@ -219,8 +219,7 @@ chmod +x up_test_r2r.sh
 
 Initial results from using the system template: `You are a helpful agent.`:
 
-- [Raw output](./test-data/r2r-test/2.3.2/23211_results.html)
-- [Chunk search output](./test-data/r2r-test/2.3.2/23211_results_chunk_search.json)
+Results are stored in `./test-data/r2r-test/2.3.2/` by default 
 
 #### 2.3.2.1 Chunk search output example
 
@@ -300,8 +299,7 @@ Initial results from using the system template: `You are a helpful agent.`:
 
 Results from using the empty system template:
 
-- [Raw output](./test-data/r2r-test/2.3.2/23212_results.html)
-- [Chunk search output](./test-data/r2r-test/2.3.2/23212_results_chunk_search.json)
+Results are stored in `./test-data/r2r-test/2.3.2/` by default
 
 #### 2.3.2.2 Chunk search output example
 

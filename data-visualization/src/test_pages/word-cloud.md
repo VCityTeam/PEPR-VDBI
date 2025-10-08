@@ -88,7 +88,7 @@ function draw(words, cloud, element) {
 
 ## Also test dynamic resizing, and word cloud size, and coloring
 
-Word count data generated from [data-analysis/wordclouds.md](../../data-analysis/wordclouds.md):
+Word count data generated from [/data-analysis/wordcount.md](/data-analysis/wordcount.md):
 
 ```sql id=integreen_words display
 select
