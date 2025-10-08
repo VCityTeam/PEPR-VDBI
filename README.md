@@ -18,46 +18,6 @@ Data analysis tests for lexicometry and bibliometry
 
 Data visualization tests with observable
 
-## Project Schedule
-
-```mermaid
----
-config:
-  theme: forest
----
-gantt
-    title PEPR VDBI Surveying/Monitoring Iterative Roadmap 2025
-    dateFormat  DD-MM-YYYY
-
-    %name                           %status     %tag    %start          %duration
-    Q1 end                          :milestone, q1,     31-03-2025,     1d
-    Q2 end                          :milestone, q2,     30-06-2025,     1d
-    Q3 end                          :milestone, q3,     30-09-2025,     1d
-    Q4 end                          :milestone, q4,     31-12-2025,     1d
-
-    section Q1
-    Road map planification          :done,      q1-1,   01-01-2025,     2w
-    Focus G1                        :active,    q1-f1,  01-01-2025,     1M
-    Focus G2                        :           q1-f2,  after q1-f1,    1M
-    Focus G3?                       :           q1-f3,  after q1-f2,    1M
-    Q1 Review                       :           q1-3,   24-03-2025,     1w
-
-    section Q2
-    Q2 planification                :           q2-1,   after q1,       1w
-    Q2 Iteration                    :           q2-2,   after q1,       3M
-    Q2 Review                       :           q2-3,   23-06-2025,     1w
-
-    section Q3
-    Q3 planification                :           q3-1,   after q2,       1w
-    Q3 Iteration                    :           q3-2,   after q2,       3M
-    Q3 Review                       :           q3-3,   23-09-2025,     1w
-
-    section Q4
-    Q4 planification                :           q4-1,   after q3,       1w
-    Q4 Iteration                    :           q4-2,   after q3,       3M
-    Y1 Review                       :           q4-3,   17-12-2025,     2w
-```
-
 > [!TIP]
 > See project [milestone](https://github.com/VCityTeam/PEPR-VDBI/milestones) descriptions for more information about specific quarterly/yearly goals.
 
