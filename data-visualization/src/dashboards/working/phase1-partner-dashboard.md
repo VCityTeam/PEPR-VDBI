@@ -30,17 +30,22 @@ import {
 
 ```js
 const filter_no_result = view(
-  Inputs.toggle({ label: "Filter results with no SIREN", value: true })
+  Inputs.toggle({ label: "Exclude results with no SIREN", value: true })
 )
+```
+
+Excluded data sources:
+
+```js
 const filter_annex_data = view(
-  Inputs.toggle({ label: "Filter annex data", value: false })
+  Inputs.toggle({ label: "Financial annexes", value: false })
 )
 const filter_general_data = view(
-  Inputs.toggle({ label: "Filter AAP generality data source", value: false })
+  Inputs.toggle({ label: "AAP generality", value: false })
 )
 const filter_aap_data = view(
   Inputs.toggle({
-    label: "Filter AAP partenaires_aap2023 data source",
+    label: "AAP partenaires_aap2023",
     value: false,
   })
 )
@@ -72,7 +77,7 @@ function filterResults(d) {
   <h3>(Levels 1, 2)</h3>
   ${resize((width) =>
     sankeyDiagram(
-      partner_graph_1_2, 
+      partner_graph_1_2,
       {
         width: width,
         nodeFill: (d) => project_color_scale.unknown('black')(d.id),
@@ -101,7 +106,7 @@ const level_1_value = Generators.input(level_1_select)
   ${level_1_select}
   ${resize((width) =>
     sankeyDiagram(
-      partner_graph_2_3, 
+      partner_graph_2_3,
       {
         width: width,
         nodeFill: (d) => project_color_scale.unknown('black')(d.id),
@@ -331,12 +336,12 @@ const filtered_partner_data_value = Generators.input(
       <div>${consensus_search}</div>
     </div>
     ${
-      resize((width) => 
+      resize((width) =>
         Inputs.table(consensus_search_result, { width: width, layout: 'auto' })
       )
     }
     ${copyTableToClipboardButton(consensus_search_result, { delimeter: ";" })}
-    
+
   </div>
   <div class="card" style="padding: 0;">
     <div style="padding: 1em;">
@@ -346,12 +351,12 @@ const filtered_partner_data_value = Generators.input(
       <div>${no_result_search}</div>
     </div>
     ${
-      resize((width) => 
+      resize((width) =>
         Inputs.table(no_result_search_result, { width: width, layout: 'auto' })
       )
     }
     ${copyTableToClipboardButton(no_result_search_result, { delimeter: ";" })}
-    
+
   </div>
   <div class="card" style="padding: 0;">
     <div style="padding: 1em;">
@@ -361,12 +366,12 @@ const filtered_partner_data_value = Generators.input(
       <div>${outlier_search}</div>
     </div>
     ${
-      resize((width) => 
+      resize((width) =>
         Inputs.table(outlier_search_result, { width: width, layout: 'auto' })
       )
     }
     ${copyTableToClipboardButton(outlier_search_result, { delimeter: ";" })}
-    
+
   </div>
 </div>
 

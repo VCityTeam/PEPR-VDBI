@@ -15,8 +15,7 @@ import {
 
 ```js
 const workbook1 = FileAttachment(
-  // "/data/private/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
-  "/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
+  "/data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
 ).xlsx()
 ```
 
@@ -51,4 +50,6 @@ const university_table = Inputs.table(phase_2_data.universities)
   </div>
 </div>
 
-<div class="warning">Possible data quality errors found for special characters, e.g., sheet `GÉNÉRALITÉ`:`Z23`</div>
+<div class="warning">
+  Possible data quality errors found for special characters, e.g., sheet `GÉNÉRALITÉ`:`Z23`
+</div>

@@ -1,7 +1,5 @@
 {
   "no-inline-html": {
-    "allowed_elements": [
-      "div"
-    ]
+    "allowed_elements": ["div", "h1", "h2"]
   }
 }
