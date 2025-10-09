@@ -15,35 +15,31 @@ import { cropText } from './utilities.js';
  *       source: 0,
  *       target: 1,
  *       value: 10,
- *       names: ['Node1', 'Node2'] },
+ *       path: ['Node1', 'Node2'] },
  *     ...]
  *   }
  */
 export function parallelSetToGraph(data, keys) {
   const nodes = []
   const nodeByKey = new InternMap([], JSON.stringify)
-  const indexByKey = new InternMap([], JSON.stringify)
   const links = []
 
-  let index = -1
-  for (const k of keys) {
+  for (const key of keys) {
     for (const d of data) {
-      const key = [k, d[k]]
-      if (nodeByKey.has(key)) continue
-      const node = { id: d[k] }
+      if (nodeByKey.has(d[key])) continue
+      const node = { id: d[key] }
       nodes.push(node)
-      nodeByKey.set(key, node)
-      indexByKey.set(key, ++index)
+      nodeByKey.set(d[key], node)
     }
   }
 
   for (let i = 1; i < keys.length; ++i) {
     const a = keys[i - 1]
     const b = keys[i]
-    const prefix = keys.slice(0, i + 1)
+    const path_prefix = keys.slice(0, i + 1)
     const linkByKey = new InternMap([], JSON.stringify)
     for (const d of data) {
-      const path = prefix.map((k) => d[k])
+      const path = path_prefix.map((key) => d[key])
       const value = d.value || 1
       let link = linkByKey.get(path)
       if (link) {
@@ -51,8 +47,8 @@ export function parallelSetToGraph(data, keys) {
         continue
       }
       link = {
-        source: indexByKey.get([a, d[a]]),
-        target: indexByKey.get([b, d[b]]),
+        source: nodeByKey.get(d[a]).id,
+        target: nodeByKey.get(d[b]).id,
         path,
         value,
       }
@@ -63,17 +59,18 @@ export function parallelSetToGraph(data, keys) {
   return { nodes, links }
 }
 
+
 /**
  * Create a Sankey diagram from a graph object
  *
  * @param {Object} graph - a graph object containing nodes and links
  * @param {Object[]} graph.nodes
- * @param {Object[]} graph.nodes[].name - node label
+ * @param {String} graph.nodes[].id - node id
  * @param {Object[]} graph.links
- * @param {Object[]} graph.links[].source
- * @param {Object[]} graph.links[].target
- * @param {Object[]} graph.links[].value - link value, used to determine width link width
- * @param {Object[]} graph.links[].names - array of node names corresponding to the link path
+ * @param {String} graph.links[].source
+ * @param {String} graph.links[].target
+ * @param {Number} graph.links[].value - link value, used to determine width link width
+ * @param {String[]} graph.links[].path - array of node ids corresponding to the link path
  * @param {Number} width - width of the SVG element
  * @param {Number} height - height of the SVG element
  * @param {Function} idMap - function to map a node to its label
@@ -81,6 +78,14 @@ export function parallelSetToGraph(data, keys) {
  * @param {Function} text - function to map a node to its label
  * @param {scaleOrdinal|Function} nodeFill - color scale for nodes
  * @param {scaleOrdinal|Function} linkStroke - color scale for links
+ * @param {Number} height - height of the SVG element
+ * @param {Number} font_size - font size for node labels
+ * @param {null|undefined} node_sort - node_sort paramters for d3-sankey,
+ *  set to undefined for default behavior
+ * @param {null|undefined} link_sort - link_sort paramters for d3-sankey,
+ *  set to undefined for default behavior
+ * 
+ * @returns {SVGElement} - an SVG element containing the Sankey diagram
  */
 export function sankeyDiagram(
   graph,
@@ -100,6 +105,7 @@ export function sankeyDiagram(
 ) {
   const sankeyGenerator = d3_sankey
     .sankey()
+    .nodeId(idMap)
     .nodeSort(node_sort)
     .linkSort(link_sort)
     .nodeWidth(4)
@@ -115,6 +121,8 @@ export function sankeyDiagram(
     .attr("width", width)
     .attr("height", height)
     .attr("style", "max-width: 100%; height: auto;")
+
+  console.debug("Input graph:", graph)
 
   const { nodes, links } = sankeyGenerator({
     nodes: graph.nodes.map((d) => Object.create(d)),

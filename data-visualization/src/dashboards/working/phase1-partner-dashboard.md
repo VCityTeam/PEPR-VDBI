@@ -20,6 +20,10 @@ import { parallelSetToGraph, sankeyDiagram } from "/components/sankey.js"
 ```
 
 ```js
+import { parseTabularGraph } from "/components/graph.js"
+```
+
+```js
 import {
   project_color_scale,
   legal_nature_colors,
@@ -50,27 +54,24 @@ const filter_aap_data = view(
 )
 ```
 
-```js
-function filterResults(d) {
-  if (filter_no_result && !d.siren) {
-    return false
-  }
-  if (
-    filter_annex_data &&
-    d.sources.includes("financed_annex_partners_by_project")
-  ) {
-    return false
-  }
-  if (filter_general_data && d.sources.includes("generality")) {
-    return false
-  }
-  if (filter_aap_data && d.sources.includes("partenaires_aap2023")) {
-    return false
-  }
-  return true
-}
-```
-
+<div class="card">
+  <h2>Legal nature distributions by project</h2>
+  <h3>(Levels 1, 2, 3)</h3>
+  <!-- ${level_1_select} -->
+  <!-- $ -->
+  ${resize((width) =>
+    sankeyDiagram(
+      filtered_partners_by_project_graph_1_2,
+      {
+        width: width,
+        pathMap: () => [],
+        nodeFill: (d) => project_color_scale.unknown('black')(d.id),
+        linkStroke: (d) => legal_nature_colors(Number(d.source.id[6])),
+      }
+    )
+  )}
+  <!-- $ -->
+</div>
 <div class="card">
   <h2>Legal nature distribution</h2>
   <h3>(Levels 1, 2)</h3>
@@ -85,18 +86,6 @@ function filterResults(d) {
     )
   )}<!-- $ -->
 </div>
-
-```js
-const level_1_select = Inputs.select(
-  new Set(filtered_legal_natures.map((d) => d.cjn1_code)),
-  {
-    label: "Select level 1 legal nature",
-    value: 0,
-  }
-)
-
-const level_1_value = Generators.input(level_1_select)
-```
 
 <div class="card">
   <h2>Level 3 legal nature distribution</h2>
@@ -118,7 +107,6 @@ const level_1_value = Generators.input(level_1_select)
   )}
   <!-- $ -->
 </div>
-
 <div class="card" style="padding: 0;">
   <div style="padding: 1em">
     <h2>Filtered partner data</h2>
@@ -129,7 +117,6 @@ const level_1_value = Generators.input(level_1_select)
   ${copyTableToClipboardButton(filtered_partner_data_value, { delimeter: ";" })}
   <!-- $ -->
 </div>
-
 <div class="card" style="padding: 0;">
   <div style="padding: 1em">
     <h2>Filtered legal nature data</h2>
@@ -140,6 +127,8 @@ const level_1_value = Generators.input(level_1_select)
   ${copyTableToClipboardButton(filtered_legal_natures_value, { delimeter: ";" })}
   <!-- $ -->
 </div>
+
+<!-- Initial data preparation -->
 
 ```sql id=all_partner_data
 -- Clean tables
@@ -230,12 +219,12 @@ WITH
 SELECT
   aggregate_partners.nom_complet,
   aggregate_partners.nature_juridique,
-  '(Code ' || cjn3."Code" || ') ' || cjn3."Libellé" as "cjn3_label",
-  cjn3."Code" as "cjn3_code",
-  '(Code ' || cjn2."Code" || ') ' || cjn2."Libellé" as "cjn2_label",
-  cjn2."Code" as "cjn2_code",
   '(Code ' || cjn1."Code" || ') ' || cjn1."Libellé" as "cjn1_label",
   cjn1."Code" as "cjn1_code",
+  '(Code ' || cjn2."Code" || ') ' || cjn2."Libellé" as "cjn2_label",
+  cjn2."Code" as "cjn2_code",
+  '(Code ' || cjn3."Code" || ') ' || cjn3."Libellé" as "cjn3_label",
+  cjn3."Code" as "cjn3_code",
   aggregate_partners.siren,
   sources,
   partner_count.partnerships,
@@ -252,7 +241,7 @@ join partner_count
 on partner_count.siren = aggregate_partners.siren
 ```
 
-```sql id=partners_by_project
+```sql id=partners_by_project_links_1_2
 -- Clean tables
 UPDATE general_partners
   SET project_name = 'RESILIENCE'
@@ -261,23 +250,79 @@ UPDATE general_partners
     SET project_name = 'NEO'
     WHERE project_name = 'NÉO';
 
+WITH partner_project_graph as (
+    SELECT
+      list_distinct(list(source)) as sources,
+      nature_juridique,
+      project_name as "target",
+      length(list_distinct(list(siren))) as "value",
+    FROM (
+      SELECT *
+      FROM aap_partners
+      UNION
+      SELECT *
+      FROM annex_partners
+      UNION
+      SELECT *
+      FROM general_partners
+    )
+    GROUP BY all
+  )
 SELECT
-  project_name,
-  nom_complet,
-  siren,
-  nature_juridique,
-  list_distinct(list(source)) as sources,
-FROM (
-  SELECT *
-  FROM aap_partners
-  UNION
-  SELECT *
-  FROM annex_partners
-  UNION
-  SELECT *
-  FROM general_partners
+  '(Code ' || cjn2."Code" || ') ' || cjn2."Libellé" AS source,
+  partner_project_graph.target,
+  partner_project_graph.value,
+  [
+    'All partners',
+    '(Code ' || cjn1."Code" || ') ' || cjn1."Libellé",
+    '(Code ' || cjn2."Code" || ') ' || cjn2."Libellé",
+    -- '(Code ' || cjn3."Code" || ') ' || cjn3."Libellé",
+    partner_project_graph.target,
+  ] as "path",
+  partner_project_graph.sources,
+  true as siren, -- needed to skip siren filter
+FROM partner_project_graph
+JOIN cjn3
+ON cjn3.Code = partner_project_graph.nature_juridique
+JOIN cjn2
+ON cjn2.Code = floor(partner_project_graph.nature_juridique / 100)
+JOIN cjn1
+ON cjn1.Code = floor(partner_project_graph.nature_juridique / 1000)
+```
+
+<!-- helpter functions -->
+
+```js
+function filterResults(d) {
+  if (filter_no_result && !d.siren) {
+    return false
+  }
+  if (
+    filter_annex_data &&
+    d.sources.includes("financed_annex_partners_by_project")
+  ) {
+    return false
+  }
+  if (filter_general_data && d.sources.includes("generality")) {
+    return false
+  }
+  if (filter_aap_data && d.sources.includes("partenaires_aap2023")) {
+    return false
+  }
+  return true
+}
+```
+
+```js
+const level_1_select = Inputs.select(
+  new Set(filtered_legal_natures.map((d) => d.cjn1_code)),
+  {
+    label: "Select level 1 legal nature",
+    value: 0,
+  }
 )
-GROUP BY all
+
+const level_1_value = Generators.input(level_1_select)
 ```
 
 ```js
@@ -289,13 +334,39 @@ const filtered_legal_natures = [...legal_natures].filter(filterResults)
 ```
 
 ```js
-const filtered_partners_by_project = [...partners_by_project].filter(
-  filterResults
+const filtered_partners_by_project_links_1_2 = [
+  ...partners_by_project_links_1_2,
+].filter(filterResults)
+
+console.debug(
+  "filtered_partners_by_project_links_1_2",
+  filtered_partners_by_project_links_1_2.map((d) => d.toJSON())
+)
+
+const filtered_partners_by_project_ids_1_2_by_key = new Map()
+
+filtered_partners_by_project_links_1_2.forEach(({ target }) => {
+  if (!filtered_partners_by_project_ids_1_2_by_key.has(target)) {
+    filtered_partners_by_project_ids_1_2_by_key.set(target, { id: target })
+  }
+})
+
+const filtered_partners_by_project_graph_1_2 = {
+  nodes: [...filtered_partners_by_project_ids_1_2_by_key.values()].concat(
+    partner_graph_1_2.nodes
+  ),
+  links: filtered_partners_by_project_links_1_2
+    .map((d) => d.toJSON())
+    .concat(partner_graph_1_2.links),
+}
+
+console.debug(
+  "filtered_partners_by_project_graph_1_2",
+  filtered_partners_by_project_graph_1_2
 )
 ```
 
 ```js
-// TODO: switch to parseTabularGraph
 const partner_graph_1_2 = parallelSetToGraph(filtered_legal_natures, [
   "total",
   "cjn1_label",
@@ -316,7 +387,7 @@ const partner_graph_2_3 = parallelSetToGraph(selected_filtered_legal_natures, [
   "cjn1_label",
   "cjn2_label",
   "cjn3_label",
-  "project_name",
+  // "project_name",
 ])
 
 const filtered_cjn2_codes = [
