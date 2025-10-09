@@ -1,5 +1,4 @@
 ---
-theme: [dashboard, light]
 sql:
   general_partners: /data/partners_general.csv
   aap_partners: /data/private/partenaires_aap2023.csv

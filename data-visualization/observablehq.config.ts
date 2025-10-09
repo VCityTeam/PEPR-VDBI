@@ -2,7 +2,8 @@
 export default {
   // The project’s title; used in the sidebar and webpage titles.
   title: 'PEPR Dashboards',
-  theme: 'light',
+  theme: ['light', 'dashboard'],
+  search: true,
   root: 'src', // path to the source root for preview
   pages: [
     {
@@ -149,7 +150,6 @@ export default {
   // ],
 
   // Some additional configuration options and their defaults:
-  // theme: "default", // try "light", "dark", "slate", etc.
   // header: "", // what to show in the header (HTML)
   // footer: "Built with Observable.", // what to show in the footer (HTML)
   // toc: true, // whether to show the table of contents

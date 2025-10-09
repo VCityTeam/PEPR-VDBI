@@ -1,6 +1,5 @@
 ---
 title: Researcher Dashboard
-theme: [dashboard, light]
 ---
 
 # Researcher Dashboard

@@ -1,19 +1,26 @@
 ---
+theme: light
 sql:
   cjn1: /data/cj_septembre_2022_n1.csv
   cjn2: /data/cj_septembre_2022_n2.csv
   cjn3: /data/cj_septembre_2022_n3.csv
 ---
 
-<div style="color: grey; font: 13px/25.5px var(--sans-serif); text-transform: uppercase;"><h1 style="display: none;">Zoomable sunburst</h1><a href="https://d3js.org/">D3</a> › <a href="/@d3/gallery">Gallery</a></div>
+<div style="color: grey; font: 13px/25.5px var(--sans-serif); text-transform: uppercase;">
+  <h1 style="display: none;">Zoomable sunburst</h1>
+  <a href="https://d3js.org/">D3</a> › <a href="/@d3/gallery">Gallery</a>
+</div>
 
 # Test of [Zoomable sunburst](https://observablehq.com/@d3/zoomable-sunburst?collection=@d3/d3-hierarchy)
 
-This variant of a [sunburst diagram](https://observablehq.com/@d3/sunburst/2) shows only two layers of the hierarchy at a time. Click a node to zoom in, or the center to zoom out. Compare to an [icicle](https://observablehq.com/@d3/zoomable-icicle).
+This variant of a [sunburst diagram](https://observablehq.com/@d3/sunburst/2)
+shows only two layers of the hierarchy at a time. Click a node to zoom in,
+or the center to zoom out. Compare to an [icicle](https://observablehq.com/@d3/zoomable-icicle).
 
 ## Get hierarchical data
 
-Load legal nature data as a hierarchy from INSEE catégories juridiques by level (from https://www.insee.fr/fr/information/2028129)
+Load legal nature data as a hierarchy from INSEE catégories juridiques by level
+(from <https://www.insee.fr/fr/information/2028129>)
 
 ```sql id=legal_nature_data echo
 -- update data
@@ -68,7 +75,9 @@ display(hierarchy)
 ## Chart
 
 <div class="tip">
-Up to date chart code was moved to <code>/src/components/zoomable-sunburst.js</code> in the code repository
+  Up to date chart code was moved to
+  <code>/src/components/zoomable-sunburst.js</code>
+  in the code repository
 </div>
 
 ```js

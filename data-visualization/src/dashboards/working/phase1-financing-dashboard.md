@@ -1,6 +1,3 @@
----
-theme: [dashboard, light]
----
 
 ```js
 const debug = false

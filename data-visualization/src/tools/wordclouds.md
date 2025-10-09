@@ -1,5 +1,4 @@
 ---
-theme: [dashboard, light]
 sql:
   integreen_wps_en_cleaned: "/data/private/integreen_wps_en_cleaned.csv"
   neo_wps_en_cleaned: "/data/private/neo_wps_en_cleaned.csv"

@@ -71,7 +71,7 @@ const productData = resolveProjectEntities(getProductSheet(workbook2))
 display(productData)
 ```
 
-# Visualization results
+## Visualization results
 
 Once integrated the following information is desired for visualization:
 
@@ -83,7 +83,7 @@ Once integrated the following information is desired for visualization:
   - col I : produit (ou resultats) de la recherche (primaire) → J : secondaire → H : Quelles actions pour quelles solutions → A : acronyme
 - Root node: PEPR VDBI
 
-## Collapsable Radial Dendrogram
+### Collapsable Radial Dendrogram
 
 **Sheet mapped to tree:**
 
@@ -114,7 +114,7 @@ const collapsableRadialProducts = collapsableRadialDendrogram(productTree, {
 display(collapsableRadialProducts)
 ```
 
-### Dendrogram: Products/results → Actions and solutions → Project acronym
+#### Dendrogram: Products/results → Actions and solutions → Project acronym
 
 A different mapping showing the relationships between the identified products and results and each project:
 

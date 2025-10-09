@@ -1,6 +1,5 @@
----
-theme: [dashboard, light]
----
+
+# Researcher Disciplines by Project
 
 ```js
 import {
@@ -26,8 +25,6 @@ import { cnu_category_map } from "/components/cnu.js"
 ```js
 import { getCategoryFromCNU, colorCNU } from "/components/color.js"
 ```
-
-# Researcher Disciplines by Project
 
 <div class="warning" label="Data visualization notice">
   <ul>

@@ -1,5 +1,5 @@
 ---
-theme: [dashboard, light]
+theme: light
 ---
 
 # Phase 1 Data

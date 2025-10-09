@@ -1,5 +1,4 @@
 ---
-theme: [dashboard, light]
 sql:
   # annex_partners: /data/partners_by_project_annex.csv
   general_partners: /data/partners_general.csv

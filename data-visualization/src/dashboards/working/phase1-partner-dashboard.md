@@ -1,5 +1,5 @@
 ---
-theme: [dashboard, light]
+toc: false
 sql:
   annex_partners: /data/partners_by_project_annex.csv
   general_partners: /data/partners_general.csv
@@ -9,6 +9,7 @@ sql:
   cjn3: /data/cj_septembre_2022_n3.csv
 ---
 
+# Phase 1 Partners
 
 ```js
 import { cropText, copyTableToClipboardButton } from "/components/utilities.js"
@@ -25,8 +26,6 @@ import {
   interpolated_legal_nature_color,
 } from "/components/color.js"
 ```
-
-# Phase 1 Partners
 
 ```js
 const filter_no_result = view(
@@ -50,7 +49,6 @@ const filter_aap_data = view(
   })
 )
 ```
-${copyTableToClipboardButton(filtered_legal_natures, { delimeter: ";" })}<!-- $ -->
 
 ```js
 function filterResults(d) {
@@ -72,21 +70,6 @@ function filterResults(d) {
   return true
 }
 ```
-
-<div class="card">
-  <h2>Legal nature distribution by project</h2>
-  <h3>(Levels 1, 2)</h3>
-  ${resize((width) =>
-    sankeyDiagram(
-      partner_graph_project_2, 
-      {
-        width: width,
-        nodeFill: (d) => project_color_scale.unknown('black')(d.id),
-        linkStroke: (d) => legal_nature_colors(Number(d.path[1][6])),
-      }
-    )
-  )}<!-- $ -->
-</div>
 
 <div class="card">
   <h2>Legal nature distribution</h2>
@@ -117,8 +100,9 @@ const level_1_value = Generators.input(level_1_select)
 
 <div class="card">
   <h2>Level 3 legal nature distribution</h2>
-  <h3>(Levels 2, 3)</h3>
+  <h3>(Levels 1, 2, 3)</h3>
   ${level_1_select}
+  <!-- $ -->
   ${resize((width) =>
     sankeyDiagram(
       partner_graph_2_3,
@@ -132,16 +116,29 @@ const level_1_value = Generators.input(level_1_select)
       }
     )
   )}
-
+  <!-- $ -->
 </div>
 
 <div class="card" style="padding: 0;">
   <div style="padding: 1em">
-    <h2>All filtered partner data</h2>
-    ${filtered_partner_data_search}
+    <h2>Filtered partner data</h2>
+    ${filtered_partner_data_search}<!-- $ -->
   </div>
   ${Inputs.table(filtered_partner_data_value)}
+  <!-- $ -->
   ${copyTableToClipboardButton(filtered_partner_data_value, { delimeter: ";" })}
+  <!-- $ -->
+</div>
+
+<div class="card" style="padding: 0;">
+  <div style="padding: 1em">
+    <h2>Filtered legal nature data</h2>
+    ${filtered_legal_natures_search}<!-- $ -->
+  </div>
+  ${Inputs.table(filtered_legal_natures)}
+  <!-- $ -->
+  ${copyTableToClipboardButton(filtered_legal_natures_value, { delimeter: ";" })}
+  <!-- $ -->
 </div>
 
 ```sql id=all_partner_data
@@ -168,7 +165,7 @@ WITH
 SELECT
   siret,
   siren,
-  project_name,
+  -- project_name,
   nom_complet,
   nature_juridique,
   libelle_commune,
@@ -177,6 +174,7 @@ SELECT
   longitude,
   code_postal,
   region,
+  list_distinct(list(project_name)) AS project_names,
   list_distinct(list(project_coordinator)) AS project_coordinator,
   list_distinct(list(source)) AS sources,
   list_distinct(list(source_label)) AS source_labels,
@@ -197,14 +195,10 @@ UPDATE general_partners
 WITH
   aggregate_partners as (
     SELECT
-      project_name,
-      -- list_distinct(list(project_name)) as project_names,
       nom_complet,
       nature_juridique,
       siren,
       list_distinct(list(source)) as sources,
-      -- length(list_distinct(list(project_name))) as "count",
-      -- 1 / length(list_distinct(list(project_name))) as "value",
     FROM (
     SELECT *
     FROM aap_partners
@@ -220,7 +214,7 @@ WITH
   partner_count as (
     SELECT
       siren,
-      length(list_distinct(list(project_name))) as "relationships",
+      length(list_distinct(list(project_name))) as "partnerships",
     FROM (
     SELECT *
     FROM aap_partners
@@ -234,8 +228,6 @@ WITH
     GROUP BY all
   )
 SELECT
-  -- aggregate_partners.project_names,
-  aggregate_partners.project_name,
   aggregate_partners.nom_complet,
   aggregate_partners.nature_juridique,
   '(Code ' || cjn3."Code" || ') ' || cjn3."Libellé" as "cjn3_label",
@@ -246,8 +238,8 @@ SELECT
   cjn1."Code" as "cjn1_code",
   aggregate_partners.siren,
   sources,
-  partner_count.relationships,
-  1 / partner_count.relationships as "value",
+  partner_count.partnerships,
+  1 as "value",
   'All partners' as total,
 from aggregate_partners
 join cjn3
@@ -260,27 +252,32 @@ join partner_count
 on partner_count.siren = aggregate_partners.siren
 ```
 
-```sql
+```sql id=partners_by_project
 -- Clean tables
 UPDATE general_partners
   SET project_name = 'RESILIENCE'
-  WHERE project_name = 'RÉSILIENCE';
-UPDATE general_partners
-  SET project_name = 'NEO'
-  WHERE project_name = 'NÉO';
+    WHERE project_name = 'RÉSILIENCE';
+  UPDATE general_partners
+    SET project_name = 'NEO'
+    WHERE project_name = 'NÉO';
 
--- merge tables
--- WITH
-  -- union_all AS (
-    SELECT *
-    FROM aap_partners
-    UNION
-    SELECT *
-    FROM annex_partners
-    UNION
-    SELECT *
-    FROM general_partners
-  -- )
+SELECT
+  project_name,
+  nom_complet,
+  siren,
+  nature_juridique,
+  list_distinct(list(source)) as sources,
+FROM (
+  SELECT *
+  FROM aap_partners
+  UNION
+  SELECT *
+  FROM annex_partners
+  UNION
+  SELECT *
+  FROM general_partners
+)
+GROUP BY all
 ```
 
 ```js
@@ -292,54 +289,38 @@ const filtered_legal_natures = [...legal_natures].filter(filterResults)
 ```
 
 ```js
-const partner_graph_project_2 = parallelSetToGraph(
-  filtered_partners_by_project,
-  [
-    "total",
-    // "cjn1_label",
-    "cjn2_label",
-    // "cjn3_label",
-    "project_name",
-  ]
+const filtered_partners_by_project = [...partners_by_project].filter(
+  filterResults
 )
+```
+
+```js
+// TODO: switch to parseTabularGraph
+const partner_graph_1_2 = parallelSetToGraph(filtered_legal_natures, [
+  "total",
+  "cjn1_label",
+  "cjn2_label",
+  // "cjn3_label",
+  // "project_name",
+])
 console.debug("partner_graph_1_2", partner_graph_1_2)
 ```
 
 ```js
-const partner_graph_1_2 = parallelSetToGraph(
-  filtered_legal_natures,
-  [
-    "total",
-    "cjn1_label",
-    "cjn2_label",
-    // "cjn3_label",
-    "project_name",
-  ]
+const selected_filtered_legal_natures = filtered_legal_natures.filter(
+  (d) => d.cjn1_code == level_1_value
 )
-console.debug("partner_graph_1_2", partner_graph_1_2)
-```
 
-```js
-const selected_filtered_legal_natures =
-  filtered_legal_natures.filter(
-    (d) => d.cjn1_code == level_1_value
-  )
-
-const partner_graph_2_3 = parallelSetToGraph(
-  selected_filtered_legal_natures,
-  [
-    // "total",
-    "cjn1_label",
-    "cjn2_label",
-    "cjn3_label",
-    // "project_name",
-  ]
-)
+const partner_graph_2_3 = parallelSetToGraph(selected_filtered_legal_natures, [
+  // "total",
+  "cjn1_label",
+  "cjn2_label",
+  "cjn3_label",
+  "project_name",
+])
 
 const filtered_cjn2_codes = [
-  ...new Set(
-    selected_filtered_legal_natures.map((d) => d.cjn2_code % 10)
-  ),
+  ...new Set(selected_filtered_legal_natures.map((d) => d.cjn2_code % 10)),
 ]
 
 console.debug("partner_graph_2_3", partner_graph_2_3)
@@ -389,6 +370,11 @@ const legal_nature_plot_config = (data, width, height = undefined) => {
 const filtered_partner_data_search = Inputs.search(filtered_partner_data)
 const filtered_partner_data_value = Generators.input(
   filtered_partner_data_search
+)
+
+const filtered_legal_natures_search = Inputs.search(filtered_legal_natures)
+const filtered_legal_natures_value = Generators.input(
+  filtered_legal_natures_search
 )
 ```
 
@@ -620,8 +606,5 @@ if (debug) {
   display(Inputs.table(legal_natures))
   display("filtered_legal_natures")
   display(Inputs.table(filtered_legal_natures))
-
-  // display("questionable_labels")
-  // display(questionable_labels)
 }
 ```

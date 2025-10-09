@@ -1,5 +1,17 @@
 {
   "no-inline-html": {
-    "allowed_elements": ["div", "h1", "h2"]
-  }
+    "allowed_elements": [
+      "div",
+      "h1",
+      "h2",
+      "h3",
+      "ol",
+      "ul",
+      "li",
+      "a",
+      "span",
+      "code"
+    ]
+  },
+  "first-line-h1": false
 }
