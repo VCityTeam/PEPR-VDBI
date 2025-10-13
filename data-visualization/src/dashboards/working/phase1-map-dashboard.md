@@ -610,8 +610,8 @@ const terrain_anchor_map = new Map([
   ["La Trambouze", "bottom-left"],
   ["Thiers", "bottom-right"],
   // ['Saint Denis', 'bottom-right'],
-  // ['Seine Saint Denis', 'bottom-left'],
-  // ['Paris', 'bottom-right'],
+  ['Seine-Saint-Denis', 'bottom-left'],
+  ['Paris', 'bottom-right'],
   ["Ivry-sur-Seine", "bottom-left"],
   // ['Cachan', 'top'],
   // ['Ris-Orangis', 'top'],
@@ -631,11 +631,11 @@ const terrain_tips = (data) =>
     return Plot.tip([d.terrain_label], {
       x: d.longitude,
       y: d.latitude,
-      textPadding: 1,
+      textPadding: 5,
       strokeOpacity: 0,
       fillOpacity: 0.5,
-      fontSize: 12,
-      fontWeight: "bold",
+      fontSize: 25,
+      // fontWeight: "bold",
       anchor: tip_anchor,
     })
   })
@@ -685,6 +685,8 @@ const labeled_france_projection = {
   type: "equal-earth",
   domain: d3.geoCircle().center([2, 47]).radius(5)(),
 }
+
+display(france_geojson)
 
 const defaultProjection = (width, height, projection, marks, caption = "") =>
   Plot.plot({
@@ -750,15 +752,14 @@ function generateLineMapMarks(terrain_data, terrain_legend) {
     x2: "longitude",
     y2: "latitude",
     stroke: (d) => project_color_scale(d.projects),
-    strokeWidth: (d) => (isProjectSelected(d.projects) ? 1 : 0.5),
-    strokeOpacity: (d) => (isProjectSelected(d.projects) ? 1 : 0.5),
-    markerEnd: "arrow",
+    strokeWidth: (d) => (isProjectSelected(d.projects) ? 2 : 0.5),
+    strokeOpacity: (d) => (isProjectSelected(d.projects) ? 2 : 0.5),
     curve: "bump-y",
   })
   const terrain_dots = Plot.dot(terrain_data, {
     x: "longitude",
     y: "latitude",
-    r: 3,
+    r: 4,
     fill: "black",
     //stroke: vdbi_color_scheme.orange,
     //fillOpacity: 0.5,
@@ -798,21 +799,24 @@ function generateLineMapMarks(terrain_data, terrain_legend) {
   const legend_dots = Plot.dot(terrain_legend, {
     x: (d) => d[2],
     y: (d) => d[3],
-    r: 5,
+    r: 7,
     fill: (d) => d[1],
     fillOpacity: (d) => (isProjectSelected(d[0]) ? 1 : 0.2),
   })
   const legend_text = Plot.text(terrain_legend, {
     x: (d) => d[2],
     y: (d) => d[3],
-    dy: -12,
+    dy: -30,
     text: (d) => d[0],
+    fontSize: 30,
+    fontWeight: "bold",
+    rotate: -15,
   })
   const legend_axis_label = Plot.text(["Financed Projects"], {
     x: d3.mean(terrain_legend.map((d) => d[2])),
     y: terrain_legend.length > 0 ? terrain_legend[0][3] : 0,
-    dy: -32,
-    fontSize: 14,
+    dy: -45,
+    fontSize: 30,
   })
   return [
     links,
@@ -820,7 +824,7 @@ function generateLineMapMarks(terrain_data, terrain_legend) {
     // legend marks //
     legend_dots,
     legend_text,
-    legend_axis_label,
+    // legend_axis_label,
     // tip marks //
     ...terrain_tips(terrain_data),
   ]
@@ -892,15 +896,15 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
   const legend_axis_label = Plot.text(["Financed Projects"], {
     x: d3.mean(terrain_legend.map((d) => d[2])),
     y: terrain_legend.length > 0 ? terrain_legend[0][3] : 0,
-    dy: -32,
-    fontSize: 14,
+    dy: -45,
+    fontSize: 30,
   })
   return [
     terrain_dots,
     // legend marks //
     legend_dots,
     legend_text,
-    legend_axis_label,
+    // legend_axis_label,
     // tip marks //
     ...terrain_tips(terrain_data),
     tip_dots,
