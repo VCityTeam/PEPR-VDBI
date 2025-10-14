@@ -36,6 +36,10 @@ export default {
           name: 'Knowledge graph generator',
           path: 'pages/tools/graphs',
         },
+        {
+          name: 'Sankey diagram generator',
+          path: 'pages/tools/sankey',
+        },
       ]
     },
     {
