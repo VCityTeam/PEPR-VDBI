@@ -1,0 +1,102 @@
+:root {
+  --theme-foreground-focus: #ff732c;
+  --theme-foreground-focus-alt: #3558a2;
+  /* --sans-serif: Mariannen, Arial, sans-serif; */
+  /* --serif: Spectral, Georgia, serif; */
+  /* --sans-serif: Arial, sans-serif; */
+  /* --serif: Georgia, serif; */
+}
+
+/* Uncomment this if the observable framework ever supports local font hosting */
+
+/* body {
+  font-family: var(--sans-serif);
+}
+
+@font-face {
+  font-family: Marianne;
+  src: url("http://127.0.0.1:3000/pages/dashboards/working/phase1-map-dashboard/fonts/Marianne-Regular.woff2");
+  src: url("http://127.0.0.1:3000/pages/dashboards/working/phase1-map-dashboard/fonts/Marianne-Regular.woff2")
+      format(woff2),
+    url("http://127.0.0.1:3000/pages/dashboards/working/phase1-map-dashboard/fonts/Marianne-Regular.woff")
+      format(woff);
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Marianne;
+  src: url("http://127.0.0.1:3000/fonts/Marianne-Bold.woff2");
+  src: url("http://127.0.0.1:3000/fonts/Marianne-Bold.woff2") format(woff2),
+    url("http://127.0.0.1:3000/fonts/Marianne-Bold.woff") format(woff);
+  font-weight: bolder;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Marianne;
+  src: url("http://127.0.0.1:3000/fonts/Marianne-Bold_Italic.woff2");
+  src: url("http://127.0.0.1:3000/fonts/Marianne-Bold_Italic.woff2")
+      format(woff2),
+    url("http://127.0.0.1:3000/fonts/Marianne-Bold_Italic.woff") format(woff);
+  font-weight: bolder;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: Marianne;
+  src: url("http://127.0.0.1:3000/fonts/Marianne-Light.woff2");
+  src: url("http://127.0.0.1:3000/fonts/Marianne-Light.woff2") format(woff2),
+    url("http://127.0.0.1:3000/fonts/Marianne-Light.woff") format(woff);
+  font-weight: lighter;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Marianne;
+  src: url("http://127.0.0.1:3000/fonts/Marianne-Light_Italic.woff2");
+  src: url("http://127.0.0.1:3000/fonts/Marianne-Light_Italic.woff2")
+      format(woff2),
+    url("http://127.0.0.1:3000/fonts/Marianne-Light_Italic.woff") format(woff);
+  font-weight: lighter;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: Marianne;
+  src: url("http://127.0.0.1:3000/fonts/Marianne-Medium.woff2");
+  src: url("http://127.0.0.1:3000/fonts/Marianne-Medium.woff2") format(woff2),
+    url("http://127.0.0.1:3000/fonts/Marianne-Medium.woff") format(woff);
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Marianne;
+  src: url("http://127.0.0.1:3000/fonts/Marianne-Medium_Italic.woff2");
+  src: url("http://127.0.0.1:3000/fonts/Marianne-Medium_Italic.woff2")
+      format(woff2),
+    url("http://127.0.0.1:3000/fonts/Marianne-Medium_Italic.woff") format(woff);
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: Spectral;
+  src: url("http://127.0.0.1:3000/fonts/Spectral-ExtraBold.woff2");
+  src: url("http://127.0.0.1:3000/fonts/Spectral-ExtraBold.woff2") format(woff2),
+    url("http://127.0.0.1:3000/fonts/Spectral-ExtraBold.woff") format(woff);
+  font-weight: bolder;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Spectral;
+  src: url("http://127.0.0.1:3000/fonts/Spectral-Regular.woff2");
+  src: url("http://127.0.0.1:3000/fonts/Spectral-Regular.woff2") format(woff2),
+    url("http://127.0.0.1:3000/fonts/Spectral-Regular.woff") format(woff);
+  font-weight: normal;
+  font-style: normal;
+}
+
+*/

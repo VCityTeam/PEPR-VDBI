@@ -1,3 +1,6 @@
+---
+style: /css/vdbi-page.css
+---
 
 # Knowledge Graph Generator
 

@@ -1,5 +1,5 @@
 ---
-theme: light
+style: /css/vdbi-page.css
 sql:
   mural_data: /data/private/Constellation PEPR VDBI-Projets-1759739807121.csv
   link_store: /data/private/mural_links.csv

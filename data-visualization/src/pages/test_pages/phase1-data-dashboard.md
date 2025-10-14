@@ -1,5 +1,5 @@
 ---
-theme: light
+style: /css/vdbi-page.css
 ---
 
 # Phase 1 Data

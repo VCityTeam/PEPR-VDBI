@@ -605,15 +605,17 @@ const terrain_anchor_map = new Map([
   ["Lyon", "top"],
   ["Plauzat", "top-right"],
   ["Marseille", "bottom-left"],
+  ["Strasbourg", "top-right"],
+  ["Lille", "top-right"],
   // ['Aix-Marseille-Provence', 'bottom-left'],
   // ['Villeurbanne', 'bottom-left'],
   ["La Trambouze", "bottom-left"],
   ["Thiers", "bottom-right"],
   // ['Saint Denis', 'bottom-right'],
-  ['Seine-Saint-Denis', 'bottom-left'],
-  ['Paris', 'bottom-right'],
-  ["Ivry-sur-Seine", "bottom-left"],
-  // ['Cachan', 'top'],
+  ["Seine-Saint-Denis", "top"],
+  ["Paris", "bottom-right"],
+  ["Ivry-sur-Seine", "top-left"],
+  ["Cachan", "bottom-right"],
   // ['Ris-Orangis', 'top'],
   // ['Saclay', 'bottom'],
   ["Arquata del Tronto", "top-right"],
@@ -634,7 +636,7 @@ const terrain_tips = (data) =>
       textPadding: 5,
       strokeOpacity: 0,
       fillOpacity: 0.5,
-      fontSize: 25,
+      fontSize: 30,
       // fontWeight: "bold",
       anchor: tip_anchor,
     })
@@ -683,7 +685,7 @@ const terrain_tip_dots = (data, legend, delta) =>
 // generate geo projection plot functions
 const labeled_france_projection = {
   type: "equal-earth",
-  domain: d3.geoCircle().center([2, 47]).radius(5)(),
+  domain: d3.geoCircle().center([2, 47.3]).radius(5)(),
 }
 
 display(france_geojson)
@@ -915,7 +917,9 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
 ```js
 const color_config = {
   scheme: "Blues",
-  label: "Nombre de partenaires " + (selected_partner_project == "All" ? "" : selected_partner_project),
+  label:
+    "Nombre de partenaires " +
+    (selected_partner_project == "All" ? "" : selected_partner_project),
   // label: "# of Partners",
   legend: true,
   // type: "log",

@@ -1,6 +1,6 @@
 ---
 title: Researcher Dashboard
-theme: light
+style: /css/vdbi-page.css
 sql:
   ann: /data/partners_by_project_annex.csv
   aap: /data/partners_aap2023.csv

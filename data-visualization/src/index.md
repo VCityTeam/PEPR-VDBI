@@ -1,6 +1,6 @@
 ---
 toc: false
-theme: light
+style: /css/vdbi-page.css
 ---
 
 <style>

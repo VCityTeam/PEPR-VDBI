@@ -1,6 +1,6 @@
 ---
 title: Initial import test
-theme: light
+style: /css/vdbi-page.css
 ---
 
 # Import and visualize Geospatial ESR Open Data

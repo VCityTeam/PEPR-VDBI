@@ -1,6 +1,6 @@
 ---
 title: Initial plot test
-theme: light
+style: /css/vdbi-page.css
 ---
 
 # Import 240117 consortium laboratoire^J

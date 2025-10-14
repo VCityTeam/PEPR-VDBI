@@ -1,6 +1,6 @@
 ---
 title: Initial tree test
-theme: light
+style: /css/vdbi-page.css
 ---
 
 # Visualize Workbook data using Trees

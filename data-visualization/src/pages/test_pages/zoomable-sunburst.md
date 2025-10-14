@@ -1,5 +1,5 @@
 ---
-theme: light
+style: /css/vdbi-page.css
 sql:
   cjn1: /data/cj_septembre_2022_n1.csv
   cjn2: /data/cj_septembre_2022_n2.csv
