@@ -28,7 +28,7 @@ import {
   resolveInstitutionEntities,
   getColumnOptions,
   filterOnInput,
-} from "/components/phase1-dashboard.js"
+} from "/components/phase1-workbook.js"
 ```
 
 ```js

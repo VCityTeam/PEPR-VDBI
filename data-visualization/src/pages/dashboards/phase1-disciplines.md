@@ -11,7 +11,7 @@ import {
 ```
 
 ```js
-import { extractPhase1Workbook } from "/components/phase1-dashboard.js"
+import { extractPhase1Workbook } from "/components/phase1-workbook.js"
 ```
 
 ```js

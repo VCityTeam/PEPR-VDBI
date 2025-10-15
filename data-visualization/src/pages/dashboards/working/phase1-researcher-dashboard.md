@@ -10,7 +10,7 @@ import {
   extractPhase1Workbook,
   // getColumnOptions,
   // filterOnInput,
-} from "/components/phase1-dashboard.js"
+} from "/components/phase1-workbook.js"
 import { donutChart } from "/components/pie-chart.js"
 import { projectionMap } from "/components/projection-map.js"
 import {

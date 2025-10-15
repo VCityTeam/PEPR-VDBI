@@ -37,7 +37,7 @@ import {
   resolveInstitutionEntities,
   getColumnOptions,
   filterOnInput,
-} from "/components/phase1-dashboard.js"
+} from "/components/phase1-workbook.js"
 ```
 
 ```js
@@ -216,7 +216,11 @@ const selected_partner_project = view(
   <!-- $ -->
 </div>
 <div class="grid grid-cols-3">
-  <div id="choropleth-container-france" class="card grid-colspan-2 grid-rowspan-2" style="padding: 12px;">
+  <div
+    id="choropleth-container-france"
+    class="card grid-colspan-2 grid-rowspan-2"
+    style="padding: 12px;"
+  >
     ${resize((width, height) => choroplethFrance(width, height))}
     <!-- $ -->
   </div>

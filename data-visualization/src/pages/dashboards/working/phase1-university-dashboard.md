@@ -21,7 +21,7 @@ import {
   getColumnOptions,
   filterOnInput,
   getFilterableCountPlot,
-} from "/components/phase1-dashboard.js"
+} from "/components/phase1-workbook.js"
 ```
 
 ```js

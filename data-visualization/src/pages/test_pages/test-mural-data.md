@@ -1,7 +1,6 @@
 ---
 style: /css/vdbi-page.css
 sql:
-  mural_data: /data/private/Constellation PEPR VDBI-Projets-1759739807121.csv
   link_store: /data/private/mural_links.csv
 ---
 
@@ -19,21 +18,32 @@ import { circleLegend } from "/components/legend.js"
 
 Mural export ${Inputs.table(mural_export)}
 
-```sql id=mural_export echo
-select
-  -- *
-  ID as id,
-  "Text" as label,
-  "BG Color" as "type",
-  -- "Sticky type" as shape
-  "Position X" as fx,
-  "Position Y" as fy,
-from mural_data
-where
-  (
-    Area = 'Cartographie (à compléter)' or
-    Area = 'Constellation (à compléter)'
-  ) and "Text" is not null
+```js
+const csvfile = view(
+  Inputs.file({
+    label: "Upload a Mural CSV export",
+    accept: ".csv",
+    required: true,
+  })
+)
+```
+
+```js
+const mural_export = await csvfile.csv()
+```
+
+```js
+mural_export.forEach((d) => {
+  d.fx = Number(d["Position X"])
+  d.fy = Number(d["Position Y"])
+})
+
+const project_graph_data = {
+  nodes: mural_export,
+  // links: [],
+  links: [...(await sql`select * from link_store`)].map((d) => d.toJSON()),
+}
+display(project_graph_data)
 ```
 
 ```js
@@ -41,15 +51,6 @@ where
 ```
 
 ## Mural project data
-
-```js echo
-const project_graph_data = {
-  nodes: [...mural_export].map((d) => d.toJSON()),
-  // links: [],
-  links: [...(await sql`select * from link_store`)].map((d) => d.toJSON()),
-}
-display(project_graph_data)
-```
 
 ```js echo
 const project_color_scale = new Map([
@@ -69,8 +70,8 @@ const project_graph = new MuralGraph(project_graph_data, {
   r: 20,
   fontSize: 50,
   strokeWidth: 5,
-  keyMap: (d) => d.label,
-  valueMap: (d) => d.type,
+  keyMap: (d) => d.Text,
+  valueMap: (d) => d["BG Color"],
   color: d3.scaleOrdinal(
     [...project_color_scale.keys()],
     [...project_color_scale.keys()]
@@ -178,7 +179,15 @@ display(
 ```
 
 ```js
-const rawhtml = FileAttachment(
-  "/data/private/Constellation PEPR VDBI - Projets_2025-10-06_08-37-05.html"
-).html()
+const htmlfile = view(
+  Inputs.file({
+    label: "Upload an HTML file created from a Mural PDF export",
+    accept: ".html",
+    required: true,
+  })
+)
+```
+
+```js
+const rawhtml = await htmlfile.html()
 ```

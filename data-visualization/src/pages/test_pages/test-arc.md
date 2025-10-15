@@ -34,7 +34,7 @@ flowchart TD
 
 ```js
 import { countEntities, cropText } from "/components/utilities.js"
-import { extractPhase1Workbook } from "/components/phase1-dashboard.js"
+import { extractPhase1Workbook } from "/components/phase1-workbook.js"
 import {
   arcDiagramVertical,
   mapTableToPropertyGraphLinks,
