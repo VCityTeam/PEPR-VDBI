@@ -4,21 +4,19 @@ These tests attempt to identify efficient, open-source, and secure methods for e
 
 ## Table of contents <!-- omit in toc -->
 
-- [1. Dependencies](#1-dependencies)
-- [2. PDF to unstructured text](#2-pdf-to-unstructured-text)
-  - [2.1. pypdf tests](#21-pypdf-tests)
-- [3. Unstructured text to structured text via GPT](#3-unstructured-text-to-structured-text-via-gpt)
-  - [3.1. Ollama](#31-ollama)
-  - [3.2. Workflow](#32-workflow)
-  - [3.3. RAG tests](#33-rag-tests)
+- [1. PDF to unstructured text](#1-pdf-to-unstructured-text)
+  - [1.1. pypdf tests](#11-pypdf-tests)
+- [2. Unstructured text to structured text via GPT](#2-unstructured-text-to-structured-text-via-gpt)
+  - [2.1. Ollama](#21-ollama)
+  - [2.2. Workflow](#22-workflow)
+  - [2.3. RAG tests](#23-rag-tests)
+- [3. Unstructured audio to unstructured text](#3-unstructured-audio-to-unstructured-text)
+  - [3.1. Whisper](#31-whisper)
 - [4. See also](#4-see-also)
-
-## Proposed method document querying <!-- omit in toc -->
 
 ```mermaid
 ---
-config:
-  theme: forest
+title: "Currently proposed method for document querying: RAG"
 ---
 flowchart LR
 
@@ -70,24 +68,24 @@ flowchart LR
 ```
 
 > [!NOTE]
-> Most document data used for testing is private.
+> Most document data used for testing is not provided due for GDPR compliance.
 > Contact the repository owners to get access if you believe you need it.
 
-## 1. Dependencies
+## Dependencies <!-- omit in toc -->
 
 These tests are written in Python.
-[uv](https://docs.astral.sh/uv/) is used in conjunction with `venv` as a Python installer, package manager, and virtual environment manager.
+[uv](https://docs.astral.sh/uv/) is now used in conjunction as a Python installer, package manager, and virtual environment manager.
 
-First [uv](https://docs.astral.sh/uv/getting-started/installation/)
+To run these tests, first install [uv](https://docs.astral.sh/uv/getting-started/installation/).
 
-Then use uv sync to install the required python libraries and activate a virtual python environment:
+Then use `uv sync` to install the required python libraries and activate a virtual python environment:
 
 ```bash
 uv sync
 source ./venv/bin/activate
 ```
 
-## 2. PDF to unstructured text
+## 1. PDF to unstructured text
 
 **RQ1 (Research question):** What is the best open source PDF to text tool or library for transforming pdf files to text?
 
@@ -113,7 +111,7 @@ source ./venv/bin/activate
 
 TODO: <https://askubuntu.com/questions/50170/how-to-convert-pdf-to-image>
 
-### 2.1. pypdf tests
+### 1.1. pypdf tests
 
 Dependency:
 
@@ -163,7 +161,7 @@ Notes:
 - conversion is relatively fast for such a long pdf
 - it will be interesting to see how these formatting issues impact results
 
-## 3. Unstructured text to structured text via GPT
+## 2. Unstructured text to structured text via GPT
 
 **RQ2:** What prompts provide the best results for answering the natural language questions posed in the [proposed method](#2-pdf-to-unstructured-text)
 
@@ -173,7 +171,7 @@ Notes:
 | ------------------------------------------- | -------------- | ------- |
 | [Ollama](https://github.com/ollama/ollama/) | Python Library |         |
 
-### 3.1. Ollama
+### 2.1. Ollama
 
 Proposed model: **Mistral**
 
@@ -324,7 +322,7 @@ Results:
 The ollama service works web but the response MUST be streamed.
 Thus the `-s` flag was added to the test script.
 
-### 3.2. Workflow
+### 2.2. Workflow
 
 #### 2.2.1. Test: Initial Python data workflow
 
@@ -442,7 +440,7 @@ TODO:
   - model parameters
   - templates
 
-### 3.3. RAG tests
+### 2.3. RAG tests
 
 **Tentative candidates:**
 
@@ -986,6 +984,31 @@ Result 6.1
 
 #### 2.3.2. [Test R2R](./r2r-tests.md)
 
-Tests moved to [r2r-tests.md](./r2r-tests.md) to better accomodate their length
+Tests moved to [r2r-tests.md](./r2r-tests.md) to better accomodate their level of detail
+
+## 3. Unstructured audio to unstructured text
+
+### 3.1. Whisper
+
+This test will examine how effective [Whisper](https://openai.com/index/whisper/) is for local automatic speech recognition (ASR).
+
+The test follows [this tutorial](https://github.com/manzolo/openai-whisper-docker) for a GPU accelerated docker installation.
+
+A audio file recorded from a conference meeting is used for testing. The main language spoken is French.
+
+#### Installation
+
+To get started pull the repository and enter the directory:
+
+```bash
+git clone https://github.com/manzolo/openai-whisper-docker.git
+cd openai-whisper-docker
+```
+
+Then follow [the tutorial](https://github.com/manzolo/openai-whisper-docker).
+
+#### Results
+
+TBD
 
 ## 4. [See also](../docs/README.md#data-integration)
