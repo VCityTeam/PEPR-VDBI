@@ -1,4 +1,4 @@
-import { map, filter, rollup } from "d3"
+import { map, filter, rollup, merge } from "d3"
 import {
   anonymizeEntry,
   pseudoanonymizeEntry,
@@ -436,10 +436,10 @@ export function extractPhase1Workbook(
     )
   })
 
-  // Move university-project links from projects to universities_by_project
-  let universities_by_project = []
+  // Move university-project links from projects to project_by_universities
+  let project_by_universities = []
   projects.forEach((project) => {
-    universities_by_project = universities_by_project.concat(
+    project_by_universities = project_by_universities.concat(
       project.institutions.map((inst) => ({
         project: project.acronyme,
         university: inst,
@@ -449,37 +449,36 @@ export function extractPhase1Workbook(
   })
 
   // Move laboratory information from researchers to laboratory_data
-  let laboratories_by_project = []
+  let project_by_laboratories = []
   projects.forEach((project) => {
-    const project_laboratories = project.labs.map((lab) => ({
-      project: project.acronyme,
-      lab: lab,
-    }))
-    laboratories_by_project =
-      laboratories_by_project.concat(project_laboratories)
+    project_by_laboratories = project_by_laboratories.concat(
+      project.labs.map((lab) => ({
+        project: project.acronyme,
+        lab: lab,
+      }))
+    )
     // delete project.labs
   })
 
-  let laboratories_by_disciplines_erc = []
-  let laboratories_by_disciplines_hceres = []
+  let laboratories_by_disciplines_erc = new Map()
+  let laboratories_by_disciplines_hceres = new Map()
   researchers.forEach((researcher) => {
     const lab = laboratories.find((lab) => lab.lab == researcher.lab)
     if (typeof lab !== "undefined") {
       lab.domain_erc = researcher.domain_erc_lab
-      laboratories_by_disciplines_erc = laboratories_by_disciplines_erc.concat(
-        researcher.disciplines_erc_lab.map((d) => ({
-          lab: lab.lab,
-          discipline_erc: d,
-        }))
+      if (!laboratories_by_disciplines_erc.has(lab.lab)) {
+        laboratories_by_disciplines_erc.set(lab.lab, new Set())
+      }
+      if (!laboratories_by_disciplines_hceres.has(lab.lab)) {
+        laboratories_by_disciplines_hceres.set(lab.lab, new Set())
+      }
+      researcher.disciplines_erc_lab.forEach((d) =>
+        laboratories_by_disciplines_erc.get(lab.lab).add(d)
       )
       lab.domain_hceres = researcher.domain_hceres
-      laboratories_by_disciplines_hceres =
-        laboratories_by_disciplines_hceres.concat(
-          researcher.disciplines_hceres.map((d) => ({
-            lab: lab.lab,
-            disciplines_hceres: d,
-          }))
-        )
+      researcher.disciplines_hceres.forEach((d) =>
+        laboratories_by_disciplines_hceres.get(lab.lab).add(d)
+      )
       delete researcher.domain_erc_lab
       delete researcher.disciplines_erc_lab
       delete researcher.domain_hceres
@@ -493,11 +492,25 @@ export function extractPhase1Workbook(
     projects,
     researchers,
     laboratories,
-    laboratories_by_project,
-    laboratories_by_disciplines_erc,
-    laboratories_by_disciplines_hceres,
+    project_by_laboratories,
+    laboratories_by_disciplines_erc: merge(
+      laboratories_by_disciplines_erc.keys().map((lab) =>
+        [...laboratories_by_disciplines_erc.get(lab)].map((discipline) => ({
+          lab: lab,
+          discipline: discipline ? discipline : null,
+        }))
+      )
+    ),
+    laboratories_by_disciplines_hceres: merge(
+      laboratories_by_disciplines_hceres.keys().map((lab) =>
+        [...laboratories_by_disciplines_hceres.get(lab)].map((discipline) => ({
+          lab: lab,
+          discipline: discipline ? discipline : null,
+        }))
+      )
+    ),
     universities,
-    universities_by_project,
+    project_by_universities,
     socioeconomic_partners,
   }
 }

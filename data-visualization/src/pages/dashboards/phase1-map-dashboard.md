@@ -149,7 +149,11 @@ const terrain_legend_type = view(
 </div>
 
 <div class="grid grid-cols-3">
-  <div id="map-container-france" class="card grid-colspan-2 grid-rowspan-2" style="padding: 10px;">
+  <div
+    id="map-container-france"
+    class="card grid-colspan-2 grid-rowspan-2"
+    style="padding: 10px;"
+  >
     ${resize((width, height) =>
       defaultProjectionFrance(
         width,
