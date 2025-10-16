@@ -1009,6 +1009,25 @@ Then follow [the tutorial](https://github.com/manzolo/openai-whisper-docker).
 
 #### Results
 
-TBD
+The input audio file has the following properties:
+
+| Property        | Value   |
+| --------------- | ------- |
+| Size            | 16.8 Mb |
+| Duration        | 47.04   |
+| Format          | m4a     |
+| Language spoken | French  |
+| Participants    | 4       |
+
+Two transcripts were created using the whisper `turbo` model.
+
+The following observation was made:
+
+- Mixed results on proper noun translation
+  - This can likely be remedied with fine tuning
+- Audio quality seems to be a large bottle neck on transcript quality.
+  Possible issues include:
+  - Multiple speakers talking at the same time
+  - Poor enunciation
 
 ## 4. [See also](../docs/README.md#data-integration)
