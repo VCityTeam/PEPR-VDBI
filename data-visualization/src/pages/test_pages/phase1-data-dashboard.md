@@ -44,25 +44,25 @@ display(phase_1_data)
 <div class="card">
   <h2>Project universities</h2>
   <div>
-    ${Inputs.table(phase_1_data.universities_by_project, {
+    ${Inputs.table(phase_1_data.project_by_universities, {
       layout: "auto",
     })}
     <!-- $ -->
   </div>
   </br>
-  ${downloadTableButton(() => phase_1_data.universities_by_project)}
+  ${downloadTableButton(() => phase_1_data.project_by_universities)}
   <!-- $ -->
 </div>
 <div class="card">
   <h2>Project Laboratories</h2>
   <div>
-    ${Inputs.table(phase_1_data.laboratories_by_project, {
+    ${Inputs.table(phase_1_data.project_by_laboratories, {
       layout: "auto",
     })}
     <!-- $ -->
   </div>
   </br>
-  ${downloadTableButton(() => phase_1_data.laboratories_by_project)}
+  ${downloadTableButton(() => phase_1_data.project_by_laboratories)}
   <!-- $ -->
 </div>
 <div class="card">

@@ -1,5 +1,5 @@
 ---
-toc: false
+toc: true
 sql:
   annex_partners: /data/partners_by_project_annex.csv
   general_partners: /data/partners_general.csv
@@ -30,6 +30,110 @@ import {
   interpolated_legal_nature_color,
 } from "/components/color.js"
 ```
+
+```js
+import { extractPhase1Workbook } from "/components/phase1-workbook.js"
+```
+
+## Partner overview
+
+<div class="card">
+  <h2>Simplified Partners by project</h2>
+  <h3>From generality source</h3>
+  ${resize((width) =>
+    sankeyDiagram(
+      parseTabularGraph(phase_1_partner_links),
+      {
+        width: width,
+        pathMap: () => [],
+        nodeFill: (d) => project_color_scale.unknown('black')(d.id),
+        linkStroke: (d) => legal_nature_colors(Number(d.source.id[6])),
+      }
+    )
+  )}
+  <!-- $ -->
+</div>
+
+```js
+const workbook = FileAttachment(
+  "/data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
+).xlsx()
+```
+
+```js
+const phase_1_data = extractPhase1Workbook(workbook, false).projects.filter(
+  (d) => d.financed
+)
+
+let phase_1_partner_links = [
+  // {source: "Partenaires du PEPR VDBI", target: "Établissements d'enseignement supérieur", value: },
+]
+const institution_set = new Set()
+const lab_set = new Set()
+const partner_set = new Set()
+
+phase_1_data.forEach(({ acronyme, institutions, labs, partners }) => {
+  // add institution -> project links
+  phase_1_partner_links.push({
+    source: "Établissements d'enseignement supérieur",
+    target: acronyme,
+    value: institutions.length,
+  })
+  institutions.forEach((institution) => institution_set.add(institution))
+
+  // add lab -> project links
+  phase_1_partner_links.push({
+    source: "Laboratoires de recherche",
+    target: acronyme,
+    value: labs.length,
+  })
+
+  labs.forEach((lab) => lab_set.add(lab))
+  // add socioeconomic partner -> project links
+  phase_1_partner_links.push({
+    source: "Socio-économiques",
+    target: acronyme,
+    value: partners.length,
+  })
+
+  partners.forEach((partner) => partner_set.add(partner))
+})
+
+// add total -> partner links
+phase_1_partner_links.push({
+  source: "Partenaires du PEPR VDBI",
+  target: "Établissements d'enseignement supérieur",
+  value: institution_set.size,
+})
+
+phase_1_partner_links.push({
+  source: "Partenaires du PEPR VDBI",
+  target: "Laboratoires de recherche",
+  value: lab_set.size,
+})
+
+phase_1_partner_links.push({
+  source: "Partenaires du PEPR VDBI",
+  target: "Socio-économiques",
+  value: partner_set.size,
+})
+
+const phase_1_partner_graph = parseTabularGraph(phase_1_partner_links)
+// remove duplicate partner counts
+phase_1_partner_graph.nodes.find((d) => d.id === "Établissements d'enseignement supérieur").value = institution_set.size
+
+display(phase_1_partner_graph.nodes.find((d) => d.id === "Établissements d'enseignement supérieur"))
+
+display(phase_1_partner_links)
+display(institution_set)
+display(lab_set)
+display(partner_set)
+display(phase_1_partner_graph)
+
+// TODO this isn't working; should use a chord diagram
+```
+
+## Socio-economic partners
 
 ```js
 const filter_no_result = view(

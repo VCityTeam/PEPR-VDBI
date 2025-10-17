@@ -12,6 +12,226 @@ sql:
   Data visualizations are unverified and errors may exist. Regard these data visualizations as estimations and not a "ground truth".
 </div>
 
+<div class="grid grid-cols-4">
+  <div class="card">
+    <h2>Project count <span class="muted">(Total / Auditioned / Financed)</span></h2>
+    <span class="big">
+      <span class="muted">${project_data.length.toLocaleString()}</span> /
+      <span class="muted">${auditioned_project_count.toLocaleString()}</span> /
+      ${financed_project_count.toLocaleString()}
+    </span>
+
+  </div>
+  <div class="card">
+    <h2>University count <span class="muted">(Total / Auditioned / Financed)</span></h2>
+    <span class="big">
+      <span class="muted">${university_data.size.toLocaleString()}</span> /
+      <span class="muted">${auditioned_university_data.size.toLocaleString()}</span> /
+      ${financed_university_data.size.toLocaleString()}
+    </span>
+
+  </div>
+  <div class="card">
+    <h2>Laboratory count <span class="muted">(Total / Auditioned / Financed)</span></h2>
+    <span class="big">
+      <span class="muted">${laboratory_data.size.toLocaleString()}</span> /
+      <span class="muted">${auditioned_laboratory_data.size.toLocaleString()}</span> /
+      ${financed_laboratory_data.size.toLocaleString()}
+    </span>
+
+  </div>
+  <div class="card">
+    <h2>Partner count <span class="muted">(Total / Auditioned / Financed)</span></h2>
+    <span class="big">
+      <span class="muted">${partner_data.size.toLocaleString()}</span> /
+      <span class="muted">${auditioned_partner_data.size.toLocaleString()}</span> /
+      ${financed_partner_data.size.toLocaleString()}
+    </span>
+
+  </div>
+</div>
+<div class="grid grid-cols-3">
+  <div class="card">
+    <h2>University count by Project</h2>
+    ${project_universities_auditioned_input}
+    ${project_universities_financed_input}
+    ${project_universities_sort_input}
+    ${resize((width) => countPlot(
+      width,
+      "University count",
+      filtered_projects_universities,
+      project_universities_sort,
+      (d) => d.institutions.length
+    ))}
+  </div>
+  <div class="card">
+    <h2>Laboratory count by Project</h2>
+    ${project_laboratories_auditioned_input}
+    ${project_laboratories_financed_input}
+    ${project_laboratories_sort_input}
+    ${resize((width) => countPlot(
+      width,
+      "Laboratory count",
+      filtered_projects_laboratories,
+      project_laboratories_sort,
+      (d) => d.labs.length
+    ))}
+  </div>
+  <div class="card">
+    <h2>Partner count by Project</h2>
+    ${project_partners_auditioned_input}
+    ${project_partners_financed_input}
+    ${project_partners_sort_input}
+    ${resize((width) => countPlot(
+      width,
+      "Socio-economic partner count",
+      filtered_projects_partners,
+      project_partners_sort,
+      (d) => d.partners.length
+    ))}
+  </div>
+</div>
+
+<div class="grid grid-cols-2">
+  <div class="card">
+    ${
+      resize((width) =>
+        Plot.plot({
+          title: "Project locations",
+          width: width,
+          height: width,
+          projection: {
+            type: 'equal-earth',
+            domain: d3.geoCircle().center([2, 47]).radius(5)(),
+          },
+          marks: [
+            Plot.geo(regions, {
+              stroke: 'white',
+              strokeOpacity: 0.5,
+              fill: vdbi_color_scheme.blue,
+              fillOpacity: 0.3,
+            }),
+            Plot.geo(departements, {
+              stroke: "white",
+              strokeOpacity: 0.1,
+            }),
+            Plot.dot(
+              filtered_terrain_data,
+              {
+                x: "longitude",
+                y: "latitude",
+                r: 3,
+                fill: 'black',
+                //stroke: vdbi_color_scheme.orange,
+                //fillOpacity: 0.5,
+                channels: {
+                  entity: {
+                    value: "terrain",
+                    label: 'City',
+                  },
+                  count: {
+                    value: (d) => 1,
+                    label: 'Occurences',
+                  },
+                  longitude: {
+                    value: "longitude",
+                    label: 'Lon',
+                  },
+                  latitude: {
+                    value: "latitude",
+                    label: 'Lat',
+                  },
+                  projects: {
+                    value: (d) => d.projects.toJSON(),
+                    label: 'Projects',
+                  },
+                },
+                tip: {
+                  format: {
+                    longitude: false,
+                    latitude: false,
+                    count: false,
+                    x: false,
+                    y: false,
+                    r: false,
+                  }
+                },
+              }
+            ),
+            // legend marks //
+            Plot.link(
+              terrain_tip_dots,
+              {
+                x1: (tip_datum) =>
+                  terrain_legend.find(
+                    (legend_datum) => legend_datum[0] === tip_datum.projects.toLocaleUpperCase()
+                  )[2],
+                y1: (tip_datum) =>
+                  terrain_legend.find(
+                    (legend_datum) => legend_datum[0] === tip_datum.projects.toLocaleUpperCase()
+                  )[3],
+                x2: "longitude",
+                y2: "latitude",
+                stroke: (d) => project_color_scale(d.projects.toLocaleUpperCase()),
+                markerEnd: "arrow",
+                curve: "bump-y",
+              }
+            ),
+            Plot.dot(
+              terrain_legend,
+              {
+                x: (d) => d[2],
+                y: (d) => d[3],
+                r: 5,
+                fill: (d) => d[1],
+              }
+            ),
+            Plot.text(
+              terrain_legend,
+              {
+                x: (d) => d[2],
+                y: (d) => d[3],
+                dy: -12,
+                text: (d) => d[0].toLocaleUpperCase(),
+              }
+            ),
+            // tip marks //
+            terrain_tips,
+            Plot.sphere(),
+          ],
+        }),
+      )
+    }
+    
+  </div>
+  <div class="card">
+    <h2>Project Knowledge Graph</h2>
+    <div style="padding-bottom: 5px;">${project_triples_predicate_select_input}</div>
+    <div style="overflow: auto;">${resize((width) => project_force_graph(width))}</div>
+  </div>
+</div>
+
+<div class="grid grid-cols-2">
+  <div class="card">
+    <h2>Project Financing</h2>
+    ${project_search_input}
+    ${project_grade_input}
+    ${project_challenge_input}
+    ${project_table}
+  </div>
+  <div class="card">
+    <h2>Project summaries</h2>
+    ${resize((width, height) => Inputs.table(
+      sql`select * from project_summary`,
+      {
+        width: width,
+        layout: "auto"
+      }
+    ))}
+
+  </div>
+</div>
+
 ```js
 import { countEntities, sparkbar } from "/components/utilities.js"
 ```
@@ -47,23 +267,6 @@ import { projectionMap } from "/components/projection-map.js"
 import { vdbi_color_scheme, project_color_scale } from "/components/color.js"
 ```
 
-<!-- debugging info -->
-
-```js
-console.debug("project_data", project_data)
-console.debug("researcher_data", researcher_data)
-console.debug("laboratory_data", laboratory_data)
-console.debug("university_data", university_data)
-console.debug("partner_data", partner_data)
-console.debug("general_partners", [
-  ...(await sql`select * from general_partners`),
-])
-console.debug("aap_partners", [...(await sql`select * from aap_partners`)])
-console.debug("terrains", [...(await sql`select * from terrains`)])
-console.debug("terrain_data", [...terrain_data])
-console.debug("ile_de_france_terrain_data", ile_de_france_terrain_data)
-```
-
 ```js
 // which terrain results are outside mainland france bbox?
 const mainland_france_bbox = {
@@ -88,12 +291,12 @@ where starts_with(terrain, 'Commune de ');
 update terrains
 set terrain = replace(terrain, 'Ville de ', '')
 where starts_with(terrain, 'Ville de ');
-update terrains
-set terrain = replace(terrain, 'Métropole d''', '')
-where starts_with(terrain, 'Métropole d''');
-update terrains
-set terrain = replace(terrain, 'Métropole européenne de ', '')
-where starts_with(terrain, 'Métropole européenne de ');
+-- update terrains
+-- set terrain = replace(terrain, 'Métropole d''', '')
+-- where starts_with(terrain, 'Métropole d''');
+-- update terrains
+-- set terrain = replace(terrain, 'Métropole européenne de ', '')
+-- where starts_with(terrain, 'Métropole européenne de ');
 
 select
   terrain,
@@ -233,7 +436,7 @@ const countPlot = (width, label, data, sort_value, accessor_function) => {
     height: width,
     marginBottom: 70,
     color: {
-      scheme: "Observable10",
+      scheme: "Blues",
     },
     x: {
       tickRotate: -30,
@@ -242,7 +445,7 @@ const countPlot = (width, label, data, sort_value, accessor_function) => {
     y: {
       grid: true,
       label: label,
-      domain: [0, Math.max(...data.map(accessor_function)) + 1],
+      nice: true,
     },
     marks: [
       Plot.barY(data, {
@@ -348,86 +551,6 @@ const filtered_projects_partners = filterOnInput(
 console.debug("filtered_projects_partners", filtered_projects_partners)
 ```
 
-<div class="grid grid-cols-4">
-  <div class="card">
-    <h2>Project count <span class="muted">(Total / Auditioned / Financed)</span></h2>
-    <span class="big">
-      <span class="muted">${project_data.length.toLocaleString()}</span> /
-      <span class="muted">${auditioned_project_count.toLocaleString()}</span> /
-      ${financed_project_count.toLocaleString()}
-    </span>
-
-  </div>
-  <div class="card">
-    <h2>University count <span class="muted">(Total / Auditioned / Financed)</span></h2>
-    <span class="big">
-      <span class="muted">${university_data.size.toLocaleString()}</span> /
-      <span class="muted">${auditioned_university_data.size.toLocaleString()}</span> /
-      ${financed_university_data.size.toLocaleString()}
-    </span>
-
-  </div>
-  <div class="card">
-    <h2>Laboratory count <span class="muted">(Total / Auditioned / Financed)</span></h2>
-    <span class="big">
-      <span class="muted">${laboratory_data.size.toLocaleString()}</span> /
-      <span class="muted">${auditioned_laboratory_data.size.toLocaleString()}</span> /
-      ${financed_laboratory_data.size.toLocaleString()}
-    </span>
-
-  </div>
-  <div class="card">
-    <h2>Partner count <span class="muted">(Total / Auditioned / Financed)</span></h2>
-    <span class="big">
-      <span class="muted">${partner_data.size.toLocaleString()}</span> /
-      <span class="muted">${auditioned_partner_data.size.toLocaleString()}</span> /
-      ${financed_partner_data.size.toLocaleString()}
-    </span>
-
-  </div>
-</div>
-<div class="grid grid-cols-3">
-  <div class="card">
-    <h2>University count by Project</h2>
-    ${project_universities_auditioned_input}
-    ${project_universities_financed_input}
-    ${project_universities_sort_input}
-    ${resize((width) => countPlot(
-      width,
-      "University count",
-      filtered_projects_universities,
-      project_universities_sort,
-      (d) => d.institutions.length
-    ))}
-  </div>
-  <div class="card">
-    <h2>Laboratory count by Project</h2>
-    ${project_laboratories_auditioned_input}
-    ${project_laboratories_financed_input}
-    ${project_laboratories_sort_input}
-    ${resize((width) => countPlot(
-      width,
-      "Laboratory count",
-      filtered_projects_laboratories,
-      project_laboratories_sort,
-      (d) => d.labs.length
-    ))}
-  </div>
-  <div class="card">
-    <h2>Partner count by Project</h2>
-    ${project_partners_auditioned_input}
-    ${project_partners_financed_input}
-    ${project_partners_sort_input}
-    ${resize((width) => countPlot(
-      width,
-      "Socio-economic partner count",
-      filtered_projects_partners,
-      project_partners_sort,
-      (d) => d.partners.length
-    ))}
-  </div>
-</div>
-
 <!-- Project terrain map -->
 
 ```js
@@ -481,7 +604,7 @@ const terrain_anchor_map = new Map([
   ["Plauzat", "top-right"],
   ["Marseille", "top-left"],
   ["Paris", "top-left"],
-  ["Aix Marseille Provence", "bottom-left"],
+  ["Métropole d'Aix Marseille Provence", "bottom-left"],
   ["Villeurbanne", "bottom-left"],
 ])
 
@@ -619,125 +742,6 @@ const project_force_graph = (width) =>
   })
 ```
 
-<div class="grid grid-cols-2">
-  <div class="card">
-    ${
-      resize((width) =>
-        Plot.plot({
-          title: "Project locations",
-          width: width,
-          height: width,
-          projection: {
-            type: 'equal-earth',
-            domain: d3.geoCircle().center([2, 47]).radius(5)(),
-          },
-          marks: [
-            Plot.geo(regions, {
-              stroke: 'white',
-              strokeOpacity: 0.5,
-              fill: vdbi_color_scheme.blue,
-              fillOpacity: 0.3,
-            }),
-            //Plot.geo(departements, {
-            //  stroke: vdbi_color_scheme.blue,
-            //  strokeOpacity: 0.1,
-            //}),
-            Plot.dot(
-              filtered_terrain_data,
-              {
-                x: "longitude",
-                y: "latitude",
-                r: 3,
-                fill: 'black',
-                //stroke: vdbi_color_scheme.orange,
-                //fillOpacity: 0.5,
-                channels: {
-                  entity: {
-                    value: "terrain",
-                    label: 'City',
-                  },
-                  count: {
-                    value: (d) => 1,
-                    label: 'Occurences',
-                  },
-                  longitude: {
-                    value: "longitude",
-                    label: 'Lon',
-                  },
-                  latitude: {
-                    value: "latitude",
-                    label: 'Lat',
-                  },
-                  projects: {
-                    value: (d) => d.projects.toJSON(),
-                    label: 'Projects',
-                  },
-                },
-                tip: {
-                  format: {
-                    longitude: false,
-                    latitude: false,
-                    count: false,
-                    x: false,
-                    y: false,
-                    r: false,
-                  }
-                },
-              }
-            ),
-            // legend marks //
-            Plot.link(
-              terrain_tip_dots,
-              {
-                x1: (tip_datum) =>
-                  terrain_legend.find(
-                    (legend_datum) => legend_datum[0] === tip_datum.projects.toLocaleUpperCase()
-                  )[2],
-                y1: (tip_datum) =>
-                  terrain_legend.find(
-                    (legend_datum) => legend_datum[0] === tip_datum.projects.toLocaleUpperCase()
-                  )[3],
-                x2: "longitude",
-                y2: "latitude",
-                stroke: (d) => project_color_scale(d.projects.toLocaleUpperCase()),
-                markerEnd: "arrow",
-                curve: "bump-y",
-              }
-            ),
-            Plot.dot(
-              terrain_legend,
-              {
-                x: (d) => d[2],
-                y: (d) => d[3],
-                r: 5,
-                fill: (d) => d[1],
-              }
-            ),
-            Plot.text(
-              terrain_legend,
-              {
-                x: (d) => d[2],
-                y: (d) => d[3],
-                dy: -12,
-                text: (d) => d[0].toLocaleUpperCase(),
-              }
-            ),
-            // tip marks //
-            terrain_tips,
-            Plot.sphere(),
-          ],
-        }),
-      )
-    }
-    
-  </div>
-  <div class="card">
-    <h2>Project Knowledge Graph</h2>
-    <div style="padding-bottom: 5px;">${project_triples_predicate_select_input}</div>
-    <div style="overflow: auto;">${resize((width) => project_force_graph(width))}</div>
-  </div>
-</div>
-
 <!-- PROJECT FINANCING -->
 
 ```js
@@ -826,20 +830,19 @@ const project_table = Inputs.table(projects_search, {
 })
 ```
 
-<div class="grid grid-cols-2">
-  <div class="card">
-    <h2>Project Financing</h2>
-    ${project_search_input}
-    ${project_grade_input}
-    ${project_challenge_input}
-    ${project_table}
-  </div>
-  <div class="card">
-    <h2>Project summaries</h2>
-    ${resize((width) => Inputs.table(
-      sql`select * from project_summary`,
-      {width: width}
-    ))}
+<!-- debugging info -->
 
-  </div>
-</div>
+```js
+console.debug("project_data", project_data)
+console.debug("researcher_data", researcher_data)
+console.debug("laboratory_data", laboratory_data)
+console.debug("university_data", university_data)
+console.debug("partner_data", partner_data)
+console.debug("general_partners", [
+  ...(await sql`select * from general_partners`),
+])
+console.debug("aap_partners", [...(await sql`select * from aap_partners`)])
+console.debug("terrains", [...(await sql`select * from terrains`)])
+console.debug("terrain_data", [...terrain_data])
+console.debug("ile_de_france_terrain_data", ile_de_france_terrain_data)
+```

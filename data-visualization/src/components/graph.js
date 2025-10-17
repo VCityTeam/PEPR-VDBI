@@ -181,6 +181,7 @@ export function mapTableToTriples(
  * @param {String} data.source - link source
  * @param {String} data.target - link target
  * @param {String} data.value - link target
+ * @param {String} data.color - link color
  * @param {Object} options - configuration options
  * @returns {Object<Array, Array>}
  */
@@ -192,26 +193,26 @@ export function parseTabularGraph(
     valueMap = (d) => d.value,
   } = {}
 ) {
-  const nodeByName = new Map()
+  const nodeByID = new Map()
   for (const link of links) {
-    if (!nodeByName.has(sourceMap(link)))
-      nodeByName.set(sourceMap(link), {
-        name: sourceMap(link),
+    if (!nodeByID.has(sourceMap(link)))
+      nodeByID.set(sourceMap(link), {
+        id: sourceMap(link),
         value: valueMap(link),
       })
     else {
-      nodeByName.get(sourceMap(link)).value += valueMap(link)
+      nodeByID.get(sourceMap(link)).value += valueMap(link)
     }
-    if (!nodeByName.has(targetMap(link)))
-      nodeByName.set(targetMap(link), {
-        name: targetMap(link),
+    if (!nodeByID.has(targetMap(link)))
+      nodeByID.set(targetMap(link), {
+        id: targetMap(link),
         value: valueMap(link),
       })
     else {
-      nodeByName.get(targetMap(link)).value += valueMap(link)
+      nodeByID.get(targetMap(link)).value += valueMap(link)
     }
   }
-  return { nodes: Array.from(nodeByName.values()), links }
+  return { nodes: Array.from(nodeByID.values()), links }
 }
 
 /**

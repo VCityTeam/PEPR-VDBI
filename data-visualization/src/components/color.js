@@ -3,12 +3,17 @@ import { exclude } from "./utilities.js"
 import { cnu_category_map } from "./cnu.js"
 
 // PEPR VDBI colors //
-// - #3558A2
-// - #FF732C
+// - #3557a2
+// - #ff722c
 export const vdbi_color_scheme = {
   blue: "#3558A2",
   orange: "#FF732C",
 }
+
+export const vdbi_color_scale_diverging = d3
+  .scaleDiverging()
+  .range([vdbi_color_scheme.blue, "white", vdbi_color_scheme.orange])
+  .unknown("#ccc")
 
 export const vdbi_orange_analogic_color_scheme = [
   // "#ffe6bf",

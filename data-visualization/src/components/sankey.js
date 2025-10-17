@@ -1,6 +1,6 @@
-import * as d3_sankey from 'd3-sankey';
-import { InternMap, scaleOrdinal, create, interpolateSpectral } from 'd3';
-import { cropText } from './utilities.js';
+import * as d3_sankey from "d3-sankey"
+import { InternMap, scaleOrdinal, create, interpolateSpectral } from "d3"
+import { cropText } from "./utilities.js"
 
 // Code adapted from https://observablehq.com/@d3/parallel-sets
 
@@ -59,9 +59,124 @@ export function parallelSetToGraph(data, keys) {
   return { nodes, links }
 }
 
-
 /**
  * Create a Sankey diagram from a graph object
+ *
+ * @param {Object} graph - a graph object containing nodes and links
+ * @param {Object[]} graph.nodes
+ * @param {String} graph.nodes[].id - node id
+ * @param {Object[]} graph.links
+ * @param {String} graph.links[].source
+ * @param {String} graph.links[].target
+ * @param {Number} graph.links[].value - link value, used to determine width link width
+ * @param {String[]} graph.links[].path - array of node ids corresponding to the link path
+ * @param {Number} width - width of the SVG element
+ * @param {Number} height - height of the SVG element
+ * @param {Function} idMap - function to map a node to its label
+ * @param {Function} text - function to map a node to its label
+ * @param {scaleOrdinal|Function} nodeFill - color scale for nodes
+ * @param {scaleOrdinal|Function} linkStroke - color scale for links
+ * @param {Number} height - height of the SVG element
+ * @param {Number} font_size - font size for node labels
+ * @param {null|undefined} node_sort - node_sort paramters for d3-sankey,
+ *  set to undefined for default behavior
+ * @param {null|undefined} link_sort - link_sort paramters for d3-sankey,
+ *  set to undefined for default behavior
+ *
+ * @returns {SVGElement} - an SVG element containing the Sankey diagram
+ */
+export function sankeyDiagram(
+  graph,
+  {
+    idMap = (d) => d.id,
+    width = 928,
+    height = 720,
+    nodeFill = "black",
+    linkStroke = (d) => d.color || "#ccc",
+    font_size = 12,
+    text = (d) => cropText(idMap(d), 85),
+    node_sort = null,
+    link_sort = null,
+  } = {}
+) {
+  const sankeyGenerator = d3_sankey
+    .sankey()
+    .nodeId(idMap)
+    .nodeSort(node_sort)
+    .linkSort(link_sort)
+    .nodeWidth(4)
+    .nodePadding(20)
+    // .nodeAlign(d3_sankey.sankeyCenter)
+    .extent([
+      [0, 5],
+      [width, height - 5],
+    ])
+
+  const svg = create("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .attr("width", width)
+    .attr("height", height)
+    .attr("style", "max-width: 100%; height: auto;")
+
+  console.debug("Input graph:", graph)
+
+  const { nodes, links } = sankeyGenerator({
+    nodes: graph.nodes.map((d) => Object.create(d)),
+    links: graph.links.map((d) => Object.create(d)),
+  })
+
+  console.debug("Sankey nodes:", nodes)
+  console.debug("Sankey links:", links)
+
+  svg
+    .append("g")
+    .selectAll("rect")
+    .data(nodes)
+    .join("rect")
+    .attr("x", (d) => d.x0)
+    .attr("y", (d) => d.y0)
+    .attr("height", (d) => d.y1 - d.y0)
+    .attr("width", (d) => d.x1 - d.x0)
+    .attr("fill", nodeFill)
+    .append("title")
+    .text((d) => `${idMap(d)}\n${d.value.toLocaleString()}`)
+
+  svg
+    .append("g")
+    .attr("fill", "none")
+    .selectAll("g")
+    .data(links)
+    .join("path")
+    .attr("d", d3_sankey.sankeyLinkHorizontal())
+    .attr("stroke", linkStroke)
+    .attr("stroke-width", (d) => d.width)
+    .style("mix-blend-mode", "multiply")
+    .append("title")
+    .text((d) => d.value.toLocaleString())
+
+  svg
+    .append("g")
+    .style("font", "10px sans-serif")
+    .selectAll("text")
+    .data(nodes)
+    .join("text")
+    .attr("x", (d) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
+    .attr("y", (d) => (d.y1 + d.y0) / 2)
+    .attr("dy", "0.35em")
+    .attr("font-size", font_size)
+    .attr("text-anchor", (d) => (d.x0 < width / 2 ? "start" : "end"))
+    .text(text)
+    .append("tspan")
+    .attr("fill-opacity", 0.7)
+    .text((d) => ` ${d.value.toLocaleString()}`)
+
+  return svg.node()
+}
+
+/**
+ * Create a Parallel Set diagram from a graph object
+ * Use @function parallelSetToGraph to convert tabular data to a graph object to pass to
+ * this function
  *
  * @param {Object} graph - a graph object containing nodes and links
  * @param {Object[]} graph.nodes
@@ -84,10 +199,10 @@ export function parallelSetToGraph(data, keys) {
  *  set to undefined for default behavior
  * @param {null|undefined} link_sort - link_sort paramters for d3-sankey,
  *  set to undefined for default behavior
- * 
+ *
  * @returns {SVGElement} - an SVG element containing the Sankey diagram
  */
-export function sankeyDiagram(
+export function parallelSet(
   graph,
   {
     idMap = (d) => d.id,
