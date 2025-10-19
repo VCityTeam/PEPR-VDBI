@@ -1,3 +1,4 @@
 .env
 orcid_token
-private
+private/*
+!private/.gitkeep

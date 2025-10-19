@@ -3,9 +3,9 @@
   "private": true,
   "scripts": {
     "clean": "rm -rf dist && rm -rf .venv && rm -rf node_modules && rm -rf docs/.observablehq/cache",
-    "build": "rm -rf dist && uv sync && observable build",
+    "build": "rm -rf dist && observable build",
     "build-jsdoc": "jsdoc ./src/components/* -d jsdoc/",
-    "dev": "observable preview",
+    "dev": "uv sync && observable preview",
     "deploy": "observable deploy",
     "observable": "observable"
   },
