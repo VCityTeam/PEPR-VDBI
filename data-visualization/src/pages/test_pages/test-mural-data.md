@@ -2,6 +2,7 @@
 style: /css/vdbi-page.css
 sql:
   link_store: /data/private/mural_links.csv
+  mural_store: /data/private/mural_export.csv
 ---
 
 ```js
@@ -23,17 +24,22 @@ const csvfile = view(
   Inputs.file({
     label: "Upload a Mural CSV export",
     accept: ".csv",
-    required: true,
+    required: false,
   })
 )
 ```
 
 ```js
-const mural_export = await csvfile.csv()
+// const mural_export = await csvfile.csv()
+
+const mural_export = [...(await sql`select * from mural_store`)].map((d) =>
+  d.toJSON()
+)
 ```
 
 ```js
 mural_export.forEach((d) => {
+  d.label = String(d["Text"])
   d.fx = Number(d["Position X"])
   d.fy = Number(d["Position Y"])
 })
@@ -102,9 +108,11 @@ const project_graph = new MuralGraph(project_graph_data, {
 <div id="graph_container" class="card">${project_graph.getCanvas()}</div>
 ${downloadSVGButton("#graph_container svg")}
 
-## Mural graph data
+</br>
 
-${Inputs.table(mural_links)}
+### Mural graph data
+
+<div class="card">${Inputs.table(mural_links, { layout: "auto" })}</div>
 ${downloadTableButton(() => mural_links, {delimeter: ';'}) }
 
 ```js
@@ -127,67 +135,4 @@ const mural_links = (async function* () {
     await new Promise((resolve) => setTimeout(resolve, 5000))
   }
 })()
-```
-
-## Missing links from latest export
-
-```js
-// list of manually identified exceptions.
-// Mostly composed of node labels separated by a newline
-// Link exeptions are commented
-const exception_list = [
-  "FPCUP (COPERNICUS",
-  ")",
-  "TID",
-  "CityOrchestra",
-  "UMACC",
-  "(projet EPE IRIS- E)",
-  "ANR DIAMS (en",
-  "finalisation)",
-  "MITI 80PRIME METEORS",
-  "(fini)",
-  "données thermophysio et environnementales", // link with newline
-  "de reference",
-  "Fresque de",
-  "Equipex+ Gaia DATA TERRA THEIA",
-  "carto interactive / datavisualisation pour diffusion des résultats aux\n    participants", // link with newline
-  "IMU -",
-  "Collectifs",
-  "Echanges de contacts",
-  "et de données sur les terrains",
-]
-
-display(
-  [...rawhtml.body.children]
-    .map((d) => {
-      let ownText = ""
-      d.childNodes.forEach((child) => {
-        if (child.nodeType === Node.TEXT_NODE) {
-          ownText += child.textContent
-        }
-      })
-      return ownText.trim()
-    })
-    .filter(
-      (d) =>
-        d &&
-        !exception_list.includes(d) &&
-        !mural_links.some(({ label }) => label === d) &&
-        ![...mural_export].some(({ label }) => label === d)
-    )
-)
-```
-
-```js
-const htmlfile = view(
-  Inputs.file({
-    label: "Upload an HTML file created from a Mural PDF export",
-    accept: ".html",
-    required: true,
-  })
-)
-```
-
-```js
-const rawhtml = await htmlfile.html()
 ```
