@@ -447,6 +447,46 @@ export function downloadTableButton(
 }
 
 /**
+ * A button for downloading a table as a csv.
+ *
+ * @param {Function} callback - a callback function to get the data to be downloaded,
+ *   rows should contain keys corresponding to the columns of the table
+ * @param {String} label - button label
+ * @param {String} filename - downloaded file name
+ * @returns {button} - a button element that copies the element html to the clipboard
+ */
+export function downloadJSONButton(
+  callback,
+  {
+    label = "Download",
+    filename = "download.json",
+  } = {}
+) {
+  return button(label, {
+    value: null,
+    reduce: () => {
+      const data = callback()
+      console.debug("downloading data: ", data)
+      writeToFile(
+        JSON.stringify(data, null, 2),
+        filename,
+        "application/json"
+      )
+    },
+  })
+}
+
+/**
+ * A button for downloading one or many an SVG elements with a d3 selector.
+        ),
+        filename,
+        "text/csv"
+      )
+    },
+  })
+}
+
+/**
  * A button for downloading one or many an SVG elements with a d3 selector.
  *
  * @param {String} selector - a d3 selector string for returning the svg elements to be downloaded.
@@ -474,13 +514,12 @@ export function downloadSVGButton(
         .forEach((d) => {
           content.html(content.html() + d.outerHTML)
 
-          width = Math.max(width, Math.floor(d.attributes["width"].value))
-          height += Math.floor(d.attributes["height"].value)
-
-          console.debug(
-            "svg element size: ",
-            Math.floor(d.attributes["width"].value),
-            Math.floor(d.attributes["height"].value)
+          width = Math.max(
+            width,
+            Math.floor(d.attributes["width"] ? d.attributes["width"].value : 0)
+          )
+          height += Math.floor(
+            d.attributes["height"] ? d.attributes["height"].value : 0
           )
         })
 

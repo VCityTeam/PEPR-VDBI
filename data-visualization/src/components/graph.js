@@ -291,8 +291,10 @@ export class Graph {
    * @param {number[]} options.scaleExtent - bounding box for the canvas
    * @param {array[]} options.translateExtent - bounding box for the canvas
    * @param {Function} options.keyMap - the function for identifying a node
+   * @param {Function} options.labelMap - the function for identifying a node label
    * @param {Function} options.relationMap - the function for identifying a link
    * @param {Function} options.valueMap - the function for categorizing a node
+   * @param {number} options.chargeStrength - strength of node repulsion
    * @param {Function} options.xMap - horizontal position accessor
    * @param {Function} options.yMap - vertical position accessor
    * @param {Function} options.color - color scheme
@@ -327,10 +329,12 @@ export class Graph {
         [Infinity, Infinity],
       ],
       keyMap = (d) => d.id,
+      labelMap = (d) => d.label,
       relationMap = (d) => d.label,
       valueMap = (d) => d.type,
-      xMap = (d) => d.fx,
-      yMap = (d) => d.fy,
+      chargeStrength = -30,
+      xMap = (d) => d.fx || null,
+      yMap = (d) => d.fy || null,
       color = d3.scaleOrdinal(d3.schemeCategory10),
       fontSize = 10,
       r = 3,
@@ -345,7 +349,7 @@ export class Graph {
       nodeLabelOpacity = 0.4,
       linkLabelOpacity = 0.3,
       highlightOpacity = 0.7,
-      nodeLabelOffset = 10,
+      nodeLabelOffset = r + 1.5,
       legend = circleLegend(
         [
           ...new Set(
@@ -370,8 +374,8 @@ export class Graph {
       legendY = -height / 2 + 10,
     }
   ) {
-    this.nodes = [...nodes]
-    this.links = [...links]
+    this.nodes = [...nodes].map((d) => ({ ...d }))
+    this.links = [...links].map((d) => ({ ...d }))
     this.id = id
     this.width = width
     this.height = height
@@ -379,8 +383,10 @@ export class Graph {
     this.scaleExtent = scaleExtent
     this.translateExtent = translateExtent
     this.keyMap = keyMap
+    this.labelMap = labelMap
     this.relationMap = relationMap
     this.valueMap = valueMap
+    this.chargeStrength = chargeStrength
     this.xMap = xMap
     this.yMap = yMap
     this.color = color
@@ -494,7 +500,7 @@ export class Graph {
       .on("pointerout", this.handleNodePointerout())
       .style("pointer-events", "all")
       .call(this.handleDrag(this.simulation))
-    this.getNodes().append("title").text(this.keyMap)
+    this.getNodes().append("title").text(this.labelMap)
 
     this.getLinks()
       .data(this.links)
@@ -505,7 +511,7 @@ export class Graph {
     this.getNodeLabels()
       .data(this.nodes)
       .join("text")
-      .text((d) => cropText(this.keyMap(d), this.textLength))
+      .text((d) => cropText(this.labelMap(d), this.textLength))
     // .attr("stroke-linejoin", "round")
     // .attr("stroke-width", this.haloWidth)
     // .attr("stroke", this.halo)
@@ -514,7 +520,7 @@ export class Graph {
     this.getLinkLabels()
       .data(this.links)
       .join("text")
-      .text((d) => cropText(this.relationMap(d), this.textLength))
+      .text((d) => cropText(this.relationMap(d) || "", this.textLength))
     // .attr("stroke-linejoin", "round")
     // .attr("stroke-width", this.haloWidth)
     // .attr("stroke", this.halo)
@@ -606,7 +612,7 @@ export class Graph {
         .forceSimulation(this.nodes)
         // .alphaDecay('0.03')
         .force("link", d3.forceLink(this.links).id(this.keyMap))
-        .force("charge", d3.forceManyBody())
+        .force("charge", d3.forceManyBody().strength(this.chargeStrength))
         .force("collide", d3.forceCollide().radius(this.r).iterations(3))
         .force("x", d3.forceX())
         .force("y", d3.forceY())
@@ -731,20 +737,33 @@ export class Graph {
   handleNodePointerEnter() {
     return (_event, datum) => {
       this.svg.classed("hover", true)
+      this.getNodes()
+        .filter((d) => d === datum)
+        .classed("highlight", true)
+      const label = this.getNodeLabels().filter((d) => d === datum)
+      label.classed("highlight", true)
+      label.text(this.labelMap(datum))
 
-      this.getNodes().classed("highlight", (d) => d === datum)
-      this.getNodeLabelGroup().style("opacity", 1)
-      this.getNodeLabels().classed("highlight", (d) => d === datum)
-
-      this.getLinks().classed(
-        "highlight",
-        ({ source, target }) => datum === target || datum === source
+      const connectedLinks = this.getLinks().filter(
+        (l) => l.source === datum || l.target === datum
       )
+      connectedLinks.classed("highlight", true)
       this.getLinkLabelGroup().style("opacity", 1)
       this.getLinkLabels().classed(
         "secondary",
         ({ source, target }) => datum === target || datum === source
       )
+      this.getLinkLabels().text((d) => this.relationMap(d))
+
+      this.getNodeLabelGroup().style("opacity", 1)
+      connectedLinks.each((link) => {
+        this.getNodes()
+          .filter((d) => d === link.source || d === link.target)
+          .classed("highlight", true)
+        this.getNodeLabels()
+          .filter((d) => d === link.source || d === link.target)
+          .classed("secondary", true)
+      })
 
       d3.selectAll(".legend g text")
         .data(this.color.domain())
@@ -760,9 +779,16 @@ export class Graph {
       this.svg.classed("hover", false)
       this.getNodes().classed("highlight", false)
       this.getNodeLabels().classed("highlight", false)
+      this.getNodeLabels().classed("secondary", false)
+      this.getNodeLabels().text((d) =>
+        cropText(this.relationMap(d), this.textLength)
+      )
       this.getNodeLabelGroup().style("opacity", this.nodeLabelOpacity)
       this.getLinks().classed("highlight", false)
       this.getLinkLabels().classed("secondary", false)
+      this.getLinkLabels().text((d) =>
+        cropText(this.relationMap(d), this.textLength)
+      )
       this.getLinkLabelGroup().style("opacity", this.linkLabelOpacity)
     }
   }
@@ -875,11 +901,20 @@ export class MuralGraph extends StaticGraph {
         this.getNodes().classed("selected", (d) => d === datum)
         this.getNodeLabels().classed("selected", (d) => d === datum)
       } else if (this.selectedNode !== datum) {
+        // get label
+        const label = prompt("new link label:")
+        if (!label) {
+          // reset if no label provided
+          this.selectedNode = null
+          this.getNodes().classed("selected", false)
+          this.getNodeLabels().classed("selected", false)
+          return
+        }
         // if a different node is already selected, create a link to the clicked node
         this.links.push({
           source: this.selectedNode,
           target: datum,
-          label: prompt("new link label:") || "",
+          label: label,
         })
         this.update()
         // this.simulation.nodes(this.nodes).force('link').links(this.links);

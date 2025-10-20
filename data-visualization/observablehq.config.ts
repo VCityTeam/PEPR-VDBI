@@ -27,6 +27,10 @@ export default {
           name: 'Phase 1 Financing',
           path: 'pages/dashboards/phase1-financing-dashboard',
         },
+        {
+          name: 'PEPR VDBI Constellation',
+          path: 'pages/dashboards/vdbi-constellation',
+        },
       ]
     },
     {
