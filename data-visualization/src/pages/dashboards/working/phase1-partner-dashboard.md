@@ -12,7 +12,11 @@ sql:
 # Phase 1 Partners
 
 ```js
-import { cropText, copyTableToClipboardButton } from "/components/utilities.js"
+import {
+  cropText,
+  copyTableToClipboardButton,
+  downloadTableButton,
+} from "/components/utilities.js"
 ```
 
 ```js
@@ -120,9 +124,15 @@ phase_1_partner_links.push({
 
 const phase_1_partner_graph = parseTabularGraph(phase_1_partner_links)
 // remove duplicate partner counts
-phase_1_partner_graph.nodes.find((d) => d.id === "Établissements d'enseignement supérieur").value = institution_set.size
+phase_1_partner_graph.nodes.find(
+  (d) => d.id === "Établissements d'enseignement supérieur"
+).value = institution_set.size
 
-display(phase_1_partner_graph.nodes.find((d) => d.id === "Établissements d'enseignement supérieur"))
+display(
+  phase_1_partner_graph.nodes.find(
+    (d) => d.id === "Établissements d'enseignement supérieur"
+  )
+)
 
 display(phase_1_partner_links)
 display(institution_set)
@@ -158,24 +168,6 @@ const filter_aap_data = view(
 )
 ```
 
-<div class="card">
-  <h2>Legal nature distributions by project</h2>
-  <h3>(Levels 1, 2, 3)</h3>
-  <!-- ${level_1_select} -->
-  <!-- $ -->
-  ${resize((width) =>
-    sankeyDiagram(
-      filtered_partners_by_project_graph_1_2,
-      {
-        width: width,
-        pathMap: () => [],
-        nodeFill: (d) => project_color_scale.unknown('black')(d.id),
-        linkStroke: (d) => legal_nature_colors(Number(d.source.id[6])),
-      }
-    )
-  )}
-  <!-- $ -->
-</div>
 <div class="card">
   <h2>Legal nature distribution</h2>
   <h3>(Levels 1, 2)</h3>
@@ -213,22 +205,22 @@ const filter_aap_data = view(
 </div>
 <div class="card" style="padding: 0;">
   <div style="padding: 1em">
-    <h2>Filtered partner data</h2>
+    <h2>Filtered partner data by SIRET</h2>
     ${filtered_partner_data_search}<!-- $ -->
   </div>
   ${Inputs.table(filtered_partner_data_value)}
   <!-- $ -->
-  ${copyTableToClipboardButton(filtered_partner_data_value, { delimeter: ";" })}
+  ${downloadTableButton(() => filtered_partner_data_value, { delimeter: ";" })}
   <!-- $ -->
 </div>
 <div class="card" style="padding: 0;">
   <div style="padding: 1em">
-    <h2>Filtered legal nature data</h2>
+    <h2>Filtered legal nature by SIREN</h2>
     ${filtered_legal_natures_search}<!-- $ -->
   </div>
   ${Inputs.table(filtered_legal_natures)}
   <!-- $ -->
-  ${copyTableToClipboardButton(filtered_legal_natures_value, { delimeter: ";" })}
+  ${downloadTableButton(() => filtered_legal_natures_value, { delimeter: ";" })}
   <!-- $ -->
 </div>
 
@@ -321,6 +313,7 @@ WITH
     GROUP BY all
   )
 SELECT
+  aggregate_partners.siren,
   aggregate_partners.nom_complet,
   aggregate_partners.nature_juridique,
   '(Code ' || cjn1."Code" || ') ' || cjn1."Libellé" as "cjn1_label",
@@ -329,7 +322,6 @@ SELECT
   cjn2."Code" as "cjn2_code",
   '(Code ' || cjn3."Code" || ') ' || cjn3."Libellé" as "cjn3_label",
   cjn3."Code" as "cjn3_code",
-  aggregate_partners.siren,
   sources,
   partner_count.partnerships,
   1 as "value",
@@ -454,20 +446,6 @@ filtered_partners_by_project_links_1_2.forEach(({ target }) => {
     filtered_partners_by_project_ids_1_2_by_key.set(target, { id: target })
   }
 })
-
-const filtered_partners_by_project_graph_1_2 = {
-  nodes: [...filtered_partners_by_project_ids_1_2_by_key.values()].concat(
-    partner_graph_1_2.nodes
-  ),
-  links: filtered_partners_by_project_links_1_2
-    .map((d) => d.toJSON())
-    .concat(partner_graph_1_2.links),
-}
-
-console.debug(
-  "filtered_partners_by_project_graph_1_2",
-  filtered_partners_by_project_graph_1_2
-)
 ```
 
 ```js
@@ -556,10 +534,24 @@ const filtered_legal_natures_value = Generators.input(
 ## Partner label data quality
 
 <div class="grid grid-cols-2">
-  <div class="card grid-colspan-2" style="padding: 0;">
+  <div class="card" style="padding: 0;">
+    <div style="padding: 1em;">
+      <h2>All source labels</h2>
+      <div>${all_label_search}</div>
+    </div>
+    ${
+      resize((width) =>
+        Inputs.table(all_label_search_result, { width: width, layout: 'auto' })
+      )
+    }
+    ${downloadTableButton(() => all_label_search_result, { delimeter: ";" })}
+
+  </div>
+  <div class="card" style="padding: 0;">
     <div style="padding: 1em;">
       <h2>
-        Labels from all sources: ${[...consensus].length}/${[...all_partner_data].length}
+        Concensus labels (has SIRET and is present in annex and secondary sources):
+        ${[...consensus].length}/${[...all_partner_data].length}
       </h2>
       <div>${consensus_search}</div>
     </div>
@@ -568,13 +560,14 @@ const filtered_legal_natures_value = Generators.input(
         Inputs.table(consensus_search_result, { width: width, layout: 'auto' })
       )
     }
-    ${copyTableToClipboardButton(consensus_search_result, { delimeter: ";" })}
+    ${downloadTableButton(() => consensus_search_result, { delimeter: ";" })}
 
   </div>
   <div class="card" style="padding: 0;">
     <div style="padding: 1em;">
       <h2>
-        Labels with no siren/siret: ${[...no_results].length}
+        Labels with no siren/siret:
+        ${[...no_results].length}
       </h2>
       <div>${no_result_search}</div>
     </div>
@@ -583,13 +576,14 @@ const filtered_legal_natures_value = Generators.input(
         Inputs.table(no_result_search_result, { width: width, layout: 'auto' })
       )
     }
-    ${copyTableToClipboardButton(no_result_search_result, { delimeter: ";" })}
+    ${downloadTableButton(() => no_result_search_result, { delimeter: ";" })}
 
   </div>
   <div class="card" style="padding: 0;">
     <div style="padding: 1em;">
       <h2>
-        Labels from only 1 source: ${[...outliers].length}/${[...all_partner_data].length}
+        Labels from only 1 source:
+        ${[...outliers].length}/${[...all_partner_data].length}
       </h2>
       <div>${outlier_search}</div>
     </div>
@@ -598,7 +592,7 @@ const filtered_legal_natures_value = Generators.input(
         Inputs.table(outlier_search_result, { width: width, layout: 'auto' })
       )
     }
-    ${copyTableToClipboardButton(outlier_search_result, { delimeter: ";" })}
+    ${downloadTableButton(() => outlier_search_result, { delimeter: ";" })}
 
   </div>
 </div>
@@ -606,6 +600,11 @@ const filtered_legal_natures_value = Generators.input(
 ```js
 const no_result_search = Inputs.search(no_results)
 const no_result_search_result = Generators.input(no_result_search)
+```
+
+```js
+const all_label_search = Inputs.search(all_source_labels)
+const all_label_search_result = Generators.input(all_label_search)
 ```
 
 ```js
@@ -725,6 +724,7 @@ with
       nom_complet,
       project_name,
       source,
+      siren,
     FROM annex_partners
     union
     SELECT
@@ -732,6 +732,7 @@ with
       nom_complet,
       project_name,
       source,
+      siren,
     FROM general_partners
     union
     SELECT
@@ -739,6 +740,7 @@ with
       nom_complet,
       project_name,
       source,
+      siren,
     FROM aap_partners
   ),
   group_all as (
@@ -747,20 +749,60 @@ with
       project_name,
       list(source_label) as source_labels,
       list(source) as sources,
+      siren,
     from union_all
     group by all
   )
 select
+  siren,
   nom_complet,
   project_name,
-  source_labels,
-  -- sources,
 from group_all
-where length(sources) == 3 and nom_complet is not null
+where
+  list_has(sources, 'financed_annex_partners_by_project') or
+  (
+    list_has(sources, 'generality') and
+    list_has(sources, 'partenaires_aap2023') and
+    nom_complet is not null
+  )
+```
+
+```sql id=all_source_labels
+-- Clean tables
+UPDATE general_partners
+  SET project_name = 'RESILIENCE'
+  WHERE project_name = 'RÉSILIENCE';
+UPDATE general_partners
+  SET project_name = 'NEO'
+  WHERE project_name = 'NÉO';
+
+-- merge tables
+WITH
+  union_all AS (
+    SELECT *
+    FROM aap_partners
+    UNION
+    SELECT *
+    FROM annex_partners
+    UNION
+    SELECT *
+    FROM general_partners
+  )
+SELECT
+  source,
+  source_label,
+  --project_name,
+  --project_coordinator,
+  siret,
+  siren,
+  nom_complet,
+  nature_juridique,
+FROM union_all
+GROUP BY ALL;
 ```
 
 ```js
-const debug = true
+const debug = false
 
 if (debug) {
   display("annex_partners")

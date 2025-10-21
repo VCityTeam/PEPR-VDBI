@@ -125,3 +125,15 @@ display(phase_1_data)
   ${downloadTableButton(() => phase_1_data.researchers)}
   <!-- $ -->
 </div>
+<div class="card">
+  <h2>Project socioeconomic partners</h2>
+  <div>
+    ${Inputs.table(phase_1_data.socioeconomic_partners, {
+      layout: "auto",
+    })}
+    <!-- $ -->
+  </div>
+  </br>
+  ${downloadTableButton(() => phase_1_data.socioeconomic_partners)}
+  <!-- $ -->
+</div>

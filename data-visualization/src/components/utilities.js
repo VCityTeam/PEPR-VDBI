@@ -409,7 +409,7 @@ export function copySVGToClipboardButton(
 }
 
 /**
- * A button for downloading a table as a csv.
+ * A button for downloading a table as a csv (tab delimited by default).
  *
  * @param {Function} callback - a callback function to get the data to be downloaded,
  *   rows should contain keys corresponding to the columns of the table
@@ -423,7 +423,7 @@ export function downloadTableButton(
     label = "Download",
     filename = "download.csv",
     columns = null,
-    delimeter = ",",
+    delimeter = "\t",
   } = {}
 ) {
   return button(label, {
@@ -436,7 +436,11 @@ export function downloadTableButton(
       writeToFile(
         data.reduce(
           (a, v) =>
-            a + columns.map((col) => v[col] || "").join(delimeter) + "\n",
+            a +
+            columns
+              .map((col) => String(v[col]).replace(/(\r\n|\r|\n)/g, " ") || "")
+              .join(delimeter) +
+            "\n",
           columns.join(delimeter) + "\n"
         ),
         filename,
