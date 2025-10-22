@@ -218,7 +218,7 @@ const filter_aap_data = view(
     <h2>Filtered legal nature by SIREN</h2>
     ${filtered_legal_natures_search}<!-- $ -->
   </div>
-  ${Inputs.table(filtered_legal_natures)}
+  ${Inputs.table(filtered_legal_natures_value)}
   <!-- $ -->
   ${downloadTableButton(() => filtered_legal_natures_value, { delimeter: ";" })}
   <!-- $ -->

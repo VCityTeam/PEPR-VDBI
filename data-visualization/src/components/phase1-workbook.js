@@ -333,6 +333,12 @@ export function resolveLabEntities(
 ) {
   return map(sheet, (d) => {
     const lab = {
+      id: d["Identifiant Laboratoire"]
+        ? d["Identifiant Laboratoire"].split(" ")[0]
+        : null,
+      umr: d["Identifiant Laboratoire"].match(/UMR \d*/g)
+        ? d["Identifiant Laboratoire"].match(/UMR \d*/g)[0]
+        : null,
       lab: d["Identifiant Laboratoire"] ? d["Identifiant Laboratoire"] : null,
       name: d["Nom Laboratoire"] ? d["Nom Laboratoire"] : null,
       institution: filterEmptyArray([
@@ -455,6 +461,7 @@ export function extractPhase1Workbook(
       project.labs.map((lab) => ({
         project: project.acronyme,
         lab: lab,
+        umr: lab.match(/UMR \d*/g),
       }))
     )
     // delete project.labs

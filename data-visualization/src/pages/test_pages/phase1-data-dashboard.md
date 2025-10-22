@@ -24,8 +24,17 @@ const workbook = FileAttachment(
 ).xlsx()
 ```
 
+```js
+const financed_only = view(
+  Inputs.toggle({ label: "Only financed projects?", value: true })
+)
+```
+
 ```js echo
 const phase_1_data = extractPhase1Workbook(workbook, false)
+phase_1_data.projects = phase_1_data.projects.filter((project) =>
+  financed_only ? project.financed : true
+)
 display(phase_1_data)
 ```
 
