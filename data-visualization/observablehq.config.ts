@@ -124,6 +124,10 @@ export default {
           path: 'pages/test_pages/parallel-sets',
         },
         {
+          name: 'Chord diagram',
+          path: 'pages/test_pages/chord-diagram',
+        },
+        {
           name: 'Word Clouds',
           path: 'pages/test_pages/word-cloud',
         },
