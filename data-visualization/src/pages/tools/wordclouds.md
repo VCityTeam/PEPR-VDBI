@@ -77,7 +77,7 @@ import {
       label: "Occurrences",
     },
     marks: [
-      Plot.barX([...selected_wordcount_value], {
+      Plot.barX(filtered_wordcount, {
         y: "text",
         x: "value",
         fill: "value",
@@ -87,16 +87,14 @@ import {
   }))}
   <!-- $ -->
 </div>
-<div class="card">${Inputs.table(selected_wordcount_value)}</div>
+<div class="card">${Inputs.table(filtered_wordcount)}</div>
 
 ```js
 const _invalidator_1 = refresh
 
 const cloud = resize((width) =>
   wordCloud(
-    [...selected_wordcount_value]
-      .slice(0, selected_word_limit_value)
-      .map((d) => (d.toJSON ? d.toJSON() : d)),
+    filtered_wordcount,
     {
       width: width,
       height: width * 0.56,
@@ -215,6 +213,12 @@ const selected_angle_number_value = Generators.input(selected_angle_number)
 const selected_angle_width_value = Generators.input(selected_angle_width)
 const selected_angle_offset_value = Generators.input(selected_angle_offset)
 const selected_word_limit_value = Generators.input(selected_word_limit)
+```
+
+```js
+const filtered_wordcount = [...selected_wordcount_value]
+  .slice(0, selected_word_limit_value)
+  .map((d) => (d.toJSON ? d.toJSON() : d))
 ```
 
 ```js
