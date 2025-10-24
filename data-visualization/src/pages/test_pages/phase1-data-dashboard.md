@@ -31,10 +31,8 @@ const financed_only = view(
 ```
 
 ```js echo
-const phase_1_data = extractPhase1Workbook(workbook, false)
-phase_1_data.projects = phase_1_data.projects.filter((project) =>
-  financed_only ? project.financed : true
-)
+const phase_1_data = extractPhase1Workbook(workbook, false, false, financed_only)
+
 display(phase_1_data)
 ```
 

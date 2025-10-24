@@ -96,13 +96,14 @@ export function resolveGeneralEntities(
 ) {
   return map(sheet, (d) => {
     const mapped_entities = {
-      acronyme: d["ACRONYME Projet"] ? d["ACRONYME Projet"] : null,
+      acronyme: d["ACRONYME Projet"]
+        ? cleanUpProjectLabel(d["ACRONYME Projet"])
+        : null,
       present: String(d["Présent aux journées"]).toUpperCase() == "OUI", // GGE: not needed
       auditioned: String(d["AUDITIONNÉ"]).toUpperCase() == "OUI", // not a list, will this cause a problem with generic map reduce functions looking for lists?
       financed: String(d["Financé"]).toUpperCase() == "OUI", // not a list, will this cause a problem with generic map reduce functions looking for lists?
       budget: d["Budget (demandé) en M€"] ? d["Budget (demandé) en M€"] : null,
-      // grade: d['Note du jury'] ? d['Note du jury'] : null,
-      grade: null,
+      grade: d["Note du jury"] ? d["Note du jury"] : null,
       challenge: d["Défi"] ? d["Défi"] : null,
       name_fr: d["NOM COMPLET FR"] ? d["NOM COMPLET FR"] : null,
       name_en: d["NOM COMPLET ANGLAIS"] ? d["NOM COMPLET ANGLAIS"] : null,
@@ -173,6 +174,9 @@ export function resolveGeneralEntities(
       why: d["POUR QUOI FAIRE"] ? d["POUR QUOI FAIRE"] : null, // empty column?
       notes: d["Notes"] ? d["Notes"] : null, // not empty but almost?
     }
+
+    // clean up labels
+    mapped_entities.acronyme
 
     if (anonymize) {
       mapped_entities.acronyme = pseudoanonymizeEntry(
@@ -288,7 +292,7 @@ export function resolveResearcherEntities(
         D.forEach((row) => {
           // every row in group should corresopond to a project the researcher is in,
           // so add every project
-          researcher.project.push(row["ACRONYME Projet"])
+          researcher.project.push(cleanUpProjectLabel(row["ACRONYME Projet"]))
         })
         if (anonymize) {
           researcher.fullname = anonymizeEntry()
@@ -403,32 +407,55 @@ export function resolveInstitutionEntities(
  * @param {Workbook} workbook - The workbook to extract
  * @param {boolean} pseudoanonymize - pseudoanonymize data or not
  * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
+ * @param {boolean} onlyFinanced - Filter out non-financed projects?
  * @returns {Object[]} An object containing formatted tables
  */
 export function extractPhase1Workbook(
   workbook,
   pseudoanonymize = true,
-  pseudoanonymousDict = new Map()
+  pseudoanonymousDict = new Map(),
+  onlyFinanced = false
 ) {
   const projects = resolveGeneralEntities(
     getGeneralSheet(workbook),
     pseudoanonymize,
     pseudoanonymousDict
-  )
+  ).filter((d) => (onlyFinanced ? d.financed : true))
   const researchers = resolveResearcherEntities(
     getResearcherSheet(workbook),
     pseudoanonymize,
     pseudoanonymousDict
+  ).filter((researcher) =>
+    onlyFinanced
+      ? projects.some(({ acronyme }) => researcher.project.includes(acronyme))
+      : true
   )
+  researchers.forEach(
+    (d) =>
+      (d.project = d.project.filter((projet) =>
+        onlyFinanced
+          ? projects.some(({ acronyme }) => projet === acronyme)
+          : true
+      ))
+  )
+
   const laboratories = resolveLabEntities(
     getLabSheet(workbook),
     pseudoanonymize,
     pseudoanonymousDict
+  ).filter((lab) =>
+    onlyFinanced ? projects.some(({ labs }) => labs.includes(lab.lab)) : true
   )
   const universities = resolveInstitutionEntities(
     getInstitutionSheet(workbook),
     pseudoanonymize,
     pseudoanonymousDict
+  ).filter((university) =>
+    onlyFinanced
+      ? projects.some(({ institutions }) =>
+          institutions.includes(university.name)
+        )
+      : true
   )
 
   // Extract socioeconomic partners from projects
@@ -461,7 +488,7 @@ export function extractPhase1Workbook(
       project.labs.map((lab) => ({
         project: project.acronyme,
         lab: lab,
-        umr: lab.match(/UMR \d*/g),
+        // umr: lab.match(/UMR \d*/g),
       }))
     )
     // delete project.labs
@@ -520,6 +547,16 @@ export function extractPhase1Workbook(
     project_by_universities,
     socioeconomic_partners,
   }
+}
+
+/**
+ * Clean up a project label.
+ *
+ * @param {string} label - The project label to clean up
+ * @returns {string} The cleaned-up project label
+ */
+function cleanUpProjectLabel(label) {
+  return label.toUpperCase().replace(/É/g, "E")
 }
 
 /**

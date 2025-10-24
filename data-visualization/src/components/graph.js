@@ -126,7 +126,7 @@ export function mapTableToTriples(
 
   data.forEach((row) => {
     // create node
-    nodes.push({ id: row[id_key], type: id_key })
+    nodes.push({ id: row[id_key], label: row[id_key], type: id_key })
 
     // iterate though every entry of each row
     for (const [key, value] of Object.entries(row)) {
@@ -142,7 +142,7 @@ export function mapTableToTriples(
       } else if (typeof value == "string" || typeof value == "number") {
         // create target node if necessary
         if (!nodes.some(({ id, type }) => id == value && type == key))
-          nodes.push({ id: value, type: key })
+          nodes.push({ id: value, label: value, type: key })
 
         // push value of row properties to graph
         links.push({ source: row[id_key], label: key, target: value })
@@ -156,7 +156,7 @@ export function mapTableToTriples(
 
           // create target node if necessary
           if (!nodes.some(({ id, type }) => id == element && type == key))
-            nodes.push({ id: element, type: key })
+            nodes.push({ id: element, label: element, type: key })
 
           // push value of row Array elements to graph
           links.push({

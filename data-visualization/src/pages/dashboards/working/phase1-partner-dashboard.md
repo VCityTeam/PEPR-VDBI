@@ -103,25 +103,6 @@ phase_1_data.forEach(({ acronyme, institutions, labs, partners }) => {
   partners.forEach((partner) => partner_set.add(partner))
 })
 
-// add total -> partner links
-phase_1_partner_links.push({
-  source: "Partenaires du PEPR VDBI",
-  target: "Établissements d'enseignement supérieur",
-  value: institution_set.size,
-})
-
-phase_1_partner_links.push({
-  source: "Partenaires du PEPR VDBI",
-  target: "Laboratoires de recherche",
-  value: lab_set.size,
-})
-
-phase_1_partner_links.push({
-  source: "Partenaires du PEPR VDBI",
-  target: "Socio-économiques",
-  value: partner_set.size,
-})
-
 const phase_1_partner_graph = parseTabularGraph(phase_1_partner_links)
 // remove duplicate partner counts
 phase_1_partner_graph.nodes.find(

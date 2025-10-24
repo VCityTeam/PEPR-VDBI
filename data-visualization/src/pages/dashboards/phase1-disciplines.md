@@ -143,7 +143,7 @@ console.debug("selected_project_data", selected_project_data)
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Researcher laboratory ERC disciplines</h2>
+    <h2>Researcher ERC discipline</h2>
     ${resize((width) => donutChart(
       selected_project_data.discipline_erc_count,
       {

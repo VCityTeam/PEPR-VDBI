@@ -202,12 +202,25 @@ sql:
         }),
       )
     }
-    
+
   </div>
   <div class="card">
     <h2>Project Knowledge Graph</h2>
     <div style="padding-bottom: 5px;">${project_triples_predicate_select_input}</div>
-    <div style="overflow: auto;">${resize((width) => project_force_graph(width))}</div>
+    <div style="overflow: auto;">
+      ${resize((width) =>
+        new Graph(
+          filtered_project_triples,
+          {
+            id: "project_force_graph",
+            width: width,
+            height: width - 50,
+            color: color,
+          }
+        ).getCanvas()
+      )}
+      <!-- $ -->
+    </div>
   </div>
 </div>
 
@@ -253,8 +266,7 @@ import {
 
 ```js
 import {
-  forceGraph,
-  mapTableToPropertyGraphLinks,
+  Graph,
   mapTableToTriples,
 } from "/components/graph.js"
 ```
@@ -730,16 +742,6 @@ const color = d3
 
 console.debug("project_triples", project_triples)
 console.debug("color", color)
-
-const project_force_graph = (width) =>
-  forceGraph(filtered_project_triples, {
-    id: "project_force_graph",
-    width: width,
-    height: width - 50,
-    color: color,
-    nodeLabelOpacity: 0.2,
-    linkLabelOpacity: 0,
-  })
 ```
 
 <!-- PROJECT FINANCING -->

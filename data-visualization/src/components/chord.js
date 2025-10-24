@@ -3,6 +3,10 @@ import * as d3 from "d3"
 /**
  * Creates a chord diagram based on a matrix.
  *
+ * Adapted from:
+ * - https://www.visualcinnamon.com/2014/12/using-data-storytelling-with-chord.html
+ * - https://www.visualcinnamon.com/2016/06/orientation-gradient-d3-chord-diagram/
+ *
  * @param {Array<Array>} data - a matrix containing the numeric values of the chord
  * ribbons. Percentage values are used by default
  * @param {Array<Number>} names - labels for each row
@@ -18,15 +22,13 @@ export function chordDiagram(
     height = width,
     outerRadius = Math.min(width, height) * 0.5 - 60,
     innerRadius = outerRadius - 10,
+    opacityDefault = 0.8,
     tickStep = d3.tickStep(0, d3.sum(data.flat()), 100),
     formatValue = d3.format(".1~%"),
   } = {}
 ) {
-  const chord = d3
-    .chord()
-    .padAngle(10 / innerRadius)
-    .sortSubgroups(d3.descending)
-    .sortChords(d3.descending)
+  // init chord, color, and svg objects
+  // const chord =
 
   const arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius)
 
@@ -44,14 +46,92 @@ export function chordDiagram(
     .attr("viewBox", [-width / 2, -height / 2, width, height])
     .attr("style", "width: 100%; height: auto; font: 10px sans-serif;")
 
-  const chords = chord(data)
+  const chords = d3
+    .chord()
+    .padAngle(10 / innerRadius)
+    .sortSubgroups(d3.descending)
+    .sortChords(d3.descending)(data)
 
+  // Create the gradient fills
+
+  // Function to create the unique id for each chord gradient
+  function getGradID(d) {
+    return "linkGrad-" + d.source.index + "-" + d.target.index
+  }
+
+  // Create the gradients definitions for each chord
+  var grads = svg
+    .append("defs")
+    .selectAll("linearGradient")
+    .data(chords)
+    .enter()
+    .append("linearGradient")
+    //Create the unique ID for this specific source-target pairing
+    .attr("id", getGradID)
+    .attr("gradientUnits", "userSpaceOnUse")
+    //Find the location where the source chord starts
+    .attr(
+      "x1",
+      (d) =>
+        innerRadius *
+        Math.cos(
+          (d.source.endAngle - d.source.startAngle) / 2 +
+            d.source.startAngle -
+            Math.PI / 2
+        )
+    )
+    .attr(
+      "y1",
+      (d) =>
+        innerRadius *
+        Math.sin(
+          (d.source.endAngle - d.source.startAngle) / 2 +
+            d.source.startAngle -
+            Math.PI / 2
+        )
+    )
+    // Find the location where the target chord starts
+    .attr(
+      "x2",
+      (d) =>
+        innerRadius *
+        Math.cos(
+          (d.target.endAngle - d.target.startAngle) / 2 +
+            d.target.startAngle -
+            Math.PI / 2
+        )
+    )
+    .attr(
+      "y2",
+      (d) =>
+        innerRadius *
+        Math.sin(
+          (d.target.endAngle - d.target.startAngle) / 2 +
+            d.target.startAngle -
+            Math.PI / 2
+        )
+    )
+  // Set the starting color (at 0%)
+  grads
+    .append("stop")
+    .attr("offset", "0%")
+    .attr("stop-color", (d) => color(names[d.source.index]))
+
+  // Set the ending color (at 100%)
+  grads
+    .append("stop")
+    .attr("offset", "100%")
+    .attr("stop-color", (d) => color(names[d.target.index]))
+
+  // add groups, labels, and group ticks
   const group = svg.append("g").selectAll().data(chords.groups).join("g")
 
   group
     .append("path")
     .attr("fill", (d) => color(names[d.index]))
     .attr("d", arc)
+    .on("mouseover", (_e, d) => fade(0.1, d))
+    .on("mouseout", (_e, d) => fade(opacityDefault, d))
 
   group
     .append("title")
@@ -89,14 +169,17 @@ export function chordDiagram(
         : `${names[d.index]} ↓`
     })
 
+  // add ribbons
   svg
     .append("g")
-    .attr("fill-opacity", 0.8)
+    .attr("fill-opacity", opacityDefault)
     .selectAll("path")
     .data(chords)
     .join("path")
+    .classed("ribbon", true)
     .style("mix-blend-mode", "multiply")
-    .attr("fill", (d) => color(names[d.source.index]))
+    .style("fill", (d) => "url(#" + getGradID(d) + ")")
+    // .attr("fill", (d) => color(names[d.source.index]))
     .attr("d", ribbon)
     .append("title")
     .text(
@@ -111,6 +194,15 @@ export function chordDiagram(
               }`
         }`
     )
+
+  // an event handler for fading a given chord group.
+  function fade(opacity, datum) {
+    svg
+      .selectAll("path.ribbon")
+      .filter((d) => d.source.index != datum.index && d.target.index !== datum.index)
+      .transition()
+      .style("opacity", opacity)
+  }
 
   return svg.node()
 }

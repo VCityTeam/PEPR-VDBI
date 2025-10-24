@@ -2,7 +2,9 @@
 
 This page was converted, adapted, and extended from [this notebook](https://observablehq.com/@d3/chord-diagram).
 
-The outer arcs in this [chord diagram](https://d3js.org/d3-chord) show the proportion of survey respondents owning a particular brand of phone, while the inner chords show the brand of these individuals’ previous phone.
+The outer arcs in this [chord diagram](https://d3js.org/d3-chord) show the
+proportion of survey respondents owning a particular brand of phone, while the
+inner chords show the brand of these individuals’ previous phone.
 Hence, this chart shows how the consumers shift between brands.
 Data via [Nadieh Bremer](https://www.visualcinnamon.com/2014/12/using-data-storytelling-with-chord.html).
 
@@ -171,7 +173,13 @@ const data = Object.assign(
 )
 ```
 
-## Chord diagram of projects and labs
+## Chord diagram with color gradients
+
+If the different categories in the diagram are symmetric or are not directional,
+the ribbons of the diagram should use color gradients as detailed in
+[this article](https://www.visualcinnamon.com/2016/06/orientation-gradient-d3-chord-diagram/)
+and using [this gist](https://gist.github.com/nbremer/a23f7f85f30f5cd9e1e8602a5a4e6d75)
+code
 
 ```js echo
 import * as chord from "/components/chord.js"
@@ -197,6 +205,7 @@ const phase_1_data = extractPhase1Workbook(workbook, false)
 ```js echo
 display(partners_by_labs)
 display([...project_lab_intersection_matrix])
+display(total_labs)
 display(chord_projects_partners)
 ```
 
@@ -206,9 +215,7 @@ const partners_by_labs = new Map(
     .filter((d) => d.financed)
     .map((d) => [d.acronyme, new Set(d.labs)])
 )
-const total_labs = partners_by_labs
-  .values()
-  .reduce((total, lab_set) => total + lab_set.size, 0)
+const total_labs = new Set(d3.merge(partners_by_labs.values())).size
 
 const project_lab_intersection_matrix = d3
   .cross(
@@ -225,10 +232,11 @@ const project_lab_intersection_matrix = d3
     []
   )
 
-const colors = d3.schemeCategory10.slice(0, 8)
 const chord_projects_partners = chord.chordDiagram(
   project_lab_intersection_matrix,
   [...partners_by_labs.keys()],
-  colors
+  partners_by_labs.keys().map((d) => project_color_scale(d))
 )
 ```
+
+### With projects and labs
