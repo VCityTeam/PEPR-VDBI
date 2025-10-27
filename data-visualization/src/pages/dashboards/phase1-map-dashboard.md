@@ -2,6 +2,8 @@
 sql:
   # annex_partners: /data/partners_by_project_annex.csv
   general_partners: /data/partners_general.csv
+  labs: /data/labs.csv
+  projects_by_partner: /data/projects_by_partner.csv
   aap_partners: /data/private/partenaires_aap2023.csv
   terrain_locations: /data/project_summary_terrain_locations.csv
   project_summaries: /data/private/project_summary.csv
@@ -141,9 +143,9 @@ const terrain_legend_type = view(
     <!-- $ -->
   </div>
   <div>
-    ${copy_map_to_clipboard_french}
-    ${copy_map_to_clipboard_idf}
-    ${copy_map_to_clipboard_italy}
+    ${download_map_france}
+    ${download_map_idf}
+    ${download_map_italy}
     <!-- $ -->
   </div>
 </div>
@@ -214,8 +216,8 @@ const selected_partner_project = view(
 ```
 
 <div style="display: flex">
-  ${open_choropleth_france}
-  ${open_choropleth_idf}
+  ${download_choropleth_france}
+  ${download_choropleth_idf}
   <!-- ${open_choropleth_italy} -->
   <!-- $ -->
 </div>
@@ -225,12 +227,49 @@ const selected_partner_project = view(
     class="card grid-colspan-2 grid-rowspan-2"
     style="padding: 12px;"
   >
-    ${resize((width, height) => choroplethFrance(width, height))}
+    ${resize((width, height) => choroplethFrance(
+      width,
+      height,
+      ({ properties }) => project_partners_by_code.get(properties.code))
+    )}
     <!-- $ -->
   </div>
   <div id="choropleth-container-idf" class="card" style="padding: 12px;">
-    ${resize((width) => choroplethIdf(width))}
+    ${resize((width) => choroplethIdf(
+      width,
+      ({ properties }) => project_partners_by_code.get(properties.code)
+    ))}
     <!-- $ -->
+  </div>
+</div>
+
+## Laboratories by ERC domain
+
+<div style="display: flex">
+  ${download_lab_choropleth_france}
+  ${download_lab_choropleth_idf}
+</div>
+<div class="grid grid-cols-3">
+  <div
+    id="lab-choropleth-container-france"
+    class="card grid-colspan-2 grid-rowspan-2"
+    style="padding: 12px;"
+  >
+    ${resize((width, height) => choroplethFrance(
+      width,
+      height,
+      ({ properties }) => lab_disciplines_by_code.get(properties.code),
+      "- Laboratoires par département, France",
+    ))}
+
+  </div>
+  <div id="lab-choropleth-container-idf" class="card" style="padding: 12px;">
+    ${resize((width) => choroplethIdf(
+      width,
+      ({ properties }) => lab_disciplines_by_code.get(properties.code),
+      "- Laboratoires par département, Île-de-France",
+    ))}
+
   </div>
   <!-- <div id="choropleth-container-italy" class="card" style="padding: 12px;">
     ${resize((width) => choroplethItaly(width))}
@@ -275,6 +314,28 @@ const project_partners_by_code = new Map(
     )
     .filter((d) => d[1] > 0)
 )
+```
+
+```js
+const lab_disciplines_by_code = new Map(
+  d3
+    .rollups(
+      [...labs],
+      (D) =>
+        D.reduce(
+          (a, v) =>
+            selected_partner_project == "All" ||
+            v.projet == selected_partner_project
+              ? a + 1
+              : a,
+          0
+        ),
+      (d) => d.code_postal
+    )
+    .filter((d) => d[1] > 0)
+)
+
+console.debug("lab_disciplines_by_code", lab_disciplines_by_code)
 ```
 
 ```sql id=all_partner_data
@@ -441,6 +502,17 @@ from labeled_terrain_locations
 join labeled_project_terrains_by_scale
 on labeled_project_terrains_by_scale.terrain_label = labeled_terrain_locations.terrain_label
 group by all
+```
+
+```sql id=labs
+select
+  "ID primaire",
+  projet,
+  "code_postal"[0:2] as code_postal,
+  code_panel_erc,
+from labs
+join projects_by_partner
+on label = source_label
 ```
 
 ```js
@@ -696,8 +768,6 @@ const labeled_france_projection = {
   domain: d3.geoCircle().center([2, 47.3]).radius(5)(),
 }
 
-display(france_geojson)
-
 const defaultProjection = (width, height, projection, marks, caption = "") =>
   Plot.plot({
     width: width,
@@ -935,12 +1005,16 @@ const color_config = {
   // nice: true,
 }
 
-const choroplethFrance = (width, height) =>
+const choroplethFrance = (
+  width,
+  height,
+  fill,
+  caption = "- Partenaires des projets par département, France"
+) =>
   Plot.plot({
     width: width,
     height: height - 60,
-    caption:
-      "- Partenaires des projets par département et Île-de-France, France",
+    caption: caption,
     // "- Project partners by department and Île-de-France, France",
     color: color_config,
     projection: france_projection,
@@ -950,17 +1024,21 @@ const choroplethFrance = (width, height) =>
           Department: ({ properties }) => properties.nom,
         },
         tip: true,
-        fill: ({ properties }) => project_partners_by_code.get(properties.code),
+        fill: fill,
         strokeOpacity: 0,
       }),
       [...mainland_france_choropleth_marks],
     ],
   })
 
-const choroplethIdf = (width) =>
+const choroplethIdf = (
+  width,
+  fill,
+  caption = "- Partenaires des projets par département, Île-de-France"
+) =>
   Plot.plot({
     width: width,
-    caption: "- Project partners by department, Île-de-France",
+    caption: caption,
     color: color_config,
     projection: idf_projection,
     marks: [
@@ -969,7 +1047,7 @@ const choroplethIdf = (width) =>
           Department: ({ properties }) => properties.nom,
         },
         tip: true,
-        fill: ({ properties }) => project_partners_by_code.get(properties.code),
+        fill: fill,
       }),
       [...idf_choropleth_marks],
     ],
@@ -1002,42 +1080,47 @@ const choroplethIdf = (width) =>
 ```
 
 ```js
-const copy_map_to_clipboard_french = downloadSVGButton(
+const download_map_france = downloadSVGButton(
   "#map-container-france svg",
   "Download French project terrains map",
   `${selected_terrain_project}_france_terrains_map.svg`
 )
 
-const copy_map_to_clipboard_idf = downloadSVGButton(
+const download_map_idf = downloadSVGButton(
   "#map-container-idf svg",
   "Download Grand Métropole de Paris project terrains map",
   `${selected_terrain_project}_paris_terrains_map.svg`
 )
 
-const copy_map_to_clipboard_italy = downloadSVGButton(
+const download_map_italy = downloadSVGButton(
   "#map-container-italy svg",
   "Download Italian project terrains map",
   `${selected_terrain_project}_italy_terrains_map.svg`
 )
 
-const open_choropleth_france = downloadSVGButton(
+const download_choropleth_france = downloadSVGButton(
   "#choropleth-container-france svg",
   "Download French choropleth partner map",
   `${selected_partner_project}_france_partner_choropleth.svg`
 )
 
-const open_choropleth_idf = downloadSVGButton(
+const download_choropleth_idf = downloadSVGButton(
   "#choropleth-container-idf svg",
   "Download Île-de-France choropleth partner map",
   `${selected_partner_project}_idf_partner_choropleth.svg`
 )
 
-// const open_choropleth_italy =
-// downloadSVGButton(
-// "#choropleth-container-italy svg",
-// "Download Italian choropleth partner map",
-//   `${selected_partner_project}_italy_partner_choropleth.svg`
-// )
+const download_lab_choropleth_france = downloadSVGButton(
+  "#lab-choropleth-container-france svg",
+  "Download French choropleth lab partner map",
+  `${selected_partner_project}_france_lab_partner_choropleth.svg`
+)
+
+const download_lab_choropleth_idf = downloadSVGButton(
+  "#lab-choropleth-container-idf svg",
+  "Download Île-de-France choropleth lab partner map",
+  `${selected_partner_project}_idf_lab_partner_choropleth.svg`
+)
 ```
 
 <!-- debugging info -->
@@ -1089,4 +1172,5 @@ console.debug(
 )
 console.debug("terrain_partners_by_code", terrain_partners_by_code)
 console.debug("project_partners_by_code", project_partners_by_code)
+console.debug("lab_disciplines_by_code", lab_disciplines_by_code)
 ```

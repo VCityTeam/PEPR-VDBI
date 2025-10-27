@@ -292,7 +292,11 @@ export function resolveResearcherEntities(
         D.forEach((row) => {
           // every row in group should corresopond to a project the researcher is in,
           // so add every project
-          researcher.project.push(cleanUpProjectLabel(row["ACRONYME Projet"]))
+          researcher.project.push(
+            row["ACRONYME Projet"]
+              ? cleanUpProjectLabel(row["ACRONYME Projet"])
+              : null
+          )
         })
         if (anonymize) {
           researcher.fullname = anonymizeEntry()

@@ -1,66 +1,96 @@
+---
+sql:
+  partners: /data/partners.csv
+  labs: /data/labs.csv
+  projects_by_partner: /data/projects_by_partner.csv
+  lab_disciplines_ERC: /data/lab_disciplines_ERC.csv
+  lab_disciplines_HCERES: /data/lab_disciplines_HCERES.csv
+---
+
 # PEPR VDBI laboratories
 
 <div class="card">
-  <h2>title</h2>
-  <div style="height: 250px;">
-    ${resize((width, height) => conditionHeatmap(width, height))}
+  ${heatmap()}
   
-  </div>
 </div>
-
-```js
-import { extractPhase1Workbook } from "/components/phase1-workbook.js"
-```
+${downloadSVGButton(".card svg")}
+<!-- $ -->
 
 ```js
 import { project_color_scale } from "/components/color.js"
+import { downloadSVGButton } from "/components/utilities.js"
 ```
 
 ```js
-const workbook = await FileAttachment(
-  "/data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
-).xlsx()
+const debug = false
+if (debug) {
+  display("partners")
+  display(Inputs.table(sql`select * from partners`))
+  display("labs")
+  display(Inputs.table(sql`select * from labs`))
+  display("projects_by_partner")
+  display(Inputs.table(sql`select * from projects_by_partner`))
+  display("lab_disciplines_ERC")
+  display(Inputs.table(sql`select * from lab_disciplines_ERC`))
+  display("lab_disciplines_HCERES")
+  display(Inputs.table(sql`select * from lab_disciplines_HCERES`))
+  display("projects_by_disciplines")
+  display(Inputs.table(projects_by_disciplines))
+}
+```
 
-const phase_1_data = extractPhase1Workbook(workbook, false, false, true)
-display(phase_1_data)
+```sql id=erc_disciplines
+select distinct discipline from lab_disciplines_ERC
+```
+
+```sql id=projects
+select distinct projet from projects_by_partner
+```
+
+```sql id=projects_by_disciplines
+select
+  projet,
+  regexp_extract(discipline, '[0-z]*') as discipline,
+  discipline[:25] as full_discipline,
+from lab_disciplines_ERC
+join projects_by_partner
+on lab_disciplines_ERC.lab = projects_by_partner.source_label
 ```
 
 ```js
-const erc_disciplines = new Set(
-  phase_1_data.laboratories_by_disciplines_erc.map((d) => d.discipline)
-)
-const projects = new Set(phase_1_data.projects.map((d) => d.acronyme))
-
-function conditionHeatmap(width, height) {
+function heatmap() {
   return Plot.plot({
-    width,
-    height,
-    marginRight: 10,
-    marginLeft: 100,
-    r: { range: [4, 20] },
-    y: {
-      domain: erc_disciplines,
-      // domain: ["Undetermined", "Low", "Significant", "High"],
-      label: "Hazard potential",
-      grid: true,
-      reverse: true,
-    },
+    title: "Projets par disciplines ERC laboratoires",
+    width: 500,
+    height: 600,
+    marginRight: 150,
+    marginLeft: 10,
+    marginBottom: 70,
+    grid: true,
+    // r: { range: [1, 15] },
     x: {
-      domain: projects,
-      label: "Condition",
-      grid: true,
+      label: "Projet",
+      tickRotate: 30,
     },
-    color: { domain: projects, range: project_color_scale.range(), label: "Condition" },
+    y: {
+      label: "Discipline",
+      axis: "right",
+    },
+    color: {
+      range: project_color_scale.range(),
+      label: "Project",
+    },
     marks: [
       Plot.dot(
-        phase_1_data.laboratories_by_disciplines_erc,
+        projects_by_disciplines,
         Plot.group(
           { r: "count" },
           {
-            y: "hazardPotential",
-            x: "conditionAssessment",
+            x: "projet",
+            y: "full_discipline",
+            fill: "projet",
+            stroke: "black",
             tip: true,
-            fill: "conditionAssessment",
           }
         )
       ),
