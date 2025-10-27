@@ -194,7 +194,7 @@ const terrain_legend_type = view(
   </div>
 </div>
 
-## Projects by Partner locations
+## Projects by partner and stakeholder locations
 
 ```js
 const selected_partner_project = view(
@@ -243,7 +243,16 @@ const selected_partner_project = view(
   </div>
 </div>
 
-## Laboratories by ERC domain
+${Inputs.table(
+  [...all_partner_data]
+  .filter((d) =>
+    selected_partner_project == "All" ||
+    d.project_name == selected_partner_project
+  ),
+  { layout: "auto" }
+)}<!-- $ -->
+
+## Participating Laboratories
 
 <div style="display: flex">
   ${download_lab_choropleth_france}
@@ -380,7 +389,7 @@ SELECT
   -- region,
   -- list_distinct(list(project_coordinator)) AS project_coordinator,
   -- list_distinct(list(source)) AS sources,
-  -- list_distinct(list(source_label)) AS source_labels,
+  source_label,
   -- count() as count,
 FROM general_partners
 -- FROM union_all
@@ -996,9 +1005,9 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
 const color_config = {
   scheme: "Blues",
   label:
-    "Nombre de partenaires " +
+    "N° de partenaires et de parties prenantes " +
     (selected_partner_project == "All" ? "" : selected_partner_project),
-  // label: "# of Partners",
+  // label: "N° of Partners",
   legend: true,
   // type: "log",
   zero: true,
@@ -1009,7 +1018,7 @@ const choroplethFrance = (
   width,
   height,
   fill,
-  caption = "- Partenaires des projets par département, France"
+  caption = "- Partenaires et parties prenantes des projets par département, France"
 ) =>
   Plot.plot({
     width: width,
@@ -1022,6 +1031,9 @@ const choroplethFrance = (
       Plot.geo(mainland_france_departements_geojson, {
         channels: {
           Department: ({ properties }) => properties.nom,
+          Code: ({ properties }) => properties.code,
+          Lat: (d) => d3.geoCentroid(d)[0],
+          Lon: (d) => d3.geoCentroid(d)[1],
         },
         tip: true,
         fill: fill,
@@ -1034,7 +1046,7 @@ const choroplethFrance = (
 const choroplethIdf = (
   width,
   fill,
-  caption = "- Partenaires des projets par département, Île-de-France"
+  caption = "- Partenaires et parties prenantes des projets par département, Île-de-France"
 ) =>
   Plot.plot({
     width: width,
@@ -1045,6 +1057,9 @@ const choroplethIdf = (
       Plot.geo(idf_departements_geojson, {
         channels: {
           Department: ({ properties }) => properties.nom,
+          Code: ({ properties }) => properties.code,
+          Lat: (d) => d3.geoCentroid(d)[0],
+          Lon: (d) => d3.geoCentroid(d)[1],
         },
         tip: true,
         fill: fill,

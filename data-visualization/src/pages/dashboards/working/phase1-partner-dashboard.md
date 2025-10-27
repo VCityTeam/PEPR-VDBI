@@ -39,7 +39,9 @@ import {
 import { extractPhase1Workbook } from "/components/phase1-workbook.js"
 ```
 
-## Partner overview
+```sql
+select * from annex_partners
+```
 
 <div class="card">
   <h2>Simplified Partners by project</h2>
@@ -374,19 +376,13 @@ function filterResults(d) {
   if (filter_no_result && !d.siren) {
     return false
   }
-  if (
-    filter_annex_data &&
-    d.sources.includes("financed_annex_partners_by_project")
-  ) {
-    return false
-  }
-  if (filter_general_data && d.sources.includes("generality")) {
-    return false
-  }
-  if (filter_aap_data && d.sources.includes("partenaires_aap2023")) {
-    return false
-  }
-  return true
+  const sources = new Set(d.sources)
+
+  if (filter_annex_data) sources.delete("financed_annex_partners_by_project")
+  if (filter_general_data) sources.delete("generality")
+  if (filter_aap_data) sources.delete("partenaires_aap2023")
+
+  return sources.size > 0
 }
 ```
 
