@@ -1,7 +1,8 @@
 ---
 sql:
-  # annex_partners: /data/partners_by_project_annex.csv
+  annex_partners: /data/partners_by_project_annex.csv
   general_partners: /data/partners_general.csv
+  socioeco_partners: /data/socioeco_partners.csv
   labs: /data/labs.csv
   projects_by_partner: /data/projects_by_partner.csv
   aap_partners: /data/private/partenaires_aap2023.csv
@@ -9,6 +10,9 @@ sql:
   project_summaries: /data/private/project_summary.csv
   project_terrains_by_scale: /data/private/project_summary_terrains.csv
 ---
+
+${Inputs.table(all_partner_data, {layout: "auto"})}
+<!-- $ -->
 
 # Phase 1 Cartography
 
@@ -21,7 +25,7 @@ sql:
 import {
   countEntities,
   sparkbar,
-  copyTableToClipboardButton,
+  downloadTableButton,
   downloadSVGButton,
   writeToFile,
 } from "/components/utilities.js"
@@ -87,7 +91,7 @@ const selected_terrain_project = view(
     [
       "All",
       // ...[...(await sql`select "Nom projet" from project_summaries`)]
-      ...[...all_partner_data].map((d) => d.project_name),
+      ...[...all_partner_data].map((d) => d.projet),
     ],
     {
       multiple: false,
@@ -97,30 +101,6 @@ const selected_terrain_project = view(
       value: "All",
     }
   )
-)
-```
-
-```js
-const copy_to_clipboard_terrain_data_by_city = copyTableToClipboardButton(
-  [...terrain_data_by_city],
-  {
-    label: "Copy terrain data by location to clipboard",
-    delimeter: ";",
-  }
-)
-
-const copy_to_clipboard_terrain_data = copyTableToClipboardButton(
-  [...terrain_data],
-  {
-    label: "Copy terrain and scale data to clipboard",
-  }
-)
-const copy_to_clipboard_all_partner_data = copyTableToClipboardButton(
-  [...all_partner_data],
-  {
-    label: "Copy partner data by project to clipboard",
-    delimeter: ";",
-  }
 )
 ```
 
@@ -137,9 +117,29 @@ const terrain_legend_type = view(
 
 <div style="display: flex">
   <div>
-    ${copy_to_clipboard_terrain_data_by_city}
-    ${copy_to_clipboard_terrain_data}
-    ${copy_to_clipboard_all_partner_data}
+    ${downloadTableButton(
+      () => [...terrain_data_by_city].map((d) => d.toJSON()),
+      {
+        label: "Download terrains by location data",
+        delimeter: "\t",
+      }
+    )}
+    <!-- $ -->
+    ${downloadTableButton(
+      () => [...terrain_data].map((d) => d.toJSON()),
+      {
+        label: "Download terrain and scale data",
+        delimeter: "\t",
+      }
+    )}
+    <!-- $ -->
+    ${downloadTableButton(
+      () => [...all_partner_data].map((d) => d.toJSON()),
+      {
+        label: "Download partners by project data",
+        delimeter: "\t",
+      }
+    )}
     <!-- $ -->
   </div>
   <div>
@@ -202,7 +202,7 @@ const selected_partner_project = view(
     [
       "All",
       // ...[...(await sql`select "Nom projet" from project_summaries`)]
-      ...[...all_partner_data].map((d) => d.project_name),
+      ...[...all_partner_data].map((d) => d.projet),
     ],
     {
       multiple: false,
@@ -230,27 +230,18 @@ const selected_partner_project = view(
     ${resize((width, height) => choroplethFrance(
       width,
       height,
-      ({ properties }) => project_partners_by_code.get(properties.code))
-    )}
+      ({ properties }) => (project_partners_by_code.get(properties.code) > 0 ? 1 : 0)
+    ))}
     <!-- $ -->
   </div>
   <div id="choropleth-container-idf" class="card" style="padding: 12px;">
     ${resize((width) => choroplethIdf(
       width,
-      ({ properties }) => project_partners_by_code.get(properties.code)
+      ({ properties }) => (project_partners_by_code.get(properties.code) > 0 ? 1 : 0)
     ))}
     <!-- $ -->
   </div>
 </div>
-
-${Inputs.table(
-  [...all_partner_data]
-  .filter((d) =>
-    selected_partner_project == "All" ||
-    d.project_name == selected_partner_project
-  ),
-  { layout: "auto" }
-)}<!-- $ -->
 
 ## Participating Laboratories
 
@@ -295,12 +286,12 @@ const terrain_partners_by_code = new Map(
       D.reduce(
         (a, v) =>
           selected_terrain_project == "All" ||
-          v.project_name == selected_terrain_project
+          v.projet == selected_terrain_project
             ? a + 1
             : a,
         0
       ),
-    (d) => (d.code_postal ? d.code_postal.slice(0, 2) : null)
+    (d) => (d.code_postal ? String(d.code_postal).slice(0, 2) : null)
   )
 )
 ```
@@ -314,12 +305,12 @@ const project_partners_by_code = new Map(
         D.reduce(
           (a, v) =>
             selected_partner_project == "All" ||
-            v.project_name == selected_partner_project
+            v.projet == selected_partner_project
               ? a + 1
               : a,
           0
         ),
-      (d) => (d.code_postal ? d.code_postal.slice(0, 2) : null)
+      (d) => (d.code_postal ? String(d.code_postal).slice(0, 2) : null)
     )
     .filter((d) => d[1] > 0)
 )
@@ -348,6 +339,45 @@ console.debug("lab_disciplines_by_code", lab_disciplines_by_code)
 ```
 
 ```sql id=all_partner_data
+WITH user_partner_data AS (
+  SELECT
+    label,
+    "ID primaire",
+    "type",
+    nom_complet,
+    code_postal,
+  FROM socioeco_partners
+  UNION
+  SELECT
+    label,
+    "ID primaire",
+    'LABORATOIRE' AS "type",
+    libelle AS nom_complet,
+    code_postal,
+  FROM labs
+)
+SELECT DISTINCT
+  projet,
+  user_partner_data.label,
+  "ID primaire",
+  user_partner_data.type,
+  nom_complet,
+  code_postal,
+FROM projects_by_partner
+JOIN user_partner_data
+ON projects_by_partner.source_label = user_partner_data.label
+UNION
+SELECT DISTINCT
+  upper(project_name) AS projet,
+  source_label AS label,
+  siret AS "ID primaire",
+  nature_juridique AS "type",
+  nom_complet,
+  code_postal,
+FROM annex_partners
+```
+
+```sql id=all_partner_data_deprecated
 -- Clean tables
 UPDATE general_partners
   SET project_name = 'RESILIENCE'
@@ -1005,20 +1035,22 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
 const color_config = {
   scheme: "Blues",
   label:
-    "N° de partenaires et de parties prenantes " +
+    "N° de partenaires " +
     (selected_partner_project == "All" ? "" : selected_partner_project),
   // label: "N° of Partners",
-  legend: true,
+  legend: false,
+  domain: [0, 2.5],
   // type: "log",
   zero: true,
-  // nice: true,
+  nice: true,
+  // ticks: 2,
 }
 
 const choroplethFrance = (
   width,
   height,
   fill,
-  caption = "- Partenaires et parties prenantes des projets par département, France"
+  caption = "- Partenaires des projets par département, France"
 ) =>
   Plot.plot({
     width: width,
@@ -1034,6 +1066,7 @@ const choroplethFrance = (
           Code: ({ properties }) => properties.code,
           Lat: (d) => d3.geoCentroid(d)[0],
           Lon: (d) => d3.geoCentroid(d)[1],
+          Count: fill,
         },
         tip: true,
         fill: fill,
@@ -1046,7 +1079,7 @@ const choroplethFrance = (
 const choroplethIdf = (
   width,
   fill,
-  caption = "- Partenaires et parties prenantes des projets par département, Île-de-France"
+  caption = "- Partenaires des projets par département, Île-de-France"
 ) =>
   Plot.plot({
     width: width,

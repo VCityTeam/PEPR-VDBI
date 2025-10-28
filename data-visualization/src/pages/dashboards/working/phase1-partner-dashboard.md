@@ -17,46 +17,21 @@ import {
   copyTableToClipboardButton,
   downloadTableButton,
 } from "/components/utilities.js"
-```
-
-```js
 import { parallelSetToGraph, sankeyDiagram } from "/components/sankey.js"
-```
-
-```js
+import { chordDiagram } from "/components/chord.js"
 import { parseTabularGraph } from "/components/graph.js"
-```
-
-```js
 import {
   project_color_scale,
   legal_nature_colors,
   interpolated_legal_nature_color,
 } from "/components/color.js"
-```
-
-```js
 import { extractPhase1Workbook } from "/components/phase1-workbook.js"
-```
-
-```sql
-select * from annex_partners
 ```
 
 <div class="card">
   <h2>Simplified Partners by project</h2>
-  <h3>From generality source</h3>
-  ${resize((width) =>
-    sankeyDiagram(
-      parseTabularGraph(phase_1_partner_links),
-      {
-        width: width,
-        pathMap: () => [],
-        nodeFill: (d) => project_color_scale.unknown('black')(d.id),
-        linkStroke: (d) => legal_nature_colors(Number(d.source.id[6])),
-      }
-    )
-  )}
+  <h3>From financial annexes</h3>
+  ${resize( (width) => partnerChordDiagram(width) )}
   <!-- $ -->
 </div>
 
@@ -72,7 +47,11 @@ const phase_1_data = extractPhase1Workbook(workbook, false).projects.filter(
 )
 
 let phase_1_partner_links = [
-  // {source: "Partenaires du PEPR VDBI", target: "Établissements d'enseignement supérieur", value: },
+  // {
+  //   source: "Partenaires du PEPR VDBI",
+  //   target: "Établissements d'enseignement supérieur",
+  //   value: ""
+  // },
 ]
 const institution_set = new Set()
 const lab_set = new Set()
@@ -123,7 +102,8 @@ display(lab_set)
 display(partner_set)
 display(phase_1_partner_graph)
 
-// TODO this isn't working; should use a chord diagram
+
+const partnerChordDiagram = chordDiagram([],[],[])
 ```
 
 ## Socio-economic partners
@@ -141,12 +121,12 @@ const filter_annex_data = view(
   Inputs.toggle({ label: "Financial annexes", value: false })
 )
 const filter_general_data = view(
-  Inputs.toggle({ label: "AAP generality", value: false })
+  Inputs.toggle({ label: "AAP generality", value: true })
 )
 const filter_aap_data = view(
   Inputs.toggle({
     label: "AAP partenaires_aap2023",
-    value: false,
+    value: true,
   })
 )
 ```
