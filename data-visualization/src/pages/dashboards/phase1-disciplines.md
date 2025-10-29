@@ -1,4 +1,3 @@
-
 # Researcher Disciplines by Project
 
 ```js
@@ -6,7 +5,8 @@ import {
   countEntities,
   cropText,
   exclude,
-  copyTableToClipboardButton,
+  downloadTableButton,
+  downloadSVGButton,
 } from "/components/utilities.js"
 ```
 
@@ -52,70 +52,74 @@ console.debug("selected_project_data", selected_project_data)
   <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Researcher CNU sections</h2>
     <div>${cnu_plot_sort_input}</div>
-    ${resize((width) => Plot.plot(
-      {
-        width: width,
-        height: 800,
-        //height: selected_project_data.cnu_count.length > 10 ? 750 : 500,
-        marginTop: 50,
-        marginRight: cnu_plot_legend_options.marginRight,
-        y: {
-          label: 'CNU',
-          axis: 'right',
-          tickFormat: (d) => cropText(d, 70),
-        },
-        x: {
-          reverse: true,
-          grid: true,
-          axis: 'both',
-          label: 'Occurences',
-        },
-        marks: [
-          Plot.barX(selected_project_data.cnu_count, {
-            y: (d) => d[0],
-            x: (d) => d[1],
-            // fill: (d) => d3
-            // .scaleOrdinal(d3.schemeCategory10)
-            // .domain(cnu_category_map.keys())
-            // .unknown("grey")(getCategoryFromCNU(d[0])),
-            fill: (d) =>
-              colorCNU(d, Math.max(...selected_project_data.cnu_count.map((d) => d[1]))),
-            stroke: 'black',
-            strokeOpacity: 0.1,
-            // sort: {y: "y"},
-            // sort: {y: "-x"},
-            sort: { y: cnu_plot_sort },
-            tip: {
-              format: {
-                fill: false,
-              },
-              lineWidth: 25,
-              textOverflow: 'ellipsis-end',
-            },
-          }),
-          Plot.barX(
-            selected_project_data.cnu_count,
-            Plot.pointerY({
+    <div id="cnu-container">
+      ${resize((width) => Plot.plot(
+        {
+          width: width,
+          height: 800,
+          //height: selected_project_data.cnu_count.length > 10 ? 750 : 500,
+          marginTop: 50,
+          marginRight: cnu_plot_legend_options.marginRight,
+          y: {
+            label: 'CNU',
+            axis: 'right',
+            tickFormat: (d) => cropText(d, 70),
+          },
+          x: {
+            reverse: true,
+            grid: true,
+            axis: 'both',
+            label: 'Occurences',
+          },
+          marks: [
+            Plot.barX(selected_project_data.cnu_count, {
               y: (d) => d[0],
               x: (d) => d[1],
-              fill: 'white',
-              opacity: 0.5,
-            })
-          ),
-          // Plot.text(selected_project_data.cnu_count, {
-          //   x: 0,
-          //   y: (d) => d[1],
-          // })
-        ],
-      }
-    ))}
-    <!-- $ -->
-    <h3>CNU group color legend</h3>
-    <div>${cnu_plot_legend}</div>
-    ${copyTableToClipboardButton(selected_project_data.cnu_count)}
+              fill: (d) =>
+                colorCNU(d, Math.max(...selected_project_data.cnu_count.map((d) => d[1]))),
+              stroke: 'black',
+              strokeOpacity: 0.1,
+              sort: { y: cnu_plot_sort },
+              tip: {
+                format: {
+                  fill: false,
+                },
+                lineWidth: 25,
+                textOverflow: 'ellipsis-end',
+              },
+            }),
+            Plot.barX(
+              selected_project_data.cnu_count,
+              Plot.pointerY({
+                y: (d) => d[0],
+                x: (d) => d[1],
+                fill: 'white',
+                opacity: 0.5,
+              })
+            ),
+            // Plot.text(selected_project_data.cnu_count, {
+            //   x: 0,
+            //   y: (d) => d[1],
+            // })
+          ],
+        }
+      ))}
+      <!-- $ -->
+      ${downloadTableButton(() => selected_project_data.cnu_count)}
+      <!-- $ -->
+      ${downloadSVGButton("#cnu-container svg")}
+      <!-- $ -->
+    </div>
+    <div id="cnu-legend">
+      <h3>CNU group color legend</h3>
+      ${cnu_plot_legend}
+      <!-- $ -->
+      <!-- ${downloadSVGButton("#cnu-legend svg")} -->
+      <!-- $ -->
+    </div>
     <!-- $ -->
   </div>
-  <div class="card">
+  <div id="cnu-group-container" class="card">
     <h2>Researcher CNU groups</h2>
     <!-- <h2>Chercheurs PEPR VDBI par groupe CNU</h2> -->
     ${resize((width) => donutChart(
@@ -139,10 +143,12 @@ console.debug("selected_project_data", selected_project_data)
     <!-- $ -->
     <h3>*Groups are defined by the CNU</h3>
     <!-- <h3>*Les regroupements des sections est définis par le CNU</h3> -->
-    ${copyTableToClipboardButton(selected_project_data.cnu_count_by_category)}
+    ${downloadTableButton(() => selected_project_data.cnu_count_by_category)}
+    <!-- $ -->
+    <!-- ${downloadSVGButton("#cnu-group-container svg")} -->
     <!-- $ -->
   </div>
-  <div class="card">
+  <div id="erc-container" class="card">
     <h2>Researcher ERC discipline</h2>
     ${resize((width) => donutChart(
       selected_project_data.discipline_erc_count,
@@ -161,7 +167,9 @@ console.debug("selected_project_data", selected_project_data)
       }
     ))}
     <!-- $ -->
-    ${copyTableToClipboardButton(selected_project_data.discipline_erc_count)}
+    ${downloadTableButton(() => selected_project_data.discipline_erc_count)}
+    <!-- $ -->
+    <!-- ${downloadSVGButton("#erc-container svg")} -->
     <!-- $ -->
   </div>
 </div>
@@ -188,7 +196,7 @@ const cnu_plot_legend = resize(
         domain: cnu_plot_legend_options.domain,
         range: cnu_plot_legend_options.range,
         type: cnu_plot_legend_options.type,
-        scheme: "Reds",
+        scheme: "Oranges",
       },
     })}
   ${Plot.legend({
@@ -200,7 +208,7 @@ const cnu_plot_legend = resize(
       domain: cnu_plot_legend_options.domain,
       range: cnu_plot_legend_options.range,
       type: cnu_plot_legend_options.type,
-      scheme: "Oranges",
+      scheme: "Greens",
     },
   })}
   ${Plot.legend({
@@ -224,7 +232,7 @@ const cnu_plot_legend = resize(
       domain: cnu_plot_legend_options.domain,
       range: cnu_plot_legend_options.range,
       type: cnu_plot_legend_options.type,
-      scheme: "Purples",
+      scheme: "Reds",
     },
   })}
   ${Plot.legend({
@@ -236,7 +244,7 @@ const cnu_plot_legend = resize(
       domain: cnu_plot_legend_options.domain,
       range: cnu_plot_legend_options.range,
       type: cnu_plot_legend_options.type,
-      scheme: "Greens",
+      scheme: "Purples",
     },
   })}
   ${Plot.legend({

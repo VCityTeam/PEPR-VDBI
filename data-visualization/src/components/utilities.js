@@ -420,7 +420,7 @@ export function copySVGToClipboardButton(
 export function downloadTableButton(
   callback,
   {
-    label = "Download",
+    label = "Download (.csv)",
     filename = "download.csv",
     columns = null,
     delimeter = "\t",
@@ -461,21 +461,14 @@ export function downloadTableButton(
  */
 export function downloadJSONButton(
   callback,
-  {
-    label = "Download",
-    filename = "download.json",
-  } = {}
+  { label = "Download", filename = "download.json" } = {}
 ) {
   return button(label, {
     value: null,
     reduce: () => {
       const data = callback()
       console.debug("downloading data: ", data)
-      writeToFile(
-        JSON.stringify(data, null, 2),
-        filename,
-        "application/json"
-      )
+      writeToFile(JSON.stringify(data, null, 2), filename, "application/json")
     },
   })
 }
@@ -500,7 +493,7 @@ export function downloadJSONButton(
  */
 export function downloadSVGButton(
   selector,
-  label = "Download",
+  label = "Download (.svg)",
   filename = "download.svg"
 ) {
   return button(label, {

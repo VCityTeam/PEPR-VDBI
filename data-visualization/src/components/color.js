@@ -107,39 +107,28 @@ export function getCategoryFromCNU(cnu) {
  */
 export function colorCNU(d, max) {
   const cnu_category = getCategoryFromCNU(d[0])
-  const color_value = d[1] > 1 ? d[1] : 1 // we can't input logarithmic values below 1
-
-  const color = d3.scaleLog([1, max], [0.4, 1])
-  //   .scaleSequential()
-  //   .domain([0, max])
-  //   .interpolator(d3.interpolateGreys)
-  //   .unknown("grey");
+  // calculate color value
+  // note: we can't pass values below 1 to logarithmic scales
+  const color_value = d3.scaleLog([1, max], [0.4, 1])(d[1] > 1 ? d[1] : 1)
 
   // determine color range by category
   if (cnu_category == "Lettres et sciences humaines") {
-    // color.interpolator(d3.interpolateOranges);
-    return d3.interpolateOranges(color(color_value))
+    return d3.interpolateGreens(color_value)
   } else if (cnu_category == "Sections de santé") {
-    // color.interpolator(d3.interpolateGreens);
-    return d3.interpolateGreens(color(color_value))
+    return d3.interpolatePurples(color_value)
   } else if (cnu_category == "Sciences") {
-    // color.interpolator(d3.interpolateBlues);
-    return d3.interpolateBlues(color(color_value))
+    return d3.interpolateBlues(color_value)
   } else if (cnu_category == "Droit, économie et gestion") {
-    // color.interpolator(d3.interpolateReds);
-    return d3.interpolateReds(color(color_value))
+    return d3.interpolateOranges(color_value)
   } else if (cnu_category == "Pluridisciplinaire") {
-    // color.interpolator(d3.interpolatePurples);
-    return d3.interpolatePurples(color(color_value))
+    return d3.interpolateReds(color_value)
   } else if (cnu_category == "Administratif" || exclude(cnu_category)) {
     // use default interpolator
   } else {
     console.error(`color CNU not implemented for ${d[0]}`)
     // use default interpolator
   }
-
-  // return color(d[1]);
-  return d3.interpolateGreys(color(color_value))
+  return d3.interpolateGreys(color_value)
 }
 
 // Legal nature colors //
