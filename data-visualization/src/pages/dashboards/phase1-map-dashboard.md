@@ -246,16 +246,16 @@ const selected_partner_project = view(
     ${resize((width, height) => choroplethFrance(
       width,
       height,
-      ({ properties }) => project_partners_by_code.get(properties.code)
-      //({ properties }) => (project_partners_by_code.get(properties.code) > 0 ? 1 : 0)
+      //({ properties }) => project_partners_by_code.get(properties.code)
+      ({ properties }) => (project_partners_by_code.get(properties.code) > 0 ? 1 : 0)
     ))}
     <!-- $ -->
   </div>
   <div id="choropleth-container-idf" class="card" style="padding: 12px;">
     ${resize((width) => choroplethIdf(
       width,
-      ({ properties }) => project_partners_by_code.get(properties.code)
-      //({ properties }) => (project_partners_by_code.get(properties.code) > 0 ? 1 : 0)
+      //({ properties }) => project_partners_by_code.get(properties.code)
+      ({ properties }) => (project_partners_by_code.get(properties.code) > 0 ? 1 : 0)
     ))}
     <!-- $ -->
   </div>
@@ -287,12 +287,14 @@ const choropleth_data = [...all_partner_data].filter(
     class="card grid-colspan-2 grid-rowspan-2"
     style="padding: 12px;"
   >
-    ${resize((width, height) => choroplethFrance(
-      width,
-      height,
-      ({ properties }) => lab_disciplines_by_code.get(properties.code),
-      "- Laboratoires par département, France",
-    ))}
+    ${resize((width, height) =>
+      choroplethFrance(
+        width,
+        height,
+        ({ properties }) => lab_disciplines_by_code.get(properties.code),
+        "- Laboratoires par département, France",
+      )
+    )}
 
   </div>
   <div id="lab-choropleth-container-idf" class="card" style="padding: 12px;">
@@ -332,7 +334,32 @@ const terrain_partners_by_code = new Map(
 const project_partners_by_code = new Map(
   d3
     .rollups(
-      [...all_partner_data],
+      [...all_partner_data].concat([ // with hardcoded project corrections
+        {
+          projet: "INTEGREEN",
+          code_postal: 95
+        },
+        {
+          projet: "INTEGREEN",
+          code_postal: 93
+        },
+        {
+          projet: "URBHEALTH",
+          code_postal: 95
+        },
+        {
+          projet: "URBHEALTH",
+          code_postal: 78
+        },
+        {
+          projet: "URBHEALTH",
+          code_postal: 92
+        },
+        {
+          projet: "URBHEALTH",
+          code_postal: 91
+        },
+      ]),
       (D) =>
         D.reduce(
           (a, v) =>
@@ -1122,7 +1149,7 @@ const color_config = {
   legend: true,
   marginLeft: 10,
   marginRight: 10,
-  // domain: [0, 2.5],
+  domain: [0, 2.7],
   // type: "log",
   zero: true,
   nice: true,

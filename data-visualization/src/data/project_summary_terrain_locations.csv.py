@@ -34,7 +34,7 @@ def main():
         user_agent="https://github.com/VCityTeam/PEPR-VDBI", timeout=10  # type: ignore
     )
     for terrain in terrains:
-        logging.info(f"processing terrain: {terrain}")
+        logging.debug(f"processing terrain: {terrain}")
 
         # get terrains
         terrain = terrain.strip()
