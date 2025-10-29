@@ -2,7 +2,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "clean": "rm -rf dist && rm -rf .venv && rm -rf node_modules && rm -rf docs/.observablehq/cache",
+    "clean": "rm -rf dist && rm -rf .venv && rm -rf node_modules && rm -rf src/.observablehq/cache",
+    "refresh": "rm -rf src/.observablehq/cache/data",
     "build": "rm -rf dist && observable build",
     "build-jsdoc": "jsdoc ./src/components/* -d jsdoc/",
     "dev": "uv sync && observable preview",

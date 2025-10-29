@@ -16,7 +16,7 @@ def main():
         usecols=["ID primaire", "label", "type"],
         dtype={"ID primaire": str},
     )
-    data = data.loc[data["type"] == "SOCIOECONOMIQUE"].reset_index(drop=True)
+    data = data.loc[data["type"] == "ETABLISSEMENT"].reset_index(drop=True)
 
     for partner in data["ID primaire"]:
         logging.info(f"Fetching data for partner {partner}")

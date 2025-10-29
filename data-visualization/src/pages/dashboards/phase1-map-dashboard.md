@@ -3,6 +3,7 @@ sql:
   annex_partners: /data/partners_by_project_annex.csv
   general_partners: /data/partners_general.csv
   socioeco_partners: /data/socioeco_partners.csv
+  etablissement_partners: /data/etablissement_partners.csv
   labs: /data/labs.csv
   projects_by_partner: /data/projects_by_partner.csv
   aap_partners: /data/private/partenaires_aap2023.csv
@@ -10,9 +11,6 @@ sql:
   project_summaries: /data/private/project_summary.csv
   project_terrains_by_scale: /data/private/project_summary_terrains.csv
 ---
-
-${Inputs.table(all_partner_data, {layout: "auto"})}
-<!-- $ -->
 
 # Phase 1 Cartography
 
@@ -194,7 +192,7 @@ const terrain_legend_type = view(
   </div>
 </div>
 
-## Projects by partner and stakeholder locations
+## Projects by partners
 
 ```js
 const selected_partner_project = view(
@@ -216,8 +214,26 @@ const selected_partner_project = view(
 ```
 
 <div style="display: flex">
-  ${download_choropleth_france}
-  ${download_choropleth_idf}
+  ${downloadSVGButton(
+    "#choropleth-container-france svg:nth-of-type(2)",
+    "Download French choropleth partner map",
+    `${selected_partner_project}_france_partner_choropleth.svg`
+  )}
+  ${downloadSVGButton(
+    "#choropleth-container-france svg:nth-of-type(1)",
+    "Download legend",
+    `${selected_partner_project}_france_partner_choropleth_legend.svg`
+  )}
+  ${downloadSVGButton(
+    "#choropleth-container-idf svg:nth-of-type(2)",
+    "Download Île-de-France choropleth partner map",
+    `${selected_partner_project}_idf_partner_choropleth.svg`
+  )}
+  ${downloadSVGButton(
+    "#choropleth-container-idf svg:nth-of-type(1)",
+    "Download legend",
+    `${selected_partner_project}_idf_partner_choropleth_legend.svg`
+  )}
   <!-- ${open_choropleth_italy} -->
   <!-- $ -->
 </div>
@@ -230,18 +246,34 @@ const selected_partner_project = view(
     ${resize((width, height) => choroplethFrance(
       width,
       height,
-      ({ properties }) => (project_partners_by_code.get(properties.code) > 0 ? 1 : 0)
+      ({ properties }) => project_partners_by_code.get(properties.code)
+      //({ properties }) => (project_partners_by_code.get(properties.code) > 0 ? 1 : 0)
     ))}
     <!-- $ -->
   </div>
   <div id="choropleth-container-idf" class="card" style="padding: 12px;">
     ${resize((width) => choroplethIdf(
       width,
-      ({ properties }) => (project_partners_by_code.get(properties.code) > 0 ? 1 : 0)
+      ({ properties }) => project_partners_by_code.get(properties.code)
+      //({ properties }) => (project_partners_by_code.get(properties.code) > 0 ? 1 : 0)
     ))}
     <!-- $ -->
   </div>
 </div>
+
+<div class="card">
+  ${Inputs.table(choropleth_data, { layout: "auto" })}
+
+</div>
+
+${downloadTableButton(() => [...choropleth_data].map(d => d.toJSON()))}<!-- $ -->
+
+```js
+const choropleth_data = [...all_partner_data].filter(
+  (d) =>
+    selected_partner_project == "All" || d.projet == selected_partner_project
+)
+```
 
 ## Participating Laboratories
 
@@ -347,34 +379,35 @@ WITH user_partner_data AS (
     nom_complet,
     code_postal,
   FROM socioeco_partners
+  -- UNION
+  -- SELECT
+  --   label,
+  --   "ID primaire",
+  --   'LABORATOIRE' AS "type",
+  --   libelle AS nom_complet,
+  --   code_postal,
+  -- FROM labs
   UNION
   SELECT
     label,
     "ID primaire",
-    'LABORATOIRE' AS "type",
-    libelle AS nom_complet,
+    "type",
+    nom_complet,
     code_postal,
-  FROM labs
+  FROM etablissement_partners
 )
 SELECT DISTINCT
   projet,
   user_partner_data.label,
   "ID primaire",
-  user_partner_data.type,
-  nom_complet,
+  -- user_partner_data.type,
+  -- nom_complet,
   code_postal,
+  -- "IGNORE",
 FROM projects_by_partner
 JOIN user_partner_data
 ON projects_by_partner.source_label = user_partner_data.label
-UNION
-SELECT DISTINCT
-  upper(project_name) AS projet,
-  source_label AS label,
-  siret AS "ID primaire",
-  nature_juridique AS "type",
-  nom_complet,
-  code_postal,
-FROM annex_partners
+WHERE NOT "IGNORE"
 ```
 
 ```sql id=all_partner_data_deprecated
@@ -552,6 +585,54 @@ select
 from labs
 join projects_by_partner
 on label = source_label
+```
+
+<!-- saving this for later when we figure out financial annex integration -->
+
+```sql id=partner_project_code
+WITH user_partner_data AS (
+  SELECT
+    label,
+    "ID primaire",
+    "type",
+    nom_complet,
+    code_postal,
+  FROM socioeco_partners
+  UNION
+  SELECT
+    label,
+    "ID primaire",
+    'LABORATOIRE' AS "type",
+    libelle AS nom_complet,
+    code_postal,
+  FROM labs
+),
+user_partner_project_data as (
+  SELECT DISTINCT
+    projet,
+    user_partner_data.label,
+    "ID primaire",
+    user_partner_data.type,
+    -- nom_complet,
+    code_postal,
+  FROM projects_by_partner
+  JOIN user_partner_data
+  ON trim(projects_by_partner.source_label) = trim(user_partner_data.label)
+)
+SELECT
+  projet,
+  "ID primaire",
+  code_postal,
+FROM user_partner_project_data
+UNION
+SELECT DISTINCT
+  upper(project_name) AS projet,
+  -- source_label AS label,
+  siret AS "ID primaire",
+  -- nature_juridique AS "type",
+  -- nom_complet,
+  code_postal,
+FROM annex_partners
 ```
 
 ```js
@@ -1038,35 +1119,31 @@ const color_config = {
     "N° de partenaires " +
     (selected_partner_project == "All" ? "" : selected_partner_project),
   // label: "N° of Partners",
-  legend: false,
-  domain: [0, 2.5],
+  legend: true,
+  marginLeft: 10,
+  marginRight: 10,
+  // domain: [0, 2.5],
   // type: "log",
   zero: true,
   nice: true,
   // ticks: 2,
 }
 
-const choroplethFrance = (
-  width,
-  height,
-  fill,
-  caption = "- Partenaires des projets par département, France"
-) =>
+const choropleth = (width, height, fill, projection, features, caption) =>
   Plot.plot({
     width: width,
     height: height - 60,
     caption: caption,
     // "- Project partners by department and Île-de-France, France",
     color: color_config,
-    projection: france_projection,
+    projection: projection,
     marks: [
-      Plot.geo(mainland_france_departements_geojson, {
+      Plot.geo(features, {
         channels: {
           Department: ({ properties }) => properties.nom,
           Code: ({ properties }) => properties.code,
           Lat: (d) => d3.geoCentroid(d)[0],
           Lon: (d) => d3.geoCentroid(d)[1],
-          Count: fill,
         },
         tip: true,
         fill: fill,
@@ -1076,30 +1153,25 @@ const choroplethFrance = (
     ],
   })
 
-const choroplethIdf = (
-  width,
-  fill,
-  caption = "- Partenaires des projets par département, Île-de-France"
-) =>
-  Plot.plot({
-    width: width,
-    caption: caption,
-    color: color_config,
-    projection: idf_projection,
-    marks: [
-      Plot.geo(idf_departements_geojson, {
-        channels: {
-          Department: ({ properties }) => properties.nom,
-          Code: ({ properties }) => properties.code,
-          Lat: (d) => d3.geoCentroid(d)[0],
-          Lon: (d) => d3.geoCentroid(d)[1],
-        },
-        tip: true,
-        fill: fill,
-      }),
-      [...idf_choropleth_marks],
-    ],
-  })
+const choroplethFrance = (width, height, fill) =>
+  choropleth(
+    width,
+    height,
+    fill,
+    france_projection,
+    mainland_france_departements_geojson,
+    "- Partenaires des projets par département, France"
+  )
+
+const choroplethIdf = (width, fill) =>
+  choropleth(
+    width,
+    width,
+    fill,
+    idf_projection,
+    idf_departements_geojson,
+    "- Partenaires des projets par département, Île-de-France"
+  )
 
 // const choroplethItaly = (width) =>
 //   Plot.plot({
@@ -1144,18 +1216,6 @@ const download_map_italy = downloadSVGButton(
   "#map-container-italy svg",
   "Download Italian project terrains map",
   `${selected_terrain_project}_italy_terrains_map.svg`
-)
-
-const download_choropleth_france = downloadSVGButton(
-  "#choropleth-container-france svg",
-  "Download French choropleth partner map",
-  `${selected_partner_project}_france_partner_choropleth.svg`
-)
-
-const download_choropleth_idf = downloadSVGButton(
-  "#choropleth-container-idf svg",
-  "Download Île-de-France choropleth partner map",
-  `${selected_partner_project}_idf_partner_choropleth.svg`
 )
 
 const download_lab_choropleth_france = downloadSVGButton(
