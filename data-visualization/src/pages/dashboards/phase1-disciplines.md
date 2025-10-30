@@ -31,13 +31,19 @@ import { getCategoryFromCNU, colorCNU } from "/components/color.js"
     <li>Researchers with multiple disciplines are counted once per discipline.</li>
     <li>Missing researcher data is not visualized by default.</li>
     <li>Data has not yet been verified. Some visualizations may be incorrect.</li>
-    <li>Bar charts use graded coloring based on a logarithmic scale (see CNU color legend).</li>
+    <li>
+      Bar charts use graded coloring based on a logarithmic scale
+      (see CNU color legend).
+    </li>
   </ul>
 </div>
 
 ```js
 const selected_project = view(
-  Inputs.select(discipline_data_by_project.keys(), { label: "Select Project" })
+  Inputs.select(discipline_data_by_project.keys(), {
+    label: "Select Project",
+    value: "Financed Projects",
+  })
 )
 ```
 
@@ -76,7 +82,10 @@ console.debug("selected_project_data", selected_project_data)
               y: (d) => d[0],
               x: (d) => d[1],
               fill: (d) =>
-                colorCNU(d, Math.max(...selected_project_data.cnu_count.map((d) => d[1]))),
+                colorCNU(
+                  d,
+                  Math.max(...selected_project_data.cnu_count.map((d) => d[1]))
+                ),
               stroke: 'black',
               strokeOpacity: 0.1,
               sort: { y: cnu_plot_sort },
@@ -114,7 +123,7 @@ console.debug("selected_project_data", selected_project_data)
       <h3>CNU group color legend</h3>
       ${cnu_plot_legend}
       <!-- $ -->
-      <!-- ${downloadSVGButton("#cnu-legend svg")} -->
+      ${downloadSVGButton("#cnu-legend svg")}
       <!-- $ -->
     </div>
     <!-- $ -->
@@ -125,17 +134,12 @@ console.debug("selected_project_data", selected_project_data)
     ${resize((width) => donutChart(
       selected_project_data.cnu_count_by_category,
       {
-        width: width * 0.7,
-        height: (width * 0.7) - 20,
+        width: width,
         legendWidth: width * 0.3,
         keyMap: (d) => d[0],
         valueMap: (d) => d[1],
         colorMap: (d) => d[0],
-        color: d3
-          //.scaleOrdinal(d3.schemeSet1.slice(1))
-          .scaleOrdinal(d3.schemeCategory10)
-          .domain(cnu_category_map.keys())
-          .unknown('grey'),
+        color: cnu_category_plot_options.color,
         //majorLabelText: () => "",
         //minorLabelText: () => "",
       }
@@ -145,7 +149,7 @@ console.debug("selected_project_data", selected_project_data)
     <!-- <h3>*Les regroupements des sections est définis par le CNU</h3> -->
     ${downloadTableButton(() => selected_project_data.cnu_count_by_category)}
     <!-- $ -->
-    <!-- ${downloadSVGButton("#cnu-group-container svg")} -->
+    ${downloadSVGButton("#cnu-group-container svg:nth-of-type(1)")}
     <!-- $ -->
   </div>
   <div id="erc-container" class="card">
@@ -153,8 +157,7 @@ console.debug("selected_project_data", selected_project_data)
     ${resize((width) => donutChart(
       selected_project_data.discipline_erc_count,
       {
-        width: width * 0.7,
-        height: (width * 0.7) - 20,
+        width: width,
         legendWidth: width * 0.3,
         keyMap: (d) => d[0],
         valueMap: (d) => d[1],
@@ -164,12 +167,14 @@ console.debug("selected_project_data", selected_project_data)
           .domain(erc_category_colors.keys())
           .range(erc_category_colors.values())
           .unknown('grey'),
+        //majorLabelText: () => "",
+        //minorLabelText: () => "",
       }
     ))}
     <!-- $ -->
     ${downloadTableButton(() => selected_project_data.discipline_erc_count)}
     <!-- $ -->
-    <!-- ${downloadSVGButton("#erc-container svg")} -->
+    ${downloadSVGButton("#erc-container svg:nth-of-type(1)")}
     <!-- $ -->
   </div>
 </div>
@@ -178,10 +183,8 @@ console.debug("selected_project_data", selected_project_data)
 const cnu_plot_legend_options = {
   marginLeft: 18,
   marginRight: 360,
-  domain: [10, 1],
-  // domain: [1, 10],
+  domain: [1, 0],
   range: [1, 0.4],
-  // range: [0.4, 1],
   type: "log",
 }
 
@@ -196,7 +199,7 @@ const cnu_plot_legend = resize(
         domain: cnu_plot_legend_options.domain,
         range: cnu_plot_legend_options.range,
         type: cnu_plot_legend_options.type,
-        scheme: "Oranges",
+        scheme: "Reds",
       },
     })}
   ${Plot.legend({
@@ -224,18 +227,6 @@ const cnu_plot_legend = resize(
     },
   })}
   ${Plot.legend({
-    label: "Pluridisciplinaire",
-    marginLeft: cnu_plot_legend_options.marginLeft,
-    marginRight: cnu_plot_legend_options.marginRight,
-    width: width,
-    color: {
-      domain: cnu_plot_legend_options.domain,
-      range: cnu_plot_legend_options.range,
-      type: cnu_plot_legend_options.type,
-      scheme: "Reds",
-    },
-  })}
-  ${Plot.legend({
     label: "Sections de santé",
     marginLeft: cnu_plot_legend_options.marginLeft,
     marginRight: cnu_plot_legend_options.marginRight,
@@ -248,7 +239,21 @@ const cnu_plot_legend = resize(
     },
   })}
   ${Plot.legend({
-    label: "Other",
+    label: "Pluridisciplinaire",
+    marginLeft: cnu_plot_legend_options.marginLeft,
+    marginRight: cnu_plot_legend_options.marginRight,
+    width: width,
+    color: {
+      domain: cnu_plot_legend_options.domain,
+      range: cnu_plot_legend_options.range,
+      // range: [0.7, 0.1],
+      type: cnu_plot_legend_options.type,
+      // scheme: "YlOrBr",
+      interpolate: d3.interpolateRgbBasis(["white", "yellow", "brown"]),
+    },
+  })}
+  ${Plot.legend({
+    label: "Autre",
     marginLeft: cnu_plot_legend_options.marginLeft,
     marginRight: cnu_plot_legend_options.marginRight,
     width: width,
@@ -281,7 +286,8 @@ const cnu_category_plot_options = {
   valueMap: (d) => d[1],
   colorMap: (d) => d[0],
   color: d3
-    .scaleOrdinal(d3.schemeCategory10)
+    .scaleOrdinal(d3.schemeSet1.slice(1))
+    // .scaleOrdinal(d3.schemeCategory10)
     .domain(cnu_category_map.keys())
     .unknown("grey"),
 }
@@ -361,8 +367,8 @@ const cnu_plot_sort_options = {
 
 const erc_category_colors = new Map([
   ["PE - Sciences & Technologies", d3.schemeCategory10[0]],
-  ["LS - Vie & Santé", d3.schemeCategory10[2]],
-  ["SH - Sciences Humaines & Sociales", "OrangeRed"],
+  ["LS - Vie & Santé", d3.schemeCategory10[4]],
+  ["SH - Sciences Humaines & Sociales", d3.schemeCategory10[2]],
   ["non chercheur", "grey"],
 ])
 
@@ -692,31 +698,53 @@ const missing_financed_cnu_count = d3.rollup(
   (D) => D.length,
   (d) => (exclude(d.cnu) ? "found_cnu" : "missing_cnu")
 )
+
+// TODO: this is way simpler
+
+// const cnu_categorization = d3.rollup(
+//   phase_1_data.researchers,
+//   (D) => D.length,
+//   (d) => Boolean(getCategoryFromCNU(d.cnu))
+// )
+
+// const cnu_categorization_value = cnu_categorization.get(false) / phase_1_data.researchers.length
+
+const missing_cnu_value =
+  (missing_cnu_count.get("missing_cnu") || 0) /
+  ((missing_cnu_count.get("missing_cnu") || 0) +
+    (missing_cnu_count.get("found_cnu") || 0))
+
+const missing_discipline_erc_value =
+  (missing_discipline_erc_count.get("missing_erc") || 0) /
+  ((missing_discipline_erc_count.get("missing_erc") || 0) +
+    (missing_discipline_erc_count.get("found_erc") || 0))
+
+const missing_financed_cnu_value =
+  (missing_financed_cnu_count.get("missing_cnu") || 0) /
+  ((missing_financed_cnu_count.get("missing_cnu") || 0) +
+    (missing_financed_cnu_count.get("found_cnu") || 0))
+
+const missing_financed_discipline_erc_value =
+  (missing_financed_discipline_erc_count.get("missing_erc") || 0) /
+  ((missing_financed_discipline_erc_count.get("missing_erc") || 0) +
+    (missing_financed_discipline_erc_count.get("found_erc") || 0))
 ```
 
 <div class="grid grid-cols-4">
   <div class="card">
     <h2>Unspecified total researcher CNU data</h2>
-    <span class="big">${`${((missing_cnu_count.get('missing_cnu') ? missing_cnu_count.get('missing_cnu') : 0) / ((missing_cnu_count.get('missing_cnu') ? missing_cnu_count.get('missing_cnu') : 0) + (missing_cnu_count.get('found_cnu') ? missing_cnu_count.get('found_cnu') : 0)) * 100)
-        .toPrecision(3)
-      }%`}</span>
+    <span class="big">${(missing_cnu_value * 100).toPrecision(3)}%</span>
   </div>
   <div class="card">
     <h2>Unspecified total ERC Discipline data</h2>
-    <span class="big">${`${((missing_discipline_erc_count.get('missing_erc') ? missing_discipline_erc_count.get('missing_erc') : 0) / ((missing_discipline_erc_count.get('missing_erc') ? missing_discipline_erc_count.get('missing_erc') : 0) + (missing_discipline_erc_count.get('found_erc') ? missing_discipline_erc_count.get('found_erc') : 0)) * 100)
-      .toPrecision(3)
-    }%`}</span>
+    <span class="big">${(missing_discipline_erc_value * 100).toPrecision(3)}%</span>
   </div>
   <div class="card">
     <h2>Unspecified financed researcher CNU data</h2>
-    <span class="big">${`${((missing_financed_cnu_count.get('missing_cnu') ? missing_financed_cnu_count.get('missing_cnu') : 0) / ((missing_financed_cnu_count.get('missing_cnu') ? missing_financed_cnu_count.get('missing_cnu') : 0) + (missing_financed_cnu_count.get('found_cnu') ? missing_financed_cnu_count.get('found_cnu') : 0)) * 100)
-        .toPrecision(3)
-      }%`}</span>
+    <span class="big">${(missing_financed_cnu_value * 100).toPrecision(3)}%</span>
   </div>
   <div class="card">
     <h2>Unspecified financed ERC Discipline data</h2>
-    <span class="big">${`${((missing_financed_discipline_erc_count.get('missing_erc') ? missing_financed_discipline_erc_count.get('missing_erc') : 0) / ((missing_financed_discipline_erc_count.get('missing_erc') ? missing_financed_discipline_erc_count.get('missing_erc') : 0) + (missing_financed_discipline_erc_count.get('found_erc') ? missing_financed_discipline_erc_count.get('found_erc') : 0)) * 100)
-      .toPrecision(3)
-    }%`}</span>
+    <span class="big">${(missing_financed_discipline_erc_value * 100).toPrecision(3)}%</span>
   </div>
 </div>

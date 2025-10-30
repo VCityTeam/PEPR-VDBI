@@ -83,28 +83,37 @@ import { vdbi_color_scheme, project_color_scale } from "/components/color.js"
 import { vectorFromArray } from "npm:apache-arrow"
 ```
 
-```js
-const selected_terrain_project = view(
-  Inputs.select(
-    [
-      "All",
-      // ...[...(await sql`select "Nom projet" from project_summaries`)]
-      ...[...all_partner_data].map((d) => d.projet),
-    ],
-    {
-      multiple: false,
-      label: "Optionally, select a project to focus on:",
-      unique: true,
-      sort: true,
-      value: "All",
-    }
-  )
-)
-```
-
 ## Projects by Terrain
 
 ```js
+const selected_terrain_project = view(
+  Inputs.checkbox(
+    [...all_partner_data].map((d) => d.projet),
+    {
+      label: "Included projects:",
+      unique: true,
+      sort: true,
+      value: [...all_partner_data].map((d) => d.projet),
+    }
+  )
+)
+
+const selected_terrain_scale = view(
+  Inputs.checkbox(
+    [...(await sql`select echelle from project_terrains_by_scale`)].map(
+      (d) => d.echelle
+    ),
+    {
+      label: "Included scales:",
+      unique: true,
+      sort: true,
+      value: [
+        ...(await sql`select echelle from project_terrains_by_scale`),
+      ].map((d) => d.echelle),
+    }
+  )
+)
+
 const terrain_legend_type = view(
   Inputs.toggle({
     label: "Remove legend lines?",
@@ -141,9 +150,23 @@ const terrain_legend_type = view(
     <!-- $ -->
   </div>
   <div>
-    ${download_map_france}
-    ${download_map_idf}
-    ${download_map_italy}
+    ${downloadSVGButton(
+      "#map-container-france svg",
+      "Download French project terrains map",
+      `${selected_terrain_project.flat()}_france_terrains_map_by_${selected_terrain_scale.flat()}_scales.svg`
+    )}
+    <!-- $ -->
+    ${downloadSVGButton(
+      "#map-container-idf svg",
+      "Download Grand Métropole de Paris project terrains map",
+      `${selected_terrain_project.flat()}_paris_terrains_map_by_${selected_terrain_scale.flat()}_scales.svg`
+    )}
+    <!-- $ -->
+    ${downloadSVGButton(
+      "#map-container-italy svg",
+      "Download Italian project terrains map",
+      `${selected_terrain_project.flat()}_italy_terrains_map_by_${selected_terrain_scale.flat()}_scales.svg`
+    )}
     <!-- $ -->
   </div>
 </div>
@@ -168,7 +191,7 @@ const terrain_legend_type = view(
   </div>
   <div id="map-container-idf" class="card" style="padding: 10px; overflow: hidden;">
     ${resize(
-      (width) => defaultProjectionIleDeFrance(
+      (width) => defaultProjectionParis(
         width,
         terrain_legend_type
         ? generateDotMapMarks(ile_de_france_terrain_data, idf_terrain_legend, 0.015)
@@ -183,8 +206,8 @@ const terrain_legend_type = view(
       (width) => defaultProjectionItaly(
         width,
         terrain_legend_type
-        ? generateDotMapMarks(international_terrain_data, italy_terrain_legend, 0.1)
-        : generateLineMapMarks(international_terrain_data, italy_terrain_legend),
+        ? generateDotMapMarks(terrain_data_by_city_by_scale, italy_terrain_legend, 0.1)
+        : generateLineMapMarks(terrain_data_by_city_by_scale, italy_terrain_legend),
         "- TRACES terrains by city, Italy"
       )
     )}
@@ -211,6 +234,8 @@ const selected_partner_project = view(
     }
   )
 )
+
+const flatten_choropleth = view(Inputs.toggle({ label: "Flatten choropleth?" }))
 ```
 
 <div style="display: flex">
@@ -246,19 +271,23 @@ const selected_partner_project = view(
     ${resize((width, height) => choroplethFrance(
       width,
       height,
-      //({ properties }) => project_partners_by_code.get(properties.code)
-      ({ properties }) => (project_partners_by_code.get(properties.code) > 0 ? 1 : 0)
+      ({ properties }) => project_partners_by_code.get(properties.code)
     ))}
     <!-- $ -->
   </div>
   <div id="choropleth-container-idf" class="card" style="padding: 12px;">
     ${resize((width) => choroplethIdf(
       width,
-      //({ properties }) => project_partners_by_code.get(properties.code)
-      ({ properties }) => (project_partners_by_code.get(properties.code) > 0 ? 1 : 0)
+      ({ properties }) => project_partners_by_code.get(properties.code)
     ))}
     <!-- $ -->
   </div>
+  <!-- <div id="choropleth-container-italy" class="card" style="padding: 12px;">
+    ${resize((width) => choroplethItaly(
+      width,
+      ({ properties }) => true
+    ))}
+  </div> -->
 </div>
 
 <div class="card">
@@ -305,9 +334,6 @@ const choropleth_data = [...all_partner_data].filter(
     ))}
 
   </div>
-  <!-- <div id="choropleth-container-italy" class="card" style="padding: 12px;">
-    ${resize((width) => choroplethItaly(width))}
-  </div> -->
 </div>
 
 <!-- Initial data integration -->
@@ -318,11 +344,7 @@ const terrain_partners_by_code = new Map(
     [...all_partner_data],
     (D) =>
       D.reduce(
-        (a, v) =>
-          selected_terrain_project == "All" ||
-          v.projet == selected_terrain_project
-            ? a + 1
-            : a,
+        (a, v) => (selected_terrain_project.includes(v.projet) ? a + 1 : a),
         0
       ),
     (d) => (d.code_postal ? String(d.code_postal).slice(0, 2) : null)
@@ -334,30 +356,31 @@ const terrain_partners_by_code = new Map(
 const project_partners_by_code = new Map(
   d3
     .rollups(
-      [...all_partner_data].concat([ // with hardcoded project corrections
+      [...all_partner_data].concat([
+        // with hardcoded project corrections
         {
           projet: "INTEGREEN",
-          code_postal: 95
+          code_postal: 95,
         },
         {
           projet: "INTEGREEN",
-          code_postal: 93
+          code_postal: 93,
         },
         {
           projet: "URBHEALTH",
-          code_postal: 95
+          code_postal: 95,
         },
         {
           projet: "URBHEALTH",
-          code_postal: 78
+          code_postal: 78,
         },
         {
           projet: "URBHEALTH",
-          code_postal: 92
+          code_postal: 92,
         },
         {
           projet: "URBHEALTH",
-          code_postal: 91
+          code_postal: 91,
         },
       ]),
       (D) =>
@@ -365,7 +388,7 @@ const project_partners_by_code = new Map(
           (a, v) =>
             selected_partner_project == "All" ||
             v.projet == selected_partner_project
-              ? a + 1
+              ? a * Number(!flatten_choropleth) + 1
               : a,
           0
         ),
@@ -547,22 +570,41 @@ where terrain_locations.terrain = project_terrains_by_scale.terrain
 with
   labeled_terrain_locations as (
     select distinct
+      terrain as terrain_label,
+      latitude,
+      longitude,
+    FROM terrain_locations
+  ),
+  labeled_project_terrains_by_scale as (
+    select
+      *,
+      terrain as terrain_label,
+    from project_terrains_by_scale
+  )
+select distinct
+  labeled_terrain_locations.terrain_label,
+  -- list_distinct(list(labeled_terrain_locations.terrain)) as terrains,
+  list_distinct(list(labeled_project_terrains_by_scale.acronyme)) as projects,
+  first(labeled_terrain_locations.latitude) as latitude,
+  first(labeled_terrain_locations.longitude) as longitude,
+  echelle as scale,
+from labeled_terrain_locations
+join labeled_project_terrains_by_scale
+on labeled_project_terrains_by_scale.terrain_label = labeled_terrain_locations.terrain_label
+group by all
+```
+
+```sql id=terrain_data_by_city_old
+-- merge data on a terrain_label
+-- (a simplified terrain label for merging locations at the city level)
+
+with
+  labeled_terrain_locations as (
+    select distinct
       terrain,
       case
-        when instr(terrain, ' Méditerranée Métropole') > 0
-          then replace(terrain, ' Méditerranée Métropole', '')
         when instr(terrain, 'Aix-Marseille-Provence') > 0
           then replace(terrain, 'Aix-Marseille-Provence', 'Marseille')
-        when instr(terrain, 'Métropole du Grand Paris') > 0
-          then replace(terrain, 'Métropole du Grand Paris', 'Paris')
-        when instr(terrain, 'Métropole Européenne de ') > 0
-          then replace(terrain, 'Métropole Européenne de ', '')
-        when instr(terrain, 'Métropole d''') > 0
-          then replace(terrain, 'Métropole d''', '')
-        when instr(terrain, 'Métropole de ') > 0
-          then replace(terrain, 'Métropole de ', '')
-        when instr(terrain, ' Métropole') > 0
-          then replace(terrain, ' Métropole', '')
         else terrain
       end as terrain_label,
       latitude,
@@ -726,46 +768,45 @@ const ile_de_france_bbox = {
   max_y: 49.24342474094858,
 }
 
-const france_terrain_data = [...terrain_data_by_city]
-  .filter(
-    (d) =>
-      // filter missing data
-      d.terrain_label &&
-      d.longitude &&
-      d.latitude &&
-      // keep projects within france
-      inBBox(d.longitude, d.latitude, mainland_france_bbox) &&
-      // separate out ile-de-france data
-      !inBBox(d.longitude, d.latitude, ile_de_france_bbox)
-  )
+const terrain_data_by_city_by_scale = [...terrain_data_by_city]
+  .filter((d) => selected_terrain_scale.includes(d.scale))
   .map((d) => d.toJSON()) // this is only to make debugging easier, should be removed
 
-const ile_de_france_terrain_data = [...terrain_data_by_city].filter(
+const france_terrain_data = terrain_data_by_city_by_scale.filter(
+  (d) =>
+    // keep projects within france
+    inBBox(d.longitude, d.latitude, mainland_france_bbox) &&
+    // separate out small scale ile-de-france data
+    (!inBBox(d.longitude, d.latitude, ile_de_france_bbox) ||
+      // d.terrain_label == "Île-de-France" ||
+      d.terrain_label == "Métropole du Grand Paris")
+)
+
+const ile_de_france_terrain_data = terrain_data_by_city_by_scale.filter(
   (d) =>
     d.terrain_label != "Île-de-France" &&
+    d.terrain_label != "Métropole du Grand Paris" &&
     inBBox(d.longitude, d.latitude, ile_de_france_bbox)
 )
 
-france_terrain_data.push({
-  terrain_label: "Île-de-France",
-  projects: vectorFromArray([
-    ...new Set(
-      [...terrain_data_by_city]
-        .filter((d) => d.terrain_label == "Île-de-France")
-        .flatMap((d) => [...d.projects])
-    ),
-    ...new Set(ile_de_france_terrain_data.flatMap((d) => [...d.projects])),
-  ]),
-  latitude: d3.mean([ile_de_france_bbox.min_y, ile_de_france_bbox.max_y]),
-  longitude: d3.mean([ile_de_france_bbox.min_x, ile_de_france_bbox.max_x]),
-})
+if (selected_terrain_scale.includes("région"))
+  france_terrain_data.push({
+    terrain_label: "Île-de-France",
+    projects: vectorFromArray([
+      ...new Set(
+        terrain_data_by_city_by_scale
+          .filter((d) => d.terrain_label == "Île-de-France")
+          .flatMap((d) => [...d.projects])
+      ),
+      ...new Set(ile_de_france_terrain_data.flatMap((d) => [...d.projects])),
+    ]),
+    scale: "région",
+    latitude: d3.mean([ile_de_france_bbox.min_y, ile_de_france_bbox.max_y]),
+    longitude: d3.mean([ile_de_france_bbox.min_x, ile_de_france_bbox.max_x]),
+  })
 
-const international_terrain_data = [...terrain_data_by_city].filter(
+const international_terrain_data = terrain_data_by_city_by_scale.filter(
   (d) =>
-    // filter missing data
-    d.terrain_label &&
-    d.longitude &&
-    d.latitude &&
     // keep projects outside of france
     !inBBox(d.longitude, d.latitude, mainland_france_bbox)
 )
@@ -831,27 +872,31 @@ const terrain_anchor_map = new Map([
   // ['Saclay Cachan', 'top-right'],
   ["Lyon", "top"],
   ["Plauzat", "top-right"],
-  ["Marseille", "bottom-left"],
+  // ["Marseille", "top-left"],
   ["Strasbourg", "top-right"],
   ["Lille", "top-right"],
-  // ['Aix-Marseille-Provence', 'bottom-left'],
-  // ['Villeurbanne', 'bottom-left'],
-  ["La Trambouze", "bottom-left"],
-  ["Thiers", "bottom-right"],
-  // ['Saint Denis', 'bottom-right'],
+  ["Montpellier Méditerranée Métropole", "bottom"],
+  // ['Aix-Marseille-Provence', 'top'],
+  // ['Villeurbanne', 'top-left'],
+  // ["La Trambouze", "top-left"],
+  ["Thiers", "top-right"],
+  ["Toulouse Métropole", "top"],
+  // ['Saint Denis', 'top-right'],
   ["Seine-Saint-Denis", "top"],
-  ["Paris", "bottom-right"],
-  ["Ivry-sur-Seine", "top-left"],
-  ["Cachan", "bottom-right"],
+  ["Paris", "top-right"],
+  // ["Ivry-sur-Seine", "top-left"],
+  ["Cachan", "top-right"],
+  ["Nantes", "top"],
+  ["Montpellier", "top"],
   // ['Ris-Orangis', 'top'],
-  // ['Saclay', 'bottom'],
+  // ['Saclay', 'top'],
   ["Arquata del Tronto", "top-right"],
-  ["Acquasanta Terme", "bottom-left"],
+  // ["Acquasanta Terme", "top-left"],
 ])
 
 const terrain_tips = (data) =>
   data.map((d) => {
-    let tip_anchor = "bottom"
+    let tip_anchor = "top-left"
 
     if (terrain_anchor_map.has(d.terrain_label)) {
       tip_anchor = terrain_anchor_map.get(d.terrain_label)
@@ -933,7 +978,7 @@ const defaultProjectionFrance = (width, height, marks, caption = "") =>
     caption
   )
 
-const defaultProjectionIleDeFrance = (width, marks, caption = "") =>
+const defaultProjectionParis = (width, marks, caption = "") =>
   defaultProjection(
     width,
     width,
@@ -970,7 +1015,7 @@ const defaultProjectionItaly = (width, marks, caption = "") =>
 // generate plot marks for each visualisation method
 
 const isProjectSelected = (project) =>
-  selected_terrain_project == "All" || project == selected_terrain_project
+  selected_terrain_project.includes(project)
 
 function generateLineMapMarks(terrain_data, terrain_legend) {
   const links = Plot.link(terrain_tip_dots(terrain_data, terrain_legend, 0.2), {
@@ -1149,12 +1194,14 @@ const color_config = {
   legend: true,
   marginLeft: 10,
   marginRight: 10,
-  domain: [0, 2.7],
+
   // type: "log",
   zero: true,
   nice: true,
   // ticks: 2,
 }
+
+if (flatten_choropleth) color_config.domain = [0, 2.7]
 
 const choropleth = (width, height, fill, projection, features, caption) =>
   Plot.plot({
@@ -1200,51 +1247,19 @@ const choroplethIdf = (width, fill) =>
     "- Partenaires des projets par département, Île-de-France"
   )
 
-// const choroplethItaly = (width) =>
-//   Plot.plot({
-//     width: width,
-//     caption: "- Project partners by department, Italy",
-//     color: {
-//       scheme: "Blues",
-//       label: "# of Socioeconomic Partners",
-//       legend: true,
-//       // type: "log",
-//       nice: true,
-//     },
-//     projection: italy_projection,
-//     marks: [
-//       Plot.geo(italy_regions_geojson, {
-//         channels: {
-//           Region: 1
-//           // Region: ({ properties }) => properties.name,
-//         },
-//         tip: true,
-//         fill: ({ properties }) => project_partners_by_code.get(properties.code),
-//       }),
-//       [...italy_choropleth_marks],
-//     ],
-//   })
+const choroplethItaly = (width, fill) =>
+  choropleth(
+    width,
+    width,
+    fill,
+    italy_projection,
+    italy_regions_geojson,
+    "- Project partners by department, Italy"
+  )
+display(italy_regions_geojson)
 ```
 
 ```js
-const download_map_france = downloadSVGButton(
-  "#map-container-france svg",
-  "Download French project terrains map",
-  `${selected_terrain_project}_france_terrains_map.svg`
-)
-
-const download_map_idf = downloadSVGButton(
-  "#map-container-idf svg",
-  "Download Grand Métropole de Paris project terrains map",
-  `${selected_terrain_project}_paris_terrains_map.svg`
-)
-
-const download_map_italy = downloadSVGButton(
-  "#map-container-italy svg",
-  "Download Italian project terrains map",
-  `${selected_terrain_project}_italy_terrains_map.svg`
-)
-
 const download_lab_choropleth_france = downloadSVGButton(
   "#lab-choropleth-container-france svg",
   "Download French choropleth lab partner map",

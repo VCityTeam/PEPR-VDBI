@@ -100,9 +100,14 @@ export function donutChart(
 
   const svg = d3
     .create("svg")
-    .attr("width", width)
+    .attr("width", width + legendWidth)
     .attr("height", height)
-    .attr("viewBox", [-width / 2 - legendWidth, -height / 2, width, height])
+    .attr("viewBox", [
+      -width / 2 - legendWidth,
+      -height / 2,
+      width + legendWidth,
+      height,
+    ])
     .attr("style", "max-width: 100%; height: auto;")
 
   const tooltip = createTooltip()
@@ -252,7 +257,7 @@ export function donutChart(
       .append("g")
       .attr(
         "transform",
-        `translate(${-width / 2 - legendWidth + 10},${-height / 2 + 10})`
+        `translate(${-width / 2 - legendWidth},${-height / 2 + 10})`
       )
       .append(() => legend)
   }

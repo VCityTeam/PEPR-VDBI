@@ -112,21 +112,21 @@ export function colorCNU(d, max) {
   const color_value = d3.scaleLog([1, max], [0.4, 1])(d[1] > 1 ? d[1] : 1)
 
   // determine color range by category
-  if (cnu_category == "Lettres et sciences humaines") {
-    return d3.interpolateGreens(color_value)
-  } else if (cnu_category == "Sections de santé") {
-    return d3.interpolatePurples(color_value)
-  } else if (cnu_category == "Sciences") {
-    return d3.interpolateBlues(color_value)
-  } else if (cnu_category == "Droit, économie et gestion") {
-    return d3.interpolateOranges(color_value)
-  } else if (cnu_category == "Pluridisciplinaire") {
-    return d3.interpolateReds(color_value)
-  } else if (cnu_category == "Administratif" || exclude(cnu_category)) {
-    // use default interpolator
-  } else {
+  const color_map = new Map([
+    ["Lettres et sciences humaines", d3.interpolateGreens],
+    ["Sections de santé", d3.interpolatePurples],
+    ["Sciences", d3.interpolateBlues],
+    ["Droit, économie et gestion", d3.interpolateReds],
+    [
+      "Pluridisciplinaire",
+      d3.interpolateRgbBasis(["white", "yellow", "brown"]),
+    ],
+  ])
+
+  if (exclude(cnu_category) && color_map.has(cnu_category)) {
+    return color_map.get(cnu_category)(color_value)
+  } else if (!exclude(cnu_category)) {
     console.error(`color CNU not implemented for ${d[0]}`)
-    // use default interpolator
   }
   return d3.interpolateGreys(color_value)
 }
