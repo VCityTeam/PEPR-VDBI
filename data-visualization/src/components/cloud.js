@@ -28,7 +28,7 @@ export function wordCloud(
   {
     width = 500,
     height = 500,
-    keyMap = (d) => d.text,
+    keyMap = (d) => String(d.text),
     valueMap = (d) => Number(d.value),
     domain = [d3.min(data.map(valueMap)), d3.max(data.map(valueMap))],
     font = () =>

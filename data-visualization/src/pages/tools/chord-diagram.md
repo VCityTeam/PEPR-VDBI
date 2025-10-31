@@ -22,8 +22,9 @@ const generate_project_partner_chord = (matrix) =>
 const selected_dataset = view(
   Inputs.select(
     new Map([
+      ["all project partners", project_all_intersection_matrix],
       [
-        "project socioeconomic partners",
+        "socioeconomic project partners",
         project_socioeconomic_intersection_matrix,
       ],
       ["project labs", project_lab_intersection_matrix],
@@ -44,6 +45,7 @@ const selected_dataset = view(
 
 ```js
 display(phase_1_data.projects)
+display(partners_by_all)
 display(partners_by_labs)
 display(partners_by_socioeconomic)
 display(partners_by_institute)
@@ -146,5 +148,36 @@ const project_institute_intersection_matrix = d3
   )
 console.debug("project_institute_intersection_matrix", [
   ...project_institute_intersection_matrix,
+])
+```
+
+```js
+const partners_by_all = new Map(
+  phase_1_data.projects.map((d) => [
+    d.acronyme,
+    new Set(d.partners).union(new Set(d.labs).union(new Set(d.institutions))),
+  ])
+)
+console.debug("partners_by_all", partners_by_all)
+
+const total_all = new Set(d3.merge(partners_by_all.values())).size
+console.debug("total_all", total_all)
+
+const project_all_intersection_matrix = d3
+  .cross(
+    partners_by_all.values(),
+    partners_by_all.values(),
+    (a, b) => a.intersection(b).size / total_all
+  )
+  // https://stackoverflow.com/questions/4492385/convert-simple-array-into-two-dimensional-array-matrix
+  .reduce(
+    (matrix, key, index) =>
+      (index % partners_by_all.size == 0
+        ? matrix.push([key])
+        : matrix[matrix.length - 1].push(key)) && matrix,
+    []
+  )
+console.debug("project_all_intersection_matrix", [
+  ...project_all_intersection_matrix,
 ])
 ```
