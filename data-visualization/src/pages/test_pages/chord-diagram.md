@@ -238,5 +238,3 @@ const chord_projects_partners = chord.chordDiagram(
   partners_by_labs.keys().map((d) => project_color_scale(d))
 )
 ```
-
-### With projects and labs

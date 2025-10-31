@@ -48,6 +48,10 @@ export default {
           name: 'Sankey diagram generator',
           path: 'pages/tools/sankey',
         },
+        {
+          name: 'Chord diagram generator',
+          path: 'pages/tools/chord-diagram',
+        },
       ]
     },
     {
@@ -73,39 +77,18 @@ export default {
         //   name: 'Phase 1 Institutions',
         //   path: 'pages/dashboards/working/phase1-university-dashboard',
         // },
-      ],
-    },
-    {
-      name: 'Framework Tests',
-      pages: [
-        {
-          name: 'Raw Data',
-          path: 'pages/test_pages/phase1-data-dashboard',
-        },
-        {
-          name: 'Import Excel',
-          path: 'pages/test_pages/test-excel-import',
-        },
-        {
-          name: 'SQL and DuckDB',
-          path: 'pages/test_pages/test-sql-duckdb',
-        },
-        {
-          name: 'Phase 1 Overview',
-          path: 'pages/test_pages/phase1-dashboard',
-        },
-        {
-          name: 'Import ORCID',
-          path: 'pages/test_pages/test-orcid-import',
-        },
         {
           name: 'Mural Data',
           path: 'pages/test_pages/test-mural-data',
         },
+        {
+          name: 'Raw Data Export',
+          path: 'pages/test_pages/phase1-data-dashboard',
+        },
       ],
     },
     {
-      name: 'D3/Plot Tests',
+      name: 'D3/Plot/Framework Tests',
       pages: [
         {
           name: 'Plot',
@@ -142,6 +125,18 @@ export default {
         {
           name: 'Import dataESR+Geospatial',
           path: 'pages/test_pages/test-esr-import',
+        },
+        {
+          name: 'Import Excel',
+          path: 'pages/test_pages/test-excel-import',
+        },
+        {
+          name: 'SQL and DuckDB',
+          path: 'pages/test_pages/test-sql-duckdb',
+        },
+        {
+          name: 'Import ORCID',
+          path: 'pages/test_pages/test-orcid-import',
         },
       ],
     },

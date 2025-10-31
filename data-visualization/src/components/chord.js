@@ -20,6 +20,7 @@ export function chordDiagram(
   {
     width = 928,
     height = width,
+    margin = 30,
     outerRadius = Math.min(width, height) * 0.5 - 60,
     innerRadius = outerRadius - 10,
     opacityDefault = 0.8,
@@ -43,7 +44,12 @@ export function chordDiagram(
     .create("svg")
     .attr("width", width)
     .attr("height", height)
-    .attr("viewBox", [-width / 2, -height / 2, width, height])
+    .attr("viewBox", [
+      -width / 2 - margin / 2,
+      -height / 2 - margin / 2,
+      width + margin / 2,
+      height + margin / 2,
+    ])
     .attr("style", "width: 100%; height: auto; font: 10px sans-serif;")
 
   const chords = d3
@@ -199,7 +205,9 @@ export function chordDiagram(
   function fade(opacity, datum) {
     svg
       .selectAll("path.ribbon")
-      .filter((d) => d.source.index != datum.index && d.target.index !== datum.index)
+      .filter(
+        (d) => d.source.index != datum.index && d.target.index !== datum.index
+      )
       .transition()
       .style("opacity", opacity)
   }
