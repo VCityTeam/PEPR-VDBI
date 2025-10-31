@@ -43,12 +43,12 @@ def main():
             continue
 
         response = geolocator.geocode(terrain, addressdetails=True)
-        logging.debug(f"response from nominatim: {response.raw}")  # type: ignore
 
         if response is None:
             logging.warning(f"data not found for terrain: {terrain}")
             continue
 
+        logging.debug(f"response from nominatim: {response.raw}")  # type: ignore
         partner_data.append(
             [
                 # project,
