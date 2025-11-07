@@ -12,7 +12,6 @@ These tests attempt to identify efficient, open-source, and secure methods for e
   - [2.3. RAG tests](#23-rag-tests)
 - [3. Unstructured audio to unstructured text](#3-unstructured-audio-to-unstructured-text)
   - [3.1. Whisper](#31-whisper)
-- [4. See also](#4-see-also)
 
 ```mermaid
 ---
@@ -1025,5 +1024,3 @@ The following observation was made:
   Possible issues include:
   - Multiple speakers talking at the same time
   - Poor enunciation
-
-## 4. [See also](../docs/README.md#data-integration)
