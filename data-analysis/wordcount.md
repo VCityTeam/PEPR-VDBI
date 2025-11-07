@@ -3,7 +3,7 @@
 This page describes the process for counting and comparing the word used in plain text files.
 
 > [!TIP]
-> These word counts can be passed to the [word cloud generator tool](/data-visualization/src/tools/wordclouds.md) to create word clouds.
+> These word counts can be passed to the [word cloud generator tool](/data-visualization/src/pages/tools/wordclouds.md) to create word clouds.
 
 ## Table of contents <!-- omit in toc -->
 
@@ -24,12 +24,12 @@ title: Text to word count method
 ---
 flowchart LR
 start@{ shape: circle, label: " " }
-  --> in@{ shape: doc, label: "Text file"}
+  --> in@{ shape: doc, label: "Text file" }
   --> tokenize(Tokenize text)
   --> count("Clean and count words")
-  --> choice@{ shape: diamond, label: "Compare word\ncounts?"}
+  --> choice@{ shape: diamond, label: "Compare word\ncounts?" }
 compare(Compare word counts)
-  --> out@{ shape: doc, label: "Word count dataset"}
+  --> out@{ shape: doc, label: "Word count dataset" }
   --> stop@{ shape: dbl-circ, label: " " }
 choice -->|yes| compare
 choice -->|no| out
@@ -212,4 +212,3 @@ count2 --> compare
 ```
 
 The results are available in the [test-data/output/compare_vdbi_recyclage_projects](test-data/output/compare_vdbi_recyclage_projects/financed_project_resumes_en_cleaned_INTERSECTION_SUM_pepr_recyclage_projets_en_cleaned.csv) folder
-

@@ -1,5 +1,4 @@
 ---
-title: Initial import test
 style: /css/vdbi-page.css
 ---
 
@@ -10,9 +9,10 @@ Import and visualize the first sheet from the phase 1 Excel document.
 ## Integration process
 
 D3 and the Observable framework can import [`.xlsx` files](https://observablehq.com/framework/lib/xlsx).
-Then the data should be transformed into an array using a [component](../components/240117-proposals-labs-establishments.js).
+Then the data should be transformed into an array using a [component](../../components/240117-proposals-labs-establishments.js).
 Columns with obviously identical entities are combined.
-E.g. `Etablissement`, `Etablissement 2`, ... `Etablissement n` are merged into the same column.
+E.g. `Etablissement`, `Etablissement 2`, ... `Etablissement n` are merged into
+the same column.
 
 **Input:** Workbook 1 - "240117 consortium laboratoire, établissement CNRS-SHS_Stat"
 
@@ -37,11 +37,12 @@ flowchart TD
     end
 ```
 
-# Visualization results
+## Visualization results
 
 Once integrated the following data visualizations are tested using components.
 
-First a component for transforming the Workbook data is imported, followed by the reading and storing of the Workbook itself.
+First a component for transforming the Workbook data is imported, followed by
+the reading and storing of the Workbook itself.
 
 ```js echo
 import { resolvePhase1Entities } from "/components/240117-proposals-labs-establishments.js"
@@ -77,7 +78,7 @@ const projects_phase_1 = resolvePhase1Entities(
 display(projects_phase_1)
 ```
 
-## Simple table
+### Simple table
 
 A function is proposed to display a simple table.
 
@@ -96,7 +97,7 @@ The function is called with the raw extracted data
 display(simpleTable(projects_phase_1, { height: 400 }))
 ```
 
-## Search table
+### Search table
 
 A searchable table can also be created.
 
@@ -119,7 +120,8 @@ search
 <!--
 ## Table with 2D arrays and search
 
-Using the proposed transformation from the component, we can map the extracted data to a more compact table.
+Using the proposed transformation from the component, we can map the extracted
+data to a more compact table.
 
 ```js echo
 const searchMapped = view(

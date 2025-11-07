@@ -163,7 +163,7 @@ Notes:
 
 ## 2. Unstructured text to structured text via GPT
 
-**RQ2:** What prompts provide the best results for answering the natural language questions posed in the [proposed method](#2-pdf-to-unstructured-text)
+**RQ2:** What prompts provide the best results for answering the natural language questions posed in the [proposed method](#1-pdf-to-unstructured-text)
 
 **Tentative candidates:**
 
@@ -200,7 +200,7 @@ For this prompt replace the occurrence of `[text]` with the contents of [pypdf_t
 
 Output:
 
-```
+```md
 Keywords: urban data, heterogeneous data integration, 3D data, spatio-temporal data, semantic web, ontologies, knowledge graphs, conceptual models, Model-Driven Architecture (MDA), data
 transformation, interoperability, computational representation, data validation.
 
@@ -229,7 +229,7 @@ For this prompt replace the occurrence of `[text]` with the contents of [pypdf_t
 
 Output:
 
-```
+```md
 Keywords: urban data integration, heterogeneous multi-dimensional data, Urban Data, 3D data, spatio-temporal data, urban models, semantic modeling, model-driven architecture, data transformation,
 standardization, interoperability, computationally representable models, ontologies, knowledge graphs.
 
@@ -342,9 +342,6 @@ python src/workflow_test.py test-data/configs/workflow_0_config.json
 >
 > - The test script can be customized. Use `python src/workflow_test.py -h` to see the documentation.
 > - Check the logs when running to see progress in real time (located in `workflow-test.log` by default)
-
-> [!WARNING]
-> This configuration requires a PDF not provided in the repository
 
 This test uses the configuration file [test-data/configs/workflow_0_config.json](test-data/configs/workflow_0_config.json) which features several prompts:
 
@@ -521,8 +518,7 @@ To run the tests, first install new dependencies.
 
 > [!WARNING]
 > Note that these dependencies do not seem to work on **Windows** as of initial testing
-
-> [!WARNING]
+>
 > Also note that these dependencies have not yet been integrate into the local uv lock.
 > They must be installed using pip:
 >
@@ -594,7 +590,7 @@ Comments:
 
 The template is now modified to the following text, which provides general information about the context:
 
-```
+```md
 Use the following pieces of context to answer the question at the end. The context is a page from a pdf. This page contains information about the research units and researchers involved in the project. Keep the answer as concise as possible.
 {context}
 Question: {question}
@@ -694,7 +690,7 @@ Results:
    - ![orcid result 2.4](img/orcid_result2.4.png)
    - When copying and pasting the contents of the table to text the table is structured as follows:
 
-     ```
+     ```md
      LEHNA
      (E2C EVZH) 199911718W UCBL1
      Bernard Kaufmann
