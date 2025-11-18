@@ -52,6 +52,10 @@ export default {
           name: 'Chord diagram generator',
           path: 'pages/tools/chord-diagram',
         },
+        {
+          name: 'Plot generator',
+          path: 'pages/tools/plot',
+        },
       ]
     },
     {

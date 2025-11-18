@@ -27,7 +27,7 @@ These **technical deliverables** are stored in this repository
 
 > [!NOTE]
 > See the [PEPR VDBI website](https://pepr-vdbi.fr/) for more information about the PEPR VDBI and check out [our LinkedIn](https://www.linkedin.com/company/pepr-vdbi/) for the latest updates
- 
+
 ## [Data integration :ballot_box:](./data-integration)
 
 Data integration tests with LLMs

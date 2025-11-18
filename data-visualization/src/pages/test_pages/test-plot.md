@@ -34,7 +34,7 @@ flowchart LR
     end
 ```
 
-# Visualization results
+## Visualization results
 
 - idea: calculate # of reserachers by etablissement
   - plot sorted graph with data divided by # of reserchers
@@ -94,9 +94,10 @@ Projects from laboratory workbook:
 display(projects_phase_1)
 ```
 
-## Simple XBar plot - count keywords
+### Simple XBar plot - count keywords
 
-Map-group-reduce-sort the keywords of each project to an array and count the occurences of each word
+Map-group-reduce-sort the keywords of each project to an array and count the
+occurences of each word
 
 ```js echo
 function countEntities(data, mapFunction) {
@@ -139,7 +140,8 @@ Plot the occurrences to a simple bar chart with the following features:
 ```js echo
 display(
   Plot.plot({
-    height: sorted_keyword_counts.length * 15, // assure adequate horizontal space for each line
+    // assure adequate horizontal space for each line
+    height: sorted_keyword_counts.length * 15,
     marginLeft: 150,
     color: {
       scheme: "Spectral",
@@ -150,7 +152,8 @@ display(
       anchor: "top",
     },
     y: {
-      tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat("...") : d), // cut off long tick labels
+      // cut off long tick labels
+      tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat("...") : d),
       fontSize: 20,
     },
     marks: [
@@ -158,14 +161,15 @@ display(
         x: "count",
         y: "entity",
         title: "entity",
-        fill: d3.map(sorted_keyword_counts, (d) => d.count + 2), // shift up the color values to be more visible
+        // shift up the color values to be more visible
+        fill: d3.map(sorted_keyword_counts, (d) => d.count + 2),
       }),
     ],
   })
 )
 ```
 
-## Sorted Grouped XBar plot - count project universities and partners
+### Sorted Grouped XBar plot - count project universities and partners
 
 <!--
 Map table to graph first
@@ -194,14 +198,21 @@ const sorted_establishment_partner_counts = countEntities(
 display(sorted_establishment_partner_counts)
 ```
 
-<!-- A count of partners per establishment (using the graph).
-Note that this "query" could work (should be) better with node types (either as attributes of a node or in the graph).
+<!--
+A count of partners per establishment (using the graph).
+Note that this "query" could work (should be) better with node types
+(either as attributes of a node or in the graph).
 
 ```js echo
 // establishment count by project
-const establishment_counts = d3.rollup(d3.filter(phase_1_graph.links, (link) => link.label == "etablissements"), (D) => D.length, (link) => link.target);
-display(establishment_counts);
-``` -->
+const establishment_counts = d3.rollup(
+  d3.filter(phase_1_graph.links, (link) => link.label == "etablissements"),
+  (D) => D.length,
+  (link) => link.target
+)
+display(establishment_counts)
+```
+-->
 
 Combine counts to one array and calculate count totals
 
@@ -249,7 +260,8 @@ display(sorted_establishment_counts)
 ```js echo
 display(
   Plot.plot({
-    height: sorted_establishment_counts.length * 20, // assure adequate horizontal space for each line
+    // assure adequate horizontal space for each line
+    height: sorted_establishment_counts.length * 20,
     width: 1000,
     marginLeft: 60,
     marginRight: 150,
@@ -262,7 +274,8 @@ display(
       anchor: "top",
     },
     fy: {
-      tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat("...") : d), // cut off long tick labels
+      // cut off long tick labels
+      tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat("...") : d),
     },
     marks: [
       Plot.barX(sorted_establishment_counts, {
@@ -278,7 +291,7 @@ display(
 )
 ```
 
-## Sorted YBar plot - count project cities
+### Sorted YBar plot - count project cities
 
 Get lab cities (from workbook for now)
 
@@ -331,7 +344,7 @@ display(
 )
 ```
 
-## Sorted YLine plot - count project laboratories (project owners and partners)
+### Sorted YLine plot - count project laboratories (project owners and partners)
 
 <!--
 Get lab data (from workbook for now)
@@ -432,7 +445,8 @@ display(sorted_lab_counts)
 ```js echo
 display(
   Plot.plot({
-    height: sorted_lab_counts.length * 7, // assure adequate horizontal space for each line
+    // assure adequate horizontal space for each line
+    height: sorted_lab_counts.length * 7,
     width: 1000,
     marginLeft: 150,
     color: {
@@ -444,7 +458,8 @@ display(
     },
     y: {
       grid: true,
-      tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat("...") : d), // cut off long tick labels
+      // cut off long tick labels
+      tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat("...") : d),
       ticks: 10,
     },
     marks: [

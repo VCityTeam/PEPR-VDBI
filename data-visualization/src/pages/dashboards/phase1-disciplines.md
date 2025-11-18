@@ -140,8 +140,8 @@ console.debug("selected_project_data", selected_project_data)
         valueMap: (d) => d[1],
         colorMap: (d) => d[0],
         color: cnu_category_plot_options.color,
-        //majorLabelText: () => "",
-        //minorLabelText: () => "",
+        majorLabelText: () => "",
+        minorLabelText: () => "",
       }
     ))}
     <!-- $ -->

@@ -18,13 +18,13 @@ export function donutChart(
   {
     width = 600,
     height = width,
-    innerRadiusRatio = 0.4,
+    innerRadiusRatio = 0.5,
     outerRadiusRatio = 1,
     legendWidth = 80,
     // minorArcLabelRadiusRatio = 0.1, // the ratio of the radius to place the minor arc label outside of the arc
     keyMap = (d) => d.entity,
     valueMap = (d) => d.count,
-    colorMap = valueMap,
+    colorMap = keyMap,
     // sort = (a, b) => d3.descending(a.count, b.count),
     fontSize = 16,
     fontFamily = "sans-serif",
@@ -33,28 +33,27 @@ export function donutChart(
     // strokeOpacity = 0.5,
     fill = "white",
     fillOpacity = 1,
-    majorLabelText = (d) => cropText(keyMap(d.data), 30),
-    minorLabelText = (d) =>
-      `${((valueMap(d.data) / d3.sum(data.map(valueMap))) * 100).toFixed(1)}%`,
+    // majorLabelText = (d) => cropText(keyMap(d.data), 30),
+    // minorLabelText = (d) =>
+    //   `${((valueMap(d.data) / d3.sum(data.map(valueMap))) * 100).toFixed(1)}%`,
     // minorLabelText = (d) => d.value.toLocaleString("en-US"),
-    majorLabelBackgroundX = (d) => `-${majorLabelText(d).length * 0.3}em`,
-    majorLabelBackgroundY = "-1.7em",
-    majorLabelBackgroundWidth = (d) => `${majorLabelText(d).length * 0.6}em`,
-    majorLabelBackgroundHeight = "1.6em",
-    minorLabelBackgroundX = (d) => `-${minorLabelText(d).length * 0.35}em`,
-    minorLabelBackgroundY = "-0.1em",
-    minorLabelBackgroundWidth = (d) => `${minorLabelText(d).length * 0.7}em`,
-    minorLabelBackgroundHeight = "1.2em",
+    // majorLabelBackgroundX = (d) => `-${majorLabelText(d).length * 0.3}em`,
+    // majorLabelBackgroundY = "-1.7em",
+    // majorLabelBackgroundWidth = (d) => `${majorLabelText(d).length * 0.6}em`,
+    // majorLabelBackgroundHeight = "1.6em",
+    // minorLabelBackgroundX = (d) => `-${minorLabelText(d).length * 0.35}em`,
+    // minorLabelBackgroundY = "-0.1em",
+    // minorLabelBackgroundWidth = (d) => `${minorLabelText(d).length * 0.7}em`,
+    // minorLabelBackgroundHeight = "1.2em",
     labelCuttoff = 0.25, // minimum arc angle for displaying label on arc
-    color = (d) =>
-      d3.interpolatePlasma(
-        d3
-          .scaleLinear()
-          .domain([
-            Math.min(...data.map(valueMap)),
-            Math.max(...data.map(valueMap)),
-          ])(d)
-      ),
+    color = d3
+      .scaleOrdinal(d3.schemeObservable10)
+      .domain(new Set(data.map(keyMap)))
+      .unknown("grey"),
+    legendText = (d) =>
+      `${((valueMap(d) / d3.sum(data.map(valueMap))) * 100).toFixed(
+        1
+      )}% ${cropText(keyMap(d), 30)}`,
     legend = circleLegend(data, {
       keyMap: keyMap,
       valueMap: valueMap,
@@ -63,10 +62,7 @@ export function donutChart(
       radius: 6,
       fontSize: 16,
       lineSeparation: 25,
-      text: (d) =>
-        `${((valueMap(d) / d3.sum(data.map(valueMap))) * 100).toFixed(
-          1
-        )}% ${cropText(keyMap(d), 30)}`,
+      text: legendText,
     }),
   } = {}
 ) {
@@ -170,16 +166,16 @@ export function donutChart(
     .data(pieData)
     .join("rect")
     .attr("transform", (d) => `translate(${arc.centroid(d)})`)
-    .call((rect) =>
-      rect
-        .filter((d) => isMajorArc(d))
-        .attr("x", majorLabelBackgroundX)
-        .attr("y", majorLabelBackgroundY)
-        .attr("width", majorLabelBackgroundWidth)
-        .attr("height", majorLabelBackgroundHeight)
-        .attr("rx", "0.5em")
-        .attr("ry", "0.5em")
-    )
+  // .call((rect) =>
+  //   rect
+  //     .filter((d) => isMajorArc(d))
+  //     .attr("x", majorLabelBackgroundX)
+  //     .attr("y", majorLabelBackgroundY)
+  //     .attr("width", majorLabelBackgroundWidth)
+  //     .attr("height", majorLabelBackgroundHeight)
+  //     .attr("rx", "0.5em")
+  //     .attr("ry", "0.5em")
+  // )
 
   // add minor label background
   svg
@@ -190,14 +186,14 @@ export function donutChart(
     .data(pieData)
     .join("rect")
     .attr("transform", (d) => `translate(${arc.centroid(d)})`)
-    .call((rect) =>
-      rect
-        .filter((d) => isMajorArc(d))
-        .attr("x", minorLabelBackgroundX)
-        .attr("y", minorLabelBackgroundY)
-        .attr("width", minorLabelBackgroundWidth)
-        .attr("height", minorLabelBackgroundHeight)
-    )
+  // .call((rect) =>
+  //   rect
+  //     .filter((d) => isMajorArc(d))
+  //     .attr("x", minorLabelBackgroundX)
+  //     .attr("y", minorLabelBackgroundY)
+  //     .attr("width", minorLabelBackgroundWidth)
+  //     .attr("height", minorLabelBackgroundHeight)
+  // )
 
   svg
     .append("g")
@@ -213,43 +209,26 @@ export function donutChart(
     .data(pieData)
     .join("text")
     .attr("transform", (d) => `translate(${arc.centroid(d)})`)
-    // add major label for major arcs
-    .call((text) =>
-      text
-        .filter((d) => isMajorArc(d))
-        .append("tspan")
-        .attr("y", "-0.4em")
-        .attr("font-weight", "bold")
-        .text(majorLabelText)
-    )
-    // add minor label for major arcs
-    .call((text) =>
-      text
-        .filter((d) => isMajorArc(d))
-        .append("tspan")
-        .attr("x", 0)
-        .attr("y", (d) => (isMajorArc(d) ? "0.7em" : "0em"))
-        .attr("fill-opacity", 0.7)
-        .attr("stroke-width", 0)
-        .text(minorLabelText)
-    )
-  // add label for minor arcs
+  // // add major label for major arcs
   // .call((text) =>
   //   text
-  //     .filter((d) => !isMajorArc(d))
+  //     .filter((d) => isMajorArc(d))
+  //     .append("tspan")
+  //     .attr("y", "-0.4em")
+  //     .attr("font-weight", "bold")
+  //     .text(majorLabelText)
+  // )
+  // // add minor label for major arcs
+  // .call((text) =>
+  //   text
+  //     .filter((d) => isMajorArc(d))
+  //     .append("tspan")
   //     .attr("x", 0)
   //     .attr("y", (d) => (isMajorArc(d) ? "0.7em" : "0em"))
   //     .attr("fill-opacity", 0.7)
-  //     .attr("text-anchor", (d))
   //     .attr("stroke-width", 0)
-  //     .attr("transform", (d) => {
-  //       const c = minorLabelArc.centroid(d);
-  //       console.debug(d.data, c);
-  //       return `translate(${c})`;
-  //     })
-  //     .text(`hi`)
-  //     // .text(`${minorLabelText}: ${majorLabelText}`)
-  // );
+  //     .text(minorLabelText)
+  // )
 
   // Create legend
   if (legend) {
