@@ -21,6 +21,33 @@ const csvfile = view(
 ```
 
 ```js
+const selected_group = view(
+  Inputs.toggle({
+    label: "Group labels?",
+    value: false,
+  })
+)
+```
+
+Uploaded data:
+
+```js
+const user_data = !selected_group
+  ? await csvfile.csv({ typed: true })
+  : d3
+      .rollups(
+        await csvfile.csv({ typed: true }),
+        (D) => D.reduce((a, v) => a + v.value, 0),
+        (d) => d.label
+      )
+      .map((d) => ({ label: d[0], value: d[1] }))
+display(Inputs.table(user_data))
+console.debug("user_data", user_data)
+```
+
+## ${selected_mark} Plot
+
+```js
 const selected_mark = view(
   Inputs.select(["area", "bar", "rect", "cell", "dot", "line", "rule"], {
     label: "Plot type:",
@@ -33,15 +60,6 @@ const selected_plot_color_scheme = view(Inputs.select(["Blues", "Reds"]), {
   value: "Blues",
 })
 ```
-
-Uploaded data:
-
-```js
-const user_data = await csvfile.csv()
-display(Inputs.table(user_data))
-```
-
-## ${selected_mark} Plot
 
 <div id="plot" class="card">
   ${resize(
@@ -125,6 +143,6 @@ const selected_pie_color_scheme = view(
       )
   )}<!-- $ -->
 
-${downloadSVGButton("#pie svg:nth-of-type(1)")}<!-- $ -->
+${downloadSVGButton("#pie svg.donut-chart")}<!-- $ -->
 
 </div>

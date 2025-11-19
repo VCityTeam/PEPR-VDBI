@@ -191,6 +191,7 @@ export function parseTabularGraph(
     sourceMap = (d) => d.source,
     targetMap = (d) => d.target,
     valueMap = (d) => d.value,
+    colorMap = (d) => d.color || null,
   } = {}
 ) {
   const nodeByID = new Map()
@@ -199,6 +200,7 @@ export function parseTabularGraph(
       nodeByID.set(sourceMap(link), {
         id: sourceMap(link),
         value: valueMap(link),
+        color: colorMap(link),
       })
     else {
       nodeByID.get(sourceMap(link)).value += valueMap(link)
@@ -207,6 +209,7 @@ export function parseTabularGraph(
       nodeByID.set(targetMap(link), {
         id: targetMap(link),
         value: valueMap(link),
+        color: colorMap(link),
       })
     else {
       nodeByID.get(targetMap(link)).value += valueMap(link)

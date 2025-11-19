@@ -13,7 +13,7 @@ export const vdbi_color_scheme = {
 export const vdbi_color_scale_diverging = d3
   .scaleDiverging()
   .range([vdbi_color_scheme.blue, "white", vdbi_color_scheme.orange])
-  .unknown("#ccc")
+  .unknown("grey")
 
 export const vdbi_orange_analogic_color_scheme = [
   // "#ffe6bf",
@@ -44,17 +44,17 @@ export const vdbi_analogic_color_scale = d3
       .zip(vdbi_orange_analogic_color_scheme, vdbi_blue_analogic_color_scheme)
       .flat()
   )
-  .unknown("#ccc")
+  .unknown("grey")
 
 export const vdbi_orange_analogic_color_scale = d3
   .scaleQuantize()
   .range(vdbi_orange_analogic_color_scheme)
-  .unknown("#ccc")
+  .unknown("grey")
 
 export const vdbi_blue_analogic_color_scale = d3
   .scaleQuantize()
   .range(vdbi_blue_analogic_color_scheme)
-  .unknown("#ccc")
+  .unknown("grey")
 
 export const project_color_scale = d3
   .scaleOrdinal(
@@ -70,7 +70,7 @@ export const project_color_scale = d3
     ],
     d3.schemeCategory10.slice(0, 8)
   )
-  .unknown("#ccc")
+  .unknown("grey")
 
 // CNU Colors //
 
@@ -144,7 +144,7 @@ export function colorCNU(d, max) {
 // (Code 9) Groupement de droit privé
 export const legal_nature_colors = d3
   .scaleOrdinal([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], d3.schemeSet3)
-  .unknown("#ccc")
+  .unknown("grey")
 
 export const interpolated_legal_nature_color = (
   code,
@@ -158,4 +158,4 @@ export const interpolated_legal_nature_color = (
         domain.length + 1
       )
     )
-    .unknown("#ccc")
+    .unknown("grey")

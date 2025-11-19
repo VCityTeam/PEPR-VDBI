@@ -76,6 +76,7 @@ export function parallelSetToGraph(data, keys) {
  * @param {Function} text - function to map a node to its label
  * @param {scaleOrdinal|Function} nodeFill - color scale for nodes
  * @param {scaleOrdinal|Function} linkStroke - color scale for links
+ * @param {Number} fillOpacity - opacity for node fill colors
  * @param {Number} height - height of the SVG element
  * @param {Number} font_size - font size for node labels
  * @param {null|undefined} node_sort - node_sort paramters for d3-sankey,
@@ -93,6 +94,7 @@ export function sankeyDiagram(
     height = 720,
     nodeFill = "black",
     linkStroke = (d) => d.color || "#ccc",
+    fillOpacity = 0.7,
     font_size = 12,
     text = (d) => cropText(idMap(d), 85),
     node_sort = null,
@@ -150,6 +152,7 @@ export function sankeyDiagram(
     .attr("d", d3_sankey.sankeyLinkHorizontal())
     .attr("stroke", linkStroke)
     .attr("stroke-width", (d) => d.width)
+    .attr("stroke-opacity", fillOpacity)
     .style("mix-blend-mode", "multiply")
     .append("title")
     .text((d) => d.value.toLocaleString())

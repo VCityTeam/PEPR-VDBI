@@ -96,6 +96,7 @@ export function donutChart(
 
   const svg = d3
     .create("svg")
+    .classed("donut-chart", true)
     .attr("width", width + legendWidth)
     .attr("height", height)
     .attr("viewBox", [
@@ -234,6 +235,7 @@ export function donutChart(
   if (legend) {
     svg
       .append("g")
+      .classed("legend", true)
       .attr(
         "transform",
         `translate(${-width / 2 - legendWidth},${-height / 2 + 10})`
