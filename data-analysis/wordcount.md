@@ -1,22 +1,30 @@
 # Text to word count <!-- omit in toc -->
 
-This page describes the process for counting and comparing the word used in plain text files.
+This page describes the process for counting and comparing the word used in
+plain text files.
 
 > [!TIP]
-> These word counts can be passed to the [word cloud generator tool](/data-visualization/src/pages/tools/wordclouds.md) to create word clouds.
+> These word counts can be passed to the
+> [word cloud generator tool](/data-visualization/src/pages/tools/wordclouds.md)
+> to create word clouds.
 
 ## Table of contents <!-- omit in toc -->
 
-- [Method](#method)
-  - [Tokenize words](#tokenize-words)
-  - [Clean and count words](#clean-and-count-words)
-  - [Word count comparison](#word-count-comparison)
-- [To Run](#to-run)
-- [Produced word counts](#produced-word-counts)
-  - [PEPR VDBI Phase 1 project work package comparison](#pepr-vdbi-phase-1-project-work-package-comparison)
-  - [Comparison between PEPR VDBI and PEPR Recyclage project descriptions](#comparison-between-pepr-vdbi-and-pepr-recyclage-project-descriptions)
+- [1. Method](#1-method)
+  - [1.1. Tokenize words](#11-tokenize-words)
+  - [1.2. Clean and count words](#12-clean-and-count-words)
+  - [1.3. Word count comparison](#13-word-count-comparison)
+- [2. To Run](#2-to-run)
+- [3. Produced word counts](#3-produced-word-counts)
+  - [3.1. PEPR VDBI Phase 1 project work package comparison](#31-pepr-vdbi-phase-1-project-work-package-comparison)
+  - [3.2. Comparison between PEPR VDBI and PEPR Recyclage project descriptions](#32-comparison-between-pepr-vdbi-and-pepr-recyclage-project-descriptions)
+    - [3.2.1. Data collection](#321-data-collection)
+    - [3.2.2. Word count generation](#322-word-count-generation)
+  - [3.3. Comparison between PEPR VDBI and INSU : OCÉAN-ATMOSPHÈRE](#33-comparison-between-pepr-vdbi-and-insu--océan-atmosphère)
+    - [3.3.1. Data collection](#331-data-collection)
+    - [3.3.2. Word count generation](#332-word-count-generation)
 
-## Method
+## 1. Method
 
 ```mermaid
 ---
@@ -35,15 +43,18 @@ choice -->|yes| compare
 choice -->|no| out
 ```
 
-### Tokenize words
+### 1.1. Tokenize words
 
-Words are tokenized using [Natural Language Toolkit's](https://www.nltk.org/) `nltk.word_tokenize` function with the default configuration.
+Words are tokenized using [Natural Language Toolkit's](https://www.nltk.org/)
+`nltk.word_tokenize` function with the default configuration.
 
-### Clean and count words
+### 1.2. Clean and count words
 
 Word tokens are cleaned by:
 
-1. [Lemmatizing](https://www.ibm.com/think/topics/stemming-lemmatization) with [Natural Language Toolkit's](https://www.nltk.org/) `nltk.stem.WordNetLemmatizer` and the default configuration
+1. [Lemmatizing](https://www.ibm.com/think/topics/stemming-lemmatization) with
+   [Natural Language Toolkit's](https://www.nltk.org/)
+   `nltk.stem.WordNetLemmatizer` and the default configuration
 2. Mapping tokens to lower case
 3. Ignoring predefined stop words
 4. Removing tokens that are numeric digits
@@ -54,7 +65,7 @@ Once cleaned, the word tokens are aggregated and counted.
 > [!WARNING]
 > The default lemmatizer does not support French
 
-### Word count comparison
+### 1.3. Word count comparison
 
 Compare two word counts by:
 
@@ -68,9 +79,10 @@ Compare two word counts by:
    2. Max
    3. Min
 
-## To Run
+## 2. To Run
 
-Before running, you must have [UV](https://docs.astral.sh/uv/) installed for managing python dependencies.
+Before running, you must have [UV](https://docs.astral.sh/uv/) installed for
+managing python dependencies.
 Alternatively, you may install python directly [python](https://www.python.org/).
 
 After installing the prerequisites, install the required npm and python libraries:
@@ -95,7 +107,9 @@ Launch a workflow (or data pipeline) based on a configuration
 
 positional arguments:
   configuration      Specify the configuration file.
-                     File must be structured as a JSON array of configurations, each specifying the type of activity, the inputs and outputs, and the parameters used for the activity.
+                     File must be structured as a JSON array of configurations,
+                     each specifying the type of activity, the inputs and outputs,
+                     and the parameters used for the activity.
                      Two types are currently supported:
                      - 'parse': for reading and parsing a text into a word count
                      - 'clean': for cleaning word counts
@@ -138,49 +152,59 @@ positional arguments:
                      ]
 
 options:
-  -h, --help         show this help message and exit
-  -d, --debug        Use debug mode for logging
-  -l LOG, --log LOG  Specify the logging file
+-h, --help show this help message and exit
+-d, --debug Use debug mode for logging
+-l LOG, --log LOG Specify the logging file
 ```
 
-## Produced word counts
+## 3. Produced word counts
 
 This section documents how different word count datasets were produced.
 
 > [!WARNING]
-> Some of the input textes contain sensitive information and are not available on Github.
-> Reach out to the repository maintainer if you believe you should have access to these files.
+> Some of the input textes contain sensitive information and are not available
+> on Github. Reach out to the repository maintainer if you believe you should
+> have access to these files.
 
-### PEPR VDBI Phase 1 project work package comparison
+### 3.1. PEPR VDBI Phase 1 project work package comparison
 
-This dataset was initially created to test the new `nltk` integration and create word clouds for the [Journées Scientifiques PEPR VDBI 2025](https://pepr-vdbi.fr/evenements/journees-scientifiques-annuelles-villes-durables-batiments-innovants-2024-1) (JS)
+This dataset was initially created to test the new `nltk` integration and create
+word clouds for the [Journées Scientifiques PEPR VDBI 2025 (JS)](https://pepr-vdbi.fr/evenements/journees-scientifiques-annuelles-villes-durables-batiments-innovants-2024-1)
 
-The input texts were sourced by manually copying all text (with the exception of major section headers) from Sections 2.1 and 2.2 of each project call regarding work package (WP) descriptions.
+The input texts were sourced by manually copying all text (with the exception of
+major section headers) from Sections 2.1 and 2.2 of each project call regarding
+work package (WP) descriptions.
 
-Once counted, the project description word counts were grouped based on their respective "Regards croisés" sessions of the JS.
+Once counted, the project description word counts were grouped based on their
+respective "Regards croisés" sessions of the JS.
 Each group's word counts were compared through the sum of their intersections.
 
-This [config](./test-data/configs/wordcount/JS_roundtable_workflow_config.json) was used to create the dataset.
+This [config](./test-data/configs/wordcount/JS_roundtable_workflow_config.json)
+was used to create the dataset.
 
 The results are available in [test-data/output/js_roundtable](./test-data/output/js_roundtable/).
 
 <a id="result_2" />
 
-### Comparison between PEPR VDBI and PEPR Recyclage project descriptions
+### 3.2. Comparison between PEPR VDBI and PEPR Recyclage project descriptions
 
 What are the most commonly used words to describe the PEPR VDBI and Recyclage projects?
 
-#### Data collection
+#### 3.2.1. Data collection
 
 The initial texts from each PEPR were extracted as follows:
 
 1. PEPR VDBI project calls description extraction
-   1. Copy all text (with the exception of major section headers) from the following three sections of each project call:
+   1. Copy all text (with the exception of major section headers) from the
+      following three sections of each project call:
       - Resume (en)
       - Resume (fr)
+        - Note that the french version was created by translating the english
+          original and verified manually.
       - Sections 2.1 and 2.2 regarding WP descriptions
-2. PEPR Recyclage project description extraction
-   1. Copy all text (with the exception of titles and section headers) from the following three sections of each project [website](https://www.pepr-recyclage.fr/):
+1. PEPR Recyclage project description extraction
+   1. Copy all text (with the exception of titles and section headers) from the
+      following three sections of each project [website](https://www.pepr-recyclage.fr/):
       - Excerpt (en)
         - Project title (en)
         - Project description (en)
@@ -188,10 +212,12 @@ The initial texts from each PEPR were extracted as follows:
       - Tasks (en)
       - Consortium (en)
    2. Projects still under construction phases such as 'Soon to come' were removed.
+   3. Final texts are available in [data-analysis/test-data/input/pepr_recyclage](data-analysis/test-data/input/pepr_recyclage)
 
-#### Word count generation
+#### 3.2.2. Word count generation
 
-This [configuation file](test-data/configs/wordcount/compare_vdbi_recyclage_projects_config.json) was used to create the dataset. It executes the following activities:
+This [configuation file](test-data/configs/wordcount/compare_vdbi_recyclage_projects_config.json)
+was used to create the dataset. It executes the following activities:
 
 ```mermaid
 flowchart LR
@@ -205,10 +231,67 @@ in2 --> tokenize2(Tokenize text)
 
 tokenize1 --> count1(Clean and count project description words)
 tokenize2 --> count2(Clean and count project description words)
-count1 --> compare(Claculate word count intersection)
+count1 --> compare(Calculate word count intersection)
 count2 --> compare
   --> out@{ shape: doc, label: "Shared project word count"}
   --> stop@{ shape: dbl-circ, label: " " }
 ```
 
-The results are available in the [test-data/output/compare_vdbi_recyclage_projects](test-data/output/compare_vdbi_recyclage_projects/financed_project_resumes_en_cleaned_INTERSECTION_SUM_pepr_recyclage_projets_en_cleaned.csv) folder
+The results are available in the [test-data/output/compare_vdbi_recyclage_projects](test-data/output/compare_vdbi_recyclage_projects/financed_project_resumes_en_cleaned_INTERSECTION_SUM_pepr_recyclage_projets_en_cleaned.csv)
+folder
+
+### 3.3. Comparison between PEPR VDBI and INSU : OCÉAN-ATMOSPHÈRE
+
+What are the most commonly used words to describe the PEPR VDBI and the
+INSU:OCÉAN-ATMOSPHÈRE prospectives?
+
+#### 3.3.1. Data collection
+
+Data sources:
+
+- PEPR VDBI project WP descriptions (see [section 3.2.1](#321-data-collection))
+- The [INSU domain perspectives](https://www.insu.cnrs.fr/fr/identifier-les-enjeux-futurs-les-prospectives-scientifiques)
+  for OCÉAN-ATMOSPHÈRE (OA):
+  - [Synthèse des prospectives OA 2023-2028 : Comprendre, prévoir et accompagner la société à l’heure du changement climatique](https://www.insu.cnrs.fr/sites/institut_insu/files/page/2024-11/DigestProspectiveOA2023_INSU-CNRS.pdf)
+  - Only sections 4-8 (pages 8-17) are used as these seem to have the richest
+    vocabulary regarding the scientific themes, project needs, and proposed
+    actions of the OA.
+  - They are extracted and converted to text using Adobe Acrobat.
+  - Final texts are available in [data-analysis/test-data/input/insu_ocean_atmosphere](data-analysis/test-data/input/insu_ocean_atmosphere)
+
+#### 3.3.2. Word count generation
+
+This [configuation file](test-data/configs/wordcount/compare_vdbi_insu_oa_config.json)
+was used to create the dataset. It executes the following activities:
+
+```mermaid
+stateDiagram-v2
+
+    direction LR
+
+    i1 : Collect VDBI project descriptions
+    i2 : Collect INSU OA perspectives
+    t1 : Tokenize text
+    t2 : Tokenize text
+    c1 : Clean and count tokens
+    c2 : Clean and count tokens
+    i  : Calculate word count intersection
+
+    state fork <<fork>>
+        [*] --> fork
+        fork --> i1
+        i2 --> t1
+        t1 --> c1
+        fork --> i2
+        i1 --> t2
+        t2 --> c2
+
+    state join <<join>>
+        c1 --> join
+        c2 --> join
+        join --> i
+
+    i --> [*]
+```
+
+Results are available in [test-data/output/compare_vdbi_insu_oa_projects/](test-data/output/compare_vdbi_insu_oa_projects)

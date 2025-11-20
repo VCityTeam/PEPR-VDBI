@@ -73,7 +73,7 @@ import {
     },
     x: {
       grid: true,
-      axis: "both",
+      axis: null,
       label: "Occurrences",
     },
     marks: [
@@ -182,19 +182,19 @@ const selected_font_size_max = Inputs.range([1, 300], {
 const selected_angle_number = Inputs.range([0, 10], {
   label: "Angle number",
   step: 1,
-  value: 3,
+  value: 1,
 })
 
 const selected_angle_width = Inputs.range([0, 360], {
   label: "Angle width",
   step: 1,
-  value: 90,
+  value: 0,
 })
 
 const selected_angle_offset = Inputs.range([0, 360], {
   label: "Angle offset",
   step: 1,
-  value: 45,
+  value: 0,
 })
 
 const selected_word_limit = Inputs.range([1, 100], {

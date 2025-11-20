@@ -1,5 +1,7 @@
 import csv
 from enum import StrEnum, auto
+
+import stanza
 from utils import read_file, write_csv
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
@@ -22,6 +24,7 @@ def get_wordnet_pos(tag):
 def lemmatize_words(words: list[str], language: str = "eng") -> list[str]:
     """Lemmatize a list of words"""
     pos_tags = []
+
     try:
         pos_tags = pos_tag(words, lang=language)
     except LookupError:
@@ -83,9 +86,24 @@ def clean_and_count_words(
     # Stem/lemmatize words
     word_counts = {}
     lemmatized_words = []
+
     with open(input_path, "r") as file:
         reader = csv.reader(file, delimiter=delimiter)
-        lemmatized_words = lemmatize_words([row[0] for row in reader], language)
+
+        print(f"Lemmatizing words for language: {language}")
+        # TODO: migrate to spaCy
+        if language not in ["eng", "rus"]:
+            print("Using Stanza for lemmatization.")
+            nlp = stanza.Pipeline(lang=language, processors="tokenize,pos,lemma")
+            doc = nlp(" ".join([row[0] for row in reader]))
+            lemmatized_words = [
+                word.lemma
+                for t in doc.iter_tokens()  # type: ignore
+                for word in t.words
+                if word.upos != "PUNCT"
+            ]
+        else:
+            lemmatized_words = lemmatize_words([row[0] for row in reader], language)
 
     # print(f"lemmatized words: {lemmatized_words}")
     # remove stop words, digits, and non-alphanumeric characters

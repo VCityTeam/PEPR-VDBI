@@ -1,0 +1,32 @@
+[
+  {
+    "description": "parse PEPR VDBI and Recyclage project descriptions",
+    "activity": "#parse",
+    "inputs": [
+      "test-data/input/insu_ocean_atmosphere/DigestProspectiveOA2023_INSU-CNRS-8-17.txt",
+      "test-data/private/input/project_resume_fr/financed_project_resumes_fr.txt"
+    ],
+    "output_dir": "test-data/private/compare_vdbi_insu_oa_stage_0/"
+  },
+  {
+    "description": "count project description tokens",
+    "activity": "#count",
+    "input_dir": "test-data/private/compare_vdbi_insu_oa_stage_0/",
+    "output_dir": "test-data/private/compare_vdbi_insu_oa_stage_1/",
+    "params": {
+      "language": "fr",
+      "stop_words_path": "test-data/configs/wordcount/stop_words_french.csv"
+    }
+  },
+  {
+    "description": "get shared project description tokens",
+    "activity": "compare",
+    "inputs": [
+      "test-data/private/compare_vdbi_insu_oa_stage_1/DigestProspectiveOA2023_INSU-CNRS-8-17_count.csv:test-data/private/compare_vdbi_insu_oa_stage_1/financed_project_resumes_fr_count.csv"
+    ],
+    "output_dir": "test-data/output/compare_vdbi_insu_oa_projects/",
+    "params": {
+      "mode": "INTERSECTION"
+    }
+  }
+]

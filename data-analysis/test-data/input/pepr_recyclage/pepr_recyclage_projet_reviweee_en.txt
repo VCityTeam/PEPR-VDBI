@@ -1,0 +1,47 @@
+REVIWEEE, pour une chaîne des valeurs française viable sur le recyclage des DEEEs
+
+
+The aim of this project is to gain a better understanding of potential deposits of critical metals from waste electronic and electrical equipment (WEEE), and to develop processes to maximize their recovery in order to create value in France. Our focus is on developing breakthrough dismantling, physical sorting and chemical treatment techniques that simplify mixtures and increase the proportions of each metal in the products generated. The aim is to reduce processing costs and the environmental impact of these processes. This must be complemented by the identification of recovery channels. In addition to understanding known or established circuits, the challenge is to identify possible links between channels and/or processes, enabling economically viable and ecologically sustainable channels to be relocated in France. Finally, the work carried out as part of this project will enable us to better understand and/or resolve known challenges, as well as identify unknown ones.
+
+Waste electrical and electronic equipment (WEEE), Flows, Life cycle assessment (LCA), Strategic metals, Inorganic metallurgy, Cost-benefit assessment, Environmental impacts, Strategy, Industrial processes
+
+
+Analysis and knowledge of the urban mine deposit
+Muriel Maillefert (Université Lyon 3, EVS)
+Solène Touzé (BRGM)
+
+This first task is divided into two sub-tasks. The first (1.1.) focuses on understanding the territory’s metabolism in relation to WEEE. The second sub-task (1.2.) focuses on the challenges of determining the composition of the urban mine that is WEEE, the difficulty being that it is highly variable. One of the obstacles to be overcome is the standardization of analysis protocols, a standard that does not currently exist.
+
+WEEE treatment process
+Jean-Christophe Gabriel (CEA, NIMBE, LICSEN)
+N. Menad (BRGM)
+CHAPUIS Marlène et Emmanuel BILLY (CEA-LITEN)
+
+Study of processes for dismantling and disassembling systems into their individual electronic components and intelligent sorting, leading to sorting bags with simplified and more reproducible elementary compositions. This process will ultimately simplify the downstream treatment processes in the recycling chain for separating elements, and enable critical metals to be recovered in an economically viable way.
+
+2.2. Development of innovative, economically viable and environmentally-friendly separation technologies, such as electrostatic separation and flotation, to concentrate the critical metals in the flows to be treated and enable them to be recovered, whereas today they are mainly buried and not recycled.
+
+2.3 Studying the fundamental parameters governing the chemical extraction and recovery of these metals, with more or less advanced control of their separation, to ultimately put in place an inorganic metallurgy technology brick that can be integrated into the general WEEE recycling process.
+
+Implications of WEEE recycling strategies for access to resources and environmental impacts
+Stéphanie Muller (BRGM)
+
+The final task will examine the implications of these new WEEE recycling strategies in terms of resource accessibility and environmental impact. It will address the following challenges:
+
+Quantifying resource accessibility within the framework of life cycle assessment (LCA);
+
+Assessing the environmental benefits of circular loops, including recycling strategies, as part of LCA.
+
+
+
+The consortium’s aim is to develop a better understanding of the circulation of WEEE within our territory, as well as tools to model it, taking into account the economic, social, environmental, legal and political context. In particular, this will lead to the definition of protocols for assessing the influence of politics in the definition of WEEE, and for establishing the chemical composition of this urban mine.rnrnIt should also enable us to improve our recycling strategies by developing and improving sorting and separation processes for materials of interest contained in electronic waste, as part of the complex overall process of WEEE recovery. In particular, we will develop
+
+A methodology for establishing a composition database for electronic components. This database will ultimately enable them to be sorted intelligently;
+
+Relevant physical and metallurgical processes for the industrial recovery of critical metals (yield, economic viability, etc.);
+
+Finally, we are seeking to provide answers on the environmental impacts and benefits of this WEEE recycling approach, and to establish a protocol considering these accessible resources and their environmental impact resulting from WEEE recycling strategies. By developing new recycling methods (Task 2) to recover materials that are not currently recycled.
+
+The final task of our project focuses on a point of prime importance for the development of recycling strategies: the evaluation of the environmental benefits and impacts of these new processes. Today, it is difficult to measure the difference in environmental impact between mining a metal and recycling an electronic scrap. The aim of recycling is to bring to market a source of secondary materials which, by avoiding the primary extraction of these metals, should lead to savings in terms of resources (energy and water) and reductions in emissions.
+
+The project will lead to the training of a number of interns, a fixed-term contract, two PhD students and three post-docs.

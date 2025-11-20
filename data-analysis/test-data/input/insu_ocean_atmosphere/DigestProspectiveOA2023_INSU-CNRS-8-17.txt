@@ -1,0 +1,228 @@
+Une image contenant transport, satellite, engin spatial, espace
+
+Description générée automatiquement
+COMPRENDRE, PRÉVOIR ET ACCOMPAGNER LA SOCIÉTÉ 
+À L’HEURE DU CHANGEMENT CLIMATIQUE
+
+Illustration du satellite Swot qui suit depuis janvier 2023 les eaux à la surface de la Terre (océaniques et continentales) avec une résolution inégalée à ce jour. 
+© CNES/Mira productions
+
+LES DÉFIS SCIENTIFIQUES OCÉAN-ATMOSPHÈRE
+Comprendre et préfigurer 
+le système climatique
+
+L’anthropisation est une réalité sensible en ce qui concerne le climat planétaire. 
+Pourtant, des aspects majeurs de la « machine » climatique restent méconnus. Il demeure des incertitudes quant aux changements et à leurs effets. La prospective OA prend en compte ces enjeux, sous la forme de six défis scientifiques au sein de zones prioritaires. 
+
+DÉFI 1 
+Variabilité, tendances et points de bascule du système climatique
+La recherche de « points de bascule » du système climatique, c’est-à-dire d’événements provoquant des changements importants, voire irréversibles, va nécessiter l’exploration systématique de la sensibilité des modèles, de même qu’une utilisation accrue des observations disponibles depuis près de 50 ans.
+La modélisation des changements climatiques nécessite quant à elle des améliorations méthodologiques, ainsi qu’un important enrichissement en données d’observation. C’est particulièrement le cas pour l’étude des changements provoqués par les gaz à effet de serre et les aérosols, à un niveau global ou régional, et pour celle de la variabilité interne de l’océan et de sa dynamique à grande échelle.
+Pour répondre à ces besoins, deux facteurs concourent à une connaissance plus détaillée des phénomènes atmosphériques et océaniques : la comparaison internationale des modèles climatiques et le fait que nous sommes désormais en possession de longues séries de données de mesures prises en continu.
+Pour la compréhension de la turbulence océanique, il est recommandé que les prochaines données satellites à haute résolution soient exploitées en synergie avec les observations et campagnes in situ.
+
+La modélisation des changements climatiques nécessite des améliorations méthodologiques, ainsi qu’un important enrichissement en données d’observation. 
+
+8
+
+DÉFI 2
+Événements extrêmes
+La fréquence des vagues de chaleur et l’intensité des précipitations extrêmes, mais aussi d’autres phénomènes (cyclones, submersions côtières, libération de poches sous-glaciaires, mégafeux...), sont susceptibles d’augmenter avec le changement climatique. L’anticipation de ces phénomènes est un enjeu majeur pour les sociétés humaines.
+Les chercheurs de la communauté OA s’efforcent de mieux comprendre quelles influences s’exercent sur ces événements extrêmes. Ainsi, la prévision d’événements tels que la foudre et les cyclones tropicaux nécessite de progresser dans la modélisation des phénomènes convectifs de l’atmosphère qui les provoquent (voir ci-après défi 3). Là encore, des observations de longue durée, la mise en œuvre d’une nouvelle génération de satellites à haute résolution et l’utilisation de capteurs in situ innovants seront déterminantes. Quant aux vagues de chaleur marine et aux épisodes de désoxygénation, leur compréhension et leur anticipation bénéficieront aussi de progrès méthodologiques et matériels.
+DÉFI 3
+Convection atmosphérique et changements climatiques
+Les mouvements verticaux de l’air, sous l’effet des différences de température, provoquent la convection atmosphérique, un phénomène universel qui joue un rôle dans la variabilité du climat. Le renouveau des méthodes d’observation à des échelles spatiales très fines, et les progrès de la modélisation sont, ici encore, déterminants pour mieux connaitre l’organisation dans l’espace de la convection, ses mécanismes, sa contribution à la circulation atmosphérique (vents), son influence sur les événements extrêmes et l’impact que les changements climatiques ont sur elle.
+Un tel renouveau nécessite l’augmentation des moyens humains de la communauté de chercheurs Océan-Atmosphère (avec l’apport d’expertises actuellement manquantes), ainsi que la conduite de grandes campagnes, nationales ou internationales. Dans cette perspective, l’étude de la convection au-dessus de l’Atlantique tropical s’affiche comme une priorité.
+
+L’étude 
+de la convection atmosphérique au-dessus de l’Atlantique tropical s’affiche comme 
+une priorité. 
+
+Incendie © Laura Reed/Pexels
+
+Une image contenant nuage, chaleur, Ambré, ciel
+
+Description générée automatiquement
+DÉFI 4
+Diversité du vivant 
+et biogéochimie 
+Les êtres vivants et, parmi eux, les micro-organismes (bactéries, algues et champignons unicellulaires) jouent un rôle important dans les cycles naturels d’éléments chimiques comme le carbone. On parle d’ailleurs de « cycles biogéochimiques » pour souligner la participation d’organismes biologiques à ces cycles géochimiques.
+Dans l’océan, le rôle de la « pompe microbienne à carbone » est l’un de ceux qu’il importe de mieux connaitre pour ses implications climatiques. C’est un phénomène de séquestration du CO2 atmosphérique, d’abord dissout dans les eaux de surface, puis capté par les algues et enfin transformé lors de la sédimentation après leur mort, notamment sous la forme d’agrégats (neige marine). 
+Au-delà de 200 mètres sous la surface de l’océan, la zone la moins explorée de notre planète joue un rôle essentiel dans la régulation du climat, en piégeant le carbone et en influençant les bilans de chaleur à l’échelle planétaire. Si les écosystèmes profonds sont encore largement méconnus, on sait cependant que leurs spécificités sont très grandes, qu’ils sont un élément important de la biodiversité et qu’ils sont extrêmement fragiles. Or, les grands fonds marins abritent des ressources qui attisent les convoitises industrielles. Le défi actuel des recherches de la communauté OA est de développer l’observation et l’instrumentation (par exemple la capacité à prélever des échantillons in situ), tout en contrôlant l’impact de telles opérations, car les écosystèmes profonds sont fragiles. 
+Enfin, des micro-organismes de l’océan encore méconnus, aux caractéristiques à la fois végétales et animales, ou appartenant au groupe des champignons ou encore à celui des virus, jouent un rôle dans les cycles géochimiques. De même, dans l’atmosphère, des micro-organismes en suspension dans l’air pourraient influer sur la formation des nuages.
+Il y a donc un ensemble de recherches à entreprendre aux interfaces continent/atmosphère/océan pour appréhender la diversité des relations entre le vivant et le climat et pour explorer les facteurs encore mal connus qui ont un impact sur l’activité biologique (comme les sources hydrothermales sous-marines).
+DÉFI 5
+Anthropisation
+des milieux
+et pollutions
+La transformation par l’Homme des environnements atmosphériques et océaniques a des impacts aigus et parfois durables, qui mettent en péril les écosystèmes, voire leur habitabilité par l’espèce humaine. Qu’il s’agisse de la qualité de l’air ou de la pollution par les microplastiques, leur étude exige une approche pluridisciplinaire, nécessairement en lien avec la société. En effet, les perturbations sont à la fois écologiques, économiques, sociales et sanitaires. Elles ne peuvent être combattues qu’à la faveur d’un transfert efficace des connaissances et des expertises (voir page suivante, nos engagements).
+Dans le domaine de la qualité de l’air, les recherches doivent notamment porter sur l’évolution à long terme des polluants atmosphériques, sur les processus d’oxydation des composés organiques volatils (COV), ainsi que sur l’influence des conditions météorologiques. La communauté OA a la capacité de lancer d’importantes campagnes de mesures et d’analyse des observations satellitaires. Il importe notamment de bien comprendre certains aspects de la chimie des polluants et de distinguer leurs origines anthropiques et naturelles (feux, volcans par exemple). Cela exige de multiplier les collaborations interdisciplinaires, notamment avec des chimistes, et de poursuivre la participation à des programmes internationaux. 
+L’étude des microplastiques, dans l’ensemble des compartiments du système Terre, doit aussi faire l’objet de recherches d’ampleur permettant d’aboutir à des quantifications, notamment pour ce qui concerne les enveloppes fluides (océans, fleuves, atmosphère).
+
+Le phytoplancton, étape essentielle de la chaîne alimentaire océanique, est aussi un facteur déterminant 
+du stockage du carbone par les océans.
+
+Une image contenant ciel, plein air, horizon, eau
+
+Description générée automatiquement
+Protistes et larves planctoniques. 
+Ce plancton a été récolté au cours de l'expédition Tara. Le 5 septembre 2009 
+le bateau Tara est parti de Lorient pour 
+une expédition de 3 ans sur tous les océans du monde, afin d'étudier la vie microscopique des océans. © Christian SARDET / Tara Océans / Plankton Chronicles / CNRS Images
+
+Une image contenant plein air, ciel, eau, nuage
+
+Description générée automatiquement
+Anthropisation du domaine côtier. 
+L’océan côtier, comme tous 
+les compartiments du système Terre, 
+connait une anthropisation sans précédent qui pose des problèmes d’habitabilité 
+et de biodiversité. © Henri Wortham
+
+Une image contenant pompier, ciel, vêtements de travail, capture d’écran
+
+Description générée automatiquement
+DÉFI 6
+Couplages 
+et interactions d’échelles
+L’expertise française est déjà riche en ce qui concerne les échanges d’énergie et de matières aux interfaces océan-atmosphère, continents-atmosphère ou encore océan-cryosphère-atmosphère. Du fait de ces échanges, on dit que ces compartiments sont en couplage. Pour la communauté OA, il est prioritaire de mieux comprendre et modéliser les couplages, leurs 
+
+Déploiement (juillet 2022) d’un châssis instrumenté depuis le Marion Dufresne 2 dans la zone du volcan sous-marin 
+de Mayotte pour mesurer les courants marins, à haute fréquence. © Jérôme Paillet / Lops / CNRS Images
+
+
+Les aires prioritaires
+
+Pour répondre à ces six défis scientifiques, la communauté se focalise sur quatre aires prioritaires. Elles ont été choisies en fonction de leur intérêt au regard des axes de recherche, 
+mais aussi de leurs enjeux sociétaux, de leur vulnérabilité aux changements climatiques 
+et de l’implantation de la communauté Océan-Atmosphère.
+
+
+
+Lâcher d’un ballon-sonde dans l’atmosphère 
+pour un radiosondage sur les bords de Seine, à Paris. 
+© Cyril FRESILLON/CNRS Images
+
+Le milieu urbain 
+La compréhension de l’évolution des microclimats urbains sous l’effet des changements climatiques est un enjeu essentiel. Réciproquement, l’impact des villes doit être mieux pris en compte dans la modélisation du système climatique.
+Les axes de recherche s’orientent sur la quantification et la prédiction des risques météorologiques, et sur le couplage entre changement climatique et microclimat urbain. Ils concernent également la vulnérabilité de la ville vis-à-vis des événements extrêmes, mais aussi la qualité de l’air, compte tenu des pratiques qui vont nécessairement évoluer. Une approche interdisciplinaire est requise pour évaluer l’impact de la ville sur le climat et l’environnement régional et pour caractériser la diversité des composés chimiques de l’atmosphère urbaine (gaz et particules). Le développement de modélisations intégrées pour la ville, appuyées par l’intelligence artificielle, répond à la volonté de préciser les risques pour les habitants.
+Pour évaluer l’impact des vagues de chaleur régionales, mais aussi les effets de la végétalisation de l’espace urbain et ceux de la décarbonation des transports et de l’industrie, il est nécessaire de coordonner le travail de différents organismes et intervenants (chimistes, physiciens, médecins, sociologues, urbanistes, juristes). La ville est le terrain idéal de l’interdisciplinarité et d’une meilleure intégration des sciences participatives, notamment par le recueil d’observations de participants qui ne sont pas des scientifiques professionnels. La communauté Océan-Atmosphère s’inscrit ainsi résolument dans le chantier urbain lancé par l’INSU, qui concerne également les communautés de l’étude des surfaces et interfaces continentales et de la Terre solide. 
+Les aires tropicales 
+et intertropicales 
+Indispensables, les observations à long terme s’avèrent pourtant nettement plus difficiles en zone tropicale et intertropicale que dans les régions tempérées. Avec un objectif d’amélioration des modèles climatiques régionaux, les recherches s’orientent sur la prévision des cyclones tropicaux, la caractérisation de la variabilité climatique à long terme, ainsi que l’étude de la convection profonde dans l’atmosphère et de la circulation des polluants.
+Il s’agit de travailler dans un contexte d’évolution rapide et de concevoir des stratégies d’adaptation. Certains dispositifs d’observation à long terme de la communauté Océan-Atmosphère sont déjà implantés dans la zone tropicale depuis plusieurs années. En outre, la coconstruction avec les organismes de recherche locaux bénéficiera aux travaux entrepris, tout en favorisant le partage de connaissances, l’adhésion et l’implication des populations.
+
+Les régions polaires 
+Archives naturelles de la composition atmosphérique, qui est enregistrée dans leurs glaces, les régions polaires sont également des zones clés du système climatique. La pollution venant des latitudes moyennes les atteint et elles se montrent particulièrement vulnérables au réchauffement planétaire. Leur couvert neigeux diminue, leurs sols dégèlent et leurs calottes polaires se réduisent, de même que les superficies de banquise.
+S’appuyant sur les réalisations, les compétences et les infrastructures de la communauté scientifique nationale pilotée par l’INSU, l’État français a proposé, en avril 2022, une stratégie polaire française. Sur cette base, la prospective Océan-Atmosphère a inclus les pôles dans ses aires prioritaires de déploiement scientifique. Pour prévoir l’évolution des régions polaires, il faut s’appuyer sur leur paléoclimatologie, modéliser les interactions avec l’atmosphère et l’océan et mieux comprendre les effets en retour de l’enneigement, en complétant les mesures physiques par des études chimiques. 
+La recherche Océan-Atmosphère française est bien implantée en Arctique et en Antarctique, où se poursuivent des observations à long terme et des expérimentations innovantes. Il est nécessaire de la renforcer par des expertises complémentaires et de mieux l’équiper (en instruments et en moyens de modélisation). Elle a aussi pour objectif de poursuivre et de développer ses collaborations internationales, notamment pour anticiper certains impacts globaux, tels que l’élévation du niveau des mers.
+
+Orthophotographie de la plage de l'Hermitage 
+(La Réunion, Saint-Gilles les Bains, 97460). © 2005 Mai-Linh Doan
+
+Avec sa faible profondeur, le coninuum continent-océan, 
+qui reçoit directement les effluents du continent, 
+est particulièrement sensible à l’anthropisation.  
+
+
+
+Mangrove du Moule en Guadeloupe.
+© Cyril FRESILLON / PEPSEA / CNRS Images
+
+L'Astrolabe I, ses passagers et un manchot empereur 
+en bordure de la banquise, Antarctique. © Yan ROPERT-COUDERT / CEBC / IPEV / WWF-Royaume-Uni / CNRS Images
+
+Le continuum continent-océan 
+Le continuum continent-océan désigne la zone allant du littoral au talus continental (la pente sous-marine qui sépare la zone côtière des grands fonds). Avec sa faible profondeur, cet océan côtier recevant directement les effluents du continent est particulièrement sensible à l’anthropisation. La zone côtière est aussi celle où vit la majeure partie de la population. Les enjeux scientifiques et sociaux y sont donc multiples : élévation du niveau des mers, acidification, risques d’érosion et de submersion, mais aussi capacité de cette zone hétérogène à « s’épurer » et à piéger le carbone.
+Il est nécessaire de mieux prévoir les variations régionales du niveau marin, les échanges d’eau et de matières (en particulier au niveau des estuaires), ainsi que l’effet des espèces « ingénieures » (herbiers, mangroves, récifs de corail, huîtres, etc.). Étant donné les enjeux climatiques et sociaux de l’océan côtier, il faut associer aux physiciens des biogéochimistes, des mathématiciens, des écologues et des biologistes, mais aussi des chercheurs en sciences humaines et sociales.
+
+
+NOS ENGAGEMENTS
+Guider l’action, 
+évaluer les solutions 
+et être exemplaire
+
+Des solutions nouvelles sont à inventer pour limiter les changements et leurs effets, tout en subvenant aux besoins énergétiques et alimentaires essentiels, et en préservant nos ressources naturelles. La fonction première des chercheurs de la communauté Océan-Atmosphère reste 
+la production de connaissances répondant aux exigences d’éthique et d’excellence. De ce fait, 
+ils sont détenteurs d’une part très importante des savoirs indispensables à la compréhension 
+du changement climatique et à l’adaptation des sociétés. Assumer le rôle de service public 
+de recherche signifie aussi mettre ces savoirs à disposition de toute la société, pour relever 
+les immenses défis du changement climatique et de l’anthropisation.
+
+Accompagner 
+les politiques publiques
+Déclinées aux échelles pertinentes, les travaux de la communauté OA peuvent nourrir les démarches d’adaptation – telles que la transition énergétique, les politiques d’aménagement ou l’émergence de technologies nouvelles – et permettre de mieux quantifier les effets des actions d’atténuation ou anticiper les risques, pour limiter les conséquences des changements climatiques.
+Donner du sens 
+pour éclairer la société
+Les crises récentes ont révélé à quel point notre société a besoin de la science et de ses éclairages, pour comprendre les enjeux et planifier les actions. Le changement climatique et l’anthropisation des milieux représentent peut-être l’un des plus grands défis de l’histoire de l’humanité. L’habitabilité de régions entières risque d’être remise en question. Les besoins d’adaptation et de mitigation vont demander des efforts considérables à l’ensemble des populations. 
+La recherche en sciences de l’atmosphère, de l’océan et du climat fournit un savoir pertinent pour comprendre les mécanismes en jeu et leurs conséquences. En tant que service public de production de connaissances, elle a le devoir moral et sociétal de transmettre ce savoir, par la médiation et la vulgarisation. Il devient aujourd’hui nécessaire d’accompagner toute la société, pour limiter les incompréhensions, les frustrations et les peurs irrationnelles. 
+Mettre les expertises OA 
+au service de la collectivité
+La communauté OA apporte 
+des réponses essentielles 
+pour les grandes transitions :
+ &#7;Qualifier et quantifier les risques climatiques pour favoriser l’adaptation des 
+« socio-écosystèmes ». 
+ &#7;Reconnaître les démarches vertueuses et identifier 
+les pratiques délétères. 
+ &#7;Proposer des trajectoires, 
+de l’échelle globale à celle 
+du territoire, en fonction 
+de scénarios mis en débat.
+ &#7;Accompagner la capture 
+et la séquestration du CO₂ 
+et cartographier les émissions 
+de gaz à effet de serre (usages 
+et fuites).
+ &#7;Évaluer et prévoir les besoins en énergie et contribuer à l’optimisation de la capacité de production, pour de nouveaux projets comme pour la gestion des réseaux énergétiques.
+Les études à long terme sont effectuées par les équipes pluridisciplinaires de la communauté OA, en s’appuyant sur leurs services nationaux d’observation intégrés dans les réseaux internationaux, leurs sites d’expérimentation, leurs instruments nationaux et leurs codes communautaires, dans des conditions rigoureuses de mesure et de modélisation. 
+L’approche interdisciplinaire est par ailleurs nécessaire pour traiter les problèmes de transition écologique et énergétique dans toute leur complexité. Ainsi, le centre interdisciplinaire Energy4Climate (E4C) et l’institut de convergence CLAND sont coordonnés par des laboratoires OA. Ils mettent en place des actions qui sont destinées à s’étendre nationalement, dans une approche de complémentarité.
+Produire des services climatiques pour éclairer 
+les décisions
+Lancés il y a 10 ans avec le portail de données DRIAS (CNRS–Cerfacs–Météo France), les services climatiques constituent une aide à la décision pour les organisations et les particuliers.
+Jusqu’à présent, DRIAS mettait à disposition les scénarios climatiques régionalisés. Aujourd’hui, le Programme de recherche (PEPR) TRACCS (TRAnsformer la modélisation du Climat pour les services ClimatiqueS) a pour objectif d’améliorer les services climatiques grâce à une modélisation permettant d’affronter les défis actuels et de répondre aux attentes sociétales. Cela passe par la production de grands ensembles de projections et le développement de méthodes statistiques avancées et de l’intelligence artificielle.
+Demain, notamment grâce à TRACCS (pour la technologie) et en s’appuyant sur le réseau des observatoires en sciences de l’Univers (pour la collecte de la demande à l’échelle locale), la communauté OA s’engagera résolument dans la production de services climatiques innovants. Ils répondront aux besoins exprimés par la société (décideurs publics, entreprises, associations…) et seront à la hauteur des moyens qui leur seront attribués.
+Mobiliser l’innovation
+La recherche scientifique en OA est source d’innovations conceptuelles et technologiques qu’il convient de mobiliser par le transfert aux acteurs socioéconomiques pour aider à la mutation vers une économie sobre en carbone, tout en participant à la création d’emplois. En outre, face à l’urgence climatique, la collaboration entre le monde socioéconomique et la communauté Océan-Atmosphère doit être renforcée.
+Voici quelques exemples 
+de valorisations issues d’innovations dans le domaine OA :
+ &#7;Développement de capteurs 
+et d’algorithmique satellitaire venant soutenir la R&D 
+du secteur aérospatial national.
+ &#7;Création de start-ups 
+avec des applications opérationnelles (par exemple GRASP-SAS, du laboratoire d’optique atmosphérique, qui fournit des services de télédétection, ou Amphitrite, du laboratoire de météorologie dynamique, pour caractériser et prévoir les courants à la surface des océans) et de laboratoires communs avec le privé tels 
+que AGORA-LAB
+(CIMEL-CNRS-U. Lille).
+ &#7;Développement de services climatiques (par ex. TRACCS pour la modélisation du climat).
+ &#7;Développement de capteurs environnementaux innovants par la division technique 
+de l’INSU. 
+Réformer nos pratiques en allant vers plus de sobriété
+De grands efforts d’investigation, de calcul, d’analyse et de stockage de données restent nécessaires pour mener à bien ces chantiers. Malgré l’urgence, la communauté Océan-Atmosphère ne s’exonère pas des efforts qui s’imposent à tous : l’importance d’une recherche sobre s’affirme comme l’une des grandes résolutions de cette prospective. 
+La recherche Océan-Atmosphère a pour cela des atouts structurels, avec la mutualisation des énergies et des moyens. Cette mutualisation est depuis longtemps synonyme d’efficacité accrue et de rationalisation des efforts financiers (par exemple, pour l’utilisation des avions et navires de recherche). Elle favorise la nécessaire interdisciplinarité des équipes et sera dans l’avenir un avantage pour le déploiement sobre de nos moyens et pour construire collectivement les stratégies de recherche et les technologies qui nous conduiront à réduire notre empreinte environnementale.
+Rester garant de l’éthique 
+et de la rigueur scientifiques
+Les défis qui sont lancés à notre société nécessitent que les résultats de nos observations et les enseignements de nos travaux soient portés dans le débat public. Au cours de ce processus, les risques de mal-interprétation, de dérives ou d’approximations délétères ne sont pas rares. La communauté Océan-Atmosphère s’engage à ce que la multiplication de ses interventions s’accompagne d’une vigilance accrue à la préservation de sa rigueur scientifique. Cet engagement s’inscrit dans le cadre des résolutions du comité d’éthique du CNRS sur l’engagement, la communication en temps de crise et le conflit d’intérêts. 
+
+Une image contenant peinture, art, Peinture artistique, Art moderne
+
+Description générée automatiquement
+Visualisation des îlots de chaleur 
+sur Paris et sa banlieue, obtenue 
+par modélisation numérique lors 
+d'’une soirée d'’été dégagée. © CNRM
+
+Les défis qui sont lancés à notre société nécessitent 
+que les résultats 
+de nos observations et les enseignements de nos travaux soient portés dans le débat public. 
+
+6 impératifs pour la mise 
+en œuvre des projets 
+
+La concrétisation de projets d’intérêt majeur, sur le changement climatique et l’anthropisation, exige le développement d’une instrumentation innovante. Des progrès notables s’observent dans l’automatisation des appareils et du traitement des données, et dans la précision des mesures. L’objectif est également d’augmenter les performances et la robustesse des instruments et capteurs déployés dans des environnements difficiles ou extrêmes, et de faciliter la transmission des données à distance.
+La mise en œuvre des priorités de cette prospective, mais aussi la préservation de la place de la France dans l’effort mondial de recherche sur le changement climatique, imposent que nous conservions les moyens lourds de recherche. Ils sont indispensables à l’exploration de territoires étendus. C’est en particulier le cas de la jouvence de la flotte aéroportée de l’infrastructure de recherche IN AIR (avions, ballons et drones), des moyens à la mer hauturier et côtier de la flotte océanographique française et de la station polaire Concordia. 
+
+Le développement de la modélisation numérique concerne des niveaux de détails de plus en plus fins, ainsi que les couplages entre les grandes composantes du système climatique. L’utilisation conjointe de supercalculateurs et de l’intelligence artificielle permettra de modéliser des savoirs multidisciplinaires et d’assimiler les données hétérogènes du système climatique. L’objectif est d’augmenter la résolution spatiale et d’explorer systématiquement les incertitudes et les sensibilités des différents modèles. 
+L’ouverture totale et exhaustive des données produites par nos services d’observation, nos campagnes, nos expériences de laboratoire et nos simulations, est plus que jamais essentielle à la production de nouveaux savoirs. L’établissement de l’infrastructure de recherche DataTerra est récent, et son ouverture totale permettra le partage des données au-delà de la communauté scientifique, vers les structures opérationnelles, les entreprises, les décideurs locaux et nationaux. Cette ouverture, si elle bénéficie du support indispensable aux laboratoires et à l’infrastructure de recherche DataTerra, sera aussi un pilier de la sobriété de nos recherches.
+Une nouvelle organisation des recherches doit être déterminée par une déclinaison territoriale, elle-même fondée sur le réseau des Observatoires en sciences de l’Univers (OSU), et une déclinaison thématique et opérationnelle, à travers les infrastructures de recherche.
+Éclairée par les prospectives quinquennales, la trajectoire de la communauté est mise en œuvre par les programmes nationaux (LEFE : Les enveloppes fluides et l’environnement ; PNTS : Programme national de télédétection spatiale) et les grands programmes de l’État (PPR, PEPR…). Ces projets de grande envergure sont facteurs d’avancées scientifiques. Leurs ressources doivent être renforcées.
+Dans les partenariats avec le privé, mais aussi face aux demandes d’expertise et d’engagement public de la communauté OA, une réflexion éthique se développe. Il s’agit d’une part de ne jamais associer la recherche scientifique à des activités commerciales aux effets potentiellement néfastes et, d’autre part, de faire preuve d’une grande rigueur scientifique dans le débat public, sans s’écarter de son champ d’expertise. Il importe notamment de formuler avec prudence toute promesse ou tout espoir d’avancées.

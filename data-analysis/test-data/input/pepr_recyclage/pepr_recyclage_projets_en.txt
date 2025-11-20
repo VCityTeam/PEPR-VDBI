@@ -1,0 +1,434 @@
+Cyclamet, recyclage des métaux stratégiques
+
+
+The general objectives of the Cyclamet project are to:
+
+Provide a framework for the socio-economic and environmental assessment of strategic metals recycling, including the development of environmental impact indicators to assess the sustainability of their management.
+Develop unit operations to optimize the recovery and valorization of metals contained in end-of-life objects, and to produce salts or marketable metals (purified, in alloy form),
+Provide tools and methods to feed other targeted projects,
+Provide other targeted projects with data on material composition and interconnections between phases (metallic, mineral, organic), reflecting the complexity of the matrices studied.
+Recycling, strategic metals, hydrometallurgy, automation, processes, sorting
+
+
+Socio-economic and environmental assessment of strategic metals recycling
+
+Systemic approach to material and energy flows under stress for the recycling of strategic metals
+The recycling industry in Europe: Scandinavian countries at the forefront
+Implications of recycling strategies for the defense industry
+Development of environmental impact indicators for strategic metals management
+Optimize automation and measurement time, with the aim of setting up on-line analysis systems for sorting adapted to recycling channels
+
+Target use cases to adapt the method (signal/noise, measurement time, shaping of the incident spectrum…)
+Spectrum processing for fast, accurate quantification of elements of interest
+Automation of the measurement process, with the aim of setting up a sizing support system (identification of atomic elements of interest to guide sorting / instrumentation / measurement optimization).
+Develop soft chemical alternatives to existing complex and polluting hydrometallurgical processes for the recovery of strategic metals
+
+Evaluate the potential of industrial-scale preparative chromatography for metal extraction.
+Use ionic solvents and couple electrolysis and electrodeposition (EE) in a single cell as an alternative to conventional hydrometallurgical processes.
+Develop efficient and economically viable processes, aiming for lower effluent and waste production, energy savings and operator safety.
+Develop innovative numerical tools to support the design and scale-up of hydrometallurgical processes for metal recycling, from leaching to separation and purification stages
+
+Develop a numerical tool to describe the various phenomena influencing the process and their coupling (case study: printed circuit board (PCB) waste).
+Predict the geometric properties of emulsions (interfacial area, breakage/coalescence sites) to enhance the reliability of predictions of M/S operation.
+Tools for process optimization
+
+Development of microfluidic equipment for on-line measurement of parameters such as dissolved O2 and CO2, metal ion concentrations…
+Can Quorum Sensing be “gamed” to improve metal recovery from e-waste?
+
+
+Contribute to making the metals in our waste accessible by preventing their dissipation
+
+Provide quantitative data to assess the value of recycling and its effect on the accessibility of metals
+
+Understand the dynamics and interconnections between the production of secondary materials and the needs driven by the energy transition
+
+Develop dedicated, clean, robust and agile processes at the interface between scientific fields, capable of adapting rapidly to changes in the composition of the urban mine and recovering a large number of metals present in our waste.
+
+
+
+Training of 6 PhD students and 13 post-docs.
+Déchets ménagers, analyse systémique
+
+
+The overall aim of the project is to acquire the knowledge needed to improve household waste recycling along the entire value chain, from collection to treatment and recycling, and the recovery and/or disposal of final waste. The project is structured around five themes. The first combines technology and social behavior to improve the sorting of household waste materials. The second focuses on innovative processes for decontaminating materials. Value chains are studied from the point of view of material/energy flows, logistics and environmental impacts. A fourth theme studies human behavior, organizational dynamics and the interconnections between players in a given area, and proposes ways of improving the structure of value chains. Finally, the role of regulation and standardization in recycling and waste sorting is analyzed.
+
+Cleaning/purification processes, Sorting processes, Waste characterization, Waste collection, Life cycle assessment, Economic players, Player dynamics, Regulation and standardization, Non-financial incentives, Individual behaviour
+
+Innovative sorting for optimum material separation
+Mathieu Durand, ESO
+Sandrine Bacconnier, ESO
+
+Combines technology and social behavior to improve waste separation. The aim is first to map and analyze the tools available to promote sorting in companies producing household waste. Then, separation technology is addressed through multi-view/multi-sensor and dual-energy X-ray images.
+
+Innovative preparations for extensive reuse of materials
+Yvan Chalamet, IMP
+
+Aims to develop deinking/purification methods that limit the use of organic solvents (replaced by supercritical fluids) and promote efficient purification methods enabling the reuse of these materials for new applications.
+
+Systems modeling and analysis
+Pascal Guiraud, TBI
+
+Modeling approaches and tools are needed to better integrate all aspects, from waste traceability to efficient recycling and reuse. Task 3 analyzes and optimizes value chains through material flow analysis (MFA), mathematical modeling and logistics optimization, economic evaluation and life cycle assessment (LCA).
+
+Dynamics of actors and organizations
+Lesly Cassin, BETA
+
+Examines human behavior, the dynamics of actors and organizations, the interconnections of actors on the territory, and proposes ways to improve the structure of value chains. We’ll discover the extent to which supply chain design helps organize industries/communities/homes from geographic, political, social, environmental and economic perspectives.
+
+Regulation, standardization
+Nathalie Lazaric, GREDEG
+
+Examines the role of regulation and standardization on human behavior with regard to recycling and waste separation, as well as on the development of new material channels.
+
+
+This project is expected to deliver results on several levels. Firstly, an interdisciplinary approach should emerge through the collaboration of researchers from different scientific backgrounds. The work carried out will lead to technological proposals for improving the recyclability of materials contained in household waste. The modeling of waste streams from collection to recycling will make it possible to propose methodologies for the systemic analysis of waste management methods. Identifying and analyzing the socio-economic and regulatory obstacles to an efficient circular economy will enable us to understand the contribution of individuals, companies and institutions, and thus propose levers for action to improve waste reduction and material circularity.
+
+The research carried out as part of this project aims to improve the environmental impact of household waste management by acting at different points in the life cycle of objects and waste. Firstly, by studying how to influence consumer behavior to reduce the production of household waste. Secondly, by improving sorting at home. The dynamics and logistics of collection networks can be optimized, as can the choice of recycling/super-recycling channels. Finally, technical improvements in waste sorting and recyclability will enable more efficient recycling, with gains in the environmental performance of the channels.
+
+The project is largely based on training through research and consolidating the high-level skills of young graduates as post-docs. The project will involve 9 post-docs (138 months).
+LULABAT, procédé de recyclage innovant, durable, économique et flexible des batteries lithium-ion usagées
+
+
+The first phase of the LULABAT research program aims to identify and address the main challenges in battery recycling, focusing primarily on the recovery of metals present in NMC-type cathode materials, as well as graphite constituting the anode (the main components of today’s batteries). The aim is to develop new unit operations that could reduce the operating costs and environmental impact of lithium-ion battery recycling processes, particularly as regards the hydrometallurgy stage.
+
+Recycling, lithium ion batteries, hydrometallurgy
+
+Towards a better understanding of the battery-grade graphite value chain and market, and identification of the future role of recycled graphite
+
+Carry out a detailed study of the graphite market, including natural and synthetic graphite, as well as graphite obtained from the recycling of end-of-life batteries.
+
+This study will address economic as well as environmental and societal factors.
+
+The 1st subtask will enable an analysis of the graphite value chain and market, with a focus on China’s supply strategy.
+
+The 2nd subtask will identify and estimate the most significant environmental impacts of natural, synthetic and recycled graphite production. The final subtask will quantify the beneficial effects of recycling graphite from end-of-life batteries.
+
+Contribution of leaching-attrition phenomena to the treatment of NMC by dissolution/precipitation
+Laurent Cassayre, LGC
+
+The aim is to study the impact and potential of the leach-attrition process on NMC dissolution and precipitation stages for the recovery of Ni and Co in recoverable form. The advantage of this process is that the surface state of the particles is refreshed by the continuous removal of surface deposits likely to slow down or block their leaching, thanks to the suspension of a solid media (typically millimeter-sized silica beads) in the leaching reactor. In this complex reactive environment, the study focuses on exploring the operating conditions required for selective dissolution of certain BM elements, in particular lithium.
+
+Electrodialysis in hydrometallurgical processes
+Alexandre Chagnes, Université de Lorraine – Georessources
+
+The aim is to evaluate the potential of this technology for recycling lithium-ion batteries. The aim is to use electrodialysis for the selective extraction of lithium, in order to produce battery-grade lithium hydroxide. At the same time, the integration of other unit operations downstream of electrodialysis, such as precipitation, crystallization and liquid-liquid extraction, will be studied, in order to recover the other metals present in batteries in the form of sulfate, while reducing reagent consumption and effluent production.
+
+Multi-criteria decision system for assessing the sustainability of battery raw materials
+Alexandre Nominé, Université de Lorraine
+
+Develop decision support software (HERawS) that analyzes the impact of scaling up primary and recycled batteries.
+
+Users will be able to create new batteries and simulate their durability prior to primary manufacture and recycling. Users will be able to upload their own data on battery performance, material sourcing and the relative importance of different sustainability criteria.
+
+Understanding oxidative precipitation mechanisms to improve Mn, Co, Ni separation
+Emmanuel Billy, CEA – LITEN
+
+Oxidative precipitation is a chemical approach to the extraction of metals of interest, which can complement or replace current methods. Oxidative precipitation offers advantages in terms of I) simplicity of industrial implementation and II) its complementarity to solvent extraction to reduce the number of extraction stages. The R&D work aims to understand the reaction pathways and mechanisms involved as a function of treatment parameters, which condition separation efficiency and selectivity. This work should make it possible to identify optimum operating conditions for evaluating the integration of the technology into recycling processes and the recovery of critical metals.
+
+Innovative process for recycling cathode materials from lithium ion batteries
+Alexandre Chagnes, Université de Lorraine -Georessources
+
+In the light of the results of tasks 1 to 5 of the LULABAT program, the aim will be to propose an innovative, relevant and efficient global recycling process diagram for the recovery of cobalt, nickel and manganese and the production of the associated precursor salts. A SWOT analysis will be carried out.
+
+The conclusions of this task will provide food for thought for a future European project.
+
+
+The technologies developed in this research program are disruptive, and are expected to reach TRL 4. This research program will therefore lead to patents and original articles in international journals, presentations at international conferences, and will help to structure French research in the field. A workshop open to the research community will be organized at the end of the project to present the results/advances and open a brainstorming session with the public.
+
+The aim of the LULABAT research program is to develop technological building blocks that will reduce the economic and environmental cost of recycling processes as much as possible. To achieve this, the experimental conditions for each technological brick developed in LULABAT will be optimized to minimize energy consumption, reagent consumption and effluent production, as will the architecture of the process bringing together the technological bricks developed. Ultimately, the LULABAT project aims to quantify the environmental impacts avoided by implementing these technological bricks in a process, and to make a comparison with other more conventional processes for which data are available in the literature.
+
+The LULABAT research project will enable the leading French scientific community in the field of battery recycling to work and exchange ideas. The 1st phase of the program has enabled the launch of 3 theses and 1 post-doctoral internship, and the training of 4 new people in the field of lithium ion battery recycling. The skills developed are varied and range from life cycle analysis to hydrometallurgy.
+NTE, Nouvelles Technologies pour l’Energie
+
+
+Our research is aimed at developing virtuous approaches to recycling in order to add value to certain systems linked to new energy technologies. Enhancing the value of the materials their components contain. Three technologies are covered: permanent magnets used in wind turbines to convert mechanical energy into electrical energy, low-temperature fuel cells that convert hydrogen (with oxygen) into electricity, and photovoltaic panels that produce electricity using solar radiation. These (components of) low-carbon technologies need to demonstrate their low carbon impact over their entire life cycle, including end-of-life. The project therefore aims to develop approaches adapted to each of the systems studied, with the common goal of finding efficient (short-loop) processes using green chemistry wherever possible.
+
+Recycling, metal and polymer recovery, green chemistry, short and closed loop recycling, secondary raw materials, electrochemical processes, powder metallurgy, ionometallurgy, material flow analysis, sonochemistry.
+
+Permanent magnets
+Sorana LUCA (CEA – Liten)
+
+Manufacture permanent magnets from used NdFeB magnets
+
+Low-temperature fuel cells (PEMFC)
+Pierre PILUSO (CEA – Liten)
+
+Enhancing the value of platinum group metals and fluorinated polymers used in fuel cells
+
+Photovoltaic (PV) cells
+Romain DUWALD (CEA – Liten)
+
+Ionometallurgical recovery of metals of interest (Ag, Cu, In, etc.) from PV panels
+
+
+
+Identify robust, sustainable solutions for adding value to the materials that make up energy systems (production, conversion). In concrete terms, this means developing and qualifying innovative, sustainable processes for the separation and purification of high value-added substances (metals, alloys, polymers) contained in the components to be recycled. This necessarily implies an understanding and optimization of the processes and their constituent stages. Generally speaking, this project will also contribute to a better understanding of the state of end-of-life components, and their level of degradation (of materials), enabling these end-of-life objects to be better directed towards the most suitable recycling process.
+
+Promoting the use of green solvents (recyclable or regenerable) by limiting effluents in selected processes limits environmental impacts. The generic route, which aims to separate and recover high-value materials from components without degrading them and in a short loop, is a virtuous one. Also, using low-temperature, low-energy processes over a short period of time guarantees control and reduction of the impacts generated.
+
+1 PhD, 2 post-docs
+PAC3R, PACkaging, Recycling, Recyclability, Re-use of papers and cardboards
+
+
+
+The research focuses on the different outgoing flows from paper and cardboard recycling plants: recycled fibers (known as accepted fibers), liquid rejects and solid rejects, and aims to develop new, more sustainable recycling or recovery processes for each.
+
+For the accepted fraction, the aim is to improve inter-fiber bonds in the dry state, while maintaining repulping properties. The aim of this improvement is to limit the use of additives and thus minimize the associated costs and rejects.
+
+For the liquid waste fraction, the aim is to develop a biorefinery integrated into a recycling unit. The starch present in used cardboard, which accumulates in the process water during recycling, is eliminated to avoid clogging the circuits, but is not currently recovered. The extraction and recovery of these compounds, in polymer or monomer form, could be applied to “secondary” biomass.
+
+For the solid fraction, the aim is to develop alternatives to current recovery methods that are better adapted to the mixtures and conditions of the materials. The production of microfibrillated cellulose (reinforcement, rheological agent), regenerated cellulose (aerogels) or cross-linked cellulose (resins) is envisaged to take advantage of the damaged state of lignocellulosic fibers. For plastic-intensive waste, other thermoconversion routes are being considered to improve energy yields and diversify co-products.
+
+The socio-environmental and economic impacts of all these flows will be studied.
+
+Paper-Cardboard, Packaging, Lignocellulosic fibers, Recycling, Recovery, Biorefinery, Physicochemical separation, Upcycling, Green chemical processes, Enzymatic processes, Thermoconversion, Life cycle assessment, Best Available Technique, Innovative ecosystem.
+
+
+Upcycling of the accepted fiber fraction from cardboard recycling and recovery of fibrous rejects
+nathalie.marlin@grenoble-inp.fr
+
+Reinforce the mechanical properties of recycled paper without adding starch, while retaining its repulping properties.
+Enhance the value of fibrous waste by taking advantage of its morphological state
+Development of a new type of biorefinery from “urban forests”: recovered paper and cardboard
+christine.chirat@grenoble-inp.fr
+
+Extract starch from cardboard during recycling, and recover it to avoid its accumulation in process water
+
+Cellulose and carbon aerogels
+romain.sescousse@mines-albi.fr
+
+Adding value to fibrous waste: producing porous materials
+
+Recovering complex, non-recyclable fibrous waste by thermal methods
+marion.carrier@mines-albi.fr
+
+Propose efficient thermoconversion processes
+
+Environmental and economic impact of new processes and materials developed
+valerie.laforest@emse.fr
+
+Report on the impact of new processes and products on the local ecosystem
+
+
+Understand the impact of multi-scale contaminants (lignin and hemicellulose, mineral fillers and plastics) on the production and quality of high value-added cellulose derivatives.
+
+Deepen our understanding of the interactions between the various constituents and contaminants of paper and cardboard (plastics, minerals, organics and lignocellulosics) during thermochemical separation and recovery processes.
+
+Develop knowledge of inter-fiber interactions in dry and wet states, on untreated and functionalized fibers, and in the presence or absence of additives.
+
+Propose methods for separating, extracting and recovering waste components that are better suited to plastic-mineral-fiber mixtures, taking advantage of the state of the material.
+
+Propose more viable recycling processes: limit waste, the use of additives and extend the life of lignocellulosic fibers.
+
+Provide an overall economic, environmental and societal analysis of the processes and new products developed.
+
+The processes and products developed as part of this research project are intended to replace those currently available on the market.
+
+In the case of processes, the ambition is to improve their efficiency while reducing their consumption of energy, water and chemicals. For products, the aim is to market materials derived from waste, offering performance comparable to that of products derived from virgin resources. In other words, the aim is to promote the removal of waste from the recycling process, by offering high value-added products that are competitive with those on the market.
+
+A study dedicated to assessing the environmental impact of these alternative processes and products is being carried out throughout the project.
+
+4 PhDs in Materials, Mechanical, Energy and Process Engineering (IMEP 2 and MEGeP graduate schools).
+
+1 post-doctorate in Materials, Mechanical, Energy and Process Engineeringu
+
+1 PhD in Environmental Sciences and Engineering (Ecole doctorale SIS)
+
+1 post-doctorate in Environmental Sciences and Engineering
+Plastics, recycling, recyclability and reuse of polymer/plastics
+
+
+In the context of the circular economy, it is crucial to develop new concepts to improve the recycling of post-consumer polymer materials and the incorporation of recycled materials into goods and products. The aim is to respond to a major societal challenge: the preservation of resources.
+
+A number of issues concerning plastics recycling were identified during the analysis of the state of the art. Firstly, the presence of contaminants and the disassembly of complex structures appear to hinder the development of mechanical recycling. On the other hand, tertiary or chemical recycling is still in its infancy, and fundamental knowledge in this field is needed to enable its deployment on different scales. Finally, more cross-disciplinary approaches including eco-design, flow analysis and the interplay of players need to be taken into account in all future developments.
+
+recycling, recyclability, reuse, polymers, plastics, eco-design, contaminant, disassembly, chemical recycling
+
+
+Contaminants in plastics
+
+
+
+Dismantling and disassembling complex structures
+
+
+
+Tertiary recycling (chemical)
+
+
+
+
+Build fundamental knowledge in the field of polymer recycling, so as to make the French scientific community in this field one of the world leaders. These targeted projects will form the backbone of large-scale collaborative projects in France and Europe.
+
+Develop new technologies that create local value, reduce France’s dependence on external resources and boost employment. Various advanced technologies will be considered in the project: 1) solvent extraction (green solvent, subcritical or supercritical conditions); 2- delamination technologies; 3- catalysis for recycling and 4- extrusion/coextrusion for recycling.
+
+To structure the French scientific community in the field of materials recycling by integrating social and human sciences, economics and law, as well as polymerists, engineers, toxicologists and data scientists. The aim is to provide a systemic vision of the possible development of plastic recycling.
+PRAN, Programme de Recherche sur l’Apport du Numérique
+
+
+
+The ‘Digital’ axis of PEPR Recycling is currently under construction. The call for expressions of interest, which closed in November 2024, resulted in several letters of intent from scientists wishing to join the consortium on these research themes, as well as the reflections of the axis carriers and program partners in the creation of this eleventh project.
+
+The PRAN project aims to study the involvement of data science and big data, AI, robotics, automation, signal and image processing, etc. in logistics and sorting processes.
+Recycomp, nouvelle génération de CMO recyclables à partir de matières premières de recyclage : vers une économie circulaire
+
+
+
+Often of fossil origin, most of the components of organic matrix composites (OMC) cannot be easily separated from one another. They are therefore difficult to recycle. OMCs were developed at a time when eco-design and waste recycling were not mandated by legislation. Most composites therefore end up in landfill or are incinerated, undermining their environmental assessment. Waste management in the EU identifies five successive stages, including prevention, preparation for reuse and recycling. The RecyComp project aims to contribute to these three stages.
+
+Prevention: improve the recyclability of composites by designing them with adhesive solutions derived from sustainable resources that are thermolabile, stimuli-reactive, soluble in green solvents or offer depolymerization capabilities.
+Preparing for reuse: maximizing the number of recycled/recyclable components, minimizing the number of components and facilitating end-of-life recycling.
+Recycling: ensure dismantling and separation using innovative technologies such as subcritical and supercritical solvolysis or solvolysis in twin-screw extruders to produce recycled raw materials (RPMs), and replace difficult-to-recycle matrices with easily recyclable ones.
+Composites, recycling, recyclability, carbon fibers and natural fibers, sustainable chemistry, circular economy
+
+
+
+CMO recycling and functionalization of recycled fibers
+Cyril AYMONIER (ICMCB)
+
+This task is to address the recycling of end-of-life composites (historical waste), with solvolysis as the targeted technology, in order to be able to produce recycled raw materials (recycled functional fibers but also monomers/oligomers from the polymer matrix). This is achieved by using green solvents, notably in a twin-screw extruder, under pressure and temperature.
+
+New generation of recyclable composites from recycled raw materials (CMO)
+Isabelle CAPRON (BIA)
+
+In this task, the recycled materials from Task 1 are used as secondary raw materials to produce new multi-material composites with improved recyclability, a better carbon footprint and satisfactory performance. Various sub-tasks focus on the design and production, at laboratory scale, of prototypes or multi-layer systems, fully representative of the targeted recyclable composite systems. The quality of interfaces between components and the cohesion between layers are addressed through the development and implementation of specific and original characterization tests.
+
+
+
+By contributing to the prevention, preparation for reuse and recycling of used CMOs, the RecyComp project will improve resource recovery, paving the way for the circular economy. Significant effects are expected rapidly for industrial sectors by maximizing recycling and taking into account waste management policies based on “extended producer responsibility” (EPR).
+
+During the RecyComp project, a Life Cycle Sustainability Assessment (LCSA) of CMOs will be carried out, including a Techno-Economic Assessment (TEA) and thus covering environmental, economic and social aspects of sustainability, based on the Life Cycle Assessment (LCA) standardized by the International Organization for Standardization (ISO) and harmonized by the European Commission under the name of Product Environmental Footprint (PEF). At the same time, the economic feasibility of the technological solutions developed will be studied. The RecyComp consortium’s efforts will be aimed at finding the best solutions for a circular economy.
+
+Acquiring knowledge to obtain new generations of recyclable organic matrix composites (OMCs) from recycled raw materials.
+
+Training through research: 4 PhD students, 3 post-docs in 7 different partner laboratories (among the 9 project partners).
+REVIWEEE, pour une chaîne des valeurs française viable sur le recyclage des DEEEs
+
+
+The aim of this project is to gain a better understanding of potential deposits of critical metals from waste electronic and electrical equipment (WEEE), and to develop processes to maximize their recovery in order to create value in France. Our focus is on developing breakthrough dismantling, physical sorting and chemical treatment techniques that simplify mixtures and increase the proportions of each metal in the products generated. The aim is to reduce processing costs and the environmental impact of these processes. This must be complemented by the identification of recovery channels. In addition to understanding known or established circuits, the challenge is to identify possible links between channels and/or processes, enabling economically viable and ecologically sustainable channels to be relocated in France. Finally, the work carried out as part of this project will enable us to better understand and/or resolve known challenges, as well as identify unknown ones.
+
+Waste electrical and electronic equipment (WEEE), Flows, Life cycle assessment (LCA), Strategic metals, Inorganic metallurgy, Cost-benefit assessment, Environmental impacts, Strategy, Industrial processes
+
+
+Analysis and knowledge of the urban mine deposit
+Muriel Maillefert (Université Lyon 3, EVS)
+Solène Touzé (BRGM)
+
+This first task is divided into two sub-tasks. The first (1.1.) focuses on understanding the territory’s metabolism in relation to WEEE. The second sub-task (1.2.) focuses on the challenges of determining the composition of the urban mine that is WEEE, the difficulty being that it is highly variable. One of the obstacles to be overcome is the standardization of analysis protocols, a standard that does not currently exist.
+
+WEEE treatment process
+Jean-Christophe Gabriel (CEA, NIMBE, LICSEN)
+N. Menad (BRGM)
+CHAPUIS Marlène et Emmanuel BILLY (CEA-LITEN)
+
+Study of processes for dismantling and disassembling systems into their individual electronic components and intelligent sorting, leading to sorting bags with simplified and more reproducible elementary compositions. This process will ultimately simplify the downstream treatment processes in the recycling chain for separating elements, and enable critical metals to be recovered in an economically viable way.
+
+2.2. Development of innovative, economically viable and environmentally-friendly separation technologies, such as electrostatic separation and flotation, to concentrate the critical metals in the flows to be treated and enable them to be recovered, whereas today they are mainly buried and not recycled.
+
+2.3 Studying the fundamental parameters governing the chemical extraction and recovery of these metals, with more or less advanced control of their separation, to ultimately put in place an inorganic metallurgy technology brick that can be integrated into the general WEEE recycling process.
+
+Implications of WEEE recycling strategies for access to resources and environmental impacts
+Stéphanie Muller (BRGM)
+
+The final task will examine the implications of these new WEEE recycling strategies in terms of resource accessibility and environmental impact. It will address the following challenges:
+
+Quantifying resource accessibility within the framework of life cycle assessment (LCA);
+
+Assessing the environmental benefits of circular loops, including recycling strategies, as part of LCA.
+
+
+
+The consortium’s aim is to develop a better understanding of the circulation of WEEE within our territory, as well as tools to model it, taking into account the economic, social, environmental, legal and political context. In particular, this will lead to the definition of protocols for assessing the influence of politics in the definition of WEEE, and for establishing the chemical composition of this urban mine.rnrnIt should also enable us to improve our recycling strategies by developing and improving sorting and separation processes for materials of interest contained in electronic waste, as part of the complex overall process of WEEE recovery. In particular, we will develop
+
+A methodology for establishing a composition database for electronic components. This database will ultimately enable them to be sorted intelligently;
+
+Relevant physical and metallurgical processes for the industrial recovery of critical metals (yield, economic viability, etc.);
+
+Finally, we are seeking to provide answers on the environmental impacts and benefits of this WEEE recycling approach, and to establish a protocol considering these accessible resources and their environmental impact resulting from WEEE recycling strategies. By developing new recycling methods (Task 2) to recover materials that are not currently recycled.
+
+The final task of our project focuses on a point of prime importance for the development of recycling strategies: the evaluation of the environmental benefits and impacts of these new processes. Today, it is difficult to measure the difference in environmental impact between mining a metal and recycling an electronic scrap. The aim of recycling is to bring to market a source of secondary materials which, by avoiding the primary extraction of these metals, should lead to savings in terms of resources (energy and water) and reductions in emissions.
+
+The project will lead to the training of a number of interns, a fixed-term contract, two PhD students and three post-docs.
+SO RRYL, Une SOciété du Réemploi et du RecYcLage?
+
+
+
+Waste management and recycling are major concerns in the move towards a “truly” circular economy. There are many technological challenges involved in developing reusable packaging, improving product recyclability and incorporating recycled materials. However, these challenges will only remain theoretical if fundamental reflections are not carried out on the place of waste in our societies, on the relationship to materiality that its existence induces, and if consumption patterns are not questioned. The relationship between waste and society and the individuals who make it up, the way in which public policy deals with these issues, the territorial structuring of industrial sectors – these are all questions on which the social sciences can build knowledge. How does or should waste circulate in today’s world, given the imperatives of sustainable development? What is the environmental, ethical, economic and social significance of the circulation of waste?
+
+By mobilizing scientific literature on the political economy of urban production and on major technical networks, political and territorial ecology, consumer behavior, new business models, and the ethical, moral and political issues surrounding waste, this project questions the socio-technical, socio-economic and socio-political evolutions of waste management, including reuse and recycling.
+
+society, reuse, circularity, consumption, public policy, territories, industrial sectors, waste flows, political ecology, sustainable development
+
+
+Political and territorial ecology of recycling: actors, territories and uses
+Jean-Baptiste Bahers (ESO)
+
+Questioning the spatial and social dimensions of material loops
+Recycling from the angle of plural governance regimes of circularity
+Clean, recycle and reuse: the greening of urban waste management in question
+Consumer behavior, new roles for public and private players
+Nathalie Lazaric (GREDEG)
+
+Examining opportunities for behavioral change using non-monetary tools
+Environmental regulation and business model innovation through standards
+Recycling practices and representations in the Anthropocene
+Laurence Rocher (EVS)
+
+Formal vs informal: an analysis of waste practices
+The peripheral territories of waste
+Material properties and material politics of waste
+VLAN, Valorisation des textiles, Recyclage, recyclabilité et réutilisation
+
+
+The aim of this project is to propose different solutions so that each textile can have the most optimal end-of-life recovery according to its own technical, aesthetic and emotional characteristics.
+
+The molecular solution consists in developing PET-based Covalent Adaptable Networks (CANs) for the implementation of eco-designed fibers and the recovery of polyester textile waste. These polymers are based on transesterification by reactive extrusion with epoxies in the presence or absence of ionic liquids.
+
+At the level of textile materials, a decision-support tool for recycling choices will be developed. It is based on a detailed analysis of the fabrics contained in the deposits, including their structure, potential recycling routes and degradation. Criteria are developed and associated with descriptions of recycling processes. At the level of textile objects, the project takes into account the intrinsic qualities and values of objects and those perceived by consumers. Echoing the material revalorization processes, a socio-cultural analysis of the mechanisms by which consumers discard textile objects is carried out. This enables us to understand their practices in terms of recycling domestic waste. The textile designer’s point of view makes it necessary to predict its aspects, by characterizing and exploiting them as “material for creation”. This area examines different ways of overcycling, equipping them with creative tools.
+
+Textile, PET, vitrimers, deposits, decision support, LCA, overcycling, quality, value, neglect
+
+
+
+Material by Design at molecular scale 
+Jannick DUCHET RUMEAU
+IMPR Lyon
+
+Enhancing the value of recycled PET
+Designing recyclable PET by introducing dynamic bonds
+Synthesis of dynamic ionic bonds
+Structure-property relationships of eco-designed and recyclable PET
+Feasibility of spinning these polymers
+Safe and Sustainable Recycling and transformation processes of textiles
+Ludovic KOEHL, GEMTEX, Roubaix
+
+Mapping of end-of-life textile-clothing recovery routes (point 1)
+Socio-cultural analysis of consumer mechanisms for discarding textile objects (point 2)
+Definitions, prioritization and determination of weighting factors for the criteria used to assess end-of-life textile-clothing recovery routes (point 3)
+Implementation of a decision-support tool on near-optimal recovery routes for textiles-clothing based on the criteria in point 3.
+At textile Object Scale, Safe & Sustainable design-led textile upcycling 
+Jean-François BASSEREAU, ENSADLab Paris
+
+Predictive pre-model for the evolution of natural dyes as a creative material (first POC)
+Architecture of the chromo chronological color chart as a creation tool in textile design
+Super-cycling experimentation on creative materials (values and sensory qualities) for textile objects to extend their premiere (3 POC projects).
+
+
+
+Area1: Development of Covalent Adaptable Networks (CANs) based on recycled PET – Partial depolymerization of PET – Use of PET/recycled PET-CANs blends to produce new textile fibers.
+
+Axis2: Criteria for classifying discarded textiles to identify their recyclability potential – Study of garments abandoned by consumers – Decision-support tool for recovering garments.
+
+Axis3: Illustration of the first law of life extension for textile objects – Tools to help in the creation of super-cycling textile objects – Methodology for life extension for textile objects, clothing and accessories.
+
+Les avantages environnementaux de chaque solution proposée sera évaluée par la méthodologie de l’ACV. Selon la littérature, les bénéfices attendus dépendent non seulement du procédé de recyclage mais aussi du matériau remplacé, de sa nature (monomère, fibre, fil, tissu), de la proportion de remplacement et des opérations textiles évitées. Ces analyses environnementales guideront le choix des différentes filières de valorisation.
+
+De plus, dans ce projet, des propositions seront faites pour prendre en compte la qualité des textiles dans l’ACV.
+
+A PhD student in the field of dynamic chemistry of vitrimers, enabling the generation of networks with reversible links (CANs for Covalent Adaptable Networks) – associated with 2 Masters and a third concerning the spinning of these materials.
+
+A PhD student in the field of sustainable textiles: eco-design for the recyclability of textile materials, life-cycle analysis, and decision-support tools for the recovery of textiles at the end of their life, in association with 2 Masters students.
+
+A post-doctoral fellow in the sociological field of practice theory applied to clothing abandonment mechanisms and recovery practices.
+
+A post-doctoral researcher in the field of design for the overcycling of textile objects, in association with several master’s and bachelor’s students for the production of POC objects.

@@ -1,0 +1,39 @@
+Déchets ménagers, analyse systémique
+
+
+The overall aim of the project is to acquire the knowledge needed to improve household waste recycling along the entire value chain, from collection to treatment and recycling, and the recovery and/or disposal of final waste. The project is structured around five themes. The first combines technology and social behavior to improve the sorting of household waste materials. The second focuses on innovative processes for decontaminating materials. Value chains are studied from the point of view of material/energy flows, logistics and environmental impacts. A fourth theme studies human behavior, organizational dynamics and the interconnections between players in a given area, and proposes ways of improving the structure of value chains. Finally, the role of regulation and standardization in recycling and waste sorting is analyzed.
+
+Cleaning/purification processes, Sorting processes, Waste characterization, Waste collection, Life cycle assessment, Economic players, Player dynamics, Regulation and standardization, Non-financial incentives, Individual behaviour
+
+Innovative sorting for optimum material separation
+Mathieu Durand, ESO
+Sandrine Bacconnier, ESO
+
+Combines technology and social behavior to improve waste separation. The aim is first to map and analyze the tools available to promote sorting in companies producing household waste. Then, separation technology is addressed through multi-view/multi-sensor and dual-energy X-ray images.
+
+Innovative preparations for extensive reuse of materials
+Yvan Chalamet, IMP
+
+Aims to develop deinking/purification methods that limit the use of organic solvents (replaced by supercritical fluids) and promote efficient purification methods enabling the reuse of these materials for new applications.
+
+Systems modeling and analysis
+Pascal Guiraud, TBI
+
+Modeling approaches and tools are needed to better integrate all aspects, from waste traceability to efficient recycling and reuse. Task 3 analyzes and optimizes value chains through material flow analysis (MFA), mathematical modeling and logistics optimization, economic evaluation and life cycle assessment (LCA).
+
+Dynamics of actors and organizations
+Lesly Cassin, BETA
+
+Examines human behavior, the dynamics of actors and organizations, the interconnections of actors on the territory, and proposes ways to improve the structure of value chains. We’ll discover the extent to which supply chain design helps organize industries/communities/homes from geographic, political, social, environmental and economic perspectives.
+
+Regulation, standardization
+Nathalie Lazaric, GREDEG
+
+Examines the role of regulation and standardization on human behavior with regard to recycling and waste separation, as well as on the development of new material channels.
+
+
+This project is expected to deliver results on several levels. Firstly, an interdisciplinary approach should emerge through the collaboration of researchers from different scientific backgrounds. The work carried out will lead to technological proposals for improving the recyclability of materials contained in household waste. The modeling of waste streams from collection to recycling will make it possible to propose methodologies for the systemic analysis of waste management methods. Identifying and analyzing the socio-economic and regulatory obstacles to an efficient circular economy will enable us to understand the contribution of individuals, companies and institutions, and thus propose levers for action to improve waste reduction and material circularity.
+
+The research carried out as part of this project aims to improve the environmental impact of household waste management by acting at different points in the life cycle of objects and waste. Firstly, by studying how to influence consumer behavior to reduce the production of household waste. Secondly, by improving sorting at home. The dynamics and logistics of collection networks can be optimized, as can the choice of recycling/super-recycling channels. Finally, technical improvements in waste sorting and recyclability will enable more efficient recycling, with gains in the environmental performance of the channels.
+
+The project is largely based on training through research and consolidating the high-level skills of young graduates as post-docs. The project will involve 9 post-docs (138 months).
