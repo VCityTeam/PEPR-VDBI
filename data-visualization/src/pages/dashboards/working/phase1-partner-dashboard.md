@@ -102,8 +102,7 @@ display(lab_set)
 display(partner_set)
 display(phase_1_partner_graph)
 
-
-const partnerChordDiagram = chordDiagram([],[],[])
+const partnerChordDiagram = chordDiagram([], [], [])
 ```
 
 ## Socio-economic partners
@@ -383,7 +382,9 @@ const filtered_partner_data = [...all_partner_data].filter(filterResults)
 ```
 
 ```js
-const filtered_legal_natures = [...legal_natures].filter(filterResults)
+const filtered_legal_natures = [...legal_natures]
+  .filter(filterResults)
+  .sort((a, b) => d3.ascending(a.nature_juridique, b.nature_juridique))
 ```
 
 ```js

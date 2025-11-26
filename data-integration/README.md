@@ -6,12 +6,30 @@ These tests attempt to identify efficient, open-source, and secure methods for e
 
 - [1. PDF to unstructured text](#1-pdf-to-unstructured-text)
   - [1.1. pypdf tests](#11-pypdf-tests)
+    - [1.2.1. Test: simple pdf to text conversion](#121-test-simple-pdf-to-text-conversion)
+    - [1.2.2. Test: pdf with table to text conversion](#122-test-pdf-with-table-to-text-conversion)
+    - [1.2.3. Test: Convert PEPR Résumés des lettres d’intention](#123-test-convert-pepr-résumés-des-lettres-dintention)
 - [2. Unstructured text to structured text via GPT](#2-unstructured-text-to-structured-text-via-gpt)
   - [2.1. Ollama](#21-ollama)
+    - [2.1.1. Test: simple keyword extraction in french](#211-test-simple-keyword-extraction-in-french)
+    - [2.1.2. Test: simple keyword extraction in english](#212-test-simple-keyword-extraction-in-english)
+    - [2.1.3. Test: Ollama server+python](#213-test-ollama-serverpython)
+    - [2.1.4 Test: Pagoda LIRIS Ollama Service](#214-test-pagoda-liris-ollama-service)
   - [2.2. Workflow](#22-workflow)
+    - [2.2.1. Test: Initial Python data workflow](#221-test-initial-python-data-workflow)
+    - [2.2.2. Test: Structured Python data workflow](#222-test-structured-python-data-workflow)
+    - [2.2.3. Test: Initial prompt optimization test](#223-test-initial-prompt-optimization-test)
+    - [2.2.4. Test: Page range test](#224-test-page-range-test)
+    - [2.2.5. Test: Add csv config to workflow](#225-test-add-csv-config-to-workflow)
+    - [2.2.6. Test: Modelfile test](#226-test-modelfile-test)
+    - [2.2.7. Test: TEMPERATURE and top parameters test](#227-test-temperature-and-top-parameters-test)
   - [2.3. RAG tests](#23-rag-tests)
+    - [2.3.1. Test: Langchain with single document and semi-structured data](#231-test-langchain-with-single-document-and-semi-structured-data)
+    - [2.3.2. Test R2R](#232-test-r2r)
 - [3. Unstructured audio to unstructured text](#3-unstructured-audio-to-unstructured-text)
   - [3.1. Whisper](#31-whisper)
+    - [Installation](#installation)
+    - [Results](#results)
 
 ```mermaid
 ---
@@ -234,17 +252,17 @@ standardization, interoperability, computationally representable models, ontolog
 
 Additionally, some specific terms related to the context of the text are:
 
-* urbanization and anthropization processes
-* digital twin cities
-* smart city applications
-* heterogeneous data sources
-* semantic and structural heterogeneity
-* data transformation and conversion
-* Model-Driven Architecture (MDA)
-* norms and models evolution
-* modeling conceptual schemes
-* standards for urban data
-* interoperability of urban data.
+- urbanization and anthropization processes
+- digital twin cities
+- smart city applications
+- heterogeneous data sources
+- semantic and structural heterogeneity
+- data transformation and conversion
+- Model-Driven Architecture (MDA)
+- norms and models evolution
+- modeling conceptual schemes
+- standards for urban data
+- interoperability of urban data.
 ```
 
 Notes:
@@ -985,11 +1003,14 @@ Tests moved to [r2r-tests.md](./r2r-tests.md) to better accomodate their level o
 
 ### 3.1. Whisper
 
-This test will examine how effective [Whisper](https://openai.com/index/whisper/) is for local automatic speech recognition (ASR).
+This test will examine how effective [Whisper](https://openai.com/index/whisper/)
+is for local automatic speech recognition (ASR).
 
-The test follows [this tutorial](https://github.com/manzolo/openai-whisper-docker) for a GPU accelerated docker installation.
+The test follows [this tutorial](https://github.com/manzolo/openai-whisper-docker)
+for a GPU accelerated docker installation.
 
-A audio file recorded from a conference meeting is used for testing. The main language spoken is French.
+A audio file recorded from a conference meeting is used for testing. The main
+language spoken is French.
 
 #### Installation
 
@@ -1000,7 +1021,17 @@ git clone https://github.com/manzolo/openai-whisper-docker.git
 cd openai-whisper-docker
 ```
 
-Then follow [the tutorial](https://github.com/manzolo/openai-whisper-docker).
+Then follow [the tutorial](https://github.com/manzolo/openai-whisper-docker) to
+setup whisper.
+
+[This script](./src/whisper_pipeline.py) was created to permit batch processing
+with whisper. Copy+paste it into the root folder of your local whisper repository.
+
+To see the script usage run:
+
+```bash
+python ./src/whisper_pipeline.py --help
+```
 
 #### Results
 
