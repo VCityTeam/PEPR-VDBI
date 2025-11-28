@@ -1,5 +1,6 @@
 {
   "no-inline-html": {
     "allowed_elements": ["a"]
-  }
+  },
+  "line-length": false
 }

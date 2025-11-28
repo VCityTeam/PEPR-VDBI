@@ -23,6 +23,10 @@ plain text files.
   - [3.3. Comparison between PEPR VDBI and INSU : OCÉAN-ATMOSPHÈRE](#33-comparison-between-pepr-vdbi-and-insu--océan-atmosphère)
     - [3.3.1. Data collection](#331-data-collection)
     - [3.3.2. Word count generation](#332-word-count-generation)
+  - [3.4. JS VDBI 2025 analyses](#34-js-vdbi-2025-analyses)
+    - [3.4.1. Data quality observations](#341-data-quality-observations)
+    - [3.4.2. Data collection](#342-data-collection)
+    - [3.4.3. Keyword extraction](#343-keyword-extraction)
 
 ## 1. Method
 
@@ -295,3 +299,81 @@ stateDiagram-v2
 ```
 
 Results are available in [test-data/output/compare_vdbi_insu_oa_projects/](test-data/output/compare_vdbi_insu_oa_projects)
+
+### 3.4. JS VDBI 2025 analyses
+
+What are the keywords and their co-occurence used in the different presentations and workshops of the [Journées Scientifiques 2026 du PEPR VDBI](https://pepr-vdbi.fr/evenements/journees-scientifiques-annuelles-villes-durables-batiments-innovants-2025)?
+
+The following activities are identified for analysis\* :
+
+- Round tables between territorial collective partners and their laureate projects
+  - Round table 1
+  - Round table 1 questions
+  - Round table 2
+  - Round table 2 questions
+  - Round table 3
+  - Round table 3 questions
+- NEO-SoLocale workshop
+  - Group 1 presentation
+  - Group 1 discussion
+  - Group 2 presentation
+  - ~~Group 2 discussion~~
+  - Group 3 presentation
+  - ~~Group 3 discussion~~
+
+\* _Some activities have been removed due to poor audio quality_
+
+#### 3.4.1. Data quality observations
+
+- Round table audio is generally good quality
+- NEO/SoLocale audio quality is inconsistent
+
+#### 3.4.2. Data collection
+
+Data source: Video and/or audio recording(s) of each activity
+
+These files are not made publicly available for participant and animator privacy
+
+#### 3.4.3. Keyword extraction
+
+```mermaid
+stateDiagram-v2
+
+  %% direction LR
+
+  video : Activity video file
+  audio : Activity audio file
+  words : Keyword list
+  wc    : Keyword count
+  wci   : Keyword count intersections
+  wcco  : Keyword co-occurences
+
+  [*] --> video
+  [*] --> audio
+  video --> audio : Extract audio
+  audio --> Transcript : Transcribe with Whisper
+
+  state fork <<fork>>
+    Transcript --> fork
+    fork --> words : Tokenization, lemmatization, and stop-word removal
+    fork --> wcco : Calculate co-word occurences
+
+  words --> wc : Count word occurrences
+  wc --> wci : Calculate intersection for parallel activity keyword counts
+  wci --> [*]
+  wcco --> [*]
+```
+
+##### Notes
+
+- Audio is cut and extracted with Microsoft Clipchamp
+- Minor transcript corrections are made manually.
+  - See the **non-exhaustive** [list of identified errors corrections](#identified-transcript-corrections)
+- Whisper `large-v2` model is used for transcription.
+
+##### Identified transcript corrections
+
+| Error       | Correction  |
+| ----------- | ----------- |
+| Bill Garden | Villegarden |
+| Antigreen   | inteGREEN   |
