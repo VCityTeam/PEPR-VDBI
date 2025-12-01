@@ -367,13 +367,5 @@ stateDiagram-v2
 ##### Notes
 
 - Audio is cut and extracted with Microsoft Clipchamp
-- Minor transcript corrections are made manually.
-  - See the **non-exhaustive** [list of identified errors corrections](#identified-transcript-corrections)
-- Whisper `large-v2` model is used for transcription.
-
-##### Identified transcript corrections
-
-| Error       | Correction  |
-| ----------- | ----------- |
-| Bill Garden | Villegarden |
-| Antigreen   | inteGREEN   |
+- Transcript is manually verified and corrected
+- Whisper `large-v2` model is used for transcription
