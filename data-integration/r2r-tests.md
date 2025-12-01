@@ -429,7 +429,7 @@ Start local services
 Run the workflow with the LIRIS Ollama service. Replace `[BEARER_TOKEN]` with a valid bearer token
 
 ```bash
-python src/workflow_test.py -m r2r -t [BEARER_TOKEN] test-data/configs/workflow_2.3.3_config.json
+python src/workflow.py -m r2r -t [BEARER_TOKEN] test-data/configs/workflow_2.3.3_config.json
 ```
 
 > [!WARNING]

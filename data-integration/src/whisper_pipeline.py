@@ -1,5 +1,6 @@
-import argparse
 import os
+import logging
+import argparse
 
 
 def main():
@@ -43,7 +44,7 @@ def run_whisper(file: str, model: str, language: str):
         f' -v ${{PWD}}/audio-files:/app openai-whisper whisper "{file}" --device cuda'
         f" --model {model} --language {language} --output_dir /app --output_format txt"
     )
-    print(command)
+    logging.info(command)
     os.system(command)
 
 

@@ -137,11 +137,11 @@ Dependency:
 #### 1.2.1. Test: simple pdf to text conversion
 
 ```bash
-python src/pypdf_test.py test-data/résumé-thèse-fr.pdf test-data/pypdf_test.txt
+python src/pypdf_pipeline.py test-data/résumé-thèse-fr.pdf test-data/pypdf_test.txt
 ```
 
 > [!TIP]
-> The test script can be customized. Use `python src/pypdf_test.py -h` to see the documentation.
+> The test script can be customized. Use `python src/pypdf_pipeline.py -h` to see the documentation.
 
 Notes:
 
@@ -152,7 +152,7 @@ Notes:
 #### 1.2.2. Test: pdf with table to text conversion
 
 ```bash
-python src/pypdf_test.py test-data/résumé-thèse-tableau-fr.pdf test-data/pypdf_table_test.txt
+python src/pypdf_pipeline.py test-data/résumé-thèse-tableau-fr.pdf test-data/pypdf_table_test.txt
 ```
 
 Notes:
@@ -169,7 +169,7 @@ Download and transform the PDF of project motivation letters.
 
 ```bash
 curl https://pepr-vdbi.fr/fileadmin/contributeurs/PEPR_Ville_durable/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf > test-data/input/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf
-python src/pypdf_test.py test-data/input/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf test-data/input/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt
+python src/pypdf_pipeline.py test-data/input/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf test-data/input/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt
 ```
 
 Notes:
@@ -283,7 +283,7 @@ This requires launching Ollama on a local server.
 
 ```bash
 ollama serve & # launch ollama server in the background
-python src/ollama_test.py \
+python src/ollama_pipeline.py \
   test-data/input/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.txt \
   test-data/input/_231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe_out.txt \
   "Donner le liste des projets décrits"
@@ -291,7 +291,7 @@ python src/ollama_test.py \
 
 > [!TIP]
 >
-> - The test script can be customized. Use `python src/ollama_test.py -h` to see the documentation.
+> - The test script can be customized. Use `python src/ollama.py -h` to see the documentation.
 > - Also, you can use just `ollama serve` (without the `&`) in another terminal session to be able to view ollama API calls in real time
 
 #### 2.1.4 Test: Pagoda LIRIS Ollama Service
@@ -323,10 +323,10 @@ client = Client(
 )
 ```
 
-The [ollama_test.py](src/ollama_test.py) script is adapted to use this code with if a hostname and token are provided:
+The [ollama.py](src/ollama_pipeline.py) script is adapted to use this code with if a hostname and token are provided:
 
 ```bash
-python src/ollama_test.py \
+python src/ollama_pipeline.py \
   -s
   -u https://ollama-ui.pagoda.liris.cnrs.fr/ollama/api/generate \
   -t '[JWT token]' \
@@ -352,12 +352,12 @@ The proposed workflow does the following for each input file:
   The following script can be used to run a series of ollama prompts based on a configuration file.
 
 ```bash
-python src/workflow_test.py test-data/configs/workflow_0_config.json
+python src/workflow.py test-data/configs/workflow_0_config.json
 ```
 
 > [!TIP]
 >
-> - The test script can be customized. Use `python src/workflow_test.py -h` to see the documentation.
+> - The test script can be customized. Use `python src/workflow.py -h` to see the documentation.
 > - Check the logs when running to see progress in real time (located in `workflow-test.log` by default)
 
 This test uses the configuration file [test-data/configs/workflow_0_config.json](test-data/configs/workflow_0_config.json) which features several prompts:
@@ -376,7 +376,7 @@ The configuration will output to the `test-data/workflow-test/VILLEGARDEN` folde
 Same test as above but using the configuration file [test-data/configs/workflow_1_config.json](test-data/configs/workflow_1_config.json) which proposes structuring prompt outputs as JSON.
 
 ```bash
-python src/workflow_test.py test-data/configs/workflow_1_config.json
+python src/workflow.py test-data/configs/workflow_1_config.json
 ```
 
 #### 2.2.3. Test: Initial prompt optimization test
@@ -388,7 +388,7 @@ Same test as above but using the configuration file [test-data/configs/workflow_
 - Asking for a formatted output i.e., _"Formulate your response as a bulleted list"_
 
 ```bash
-python src/workflow_test.py test-data/configs/workflow_2_config.json
+python src/workflow.py test-data/configs/workflow_2_config.json
 ```
 
 #### 2.2.4. Test: Page range test
@@ -397,7 +397,7 @@ Same test as above but using the configuration file [test-data/configs/workflow_
 Page ranges should be a comma separated string e.g., `1, 2, 5-7` (spaces are allowed)
 
 ```bash
-python src/workflow_test.py test-data/configs/workflow_3_config.json
+python src/workflow.py test-data/configs/workflow_3_config.json
 ```
 
 #### 2.2.5. Test: Add csv config to workflow
@@ -405,7 +405,7 @@ python src/workflow_test.py test-data/configs/workflow_3_config.json
 Use a csv file to configure workflow instead of a json file.
 
 ```bash
-python src/workflow_test.py test-data/configs/workflow_0_config.csv
+python src/workflow.py test-data/configs/workflow_0_config.csv
 ```
 
 #### 2.2.6. Test: Modelfile test
@@ -413,7 +413,7 @@ python src/workflow_test.py test-data/configs/workflow_0_config.csv
 Added modelfile functionality to ollama and workflow test scripts.
 
 ```bash
-python src/workflow_test.py test-data/configs/workflow_4_config.json
+python src/workflow.py test-data/configs/workflow_4_config.json
 ```
 
 #### 2.2.7. Test: TEMPERATURE and top parameters test
@@ -440,7 +440,7 @@ These modelfiles use differente `temperature`, `top_k`, `top_p` to change see ho
 Additionally, conversation examples are used to provided to the model of how it should respond. The user prompt features a page of text from VILLEGARDEN project containing resercher names and their ORCIDs/IdHal. The assistant response features an example of what the expected corresponding JSON output should be.
 
 ```bash
-python src/workflow_test.py test-data/configs/workflow_5_config.json
+python src/workflow.py test-data/configs/workflow_5_config.json
 ```
 
 TODO: run test and add notes
