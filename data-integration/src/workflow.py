@@ -9,7 +9,6 @@ from utils import readFile, writeToFile
 from ollama_pipeline import sendPrompt as sendOllamaPrompt
 from pypdf_pipeline import pdf2list
 from r2r_pipeline import R2RClient
-from whisper_pipeline import run_whisper
 from codecarbon import OfflineEmissionsTracker
 from codecarbon.output_methods.logger import LoggerOutput
 
