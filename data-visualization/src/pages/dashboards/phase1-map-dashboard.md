@@ -64,6 +64,7 @@ import {
   mainland_france_departements_no_idf_geojson,
   idf_departements_geojson,
   italy_regions_geojson,
+  idf_department_codes,
   france_projection,
   idf_projection,
   paris_projection,
@@ -355,7 +356,7 @@ const choropleth_terrain_data_by_city = [
 display(choropleth_terrain_data_by_city)
 ```
 
-## Projects by partners
+## Partners by Project
 
 ```js
 const selected_partner_project = view(
@@ -376,6 +377,8 @@ const selected_partner_project = view(
 )
 
 const flatten_choropleth = view(Inputs.toggle({ label: "Flatten choropleth?" }))
+
+const group_idf = view(Inputs.toggle({ label: "Group Île-de-France?" }))
 ```
 
 <div style="display: flex">
@@ -411,14 +414,16 @@ const flatten_choropleth = view(Inputs.toggle({ label: "Flatten choropleth?" }))
     ${resize((width, height) => choroplethFrance(
       width,
       height,
-      ({ properties }) => project_partners_by_code.get(properties.code)
+      ({ properties }) => project_partners_by_code.get(properties.code),
+      false,
     ))}
     <!-- $ -->
   </div>
   <div id="choropleth-container-idf" class="card" style="padding: 12px;">
     ${resize((width) => choroplethIdf(
       width,
-      ({ properties }) => project_partners_by_code.get(properties.code)
+      ({ properties }) => project_partners_by_code.get(properties.code),
+      false,
     ))}
     <!-- $ -->
   </div>
@@ -435,7 +440,9 @@ const flatten_choropleth = view(Inputs.toggle({ label: "Flatten choropleth?" }))
 
 </div>
 
-${downloadTableButton(() => [...choropleth_data].map(d => d.toJSON()))}<!-- $ -->
+${downloadTableButton(
+  () => [...choropleth_data].map(d => d.toJSON()),
+  { filename: `${selected_partner_project}\_partenaires.csv` })}<!-- $ -->
 
 ```js
 const choropleth_data = [...all_partner_data].filter(
@@ -536,6 +543,18 @@ const project_partners_by_code = new Map(
     )
     .filter((d) => d[1] > 0)
 )
+
+if (group_idf) {
+  let idf_count = 0
+  project_partners_by_code.forEach((value, key) =>
+    idf_department_codes.includes(key) ? (idf_count += value) : null
+  )
+  idf_department_codes.forEach((code) =>
+    project_partners_by_code.has(code)
+      ? project_partners_by_code.set(code, idf_count)
+      : null
+  )
+}
 ```
 
 ```js
@@ -543,6 +562,28 @@ const lab_disciplines_by_code = new Map(
   d3
     .rollups(
       [...labs],
+      (D) =>
+        D.reduce(
+          (a, v) =>
+            selected_partner_project == "All" ||
+            v.projet == selected_partner_project
+              ? a + 1
+              : a,
+          0
+        ),
+      (d) => d.code_postal
+    )
+    .filter((d) => d[1] > 0)
+)
+
+console.debug("lab_disciplines_by_code", lab_disciplines_by_code)
+```
+
+```js
+const all_partners_by_code = new Map(
+  d3
+    .rollups(
+      [...labs].concat,
       (D) =>
         D.reduce(
           (a, v) =>
@@ -569,14 +610,14 @@ WITH user_partner_data AS (
     nom_complet,
     code_postal,
   FROM socioeco_partners
-  -- UNION
-  -- SELECT
-  --   label,
-  --   "ID primaire",
-  --   'LABORATOIRE' AS "type",
-  --   libelle AS nom_complet,
-  --   code_postal,
-  -- FROM labs
+  UNION
+  SELECT
+    label,
+    "ID primaire",
+    'LABORATOIRE' AS "type",
+    libelle AS nom_complet,
+    code_postal,
+  FROM labs
   UNION
   SELECT
     label,
@@ -1342,11 +1383,11 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
 
 const color_config = {
   scheme: "Blues",
-  label:
-    "N° de partenaires " +
-    (selected_partner_project == "All" ? "" : selected_partner_project),
+  label: `N° de partenaires ${
+    selected_partner_project == "All" ? "" : selected_partner_project
+  } estimé`,
   // label: "N° of Partners",
-  domain: [0, 6],
+  // domain: [0, 6],
   legend: true,
   marginLeft: 10,
   marginRight: 10,
@@ -1413,7 +1454,7 @@ const choroplethFrance = (width, height, fill) =>
     height,
     fill,
     france_projection,
-    mainland_france_departements_no_idf_geojson,
+    mainland_france_departements_geojson,
     "- Partenaires des projets par département, France"
   )
 
