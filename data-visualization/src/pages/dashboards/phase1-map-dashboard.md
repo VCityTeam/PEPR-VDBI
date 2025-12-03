@@ -121,13 +121,6 @@ const terrain_legend_type = view(
     value: false,
   })
 )
-
-const big_labels = view(
-  Inputs.toggle({
-    label: "Big labels?",
-    value: false,
-  })
-)
 ```
 
 <div style="display: flex">
@@ -161,19 +154,19 @@ const big_labels = view(
     ${downloadSVGButton(
       "#map-container-france svg",
       "Download French project terrains map",
-      `${selected_terrain_project.flat()}_france_terrains_map_by_${selected_terrain_scale.flat()}_scales.svg`
+      "france_project_terrains_by_scales_map.svg"
     )}
     <!-- $ -->
     ${downloadSVGButton(
       "#map-container-idf svg",
       "Download Grand Métropole de Paris project terrains map",
-      `${selected_terrain_project.flat()}_paris_terrains_map_by_${selected_terrain_scale.flat()}_scales.svg`
+      "paris_project_terrains_by_scales_map.svg"
     )}
     <!-- $ -->
     ${downloadSVGButton(
       "#map-container-italy svg",
       "Download Italian project terrains map",
-      `${selected_terrain_project.flat()}_italy_terrains_map_by_${selected_terrain_scale.flat()}_scales.svg`
+      "italy_project_terrains_by_scales_map.svg"
     )}
     <!-- $ -->
   </div>
@@ -190,11 +183,17 @@ const big_labels = view(
         width,
         height - 15,
         terrain_legend_type
-        ? generateDotMapMarks(france_terrain_data, france_terrain_legend, 0.2)
-        : generateLineMapMarks(
-        choropleth_terrain_data_by_city,
-        france_terrain_legend
-      ),
+          ? generateDotMapMarks(
+              france_terrain_data,
+              france_terrain_legend,
+              0.2,
+              width > 1030,
+            )
+          : generateLineMapMarks(
+              choropleth_terrain_data_by_city,
+              france_terrain_legend,
+              width > 1030,
+            ),
         "- Project terrains by city and Île-de-France, France"
       ))
     }
@@ -205,8 +204,17 @@ const big_labels = view(
       (width) => defaultProjectionParis(
         width,
         terrain_legend_type
-        ? generateDotMapMarks(ile_de_france_terrain_data, idf_terrain_legend, 0.015)
-        : generateLineMapMarks(ile_de_france_terrain_data, idf_terrain_legend),
+          ? generateDotMapMarks(
+              ile_de_france_terrain_data,
+              idf_terrain_legend,
+              0.015,
+              width > 500,
+            )
+          : generateLineMapMarks(
+              ile_de_france_terrain_data,
+              idf_terrain_legend,
+              width > 500,
+            ),
         "- Project terrains by city, Grand Métropole de Paris"
       )
     )}
@@ -220,9 +228,14 @@ const big_labels = view(
         ? generateDotMapMarks(
             terrain_data_by_city_by_scale_by_scale,
             italy_terrain_legend,
-            0.1
+            0.1,
+            width > 500,
           )
-        : generateLineMapMarks(terrain_data_by_city_by_scale_by_scale, italy_terrain_legend),
+        : generateLineMapMarks(
+            terrain_data_by_city_by_scale_by_scale,
+            italy_terrain_legend,
+            width > 500,
+          ),
         "- TRACES terrains by city, Italy"
       )
     )}
@@ -286,13 +299,14 @@ const big_labels = view(
     ))}
     <!-- $ -->
   </div>
+  <!--
   <div id="terrain-choropleth-container-italy" class="card" style="padding: 12px;">
     ${resize((width) => choroplethItaly(
       width,
       ({ properties }) => true
     ))}
-    <!-- $ -->
   </div>
+  -->
 </div>
 
 <!-- <div class="card">
@@ -414,16 +428,16 @@ const group_idf = view(Inputs.toggle({ label: "Group Île-de-France?" }))
     ${resize((width, height) => choroplethFrance(
       width,
       height,
-      ({ properties }) => project_partners_by_code.get(properties.code),
-      false,
+      ({ properties }) => group_idf ?
+        all_partners_by_code_group_idf.get(properties.code) :
+        all_partners_by_code.get(properties.code),
     ))}
     <!-- $ -->
   </div>
   <div id="choropleth-container-idf" class="card" style="padding: 12px;">
     ${resize((width) => choroplethIdf(
       width,
-      ({ properties }) => project_partners_by_code.get(properties.code),
-      false,
+      ({ properties }) => all_partners_by_code.get(properties.code),
     ))}
     <!-- $ -->
   </div>
@@ -500,7 +514,7 @@ const terrain_partners_by_code = new Map(
 ```
 
 ```js
-const project_partners_by_code = new Map(
+const all_partners_by_code = new Map(
   d3
     .rollups(
       [...all_partner_data].concat([
@@ -544,17 +558,17 @@ const project_partners_by_code = new Map(
     .filter((d) => d[1] > 0)
 )
 
-if (group_idf) {
-  let idf_count = 0
-  project_partners_by_code.forEach((value, key) =>
-    idf_department_codes.includes(key) ? (idf_count += value) : null
-  )
-  idf_department_codes.forEach((code) =>
-    project_partners_by_code.has(code)
-      ? project_partners_by_code.set(code, idf_count)
-      : null
-  )
-}
+const all_partners_by_code_group_idf = new Map(all_partners_by_code)
+
+let idf_count = 0
+all_partners_by_code_group_idf.forEach((value, key) =>
+  idf_department_codes.includes(key) ? (idf_count += value) : null
+)
+idf_department_codes.forEach((code) =>
+  all_partners_by_code_group_idf.has(code)
+    ? all_partners_by_code_group_idf.set(code, idf_count)
+    : null
+)
 ```
 
 ```js
@@ -562,28 +576,6 @@ const lab_disciplines_by_code = new Map(
   d3
     .rollups(
       [...labs],
-      (D) =>
-        D.reduce(
-          (a, v) =>
-            selected_partner_project == "All" ||
-            v.projet == selected_partner_project
-              ? a + 1
-              : a,
-          0
-        ),
-      (d) => d.code_postal
-    )
-    .filter((d) => d[1] > 0)
-)
-
-console.debug("lab_disciplines_by_code", lab_disciplines_by_code)
-```
-
-```js
-const all_partners_by_code = new Map(
-  d3
-    .rollups(
-      [...labs].concat,
       (D) =>
         D.reduce(
           (a, v) =>
@@ -1082,7 +1074,7 @@ const terrain_anchor_map = new Map([
   // ["Acquasanta Terme", "top-left"],
 ])
 
-const tip_config = (datum, tip_anchor) => ({
+const tip_config = (datum, tip_anchor, big_labels) => ({
   x: datum.longitude,
   y: datum.latitude,
   textPadding: big_labels ? 5 : 3,
@@ -1093,7 +1085,7 @@ const tip_config = (datum, tip_anchor) => ({
   anchor: tip_anchor,
 })
 
-const terrain_tips = (data) =>
+const terrain_tips = (data, big_labels) =>
   data.map((d) => {
     let tip_anchor = "top-left"
 
@@ -1101,7 +1093,7 @@ const terrain_tips = (data) =>
       tip_anchor = terrain_anchor_map.get(d.terrain_label)
     }
 
-    return Plot.tip([d.terrain_label], tip_config(d, tip_anchor))
+    return Plot.tip([d.terrain_label], tip_config(d, tip_anchor, big_labels))
   })
 
 const terrain_tip_dots_float_left = [
@@ -1147,7 +1139,7 @@ const terrain_tip_dots = (data, legend, delta) =>
 // generate geo projection plot functions
 const labeled_france_projection = {
   type: "equal-earth",
-  domain: d3.geoCircle().center([2, 47.3]).radius(5)(),
+  domain: d3.geoCircle().center([1.7, 47.1]).radius(4.7)(),
 }
 
 const defaultProjection = (width, height, projection, marks, caption = "") =>
@@ -1180,6 +1172,7 @@ const defaultProjectionParis = (width, marks, caption = "") =>
         fill: vdbi_color_scheme.blue,
         fillOpacity: 0.3,
       }),
+      Plot.frame(),
       marks,
     ],
     caption
@@ -1197,6 +1190,7 @@ const defaultProjectionItaly = (width, marks, caption = "") =>
         fill: vdbi_color_scheme.blue,
         fillOpacity: 0.3,
       }),
+      Plot.frame(),
       marks,
     ],
     caption
@@ -1207,7 +1201,7 @@ const defaultProjectionItaly = (width, marks, caption = "") =>
 const isProjectSelected = (project) =>
   selected_terrain_project.includes(project)
 
-const map_legend_dots = (terrain_legend) =>
+const map_legend_dots = (terrain_legend, big_labels) =>
   Plot.dot(terrain_legend, {
     x: (d) => d[2],
     y: (d) => d[3],
@@ -1216,19 +1210,20 @@ const map_legend_dots = (terrain_legend) =>
     fillOpacity: (d) => (isProjectSelected(d[0]) ? 1 : 0.2),
   })
 
-const map_legend_text = (terrain_legend) =>
+const map_legend_text = (terrain_legend, big_labels) =>
   Plot.text(terrain_legend, {
     x: (d) => d[2],
     y: (d) => d[3],
+    dx: big_labels ? -5 : 0,
     dy: big_labels ? -25 : -15,
     fontWeight: "bold",
     fontSize: big_labels ? 30 : 12,
-    rotate: big_labels ? -15 : 0,
+    rotate: big_labels ? -20 : 0,
     text: (d) => d[0],
     opacity: (d) => (isProjectSelected(d[0]) ? 1 : 0.2),
   })
 
-function generateLineMapMarks(terrain_data, terrain_legend) {
+function generateLineMapMarks(terrain_data, terrain_legend, big_labels) {
   const strokeWidth = big_labels ? 2 : 1
 
   const links = Plot.link(terrain_tip_dots(terrain_data, terrain_legend, 0.2), {
@@ -1292,15 +1287,20 @@ function generateLineMapMarks(terrain_data, terrain_legend) {
     links,
     terrain_dots,
     // legend marks //
-    map_legend_dots(terrain_legend),
-    map_legend_text(terrain_legend),
+    map_legend_dots(terrain_legend, big_labels),
+    map_legend_text(terrain_legend, big_labels),
     // legend_axis_label,
     // tip marks //
     // ...terrain_tips(terrain_data),
   ]
 }
 
-function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
+function generateDotMapMarks(
+  terrain_data,
+  terrain_legend,
+  tip_dot_delta,
+  big_labels,
+) {
   const terrain_dots = Plot.dot(terrain_data, {
     x: "longitude",
     y: "latitude",
@@ -1370,8 +1370,8 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
   return [
     terrain_dots,
     // legend marks //
-    map_legend_dots(terrain_legend),
-    map_legend_text(terrain_legend),
+    map_legend_dots(terrain_legend, big_labels),
+    map_legend_text(terrain_legend, big_labels),
     // legend_axis_label,
     // tip marks //
     ...terrain_tips(terrain_data),
@@ -1383,9 +1383,7 @@ function generateDotMapMarks(terrain_data, terrain_legend, tip_dot_delta) {
 
 const color_config = {
   scheme: "Blues",
-  label: `N° de partenaires ${
-    selected_partner_project == "All" ? "" : selected_partner_project
-  } estimé`,
+  label: `N° de partenaires et parties prenantes estimé`,
   // label: "N° of Partners",
   // domain: [0, 6],
   legend: true,
@@ -1408,6 +1406,7 @@ const choropleth = (width, height, fill, projection, features, caption) =>
     color: color_config,
     projection: projection,
     marks: [
+      // Plot.geo(projection.domain, { stroke: "red", strokeWidth: 2 }),
       Plot.geo(features, {
         channels: {
           Department: ({ properties }) => properties.nom,
@@ -1455,7 +1454,7 @@ const choroplethFrance = (width, height, fill) =>
     fill,
     france_projection,
     mainland_france_departements_geojson,
-    "- Partenaires des projets par département, France"
+    "- Partenaires et parties prenantes des projets par département, France"
   )
 
 const choroplethIdf = (width, fill) =>
@@ -1465,7 +1464,7 @@ const choroplethIdf = (width, fill) =>
     fill,
     idf_projection,
     idf_departements_geojson,
-    "- Partenaires des projets par département, Île-de-France"
+    "- Partenaires et parties prenantes des projets par département, Île-de-France"
   )
 
 const choroplethItaly = (width, fill) =>
@@ -1475,7 +1474,7 @@ const choroplethItaly = (width, fill) =>
     fill,
     italy_projection,
     italy_regions_geojson,
-    "- Project partners by department, Italy"
+    "- Partenaires et parties prenantes des projets par département, Italy"
   )
 display(italy_regions_geojson)
 ```
@@ -1536,6 +1535,6 @@ console.debug(
   [...all_partner_data].map((d) => d.toJSON())
 )
 console.debug("terrain_partners_by_code", terrain_partners_by_code)
-console.debug("project_partners_by_code", project_partners_by_code)
+console.debug("all_partners_by_code", all_partners_by_code)
 console.debug("lab_disciplines_by_code", lab_disciplines_by_code)
 ```
