@@ -33,7 +33,7 @@ These tests attempt to identify efficient, open-source, and secure methods for e
 
 ```mermaid
 ---
-title: "Currently proposed method for document querying: RAG"
+title: "Proposed method for document querying"
 ---
 flowchart LR
 
@@ -82,6 +82,32 @@ flowchart LR
   R -->|7-Send query contextualized with documents| LLM
   LLM -->|8-Generate structured text| JSON
   JSON --> O
+```
+
+```mermaid
+---
+title: "Proposed method for knowledge graph creation"
+---
+stateDiagram-v2
+
+    direction LR
+    
+    [*] --> audio
+    
+    state fork <<fork>>
+        audio --> fork
+        fork --> transcript : with Whisper
+        fork --> diarization : with Whisper+pyannote
+    
+    state join <<join>>
+        transcript --> join
+        diarization --> join
+        join --> Summary : RAG assisted summarization
+        join --> Graph : RAG assisted transformation to graph
+
+    Summary --> [*]
+    Graph --> [*]
+    Summary --> Graph : RAG assisted transformation to graph
 ```
 
 > [!NOTE]

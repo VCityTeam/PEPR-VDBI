@@ -2,6 +2,7 @@ import os
 import json
 import argparse
 import logging
+from codecarbon import OfflineEmissionsTracker
 from utils import read_file, write_csv
 from wordcount import (
     tokenize_text,
@@ -9,57 +10,74 @@ from wordcount import (
     compare_wordcounts,
     write_word_count,
 )
+from transcribe import transcribe
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="""Launch a workflow (or data pipeline) based
-            on a configuration"""
+        description="""Launch a workflow (or data pipeline). A configuration file can
+        specify multiple several workflow steps. Otherwise a single step can be run by
+        specifying the input/output directories and the activity type. If a configuration
+        file is provided, non-debugging and logging arguments are ignored.""",
     )
     parser.add_argument(
-        "configuration",
+        "config",
         help="""Specify the configuration file. File must be structured as a JSON array of
-            configurations, each specifying the type of activity, the inputs and outputs,
-            and the parameters used for the activity. Two types are currently supported:
-            - 'parse': for tokenizing a text
-            - 'count': for lemmatizing, filtering, and counting a list of words
-            - 'compare': for comparing word counts
-            For example:
-            [
-                {
-                    "activity": "parse",
-                    "input_dir": "./input/wordcount-test/",
-                    "output_dir": "./wordcount-test_stage_0/"
-                },
-                {
-                    "activity": "count",
-                    "input_dir": "./wordcount-test_stage_0/",
-                    "output_dir": "./wordcount-test_stage_1/",
-                    "limit": 50,
-                    "params": {
-                    "stop_words_path": "./configs/wordcount/stop_words_english.csv"
-                    }
-                },
-                {
-                    "activity": "count",
-                    "input_dir": "./wordcount-test_stage_0/",
-                    "output_dir": "./wordcount-test_stage_1/",
-                    "limit": 100,
-                    "params": {
-                    "stop_words_path": "./configs/wordcount/stop_words_english.csv"
-                    }
-                },
-                {
-                    "activity": "compare",
-                    "inputs": [
-                        "./wordcount-test_stage_1/example-text_count_50.csv:./wordcount-test_stage_1/example-text_count_100.csv"
-                    ],
-                    "output_dir": "./output/wordcount-test/",
-                    "params": {
-                    "mode": "INTERSECTION"
-                    }
-                }
-            ]""",
+configurations, each specifying the type of activity, the inputs and outputs,
+and the parameters used for the activity.
+
+The following types are currently
+supported:
+- 'parse': for tokenizing a text
+- 'count': for lemmatizing, filtering, and counting a list of words
+- 'compare': for comparing word counts
+- 'transcribe': for transcribing audio files
+For example:
+```json
+[
+    {
+        "activity": "parse",
+        "input_dir": "./input/wordcount-test/",
+        "output_dir": "./wordcount-test_stage_0/"
+    },
+    {
+        "activity": "count",
+        "input_dir": "./wordcount-test_stage_0/",
+        "output_dir": "./wordcount-test_stage_1/",
+        "limit": 50,
+        "params": {
+        "stop_words_path": "./configs/wordcount/stop_words_english.csv"
+        }
+    },
+    {
+        "activity": "count",
+        "input_dir": "./wordcount-test_stage_0/",
+        "output_dir": "./wordcount-test_stage_1/",
+        "limit": 100,
+        "params": {
+        "stop_words_path": "./configs/wordcount/stop_words_english.csv"
+        }
+    },
+    {
+        "activity": "compare",
+        "inputs": [
+            "./wordcount-test_stage_1/example-text_count_50.csv:./wordcount-test_stage_1/example-text_count_100.csv"
+        ],
+        "output_dir": "./output/wordcount-test/",
+        "params": {
+        "mode": "INTERSECTION"
+        }
+    }
+]
+```
+
+Note that:
+- if `input_dir` is specified, it overwrites `inputs`.
+- `input_dir` is not supported by the compare activity.
+- If `input_dir` is specified, all files from the specified directory are taken into
+  account and inputs are set to the files in that directory.
+- The transcribe step requires a docker container setup with GPU support as described in:
+    https://github.com/manzolo/openai-whisper-docker""",
     )
     parser.add_argument(
         "-d",
@@ -79,7 +97,7 @@ def main():
     logging.basicConfig(
         format="%(asctime)s %(levelname)-8s %(message)s",
         filename=args.log,
-        level=(logging.DEBUG if args.debug else logging.INFO),
+        level=(logging.DEBUG if args.debug else logging.WARNING),
     )
     print(f"Initializing, see {args.log} for logs...")
     logging.info(
@@ -91,33 +109,40 @@ def main():
   \/_____/     \/_/    \/_/\/_/   \/_/ /_/     \/_/"""
     )
 
-    runWorkflow(args.configuration)
+    config = None
+    if args.config is None:
+        print("No configuration file specified, running single step.")
+        logging.error("No configuration file specified, running single step.")
+        config = [
+            {
+                "activity": args.mode,
+                "input_dir": args.input_dir,
+                "output_dir": args.output_dir,
+                "limit": args.limit,
+            }
+        ]
+
+    else:
+        config = json.loads(read_file(args.config))
+
+    runWorkflow(config)
 
 
-def runWorkflow(config_path: str) -> None:
-    """Run a workflow based on a configuration file.
-    :config_path: Path to JSON configuration.
-        The file must be structured as follows for JSON:
-            [
-                {
-                    "activity": str,
-                    "inputs": list[str],
-                    "input_dir": str (optional),
-                    "params": dict,
-                },
-                ...
-            ]
-        If `input_dir` is specified, it overwrites `inputs`. `input_dir` is not supported
-        by the compare activity. If `input_dir` is specified, all files from the
-        sepecified directory are taken into account and inputs are set to the files in
-        that directory.
+def runWorkflow(config: list[dict]) -> None:
+    """Run a workflow based on a workflow configuration.
+    :config: A list of workflow step configurations. Each configuration is a dictionary
+        specifying the type of activity, the inputs and outputs, and the parameters used
+        for the activity.
     """
-    config = json.loads(read_file(config_path))
-    for activity_config in config:
 
+    tracker = OfflineEmissionsTracker(
+        save_to_logger=True, logging_logger=logging.getLogger()
+    )
+
+    for activity_config in config:
         # parse the inputs and parameters for activity
         parsed_activity_config = []
-        inputs = activity_config.get("inputs")
+        inputs = activity_config.get("inputs", [])
         output_dir = activity_config["output_dir"]
         limit = activity_config.get("limit", None)
         logging.debug(f"Activity config: {json.dumps(activity_config, indent=2)}")
@@ -150,6 +175,8 @@ def runWorkflow(config_path: str) -> None:
             runCount(parsed_activity_config, output_dir, limit)
         elif activity_config.get("activity") == "compare":
             runCompare(parsed_activity_config, output_dir, limit)
+        elif activity_config.get("activity") == "transcribe":
+            runTranscribe(parsed_activity_config, tracker)
         else:
             logging.error(f"Unknown activity type: {activity_config.get('activity')}")
             print(f"Unknown activity type: {activity_config.get('activity')}")
@@ -220,6 +247,23 @@ def runCompare(config: list[dict], output_dir: str = "./", limit: int | None = N
 
         logging.info(f"writing tokens to {output_file}")
         write_word_count(compared_word_counts, output_file, limit)
+
+
+def runTranscribe(config: list[dict], tracker: OfflineEmissionsTracker) -> None:
+    """Run transcribe() on one file based on a configuration"""
+    for params in config:
+        row_params = params.copy()  # deep copy
+        input_path = row_params["input_path"]
+        model = row_params.get("model", "turbo")
+        language = row_params.get("language")
+
+        if language is None:
+            logging.error("Language parameter is required for transcription.")
+            print("Language parameter is required for transcription.")
+            return None
+
+        logging.info(f"running transcribe() on {input_path}")
+        transcribe(input_path, model, language, tracker)
 
 
 if __name__ == "__main__":

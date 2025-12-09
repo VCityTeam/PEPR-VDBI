@@ -1,6 +1,5 @@
 import csv
 from enum import StrEnum, auto
-
 import stanza
 from utils import read_file, write_csv
 from nltk.stem import WordNetLemmatizer

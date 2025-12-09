@@ -1,7 +1,7 @@
 [
   {
     "description": "parse PEPR VDBI and Recyclage project descriptions",
-    "activity": "#parse",
+    "activity": "parse",
     "inputs": [
       "test-data/input/insu_ocean_atmosphere/DigestProspectiveOA2023_INSU-CNRS-8-17.txt",
       "test-data/private/input/project_resume_fr/financed_project_resumes_fr.txt"
@@ -10,7 +10,7 @@
   },
   {
     "description": "count project description tokens",
-    "activity": "#count",
+    "activity": "count",
     "input_dir": "test-data/private/compare_vdbi_insu_oa_stage_0/",
     "output_dir": "test-data/private/compare_vdbi_insu_oa_stage_1/",
     "params": {

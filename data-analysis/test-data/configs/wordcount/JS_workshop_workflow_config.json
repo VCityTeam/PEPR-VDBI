@@ -1,0 +1,16 @@
+[
+  {
+    "activity": "parse",
+    "input_dir": "test-data/private/input/js_2025_workshops/",
+    "output_dir": "test-data/private/js_2025_workshops_stage_0/"
+  },
+  {
+    "activity": "count",
+    "input_dir": "test-data/private/js_2025_workshops_stage_0/",
+    "output_dir": "test-data/private/js_2025_workshops_stage_1/",
+    "params": {
+      "language": "fr",
+      "stop_words_path": "test-data/configs/wordcount/stop_words_french.csv"
+    }
+  }
+]
