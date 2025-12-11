@@ -346,22 +346,40 @@ stateDiagram-v2
   words : Keyword list
   wc    : Keyword count
   wci   : Keyword count intersections
+  cc    : Cortex Corpus
   wcco  : Keyword co-occurences
+  kt    : Key Terms
+  ne    : Named Enities
+  es    : Embedding Similarity
 
   [*] --> video
   [*] --> audio
-  video --> audio : Extract audio
-  audio --> Transcript : Transcribe with Whisper
+  video --> audio       : Extract audio
+  audio --> Transcript  : Transcribe with Whisper
 
   state fork <<fork>>
     Transcript --> fork
-    fork --> words : Tokenization, lemmatization, and stop-word removal
-    fork --> wcco : Calculate co-word occurences
+    fork --> words      : Tokenization, lemmatization, and stop-word removal
+    fork --> cc         : Import into Cortex
 
-  words --> wc : Count word occurrences
-  wc --> wci : Calculate intersection for parallel activity keyword counts
+  state fork2 <<fork>>
+    cc --> fork2
+    fork2 --> wcco      : Calculate co-word occurences
+    fork2 --> kt        : TermExtraction
+    fork2 --> ne        : NamedEntityRecognition
+    fork2 --> es        : W2VExplorer
+
+  words --> wc          : Count word occurrences
+  wc --> wci            : Calculate intersection for parallel activity keyword counts
+  
+  state join <<join>>
+    wcco --> join
+    kt --> join
+    ne --> join
+    es --> join
+    join --> [*]
+
   wci --> [*]
-  wcco --> [*]
 ```
 
 ##### Notes
