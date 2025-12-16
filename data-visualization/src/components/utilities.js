@@ -409,7 +409,9 @@ export function copySVGToClipboardButton(
 }
 
 /**
- * A button for downloading a table as a csv (tab delimited by default).
+ * A button for downloading a table.
+ * Semicolon delimited by default for EU Excel/List separator compatibility :
+ * https://superuser.com/questions/606272/how-to-get-excel-to-interpret-the-comma-as-a-default-delimiter-in-csv-files
  *
  * @param {Function} callback - a callback function to get the data to be downloaded,
  *   rows should contain keys corresponding to the columns of the table
@@ -423,7 +425,7 @@ export function downloadTableButton(
     label = "Download (.csv)",
     filename = "download.csv",
     columns = null,
-    delimeter = "\t",
+    delimeter = ";",
   } = {}
 ) {
   return button(label, {
@@ -589,7 +591,9 @@ export function request(method, url, options = {}) {
 
 /**
  * Generate a button to write a blob to a file
- * adapted from https://flexiple.com/javascript/javascript-write-to-file-detailed
+ * adapted from https://flexiple.com/javascript/javascript-write-to-file-detailed.
+ * 
+ * Used Github Copilot to improve BOM handling for UTF-8 text files.
  *
  * @param {any} content - content to write
  * @param {String} content_type - file content mime type
@@ -599,15 +603,32 @@ export function request(method, url, options = {}) {
 export function writeToFile(
   content,
   filename = "download.txt",
-  content_type = "text/plain"
-  // content_type = "image/svg+xml",
+  content_type = "text/plain;charset=utf-8"
 ) {
-  const data = new File([content], filename, { type: content_type })
-  const url = window.URL.createObjectURL(data)
+  // Ensure the content type declares UTF-8 for text-like MIME types
+  if (
+    content_type &&
+    (content_type.startsWith("text/") || content_type === "application/json") &&
+    !/charset=/i.test(content_type)
+  ) {
+    content_type = `${content_type};charset=utf-8`
+  }
+
+  // Ensure we write text; for text/CSV and JSON include a BOM so Excel/Windows
+  // will correctly detect UTF-8 encoding when opening the file.
+  const text = typeof content === "string" ? content : String(content)
+  const needsBom =
+    content_type.startsWith("text/") || content_type === "application/json"
+  const bom = needsBom ? "\uFEFF" : ""
+
+  // Use Blob (more conventional for binary/text downloads) instead of File
+  const blob = new Blob([bom + text], { type: content_type })
+  const url = window.URL.createObjectURL(blob)
   const a = document.createElement("a")
   a.href = url
   a.download = filename
   document.body.appendChild(a)
   a.click()
+  a.remove()
   window.URL.revokeObjectURL(url)
 }
