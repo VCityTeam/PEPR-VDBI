@@ -1,5 +1,5 @@
 import pandas as pd
-from utils import initDefaultLogger
+from utilities.utils import initDefaultLogger
 from geopy.geocoders import Nominatim
 from time import sleep
 

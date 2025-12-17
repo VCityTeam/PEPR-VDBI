@@ -1,5 +1,5 @@
 from time import sleep
-from utils import initDefaultLogger
+from utilities.utils import initDefaultLogger
 import pandas as pd
 import requests
 from collections.abc import Iterable

@@ -2,7 +2,7 @@ import logging
 import sys
 import csv
 import json
-from utils import initDefaultLogger
+from utilities.utils import initDefaultLogger
 from geopy.geocoders import Nominatim
 
 

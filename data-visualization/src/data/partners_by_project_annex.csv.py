@@ -1,7 +1,7 @@
 import sys
 import csv
-from siret_utils import queryAndFormatRe, defaultCsvHeader
-from utils import initDefaultLogger
+from utilities.siret import queryAndFormatRe, defaultCsvHeader
+from utilities.utils import initDefaultLogger
 
 
 def main():

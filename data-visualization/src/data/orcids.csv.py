@@ -1,13 +1,13 @@
 import json
 import pandas as pd
-from orcid_utils import (
+from utilities.orcid import (
     getORCiDSecrets,
     getAccessToken,
     queryOrcid,
     getFirstname,
     getLastname,
 )
-from utils import initDefaultLogger
+from utilities.utils import initDefaultLogger
 
 
 def main():

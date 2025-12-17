@@ -1,5 +1,5 @@
-from utils import initDefaultLogger
-from siret_utils import queryRE, formatReResponse
+from utilities.utils import initDefaultLogger
+from utilities.siret import queryRE, formatReResponse
 import pandas as pd
 
 
