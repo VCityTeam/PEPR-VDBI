@@ -25,7 +25,7 @@ import { downloadSVGButton } from "/components/utilities.js"
 ```
 
 ```js
-const debug = true
+const debug = false
 if (debug) {
   display("partners")
   display(Inputs.table(sql`select * from partners`))
