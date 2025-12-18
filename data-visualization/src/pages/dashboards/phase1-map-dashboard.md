@@ -329,7 +329,8 @@ const choropleth_terrain_data = d3.group(
     ).properties.nom,
   (d) => d.project_acronyme
 )
-display(choropleth_terrain_data)
+
+console.debug("choropleth_terrain_data", choropleth_terrain_data)
 
 const choropleth_terrain_data_by_city = [
   ...d3
@@ -367,7 +368,10 @@ const choropleth_terrain_data_by_city = [
     .values(),
 ]
 
-display(choropleth_terrain_data_by_city)
+console.debug(
+  "choropleth_terrain_data_by_city",
+  choropleth_terrain_data_by_city
+)
 ```
 
 ## Partners by Project
@@ -1299,7 +1303,7 @@ function generateDotMapMarks(
   terrain_data,
   terrain_legend,
   tip_dot_delta,
-  big_labels,
+  big_labels
 ) {
   const terrain_dots = Plot.dot(terrain_data, {
     x: "longitude",
@@ -1444,8 +1448,10 @@ const choropleth = (width, height, fill, projection, features, caption) =>
     ],
   })
 
-display("mainland_france_regions_geojson")
-display(mainland_france_regions_geojson)
+console.debug(
+  "mainland_france_regions_geojson",
+  mainland_france_regions_geojson
+)
 
 const choroplethFrance = (width, height, fill) =>
   choropleth(
@@ -1476,7 +1482,8 @@ const choroplethItaly = (width, fill) =>
     italy_regions_geojson,
     "- Partenaires et parties prenantes des projets par département, Italy"
   )
-display(italy_regions_geojson)
+
+console.debug("italy_regions_geojson", italy_regions_geojson)
 ```
 
 ```js
