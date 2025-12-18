@@ -345,10 +345,9 @@ stateDiagram-v2
   audio : Activity audio file
   words : Keyword list
   wc    : Keyword count
-  wci   : Keyword count intersections
+  %% wci   : Keyword intersection count
   cc    : Cortex Corpus
-  wcco  : Keyword co-occurences
-  kt    : Key Terms
+  wcco  : Multiterm co-occurences
   ne    : Named Enities
   es    : Embedding Similarity
 
@@ -364,22 +363,17 @@ stateDiagram-v2
 
   state fork2 <<fork>>
     cc --> fork2
-    fork2 --> wcco      : Calculate co-word occurences
-    fork2 --> kt        : TermExtraction
-    fork2 --> ne        : NamedEntityRecognition
-    fork2 --> es        : W2VExplorer
+    fork2 --> wcco   : Calculate multiterm (co-)occurences
+    fork2 --> ne     : Named Entity Recognition
+    fork2 --> es     : W2VExplorer
 
-  words --> wc          : Count word occurrences
-  wc --> wci            : Calculate intersection for parallel activity keyword counts
-  
-  state join <<join>>
-    wcco --> join
-    kt --> join
-    ne --> join
-    es --> join
-    join --> [*]
-
-  wci --> [*]
+  words --> wc  : Count word occurrences
+  wc --> [*]
+  %% wc --> wci    : Calculate intersection for parallel activity keyword counts
+  wcco --> [*]
+  ne --> [*]
+  es --> [*]
+  %% wci --> [*]
 ```
 
 ##### Notes
