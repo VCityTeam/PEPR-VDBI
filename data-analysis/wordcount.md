@@ -365,15 +365,16 @@ stateDiagram-v2
     cc --> fork2
     fork2 --> ne          : Named Entity Recognition
     fork2 --> Multiterms  : Calculate multiterms
-    Multiterms --> wcco   : Calculate statistics
 
-  state join1 <<join>>
-    Multiterms --> join1
-    ne --> join1
-    join1 --> es : W2VExplorer
+  state join <<join>>
+    Multiterms --> join
+    ne --> join
+    join --> es : W2VExplorer
+
+  Multiterms --> wcco : Calculate statistics
+  words --> wc        : Count word occurrences
 
   state join2 <<join>>
-    words --> wc  : Count word occurrences
     wc --> join2
     %% wc --> wci    : Calculate intersection for parallel activity keyword counts
     wcco --> join2
