@@ -349,8 +349,8 @@ export class Graph {
       textColor = "black",
       halo = "GhostWhite",
       haloWidth = 0.25,
-      nodeLabelOpacity = 0.4,
-      linkLabelOpacity = 0.3,
+      nodeLabelOpacity = 0.1,
+      linkLabelOpacity = 0.1,
       highlightOpacity = 0.7,
       nodeLabelOffset = r + 1.5,
       legend = circleLegend(

@@ -346,10 +346,10 @@ stateDiagram-v2
   words : Keyword list
   wc    : Keyword count
   %% wci   : Keyword intersection count
-  cc    : Cortex Corpus
-  wcco  : Multiterm co-occurences
-  ne    : Named Enities
-  es    : Embedding Similarity
+  cc    : Cortex corpus
+  wcco  : Multiterm statistics
+  ne    : Named enities
+  es    : Term/Entity similarity
 
   [*] --> video
   [*] --> audio
@@ -363,17 +363,24 @@ stateDiagram-v2
 
   state fork2 <<fork>>
     cc --> fork2
-    fork2 --> wcco   : Calculate multiterm (co-)occurences
-    fork2 --> ne     : Named Entity Recognition
-    fork2 --> es     : W2VExplorer
+    fork2 --> ne          : Named Entity Recognition
+    fork2 --> Multiterms  : Calculate multiterms
+    Multiterms --> wcco   : Calculate statistics
 
-  words --> wc  : Count word occurrences
-  wc --> [*]
-  %% wc --> wci    : Calculate intersection for parallel activity keyword counts
-  wcco --> [*]
-  ne --> [*]
-  es --> [*]
-  %% wci --> [*]
+  state join1 <<join>>
+    Multiterms --> join1
+    ne --> join1
+    join1 --> es : W2VExplorer
+
+  state join2 <<join>>
+    words --> wc  : Count word occurrences
+    wc --> join2
+    %% wc --> wci    : Calculate intersection for parallel activity keyword counts
+    wcco --> join2
+    %% ne --> join2
+    es --> join2
+    %% wci --> join2
+    join2 --> [*]
 ```
 
 ##### Notes
@@ -381,3 +388,4 @@ stateDiagram-v2
 - Audio is cut and extracted with Microsoft Clipchamp
 - Transcript is manually verified and corrected
 - Whisper `large-v2` model is used for transcription
+- Multiterm statistics include C-value, Gfidf, Specificity chi2, Occurrences, and Cooccurrences
