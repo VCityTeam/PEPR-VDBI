@@ -1,3 +1,7 @@
+---
+style: /css/vdbi-page.css
+---
+
 # Chord diagram generator
 
 ```js
