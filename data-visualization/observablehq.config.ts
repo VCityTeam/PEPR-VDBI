@@ -3,6 +3,7 @@ export default {
   // The project’s title; used in the sidebar and webpage titles.
   title: 'VDBI Dashboards',
   // theme: ['light', 'dashboard'],
+  head: '<link rel="icon" href="pepr-vdbi-logo.png" type="image/png" sizes="32x32">',
   style: 'css/vdbi-dashboard.css',
   search: true,
   home: "VDBI Dashboards",
