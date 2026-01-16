@@ -1,4 +1,3 @@
-
 # Researcher Dashboard
 
 ```js

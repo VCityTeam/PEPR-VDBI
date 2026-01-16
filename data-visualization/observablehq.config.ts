@@ -60,6 +60,15 @@ export default {
       ]
     },
     {
+      name: 'Reports',
+      pages: [
+        {
+          name: 'Lexicometry analysis: VDBI JS 2025',
+          path: 'pages/reports/cortex-lexicometry-dashboard',
+        },
+      ]
+    },
+    {
       name: 'Under Construction',
       pages: [
         {
