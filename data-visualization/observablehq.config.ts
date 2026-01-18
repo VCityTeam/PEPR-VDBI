@@ -63,9 +63,13 @@ export default {
       name: 'Reports',
       pages: [
         {
-          name: 'Lexicometry analysis: VDBI JS 2025',
-          path: 'pages/reports/cortex-lexicometry-dashboard',
+          name: 'NEO/SoLocale Lexicometric analysis',
+          path: 'pages/reports/js-2025-workshop-analysis',
         },
+        // {
+        //   name: 'JS 2025 Round Table Lexicometric analysis',
+        //   path: 'pages/reports/js-2025-round-table-analysis',
+        // },
       ]
     },
     {
