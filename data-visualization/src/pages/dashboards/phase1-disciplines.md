@@ -166,7 +166,7 @@ console.debug("selected_project_data", selected_project_data)
   </div>
 </div>
 <div class="grid grid-cols-3">
-  <div id="theme-container" class="card grid-rowspan-2">
+  <div id="theme-container" class="card">
     <h2>Researcher subjects, themes, and research interests</h2>
     <div>${theme_plot_search_input}</div>
     <div>${theme_plot_sort_input}</div>
@@ -225,8 +225,19 @@ console.debug("selected_project_data", selected_project_data)
     ${downloadSVGButton("#theme-container svg")}
     <!-- $ -->
   </div>
-  <div id="theme-graph-container" class="card grid-rowspan-2 grid-colspan-2">
-    ${resize((width) => chordDiagram(selected_project_data.theme_count, { width: width })) }
+  <div id="theme-chord-container" class="card grid-colspan-2">
+    ${resize((width) =>
+      chordDiagram(
+        selected_project_data.theme_project_matrix,
+        selected_project_data.projects,
+        d3.scaleOrdinal(selected_project_data.projects, d3.schemeCategory10).range(),
+        { width: width, height: width, margin: 100 }
+      )
+    )}<!-- $ -->
+    ${downloadTableButton(() => selected_project_data.theme_count)}
+    <!-- $ -->
+    ${downloadSVGButton("#theme-chord-container svg")}
+    <!-- $ -->
   </div>
 </div>
 
@@ -455,9 +466,12 @@ const theme_plot_sort = Generators.input(theme_plot_sort_input)
 ```
 
 ```js
-const theme_plot_search_input = Inputs.search(selected_project_data.theme_count, {
-  placeholder: "Search themes...",
-})
+const theme_plot_search_input = Inputs.search(
+  selected_project_data.theme_count,
+  {
+    placeholder: "Search themes...",
+  },
+)
 
 const theme_plot_search_results = Generators.input(theme_plot_search_input)
 ```
@@ -564,11 +578,34 @@ function formatResearcherDataByProject(
   const theme_count = countEntities(filtered_researchers, (d) => d.themes)
     .filter((d) => !!d[0])
     .sort((a, b) => d3.descending(a[1], b[1]))
-// TODO: group themes by project, not researchers
+
+  const projects_by_theme = filtered_researchers.flatMap((researcher) =>
+    researcher.project
+      .filter(
+        (researcher_project) =>
+          (project ? researcher_project === project : true) &&
+          (auditioned
+            ? auditioned_projects.includes(researcher_project)
+            : true) &&
+          (financed
+            ? financed_projects.includes(researcher_project)
+            : true),
+      )
+      .map((project) => ({
+        project,
+        themes: researcher.themes,
+      })),
+  )
+
+  const grouped_projects_by_theme = d3.rollup(
+    projects_by_theme,
+    (D) => new Set(D.flatMap((d) => d.themes)),
+    (d) => d.project,
+  )
+  console.debug("grouped_projects_by_theme", grouped_projects_by_theme)
+
   const theme_project_matrix = generateIntersectionMatrix(
-    filtered_researchers,
-    "themes",
-    "project",
+    grouped_projects_by_theme,
   )
 
   return {
@@ -579,6 +616,7 @@ function formatResearcherDataByProject(
     cnu_count_by_category: cnu_count_by_category,
     theme_count: theme_count,
     theme_project_matrix: theme_project_matrix,
+    projects: [...grouped_projects_by_theme.keys()],
   }
 }
 ```

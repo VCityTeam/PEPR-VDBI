@@ -7,19 +7,11 @@ import * as d3 from "d3"
  * Constructs a square matrix where each cell represents the size of the intersection
  * between two sets, normalized by the total number of unique elements across the entire dataset.
  *
- * @param {Object[]} data - The data array to process.
- * @param {string} id_accessor - The property name to use as the unique identifier.
- * @param {string} set_accessor - The property name containing the array of items to intersect.
+ * @param {Map<string, Set<any>>} set_map - The data array to process.
  * @returns {number[][]} A 2D array representing the intersection matrix, where values are between 0 and 1.
  */
-export function generateIntersectionMatrix(data, id_accessor, set_accessor) {
-  const set_map = new Map(
-    data.map((d) => [d[id_accessor], new Set(d[set_accessor])]),
-  )
-  console.debug("set_map", set_map)
-
+export function generateIntersectionMatrix(set_map) {
   const superset_size = new Set(d3.merge(set_map.values())).size
-  console.debug("superset_size", superset_size)
 
   const intersection_matrix = d3
     .cross(
@@ -29,10 +21,10 @@ export function generateIntersectionMatrix(data, id_accessor, set_accessor) {
     )
     // https://stackoverflow.com/questions/4492385/convert-simple-array-into-two-dimensional-array-matrix
     .reduce(
-      (set_map, key, index) =>
+      (matrix, key, index) =>
         (index % set_map.size == 0
-          ? set_map.push([key])
-          : set_map[set_map.length - 1].push(key)) && set_map,
+          ? matrix.push([key])
+          : matrix[matrix.length - 1].push(key)) && matrix,
       [],
     )
 
@@ -156,6 +148,7 @@ export function chordDiagram(
             Math.PI / 2,
         ),
     )
+
   // Set the starting color (at 0%)
   grads
     .append("stop")
