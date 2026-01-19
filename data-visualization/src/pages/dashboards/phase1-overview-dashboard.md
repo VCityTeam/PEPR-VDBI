@@ -320,9 +320,8 @@ group by all
 ```
 
 ```js
-// "/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
 const workbook1 = FileAttachment(
-  "/data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
+  "/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx"
 ).xlsx()
 ```
 

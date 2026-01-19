@@ -7,23 +7,17 @@ import {
   exclude,
   downloadTableButton,
   downloadSVGButton,
+  sparkbar,
 } from "/components/utilities.js"
-```
-
-```js
 import { extractPhase1Workbook } from "/components/phase1-workbook.js"
-```
-
-```js
 import { donutChart } from "/components/pie-chart.js"
-```
-
-```js
 import { cnu_category_map } from "/components/cnu.js"
-```
-
-```js
-import { getCategoryFromCNU, colorCNU } from "/components/color.js"
+import {
+  getCategoryFromCNU,
+  colorCNU,
+  vdbi_color_scheme,
+} from "/components/color.js"
+import { chordDiagram, generateIntersectionMatrix } from "/components/chord.js"
 ```
 
 <div class="warning" label="Data visualization notice">
@@ -43,7 +37,7 @@ const selected_project = view(
   Inputs.select(discipline_data_by_project.keys(), {
     label: "Select Project",
     value: "Financed Projects",
-  })
+  }),
 )
 ```
 
@@ -52,11 +46,16 @@ const selected_project_data = discipline_data_by_project.get(selected_project)
 console.debug("selected_project_data", selected_project_data)
 ```
 
-## ${selected_project}
+## ${selected_project} Disciplines
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1 grid-rowspan-2">
     <h2>Researcher CNU sections</h2>
+    <div id="cnu-legend">
+      <h3>CNU group legend</h3>
+      ${cnu_plot_legend}
+      ${downloadSVGButton("#cnu-legend svg")}<!-- $ -->
+    </div>
     <div>${cnu_plot_sort_input}</div>
     <div id="cnu-container">
       ${resize((width) => Plot.plot(
@@ -106,10 +105,6 @@ console.debug("selected_project_data", selected_project_data)
                 opacity: 0.5,
               })
             ),
-            // Plot.text(selected_project_data.cnu_count, {
-            //   x: 0,
-            //   y: (d) => d[1],
-            // })
           ],
         }
       ))}
@@ -119,14 +114,6 @@ console.debug("selected_project_data", selected_project_data)
       ${downloadSVGButton("#cnu-container svg")}
       <!-- $ -->
     </div>
-    <div id="cnu-legend">
-      <h3>CNU group color legend</h3>
-      ${cnu_plot_legend}
-      <!-- $ -->
-      ${downloadSVGButton("#cnu-legend svg")}
-      <!-- $ -->
-    </div>
-    <!-- $ -->
   </div>
   <div id="cnu-group-container" class="card">
     <h2>Researcher CNU groups</h2>
@@ -134,7 +121,7 @@ console.debug("selected_project_data", selected_project_data)
     ${resize((width) => donutChart(
       selected_project_data.cnu_count_by_category,
       {
-        width: width,
+        width: width * 0.6,
         legendWidth: width * 0.3,
         keyMap: (d) => d[0],
         valueMap: (d) => d[1],
@@ -153,11 +140,11 @@ console.debug("selected_project_data", selected_project_data)
     <!-- $ -->
   </div>
   <div id="erc-container" class="card">
-    <h2>Researcher ERC discipline</h2>
+    <h2>Resarcher ERC discipline</h2>
     ${resize((width) => donutChart(
       selected_project_data.discipline_erc_count,
       {
-        width: width,
+        width: width * 0.6,
         legendWidth: width * 0.3,
         keyMap: (d) => d[0],
         valueMap: (d) => d[1],
@@ -178,6 +165,79 @@ console.debug("selected_project_data", selected_project_data)
     <!-- $ -->
   </div>
 </div>
+<div class="grid grid-cols-3">
+  <div id="theme-container" class="card grid-rowspan-2">
+    <h2>Researcher subjects, themes, and research interests</h2>
+    <div>${theme_plot_search_input}</div>
+    <div>${theme_plot_sort_input}</div>
+    <div style="max-height: 1100px; overflow: auto;">
+      ${resize((width) => Plot.plot(
+        {
+          width: width,
+          height: theme_plot_search_results.length * 20,
+          marginTop: 50,
+          marginBottom: 10,
+          marginRight: 200,
+          x: {
+            label: 'Occurences',
+            grid: true,
+            axis: 'both',
+            reverse: true,
+          },
+          y: {
+            label: 'Subjects, themes, or research interests',
+            tickRotate: -20,
+            tickFormat: (d) => cropText(d, 40),
+            axis: 'right',
+          },
+          marks: [
+            Plot.barX(theme_plot_search_results, {
+              y: (d) => d[0],
+              x: (d) => d[1],
+              stroke: 'black',
+              strokeOpacity: 0.1,
+              fill: vdbi_color_scheme.blue,
+              sort: { y: theme_plot_sort },
+              tip: {
+                format: {
+                  fill: false,
+                },
+                lineWidth: 25,
+                textOverflow: 'ellipsis-end',
+              },
+            }),
+            Plot.barX(
+              theme_plot_search_results,
+              Plot.pointerY({
+                y: (d) => d[0],
+                x: (d) => d[1],
+                fill: 'white',
+                opacity: 0.5,
+              })
+            ),
+          ],
+        }
+      ))}
+    <!-- $ -->
+    </div>
+    ${downloadTableButton(() => selected_project_data.theme_count)}
+    <!-- $ -->
+    ${downloadSVGButton("#theme-container svg")}
+    <!-- $ -->
+  </div>
+  <div id="theme-graph-container" class="card grid-rowspan-2 grid-colspan-2">
+    ${resize((width) => chordDiagram(selected_project_data.theme_count, { width: width })) }
+  </div>
+</div>
+
+```js
+const workbook1 = await FileAttachment(
+  "/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx",
+).xlsx()
+
+const phase_1_data = extractPhase1Workbook(workbook1, false)
+console.debug("phase_1_data", phase_1_data)
+```
 
 ```js
 const cnu_plot_legend_options = {
@@ -263,21 +323,9 @@ const cnu_plot_legend = resize(
       type: cnu_plot_legend_options.type,
       scheme: "Greys",
     },
-  })}`
+  })}`,
 )
-```
 
-```js
-const workbook1 = await FileAttachment(
-  "/data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
-  // '/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx'
-).xlsx()
-
-const phase_1_data = extractPhase1Workbook(workbook1, false)
-console.debug("phase_1_data", phase_1_data)
-```
-
-```js
 const cnu_category_plot_options = {
   width: 800,
   height: 450,
@@ -339,7 +387,7 @@ function generateCnuPlotOptions(data, sort = "y", height = 350, width = 500) {
           x: (d) => d[1],
           fill: "white",
           opacity: 0.5,
-        })
+        }),
       ),
       // Plot.text(data, {
       //   x: 0,
@@ -347,14 +395,6 @@ function generateCnuPlotOptions(data, sort = "y", height = 350, width = 500) {
       // })
     ],
   }
-}
-
-const cnu_plot_sort_values = new Map([
-  ["CNU", "y"],
-  ["Occurrences", "-x"],
-])
-const cnu_plot_sort_options = {
-  label: "Sorted by",
 }
 
 // const shs_cnu_plot_options = {
@@ -390,29 +430,51 @@ console.debug("erc_category_colors", erc_category_colors.entries())
 
 ```js
 const cnu_plot_sort_input = Inputs.select(
-  cnu_plot_sort_values,
-  cnu_plot_sort_options
+  new Map([
+    ["CNU", "y"],
+    ["Occurrences", "-x"],
+  ]),
+  {
+    label: "Sort by",
+  },
 )
 
 const cnu_plot_sort = Generators.input(cnu_plot_sort_input)
 
-const all_project_cnu_max = Math.max(
-  ...discipline_data_by_project.get("All Projects").cnu_count.map((d) => d[1])
+const theme_plot_sort_input = Inputs.select(
+  new Map([
+    ["Theme", "y"],
+    ["Occurrences", "-x"],
+  ]),
+  {
+    label: "Sort by",
+  },
 )
+
+const theme_plot_sort = Generators.input(theme_plot_sort_input)
 ```
 
 ```js
+const theme_plot_search_input = Inputs.search(selected_project_data.theme_count, {
+  placeholder: "Search themes...",
+})
+
+const theme_plot_search_results = Generators.input(theme_plot_search_input)
+```
+
+```js
+// debugger
 const discipline_data_by_project = new Map([
   ["All Projects", formatResearcherDataByProject(false, false, false)],
   ["Auditioned Projects", formatResearcherDataByProject(false, true, false)],
   ["Financed Projects", formatResearcherDataByProject(false, true, true)],
-  ["NÉO", formatResearcherDataByProject("NÉO", true, true)],
-  ["RÉSILIENCE", formatResearcherDataByProject("RÉSILIENCE", true, true)],
+  ["NEO", formatResearcherDataByProject("NEO", true, true)],
+  ["RESILIENCE", formatResearcherDataByProject("RESILIENCE", true, true)],
   ["TRACES", formatResearcherDataByProject("TRACES", true, true)],
   ["VF++", formatResearcherDataByProject("VF++", true, true)],
   ["VILLEGARDEN", formatResearcherDataByProject("VILLEGARDEN", true, true)],
   ["WHAOU", formatResearcherDataByProject("WHAOU", true, true)],
-  ["inteGREEN", formatResearcherDataByProject("inteGREEN", true, true)],
+  ["INTEGREEN", formatResearcherDataByProject("INTEGREEN", true, true)],
   ["URBHEALTH", formatResearcherDataByProject("URBHEALTH", true, true)],
 ])
 
@@ -427,13 +489,13 @@ const financed_projects = phase_1_data.projects
   .filter((d) => d.financed)
   .map((d) => d.acronyme)
 // [
-//   "NÉO",
-//   "RÉSILIENCE",
+//   "NEO",
+//   "RESILIENCE",
 //   "TRACES",
 //   "VF++",
 //   "VILLEGARDEN",
 //   "WHAOU",
-//   "inteGREEN",
+//   "INTEGREEN",
 //   "URBHEALTH",
 // ];
 console.debug("auditioned_projects", auditioned_projects)
@@ -447,7 +509,7 @@ console.debug("financed_projects", financed_projects)
 function formatResearcherDataByProject(
   project,
   auditioned = false,
-  financed = false
+  financed = false,
 ) {
   // filter by project if project, otherwise keep everything
   const filtered_researchers = phase_1_data.researchers.filter(
@@ -455,19 +517,19 @@ function formatResearcherDataByProject(
       (project ? d.project.includes(project) : true) &&
       (auditioned
         ? d.project.some((researcher_project) =>
-            auditioned_projects.includes(researcher_project)
+            auditioned_projects.includes(researcher_project),
           )
         : true) &&
       (financed
         ? d.project.some((researcher_project) =>
-            financed_projects.includes(researcher_project)
+            financed_projects.includes(researcher_project),
           )
-        : true)
+        : true),
   )
 
   const discipline_erc_count = countEntities(
     filtered_researchers,
-    (d) => d.discipline_erc
+    (d) => d.discipline_erc,
   )
     .filter((d) => exclude(d[0]))
     .sort((a, b) => d3.descending(a[1], b[1]))
@@ -476,7 +538,7 @@ function formatResearcherDataByProject(
     .rollups(
       filtered_researchers,
       (d) => d.length,
-      (d) => d.cnu
+      (d) => d.cnu,
     )
     .filter((d) => exclude(d[0]))
     .sort((a, b) => d3.descending(a[1], b[1]))
@@ -494,11 +556,20 @@ function formatResearcherDataByProject(
     .rollups(
       filtered_researchers,
       (D) => D.length,
-      (d) => (d.cnu ? getCategoryFromCNU(d.cnu) : null)
+      (d) => (d.cnu ? getCategoryFromCNU(d.cnu) : null),
     )
     .filter((d) => !!d[0])
-    .sort((a, b) => d3.descending(a[1], b[1])) //TODO: add missing information to data quality check
-  // debugger;
+    .sort((a, b) => d3.descending(a[1], b[1]))
+
+  const theme_count = countEntities(filtered_researchers, (d) => d.themes)
+    .filter((d) => !!d[0])
+    .sort((a, b) => d3.descending(a[1], b[1]))
+// TODO: group themes by project, not researchers
+  const theme_project_matrix = generateIntersectionMatrix(
+    filtered_researchers,
+    "themes",
+    "project",
+  )
 
   return {
     discipline_erc_count: discipline_erc_count,
@@ -506,6 +577,8 @@ function formatResearcherDataByProject(
     // shs_cnu_count: shs_cnu_count,
     // shs_cnu_percent: shs_cnu_percent,
     cnu_count_by_category: cnu_count_by_category,
+    theme_count: theme_count,
+    theme_project_matrix: theme_project_matrix,
   }
 }
 ```
@@ -515,14 +588,13 @@ function formatResearcherDataByProject(
 ```js
 function formatDomainPercents(label, data) {
   // debugger;
-  const percent = (value, total) => `${((value / total) * 100).toPrecision(3)}%`
   const getFromMapOrZero = (map, value) => (map.has(value) ? map.get(value) : 0)
 
   const discipline_erc_count_map = new Map(data.discipline_erc_count)
   const discipline_erc_count_total =
     getFromMapOrZero(
       discipline_erc_count_map,
-      "SH - Sciences Humaines & Sociales"
+      "SH - Sciences Humaines & Sociales",
     ) +
     getFromMapOrZero(discipline_erc_count_map, "PE - Sciences & Technologies") +
     getFromMapOrZero(discipline_erc_count_map, "LS - Vie & Santé") +
@@ -532,11 +604,11 @@ function formatDomainPercents(label, data) {
   const cnu_count_by_category_count_total =
     getFromMapOrZero(
       cnu_count_by_category_count_map,
-      "Droit, économie et gestion"
+      "Droit, économie et gestion",
     ) +
     getFromMapOrZero(
       cnu_count_by_category_count_map,
-      "Lettres et sciences humaines"
+      "Lettres et sciences humaines",
     ) +
     getFromMapOrZero(cnu_count_by_category_count_map, "Sciences") +
     getFromMapOrZero(cnu_count_by_category_count_map, "Pluridisciplinaire") +
@@ -544,60 +616,52 @@ function formatDomainPercents(label, data) {
 
   return {
     label: label,
-    erc_sh_percent: percent(
+    erc_sh_ratio:
       getFromMapOrZero(
         discipline_erc_count_map,
-        "SH - Sciences Humaines & Sociales"
-      ),
-      discipline_erc_count_total
-    ),
-    erc_pe_percent: percent(
+        "SH - Sciences Humaines & Sociales",
+      ) / discipline_erc_count_total,
+    erc_pe_ratio:
       getFromMapOrZero(
         discipline_erc_count_map,
-        "PE - Sciences & Technologies"
-      ),
-      discipline_erc_count_total
-    ),
-    erc_ls_percent: percent(
-      getFromMapOrZero(discipline_erc_count_map, "LS - Vie & Santé"),
-      discipline_erc_count_total
-    ),
-    cnu_droit_percent: percent(
+        "PE - Sciences & Technologies",
+      ) / discipline_erc_count_total,
+    erc_ls_ratio:
+      getFromMapOrZero(discipline_erc_count_map, "LS - Vie & Santé") /
+      discipline_erc_count_total,
+    cnu_droit_ratio:
       getFromMapOrZero(
         cnu_count_by_category_count_map,
-        "Droit, économie et gestion"
-      ),
-      cnu_count_by_category_count_total
-    ),
-    cnu_shs_percent: percent(
+        "Droit, économie et gestion",
+      ) / cnu_count_by_category_count_total,
+    cnu_shs_ratio:
       getFromMapOrZero(
         cnu_count_by_category_count_map,
-        "Lettres et sciences humaines"
-      ),
-      cnu_count_by_category_count_total
-    ),
-    cnu_science_percent: percent(
-      getFromMapOrZero(cnu_count_by_category_count_map, "Sciences"),
-      cnu_count_by_category_count_total
-    ),
-    cnu_pluri_percent: percent(
-      getFromMapOrZero(cnu_count_by_category_count_map, "Pluridisciplinaire"),
-      cnu_count_by_category_count_total
-    ),
-    cnu_sante_percent: percent(
-      getFromMapOrZero(cnu_count_by_category_count_map, "Sections de santé"),
-      cnu_count_by_category_count_total
-    ),
+        "Lettres et sciences humaines",
+      ) / cnu_count_by_category_count_total,
+    cnu_science_ratio:
+      getFromMapOrZero(cnu_count_by_category_count_map, "Sciences") /
+      cnu_count_by_category_count_total,
+    cnu_pluri_ratio:
+      getFromMapOrZero(cnu_count_by_category_count_map, "Pluridisciplinaire") /
+      cnu_count_by_category_count_total,
+    cnu_sante_ratio:
+      getFromMapOrZero(cnu_count_by_category_count_map, "Sections de santé") /
+      cnu_count_by_category_count_total,
   }
 }
 
 // Table //
 const overview_data = []
+const generateSparkbar = sparkbar(1, {
+  format: (x) => `${(x * 100).toPrecision(3)}%`,
+  float: "right",
+})
 
 discipline_data_by_project
   .entries()
   .forEach(([key, value]) =>
-    overview_data.push(formatDomainPercents(key, value))
+    overview_data.push(formatDomainPercents(key, value)),
   )
 
 console.debug("overview_data", overview_data)
@@ -606,25 +670,35 @@ const overview_table_erc = Inputs.table(overview_data, {
   // height: 400,
   columns: [
     "label",
-    // "erc_sh_percent",
-    // "erc_pe_percent",
-    // "erc_ls_percent",
-    "cnu_droit_percent",
-    "cnu_shs_percent",
-    "cnu_science_percent",
-    "cnu_pluri_percent",
-    "cnu_sante_percent",
+    // "erc_sh_ratio",
+    // "erc_pe_ratio",
+    // "erc_ls_ratio",
+    "cnu_droit_ratio",
+    "cnu_shs_ratio",
+    "cnu_science_ratio",
+    "cnu_pluri_ratio",
+    "cnu_sante_ratio",
   ],
   header: {
     label: "Project",
-    erc_sh_percent: "% ERC SH",
-    erc_pe_percent: "% ERC PE",
-    erc_ls_percent: "% ERC VS",
-    cnu_droit_percent: "% CNU Droit, économie et gestion",
-    cnu_shs_percent: "% CNU Lettres et SH",
-    cnu_science_percent: "% CNU Sciences",
-    cnu_pluri_percent: "% CNU Pluridisciplinaire",
-    cnu_sante_percent: "% CNU Santé",
+    erc_sh_ratio: "% ERC SH",
+    erc_pe_ratio: "% ERC PE",
+    erc_ls_ratio: "% ERC VS",
+    cnu_droit_ratio: "% CNU Droit, économie et gestion",
+    cnu_shs_ratio: "% CNU Lettres et SH",
+    cnu_science_ratio: "% CNU Sciences",
+    cnu_pluri_ratio: "% CNU Pluridisciplinaire",
+    cnu_sante_ratio: "% CNU Santé",
+  },
+  format: {
+    erc_sh_ratio: generateSparkbar,
+    erc_pe_ratio: generateSparkbar,
+    erc_ls_ratio: generateSparkbar,
+    cnu_droit_ratio: generateSparkbar,
+    cnu_shs_ratio: generateSparkbar,
+    cnu_science_ratio: generateSparkbar,
+    cnu_pluri_ratio: generateSparkbar,
+    cnu_sante_ratio: generateSparkbar,
   },
 })
 
@@ -632,25 +706,35 @@ const overview_table_cnu = Inputs.table(overview_data, {
   // height: 400,
   columns: [
     "label",
-    "erc_sh_percent",
-    "erc_pe_percent",
-    "erc_ls_percent",
-    // "cnu_droit_percent",
-    // "cnu_shs_percent",
-    // "cnu_science_percent",
-    // "cnu_pluri_percent",
-    // "cnu_sante_percent",
+    "erc_sh_ratio",
+    "erc_pe_ratio",
+    "erc_ls_ratio",
+    // "cnu_droit_ratio",
+    // "cnu_shs_ratio",
+    // "cnu_science_ratio",
+    // "cnu_pluri_ratio",
+    // "cnu_sante_ratio",
   ],
   header: {
     label: "Project",
-    erc_sh_percent: "% ERC SH",
-    erc_pe_percent: "% ERC PE",
-    erc_ls_percent: "% ERC VS",
-    cnu_droit_percent: "% CNU Droit, économie et gestion",
-    cnu_shs_percent: "% CNU Lettres et SH",
-    cnu_science_percent: "% CNU Sciences",
-    cnu_pluri_percent: "% CNU Pluridisciplinaire",
-    cnu_sante_percent: "% CNU Santé",
+    erc_sh_ratio: "% ERC SH",
+    erc_pe_ratio: "% ERC PE",
+    erc_ls_ratio: "% ERC VS",
+    cnu_droit_ratio: "% CNU Droit, économie et gestion",
+    cnu_shs_ratio: "% CNU Lettres et SH",
+    cnu_science_ratio: "% CNU Sciences",
+    cnu_pluri_ratio: "% CNU Pluridisciplinaire",
+    cnu_sante_ratio: "% CNU Santé",
+  },
+  format: {
+    erc_sh_ratio: generateSparkbar,
+    erc_pe_ratio: generateSparkbar,
+    erc_ls_ratio: generateSparkbar,
+    cnu_droit_ratio: generateSparkbar,
+    cnu_shs_ratio: generateSparkbar,
+    cnu_science_ratio: generateSparkbar,
+    cnu_pluri_ratio: generateSparkbar,
+    cnu_sante_ratio: generateSparkbar,
   },
 })
 ```
@@ -676,27 +760,27 @@ function isFinanced(projects) {
 const missing_discipline_erc_count = d3.rollup(
   phase_1_data.researchers,
   (D) => D.length,
-  (d) => (exclude(d.discipline_erc) ? "found_erc" : "missing_erc")
+  (d) => (exclude(d.discipline_erc) ? "found_erc" : "missing_erc"),
 )
 missing_discipline_erc_count
 
 const missing_cnu_count = d3.rollup(
   phase_1_data.researchers,
   (D) => D.length,
-  (d) => (exclude(d.cnu) ? "found_cnu" : "missing_cnu")
+  (d) => (exclude(d.cnu) ? "found_cnu" : "missing_cnu"),
 )
 
 const missing_financed_discipline_erc_count = d3.rollup(
   phase_1_data.researchers.filter((d) => isFinanced(d.project)),
   (D) => D.length,
-  (d) => (exclude(d.discipline_erc) ? "found_erc" : "missing_erc")
+  (d) => (exclude(d.discipline_erc) ? "found_erc" : "missing_erc"),
 )
 missing_discipline_erc_count
 
 const missing_financed_cnu_count = d3.rollup(
   phase_1_data.researchers.filter((d) => isFinanced(d.project)),
   (D) => D.length,
-  (d) => (exclude(d.cnu) ? "found_cnu" : "missing_cnu")
+  (d) => (exclude(d.cnu) ? "found_cnu" : "missing_cnu"),
 )
 
 // TODO: this is way simpler

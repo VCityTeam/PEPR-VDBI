@@ -20,7 +20,7 @@ import {
 
 ```js
 const workbook = FileAttachment(
-  "/data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
+  "/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx"
 ).xlsx()
 ```
 

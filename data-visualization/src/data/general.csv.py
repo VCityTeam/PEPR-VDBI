@@ -2,7 +2,7 @@ from utilities.utils import extractSheet, initDefaultLogger
 
 
 def main():
-    PATH = "./src/data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx"
+    PATH = "./src/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx"
     SHEET = "GÉNÉRALITÉ"
     LOG_PATH = "general.csv.log"
     initDefaultLogger(LOG_PATH)

@@ -75,7 +75,7 @@ export function countEntities(data, mapFunction) {
   return rollups(
     merge(map(data, (d) => mapFunction(d))),
     (D) => D.length,
-    (d) => d
+    (d) => d,
   )
 }
 
@@ -93,14 +93,14 @@ export function addEntityProjectOwnerAndPartnerCounts(
   source_data,
   target_data,
   source_key,
-  target_key
+  target_key,
 ) {
   // calculate count data for all entities
   const owner_count = countEntities(source_data, (d) =>
-    d[source_key].slice(0, 1)
+    d[source_key].slice(0, 1),
   )
   const partner_count = countEntities(source_data, (d) =>
-    d[source_key].slice(1)
+    d[source_key].slice(1),
   )
 
   // console.log("owner_count", owner_count);
@@ -110,14 +110,14 @@ export function addEntityProjectOwnerAndPartnerCounts(
 
     // add owner counts
     const source_owner_count = owner_count.find(
-      (source_d) => target_d_entity === source_d[0]
+      (source_d) => target_d_entity === source_d[0],
     )
     target_d.project_owner_count =
       typeof source_owner_count === "undefined" ? 0 : source_owner_count[1]
 
     // add partner counts
     const source_partner_count = partner_count.find(
-      (source_d) => target_d_entity === source_d[0]
+      (source_d) => target_d_entity === source_d[0],
     )
     target_d.project_partner_count =
       typeof source_partner_count === "undefined" ? 0 : source_partner_count[1]
@@ -130,7 +130,7 @@ export function addEntityProjectOwnerAndPartnerCounts(
 
 export function joinOnKey(source_data, target_data, foreign_key, primary_key) {
   source_data[foreign_key] = target_data.find(
-    (d) => d[primary_key] === foreign_key
+    (d) => d[primary_key] === foreign_key,
   )
   // TODO add join from target to source
 }
@@ -140,20 +140,20 @@ export function joinOnKeys(
   source_foreign_keys,
   target_data,
   target_primary_key,
-  target_foreign_key
+  target_foreign_key,
 ) {
   source_data.forEach((source_d) => {
     for (let index = 0; index < source_d[source_foreign_keys].length; index++) {
       const foreign_key = source_d[source_foreign_keys][index]
       source_d[source_foreign_keys][index] = target_data.find(
-        (target_d) => target_d[target_primary_key] === foreign_key
+        (target_d) => target_d[target_primary_key] === foreign_key,
       )
     }
   })
 
   target_data.forEach((target_d) => {
     target_d[target_foreign_key] = filter(source_data, (source_d) =>
-      source_d[source_foreign_keys].includes(target_d)
+      source_d[source_foreign_keys].includes(target_d),
     )
   })
 }
@@ -164,13 +164,13 @@ export function joinOnOwnerPartnerKeys(
   target_data,
   target_foreign_key,
   target_primary_key,
-  target_foreign_key_filter = null
+  target_foreign_key_filter = null,
 ) {
   source_data.forEach((source_d) => {
     for (let index = 0; index < source_d[source_foreign_keys].length; index++) {
       const foreign_key = source_d[source_foreign_keys][index]
       const foreign_entity = target_data.find(
-        (target_d) => target_d[target_primary_key] === foreign_key
+        (target_d) => target_d[target_primary_key] === foreign_key,
       )
       source_d[source_foreign_keys][index] = foreign_entity
         ? foreign_entity
@@ -184,13 +184,13 @@ export function joinOnOwnerPartnerKeys(
     } else {
       target_data[index]["owner_" + target_foreign_key] = filter(
         source_data,
-        (source_d) => source_d[source_foreign_keys][0] === target_data[index]
+        (source_d) => source_d[source_foreign_keys][0] === target_data[index],
       )
 
       target_data[index]["partner_" + target_foreign_key] = filter(
         source_data,
         (source_d) =>
-          source_d[source_foreign_keys].slice(1).includes(target_data[index])
+          source_d[source_foreign_keys].slice(1).includes(target_data[index]),
       )
     }
   }
@@ -220,7 +220,7 @@ export function pseudoanonymizeEntry(entry, dictionary, type = "human") {
       nameByRace(type, {
         gender: Math.floor(Math.random() * 2) ? "male" : "female",
         allowMultipleNames: Math.floor(Math.random() * 2) ? true : false,
-      })
+      }),
     )
   }
   return dictionary.get(entry)
@@ -278,31 +278,37 @@ export const exclude = (d) =>
 
 export function sparkbar(
   max,
-  background = "var(--theme-green)",
-  color = "black"
+  {
+    background = "var(--theme-foreground-focus)",
+    // background = "var(--theme-foreground-focus-alt)",
+    color = "black",
+    float = "right",
+    format = (x) => x.toLocaleString("en-US"),
+  } = {},
 ) {
   // code source: https://observablehq.com/framework/inputs/table
-  return (x) => html`<div
-    style="
-    background: ${background};
-    color: ${color};
-    width: ${(100 * x) / max}%;
-    float: left;
-    padding-right: 3px;
-    box-sizing: border-box;
-    overflow: visible;
-    display: flex;
-    justify-content: start;"
-  >
-    ${x.toLocaleString("en-US")}
-  </div>`
+  return (x) =>
+    html`<div
+      style="
+        background: ${background};
+        color: ${color};
+        width: ${(100 * x) / max}%;
+        float: ${float};
+        padding-right: 3px;
+        box-sizing: border-box;
+        overflow: visible;
+        display: flex;
+        justify-content: ${float === "right" ? "end" : "start"};"
+    >
+      ${format(x)}
+    </div>`
 }
 
 export function filterEmptyArray(data) {
   return filter(
     // use array substring for (headerless) ranges?
     data,
-    (d) => typeof d !== "undefined" && d !== 0
+    (d) => typeof d !== "undefined" && d !== 0,
   )
 }
 
@@ -319,6 +325,25 @@ export function formatIfString(d) {
     return null
   }
   return d
+}
+
+/**
+ * Converts a string to lowercase, except for uppercase acronyms.
+ * Preserves the case of words that contain no lowercase letters.
+ * Initially generated by `Gemini 3 Pro (low)`
+ *
+ * @param {string} str - The input string
+ * @returns {string} The processed string
+ */
+export function toLowerPreservingAcronyms(str) {
+  if (!str) return str
+  // Match chunks of words/numbers (including accents) to process them individually
+  // This allows handling hyphenated words like "Micro-USB" correctly
+  return str.replace(/[\w\u00C0-\u00FF]+/g, (word) => {
+    // If the word contains ANY lowercase letter, convert it to lowercase
+    // Otherwise (all caps, numbers, or symbols), keep it as is
+    return /[a-z]/.test(word) ? word.toLowerCase() : word
+  })
 }
 
 /**
@@ -361,7 +386,7 @@ export function getAttributeByPath(obj, path) {
  */
 export function copyTableToClipboardButton(
   data,
-  { columns = null, label = "Copy to clipboard", delimeter = "," } = {}
+  { columns = null, label = "Copy to clipboard", delimeter = "," } = {},
 ) {
   if (columns === null) columns = Object.keys(data[0])
 
@@ -372,8 +397,8 @@ export function copyTableToClipboardButton(
         data.reduce(
           (a, v) =>
             a + columns.map((col) => v[col] || "").join(delimeter) + "\n",
-          columns.join(delimeter) + "\n"
-        )
+          columns.join(delimeter) + "\n",
+        ),
       ),
   })
 }
@@ -389,7 +414,7 @@ export function copyTableToClipboardButton(
 export function copySVGToClipboardButton(
   element,
   label = "Copy to clipboard",
-  callback = undefined
+  callback = undefined,
 ) {
   if (!element && !callback) {
     console.warn("copySVGToClipboardButton: element and callback are empty")
@@ -426,7 +451,7 @@ export function downloadTableButton(
     filename = "download.csv",
     columns = null,
     delimeter = ";",
-  } = {}
+  } = {},
 ) {
   return button(label, {
     value: null,
@@ -443,10 +468,10 @@ export function downloadTableButton(
               .map((col) => String(v[col]).replace(/(\r\n|\r|\n)/g, " ") || "")
               .join(delimeter) +
             "\n",
-          columns.join(delimeter) + "\n"
+          columns.join(delimeter) + "\n",
         ),
         filename,
-        "text/csv"
+        "text/csv",
       )
     },
   })
@@ -463,7 +488,7 @@ export function downloadTableButton(
  */
 export function downloadJSONButton(
   callback,
-  { label = "Download", filename = "download.json" } = {}
+  { label = "Download", filename = "download.json" } = {},
 ) {
   return button(label, {
     value: null,
@@ -496,7 +521,7 @@ export function downloadJSONButton(
 export function downloadSVGButton(
   selector,
   label = "Download (.svg)",
-  filename = "download.svg"
+  filename = "download.svg",
 ) {
   return button(label, {
     value: null,
@@ -515,10 +540,10 @@ export function downloadSVGButton(
 
           width = Math.max(
             width,
-            Math.floor(d.attributes["width"] ? d.attributes["width"].value : 0)
+            Math.floor(d.attributes["width"] ? d.attributes["width"].value : 0),
           )
           height += Math.floor(
-            d.attributes["height"] ? d.attributes["height"].value : 0
+            d.attributes["height"] ? d.attributes["height"].value : 0,
           )
         })
 
@@ -567,7 +592,7 @@ export function request(method, url, options = {}) {
       url += "?"
       for (const [paramKey, paramValue] of Object.entries(urlParameters)) {
         url += `${encodeURIComponent(paramKey)}=${encodeURIComponent(
-          paramValue
+          paramValue,
         )}&`
       }
     }
@@ -592,7 +617,7 @@ export function request(method, url, options = {}) {
 /**
  * Generate a button to write a blob to a file
  * adapted from https://flexiple.com/javascript/javascript-write-to-file-detailed.
- * 
+ *
  * Used Github Copilot to improve BOM handling for UTF-8 text files.
  *
  * @param {any} content - content to write
@@ -603,7 +628,7 @@ export function request(method, url, options = {}) {
 export function writeToFile(
   content,
   filename = "download.txt",
-  content_type = "text/plain;charset=utf-8"
+  content_type = "text/plain;charset=utf-8",
 ) {
   // Ensure the content type declares UTF-8 for text-like MIME types
   if (

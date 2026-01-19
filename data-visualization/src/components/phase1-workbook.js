@@ -3,6 +3,7 @@ import {
   anonymizeEntry,
   pseudoanonymizeEntry,
   filterEmptyArray,
+  toLowerPreservingAcronyms,
 } from "./utilities.js"
 import * as Plot from "@observablehq/plot"
 
@@ -92,7 +93,7 @@ export function getInstitutionSheet(workbook) {
 export function resolveGeneralEntities(
   sheet,
   anonymize = false,
-  pseudoanonymousDict = new Map()
+  pseudoanonymousDict = new Map(),
 ) {
   return map(sheet, (d) => {
     const mapped_entities = {
@@ -182,17 +183,17 @@ export function resolveGeneralEntities(
       mapped_entities.acronyme = pseudoanonymizeEntry(
         mapped_entities.acronyme,
         pseudoanonymousDict,
-        "dragon"
+        "dragon",
       )
       mapped_entities.name_fr = pseudoanonymizeEntry(
         mapped_entities.name_fr,
         pseudoanonymousDict,
-        "darkelf"
+        "darkelf",
       )
       mapped_entities.name_en = pseudoanonymizeEntry(
         mapped_entities.name_en,
         pseudoanonymousDict,
-        "drow"
+        "drow",
       )
       for (
         let index = 0;
@@ -202,21 +203,21 @@ export function resolveGeneralEntities(
         mapped_entities.institutions[index] = pseudoanonymizeEntry(
           mapped_entities.institutions[index],
           pseudoanonymousDict,
-          "dwarf"
+          "dwarf",
         )
       }
       for (let index = 0; index < mapped_entities.labs.length; index++) {
         mapped_entities.labs[index] = pseudoanonymizeEntry(
           mapped_entities.labs[index],
           pseudoanonymousDict,
-          "highelf"
+          "highelf",
         )
       }
       for (let index = 0; index < mapped_entities.partners.length; index++) {
         mapped_entities.partners[index] = pseudoanonymizeEntry(
           mapped_entities.partners[index],
           pseudoanonymousDict,
-          "goblin"
+          "goblin",
         )
       }
     }
@@ -235,7 +236,7 @@ export function resolveGeneralEntities(
 export function resolveResearcherEntities(
   sheet,
   anonymize = true,
-  pseudoanonymousDict = new Map()
+  pseudoanonymousDict = new Map(),
 ) {
   return map(
     rollup(
@@ -247,8 +248,10 @@ export function resolveResearcherEntities(
           lastname: D[0]["NOM"] ? D[0]["NOM"] : null,
           firstname: D[0]["Prénom"] ? D[0]["Prénom"] : null,
           gender: D[0]["sexe"] ? D[0]["sexe"] : null,
-          disciplines: D[0]["discipline chercheur"]
-            ? D[0]["discipline chercheur"].split(",").map((d) => d.trim())
+          themes: D[0]["objets, thèmes, intérêts de recherche"]
+            ? D[0]["objets, thèmes, intérêts de recherche"]
+                .split(",")
+                .map((d) => toLowerPreservingAcronyms(d.trim()))
             : [],
           discipline_erc: D[0]["discipline ERC chercheur"]
             ? D[0]["discipline ERC chercheur"].split(";").map((d) => d.trim())
@@ -256,35 +259,35 @@ export function resolveResearcherEntities(
           position: D[0]["position statutaire"]
             ? D[0]["position statutaire"]
             : null,
-          cnu: D[0]["CNU"] ? D[0]["CNU"] : null,
+          cnu: D[0]["discipline CNU"] ? D[0]["discipline CNU"] : null,
           site: D[0]["Sites"] ? D[0]["Sites"] : null,
           orcid: D[0]["ORCID"] ? D[0]["ORCID"] : null,
           idhal: D[0]["IDHAL"] ? D[0]["IDHAL"] : null,
           lab: D[0]["Identifiant Laboratoire"]
             ? D[0]["Identifiant Laboratoire"]
             : null,
-          domain_erc_lab: D[0]["DOMAINES ERC LABO"]
-            ? D[0]["DOMAINES ERC LABO"]
+          domain_erc_lab: D[0]["DOMAINE ERC LABO (sources RNSR)"]
+            ? D[0]["DOMAINE ERC LABO (sources RNSR)"]
             : null,
           disciplines_erc_lab: filterEmptyArray([
-            D[0]["Discipline ERC 1 LABO"],
-            D[0]["Discipline ERC 2 LABO"],
-            D[0]["Discipline ERC 3 LABO"],
-            D[0]["Discipline ERC 4 LABO"],
-            D[0]["Discipline ERC 5 LABO"],
-            D[0]["Discipline ERC 6 LABO"],
-            D[0]["Discipline ERC 7 LABO"],
-            D[0]["Discipline ERC 8 LABO"],
-            D[0]["Discipline ERC 9 LABO"],
+            D[0]["DISCIPLINES ERC LABO 1 (sources RNSR)"],
+            D[0]["DISCIPLINES ERC LABO 2 (sources RNSR)"],
+            D[0]["DISCIPLINES ERC LABO 3 (sources RNSR)"],
+            D[0]["DISCIPLINES ERC LABO 4 (sources RNSR)"],
+            D[0]["DISCIPLINES ERC LABO 5 (sources RNSR)"],
+            D[0]["DISCIPLINES ERC LABO 6 (sources RNSR)"],
+            D[0]["DISCIPLINES ERC LABO 7 (sources RNSR)"],
+            D[0]["DISCIPLINES ERC LABO 8 (sources RNSR)"],
+            D[0]["DISCIPLINES ERC LABO 9 (sources RNSR)"],
           ]),
-          domain_hceres: D[0]["Domaines scientifique HCERES 1"],
+          domain_hceres: D[0]["Domaines scientifique HCERES 1 (sources RNSR)"],
           disciplines_hceres: filterEmptyArray([
-            D[0]["Sous-domaines scientifique HCERES 1"],
-            D[0]["Sous-Domaines scientifique HCERES 2"],
-            D[0]["Sous-Domaine Scientifique HCERES 3"],
-            D[0]["sous-domaine scientifique HCERES 4"],
-            D[0]["sous-domaine scientifique HCERES 5"],
-            D[0]["sous-domaine scientifique HCERES 6"],
+            D[0]["Sous-domaines scientifique HCERES 1  (sources RNSR)"],
+            D[0]["Sous-Domaines scientifique HCERES 2  (sources RNSR)"],
+            D[0]["Sous-Domaine Scientifique HCERES 3  (sources RNSR)"],
+            D[0]["sous-domaine scientifique HCERES 4  (sources RNSR)"],
+            D[0]["sous-domaine scientifique HCERES 5  (sources RNSR)"],
+            D[0]["sous-domaine scientifique HCERES 6  (sources RNSR)"],
           ]),
           project: [],
           notes: D[0]["notes"] ? D[0]["notes"] : null,
@@ -295,7 +298,7 @@ export function resolveResearcherEntities(
           researcher.project.push(
             row["ACRONYME Projet"]
               ? cleanUpProjectLabel(row["ACRONYME Projet"])
-              : null
+              : null,
           )
         })
         if (anonymize) {
@@ -308,21 +311,21 @@ export function resolveResearcherEntities(
           researcher.lab = pseudoanonymizeEntry(
             researcher.lab,
             pseudoanonymousDict,
-            "highelf"
+            "highelf",
           )
           for (let index = 0; index < researcher.project.length; index++) {
             researcher.project[index] = pseudoanonymizeEntry(
               researcher.project[index],
               pseudoanonymousDict,
-              "dragon"
+              "dragon",
             )
           }
         }
         return researcher
       },
-      (d) => (d["id"] ? d["id"] : d["NOM et Prénom"]) // group researcher by id if available, otherwise by name
+      (d) => (d["id"] ? d["id"] : d["NOM et Prénom"]), // group researcher by id if available, otherwise by name
     ),
-    (d) => d[1]
+    (d) => d[1],
   )
 }
 
@@ -337,7 +340,7 @@ export function resolveResearcherEntities(
 export function resolveLabEntities(
   sheet,
   anonymize = false,
-  pseudoanonymousDict = new Map()
+  pseudoanonymousDict = new Map(),
 ) {
   return map(sheet, (d) => {
     const lab = {
@@ -368,7 +371,7 @@ export function resolveLabEntities(
         lab.institution[index] = pseudoanonymizeEntry(
           lab.institution[index],
           pseudoanonymousDict,
-          "dwarf"
+          "dwarf",
         )
       }
     }
@@ -387,7 +390,7 @@ export function resolveLabEntities(
 export function resolveInstitutionEntities(
   sheet,
   anonymize = false,
-  pseudoanonymousDict = new Map()
+  pseudoanonymousDict = new Map(),
 ) {
   return map(sheet, (d) => {
     const institution = {
@@ -398,7 +401,7 @@ export function resolveInstitutionEntities(
       institution.name = pseudoanonymizeEntry(
         institution.name,
         pseudoanonymousDict,
-        "gnome"
+        "gnome",
       )
     }
     return institution
@@ -418,48 +421,49 @@ export function extractPhase1Workbook(
   workbook,
   pseudoanonymize = true,
   pseudoanonymousDict = new Map(),
-  onlyFinanced = false
+  onlyFinanced = false,
 ) {
   const projects = resolveGeneralEntities(
     getGeneralSheet(workbook),
     pseudoanonymize,
-    pseudoanonymousDict
+    pseudoanonymousDict,
   ).filter((d) => (onlyFinanced ? d.financed : true))
+
   const researchers = resolveResearcherEntities(
     getResearcherSheet(workbook),
     pseudoanonymize,
-    pseudoanonymousDict
+    pseudoanonymousDict,
   ).filter((researcher) =>
     onlyFinanced
       ? projects.some(({ acronyme }) => researcher.project.includes(acronyme))
-      : true
+      : true,
   )
   researchers.forEach(
     (d) =>
       (d.project = d.project.filter((projet) =>
         onlyFinanced
           ? projects.some(({ acronyme }) => projet === acronyme)
-          : true
-      ))
+          : true,
+      )),
   )
 
   const laboratories = resolveLabEntities(
     getLabSheet(workbook),
     pseudoanonymize,
-    pseudoanonymousDict
+    pseudoanonymousDict,
   ).filter((lab) =>
-    onlyFinanced ? projects.some(({ labs }) => labs.includes(lab.lab)) : true
+    onlyFinanced ? projects.some(({ labs }) => labs.includes(lab.lab)) : true,
   )
   const universities = resolveInstitutionEntities(
     getInstitutionSheet(workbook),
     pseudoanonymize,
-    pseudoanonymousDict
+    pseudoanonymousDict,
   ).filter((university) =>
     onlyFinanced
       ? projects.some(({ institutions }) =>
-          institutions.includes(university.name)
+          institutions.includes(university.name),
         )
-      : true
+      : true,
   )
 
   // Extract socioeconomic partners from projects
@@ -469,7 +473,7 @@ export function extractPhase1Workbook(
       project.partners.map((partner) => ({
         project: project.acronyme,
         partner: partner,
-      }))
+      })),
     )
   })
 
@@ -480,7 +484,7 @@ export function extractPhase1Workbook(
       project.institutions.map((inst) => ({
         project: project.acronyme,
         university: inst,
-      }))
+      })),
     )
     // delete project.institutions
   })
@@ -493,7 +497,7 @@ export function extractPhase1Workbook(
         project: project.acronyme,
         lab: lab,
         // umr: lab.match(/UMR \d*/g),
-      }))
+      })),
     )
     // delete project.labs
   })
@@ -507,16 +511,18 @@ export function extractPhase1Workbook(
       if (!laboratories_by_disciplines_erc.has(lab.lab)) {
         laboratories_by_disciplines_erc.set(lab.lab, new Set())
       }
+      researcher.disciplines_erc_lab.forEach((d) =>
+        laboratories_by_disciplines_erc.get(lab.lab).add(d),
+      )
+
+      lab.domain_hceres = researcher.domain_hceres
       if (!laboratories_by_disciplines_hceres.has(lab.lab)) {
         laboratories_by_disciplines_hceres.set(lab.lab, new Set())
       }
-      researcher.disciplines_erc_lab.forEach((d) =>
-        laboratories_by_disciplines_erc.get(lab.lab).add(d)
-      )
-      lab.domain_hceres = researcher.domain_hceres
       researcher.disciplines_hceres.forEach((d) =>
-        laboratories_by_disciplines_hceres.get(lab.lab).add(d)
+        laboratories_by_disciplines_hceres.get(lab.lab).add(d),
       )
+
       delete researcher.domain_erc_lab
       delete researcher.disciplines_erc_lab
       delete researcher.domain_hceres
@@ -536,16 +542,16 @@ export function extractPhase1Workbook(
         [...laboratories_by_disciplines_erc.get(lab)].map((discipline) => ({
           lab: lab,
           discipline: discipline ? discipline : null,
-        }))
-      )
+        })),
+      ),
     ),
     laboratories_by_disciplines_hceres: merge(
       laboratories_by_disciplines_hceres.keys().map((lab) =>
         [...laboratories_by_disciplines_hceres.get(lab)].map((discipline) => ({
           lab: lab,
           discipline: discipline ? discipline : null,
-        }))
-      )
+        })),
+      ),
     ),
     universities,
     project_by_universities,
@@ -616,7 +622,7 @@ export function getSortable3DCountPlot(
   fy_tick_format_cuttoff = 25, // cut off label after this many characters
   fy_label = "Entity",
   sort_criteria = "-x",
-  tip = true
+  tip = true,
 ) {
   return Plot.plot({
     height: data.length * row_height, // assure adequate horizontal space for each line
@@ -668,7 +674,7 @@ export function getSortable2MarkCountPlot(
   y_tick_format_cuttoff = 25, // cut off label after this many characters
   y_label = "Entity",
   sort_criteria = "-x",
-  tip = true
+  tip = true,
 ) {
   return Plot.plot({
     height: data.length * row_height, // assure adequate horizontal space for each line

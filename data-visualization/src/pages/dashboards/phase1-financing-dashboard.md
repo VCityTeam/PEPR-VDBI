@@ -1,4 +1,3 @@
-
 ```js
 const debug = false
 ```
@@ -135,10 +134,22 @@ function default_personnel_table_config(data, width) {
       total_cost: "left",
     },
     format: {
-      cost: sparkbar(d3.max(data, (d) => d.cost)),
-      assistance: sparkbar(d3.max(data, (d) => d.assistance)),
-      support: sparkbar(d3.max(data, (d) => d.support)),
-      total_cost: sparkbar(d3.max(data, (d) => d.total_cost)),
+      cost: sparkbar(
+        d3.max(data, (d) => d.cost),
+        { background: "var(--theme-green)" },
+      ),
+      assistance: sparkbar(
+        d3.max(data, (d) => d.assistance),
+        { background: "var(--theme-green)" },
+      ),
+      support: sparkbar(
+        d3.max(data, (d) => d.support),
+        { background: "var(--theme-green)" },
+      ),
+      total_cost: sparkbar(
+        d3.max(data, (d) => d.total_cost),
+        { background: "var(--theme-green)" },
+      ),
     },
   }
 }
@@ -197,7 +208,7 @@ function default_x_plot_options(label, data, width, height) {
           y: (d) => d[0],
           fill: "white",
           opacity: 0.5,
-        })
+        }),
       ),
     ],
   }
@@ -248,7 +259,7 @@ function default_employer_plot_options(data, width, height = 500) {
           y: (d) => d[1],
           fill: "white",
           opacity: 0.5,
-        })
+        }),
       ),
     ],
   }
@@ -313,7 +324,7 @@ const all_type_post_count = d3
   .rollups(
     all_data.personnel,
     (D) => D.length,
-    (d) => d.type_post
+    (d) => d.type_post,
   )
   .filter((d) => d[0])
 
@@ -327,7 +338,7 @@ const all_employer_count_by_siret = d3
   .rollups(
     all_data.personnel,
     (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-    (d) => d.employer_id
+    (d) => d.employer_id,
   )
   .filter((d) => d[0])
   .map((d) => d3.merge([[d[0]], d[1]]))
@@ -335,7 +346,7 @@ const all_employer_count_by_siret = d3
 const all_employer_count_by_siret_by_name = d3.rollups(
   all_employer_count_by_siret,
   (D) => d3.sum(D, (d) => d[1]),
-  (d) => d[2]
+  (d) => d[2],
 )
 
 if (debug) {
@@ -420,7 +431,7 @@ if (debug) {
                 }
               }),
               Plot.barY(
-                all_employer_count_by_siret_by_name, 
+                all_employer_count_by_siret_by_name,
                 Plot.pointerX({
                   x: (d) => d[0],
                   y: (d) => d[1],
@@ -480,7 +491,7 @@ if (debug) {
                 }
               }),
               Plot.barY(
-                all_employer_count_by_siret, 
+                all_employer_count_by_siret,
                 Plot.pointerX({
                   x: (d) => d[2],
                   y: (d) => d[1],
@@ -623,21 +634,21 @@ if (debug) {
 
 ```js
 const inteGREEN_workbook = FileAttachment(
-  "/data/private/inteGREEN_France2030_aap_pepr_vdbi_2023_AnnexeFinanciere.xlsx"
+  "/data/private/inteGREEN_France2030_aap_pepr_vdbi_2023_AnnexeFinanciere.xlsx",
 ).xlsx()
 ```
 
 ```js
 const inteGREEN_data = resolveProjectFinancingEntities(
   inteGREEN_workbook,
-  "inteGREEN"
+  "inteGREEN",
 )
 
 const inteGREEN_type_post_count = d3
   .rollups(
     inteGREEN_data.personnel,
     (D) => D.length,
-    (d) => d.type_post
+    (d) => d.type_post,
   )
   .filter((d) => d[0])
 
@@ -645,7 +656,7 @@ const inteGREEN_employer_count = d3
   .rollups(
     inteGREEN_data.personnel,
     (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-    (d) => d.employer_id
+    (d) => d.employer_id,
   )
   .filter((d) => d[0])
   .map((d) => d3.merge([[d[0]], d[1]]))
@@ -727,21 +738,21 @@ if (debug) {
 
 ```js
 const VILLEGARDEN_workbook = FileAttachment(
-  "/data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_VILLEGARDEN_07_02_2024.xlsx"
+  "/data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_VILLEGARDEN_07_02_2024.xlsx",
 ).xlsx()
 ```
 
 ```js
 const VILLEGARDEN_data = resolveProjectFinancingEntities(
   VILLEGARDEN_workbook,
-  "VILLEGARDEN"
+  "VILLEGARDEN",
 )
 
 const VILLEGARDEN_type_post_count = d3
   .rollups(
     VILLEGARDEN_data.personnel,
     (D) => D.length,
-    (d) => d.type_post
+    (d) => d.type_post,
   )
   .filter((d) => d[0])
 
@@ -749,7 +760,7 @@ const VILLEGARDEN_employer_count = d3
   .rollups(
     VILLEGARDEN_data.personnel,
     (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-    (d) => d.employer_id
+    (d) => d.employer_id,
   )
   .filter((d) => d[0])
   .map((d) => d3.merge([[d[0]], d[1]]))
@@ -831,7 +842,7 @@ if (debug) {
 
 ```js
 const NEO_workbook = FileAttachment(
-  "/data/private/NEO_AnnexeFinanciere_totale_finale.xlsx"
+  "/data/private/NEO_AnnexeFinanciere_totale_finale.xlsx",
 ).xlsx()
 ```
 
@@ -842,7 +853,7 @@ const NEO_type_post_count = d3
   .rollups(
     NEO_data.personnel,
     (D) => D.length,
-    (d) => d.type_post
+    (d) => d.type_post,
   )
   .filter((d) => d[0])
 
@@ -850,7 +861,7 @@ const NEO_employer_count = d3
   .rollups(
     NEO_data.personnel,
     (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-    (d) => d.employer_id
+    (d) => d.employer_id,
   )
   .filter((d) => d[0])
   .map((d) => d3.merge([[d[0]], d[1]]))
@@ -932,21 +943,21 @@ if (debug) {
 
 ```js
 const RESILIENCE_workbook = FileAttachment(
-  "/data/private/PEPR_RESILIENCE_07022024.xlsx"
+  "/data/private/PEPR_RESILIENCE_07022024.xlsx",
 ).xlsx()
 ```
 
 ```js
 const RESILIENCE_data = resolveProjectFinancingEntities(
   RESILIENCE_workbook,
-  "RESILIENCE"
+  "RESILIENCE",
 )
 
 const RESILIENCE_type_post_count = d3
   .rollups(
     RESILIENCE_data.personnel,
     (D) => D.length,
-    (d) => d.type_post
+    (d) => d.type_post,
   )
   .filter((d) => d[0])
 
@@ -954,7 +965,7 @@ const RESILIENCE_employer_count = d3
   .rollups(
     RESILIENCE_data.personnel,
     (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-    (d) => d.employer_id
+    (d) => d.employer_id,
   )
   .filter((d) => d[0])
   .map((d) => d3.merge([[d[0]], d[1]]))
@@ -1036,7 +1047,7 @@ if (debug) {
 
 ```js
 const TRACES_workbook = FileAttachment(
-  "/data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_TRACES.xlsx"
+  "/data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_TRACES.xlsx",
 ).xlsx()
 ```
 
@@ -1047,7 +1058,7 @@ const TRACES_type_post_count = d3
   .rollups(
     TRACES_data.personnel,
     (D) => D.length,
-    (d) => d.type_post
+    (d) => d.type_post,
   )
   .filter((d) => d[0])
 
@@ -1055,7 +1066,7 @@ const TRACES_employer_count = d3
   .rollups(
     TRACES_data.personnel,
     (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-    (d) => d.employer_id
+    (d) => d.employer_id,
   )
   .filter((d) => d[0])
   .map((d) => d3.merge([[d[0]], d[1]]))
@@ -1137,21 +1148,21 @@ if (debug) {
 
 ```js
 const URBHEALTH_workbook = FileAttachment(
-  "/data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_URBHEALTH_2024_02_05.xlsx"
+  "/data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_URBHEALTH_2024_02_05.xlsx",
 ).xlsx()
 ```
 
 ```js
 const URBHEALTH_data = resolveProjectFinancingEntities(
   URBHEALTH_workbook,
-  "URBHEALTH"
+  "URBHEALTH",
 )
 
 const URBHEALTH_type_post_count = d3
   .rollups(
     URBHEALTH_data.personnel,
     (D) => D.length,
-    (d) => d.type_post
+    (d) => d.type_post,
   )
   .filter((d) => d[0])
 
@@ -1159,7 +1170,7 @@ const URBHEALTH_employer_count = d3
   .rollups(
     URBHEALTH_data.personnel,
     (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-    (d) => d.employer_id
+    (d) => d.employer_id,
   )
   .filter((d) => d[0])
   .map((d) => d3.merge([[d[0]], d[1]]))
@@ -1241,7 +1252,7 @@ if (debug) {
 
 ```js
 const VFpp_workbook = FileAttachment(
-  "/data/private/VF2PLUS_France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_global.xlsx"
+  "/data/private/VF2PLUS_France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_global.xlsx",
 ).xlsx()
 ```
 
@@ -1252,7 +1263,7 @@ const VFpp_type_post_count = d3
   .rollups(
     VFpp_data.personnel,
     (D) => D.length,
-    (d) => d.type_post
+    (d) => d.type_post,
   )
   .filter((d) => d[0])
 
@@ -1260,7 +1271,7 @@ const VFpp_employer_count = d3
   .rollups(
     VFpp_data.personnel,
     (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-    (d) => d.employer_id
+    (d) => d.employer_id,
   )
   .filter((d) => d[0])
   .map((d) => d3.merge([[d[0]], d[1]]))
@@ -1342,7 +1353,7 @@ if (debug) {
 
 ```js
 const WHAOU_workbook = FileAttachment(
-  "/data/private/WHAOU_PEPR_VDBI_AnnexeFinanciere.xlsx"
+  "/data/private/WHAOU_PEPR_VDBI_AnnexeFinanciere.xlsx",
 ).xlsx()
 ```
 
@@ -1353,7 +1364,7 @@ const WHAOU_type_post_count = d3
   .rollups(
     WHAOU_data.personnel,
     (D) => D.length,
-    (d) => d.type_post
+    (d) => d.type_post,
   )
   .filter((d) => d[0])
 
@@ -1361,7 +1372,7 @@ const WHAOU_employer_count = d3
   .rollups(
     WHAOU_data.personnel,
     (D) => [D.length, D[0].employer.toLocaleUpperCase()],
-    (d) => d.employer_id
+    (d) => d.employer_id,
   )
   .filter((d) => d[0])
   .map((d) => d3.merge([[d[0]], d[1]]))

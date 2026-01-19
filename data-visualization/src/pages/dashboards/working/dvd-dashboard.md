@@ -30,9 +30,6 @@ const exclude = (d) =>
   ].includes(d)
 
 const workbook1 = FileAttachment(
-  // "/data/private/PEPR_VBDI_analyse_210524_15h24_GGE.xlsx" //outdated
-  // "/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx" //outdated
-  // "/data/private/250120 PEPR_VBDI_analyse modifiée JYT.xlsx" // outdated
   "/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
 ).xlsx()
 
@@ -159,11 +156,11 @@ const discipline_erc_pie = donutChart(discipline_erc_count, {
 // Discipline count //
 const discipline_count = countEntities(
   global_search,
-  (d) => d.disciplines
+  (d) => d.themes
 ).sort((a, b) => d3.descending(a[1], b[1]))
 
 const discipline_search_input = Inputs.search(discipline_count, {
-  placeholder: "Search disciplines...",
+  placeholder: "Search researcher themes...",
 })
 
 const discipline_search = Generators.input(discipline_search_input)

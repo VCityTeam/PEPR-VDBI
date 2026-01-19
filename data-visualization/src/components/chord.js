@@ -1,5 +1,44 @@
 import * as d3 from "d3"
 
+
+/**
+ * Generates an intersection matrix for a given dataset.
+ *
+ * Constructs a square matrix where each cell represents the size of the intersection
+ * between two sets, normalized by the total number of unique elements across the entire dataset.
+ *
+ * @param {Object[]} data - The data array to process.
+ * @param {string} id_accessor - The property name to use as the unique identifier.
+ * @param {string} set_accessor - The property name containing the array of items to intersect.
+ * @returns {number[][]} A 2D array representing the intersection matrix, where values are between 0 and 1.
+ */
+export function generateIntersectionMatrix(data, id_accessor, set_accessor) {
+  const set_map = new Map(
+    data.map((d) => [d[id_accessor], new Set(d[set_accessor])]),
+  )
+  console.debug("set_map", set_map)
+
+  const superset_size = new Set(d3.merge(set_map.values())).size
+  console.debug("superset_size", superset_size)
+
+  const intersection_matrix = d3
+    .cross(
+      set_map.values(),
+      set_map.values(),
+      (a, b) => a.intersection(b).size / superset_size,
+    )
+    // https://stackoverflow.com/questions/4492385/convert-simple-array-into-two-dimensional-array-matrix
+    .reduce(
+      (set_map, key, index) =>
+        (index % set_map.size == 0
+          ? set_map.push([key])
+          : set_map[set_map.length - 1].push(key)) && set_map,
+      [],
+    )
+
+  return intersection_matrix
+}
+
 /**
  * Creates a chord diagram based on a matrix.
  *
@@ -26,7 +65,7 @@ export function chordDiagram(
     opacityDefault = 0.8,
     tickStep = d3.tickStep(0, d3.sum(data.flat()), 100),
     formatValue = d3.format(".1~%"),
-  } = {}
+  } = {},
 ) {
   // init chord, color, and svg objects
   // const chord =
@@ -83,8 +122,8 @@ export function chordDiagram(
         Math.cos(
           (d.source.endAngle - d.source.startAngle) / 2 +
             d.source.startAngle -
-            Math.PI / 2
-        )
+            Math.PI / 2,
+        ),
     )
     .attr(
       "y1",
@@ -93,8 +132,8 @@ export function chordDiagram(
         Math.sin(
           (d.source.endAngle - d.source.startAngle) / 2 +
             d.source.startAngle -
-            Math.PI / 2
-        )
+            Math.PI / 2,
+        ),
     )
     // Find the location where the target chord starts
     .attr(
@@ -104,8 +143,8 @@ export function chordDiagram(
         Math.cos(
           (d.target.endAngle - d.target.startAngle) / 2 +
             d.target.startAngle -
-            Math.PI / 2
-        )
+            Math.PI / 2,
+        ),
     )
     .attr(
       "y2",
@@ -114,8 +153,8 @@ export function chordDiagram(
         Math.sin(
           (d.target.endAngle - d.target.startAngle) / 2 +
             d.target.startAngle -
-            Math.PI / 2
-        )
+            Math.PI / 2,
+        ),
     )
   // Set the starting color (at 0%)
   grads
@@ -151,7 +190,7 @@ export function chordDiagram(
     .attr(
       "transform",
       (d) =>
-        `rotate(${(d.angle * 180) / Math.PI - 90}) translate(${outerRadius},0)`
+        `rotate(${(d.angle * 180) / Math.PI - 90}) translate(${outerRadius},0)`,
     )
 
   groupTick.append("line").attr("stroke", "currentColor").attr("x2", 6)
@@ -161,7 +200,7 @@ export function chordDiagram(
     .attr("x", 8)
     .attr("dy", "0.35em")
     .attr("transform", (d) =>
-      d.angle > Math.PI ? "rotate(180) translate(-16)" : null
+      d.angle > Math.PI ? "rotate(180) translate(-16)" : null,
     )
     .attr("text-anchor", (d) => (d.angle > Math.PI ? "end" : null))
     .text((d) => formatValue(d.value))
@@ -198,7 +237,7 @@ export function chordDiagram(
             : `\n${formatValue(d.target.value)} ${names[d.source.index]} → ${
                 names[d.target.index]
               }`
-        }`
+        }`,
     )
 
   // an event handler for fading a given chord group.
@@ -206,7 +245,7 @@ export function chordDiagram(
     svg
       .selectAll("path.ribbon")
       .filter(
-        (d) => d.source.index != datum.index && d.target.index !== datum.index
+        (d) => d.source.index != datum.index && d.target.index !== datum.index,
       )
       .transition()
       .style("opacity", opacity)
