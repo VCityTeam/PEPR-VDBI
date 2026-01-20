@@ -217,7 +217,7 @@ sql:
             height: width - 50,
             color: color,
           }
-        ).getCanvas()
+        ).getSVG()
       )}
       <!-- $ -->
     </div>

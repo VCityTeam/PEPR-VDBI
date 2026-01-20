@@ -11,6 +11,29 @@ import { createTooltip, cropText } from "./utilities.js"
  * @param {Object[]} data - input dataset, by default expects an array of key (string)
  *  and value (number) pairs. Modify keyMap and valueMap in the options if this is not the case.
  * @param {Object} options - configuration options for the chart
+ * @param {number} options.width - width of the chart
+ * @param {number} options.height - height of the chart
+ * @param {number} options.innerRadiusRatio - ratio of the radius to the inner radius
+ * @param {number} options.outerRadiusRatio - ratio of the radius to the outer radius
+ * @param {number} options.legendWidth - width of the legend
+ * @param {function} options.keyMap - accessor function to map the data to the key
+ * @param {function} options.valueMap - accessor function to map the data to the value
+ * @param {function} options.colorMap - accessor function to map the data to the color
+ * @param {function} options.color - accessor function to map the data to the color
+ * @param {number} options.fontSize - font size of the labels
+ * @param {string} options.fontFamily - font family of the labels
+ * @param {string} options.sliceStrokeColor - color of the slice stroke
+ * @param {number} options.strokeWidth - width of the slice stroke
+ * @param {number} options.strokeOpacity - opacity of the slice stroke
+ * @param {string} options.fill - color of the slice fill
+ * @param {number} options.fillOpacity - opacity of the slice fill
+ * @param {function} options.majorLabelText - function to map the data to the major label text
+ * @param {function} options.minorLabelText - function to map the data to the minor label text
+ * @param {number} options.labelCuttoff - minimum arc angle for displaying label on arc
+ * @param {function} options.legendText - function to map the data to the legend text
+ * @param {number} options.legendTextLength - length of the legend text
+ * @param {number} options.legendTextFontSize - font size of the legend text
+ * @param {number} options.legendTextLineSeparation - separation between legend lines
  * @returns {d3.node} - SVG node containing the donut chart
  */
 export function donutChart(
@@ -20,7 +43,6 @@ export function donutChart(
     height = width,
     innerRadiusRatio = 0.5,
     outerRadiusRatio = 1,
-    legendWidth = 80,
     // minorArcLabelRadiusRatio = 0.1, // the ratio of the radius to place the minor arc label outside of the arc
     keyMap = (d) => d.entity,
     valueMap = (d) => d.count,
@@ -50,23 +72,28 @@ export function donutChart(
       .scaleOrdinal(d3.schemeObservable10)
       .domain(new Set(data.map(keyMap)))
       .unknown("grey"),
+    legendWidth = 80,
+    legendTextLength = 30,
     legendText = (d) =>
       `${((valueMap(d) / d3.sum(data.map(valueMap))) * 100).toFixed(
-        1
-      )}% ${cropText(keyMap(d), 30)}`,
+        1,
+      )}% ${cropText(keyMap(d), legendTextLength)}`,
+    legendFontSize = 16,
+    legendLineSeparation = 25,
     legend = circleLegend(data, {
+      width: legendWidth,
       keyMap: keyMap,
       valueMap: valueMap,
       colorMap: colorMap,
       color: color,
       radius: 6,
-      fontSize: 16,
-      lineSeparation: 25,
+      fontSize: legendFontSize,
+      lineSeparation: legendLineSeparation,
       text: legendText,
     }),
-  } = {}
+  } = {},
 ) {
-  const radius = Math.min(width, height) / 2
+  const radius = Math.min(width + legendWidth, height) / 2
   const arc = d3
     .arc()
     .innerRadius(radius * innerRadiusRatio)
@@ -97,12 +124,12 @@ export function donutChart(
   const svg = d3
     .create("svg")
     .classed("donut-chart", true)
-    .attr("width", width + legendWidth)
+    .attr("width", width)
     .attr("height", height)
     .attr("viewBox", [
-      -width / 2 - legendWidth,
+      -width / 2,
       -height / 2,
-      width + legendWidth,
+      width,
       height,
     ])
     .attr("style", "max-width: 100%; height: auto;")
@@ -147,7 +174,7 @@ export function donutChart(
       d3
         .select(".tooltip")
         .style("top", event.pageY - 10 + "px")
-        .style("left", event.pageX + 15 + "px")
+        .style("left", event.pageX + 15 + "px"),
     )
     .on("mouseout", (event) => {
       // console.debug("mouseout");
@@ -235,10 +262,9 @@ export function donutChart(
   if (legend) {
     svg
       .append("g")
-      .classed("legend", true)
       .attr(
         "transform",
-        `translate(${-width / 2 - legendWidth},${-height / 2 + 10})`
+        `translate(${width - legendWidth} ${-height / 2})`,
       )
       .append(() => legend)
   }

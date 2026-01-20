@@ -50,7 +50,7 @@ display(user_data)
         width: width,
         height: width,
       }
-    ).getCanvas()
+    ).getSVG()
   )}<!-- $ -->
 </div>
 

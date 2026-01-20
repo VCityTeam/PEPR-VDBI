@@ -95,7 +95,7 @@ const project_graph_data = {
 
 ## Mural graph editor
 
-<div id="graph_container" class="card">${project_graph.getCanvas()}</div>
+<div id="graph_container" class="card">${project_graph.getSVG()}</div>
 ${downloadSVGButton("#graph_container svg")}
 
 </br>
@@ -246,7 +246,7 @@ filtered_constellation
           backgroundOpacity: 0.1,
         }),
       }
-    ).getCanvas()
+    ).getSVG()
   )}
 
 </div>

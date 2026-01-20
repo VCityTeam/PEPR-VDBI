@@ -18,15 +18,10 @@ export function circleLegend(
     radius = 5,
     lineSeparation = 25,
     fontSize = 14,
-    fontWeight = 'normal',
-    fontColor = 'black',
-    strokeColor = 'black',
+    fontWeight = "normal",
+    fontColor = "black",
+    strokeColor = "black",
     strokeWidth = 0.5,
-    backgroundColor = 'black',
-    backgroundStroke = 'black',
-    backgroundOpacity = 0,
-    backgroundStrokeOpacity = 0,
-    backgroundRadius = radius,
     marginTop = 5,
     marginLeft = 5,
     color = (d) =>
@@ -36,53 +31,44 @@ export function circleLegend(
           .domain([
             Math.min(...data.map(valueMap)),
             Math.max(...data.map(valueMap)),
-          ])(d)
+          ])(d),
       ),
     text = (d) => `${valueMap(d)}: ${keyMap(d)}`,
-  } = {}
+  } = {},
 ) {
+  const height = (data.length - 1) * lineSeparation + radius * 2 + marginTop * 2
   const svg = d3
-    .create('svg')
-    .classed('legend', true)
-    .attr('height', (data.length - 1) * lineSeparation + radius * 2 + marginTop * 2)
-    .attr('width', width);
-
-    svg
-    .append('rect')
-    .attr('fill', backgroundColor)
-    .attr('fill-opacity', backgroundOpacity)
-    .attr('stroke', backgroundStroke)
-    .attr('stroke-opacity', backgroundStrokeOpacity)
-    .attr('height', (data.length - 1) * lineSeparation + radius * 2 + marginTop * 2)
-    .attr('width', width)
-    .attr('rx', backgroundRadius)
-    .attr('ry', backgroundRadius);
+    .create("svg")
+    .classed("legend", true)
+    .attr("height", height)
+    .attr("width", width)
+    .attr("viewBox", [-width / 2, -height / 2, width, height])
 
   svg
-    .append('g')
-    .attr('stroke', strokeColor)
-    .attr('stroke-width', strokeWidth)
-    .selectAll('circle')
+    .append("g")
+    .attr("stroke", strokeColor)
+    .attr("stroke-width", strokeWidth)
+    .selectAll("circle")
     .data(data)
-    .join('circle')
-    .attr('cx', radius + marginLeft)
-    .attr('cy', (_d, i) => radius + i * lineSeparation + marginTop)
-    .attr('r', radius)
-    .style('fill', (d) => color(colorMap(d)));
+    .join("circle")
+    .attr("cx", radius + marginLeft)
+    .attr("cy", (_d, i) => radius + i * lineSeparation + marginTop)
+    .attr("r", radius)
+    .style("fill", (d) => color(colorMap(d)))
 
-    svg
-    .append('g')
-    .style('fill', fontColor)
-    .style('font-size', fontSize)
-    .attr('text-anchor', 'left')
-    .selectAll('text')
+  svg
+    .append("g")
+    .style("fill", fontColor)
+    .style("font-size", fontSize)
+    .attr("text-anchor", "left")
+    .selectAll("text")
     .data(data)
-    .join('text')
-    .style('font-weight', fontWeight)
-    .attr('x', radius * 2 + 5 + marginLeft)
-    .attr('y', (_d, i) => radius * 2 + i * lineSeparation + marginTop)
-    .text(text);
+    .join("text")
+    .style("font-weight", fontWeight)
+    .attr("x", radius * 2 + 5 + marginLeft)
+    .attr("y", (_d, i) => radius * 2 + i * lineSeparation + marginTop)
+    .text(text)
 
   // console.debug(svg.node());
-  return svg.node();
+  return svg.node()
 }

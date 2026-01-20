@@ -18,6 +18,11 @@ import {
   vdbi_color_scheme,
 } from "/components/color.js"
 import { chordDiagram, generateIntersectionMatrix } from "/components/chord.js"
+import { ForceLayoutStaticGraph, mapTableToTriples } from "/components/graph.js"
+import {
+  mainland_france_choropleth_marks,
+  mainland_france_departements_geojson,
+} from "/components/projection-map.js"
 ```
 
 <div class="warning" label="Data visualization notice">
@@ -46,7 +51,7 @@ const selected_project_data = discipline_data_by_project.get(selected_project)
 console.debug("selected_project_data", selected_project_data)
 ```
 
-## ${selected_project} Disciplines
+## ${selected_project} Disciplines by CNU and ERC
 
 <div class="grid grid-cols-2">
   <div class="card grid-colspan-1 grid-rowspan-2">
@@ -62,14 +67,8 @@ console.debug("selected_project_data", selected_project_data)
         {
           width: width,
           height: 800,
-          //height: selected_project_data.cnu_count.length > 10 ? 750 : 500,
           marginTop: 50,
           marginRight: cnu_plot_legend_options.marginRight,
-          y: {
-            label: 'CNU',
-            axis: 'right',
-            tickFormat: (d) => cropText(d, 70),
-          },
           x: {
             reverse: true,
             grid: true,
@@ -77,6 +76,12 @@ console.debug("selected_project_data", selected_project_data)
             label: 'Occurences',
           },
           marks: [
+            Plot.axisY({
+              label: 'CNU',
+              anchor: 'right',
+              lineWidth: 15,
+              textOverflow: "ellipsis",
+            }),
             Plot.barX(selected_project_data.cnu_count, {
               y: (d) => d[0],
               x: (d) => d[1],
@@ -88,13 +93,7 @@ console.debug("selected_project_data", selected_project_data)
               stroke: 'black',
               strokeOpacity: 0.1,
               sort: { y: cnu_plot_sort },
-              tip: {
-                format: {
-                  fill: false,
-                },
-                lineWidth: 25,
-                textOverflow: 'ellipsis-end',
-              },
+              tip: true,
             }),
             Plot.barX(
               selected_project_data.cnu_count,
@@ -122,11 +121,12 @@ console.debug("selected_project_data", selected_project_data)
       selected_project_data.cnu_count_by_category,
       {
         width: width * 0.6,
-        legendWidth: width * 0.3,
+        legendWidth: width * 0.5,
         keyMap: (d) => d[0],
         valueMap: (d) => d[1],
         colorMap: (d) => d[0],
         color: cnu_category_plot_options.color,
+        legendTextLength: 20,
         majorLabelText: () => "",
         minorLabelText: () => "",
       }
@@ -140,12 +140,12 @@ console.debug("selected_project_data", selected_project_data)
     <!-- $ -->
   </div>
   <div id="erc-container" class="card">
-    <h2>Resarcher ERC discipline</h2>
+    <h2>Researcher ERC discipline</h2>
     ${resize((width) => donutChart(
       selected_project_data.discipline_erc_count,
       {
         width: width * 0.6,
-        legendWidth: width * 0.3,
+        legendWidth: width * 0.5,
         keyMap: (d) => d[0],
         valueMap: (d) => d[1],
         colorMap: (d) => d[0],
@@ -154,6 +154,8 @@ console.debug("selected_project_data", selected_project_data)
           .domain(erc_category_colors.keys())
           .range(erc_category_colors.values())
           .unknown('grey'),
+        legendTextLength: 20,
+        legendFontSize: 12,
         //majorLabelText: () => "",
         //minorLabelText: () => "",
       }
@@ -187,8 +189,9 @@ console.debug("selected_project_data", selected_project_data)
           y: {
             label: 'Subjects, themes, or research interests',
             tickRotate: -20,
-            tickFormat: (d) => cropText(d, 40),
             axis: 'right',
+            lineWidth: 20,
+            textOverflow: "ellipsis",
           },
           marks: [
             Plot.barX(theme_plot_search_results, {
@@ -240,6 +243,50 @@ console.debug("selected_project_data", selected_project_data)
     <!-- $ -->
   </div>
 </div>
+<div class="grid grid-cols-2">
+  <div id="graph-container" class="card">
+    ${Inputs.button("Stop simulation", {
+      reduce: () => {
+        getGraph().simulation.stop()
+      }
+    })}
+    <!-- $ -->
+    ${resize((width) =>
+      setGraph(selected_project_data.theme_graph, width).getSVG()
+    )}
+    <!-- $ -->
+    ${downloadSVGButton("#graph-container svg")}
+    <!-- $ -->
+  </div>
+  <div id="map-container" class="card">
+    ${resize((width, height) =>
+      Plot.plot({
+        width: width,
+        height: height,
+        projection: {
+          type: "equal-earth",
+          domain: d3.geoCircle().center([1.7, 47.1]).radius(4.7)(),
+        },
+        marks: mainland_france_choropleth_marks.concat([
+          Plot.geo([], {
+          //Plot.geo(mainland_france_departements_geojson, {
+            channels: {
+              Department: ({ properties }) => properties.nom,
+              Code: ({ properties }) => properties.code,
+              Lat: (d) => d3.geoCentroid[d](0),
+              Lon: (d) => d3.geoCentroid[d](1),
+            },
+            tip: true,
+            //fill: ({ properties }) =>
+            //  (choropleth_terrain_data.get(properties.nom) || { size: null }).size,
+            strokeOpacity: 0,
+          }),
+        ])
+      })
+    )}
+    <!-- $ -->
+  </div>
+</div>
 
 ```js
 const workbook1 = await FileAttachment(
@@ -251,9 +298,22 @@ console.debug("phase_1_data", phase_1_data)
 ```
 
 ```js
+let graph = null
+const setGraph = (data, width) => {
+  graph = new ForceLayoutStaticGraph(data, {
+    width: width,
+    height: width,
+  })
+
+  return graph
+}
+const getGraph = () => graph
+```
+
+```js
 const cnu_plot_legend_options = {
   marginLeft: 18,
-  marginRight: 360,
+  marginRight: 175,
   domain: [1, 0],
   range: [1, 0.4],
   type: "log",
@@ -361,7 +421,8 @@ function generateCnuPlotOptions(data, sort = "y", height = 350, width = 500) {
       label: "CNU",
       tickRotate: 10,
       axis: "right",
-      tickFormat: (d) => cropText(d, 70),
+      lineWidth: 35,
+      textOverflow: "ellipsis",
     },
     x: {
       reverse: true,
@@ -459,6 +520,7 @@ const theme_plot_sort_input = Inputs.select(
   ]),
   {
     label: "Sort by",
+    value: "-x",
   },
 )
 
@@ -502,16 +564,7 @@ const auditioned_projects = phase_1_data.projects
 const financed_projects = phase_1_data.projects
   .filter((d) => d.financed)
   .map((d) => d.acronyme)
-// [
-//   "NEO",
-//   "RESILIENCE",
-//   "TRACES",
-//   "VF++",
-//   "VILLEGARDEN",
-//   "WHAOU",
-//   "INTEGREEN",
-//   "URBHEALTH",
-// ];
+
 console.debug("auditioned_projects", auditioned_projects)
 console.debug("financed_projects", financed_projects)
 ```
@@ -557,15 +610,6 @@ function formatResearcherDataByProject(
     .filter((d) => exclude(d[0]))
     .sort((a, b) => d3.descending(a[1], b[1]))
 
-  // const shs_cnu_count = cnu_count
-  //   .filter((d) => isSHSCNU(d[0]));
-
-  // const shs_cnu_percent = d3.rollups(
-  //   cnu_count,
-  //   (D) => D.length,
-  //   (d) => isSHSCNU(d[0]) ? 'SHS' : 'non-SHS'
-  // );
-
   const cnu_count_by_category = d3
     .rollups(
       filtered_researchers,
@@ -587,9 +631,7 @@ function formatResearcherDataByProject(
           (auditioned
             ? auditioned_projects.includes(researcher_project)
             : true) &&
-          (financed
-            ? financed_projects.includes(researcher_project)
-            : true),
+          (financed ? financed_projects.includes(researcher_project) : true),
       )
       .map((project) => ({
         project,
@@ -608,15 +650,43 @@ function formatResearcherDataByProject(
     grouped_projects_by_theme,
   )
 
+  const theme_graph = {
+    nodes: [
+      ...new Set(
+        filtered_researchers.flatMap((reasearcher) =>
+          reasearcher.themes.map((theme) => ({
+            id: theme,
+            label: theme,
+            type: "Theme",
+          })),
+        ),
+      ),
+    ],
+    links: filtered_researchers.flatMap((researcher) =>
+      researcher.themes.flatMap((source_theme) =>
+        researcher.themes
+          .map((target_theme) =>
+            source_theme === target_theme
+              ? null
+              : {
+                  source: source_theme,
+                  target: target_theme,
+                  label: "Shared researcher",
+                },
+          )
+          .filter((d) => !!d),
+      ),
+    ),
+  }
+
   return {
-    discipline_erc_count: discipline_erc_count,
-    cnu_count: cnu_count,
-    // shs_cnu_count: shs_cnu_count,
-    // shs_cnu_percent: shs_cnu_percent,
-    cnu_count_by_category: cnu_count_by_category,
-    theme_count: theme_count,
-    theme_project_matrix: theme_project_matrix,
+    discipline_erc_count,
+    cnu_count,
+    cnu_count_by_category,
+    theme_count,
+    theme_project_matrix,
     projects: [...grouped_projects_by_theme.keys()],
+    theme_graph,
   }
 }
 ```

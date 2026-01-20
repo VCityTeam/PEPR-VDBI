@@ -58,7 +58,7 @@ const search_links = view(
           lineSeparation: 18,
         }),
       }
-    ).getCanvas()
+    ).getSVG()
   )}
 
 </div>

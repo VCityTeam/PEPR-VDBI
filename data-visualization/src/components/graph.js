@@ -25,7 +25,7 @@ export function mapTableToPropertyGraphLinks(
     id_key = "id", // the key used to identify a row
     column, // columns NOT in this list are ignored. Use all columns by default
     reflexive = false, // if there is a link from A to B, should a link be generated from B to A?
-  } = {}
+  } = {},
 ) {
   const links = []
   // create links for each "row" and add them to an array (representing the links)
@@ -39,7 +39,7 @@ export function mapTableToPropertyGraphLinks(
       } else if (typeof value == "string" || typeof value == "number") {
         // get rows with the same value
         const rows_to_link = data.filter(
-          (d) => d[id_key] != row[id_key] && d[key] == row[key]
+          (d) => d[id_key] != row[id_key] && d[key] == row[key],
         )
 
         for (let index = 0; index < rows_to_link.length; index++) {
@@ -47,7 +47,7 @@ export function mapTableToPropertyGraphLinks(
           if (
             !reflexive &&
             links.some(
-              (l) => l.source == row_to_link[id_key] && l.target == row[id_key]
+              (l) => l.source == row_to_link[id_key] && l.target == row[id_key],
             )
           ) {
             continue // link already exists
@@ -118,7 +118,7 @@ export function mapTableToTriples(
     id_key = "id", // the key used to identify a row
     column, // columns NOT in this list are ignored. Use all columns by default
     // type_nodes = false, // create an RDF Type triple for each node
-  } = {}
+  } = {},
 ) {
   // create triples for each row and add them to an array (representing the graph)
   const nodes = []
@@ -192,7 +192,7 @@ export function parseTabularGraph(
     targetMap = (d) => d.target,
     valueMap = (d) => d.value,
     colorMap = (d) => d.color || null,
-  } = {}
+  } = {},
 ) {
   const nodeByID = new Map()
   for (const link of links) {
@@ -288,6 +288,7 @@ export class Graph {
    *  }
    * @param {object} options - configuration options for the graph
    * @param {string} options.id - the id of the graph SVG element
+   * @param {boolean} options.performanceMode - whether to use performance mode for large datasets
    * @param {number} options.width - canvas width
    * @param {number} options.height - canvas height
    * @param {number[]} options.viewBox - viewBox for the SVG canvas
@@ -323,6 +324,7 @@ export class Graph {
     { nodes = [], links = [] },
     {
       id = "d3_graph_" + Math.random().toString(36).substring(7),
+      performanceMode = false,
       width = 500,
       height = 500,
       viewBox = [-width / 2, -height / 2, width, height],
@@ -359,7 +361,7 @@ export class Graph {
             nodes
               .map((d) => valueMap(d))
               .filter((d) => d != null)
-              .sort(d3.ascending)
+              .sort(d3.ascending),
           ),
         ],
         {
@@ -371,15 +373,16 @@ export class Graph {
           backgroundColor: "black",
           backgroundStroke: "black",
           backgroundOpacity: 0.1,
-        }
+        },
       ),
       legendX = -width / 2 + 10,
       legendY = -height / 2 + 10,
-    }
+    },
   ) {
     this.nodes = [...nodes].map((d) => ({ ...d }))
     this.links = [...links].map((d) => ({ ...d }))
     this.id = id
+    this.performanceMode = performanceMode
     this.width = width
     this.height = height
     this.viewBox = viewBox
@@ -417,6 +420,7 @@ export class Graph {
       .attr("class", "d3_graph")
       .attr("viewBox", viewBox)
       .style("display", "hidden")
+      .style("overflow", "hidden")
 
     // Add styles for the user interaction.
     this.svg.append("style").text(`
@@ -468,7 +472,7 @@ export class Graph {
       legend_svg.append(() => legend)
     }
 
-    this.simulation = this.createSimulation()
+    this.simulation = this.createSimulation(this.performanceMode)
     Object.assign(this.svg.node(), { simulation: this.simulation })
 
     this.update()
@@ -536,94 +540,75 @@ export class Graph {
    * Get the SVG element of the graph
    * @returns {d3.node} the SVG node of the graph
    */
-  getCanvas() {
-    return this.svg.node()
-  }
+  getSVG = () => this.svg.node()
 
   /**
    * Get the SVG node group of the graph
    * @returns {d3.selection} the node group
    */
-  getNodeGroup() {
-    return this.svg.selectAll(`#${this.id} g.nodes`)
-  }
+  getNodeGroup = () => this.svg.selectAll(`#${this.id} g.nodes`)
 
   /**
    * Get the SVG link group of the graph
    * @returns {d3.selection} the link group
    */
-  getLinkGroup() {
-    return this.svg.selectAll(`#${this.id} g.links`)
-  }
+  getLinkGroup = () => this.svg.selectAll(`#${this.id} g.links`)
 
   /**
    * Get the SVG node label group of the graph
    * @returns {d3.selection} the node label group
    */
-  getNodeLabelGroup() {
-    return this.svg.selectAll(`#${this.id} g.node_labels`)
-  }
+  getNodeLabelGroup = () => this.svg.selectAll(`#${this.id} g.node_labels`)
 
   /**
    * Get the SVG link label group of the graph
    * @returns {d3.selection} the link label group
    */
-  getLinkLabelGroup() {
-    return this.svg.selectAll(`#${this.id} g.link_labels`)
-  }
+  getLinkLabelGroup = () => this.svg.selectAll(`#${this.id} g.link_labels`)
 
   /**
    * Get the SVG nodes of the graph
    * @returns {d3.selection} the SVG nodes
    */
-  getNodes() {
-    return this.getNodeGroup().selectAll("circle")
-  }
+  getNodes = () => this.getNodeGroup().selectAll("circle")
 
   /**
    * Get the SVG link group of the graph
    * @returns {d3.selection} the SVG links
    */
-  getLinks() {
-    return this.getLinkGroup().selectAll("line")
-  }
+  getLinks = () => this.getLinkGroup().selectAll("line")
 
   /**
    * Get the SVG node label group of the graph
    * @returns {d3.selection} the SVG node labels
    */
-  getNodeLabels() {
-    return this.getNodeLabelGroup().selectAll("text")
-  }
+  getNodeLabels = () => this.getNodeLabelGroup().selectAll("text")
 
   /**
    * Get the SVG link label group of the graph
    * @returns {d3.selection} the SVG link labels
    */
-  getLinkLabels() {
-    return this.getLinkLabelGroup().selectAll("text")
-  }
+  getLinkLabels = () => this.getLinkLabelGroup().selectAll("text")
 
   /**
    * Start a force simulation from graph data
    *
+   * @param {boolean} performanceMode - whether to use performance mode
+   *
    * @returns {d3.forceSimulation} a D3 force simulation object
    */
-  createSimulation() {
-    return (
-      d3
-        .forceSimulation(this.nodes)
-        // .alphaDecay('0.03')
-        .force("link", d3.forceLink(this.links).id(this.keyMap))
-        .force("charge", d3.forceManyBody().strength(this.chargeStrength))
-        .force("collide", d3.forceCollide().radius(this.r).iterations(3))
-        .force("x", d3.forceX())
-        .force("y", d3.forceY())
-        .force("fx", this.xMap)
-        .force("fy", this.yMap)
-        .on("tick", this.handleTick())
-    )
-  }
+  createSimulation = (performanceMode) =>
+    d3
+      .forceSimulation(this.nodes)
+      .alphaDecay(performanceMode ? 0.1 : undefined)
+      .force("link", d3.forceLink(this.links).id(this.keyMap))
+      .force("charge", d3.forceManyBody().strength(this.chargeStrength))
+      .force("collide", d3.forceCollide().radius(this.r).iterations(3))
+      .force("x", d3.forceX())
+      .force("y", d3.forceY())
+      .force("fx", this.xMap)
+      .force("fy", this.yMap)
+      .on("tick", this.handleTick())
 
   /**
    * Create a drag effect for graph nodes within the context of a force simulation
@@ -635,7 +620,7 @@ export class Graph {
      * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
      */
     function dragstarted(event) {
-      if (!event.active) simulation.alphaTarget(0.3).restart()
+      if (!event.active) simulation.alpha(0.3).restart()
       event.subject.fx = event.subject.x
       event.subject.fy = event.subject.y
     }
@@ -692,7 +677,7 @@ export class Graph {
             event.transform.y +
             ") scale(" +
             event.transform.k +
-            ")"
+            ")",
         )
 
       this.getLinkLabelGroup()
@@ -700,12 +685,12 @@ export class Graph {
         .attr(
           "transform",
           "translate(" +
+            event.transform.k +
             event.transform.x +
             "," +
             event.transform.y +
             ") scale(" +
-            event.transform.k +
-            ")"
+            ")",
         )
     }
   }
@@ -748,24 +733,32 @@ export class Graph {
       label.text(this.labelMap(datum))
 
       const connectedLinks = this.getLinks().filter(
-        (l) => l.source === datum || l.target === datum
+        (l) => l.source === datum || l.target === datum,
       )
       connectedLinks.classed("highlight", true)
-      this.getLinkLabelGroup().style("opacity", 1)
-      this.getLinkLabels().classed(
-        "secondary",
-        ({ source, target }) => datum === target || datum === source
-      )
-      this.getLinkLabels().text((d) => this.relationMap(d))
+      this.getLinkLabelGroup().style("opacity", 0.5)
+      if (!this.performanceMode) {
+        this.getLinkLabels().classed(
+          "secondary",
+          ({ source, target }) => datum === target || datum === source,
+        )
+        this.getLinkLabels().text((d) => this.relationMap(d))
+      }
 
       this.getNodeLabelGroup().style("opacity", 1)
       connectedLinks.each((link) => {
-        this.getNodes()
-          .filter((d) => d === link.source || d === link.target)
-          .classed("highlight", true)
-        this.getNodeLabels()
-          .filter((d) => d === link.source || d === link.target)
-          .classed("secondary", true)
+        if (!this.performanceMode) {
+          this.getNodes()
+            .filter((d) => d === link.source || d === link.target)
+            .classed("highlight", true)
+          this.getNodeLabels()
+            .filter((d) => d === link.source || d === link.target)
+            .classed("secondary", true)
+        } else {
+          this.getNodes()
+            .find((d) => d === link.source)
+            .classed("highlight", true)
+        }
       })
 
       d3.selectAll(".legend g text")
@@ -781,17 +774,15 @@ export class Graph {
     return () => {
       this.svg.classed("hover", false)
       this.getNodes().classed("highlight", false)
-      this.getNodeLabels().classed("highlight", false)
-      this.getNodeLabels().classed("secondary", false)
-      this.getNodeLabels().text((d) =>
-        cropText(this.relationMap(d), this.textLength)
-      )
+      this.getNodeLabels()
+        .classed("highlight", false)
+        .classed("secondary", false)
+        .text((d) => cropText(this.relationMap(d), this.textLength))
       this.getNodeLabelGroup().style("opacity", this.nodeLabelOpacity)
       this.getLinks().classed("highlight", false)
-      this.getLinkLabels().classed("secondary", false)
-      this.getLinkLabels().text((d) =>
-        cropText(this.relationMap(d), this.textLength)
-      )
+      this.getLinkLabels()
+        .classed("secondary", false)
+        .text((d) => cropText(this.relationMap(d), this.textLength))
       this.getLinkLabelGroup().style("opacity", this.linkLabelOpacity)
     }
   }
@@ -822,7 +813,7 @@ export class Graph {
  */
 export function forceGraph(data, options = {}) {
   const graph = new Graph(data, options)
-  return graph.getCanvas()
+  return graph.getSVG()
 }
 
 export class StaticGraph extends Graph {
@@ -850,7 +841,7 @@ export class StaticGraph extends Graph {
       ],
       legendX = translateExtent[0][0] + 10,
       legendY = translateExtent[0][1] + 10,
-    }
+    },
   ) {
     super(
       data,
@@ -863,8 +854,8 @@ export class StaticGraph extends Graph {
           legendX: legendX,
           legendY: legendY,
         },
-        arguments[1]
-      )
+        arguments[1],
+      ),
     )
   }
 
@@ -874,6 +865,88 @@ export class StaticGraph extends Graph {
    */
   handleDrag() {
     return d3.drag().on("start", null).on("drag", null).on("end", null)
+  }
+}
+
+export class ForceLayoutStaticGraph extends StaticGraph {
+  constructor(data, options) {
+    super(data, options)
+    // this.simulation.stop()
+    this.progress = 0
+
+    this.svg
+      .style("opacity", 0.5)
+      .append("g")
+      .attr("class", "loading")
+      .attr("transform", `translate(${this.width / 2}, ${15})`)
+      .append("text")
+      .text("Loading...")
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "middle")
+      .attr("font-size", 20)
+      .attr("fill", "black")
+  }
+
+  createSimulation() {
+    const worker = new Worker("./force-layout-simulation-worker.js")
+
+    worker.postMessage({
+      nodes: this.nodes,
+      links: this.links,
+    })
+
+    worker.onmessage = function (event) {
+      switch (event.data.type) {
+        case "tick":
+          return () => {
+            this.progress = event.data.progress
+            this.svg.select(".loading text").text(`${this.progress * 100}%`)
+          }
+        case "end":
+          return () => {
+            this.nodes = event.data.nodes
+            this.links = event.data.links
+            this.update()
+          }
+      }
+    }
+  }
+
+  /**
+   * Update the graph with new nodes and links without a simulation
+   */
+  update() {
+    this.getNodes()
+      .data(this.nodes)
+      .join("circle")
+      .attr("r", this.r)
+      .attr("stroke-opacity", this.nodeStrokeOpacity)
+      .attr("stroke-width", this.strokeWidth)
+      .attr("stroke", this.stroke)
+      .attr("fill", (d) => this.color(this.valueMap(d)))
+      .on("pointerup", this.handleNodePointerup())
+      .on("pointerdown", this.handleNodePointerdown())
+      .on("pointerenter", this.handleNodePointerEnter())
+      .on("pointerout", this.handleNodePointerout())
+      .style("pointer-events", "all")
+      .call(this.handleDrag())
+    this.getNodes().append("title").text(this.labelMap)
+
+    this.getLinks()
+      .data(this.links)
+      .join("line")
+      .style("pointer-events", "none")
+      .attr("stroke-width", this.strokeWidth)
+
+    this.getNodeLabels()
+      .data(this.nodes)
+      .join("text")
+      .text((d) => cropText(this.labelMap(d), this.textLength))
+
+    this.getLinkLabels()
+      .data(this.links)
+      .join("text")
+      .text((d) => cropText(this.relationMap(d) || "", this.textLength))
   }
 }
 
@@ -948,16 +1021,16 @@ export function filterLinks(graph, filterFunction, keyMap = (d) => d.id) {
   ) {
     filteredGraph.nodes = d3.filter(graph.nodes, (node) =>
       filteredGraph.links.find(
-        (link) => link.source == keyMap(node) || link.target == keyMap(node)
-      )
+        (link) => link.source == keyMap(node) || link.target == keyMap(node),
+      ),
     )
   } else {
     filteredGraph.nodes = d3.filter(graph.nodes, (node) =>
       filteredGraph.links.find(
         (link) =>
           keyMap(link.source) == keyMap(node) ||
-          keyMap(link.target) == keyMap(node)
-      )
+          keyMap(link.target) == keyMap(node),
+      ),
     )
   }
 
@@ -1012,15 +1085,15 @@ export function arcDiagramVertical(
         nodes
           .map((d) => valueMap(d))
           .filter((d) => d != null)
-          .sort(d3.ascending)
+          .sort(d3.ascending),
       )
       .range(
         d3
           .quantize(
             d3.interpolatePlasma,
-            new Set(nodes.map((d) => valueMap(d))).size
+            new Set(nodes.map((d) => valueMap(d))).size,
           )
-          .reverse()
+          .reverse(),
       )
       .unknown("#aaa"),
     nodeFill = "GhostWhite",
@@ -1032,7 +1105,7 @@ export function arcDiagramVertical(
           nodes
             .map((d) => valueMap(d))
             .filter((d) => d != null)
-            .sort(d3.ascending)
+            .sort(d3.ascending),
         ),
       ],
       {
@@ -1040,9 +1113,9 @@ export function arcDiagramVertical(
         valueMap: (d) => d,
         color: color,
         text: (d) => cropText(d, 40),
-      }
+      },
     ),
-  } = {}
+  } = {},
 ) {
   // A function of a link, that checks that source and target have the same group and returns
   // the group; otherwise null. Used to color the links.
@@ -1062,7 +1135,7 @@ export function arcDiagramVertical(
 
   // The current position, indexed by id. Will be interpolated.
   const y_positions = new Map(
-    nodes.map((d) => [keyMap(d), yDistribution(keyMap(d))])
+    nodes.map((d) => [keyMap(d), yDistribution(keyMap(d))]),
   )
 
   // Add an arc for each link.
@@ -1114,8 +1187,8 @@ export function arcDiagramVertical(
       "transform",
       (d) =>
         `translate(${marginLeft},${y_positions.get(
-          keyMap(d)
-        )}), rotate(${labelRotate})`
+          keyMap(d),
+        )}), rotate(${labelRotate})`,
     )
     .call((g) =>
       g
@@ -1123,14 +1196,14 @@ export function arcDiagramVertical(
         .attr("x", -6)
         .attr("dy", "0.35em")
         // .attr("fill", (d) => color(valueMap(d)))
-        .text((d) => keyMap(d))
+        .text((d) => keyMap(d)),
     )
     .call((g) =>
       g
         .append("circle")
         .attr("r", r)
         .attr("fill", nodeFill)
-        .attr("stroke", nodeStroke)
+        .attr("stroke", nodeStroke),
     )
   // .join(
   //   (enter) => {
@@ -1179,13 +1252,13 @@ export function arcDiagramVertical(
         links.some(
           ({ source, target }) =>
             (keyMap(n) === source && keyMap(d) === target) ||
-            (keyMap(n) === target && keyMap(d) === source)
-        )
+            (keyMap(n) === target && keyMap(d) === source),
+        ),
       )
       path
         .classed(
           "primary",
-          (l) => l.source === keyMap(d) || l.target === keyMap(d)
+          (l) => l.source === keyMap(d) || l.target === keyMap(d),
         )
         .filter(".primary")
         .raise()
@@ -1219,7 +1292,7 @@ export function arcDiagramVertical(
 
     label
       .sort((a, b) =>
-        d3.ascending(y_positions.get(keyMap(a)), y_positions.get(keyMap(b)))
+        d3.ascending(y_positions.get(keyMap(a)), y_positions.get(keyMap(b))),
       )
       .transition()
       .duration(750)
@@ -1227,7 +1300,7 @@ export function arcDiagramVertical(
       .attrTween("transform", (d) => {
         const i = d3.interpolateNumber(
           y_positions.get(keyMap(d)),
-          yDistribution(keyMap(d))
+          yDistribution(keyMap(d)),
         )
         return (t) => {
           const y = i(t)
@@ -1276,7 +1349,7 @@ export function sortNodes(
     // { source: "A", target: "B" },
     // ],
   },
-  { keyMap = (d) => d.id, valueMap = (d) => d.group }
+  { keyMap = (d) => d.id, valueMap = (d) => d.group },
 ) {
   const degree = d3.rollup(
     links.flatMap(({ source, target }) => [
@@ -1284,7 +1357,7 @@ export function sortNodes(
       { node: target, count: 1 },
     ]),
     (v) => d3.sum(v, ({ count }) => count),
-    ({ node }) => node
+    ({ node }) => node,
   )
   // console.debug("degree", degree);
   return new Map([
@@ -1300,8 +1373,8 @@ export function sortNodes(
           (a, b) =>
             d3.descending(
               degree.has(keyMap(a)) ? degree.get(keyMap(a)) : 0,
-              degree.has(keyMap(b)) ? degree.get(keyMap(b)) : 0
-            ) || d3.ascending(keyMap(a), keyMap(b))
+              degree.has(keyMap(b)) ? degree.get(keyMap(b)) : 0,
+            ) || d3.ascending(keyMap(a), keyMap(b)),
         )
         .map(keyMap),
     ],
