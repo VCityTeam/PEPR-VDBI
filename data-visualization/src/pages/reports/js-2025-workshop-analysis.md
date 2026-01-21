@@ -25,7 +25,8 @@ audio.
 The report is structured as follows:
 
 - [Section 2](#2-method) details the proposed methodology and steps for reproducibility
-- [Section 3](#3-analysis-results) presents the results of the lexicometric analysis
+- [Section 3](#3-lexical-analysis-results) presents the results of the lexicometric
+  analysis
 - [Section 4](#4-method-review) reviews the limitations of the proposed methodology
 
 ## 2. Method
@@ -48,18 +49,38 @@ and entities from a corpus. This analysis uses three main Cortext tasks:
 
 1. **[Named Entity Recognition (NER)](https://docs.cortext.net/named-entity-recognizer/)**
    to "identify and index persons, places, organizations, etc."
+   The following metrics are priovided for each extracted entity:
+   - `frequency`: The number of times the entity appears in the corpus
+   - `type`: The type of the entity (e.g. Person, Organization, Location)
 2. **[(Multi)Term extraction](https://docs.cortext.net/lexical-extraction/)** to
    identifiy "terms pertaining to a given [document] corpus... [Including] not
    only simple terms but also multi-terms (called [n-grams](https://en.wikipedia.org/wiki/N-gram))."
+   The following metrics are priovided to measure the relevance or frequency of
+   each extracted term:
+   - `C-value`: A measure of the frequency of a term
+   - `Gf.idf (G2)`: An alternative frequency measurement of a term
+   - `chi2`: The specificity of a term
+   - `Occurrences`: The number of times a term appears in the corpus
+   - `Cooccurrences`: The number of times a term appears in the corpus
+   - `Part of speech (POS)`: The part of speech of a term (e.g. Noun, Verb, Adjective)
 3. **[W2V Explorer](https://docs.cortext.net/w2v-explorer/)** to "[learn] the
    word embedding of every word... in a corpus and [visualize] the position of
    words in a reduced 2 dimensional space. Words are also clustered according to
    their proximity."
 
+<div class="tip">
+
+For more information, see the Cortext documentation for details on the methods
+used, the parameters and the metrics provided, and scientific references.
+
+- [Named Entity Recognition](https://docs.cortext.net/named-entity-recognizer/)
+- [(Multi)Term extraction](https://docs.cortext.net/lexical-extraction/)
+- [W2V Explorer](https://docs.cortext.net/w2v-explorer/)
+
+</div>
+
 <div class="note">
-
-Cortext NER doesn't have as many entity types or configurations for french.
-
+  Cortext NER doesn't have as many entity types or configurations for french.
 </div>
 
 ```mermaid
@@ -112,12 +133,6 @@ stateDiagram-v2
 
 The following parameters were used to configure the Cortext tasks as of 19/12/2025.
 
-<div class="note">
-
-Unmentioned parameters use their default settings
-
-</div>
-
 | Task                    | Parameter                | Value         |
 | :---------------------- | ------------------------ | ------------- |
 | Terms extraction        | Textual Fields           | text          |
@@ -131,23 +146,9 @@ Unmentioned parameters use their default settings
 
 ${tex`^*`} Rerun task once with each available value<!-- $ -->
 
-The following metrics are priovided for each extracted entity:
+<div class="note">Unmentioned parameters use their default settings</div>
 
-- `frequency`: The number of times the entity appears in the corpus
-- `type`: The type of the entity (e.g. Person, Organization, Location)
-
-The following metrics are priovided for each extracted term:
-
-- `C-value`: A measure of the frequency of a term
-- `Gf.idf (G2)`: An alternative frequency measurement of a term
-- `chi2`: The specificity of a term
-- `Occurrences`: The number of times a term appears in the corpus
-- `Cooccurrences`: The number of times a term appears in the corpus
-- `Part of speech (POS)`: The part of speech of a term (e.g. Noun, Verb, Adjective)
-
-Both sets of metrics are separated by their occurrence in each group's discussion.
-
-## 3. Analysis Results
+## 3. Lexical Analysis Results
 
 ```js
 import { downloadSVGButton } from "/components/utilities.js"
@@ -169,6 +170,11 @@ const files = await FileAttachment(
 
 const extracted_terms = files.file("extracted-terms.tsv").tsv({ typed: true })
 const entities = files.file("entities.tsv").tsv({ typed: true })
+```
+
+```js
+console.debug("extracted_terms", extracted_terms)
+console.debug("entities", entities)
 ```
 
 ### 3.1. Extracted Entities
@@ -200,226 +206,107 @@ const generateEntitiesPlot = (data, width) =>
   })
 ```
 
-### 3.2. Extracted Nouns
+### 3.2. Extracted Terms
 
-<div class="grid grid-cols-1">
-  <div id="c-value-noun-plot" class="card">
-    <h2>C-values</h2>
-    ${resize((width) => generateExtractedTermsPlot(
-      extracted_terms,
-      width,
-      "C-value",
-      "noun",
-      180,
-    ))}<!-- $ -->
-    ${downloadSVGButton("#c-value-noun-plot svg")}
-
-  </div>
-  <div id="gfidf-noun-plot" class="card">
-    <h2>Gfidfs</h2>
-    ${resize((width) => generateExtractedTermsPlot(
-      extracted_terms,
-      width,
-      "Gfidf",
-      "noun",
-      180,
-    ))}<!-- $ -->
-    ${downloadSVGButton("#gfidf-noun-plot svg")}
-
-  </div>
-  <div id="specificity-noun-plot" class="card">
-    <h2>Specificity</h2>
-    ${resize((width) => generateExtractedTermsPlot(
-      extracted_terms,
-      width,
-      "Specificity chi2",
-      "noun",
-      180,
-    ))}<!-- $ -->
-    ${downloadSVGButton("#specificity-noun-plot svg")}
-
-  </div>
-  <div id="occurrences-noun-plot" class="card">
-    <h2>Occurrences</h2>
-    ${resize((width) => generateExtractedTermsPlot(
-      extracted_terms,
-      width,
-      "Occurrences",
-      "noun",
-      180,
-    ))}<!-- $ -->
-    ${downloadSVGButton("#occurrences-noun-plot svg")}
-
-  </div>
-  <div id="cooccurrences-noun-plot" class="card">
-    <h2>Co-occurrences</h2>
-    ${resize((width) => generateExtractedTermsPlot(
-      extracted_terms,
-      width,
-      "Cooccurrences",
-      "noun",
-      180,
-    ))}<!-- $ -->
-    ${downloadSVGButton("#cooccurrences-noun-plot svg")}
-
-  </div>
-</div>
-
-### 3.3. Extracted Verbs
-
-<div class="grid grid-cols-2">
-  <div id="c-value-verb-plot" class="card">
-    <h2>C-values</h2>
-    ${resize((width) => generateExtractedTermsPlot(
-      extracted_terms,
-      width,
-      "C-value",
-      "verb",
-      100,
-    ))}<!-- $ -->
-    ${downloadSVGButton("#c-value-verb-plot svg")}
-
-  </div>
-  <div id="gfidf-verb-plot" class="card">
-    <h2>Gfidfs</h2>
-    ${resize((width) => generateExtractedTermsPlot(
-      extracted_terms,
-      width,
-      "Gfidf",
-      "verb",
-      100,
-    ))}<!-- $ -->
-    ${downloadSVGButton("#gfidf-verb-plot svg")}
-
-  </div>
-  <div id="specificity-noun-plot" class="card">
-    <h2>Specificity</h2>
-    ${resize((width) => generateExtractedTermsPlot(
-      extracted_terms,
-      width,
-      "Specificity chi2",
-      "verb",
-      100,
-    ))}<!-- $ -->
-    ${downloadSVGButton("#specificity-noun-plot svg")}
-
-  </div>
-  <div id="occurrences-verb-plot" class="card">
-    <h2>Occurrences</h2>
-    ${resize((width) => generateExtractedTermsPlot(
-      extracted_terms,
-      width,
-      "Occurrences",
-      "verb",
-      100,
-    ))}<!-- $ -->
-    ${downloadSVGButton("#occurrences-verb-plot svg")}
-
-  </div>
-  <div id="cooccurrences-verb-plot" class="card">
-    <h2>Co-occurrences</h2>
-    ${resize((width) => generateExtractedTermsPlot(
-      extracted_terms,
-      width,
-      "Cooccurrences",
-      "verb",
-      100,
-    ))}<!-- $ -->
-    ${downloadSVGButton("#cooccurrences-verb-plot svg")}
-
-  </div>
-</div>
-
-### 3.4. Extracted Adjectives
-
-<div class="grid grid-cols-4">
-  <div id="c-value-adj-plot" class="card">
-    <h2>C-values</h2>
-    ${resize((width) => generateExtractedTermsPlot(
-      extracted_terms,
-      width,
-      "C-value",
-      "adj",
-      60,
-    ))}<!-- $ -->
-    ${downloadSVGButton("#c-value-adj-plot svg")}
-
-  </div>
-  <div id="gfidf-adj-plot" class="card">
-    <h2>Gfidfs</h2>
-    ${resize((width) => generateExtractedTermsPlot(
-      extracted_terms,
-      width,
-      "Gfidf",
-      "adj",
-      60,
-    ))}<!-- $ -->
-    ${downloadSVGButton("#gfidf-adj-plot svg")}
-
-  </div>
-  <div id="specificity-noun-plot" class="card">
-    <h2>Specificity</h2>
-    ${resize((width) => generateExtractedTermsPlot(
-      extracted_terms,
-      width,
-      "Specificity chi2",
-      "adj",
-      60,
-    ))}<!-- $ -->
-    ${downloadSVGButton("#specificity-noun-plot svg")}
-
-  </div>
-  <div id="occurrences-adj-plot" class="card">
-    <h2>Occurrences</h2>
-    ${resize((width) => generateExtractedTermsPlot(
-      extracted_terms,
-      width,
-      "Occurrences",
-      "adj",
-      60,
-    ))}<!-- $ -->
-    ${downloadSVGButton("#occurrences-adj-plot svg")}
-
-  </div>
-  <div id="cooccurrences-adj-plot" class="card">
-    <h2>Co-occurrences</h2>
-    ${resize((width) => generateExtractedTermsPlot(
-      extracted_terms,
-      width,
-      "Cooccurrences",
-      "adj",
-      60,
-    ))}<!-- $ -->
-    ${downloadSVGButton("#cooccurrences-adj-plot svg")}
-
-  </div>
+<div>
+<!-- 
+${resize((width) => extractedTermsPosHtmlTemplate(extracted_terms))}
+ -->
+${extractedTermsPosHtmlTemplate(extracted_terms)}
+<!-- $ -->
 </div>
 
 ```js
-const generateExtractedTermsPlot = (data, width, y_column, term, marginLeft) =>
-  Plot.auto(
-    data.filter((d) => d.pos === term),
-    {
-      x: (d) => Number(d[y_column]),
-      y: "Main form",
-      fx: "group",
-      color: "#3558A2",
-      mark: "bar",
-    },
-  ).plot({
-    x: {
-      label: y_column,
-      ticks:
-        d3.max(data.filter((d) => d.pos === term).map((d) => d[y_column])) === 1
-          ? 1
-          : undefined,
-    },
-    fx: { label: "Group" },
-    width: width,
-    grid: true,
-    marginLeft: marginLeft,
-    marginRight: 50,
-  })
+const pos_header_map = new Map([
+  ["noun", "Nouns"],
+  ["verb", "Verbs"],
+  ["adj", "Adjectives"],
+])
+
+const column_label_map = new Map([
+  ["n", "Occurrences"],
+  ["C-value", "C-value"],
+  ["Gfidf", "gf.idf"],
+  ["Specificity chi2", "Specificity"],
+  ["Cooccurrences", "Co-occurrences"],
+])
+
+const plot_option_map = new Map([
+  ["noun", { marginLeft: 180 }],
+  ["verb", { marginLeft: 90 }],
+  ["adj", { marginLeft: 60 }],
+])
+
+const mark_option_map = new Map([
+  ["n", { title: "Noun", subtitle: "Noun", marginLeft: 100 }],
+  ["C-value", { title: "Noun", subtitle: "Noun", marginLeft: 100 }],
+  ["Gfidf", { title: "Noun", subtitle: "Noun", marginLeft: 100 }],
+  ["Specificity chi2", { title: "Noun", subtitle: "Noun", marginLeft: 100 }],
+  ["Cooccurrences", { title: "Noun", subtitle: "Noun", marginLeft: 100 }],
+])
+
+const generateExtractedTermsPlot = (
+  data,
+  title,
+  x_column,
+  x_column_label,
+  mark_options,
+  plot_options,
+) =>
+  resize((width) =>
+    Plot.plot({
+      x: {
+        label: x_column_label,
+        ticks: d3.max(data.map((d) => d[x_column])) === 1 ? 1 : undefined,
+        axis: "both",
+      },
+      color: { legend: true },
+      symbol: { legend: true },
+      width: width,
+      title: title,
+      grid: true,
+      marginRight: 50,
+      ...plot_options,
+      marks: [
+        Plot.barX(data, {
+          x: (d) => Number(d[x_column]),
+          y: "group",
+          fy: "Main form",
+          fill: (d) => `Group ${d.group}`,
+          ...mark_options,
+        }),
+      ],
+    }),
+  )
+
+const extractedTermsPlotHtmlTemplate = (data, pos, column, column_label) =>
+  html`<div id="${pos}-${column}-plot" class="card">
+    ${generateExtractedTermsPlot(
+      data,
+      // data.filter((d) => d.pos === pos),
+      `Extracted ${pos_header_map.get(pos)} by ${column_label_map.get(column)}`,
+      column,
+      column_label,
+      {},
+      plot_option_map.get(pos),
+    )}
+    ${downloadSVGButton(`#${pos}-${column}-plot svg`)}
+  </div>`
+
+const extractedTermsPosHtmlTemplate = (data) =>
+  html`${pos_header_map.entries().map(
+    ([pos, pos_label]) =>
+      html`<div class="grid grid-cols-1">
+        ${column_label_map
+          .entries()
+          .filter(([column, column_label]) =>
+            data.some((d) => d.pos === pos && Number(d[column]) > 0),
+          )
+          .map(([column, column_label]) =>
+            extractedTermsPlotHtmlTemplate(data, pos, column, column_label),
+          )}
+      </div>`,
+  )}`
 ```
 
 ## 4. Method review
