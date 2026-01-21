@@ -7,6 +7,15 @@
   /* --serif: Georgia, serif; */
 }
 
+.note {
+	border-left-color: var(--theme-blue);
+	background-color: color-mix(in srgb, var(--theme-blue), var(--theme-background) 90%);
+}
+
+.note::before {
+	color: var(--theme-blue);
+}
+
 /* Uncomment this if the observable framework ever supports local font hosting */
 
 /* body {
