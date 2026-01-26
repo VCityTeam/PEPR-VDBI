@@ -1,5 +1,11 @@
 ---
 style: /css/vdbi-page.css
+sql:
+  entities: "/data/private/VDBI_JS_2025_atelier_NEO_entities.tsv"
+  extracted_terms: "/data/private/VDBI_JS_2025_atelier_NEO_extracted_terms.tsv"
+  nouns: "/data/private/VDBI_JS_2025_atelier_NEO_entities_and_nouns.tsv"
+  verbs: "/data/private/VDBI_JS_2025_atelier_NEO_verbs.tsv"
+  adj: "/data/private/VDBI_JS_2025_atelier_NEO_adj.tsv"
 ---
 
 # VDBI JS 2025 Lexicometric Analysis <!-- omit in toc -->
@@ -47,40 +53,36 @@ social science and humanities research infrastructure.
 Cortext uses Natural Language Processing (NLP) and machine learning to extract keywords
 and entities from a corpus. This analysis uses three main Cortext tasks:
 
-1. **[Named Entity Recognition (NER)](https://docs.cortext.net/named-entity-recognizer/)**
+1. **Named Entity Recognition (NER)** [[5.1]](#51-cortext-documentation-named-entity-recognition)
    to "identify and index persons, places, organizations, etc."
-   The following metrics are priovided for each extracted entity:
-   - `frequency`: The number of times the entity appears in the corpus
+   The following metrics are provided for each extracted entity:
+   - `frequency`: The number of times the entity appears in the workshop
    - `type`: The type of the entity (e.g. Person, Organization, Location)
-2. **[(Multi)Term extraction](https://docs.cortext.net/lexical-extraction/)** to
-   identifiy "terms pertaining to a given [document] corpus... [Including] not
-   only simple terms but also multi-terms (called [n-grams](https://en.wikipedia.org/wiki/N-gram))."
-   The following metrics are priovided to measure the relevance or frequency of
-   each extracted term:
+2. **(Multi)Term extraction** [[5.2]](#52-cortext-documentation-multiterm-extraction)
+   to identifiy terms used during the workshop. Including "not only simple terms
+   but also multi-terms (called [n-grams](https://en.wikipedia.org/wiki/N-gram))."
+   The following metrics are provided for each extracted term:
    - `C-value`: A measure of the frequency of a term
-   - `Gf.idf (G2)`: An alternative frequency measurement of a term
-   - `chi2`: The specificity of a term
-   - `Occurrences`: The number of times a term appears in the corpus
-   - `Cooccurrences`: The number of times a term appears in the corpus
+   - `Cooccurrence`: The number of times the term cooccurs with other terms
    - `Part of speech (POS)`: The part of speech of a term (e.g. Noun, Verb, Adjective)
-3. **[W2V Explorer](https://docs.cortext.net/w2v-explorer/)** to "[learn] the
-   word embedding of every word... in a corpus and [visualize] the position of
-   words in a reduced 2 dimensional space. Words are also clustered according to
-   their proximity."
+3. **W2V Explorer** [[5.3]](#53-cortext-documentation-w2v-explorer) to "[learn]
+   the word embedding of every word... in a corpus and [visualize] the position
+   of words in a reduced 2 dimensional space. Words are also clustered according
+   to their proximity."
 
-<div class="tip">
+<div class="note">
 
-For more information, see the Cortext documentation for details on the methods
-used, the parameters and the metrics provided, and scientific references.
-
-- [Named Entity Recognition](https://docs.cortext.net/named-entity-recognizer/)
-- [(Multi)Term extraction](https://docs.cortext.net/lexical-extraction/)
-- [W2V Explorer](https://docs.cortext.net/w2v-explorer/)
+The following extracted terms have been filtered out (as they are too common):
+_'être', 'est', 'étais', 'était', 'sont', 'avait', 'faire', 'fait', 'va'_
 
 </div>
 
 <div class="note">
   Cortext NER doesn't have as many entity types or configurations for french.
+</div>
+
+<div class="note">
+  While Cortext NER doesn't have as many entity types or configurations for french.
 </div>
 
 ```mermaid
@@ -154,33 +156,45 @@ ${tex`^*`} Rerun task once with each available value<!-- $ -->
 import { downloadSVGButton } from "/components/utilities.js"
 ```
 
+```sql id=extracted_terms
+select
+  *
+from extracted_terms
+where
+  "Main form" != 'être' and
+  "Main form" != 'est' and
+  "Main form" != 'étais' and
+  "Main form" != 'était' and
+  "Main form" != 'sont' and
+  "Main form" != 'avait' and
+  "Main form" != 'faire' and
+  "Main form" != 'fait' and
+  "Main form" != 'va'
+```
+
+```sql id=entities
+select * from entities
+```
+
 ```js
 // for debugging
 // display("entities")
 // display(Inputs.table(entities))
-// display("extracted_terms")
-// display(Inputs.table(extracted_terms))
-```
-
-```js
-// Load Cortext export
-const files = await FileAttachment(
-  "/data/private/VDBI_JS_2025_atelier_NEO_extracted_terms.zip",
-).zip()
-
-const extracted_terms = files.file("extracted-terms.tsv").tsv({ typed: true })
-const entities = files.file("entities.tsv").tsv({ typed: true })
-```
-
-```js
 console.debug("extracted_terms", extracted_terms)
 console.debug("entities", entities)
 ```
 
+Between the extracted entities and terms, we can observe the following:
+
+- There is little overlap between the extracted entities and terms
+  - With the only exception being "PEPR", evoked in group 1
+- There is no overlap between the extracted entities of each group discussion
+- There is little overlap entity reuse within each group discussion (with the
+  exception of the "PEPR" in group 1)
+
 ### 3.1. Extracted Entities
 
-<div id="entities" class="card">
-  <h2>Extracted Entities</h2>
+<div id="entities">
   ${resize((width) =>
     generateEntitiesPlot(entities, width)
   )}<!-- $ -->
@@ -189,12 +203,18 @@ console.debug("entities", entities)
 </div>
 
 ```js
+const entity_type_map = new Map([
+  ["loc", "Location"],
+  ["misc", "Miscellaneous"],
+  ["org", "Organization"],
+])
+
 const generateEntitiesPlot = (data, width) =>
   Plot.auto(data, {
     x: (d) => Number(d.frequency),
     y: "entity",
     fx: "group",
-    color: "type",
+    color: (d) => entity_type_map.get(d.type),
     mark: "bar",
   }).plot({
     width: width,
@@ -208,13 +228,7 @@ const generateEntitiesPlot = (data, width) =>
 
 ### 3.2. Extracted Terms
 
-<div>
-<!-- 
-${resize((width) => extractedTermsPosHtmlTemplate(extracted_terms))}
- -->
-${extractedTermsPosHtmlTemplate(extracted_terms)}
-<!-- $ -->
-</div>
+<div>${extractedTermsPosHtmlTemplate([...extracted_terms])}</div>
 
 ```js
 const pos_header_map = new Map([
@@ -227,86 +241,55 @@ const column_label_map = new Map([
   ["n", "Occurrences"],
   ["C-value", "C-value"],
   ["Gfidf", "gf.idf"],
-  ["Specificity chi2", "Specificity"],
+  // ["Specificity chi2", "Specificity"],
+  // ["Occurrences", "Occurrences"],
   ["Cooccurrences", "Co-occurrences"],
 ])
 
-const plot_option_map = new Map([
-  ["noun", { marginLeft: 180 }],
-  ["verb", { marginLeft: 90 }],
-  ["adj", { marginLeft: 60 }],
-])
-
-const mark_option_map = new Map([
-  ["n", { title: "Noun", subtitle: "Noun", marginLeft: 100 }],
-  ["C-value", { title: "Noun", subtitle: "Noun", marginLeft: 100 }],
-  ["Gfidf", { title: "Noun", subtitle: "Noun", marginLeft: 100 }],
-  ["Specificity chi2", { title: "Noun", subtitle: "Noun", marginLeft: 100 }],
-  ["Cooccurrences", { title: "Noun", subtitle: "Noun", marginLeft: 100 }],
-])
-
-const generateExtractedTermsPlot = (
-  data,
-  title,
-  x_column,
-  x_column_label,
-  mark_options,
-  plot_options,
-) =>
+const generateExtractedTermsPlot = (data, title, x_column, x_column_label) =>
   resize((width) =>
     Plot.plot({
       x: {
         label: x_column_label,
         ticks: d3.max(data.map((d) => d[x_column])) === 1 ? 1 : undefined,
-        axis: "both",
+        // axis: "both",
+        nice: true,
       },
+      fx: { label: "Group" },
       color: { legend: true },
       symbol: { legend: true },
-      width: width,
       title: title,
+      width: width,
+      marginLeft: 180,
       grid: true,
-      marginRight: 50,
-      ...plot_options,
       marks: [
+        Plot.frame(),
         Plot.barX(data, {
           x: (d) => Number(d[x_column]),
-          y: "group",
-          fy: "Main form",
-          fill: (d) => `Group ${d.group}`,
-          ...mark_options,
+          y: "Main form",
+          fx: "group",
+          fill: (d) => pos_header_map.get(d.pos),
+          sort: { y: "-x" },
         }),
       ],
     }),
   )
 
-const extractedTermsPlotHtmlTemplate = (data, pos, column, column_label) =>
-  html`<div id="${pos}-${column}-plot" class="card">
-    ${generateExtractedTermsPlot(
-      data,
-      // data.filter((d) => d.pos === pos),
-      `Extracted ${pos_header_map.get(pos)} by ${column_label_map.get(column)}`,
-      column,
-      column_label,
-      {},
-      plot_option_map.get(pos),
-    )}
-    ${downloadSVGButton(`#${pos}-${column}-plot svg`)}
-  </div>`
-
 const extractedTermsPosHtmlTemplate = (data) =>
-  html`${pos_header_map.entries().map(
-    ([pos, pos_label]) =>
-      html`<div class="grid grid-cols-1">
-        ${column_label_map
-          .entries()
-          .filter(([column, column_label]) =>
-            data.some((d) => d.pos === pos && Number(d[column]) > 0),
-          )
-          .map(([column, column_label]) =>
-            extractedTermsPlotHtmlTemplate(data, pos, column, column_label),
+  html`${column_label_map
+    .entries()
+    .map(
+      ([column, column_label]) =>
+        html`<div id="terms-${column}-plot">
+          ${generateExtractedTermsPlot(
+            data,
+            `Extracted terms by ${column_label}`,
+            column,
+            column_label,
           )}
-      </div>`,
-  )}`
+          ${downloadSVGButton(`#terms-${column}-plot svg`)}
+        </div>`,
+    )}`
 ```
 
 ## 4. Method review
@@ -357,3 +340,14 @@ manually. Notably, existing tools with known limitations could be used in the fu
   hypothesis and/or reference may need data cleaning depending on use-case
 
 </div>
+
+## 5. References
+
+For more information, see the Cortext documentation for details on the methods
+used, the parameters and the metrics provided, and scientific references.
+
+### 5.1. [Cortext documentation: Named Entity Recognition](https://docs.cortext.net/named-entity-recognizer/)
+
+### 5.2. [Cortext documentation: (Multi)Term extraction](https://docs.cortext.net/lexical-extraction/)
+
+### 5.3. [Cortext documentation: W2V Explorer](https://docs.cortext.net/w2v-explorer/)
