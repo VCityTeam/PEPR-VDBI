@@ -66,8 +66,9 @@ console.debug("selected_project_data", selected_project_data)
       ${resize((width) => Plot.plot(
         {
           width: width,
-          height: 800,
+          // height: 800,
           marginTop: 50,
+          marginLeft: cnu_plot_legend_options.marginLeft,
           marginRight: cnu_plot_legend_options.marginRight,
           x: {
             reverse: true,
@@ -79,7 +80,7 @@ console.debug("selected_project_data", selected_project_data)
             Plot.axisY({
               label: 'CNU',
               anchor: 'right',
-              lineWidth: 15,
+              lineWidth: 30,
               textOverflow: "ellipsis",
             }),
             Plot.barX(selected_project_data.cnu_count, {
@@ -251,9 +252,9 @@ console.debug("selected_project_data", selected_project_data)
       }
     })}
     <!-- $ -->
-    ${resize((width) =>
+    <!-- ${resize((width) =>
       setGraph(selected_project_data.theme_graph, width).getSVG()
-    )}
+    )} -->
     <!-- $ -->
     ${downloadSVGButton("#graph-container svg")}
     <!-- $ -->
@@ -313,9 +314,10 @@ const getGraph = () => graph
 ```js
 const cnu_plot_legend_options = {
   marginLeft: 18,
-  marginRight: 175,
-  domain: [1, 0],
+  marginRight: 300,
+  domain: [1, 0.1],
   range: [1, 0.4],
+  format: (d) => Number(d),
   type: "log",
 }
 
@@ -323,9 +325,10 @@ const cnu_plot_legend = resize(
   (width) =>
     htl.html`${Plot.legend({
       label: "Droit, économie et gestion",
+      width: width,
       marginLeft: cnu_plot_legend_options.marginLeft,
       marginRight: cnu_plot_legend_options.marginRight,
-      width: width,
+      tickFormat: cnu_plot_legend_options.format,
       color: {
         domain: cnu_plot_legend_options.domain,
         range: cnu_plot_legend_options.range,
@@ -335,9 +338,10 @@ const cnu_plot_legend = resize(
     })}
   ${Plot.legend({
     label: "Lettres et sciences humaines",
+    width: width,
     marginLeft: cnu_plot_legend_options.marginLeft,
     marginRight: cnu_plot_legend_options.marginRight,
-    width: width,
+    tickFormat: cnu_plot_legend_options.format,
     color: {
       domain: cnu_plot_legend_options.domain,
       range: cnu_plot_legend_options.range,
@@ -347,9 +351,10 @@ const cnu_plot_legend = resize(
   })}
   ${Plot.legend({
     label: "Sciences",
+    width: width,
     marginLeft: cnu_plot_legend_options.marginLeft,
     marginRight: cnu_plot_legend_options.marginRight,
-    width: width,
+    tickFormat: cnu_plot_legend_options.format,
     color: {
       domain: cnu_plot_legend_options.domain,
       range: cnu_plot_legend_options.range,
@@ -359,9 +364,10 @@ const cnu_plot_legend = resize(
   })}
   ${Plot.legend({
     label: "Sections de santé",
+    width: width,
     marginLeft: cnu_plot_legend_options.marginLeft,
     marginRight: cnu_plot_legend_options.marginRight,
-    width: width,
+    tickFormat: cnu_plot_legend_options.format,
     color: {
       domain: cnu_plot_legend_options.domain,
       range: cnu_plot_legend_options.range,
@@ -371,9 +377,10 @@ const cnu_plot_legend = resize(
   })}
   ${Plot.legend({
     label: "Pluridisciplinaire",
+    width: width,
     marginLeft: cnu_plot_legend_options.marginLeft,
     marginRight: cnu_plot_legend_options.marginRight,
-    width: width,
+    tickFormat: cnu_plot_legend_options.format,
     color: {
       domain: cnu_plot_legend_options.domain,
       range: cnu_plot_legend_options.range,
@@ -385,9 +392,10 @@ const cnu_plot_legend = resize(
   })}
   ${Plot.legend({
     label: "Autre",
+    width: width,
     marginLeft: cnu_plot_legend_options.marginLeft,
     marginRight: cnu_plot_legend_options.marginRight,
-    width: width,
+    tickFormat: cnu_plot_legend_options.format,
     color: {
       domain: cnu_plot_legend_options.domain,
       range: cnu_plot_legend_options.range,
