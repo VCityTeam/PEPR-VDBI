@@ -2,10 +2,11 @@
 style: /css/vdbi-page.css
 sql:
   entities: "/data/private/VDBI_JS_2025_atelier_NEO_entities.tsv"
-  extracted_terms: "/data/private/VDBI_JS_2025_atelier_NEO_extracted_terms.tsv"
-  nouns: "/data/private/VDBI_JS_2025_atelier_NEO_entities_and_nouns.tsv"
-  verbs: "/data/private/VDBI_JS_2025_atelier_NEO_verbs.tsv"
-  adj: "/data/private/VDBI_JS_2025_atelier_NEO_adj.tsv"
+  # extracted_terms: "/data/private/VDBI_JS_2025_atelier_NEO_extracted_terms.tsv"
+  nouns_by_group: "/data/private/VDBI_JS_2025_atelier_NEO_nouns_by_group.tsv"
+  nouns: "/data/private/VDBI_JS_2025_atelier_NEO_nouns.tsv"
+  # verbs: "/data/private/VDBI_JS_2025_atelier_NEO_verbs.tsv"
+  # adj: "/data/private/VDBI_JS_2025_atelier_NEO_adj.tsv"
 ---
 
 # VDBI JS 2025 Lexicometric Analysis <!-- omit in toc -->
@@ -73,7 +74,8 @@ and entities from a corpus. This analysis uses three main Cortext tasks:
 <div class="note">
 
 The following extracted terms have been filtered out (as they are too common):
-_'être', 'est', 'étais', 'était', 'sont', 'avait', 'faire', 'fait', 'va'_
+_'être', 'est', 'étais', 'était', 'été', 'sont', 'avait', 'faire', 'fait', 'peut',_
+_'va'_
 
 </div>
 
@@ -153,35 +155,19 @@ ${tex`^*`} Rerun task once with each available value<!-- $ -->
 ## 3. Lexical Analysis Results
 
 ```js
-import { downloadSVGButton } from "/components/utilities.js"
+import { downloadSVGButton, downloadTableButton } from "/components/utilities.js"
 ```
 
-```sql id=extracted_terms
-select
-  *
-from extracted_terms
-where
-  "Main form" != 'être' and
-  "Main form" != 'est' and
-  "Main form" != 'étais' and
-  "Main form" != 'était' and
-  "Main form" != 'sont' and
-  "Main form" != 'avait' and
-  "Main form" != 'faire' and
-  "Main form" != 'fait' and
-  "Main form" != 'va'
+```sql id=nouns_by_group
+select * from nouns_by_group
+```
+
+```sql id=nouns
+select * from nouns
 ```
 
 ```sql id=entities
 select * from entities
-```
-
-```js
-// for debugging
-// display("entities")
-// display(Inputs.table(entities))
-console.debug("extracted_terms", extracted_terms)
-console.debug("entities", entities)
 ```
 
 Between the extracted entities and terms, we can observe the following:
@@ -205,8 +191,8 @@ Between the extracted entities and terms, we can observe the following:
 ```js
 const entity_type_map = new Map([
   ["loc", "Location"],
-  ["misc", "Miscellaneous"],
   ["org", "Organization"],
+  ["misc", "Miscellaneous"],
 ])
 
 const generateEntitiesPlot = (data, width) =>
@@ -228,22 +214,26 @@ const generateEntitiesPlot = (data, width) =>
 
 ### 3.2. Extracted Terms
 
-<div>${extractedTermsPosHtmlTemplate([...extracted_terms])}</div>
+<div>${extractedTermsHtmlTemplate([...nouns])}</div>
+
+<div>${extractedTermsByGroupHtmlTemplate([...nouns_by_group])}</div>
 
 ```js
-const pos_header_map = new Map([
-  ["noun", "Nouns"],
-  ["verb", "Verbs"],
-  ["adj", "Adjectives"],
-])
-
 const column_label_map = new Map([
-  ["n", "Occurrences"],
+  // ["n", "N"],
   ["C-value", "C-value"],
-  ["Gfidf", "gf.idf"],
+  ["Gfidf", "G2"],
+  ["Specificity chi2", "Specificity (X^2)"],
+  ["Occurrences", "Occurrences"],
+  ["Cooccurrences", "Co-occurrences"],
+])
+const column_label_map_by_group = new Map([
+  // ["n", "N"],
+  ["C-value", "C-value"],
+  ["Gfidf", "G2"],
   // ["Specificity chi2", "Specificity"],
   // ["Occurrences", "Occurrences"],
-  ["Cooccurrences", "Co-occurrences"],
+  // ["Cooccurrences", "Co-occurrences"],
 ])
 
 const generateExtractedTermsPlot = (data, title, x_column, x_column_label) =>
@@ -255,8 +245,6 @@ const generateExtractedTermsPlot = (data, title, x_column, x_column_label) =>
         // axis: "both",
         nice: true,
       },
-      fx: { label: "Group" },
-      color: { legend: true },
       symbol: { legend: true },
       title: title,
       width: width,
@@ -267,21 +255,69 @@ const generateExtractedTermsPlot = (data, title, x_column, x_column_label) =>
         Plot.barX(data, {
           x: (d) => Number(d[x_column]),
           y: "Main form",
-          fx: "group",
-          fill: (d) => pos_header_map.get(d.pos),
+          fill: "var(--theme-foreground-focus-alt)",
           sort: { y: "-x" },
         }),
       ],
     }),
   )
 
-const extractedTermsPosHtmlTemplate = (data) =>
-  html`${column_label_map
+const generateExtractedTermsByGroupPlot = (
+  data,
+  title,
+  x_column,
+  x_column_label,
+) =>
+  resize((width) =>
+    Plot.plot({
+      x: {
+        label: x_column_label,
+        ticks: d3.max(data.map((d) => d[x_column])) === 1 ? 1 : undefined,
+        // axis: "both",
+        nice: true,
+      },
+      fx: { label: "Group" },
+      symbol: { legend: true },
+      title: title,
+      width: width,
+      marginLeft: 180,
+      grid: true,
+      marks: [
+        Plot.frame(),
+        Plot.barX(data, {
+          x: (d) => Number(d[x_column]),
+          y: "Main form",
+          fill: "var(--theme-foreground-focus-alt)",
+          fx: "group",
+          sort: { y: "-x" },
+        }),
+      ],
+    }),
+  )
+
+const extractedTermsHtmlTemplate = (data) =>
+  html`<div class="grid grid-cols-2">${column_label_map
+    .entries()
+    .map(
+      ([column, column_label]) =>
+        html`<div id="all-terms-${column}-plot" class="grid-colspan-1">
+          ${generateExtractedTermsPlot(
+            data,
+            `Extracted terms by ${column_label}`,
+            column,
+            column_label,
+          )}
+          ${downloadSVGButton(`#all-terms-${column}-plot svg`)}
+        </div>`,
+    )}</div>`
+
+const extractedTermsByGroupHtmlTemplate = (data) =>
+  html`${column_label_map_by_group
     .entries()
     .map(
       ([column, column_label]) =>
         html`<div id="terms-${column}-plot">
-          ${generateExtractedTermsPlot(
+          ${generateExtractedTermsByGroupPlot(
             data,
             `Extracted terms by ${column_label}`,
             column,
