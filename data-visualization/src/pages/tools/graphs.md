@@ -76,7 +76,7 @@ display(
 )
 ```
 
-Orpaned nodes
+Orphaned nodes
 
 ```js
 display(

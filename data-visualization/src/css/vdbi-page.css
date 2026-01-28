@@ -1,3 +1,7 @@
 @import url("observablehq:default.css");
 @import url("observablehq:theme-air.css");
 @import url("vdbi-default.css");
+
+.div {
+  max-width: 640px;
+}
