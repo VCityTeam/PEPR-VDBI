@@ -64,7 +64,7 @@ export default {
       pages: [
         {
           name: 'NEO/SoLocale Lexicometric analysis',
-          path: 'pages/reports/js-2025-workshop-analysis',
+          path: 'pages/reports/js-2025-workshop-analysis-fr',
         },
         // {
         //   name: 'JS 2025 Round Table Lexicometric analysis',

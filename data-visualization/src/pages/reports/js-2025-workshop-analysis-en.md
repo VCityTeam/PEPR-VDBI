@@ -13,6 +13,8 @@ sql:
 
 ## NEO/SoLocale Workshop <!-- omit in toc -->
 
+Author: Diego Vinasco-Alvarez (<diego.vinasco-alvarez@cnrs.fr>) - PEPR VDBI
+
 ## 1. Context
 
 This report provides a lexicometric analysis of the NEO/SoLocale workshop held
@@ -176,7 +178,21 @@ The following parameters were used to configure the Cortext tasks as of 19/12/20
 import {
   downloadSVGButton,
   downloadTableButton,
+  cropText,
 } from "/components/utilities.js"
+import { Graph } from "/components/graph.js"
+import {
+  freq_words,
+  group_freq_words,
+  graph_config,
+  entity_type_map,
+  generateEntitiesPlot,
+  column_title_map,
+  column_label_map,
+  generateExtractedTermsPlot,
+  extractedTermsHtmlTemplate,
+  extractedTermsByGroupHtmlTemplate,
+} from "./js-2025-workshop-analysis.js"
 ```
 
 ```sql id=nouns_by_group
@@ -201,163 +217,78 @@ follows:
 - **Group 3:** "Comment évaluer et améliorer les processus
   (de coconstruction, d’apprentissage réciproque) ?"
 
-Between the [extracted entities](#3-1-extracted-entities-by-group)
-(identified persons, places, organizations, etc.) and the
-[extracted terms](#3-3-extracted-terms-by-frequency), we can observe the following:
+Looking at the top 6 most frequently used terms overall and by group, we can see
+that **#question**", **#territoire**", **#acteurs**", **#projet**", and **#processus-de-co-construction**
+are the most commonly used terms.
+
+| Top 6 terms by frequency          | Top 6 terms by group frequency    |
+| --------------------------------- | --------------------------------- |
+| **#question**                     | **#territoire**                   |
+| **#territoire**                   | #sujet                            |
+| **#acteurs**                      | **#question**                     |
+| #notion                           | **#acteurs**                      |
+| #projet                           | #métropole                        |
+| **#processus-de-co-construction** | **#processus-de-co-construction** |
+
+${new Graph({nodes: freq_words([...nouns])}, graph_config).getSVG()}
+
+<!-- $ -->
+<figcaption>Fig 2. Top 10 terms by frequency</figcaption>
+
+${new Graph({nodes: group_freq_words([...nouns])}, graph_config).getSVG()}
+
+<!-- $ -->
+<figcaption>Fig 3. Top 10 terms by group frequency</figcaption>
+
+Interestingly, group 3 evokes the term **#processus** and **#processus-de-co-construction**
+more than group 2 despite both groups' questions being about processes (fig 5).
+This seems to be due to the fact that group 2's presentation focused more on the
+transposable elements of the process of documentation than _how_ to document it.
+
+Between the extracted entities (figures 3-6) and the extracted terms, we can also
+observe the following:
 
 - There is little overlap between the extracted entities and terms
   - With the only exception being "PEPR", evoked by group 1
 - There is no overlap between the extracted entities of each group presentation
 - There is little overlap entity reuse within each group presentation (with the
   exception of the "PEPR" in group 1)
-- Looking at the top 6 most frequently used terms overall and by group, we can see
-  that **#question**", **#territoire**", **#acteurs**", **#projet**", and **#processus-de-co-construction**
-  are the most commonly used terms.
 
-  | Top 6 by frequency                | Top 6 by group frequency          |
-  | --------------------------------- | --------------------------------- |
-  | **#question**                     | **#territoire**                   |
-  | **#territoire**                   | #sujet                            |
-  | **#acteurs**                      | **#question**                     |
-  | #notion                           | **#acteurs**                      |
-  | #projet                           | #métropole                        |
-  | **#processus-de-co-construction** | **#processus-de-co-construction** |
+Looking at the extracted entities and terms that were only evoked by a singular
+group we can see that keywords in the respective group questions are also evoked
+during each presentation. Notably the keywords that are not evoked in the group
+questions may give (somewhat vague) insight into how each group responded to their
+question.
 
-- Interestingly, group 3 evokes the term **#processus** and **#processus-de-co-construction**
-  more than group 2 despite both groups' question being about processes [[3.2]](#3-2-extracted-terms-by-frequency-by-group).
-  This seems to be due to the fact that group 2's presentation focused more on the
-  transposable elements of the process of documentation than _how_ to document it.
-- Looking at the extracted entities and terms by group
+| Top 5 unique group 1 terms            | Top 5 unique Group 2 terms | Top 5 unique Group 3 terms    |
+| ------------------------------------- | -------------------------- | ----------------------------- |
+| #capitalisation-et-de-la-transmission | #projet                    | #processus-de-co-construction |
+| #comité-des-parties-prenantes         | #sujet                     | #notion                       |
+| #premier-groupe                       | #métropole                 | #volet                        |
+| #PEPR                                 | #expertise-locale          | #évaluation                   |
+|                                       | #villes-moyennes           | #apprendisage-réciproque      |
 
-### 3.1. Extracted Entities by group
+${resize((width) => generateEntitiesPlot(entities, width))}<!-- $ -->
 
-<div id="entities">
-  ${resize((width) =>
-    generateEntitiesPlot(entities, width)
-  )}<!-- $ -->
-  <!-- ${downloadSVGButton("#entities svg")} -->
+<!-- ${downloadSVGButton("#entities svg")} -->
 
-</div>
+${extractedTermsByGroupHtmlTemplate([...nouns_by_group])}<!-- $ -->
 
-```js
-const entity_type_map = new Map([
-  ["loc", "Location"],
-  ["org", "Organization"],
-  ["misc", "Miscellaneous"],
-])
-
-const generateEntitiesPlot = (data, width) =>
-  Plot.auto(data, {
-    x: (d) => Number(d.frequency),
-    y: "entity",
-    fx: "group",
-    color: (d) => entity_type_map.get(d.type),
-    mark: "bar",
-  }).plot({
-    width: width,
-    y: { label: "Entity", grid: true },
-    x: { label: "Frequency" },
-    fx: { label: "Group" },
-    color: { legend: true },
-    marginLeft: 150,
-  })
-```
-
-${extractedTermsByGroupHtmlTemplate([...nouns_by_group])}
-
-${extractedTermsHtmlTemplate([...nouns])}
-
-```js
-const column_title_map = new Map([
-  ["C-value", "3.3. Terms by frequency"],
-  ["Gfidf", "3.4. Terms by group frequency"],
-  // ["Specificity chi2", "3.5. Terms by specificity"],
-  ["Occurrences", "3.6. Terms by group occurrences"],
-  ["Cooccurrences", "3.7. Terms by group co-occurrences"],
-])
-
-const column_label_map = new Map([
-  ["C-value", "C-value"],
-  ["Gfidf", "G2 (gf.idf)"],
-  // ["Specificity chi2", "X^2"],
-  ["Occurrences", "Group occurrences"],
-  ["Cooccurrences", "Group co-occurrences"],
-])
-
-const generateExtractedTermsPlot = (data, x_column) =>
-  resize((width) =>
-    Plot.plot({
-      x: {
-        label: column_label_map.get(x_column),
-        ticks: d3.max(data.map((d) => d[x_column])) === 1 ? 1 : undefined,
-        // axis: "both",
-        nice: true,
-      },
-      symbol: { legend: true },
-      width: width,
-      marginLeft: 180,
-      grid: true,
-      marks: [
-        Plot.frame(),
-        Plot.barX(data, {
-          x: (d) => Number(d[x_column]),
-          y: "Main form",
-          fill: "var(--theme-foreground-focus-alt)",
-          sort: { y: "-x" },
-        }),
-      ],
-    }),
-  )
-
-const extractedTermsHtmlTemplate = (data) =>
-  html`<div class="grid grid-cols-2">
-    ${column_title_map.keys().map(
-      (column) =>
-        html`<div>
-          <h3>${column_title_map.get(column)}</h3>
-          <div id="all-terms-${column}-plot">
-            ${generateExtractedTermsPlot(data, column)}
-          </div>
-        </div>`,
-    )}
-  </div>`
-// ${downloadSVGButton(`#all-terms-${column}-plot svg`)}
-
-const extractedTermsByGroupHtmlTemplate = (data) =>
-  html`<h3>3.2. Extracted terms by frequency by group</h3>
-    ${resize((width) =>
-      Plot.plot({
-        x: {
-          label: column_label_map.get("C-value"),
-          ticks: d3.max(data.map((d) => d["C-value"])) === 1 ? 1 : undefined,
-          // axis: "both",
-          nice: true,
-        },
-        fx: { label: "Group" },
-        symbol: { legend: true },
-        width: width,
-        marginLeft: 180,
-        grid: true,
-        marks: [
-          Plot.frame(),
-          Plot.barX(data, {
-            x: (d) => Number(d["C-value"]),
-            y: "Main form",
-            fill: "var(--theme-foreground-focus-alt)",
-            fx: "group",
-            sort: { y: "-x" },
-          }),
-        ],
-      }),
-    )}`
-// ${downloadSVGButton(`#terms-${"C-value"}-plot svg`)}
-```
+${extractedTermsHtmlTemplate([...nouns])}<!-- $ -->
 
 ## 4. Method review
 
+Two aspects of the methodology are reviewed in this section:
+
+1. A quantitative measure of the effectiveness of **Whisper** to automatically generate
+   transcripts in a real-world setting
+2. An informal review of the usefullness of **Cortext** and this **lexical analyses**
+   to extract terms from the workshop transcripts compared to a manual analysis
+
 ### 4.1. Whisper error rate measurement
 
-The Whisper transcription accuracy was measured using the [Word Error Rate (WER)](https://en.wikipedia.org/wiki/Word_error_rate)
+The Whisper transcription accuracy was measured using the
+[Word Error Rate (WER) [5.3]](https://en.wikipedia.org/wiki/Word_error_rate)
 
 ```tex
 WER=\frac{S+D+I}{N}=\frac{S+D+I}{S+D+C}
@@ -368,7 +299,7 @@ Where
 - ${tex`S`} is the number of substitutions,
 - ${tex`D`} is the number of deletions,
 - ${tex`I`} is the number of insertions,
-- ${tex`N`} is the number of words in the reference (N=S+D+C),
+- ${tex`N`} is the number of words in the reference ${tex`(N=S+D+C)`},
 - ${tex`C`} is the number of correct words
 
 For this study words are separated by spaces (i.e., '_c'est_' is considered
@@ -386,8 +317,15 @@ The following table shows the WER for each group presentation:
 <div class="note">
 
 It should be noted that a large majority of measured deletions are clustered
-together. Surprisingly, Whisper's errors often materialize as several
-repetitive, duplicate lines. These are easy to find and correct manually.
+together. Surprisingly, Whisper's errors often materialized as several repetitive,
+duplicate lines.
+
+These are very easy to find and correct manually, which means that the WER score
+may be a pessimistic measure of the actual effort required to correct the transcriptions.
+
+Future experiments should consider measuring the WER after only removing the
+repetitive lines to get a better estimate of the effort required to _quickly_ but
+not completely correct the transcriptions.
 
 </div>
 
@@ -402,13 +340,42 @@ manually. Notably, existing tools with known limitations could be used in the fu
 
 </div>
 
-## 5. References and links
+### 4.2. Cortext vs manual analysis
 
-For more information, see the Cortext documentation for details on the methods
-used, the parameters and the metrics provided, and scientific references.
+A synthesis of the workshop was proposed by the NEO project, which is comparitavly
+rich when compared to this lexical analysis. Many more conclusions and
+observations are drawn with more detail and meaning in the manual synthesis. This
+highlights the main limitation of Cortext in this application: _Cortext is intended_
+_to analyse document corpuses at scale_.
+
+In addition, the approach is limited by the quality of the transcriptions; much
+of the recorded sessions were not included as the audio quality was insufficient
+and inconsistent. Although manually reviewing the transcripts is always necessary
+to some degree, even in a manual approach. Some manual corrections and methodology
+adustment were also necessary for this analysis. For example, the detected location
+entity `France` was initially identified as `de France`.
+
+However, this methodology still has applications in the following settings, given
+that the transcription quality is sufficient:
+
+- When the number of transcriptions is too large for a manual analysis
+- When the goal of the analysis is to get a general overview of the content or to
+  supplement the conclusions of a manual analysis
+- When a domain expert is not available to perform a manual analysis
+
+<div class="note">
+
+The author of this analysis is not as knowledgeable in the domain
+of urban planning and development as the workshop participants or the author
+of the manual analysis and could not have performed a manual analysis of the
+same quality.
+
+</div>
+
+## 5. References and links
 
 ### 5.1. [Cortext documentation: Named Entity Recognition](https://docs.cortext.net/named-entity-recognizer/)
 
 ### 5.2. [Cortext documentation: (Multi)Term extraction](https://docs.cortext.net/lexical-extraction/)
 
-### 5.3. [Cortext documentation: W2V Explorer](https://docs.cortext.net/w2v-explorer/)
+### 5.3. [Word Error Rate](https://en.wikipedia.org/wiki/Word_error_rate)
