@@ -277,7 +277,9 @@ export class Graph {
    * @param {object[]} data.nodes - an array of node objects with properties:
    *    nodes: array<{
    *      id:    string,
-   *      color: number
+   *      label: string,
+   *      color: number,
+   *      ...
    *    }>,
    * @param {object[]} data.links - an array of link objects with properties:
    *    links: array<{
@@ -302,8 +304,8 @@ export class Graph {
    * @param {Function} options.xMap - horizontal position accessor
    * @param {Function} options.yMap - vertical position accessor
    * @param {Function} options.color - color scheme
-   * @param {number} options.fontSize - label font size
-   * @param {number} options.r - node radius
+   * @param {Function} options.fontSize - label font size
+   * @param {Function} options.r - node radius
    * @param {number} options.textLength - label cutoff length
    * @param {number} options.stroke - stroke for links
    * @param {number} options.strokeWidth - stroke width for links
@@ -315,7 +317,7 @@ export class Graph {
    * @param {number} options.nodeLabelOpacity - default node label opacity
    * @param {number} options.linkLabelOpacity - default link label opacity
    * @param {number} options.highlightOpacity - mouseover label opacity
-   * @param {number} options.nodeLabelOffset - move node label placement
+   * @param {Function} options.nodeLabelOffset - move node label placement
    * @param {element} options.legend - legend for the graph
    * @param {number} options.legendX - horizontal location of legend
    * @param {number} options.legendY - vertical location of legend
@@ -337,12 +339,12 @@ export class Graph {
       labelMap = (d) => d.label,
       relationMap = (d) => d.label,
       valueMap = (d) => d.type,
-      chargeStrength = -30,
+      chargeStrength = (d) => d.r || -30,
       xMap = (d) => d.fx || null,
       yMap = (d) => d.fy || null,
       color = d3.scaleOrdinal(d3.schemeCategory10),
       fontSize = 10,
-      r = 3,
+      r = (d) => d.r || 3,
       textLength = 15,
       stroke = "black",
       strokeWidth = 0.5,
@@ -354,7 +356,7 @@ export class Graph {
       nodeLabelOpacity = 0.1,
       linkLabelOpacity = 0.1,
       highlightOpacity = 0.7,
-      nodeLabelOffset = r + 1.5,
+      nodeLabelOffset = (d) => r(d) + 1.5,
       legend = circleLegend(
         [
           ...new Set(
@@ -377,7 +379,7 @@ export class Graph {
       ),
       legendX = -width / 2 + 10,
       legendY = -height / 2 + 10,
-    },
+    } = {},
   ) {
     this.nodes = [...nodes].map((d) => ({ ...d }))
     this.links = [...links].map((d) => ({ ...d }))
@@ -446,7 +448,7 @@ export class Graph {
       .attr("class", "link_labels")
       .style("text-anchor", "middle")
       .style("font-family", "Arial")
-      .style("font-size", this.fontSize)
+      // .style("font-size", this.fontSize)
       .style("fill", this.textColor)
       // .style('fill', 'white')
       // .style('visibility', 'hidden')
@@ -458,7 +460,7 @@ export class Graph {
       .attr("class", "node_labels")
       .style("text-anchor", "middle")
       .style("font-family", "Arial")
-      .style("font-size", this.fontSize)
+      // .style("font-size", this.fontSize)
       .style("fill", this.textColor)
       .style("opacity", this.nodeLabelOpacity)
       // .style('fill', 'white')
@@ -472,7 +474,7 @@ export class Graph {
       legend_svg.append(() => legend)
     }
 
-    this.simulation = this.createSimulation(this.performanceMode)
+    this.simulation = this.createSimulation()
     Object.assign(this.svg.node(), { simulation: this.simulation })
 
     this.update()
@@ -519,6 +521,7 @@ export class Graph {
       .data(this.nodes)
       .join("text")
       .text((d) => cropText(this.labelMap(d), this.textLength))
+      .attr("font-size", this.fontSize)
     // .attr("stroke-linejoin", "round")
     // .attr("stroke-width", this.haloWidth)
     // .attr("stroke", this.halo)
@@ -528,6 +531,7 @@ export class Graph {
       .data(this.links)
       .join("text")
       .text((d) => cropText(this.relationMap(d) || "", this.textLength))
+      .attr("font-size", this.fontSize)
     // .attr("stroke-linejoin", "round")
     // .attr("stroke-width", this.haloWidth)
     // .attr("stroke", this.halo)
@@ -592,22 +596,25 @@ export class Graph {
 
   /**
    * Start a force simulation from graph data
-   *
-   * @param {boolean} performanceMode - whether to use performance mode
-   *
    * @returns {d3.forceSimulation} a D3 force simulation object
    */
-  createSimulation = (performanceMode) =>
+  createSimulation = () =>
     d3
       .forceSimulation(this.nodes)
-      .alphaDecay(performanceMode ? 0.1 : undefined)
       .force("link", d3.forceLink(this.links).id(this.keyMap))
-      .force("charge", d3.forceManyBody().strength(this.chargeStrength))
-      .force("collide", d3.forceCollide().radius(this.r).iterations(3))
+      .force(
+        "charge",
+        d3.forceManyBody().strength(this.chargeStrength).distanceMax(300),
+      )
+      .force(
+        "collide",
+        d3
+          .forceCollide()
+          .radius((d) => this.r(d) * 1.1)
+          .iterations(3),
+      )
       .force("x", d3.forceX())
       .force("y", d3.forceY())
-      .force("fx", this.xMap)
-      .force("fy", this.yMap)
       .on("tick", this.handleTick())
 
   /**
@@ -685,11 +692,11 @@ export class Graph {
         .attr(
           "transform",
           "translate(" +
-            event.transform.k +
             event.transform.x +
             "," +
             event.transform.y +
             ") scale(" +
+            event.transform.k +
             ")",
         )
     }
@@ -705,7 +712,7 @@ export class Graph {
         .attr("cy", (d) => d.y)
       this.getNodeLabels()
         .attr("x", (d) => d.x)
-        .attr("y", (d) => d.y - this.nodeLabelOffset)
+        .attr("y", (d) => d.y - this.nodeLabelOffset(d))
       this.getLinks()
         .attr("x1", (d) => d.source.x)
         .attr("y1", (d) => d.source.y)
