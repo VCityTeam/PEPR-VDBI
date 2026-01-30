@@ -10,8 +10,12 @@
       "li",
       "a",
       "span",
-      "code"
+      "code",
+      "figcaption"
     ]
   },
-  "first-line-h1": false
+  "first-line-h1": false,
+  "line-length": {
+    "tables": false
+  }
 }
