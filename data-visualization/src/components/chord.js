@@ -61,6 +61,7 @@ export function chordDiagram(
 ) {
   // init chord, color, and svg objects
   // const chord =
+  let selectedGroupIndex = null
 
   const arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius)
 
@@ -113,8 +114,8 @@ export function chordDiagram(
         innerRadius *
         Math.cos(
           (d.source.endAngle - d.source.startAngle) / 2 +
-            d.source.startAngle -
-            Math.PI / 2,
+          d.source.startAngle -
+          Math.PI / 2,
         ),
     )
     .attr(
@@ -123,8 +124,8 @@ export function chordDiagram(
         innerRadius *
         Math.sin(
           (d.source.endAngle - d.source.startAngle) / 2 +
-            d.source.startAngle -
-            Math.PI / 2,
+          d.source.startAngle -
+          Math.PI / 2,
         ),
     )
     // Find the location where the target chord starts
@@ -134,8 +135,8 @@ export function chordDiagram(
         innerRadius *
         Math.cos(
           (d.target.endAngle - d.target.startAngle) / 2 +
-            d.target.startAngle -
-            Math.PI / 2,
+          d.target.startAngle -
+          Math.PI / 2,
         ),
     )
     .attr(
@@ -144,8 +145,8 @@ export function chordDiagram(
         innerRadius *
         Math.sin(
           (d.target.endAngle - d.target.startAngle) / 2 +
-            d.target.startAngle -
-            Math.PI / 2,
+          d.target.startAngle -
+          Math.PI / 2,
         ),
     )
 
@@ -167,9 +168,25 @@ export function chordDiagram(
   group
     .append("path")
     .attr("fill", (d) => color(names[d.index]))
+    .classed("selected", false)
     .attr("d", arc)
-    .on("mouseover", (_e, d) => fade(0.1, d))
-    .on("mouseout", (_e, d) => fade(opacityDefault, d))
+    .on("mouseover", (_e, d) => {
+      if (selectedGroupIndex === null) fade(0.1, d)
+    })
+    .on("mouseout", (_e, d) => {
+      if (selectedGroupIndex === null) fade(opacityDefault, d)
+    })
+    .on("click", (e, d) => {
+      if (selectedGroupIndex === null || selectedGroupIndex !== d.index) {
+        // select group
+        selectedGroupIndex = d.index
+        fade(0.1, d)
+      } else {
+        // deselect group
+        selectedGroupIndex = null
+        fade(opacityDefault, d)
+      }
+    })
 
   group
     .append("title")
@@ -222,14 +239,11 @@ export function chordDiagram(
     .append("title")
     .text(
       (d) =>
-        `${formatValue(d.source.value)} ${names[d.target.index]} → ${
-          names[d.source.index]
-        }${
-          d.source.index === d.target.index
-            ? ""
-            : `\n${formatValue(d.target.value)} ${names[d.source.index]} → ${
-                names[d.target.index]
-              }`
+        `${formatValue(d.source.value)} ${names[d.target.index]} → ${names[d.source.index]
+        }${d.source.index === d.target.index
+          ? ""
+          : `\n${formatValue(d.target.value)} ${names[d.source.index]} → ${names[d.target.index]
+          }`
         }`,
     )
 
