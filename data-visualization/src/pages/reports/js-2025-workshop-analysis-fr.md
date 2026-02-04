@@ -11,30 +11,32 @@ sql:
 
 # VDBI JS 2025 Analyse lexicométrique <!-- omit in toc -->
 
-## Atélier NEO/SoLocale <!-- omit in toc -->
+## Atelier NEO/SoLocal <!-- omit in toc -->
 
-Auteur: Diego Vinasco-Alvarez (<diego.vinasco-alvarez@cnrs.fr>) - PEPR VDBI
+Auteur: Diego Vinasco-Alvarez; PEPR VDBI; <diego.vinasco-alvarez@cnrs.fr>
 
 ## 1. Contexte
 
-Ce rapport présente une analyse lexicométrique de l'atelier NEO/SoLocale qui
-s'est tenu le 5 novembre 2025 lors des [Journées Scientifiques PEPR VDBI 2025](https://pepr-vdbi.fr/evenements/journees-scientifiques-annuelles-villes-durables-batiments-innovants-2025).
+Ce rapport présente une analyse lexicométrique de l'atelier NEO/SoLocal qui
+s'est tenu le 5 novembre 2025 lors des
+[Journées Scientifiques PEPR VDBI 2025](https://pepr-vdbi.fr/evenements/journees-scientifiques-annuelles-villes-durables-batiments-innovants-2025).
 
 L'objectif de cette analyse est d'identifier automatiquement les mots-clés et les
-entités les plus pertinents notés au cours de l'atelier. En outre, ce rapport identifie
-les limites connues de la méthodologie proposée et les compare à une analyse manuelle.
+entités les plus pertinents notés durant l'atelier. En outre, ce rapport identifie
+les limites identifées de la méthodologie proposée et les compare à une analyse
+manuelle.
 
-L'atelier NEO/SoLocale était principalement composé de discussions et d'activités
-de groupe. Ce rapport se concentrera sur l'activité de synthèse finale
-« _World café_ », au cours de laquelle 3 groupes de participants ont été invités
-à présenter les conclusions de leur travail de groupe.
+L'atelier NEO/SoLocal était principalement composé de discussions et d'activités
+de groupe. Ce rapport se concentrera sur l'activité de synthèse finale du
+« _World café_ », dans laquelle trois groupes de participants ont présenté les
+résultats de leur travail de groupe.
 
 Le thème de l'activité est :
 
-> "Comment garder la mémoire et retranscrire les démarches de collaboration et
+> « Comment garder la mémoire et retranscrire les démarches de collaboration et
 > de co-création des outils de la connaissance en vue de la réplicabilité sur
 > d’autres territoires ? Illustration à travers le cas d’usage Sol autour de la
-> problématique plus spécifique des données."
+> problématique plus spécifique des données. »
 
 Pour répondre à cette question, une ou plusieurs questions ont été attribuées à
 chaque groupe :
@@ -47,26 +49,26 @@ chaque groupe :
 >    réciproque) ?
 
 Les autres activités de l'atelier, y compris les sections consacrées aux questions,
-ne seront malheureusement pas analysées en raison de la qualité insuffisante de
+ne seront pas analysées en raison de la qualité insuffisante de
 l'enregistrement audio de l'atelier.
 
 Le rapport est structuré comme suit :
 
-- La [section 2](#2-methode) détaille la méthodologie proposée et les étapes pour
+- La [section 2](#2-méthode) détaille la méthodologie proposée et les étapes pour
   la reproductibilité
 - La [section 3](#3-résultats-de-lanalyse-lexicale) présente les résultats de l'analyse
   lexicométrique
-- La [section 4](#4-review-de-la-methode) passe en revue les limites de la méthodologie
+- La [section 4](#4-revue-de-la-méthode) passe en revue les limites de la méthodologie
   proposée
 
-## 2. Methode
+## 2. Méthode
 
 Le diagramme ci-dessous illustre le processus d'analyse.
 
 Tout d'abord, une vidéo de l'activité de l'atelier a été enregistrée en direct.
 Les enregistrements de l'atelier ne sont actuellement pas accessibles au public
 afin de préserver la vie privée des participants et des animateurs. L'audio a ensuite
-été extrait et coupé avec [Microsoft Clipchamp](https://clipchamp.com/) afin d'être
+été extrait et coupé avec [Microsoft Clipchamp](https://clipchamp.com/) pour être
 transcrit.
 
 La transcription a été réalisée à l'aide du modèle « large-v2 » de [Whisper](https://github.com/openai/whisper).
@@ -80,13 +82,14 @@ des mots-clés et des entités d'un corpus. Cette analyse utilise deux tâches p
 de Cortext :
 
 1. **Reconnaissance d'entités nommées (NER)** [[5.1]](#51-cortext-documentation-named-entity-recognition)
-   pour "identify and index persons, places, organizations, etc."
+   pour « identifier et indexer des personnes, places, organisations, etc. »
    Les mesures suivantes sont fournies pour chaque entité extraite :
    - _fréquence_ : nombre d'occurrences de l'entité dans l'atelier
    - _type_ : type de l'entité (par exemple, personne, organisation, lieu)
 2. **Extraction (multi)terminologique** [[5.2]](#52-cortext-documentation-multiterm-extraction)
-   pour identifier les termes utilisés pendant l'atelier. Y compris "not only simple
-   terms but also multi-terms (called [n-grams](https://en.wikipedia.org/wiki/N-gram))."
+   pour identifier les termes utilisés pendant l'atelier. Y compris « simultanément
+   des termes simples et des multitermes
+   (appelés [n-grams](https://en.wikipedia.org/wiki/N-gram)). »
    Les mesures suivantes sont fournies pour chaque terme extrait :
    - _C-value_ : une mesure de la fréquence d'un terme
    - _G2_ (gf.idf) : une autre mesure de la fréquence d'un terme "based on the
@@ -121,7 +124,6 @@ termes par statistiques de groupe.
 
 ```mermaid
 ---
-title: "Fig 1. Analysis Process"
 config:
   theme: neutral
 ---
@@ -158,6 +160,8 @@ stateDiagram-v2
     join2 --> [*]
 ```
 
+<figcaption>Fig 1. Analysis Process</figcaption>
+
 Les paramètres suivants ont été utilisés pour configurer les tâches Cortext au 19/12/2025.
 
 | Task                    | Parameter                | Value |
@@ -178,12 +182,12 @@ import {
   downloadSVGButton,
   downloadTableButton,
   cropText,
-} from "/components/utilities.js"
-import { Graph } from "/components/graph.js"
+} from "/components/utilities.js";
+import { Graph } from "/components/graph.js";
 import {
   freq_words,
   group_freq_words,
-  graph_config,
+  graph_config_workshop,
   entity_type_map,
   generateEntitiesPlot,
   column_title_map,
@@ -191,7 +195,7 @@ import {
   generateExtractedTermsPlot,
   extractedTermsHtmlTemplate,
   extractedTermsByGroupHtmlTemplate,
-} from "./js-2025-workshop-analysis.js"
+} from "./js-2025-analysis.js";
 ```
 
 ```sql id=nouns_by_group
@@ -209,11 +213,11 @@ select * from entities
 Chaque présentation de groupe est numérotée en fonction de sa ou ses questions respectives,
 comme suit :
 
-- **Group 1:** "Comment capitaliser et transmettre les apprentissages à l’échelle
+- **Groupe 1 :** "Comment capitaliser et transmettre les apprentissages à l’échelle
   nationale ?"
-- **Group 2:** "Comment documenter le processus ? Quels sont les éléments transposables
+- **Groupe 2 :** "Comment documenter le processus ? Quels sont les éléments transposables
   (ou non) ?"
-- **Group 3:** "Comment évaluer et améliorer les processus
+- **Groupe 3 :** "Comment évaluer et améliorer les processus
   (de coconstruction, d’apprentissage réciproque) ?"
 
 En examinant les 6 termes les plus fréquemment utilisés dans l'ensemble et par groupe,
@@ -229,13 +233,13 @@ et **#processus-de-co-construction** sont les termes les plus couramment utilis�
 | #projet                           | #métropole                           |
 | **#processus-de-co-construction** | **#processus-de-co-construction**    |
 
-${new Graph({nodes: freq_words([...nouns])}, graph_config).getSVG()}
+${new Graph({nodes: freq_words([...nouns])}, graph_config_workshop).getSVG()}
 
 <!-- $ -->
 
 <figcaption>Fig 2. Les 10 termes les plus fréquents</figcaption>
 
-${new Graph({nodes: group_freq_words([...nouns])}, graph_config).getSVG()}
+${new Graph({nodes: group_freq_words([...nouns])}, graph_config_workshop).getSVG()}
 
 <!-- $ -->
 
@@ -244,7 +248,7 @@ ${new Graph({nodes: group_freq_words([...nouns])}, graph_config).getSVG()}
 Il est intéressant de noter que le groupe 3 évoque davantage les termes **#processus**
 et **#processus-de-co-construction** que le groupe 2, bien que les questions des
 deux groupes portent sur les processus (fig. 5). Cela semble s'expliquer par le
-fait que la présentation du groupe 2 était davantage axée sur les éléments transposables
+fait que la présentation du groupe 2 était plus axée sur les éléments transposables
 du processus de documentation que sur la manière de le documenter.
 
 Entre les entités extraites (figures 3 à 6) et les termes extraits, nous pouvons
@@ -252,7 +256,7 @@ Entre les entités extraites (figures 3 à 6) et les termes extraits, nous pouvo
 
 - Il y a peu de chevauchement entre les entités et les termes extraits
   - La seule exception étant « PEPR », évoqué par le groupe 1
-- Il n'y a pas de chevauchement entre les entités extraites de chaque présentation
+- Aucun chevauchement n'existe entre les entités extraites de chaque présentation
   de groupe
 - Il y a peu de chevauchement dans la réutilisation des entités au sein de chaque
   présentation de groupe (à l'exception du « PEPR » dans le groupe 1)
@@ -263,13 +267,13 @@ sont également évoqués lors de chaque présentation. Il convient de noter que
 mots-clés qui ne sont pas évoqués dans les questions du groupe peuvent donner un
 aperçu (quelque peu vague) de la manière dont chaque groupe a répondu à sa question.
 
-| Top 5 termes uniques du group 1       | Top 5 termes uniques du Group 2 | Top 5 termes uniques du Group 3 |
-| ------------------------------------- | ------------------------------- | ------------------------------- |
-| #capitalisation-et-de-la-transmission | #projet                         | #processus-de-co-construction   |
-| #comité-des-parties-prenantes         | #sujet                          | #notion                         |
-| #premier-groupe                       | #métropole                      | #volet                          |
-| #PEPR                                 | #expertise-locale               | #évaluation                     |
-|                                       | #villes-moyennes                | #apprendisage-réciproque        |
+| Top 5 termes uniques du groupe 1      | Top 5 termes uniques du groupe 2 | Top 5 termes uniques du groupe 3 |
+| ------------------------------------- | -------------------------------- | -------------------------------- |
+| #capitalisation-et-de-la-transmission | #projet                          | #processus-de-co-construction    |
+| #comité-des-parties-prenantes         | #sujet                           | #notion                          |
+| #premier-groupe                       | #métropole                       | #volet                           |
+| #PEPR                                 | #expertise-locale                | #évaluation                      |
+|                                       | #villes-moyennes                 | #apprendisage-réciproque         |
 
 ${resize((width) => generateEntitiesPlot(entities, width))}<!-- $ -->
 
@@ -279,7 +283,7 @@ ${extractedTermsByGroupHtmlTemplate([...nouns_by_group])}<!-- $ -->
 
 ${extractedTermsHtmlTemplate([...nouns])}<!-- $ -->
 
-## 4. Review de la methode
+## 4. Revue de la méthode
 
 Deux aspects de la méthodologie sont examinés dans cette section :
 
@@ -291,7 +295,7 @@ Deux aspects de la méthodologie sont examinés dans cette section :
 
 ### 4.1. Mesure de l'exactitude de Whisper
 
-L'exactitude de la transcription de Whisper a été mesurée en utilisant le
+L'exactitude de la transcription de Whisper a été mesurée avec le
 [Word Error Rate (WER) [5.3]](https://en.wikipedia.org/wiki/Word_error_rate)
 
 ```tex
@@ -301,23 +305,23 @@ WER=\frac{S+D+I}{N}=\frac{S+D+I}{S+D+C}
 Where
 
 - ${tex`S`} est le nombre des substitutions,
-- ${tex`D`} est le nombre des deletions,
+- ${tex`D`} est le nombre des délétions,
 - ${tex`I`} est le nombre des insertions,
 - ${tex`N`} est le nombre des mots dans la référence ${tex`(N=S+D+C)`},
 - ${tex`C`} est le nombre des mots corrects
 
-Pour cette étude les mots sont séparés par des espaces (i.e., '_c'est_' est considéré
-comme un seul mot)
+Pour cette étude, les mots sont séparés par des espaces (i.e., '_c'est_' est considéré
+comme un seul mot).
 
 Le tableau suivant indique le taux d'erreur de reconnaissance (WER) pour chaque
 présentation de groupe :
 
-| Source text          | S   | D   | I   | N    | WER          |
-| :------------------- | --- | --- | --- | :--- | :----------- |
-| Presentation group 1 | 3   | 2   | 4   | 319  | 0.028213     |
-| Presentation group 2 | 1   | 42  | 31  | 1000 | 0.074000     |
-| Presentation group 3 | 29  | 204 | 88  | 907  | 0.353914     |
-| **Total**            | 33  | 248 | 133 | 2226 | **0.185984** |
+| Source text           | S   | D   | I   | N    | WER          |
+| :-------------------- | --- | --- | --- | :--- | :----------- |
+| Presentation groupe 1 | 3   | 2   | 4   | 319  | 0.028213     |
+| Presentation groupe 2 | 1   | 42  | 31  | 1000 | 0.074000     |
+| Presentation groupe 3 | 29  | 204 | 88  | 907  | 0.353914     |
+| **Total**             | 33  | 248 | 133 | 2226 | **0.185984** |
 
 <div class="note">
 
@@ -339,7 +343,7 @@ nécessaire pour corriger rapidement, mais pas complètement, les transcriptions
 
 Un [git diff](https://git-scm.com/docs/git-diff) est utilisé pour aider à identifier
 manuellement le WER. Il convient de noter que des outils existants présentant des
-limites connues pourraient être utilisés à l'avenir :
+limites identifiées pourraient être utilisés à l'avenir :
 
 - [Comprendre et calculer le taux d'erreur sur les mots (WER) dans la reconnaissance vocale automatique à l'aide de Python](https://medium.com/@ramadhanimassawe14/understanding-and-calculating-word-error-rate-wer-in-automatic-speech-recognition-using-python-661f18b518a5)
 - [WER-in-python](https://github.com/zszyellow/WER-in-python/tree/master) ;
@@ -376,7 +380,7 @@ Cependant, cette méthodologie trouve encore des applications dans les cas suiva
 
 - Lorsque le nombre de transcriptions est trop important pour une analyse manuelle
 - Lorsque l'objectif de l'analyse est d'obtenir une vue d'ensemble du contenu ou
-- de compléter les conclusions d'une analyse manuelle
+  de compléter les conclusions d'une analyse manuelle
 - Lorsqu'aucun expert du domaine n'est disponible pour effectuer une analyse manuelle
 
 <div class="note">

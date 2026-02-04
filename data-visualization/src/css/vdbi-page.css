@@ -3,5 +3,5 @@
 @import url("vdbi-default.css");
 
 .div {
-  max-width: 640px;
+  --observablehq-max-width: 640px;
 }

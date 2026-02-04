@@ -63,13 +63,13 @@ export default {
       name: 'Reports',
       pages: [
         {
-          name: 'NEO/SoLocale Lexicometric analysis',
+          name: 'Lexicometric analysis - JS 2025: NEO/SoLocale Workshop',
           path: 'pages/reports/js-2025-workshop-analysis-fr',
         },
-        // {
-        //   name: 'JS 2025 Round Table Lexicometric analysis',
-        //   path: 'pages/reports/js-2025-round-table-analysis',
-        // },
+        {
+          name: 'Lexicometric analysis - JS 2025: Round Tables',
+          path: 'pages/reports/js-2025-round-table-analysis-en',
+        },
       ]
     },
     {

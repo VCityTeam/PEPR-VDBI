@@ -1,13 +1,34 @@
 ---
 style: /css/vdbi-page.css
 sql:
-  entities: "/data/private/VDBI_JS_2025_atelier_NEO_entities.tsv"
-  # extracted_terms: "/data/private/VDBI_JS_2025_atelier_NEO_extracted_terms.tsv"
-  nouns_by_group: "/data/private/VDBI_JS_2025_atelier_NEO_nouns_by_group.tsv"
-  nouns: "/data/private/VDBI_JS_2025_atelier_NEO_nouns.tsv"
-  # verbs: "/data/private/VDBI_JS_2025_atelier_NEO_verbs.tsv"
-  # adj: "/data/private/VDBI_JS_2025_atelier_NEO_adj.tsv"
+  locations: "/data/private/js-2025-tables-rondes-loc-1-1.tsv"
+  miscellaneous: "/data/private/js-2025-tables-rondes-misc-1-1.tsv"
+  organizations: "/data/private/js-2025-tables-rondes-org-1-1.tsv"
+  nouns: "/data/lemmatized_js_2025_tables_ronde_nouns.tsv"
+  verbs: "/data/lemmatized_js_2025_tables_ronde_verbs.tsv"
+  adjectives: "/data/lemmatized_js_2025_tables_ronde_adj.tsv"
 ---
+
+```js
+import {
+  downloadSVGButton,
+  downloadTableButton,
+  cropText,
+} from "/components/utilities.js";
+import { Graph, WordBubbles } from "/components/graph.js";
+import {
+  freq_words,
+  group_freq_words,
+  graph_config_round_table,
+  entity_type_map,
+  generateEntitiesPlot,
+  column_title_map,
+  column_label_map,
+  generateExtractedTermsPlot,
+  extractedTermsHtmlTemplate,
+  extractedTermsByGroupHtmlTemplate,
+} from "./js-2025-analysis.js";
+```
 
 # VDBI JS 2025 Lexicometric Analysis <!-- omit in toc -->
 
@@ -173,39 +194,39 @@ The following parameters were used to configure the Cortext tasks as of 19/12/20
 
 <div class="note">Unmentioned parameters use their default settings</div>
 
+<div class="note">
+
+The following infinitive terms and their conjugations were removed as they are too
+general and occur too many times:
+
+- être
+- avoir
+- aller
+- pouvoir
+- vouloir
+
+</div>
+
 ## 3. Lexical Analysis Results
 
-```js
-import {
-  downloadSVGButton,
-  downloadTableButton,
-  cropText,
-} from "/components/utilities.js";
-import { Graph } from "/components/graph.js";
-import {
-  freq_words,
-  group_freq_words,
-  graph_config_workshop,
-  entity_type_map,
-  generateEntitiesPlot,
-  column_title_map,
-  column_label_map,
-  generateExtractedTermsPlot,
-  extractedTermsHtmlTemplate,
-  extractedTermsByGroupHtmlTemplate,
-} from "./js-2025-analysis.js";
+${Inputs.table([...extracted_terms])}
+
+<!-- $ -->
+
+```sql id=extracted_terms
+select *, 'noun' as pos from nouns
+union
+select *, 'verb' as pos from verbs
+union
+select *, 'adj' as pos from adjectives
 ```
 
-```sql id=nouns_by_group
-select * from nouns_by_group
-```
-
-```sql id=nouns
-select * from nouns
-```
-
-```sql id=entities
-select * from entities
+```sql id=extracted_entities
+select *, 'loc' as type from locations
+union
+select *, 'org' as type from organizations
+union
+select *, 'misc' as type from miscellaneous
 ```
 
 Each group presentation is numbered based on their respective question(s) as
@@ -231,15 +252,21 @@ are the most commonly used terms.
 | #projet                           | #métropole                        |
 | **#processus-de-co-construction** | **#processus-de-co-construction** |
 
-${new Graph({nodes: freq_words([...nouns])}, graph_config_workshop).getSVG()}
+${fig_3}<!-- $ -->
 
-<!-- $ -->
-<figcaption>Fig 2. Top 10 terms by frequency</figcaption>
+<figcaption>Fig 3. Top 10 nouns by group frequency</figcaption>
 
-${new Graph({nodes: group_freq_words([...nouns])}, graph_config_workshop).getSVG()}
-
-<!-- $ -->
-<figcaption>Fig 3. Top 10 terms by group frequency</figcaption>
+```js
+const fig_3 = new WordBubbles(
+  {
+    nodes: freq_words([...(await sql`select * from nouns`)], {
+      labelCropFactor: 2,
+      rFactor: 5,
+    }),
+  },
+  graph_config_round_table,
+).getSVG();
+```
 
 Interestingly, group 3 evokes the term **#processus** and **#processus-de-co-construction**
 more than group 2 despite both groups' questions being about processes (fig 5).
@@ -269,13 +296,12 @@ question.
 | #PEPR                                 | #expertise-locale          | #évaluation                   |
 |                                       | #villes-moyennes           | #apprendisage-réciproque      |
 
-${resize((width) => generateEntitiesPlot(entities, width))}<!-- $ -->
+<!--
+${resize((width) => generateEntitiesPlot(extracted_entities, width))}<!-- $ -->
 
 <!-- ${downloadSVGButton("#entities svg")} -->
 
-${extractedTermsByGroupHtmlTemplate([...nouns_by_group])}<!-- $ -->
-
-${extractedTermsHtmlTemplate([...nouns])}<!-- $ -->
+<!-- ${extractedTermsHtmlTemplate([...extracted_terms])}$ -->
 
 ## 4. Method review
 
