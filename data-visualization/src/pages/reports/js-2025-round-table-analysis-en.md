@@ -9,6 +9,8 @@ sql:
   adjectives: "/data/lemmatized_js_2025_tables_ronde_adj.tsv"
 ---
 
+${fig_3}<!-- $ -->
+
 ```js
 import {
   downloadSVGButton,
@@ -260,7 +262,7 @@ ${fig_3}<!-- $ -->
 const fig_3 = new WordBubbles(
   {
     nodes: freq_words([...(await sql`select * from nouns`)], {
-      labelCropFactor: 2,
+      labelCropFactor: 1000,
       rFactor: 5,
     }),
   },

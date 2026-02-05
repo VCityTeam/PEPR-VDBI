@@ -1,7 +1,6 @@
 import * as d3 from "d3";
 import { circleLegend } from "./legend.js";
-import { cropText, wrapTextWithTspans } from "./utilities.js";
-import { html } from "npm:htl";
+import { cropText, wrapText } from "./utilities.js";
 
 /**
  * Map the elements of an array of objects (a table) to a graph with the following rules:
@@ -1023,20 +1022,28 @@ export class MuralGraph extends StaticGraph {
 
 export class WordBubbles extends Graph {
   constructor(nodes, links, options = {}) {
+    options.nodeLabelOffset = () => 0;
     super(nodes, links, options);
   }
 
   update() {
     super.update();
 
+    const nodeLabelXOffset = (d) =>
+      `${1 - wrapText(this.labelMap(d), this.r(d) / 4).split("\n").length}em`;
+
     this.getNodeLabels()
       .data(this.nodes)
       .join("text")
       .attr("font-size", this.fontSize)
-      .html(
-        (d) => wrapTextWithTspans(this.labelMap(d), this.textLength).innerHTML,
-      );
+      .attr("dy", nodeLabelXOffset)
+      .style("white-space", "break-spaces")
+      .text((d) => wrapText(this.labelMap(d), this.r(d) / 4));
   }
+
+  handleNodePointerEnter() {}
+
+  handleNodePointerout() {}
 }
 
 export function filterLinks(graph, filterFunction, keyMap = (d) => d.id) {

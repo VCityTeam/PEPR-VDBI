@@ -5,6 +5,7 @@ import { html } from "npm:htl";
 import { cropText } from "/components/utilities.js";
 
 const graph_config_workshop = {
+  labelMap: (d) => d.label,
   nodeLabelOpacity: 1,
   textColor: "white",
   color: () => "var(--theme-foreground-focus)",

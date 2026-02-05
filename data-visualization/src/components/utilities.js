@@ -255,31 +255,9 @@ export function wrapText(text, maxWidth = 20, newlineCharter = "\n") {
       currentLine += word + " ";
     }
   }
+  lines.push(currentLine.trim());
 
   return lines.join(newlineCharter);
-}
-
-export function wrapTextWithTspans(text, maxWidth = 20) {
-  const words = text.split(" ");
-
-  if (words.length === 1) {
-    return html`<tspan>${cropText(text, maxWidth)}</tspan>`;
-  }
-
-  let lines = "";
-  let currentLine = "";
-
-  for (let word of words) {
-    if (currentLine.length + word.length > maxWidth - 1) {
-      lines += `<tspan>${currentLine.trim()}</tspan>`;
-      currentLine = word + " ";
-    } else {
-      currentLine += word + " ";
-    }
-  }
-  lines += `<tspan>${currentLine.trim()}</tspan>`;
-
-  return html`<text>${lines}</text>`;
 }
 
 /**
