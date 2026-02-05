@@ -242,13 +242,21 @@ export function cropText(text, maxLength = 20) {
     : text;
 }
 
-export function wrapText(text, maxWidth = 20, newlineCharter = "\n") {
-  const words = text.split(" ");
+export function wrapText(
+  text,
+  maxWidth = 20,
+  newlineCharter = "\n",
+  delimeter = /\s+|-|\//,
+) {
+  const words = text.split(delimeter);
+  console.debug("words", words);
   let lines = [];
   let currentLine = "";
 
   for (let word of words) {
-    if (currentLine.length + word.length > maxWidth - 1) {
+    if (currentLine.length === 0) {
+      currentLine = word + " ";
+    } else if (currentLine.length + word.length > maxWidth - 1) {
       lines.push(currentLine.trim());
       currentLine = word + " ";
     } else {

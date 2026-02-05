@@ -607,7 +607,10 @@ export class Graph {
       .force("link", d3.forceLink(this.links).id(this.keyMap))
       .force(
         "charge",
-        d3.forceManyBody().strength(this.chargeStrength).distanceMax(300),
+        d3
+          .forceManyBody()
+          .strength(this.chargeStrength)
+          .distanceMax(this.width / 2),
       )
       .force(
         "collide",
@@ -1024,13 +1027,16 @@ export class WordBubbles extends Graph {
   constructor(nodes, links, options = {}) {
     options.nodeLabelOffset = () => 0;
     super(nodes, links, options);
+    this.simulation = this.createSimulation();
+    Object.assign(this.svg.node(), { simulation: this.simulation });
+    this.simulation.restart();
   }
 
   update() {
     super.update();
 
     const nodeLabelXOffset = (d) =>
-      `${1 - wrapText(this.labelMap(d), this.r(d) / 4).split("\n").length}em`;
+      `${1 - wrapText(this.labelMap(d), this.r(d) / 4).split("\n").length * 0.75}em`;
 
     this.getNodeLabels()
       .data(this.nodes)
@@ -1040,6 +1046,27 @@ export class WordBubbles extends Graph {
       .style("white-space", "break-spaces")
       .text((d) => wrapText(this.labelMap(d), this.r(d) / 4));
   }
+
+  createSimulation = () =>
+    d3
+      .forceSimulation(this.nodes)
+      .force(
+        "charge",
+        d3
+          .forceManyBody()
+          .strength(this.chargeStrength)
+          .distanceMax(this.width / 2),
+      )
+      .force(
+        "collide",
+        d3
+          .forceCollide()
+          .radius((d) => this.r(d) * 1.1)
+          .iterations(3),
+      )
+      .force("x", d3.forceX())
+      .force("y", d3.forceY())
+      .on("tick", this.handleTick());
 
   handleNodePointerEnter() {}
 

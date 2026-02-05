@@ -102,12 +102,6 @@ refers to a transcript of a group presentation of the workshop.
 
 <div class="note">
 
-Cortext NER doesn't have as many entity types or configurations for french.
-
-</div>
-
-<div class="note">
-
 Only the extracted noun terms are used in this analysis. Initial extaction of verbs
 and adjectives did not yield interesting results.
 
@@ -187,7 +181,7 @@ import {
   group_freq_words,
   graph_config_workshop,
   entity_type_map,
-  generateEntitiesPlot,
+  generateWorkshopEntitiesPlot,
   column_title_map,
   column_label_map,
   generateExtractedTermsPlot,
@@ -269,7 +263,7 @@ question.
 | #PEPR                                 | #expertise-locale          | #évaluation                   |
 |                                       | #villes-moyennes           | #apprendisage-réciproque      |
 
-${resize((width) => generateEntitiesPlot(entities, width))}<!-- $ -->
+${resize((width) => generateWorkshopEntitiesPlot(entities, width))}<!-- $ -->
 
 <!-- ${downloadSVGButton("#entities svg")} -->
 
@@ -373,7 +367,25 @@ same quality.
 
 </div>
 
+<div class="note">
+
+Cortext NER doesn't have as many entity types or configurations for french. Analysing
+terms and entities in english may yield more accurate and/or more detailed results.
+
+</div>
+
 ## 5. References and links
+
+```bibtex
+@software{cortext_manager_v2_bibtex,
+  keywords = {natural language processing, social network analysis, geospatial analysis, descriptive statistics, scientometrics, biliometrics},
+  author = {Breucker, Philippe and Cointet, Jean-Philippe and Hannud Abdo, Alexandre and Orsal, Guillaume and de Quatrebarbes, Constance and Duong, Tam-Kien and Martinez, Cristian and Ospina Delgado, Juan Pablo and Medina Zuluaga, Luis Daniel and Gómez Peña, Diego Fernando and Sánchez Castaño, Tatiana Andrea and Marques da Costa, Joenio and Laglil, Hajar and Villard, Lionel and Barbier, Marc},
+  month = {10},
+  title = {CorTexT Manager},
+  url = {https://docs.cortext.net},
+  year = {2016}
+}
+```
 
 ### 5.1. [Cortext documentation: Named Entity Recognition](https://docs.cortext.net/named-entity-recognizer/)
 

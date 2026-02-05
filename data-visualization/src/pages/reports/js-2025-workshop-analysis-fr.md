@@ -183,13 +183,13 @@ import {
   downloadTableButton,
   cropText,
 } from "/components/utilities.js";
-import { Graph } from "/components/graph.js";
+import { WordBubbles } from "/components/graph.js";
 import {
   freq_words,
   group_freq_words,
   graph_config_workshop,
   entity_type_map,
-  generateEntitiesPlot,
+  generateWorkshopEntitiesPlot,
   column_title_map,
   column_label_map,
   generateExtractedTermsPlot,
@@ -233,13 +233,25 @@ et **#processus-de-co-construction** sont les termes les plus couramment utilis�
 | #projet                           | #métropole                           |
 | **#processus-de-co-construction** | **#processus-de-co-construction**    |
 
-${new Graph({nodes: freq_words([...nouns])}, graph_config_workshop).getSVG()}
+${fig_2}
 
 <!-- $ -->
 
 <figcaption>Fig 2. Les 10 termes les plus fréquents</figcaption>
 
-${new Graph({nodes: group_freq_words([...nouns])}, graph_config_workshop).getSVG()}
+```js
+const fig_2 = new WordBubbles(
+  {
+    nodes: freq_words([...nouns], {
+      labelCropFactor: 1000,
+      rFactor: 7,
+    }),
+  },
+  graph_config_workshop,
+).getSVG();
+```
+
+${new WordBubbles({nodes: group_freq_words([...nouns])}, graph_config_workshop).getSVG()}
 
 <!-- $ -->
 
@@ -275,7 +287,7 @@ aperçu (quelque peu vague) de la manière dont chaque groupe a répondu à sa q
 | #PEPR                                 | #expertise-locale                | #évaluation                      |
 |                                       | #villes-moyennes                 | #apprendisage-réciproque         |
 
-${resize((width) => generateEntitiesPlot(entities, width))}<!-- $ -->
+${resize((width) => generateWorkshopEntitiesPlot(entities, width))}<!-- $ -->
 
 <!-- ${downloadSVGButton("#entities svg")} -->
 
@@ -391,7 +403,26 @@ manuelle et n'aurait pas pu réaliser une analyse manuelle de la même qualité.
 
 </div>
 
+<div class="note">
+
+Cortext NER ne dispose pas d'autant de types d'entités ou de configurations pour
+le français. L'analyse des termes et des entités en anglais peut donner des résultats
+plus précis et/ou plus détaillés.
+
+</div>
+
 ## 5. Références et liens
+
+```bibtex
+@software{cortext_manager_v2_bibtex,
+  keywords = {natural language processing, social network analysis, geospatial analysis, descriptive statistics, scientometrics, biliometrics},
+  author = {Breucker, Philippe and Cointet, Jean-Philippe and Hannud Abdo, Alexandre and Orsal, Guillaume and de Quatrebarbes, Constance and Duong, Tam-Kien and Martinez, Cristian and Ospina Delgado, Juan Pablo and Medina Zuluaga, Luis Daniel and Gómez Peña, Diego Fernando and Sánchez Castaño, Tatiana Andrea and Marques da Costa, Joenio and Laglil, Hajar and Villard, Lionel and Barbier, Marc},
+  month = {10},
+  title = {CorTexT Manager},
+  url = {https://docs.cortext.net},
+  year = {2016}
+}
+```
 
 ### 5.1. [Cortext documentation: Named Entity Recognition](https://docs.cortext.net/named-entity-recognizer/)
 

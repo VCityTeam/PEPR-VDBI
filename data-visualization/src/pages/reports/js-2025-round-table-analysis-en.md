@@ -4,12 +4,10 @@ sql:
   locations: "/data/private/js-2025-tables-rondes-loc-1-1.tsv"
   miscellaneous: "/data/private/js-2025-tables-rondes-misc-1-1.tsv"
   organizations: "/data/private/js-2025-tables-rondes-org-1-1.tsv"
-  nouns: "/data/lemmatized_js_2025_tables_ronde_nouns.tsv"
-  verbs: "/data/lemmatized_js_2025_tables_ronde_verbs.tsv"
-  adjectives: "/data/lemmatized_js_2025_tables_ronde_adj.tsv"
+  nouns: "/data/private/js-2025-tables-rondes-nouns-extracted-terms.tsv"
+  verbs: "/data/private/js-2025-tables-rondes-verbs-extracted-terms.tsv"
+  adjectives: "/data/private/js-2025-tables-rondes-adj-extracted-terms.tsv"
 ---
-
-${fig_3}<!-- $ -->
 
 ```js
 import {
@@ -23,7 +21,7 @@ import {
   group_freq_words,
   graph_config_round_table,
   entity_type_map,
-  generateEntitiesPlot,
+  generateRoundTableEntitiesPlot,
   column_title_map,
   column_label_map,
   generateExtractedTermsPlot,
@@ -32,63 +30,44 @@ import {
 } from "./js-2025-analysis.js";
 ```
 
-# VDBI JS 2025 Lexicometric Analysis <!-- omit in toc -->
+# VDBI JS 2025 Round Table Lexicometric Analysis <!-- omit in toc -->
 
-## NEO/SoLocale Workshop <!-- omit in toc -->
-
-Author: Diego Vinasco-Alvarez (<diego.vinasco-alvarez@cnrs.fr>) - PEPR VDBI
+## Diego Vinasco-Alvarez (PEPR VDBI; <diego.vinasco-alvarez@cnrs.fr>) <!-- omit in toc -->
 
 ## 1. Context
 
-This report provides a lexicometric analysis of the NEO/SoLocale workshop held
-on November 5th, 2025 during the [2025 PEPR VDBI Journées Scientifiques](https://pepr-vdbi.fr/evenements/journees-scientifiques-annuelles-villes-durables-batiments-innovants-2025).
+This report provides a lexicometric analysis of the round table discussions held
+during the [2025 PEPR VDBI Journées Scientifiques](https://pepr-vdbi.fr/evenements/journees-scientifiques-annuelles-villes-durables-batiments-innovants-2025)
+between November 3rd and 5th, 2025.
 
-The purpose of this analysis is to automatically identify the most relevant keywords
-and entities noted during the workshop. Additionally, this report identifies the
-known limitations of the proposed methodology and when compared to a manual analysis.
-
-The NEO/SoLocale workshop was composed largely of group discussions and activities.
-This report will focus on a the final "World café" synthesis activity, where 3
-groups of paricipants were asked to present the conclusions of their group work.
-The activity theme is :
-
-> "Comment garder la mémoire et retranscrire les démarches de collaboration et
-> de co-création des outils de la connaissance en vue de la réplicabilité sur
-> d’autres territoires ? Illustration à travers le cas d’usage Sol autour de la
-> problématique plus spécifique des données."
-
-To answer this, one or more questions were assigned to each group:
-
-> 1. Comment capitaliser et transmettre les apprentissages à l’échelle
->    nationale ?
-> 2. Comment documenter le processus ? Quels sont les éléments transposables
->    (ou non) ? Quelles spécificités propres au territoire ?
-> 3. Comment évaluer et améliorer les processus (de coconstruction, d’apprentissage
->    réciproque) ?
-
-Other activities of the workshop, including the question sections, will
-unfortunately not be analyzed due to insufficient quality of the recorded workshop
-audio.
+This report will be used to supplement a future publication regarding the round
+table discussions. This publication will provide a more in-depth analysis of the
+discussions and their context.
 
 The report is structured as follows:
 
 - [Section 2](#2-method) details the proposed methodology and steps for reproducibility
-- [Section 3](#3-lexical-analysis-results) presents the results of the lexicometric
+- [Section 3](#3-results) presents the results of the lexicometric
   analysis
-- [Section 4](#4-method-review) reviews the limitations of the proposed methodology
+
+<div class="tip">
+
+A critique of the proposed methodology is provided in [this report](./js-2025-workshop-analysis-en).
+
+</div>
 
 ## 2. Method
 
 The diagram below illustrates the analysis process.
 
-First, a video of the workshop activity was recorded live. The recordings for the
-workshop are not currently made publicly available for participant and animator
-privacy. The audio was then extracted and cut with [Microsoft Clipchamp](https://clipchamp.com/en/)
-to be transcribed.
+First, round table discussions were recorded live. Their audio was cut and extracted
+with [Microsoft Clipchamp](https://clipchamp.com/en/).
 
 Transcription was done using [Whisper](https://github.com/openai/whisper)'s
-`large-v2` model. This transcript was manually verified and corrected. An evaluation
-of the transcription quality is provided in [section 4.1](#41-whisper-error-rate-measurement).
+`large-v2` model. This transcript was manually verified and corrected by replacing
+the most common misspelled proper nouns related to the PEPR VDBI, it's projects,
+and the territorial collectives that participated in the round table (e.g. "Pleine
+Commune" to "Plaine Commune" or "Antegreen" to "InteGREEN").
 
 Next, the transcript was processed using the [Cortext](https://www.cortext.net/)
 social science and humanities research infrastructure.
@@ -98,148 +77,125 @@ and entities from a corpus. This analysis uses two main Cortext tasks:
 1. **Named Entity Recognition (NER)** [[5.1]](#51-cortext-documentation-named-entity-recognition)
    to "identify and index persons, places, organizations, etc."
    The following metrics are provided for each extracted entity:
-   - _frequency_: The number of times the entity appears in the workshop
-   - _type_: The type of the entity (e.g. Person, Organization, Location)
+   - _frequency_: The number of times the entity appears in the discussions
+   - _type_: The type of the entity (e.g. Person, Organization, Location).
 2. **(Multi)Term extraction** [[5.2]](#52-cortext-documentation-multiterm-extraction)
-   to identifiy terms used during the workshop. Including "not only simple terms
+   to identifiy terms used during the discussions. Including "not only simple terms
    but also multi-terms (called [n-grams](https://en.wikipedia.org/wiki/N-gram))."
    The following metrics are provided for each extracted term:
    - _C-value_: A measure of the frequency of a term
    - _G2_ (gf.idf): An alternative frequency measurement of a term "based on the
-   assumption that interesting terms tend to be repeated within the same document."
-   <!-- - _Specificity_ (${tex`X^2`}): How specific a term is within the text -->
-   - _Occurrences_: The number of group presentations where a term appears
-   - _Cooccurrence_: The number of times the term cooccurs with other terms in the
-   same group presentation
-   <!-- 3. **W2V Explorer** [[5.3]](#53-cortext-documentation-w2v-explorer) to "[learn]
-      the word embedding of every word... in a corpus and [visualize] the position
-      of words in a reduced 2 dimensional space. Words are also clustered according
-      to their proximity." -->
+     assumption that interesting terms tend to be repeated within the same document."
+
+The identified terms and entities were reviewed and corrected manually
+
+- People identified as entities or terms were removed for privacy reasons
+- Mistyped entities were reclassified (e.g., PEPR VDBI were retyped as
+  organizations)
+-
 
 <div class="note">
 
 The term '_corpus_' refers to a corpus of documents. In this case, each document
-refers to a transcript of a group presentation of the workshop.
-
-</div>
-
-<div class="note">
-
-Cortext NER doesn't have as many entity types or configurations for french.
-
-</div>
-
-<div class="note">
-
-Only the extracted noun terms are used in this analysis. Initial extaction of verbs
-and adjectives did not yield interesting results.
-
-</div>
-
-<div class="note">
-
-The term extraction step is run once on the entire corpus, and once for each
-group presentation to extract term frequency by group statistics.
+refers to a transcript of one of the three round table discussions.
 
 </div>
 
 ```mermaid
 ---
-config:
-  theme: neutral
+config: {
+  theme: "neutral"
+}
 ---
 
 stateDiagram-v2
 
-  %%direction LR
+  %% direction LR
 
-  video     : Workshop video recording
-  audio     : Workshop audio
-  corpus    : Cortext corpus
-  entities  : Named entities
-  %sim       : Term/Entity similarity
+  v   : Round table video recording
+  a   : Round table audio recording
+  t   : Round table transcript
+  c   : Transcript corpus
+  e   : Named entities
 
-  [*] --> video
-  [*] --> audio
-  video --> audio       : Extract audio
-  audio --> Transcript  : Transcribe with Whisper
-  Transcript --> corpus         : Import into Cortext
+  [*] --> v
+  v --> a         : Extract audio
+  a --> t         : Transcribe with Whisper
+  t --> Cortext   : Clean and import into Cortext
 
-  state fork2 <<fork>>
-    corpus --> fork2
-    fork2 --> entities    : Named Entity Recognition
-    fork2 --> Multiterms  : Extract multiterms
+  state Cortext {
+    %% direction LR
 
-  %state join <<join>>
-  %  Multiterms --> join
-  %  entities --> join
-  %  join --> sim : W2VExplorer
+    state fork2 <<fork>>
+      c --> fork2
+      fork2 --> e    : Named Entity Recognition
+      fork2 --> Multiterms  : Extract multiterms
 
-  state join2 <<join>>
-    entities --> join2
-    Multiterms --> join2
-    join2 --> [*]
+    state join2 <<join>>
+      e --> join2
+      Multiterms --> join2
+      join2 --> [*]
+  }
+
+  Cortext --> [*]
 ```
 
 <figcaption>Fig 1. Analysis Process</figcaption>
 
 The following parameters were used to configure the Cortext tasks as of 19/12/2025.
 
-| Task                    | Parameter                | Value |
-| :---------------------- | ------------------------ | ----- |
-| Terms extraction        | Textual Fields           | text  |
-| Terms extraction        | Minimum Frequency        | 2     |
-| Terms extraction        | language                 | fr    |
-| Terms extraction        | Monogramms are forbidden | no    |
-| Named Entity Recognizer | Textual Fields           | text  |
-| Named Entity Recognizer | language                 | fr    |
+| Task                    | Parameter                | Value       |
+| :---------------------- | ------------------------ | ----------- |
+| Terms extraction        | Textual Fields           | text        |
+| Terms extraction        | Minimum Frequency        | 2           |
+| Terms extraction        | language                 | fr          |
+| Terms extraction        | Monogramms are forbidden | no          |
+| Terms extraction        | grammatical criterion    | noun phrase |
+| Named Entity Recognizer | Textual Fields           | text        |
+| Named Entity Recognizer | language                 | fr          |
 
 <div class="note">Unmentioned parameters use their default settings</div>
 
 <div class="note">
 
-The following infinitive terms and their conjugations were removed as they are too
-general and occur too many times:
-
-- être
-- avoir
-- aller
-- pouvoir
-- vouloir
+Regarding the extracted multi-term entities, only the extracted noun phrases are
+used in this analysis. Initial extaction of verbs and adjectives did not yield
+interesting results.
 
 </div>
 
-## 3. Lexical Analysis Results
+## 3. Results
 
-${Inputs.table([...extracted_terms])}
+${Inputs.table([... await sql`select *, 'noun' from nouns`])}
 
 <!-- $ -->
 
-```sql id=extracted_terms
-select *, 'noun' as pos from nouns
-union
-select *, 'verb' as pos from verbs
-union
-select *, 'adj' as pos from adjectives
-```
-
 ```sql id=extracted_entities
-select *, 'loc' as type from locations
-union
-select *, 'org' as type from organizations
-union
-select *, 'misc' as type from miscellaneous
+(
+  select
+    entity,
+    sum(frequency) as frequency,
+    'loc' as type
+  from locations
+  group by entity
+  union
+  select
+    entity,
+    sum(frequency) as frequency,
+    'org' as type
+  from organizations
+  group by entity
+  union
+  select
+    entity,
+    sum(frequency) as frequency,
+    'misc' as type
+  from miscellaneous
+  group by entity
+)
+order by "frequency" desc
+limit 20
 ```
-
-Each group presentation is numbered based on their respective question(s) as
-follows:
-
-- **Group 1:** "Comment capitaliser et transmettre les apprentissages à l’échelle
-  nationale ?"
-- **Group 2:** "Comment documenter le processus ? Quels sont les éléments transposables
-  (ou non) ?"
-- **Group 3:** "Comment évaluer et améliorer les processus
-  (de coconstruction, d’apprentissage réciproque) ?"
 
 Looking at the top 6 most frequently used terms overall and by group, we can see
 that **#question**", **#territoire**", **#acteurs**", **#projet**", and **#processus-de-co-construction**
@@ -254,16 +210,32 @@ are the most commonly used terms.
 | #projet                           | #métropole                        |
 | **#processus-de-co-construction** | **#processus-de-co-construction** |
 
+${fig_2}<!-- $ -->
+
+<figcaption>Fig 2. Top 15 extracted nouns by frequency</figcaption>
+
+```js
+const fig_2 = new WordBubbles(
+  {
+    nodes: freq_words([...(await sql`select * from nouns`)], {
+      limit: 15,
+      rFactor: 4,
+    }),
+  },
+  graph_config_round_table,
+).getSVG();
+```
+
 ${fig_3}<!-- $ -->
 
-<figcaption>Fig 3. Top 10 nouns by group frequency</figcaption>
+<figcaption>Fig 3. Top 15 extracted nouns by round table frequency</figcaption>
 
 ```js
 const fig_3 = new WordBubbles(
   {
-    nodes: freq_words([...(await sql`select * from nouns`)], {
-      labelCropFactor: 1000,
-      rFactor: 5,
+    nodes: group_freq_words([...(await sql`select * from nouns`)], {
+      limit: 15,
+      rFactor: 4,
     }),
   },
   graph_config_round_table,
@@ -298,12 +270,14 @@ question.
 | #PEPR                                 | #expertise-locale          | #évaluation                   |
 |                                       | #villes-moyennes           | #apprendisage-réciproque      |
 
-<!--
-${resize((width) => generateEntitiesPlot(extracted_entities, width))}<!-- $ -->
+${resize((width) => generateRoundTableEntitiesPlot(extracted_entities, width))}
 
-<!-- ${downloadSVGButton("#entities svg")} -->
+<!-- $ -->
 
-<!-- ${extractedTermsHtmlTemplate([...extracted_terms])}$ -->
+${extractedTermsHtmlTemplate(
+[...(await sql`select * from nouns`)],
+{marginLeft: 120}
+)}<!-- $ -->
 
 ## 4. Method review
 
@@ -402,6 +376,17 @@ same quality.
 </div>
 
 ## 5. References and links
+
+```bibtex
+@software{cortext_manager_v2_bibtex,
+  keywords = {natural language processing, social network analysis, geospatial analysis, descriptive statistics, scientometrics, biliometrics},
+  author = {Breucker, Philippe and Cointet, Jean-Philippe and Hannud Abdo, Alexandre and Orsal, Guillaume and de Quatrebarbes, Constance and Duong, Tam-Kien and Martinez, Cristian and Ospina Delgado, Juan Pablo and Medina Zuluaga, Luis Daniel and Gómez Peña, Diego Fernando and Sánchez Castaño, Tatiana Andrea and Marques da Costa, Joenio and Laglil, Hajar and Villard, Lionel and Barbier, Marc},
+  month = {10},
+  title = {CorTexT Manager},
+  url = {https://docs.cortext.net},
+  year = {2016}
+}
+```
 
 ### 5.1. [Cortext documentation: Named Entity Recognition](https://docs.cortext.net/named-entity-recognizer/)
 
