@@ -90,8 +90,7 @@ and entities from a corpus. This analysis uses two main Cortext tasks:
 The identified terms and entities were reviewed and corrected manually
 
 - People identified as entities or terms were removed for privacy reasons
-- Mistyped entities were reclassified (e.g., PEPR VDBI were retyped as
-  organizations)
+- Mistyped entities were reclassified (e.g., "PEPR VDBI" was retyped as an organization)
 -
 
 <div class="note">
@@ -117,6 +116,7 @@ stateDiagram-v2
   t   : Round table transcript
   c   : Transcript corpus
   e   : Named entities
+  f   : Clean results
 
   [*] --> v
   v --> a         : Extract audio
@@ -137,12 +137,15 @@ stateDiagram-v2
       join2 --> [*]
   }
 
-  Cortext --> [*]
+  Cortext --> f : Clean entities and terms
+  f --> [*]
 ```
 
 <figcaption>Fig 1. Analysis Process</figcaption>
 
-The following parameters were used to configure the Cortext tasks as of 19/12/2025.
+<!-- ${downloadSVGButton(".statediagram")} -->
+
+The following parameters were used to configure the Cortext tasks as of 4/1/2026.
 
 | Task                    | Parameter                | Value       |
 | :---------------------- | ------------------------ | ----------- |
@@ -156,17 +159,15 @@ The following parameters were used to configure the Cortext tasks as of 19/12/20
 
 <div class="note">Unmentioned parameters use their default settings</div>
 
-<div class="note">
+## 3. Results and discussion
 
-Regarding the extracted multi-term entities, only the extracted noun phrases are
-used in this analysis. Initial extaction of verbs and adjectives did not yield
-interesting results.
+```js
+const term_search = view(Inputs.search(extracted_terms));
+```
 
-</div>
+${Inputs.table(term_search, { layout: "auto"})}
 
-## 3. Results
-
-${Inputs.table([... await sql`select *, 'noun' from nouns`])}
+<figcaption>Table 1. Top 7 extracted nouns terms by frequency and by round table</figcaption>
 
 <!-- $ -->
 
@@ -197,28 +198,51 @@ order by "frequency" desc
 limit 20
 ```
 
-Looking at the top 6 most frequently used terms overall and by group, we can see
-that **#question**", **#territoire**", **#acteurs**", **#projet**", and **#processus-de-co-construction**
-are the most commonly used terms.
+```sql id=extracted_terms
+select *, 'noun' as pos from nouns
+union
+select *, 'adj' as pos from adjectives
+-- union
+-- select *, 'verb' as pos from verbs
+```
 
-| Top 6 terms by frequency          | Top 6 terms by group frequency    |
-| --------------------------------- | --------------------------------- |
-| **#question**                     | **#territoire**                   |
-| **#territoire**                   | #sujet                            |
-| **#acteurs**                      | **#question**                     |
-| #notion                           | **#acteurs**                      |
-| #projet                           | #métropole                        |
-| **#processus-de-co-construction** | **#processus-de-co-construction** |
+Looking at the top 7 most frequently used identified terms and entities overall
+and by round table, we can see that **#dispositifs**, **#carnet**, **_#Plaine-Commune_**,
+**#Nantes**, and **#Nantes-Métropole** are the most commonly used terms (cf. table
+2, figures 2-4). In particular **_#Plaine-Commune_** appearing in all 3 lists.
+
+Notably, **#Nantes** and **#Thiers** appear in the top 7 terms by round table frequency
+suggesting that the TR2 discussion may have focused on their respective territorial
+collectives more relative to TR1 and TR2 which may have focuses on other subjects.
+Taking into consideration the top 20 extracted named entities (figure 4), **#Lyon**
+is the 2nd most frequently occuring location entity overall (2nd to **#Paris**).
+
+Additionally, **#Nantes-Métropole** and **#Plaine-Commune** are the most
+frequently used territorial collectives terms overall and by round table discussion.
+
+|     | Top 7 terms by frequency | Top 7 terms by round table frequency | Top 7 named entities by frequency |
+| --- | ------------------------ | ------------------------------------ | --------------------------------- |
+| 1.  | **#dispositifs**         | **#dispositifs**                     | #Paris                            |
+| 2.  | #méthode                 | **#carnet**                          | #Lyon                             |
+| 3.  | **#carnet**              | **_#Plaine-Commune_**                | #CEREMA                           |
+| 4.  | **#Nantes-Métropole**    | #étudiants                           | **_#Plaine-Commune_**             |
+| 5.  | #politiques publiques    | **#Nantes**                          | #France                           |
+| 6.  | **_#Plaine-Commune_**    | #Thiers                              | #InteGREEN                        |
+| 7.  | #information             | **#Nantes-Métropole**                | **#Nantes**                       |
+
+<figcaption>
+Table 2. Top 7 extracted terms and entities by frequency and by round table
+</figcaption>
 
 ${fig_2}<!-- $ -->
 
-<figcaption>Fig 2. Top 15 extracted nouns by frequency</figcaption>
+<figcaption>Fig 2. Extracted nouns by frequency</figcaption>
 
 ```js
 const fig_2 = new WordBubbles(
   {
     nodes: freq_words([...(await sql`select * from nouns`)], {
-      limit: 15,
+      limit: 30,
       rFactor: 4,
     }),
   },
@@ -228,47 +252,19 @@ const fig_2 = new WordBubbles(
 
 ${fig_3}<!-- $ -->
 
-<figcaption>Fig 3. Top 15 extracted nouns by round table frequency</figcaption>
+<figcaption>Fig 3. Extracted nouns by round table frequency</figcaption>
 
 ```js
 const fig_3 = new WordBubbles(
   {
     nodes: group_freq_words([...(await sql`select * from nouns`)], {
-      limit: 15,
-      rFactor: 4,
+      limit: 30,
+      rFactor: 4.9,
     }),
   },
   graph_config_round_table,
 ).getSVG();
 ```
-
-Interestingly, group 3 evokes the term **#processus** and **#processus-de-co-construction**
-more than group 2 despite both groups' questions being about processes (fig 5).
-This seems to be due to the fact that group 2's presentation focused more on the
-transposable elements of the process of documentation than _how_ to document it.
-
-Between the extracted entities (figures 3-6) and the extracted terms, we can also
-observe the following:
-
-- There is little overlap between the extracted entities and terms
-  - With the only exception being "PEPR", evoked by group 1
-- There is no overlap between the extracted entities of each group presentation
-- There is little overlap entity reuse within each group presentation (with the
-  exception of the "PEPR" in group 1)
-
-Looking at the extracted entities and terms that were only evoked by a singular
-group we can see that keywords in the respective group questions are also evoked
-during each presentation. Notably the keywords that are not evoked in the group
-questions may give (somewhat vague) insight into how each group responded to their
-question.
-
-| Top 5 unique group 1 terms            | Top 5 unique Group 2 terms | Top 5 unique Group 3 terms    |
-| ------------------------------------- | -------------------------- | ----------------------------- |
-| #capitalisation-et-de-la-transmission | #projet                    | #processus-de-co-construction |
-| #comité-des-parties-prenantes         | #sujet                     | #notion                       |
-| #premier-groupe                       | #métropole                 | #volet                        |
-| #PEPR                                 | #expertise-locale          | #évaluation                   |
-|                                       | #villes-moyennes           | #apprendisage-réciproque      |
 
 ${resize((width) => generateRoundTableEntitiesPlot(extracted_entities, width))}
 
@@ -279,113 +275,65 @@ ${extractedTermsHtmlTemplate(
 {marginLeft: 120}
 )}<!-- $ -->
 
-## 4. Method review
+<figcaption>Fig 5. Top terms by frequency and by round table frequency</figcaption>
 
-Two aspects of the methodology are reviewed in this section:
+## 4. Analysis Perspective
 
-1. A quantitative measure of the effectiveness of **Whisper** to automatically generate
-   transcripts in a real-world setting
-2. An informal review of the usefullness of **Cortext** and this **lexical analyses**
-   to extract terms from the workshop transcripts compared to a manual analysis
+Several improvements to the methodology have been identified for perspective analyses
+using Cortext.
 
-### 4.1. Whisper error rate measurement
-
-The Whisper transcription accuracy was measured using the
-[Word Error Rate (WER) [5.3]](https://en.wikipedia.org/wiki/Word_error_rate)
-
-```tex
-WER=\frac{S+D+I}{N}=\frac{S+D+I}{S+D+C}
-```
-
-Where
-
-- ${tex`S`} is the number of substitutions,
-- ${tex`D`} is the number of deletions,
-- ${tex`I`} is the number of insertions,
-- ${tex`N`} is the number of words in the reference ${tex`(N=S+D+C)`},
-- ${tex`C`} is the number of correct words
-
-For this study words are separated by spaces (i.e., '_c'est_' is considered
-a single word)
-
-The following table shows the WER for each group presentation:
-
-| Source text          | S   | D   | I   | N    | WER          |
-| :------------------- | --- | --- | --- | :--- | :----------- |
-| Group 1 presentation | 3   | 2   | 4   | 319  | 0.028213     |
-| Group 2 presentation | 1   | 42  | 31  | 1000 | 0.074000     |
-| Group 3 presentation | 29  | 204 | 88  | 907  | 0.353914     |
-| **Total**            | 33  | 248 | 133 | 2226 | **0.185984** |
+First, this analysis only extracted _noun phrases_ as terms, but other parts of
+speech could be extracted for the purposes of keyword identification such as _verbs_
+and _adjectives_ using Cortext. While identified n-gram nouns phrases can
+contain adjectives (e.g., "jeu-sérieux"), few were identified in this analysis.
+An initial extraction of verbs and adjectives was done but excluded from the results.
+This was due to the fact that only monograms can be extracted for verbs and adjectives
+using Cortext and the resulting terms require more involved data treatment to improve
+their usefulness (e.g., _definition and removal of unwanted stop words, lemmatization_,
+etc.)
 
 <div class="note">
 
-It should be noted that a large majority of measured deletions are clustered
-together. Surprisingly, Whisper's errors often materialized as several repetitive,
-duplicate lines.
-
-These are very easy to find and correct manually, which means that the WER score
-may be a pessimistic measure of the actual effort required to correct the transcriptions.
-
-Future experiments should consider measuring the WER after only removing the
-repetitive lines to get a better estimate of the effort required to _quickly_ but
-not completely correct the transcriptions.
+Cortext does not provide a lemmatization function in place of stemming but this
+is a well know NLP task that can be done on French text using libraries such as
+Stanza [[5.4]](#54-stanza)
 
 </div>
 
-<div class="tip">
+Second, the identified _entities and terms could be combined_ into a single, more
+comprehensive list of terms for a more comprehensive keyword analysis.
 
-A [git diff](https://git-scm.com/docs/git-diff) is used to help identify the WER
-manually. Notably, existing tools with known limitations could be used in the future:
-
-- [Understanding and Calculating Word Error Rate (WER) in Automatic Speech Recognition using python](https://medium.com/@ramadhanimassawe14/understanding-and-calculating-word-error-rate-wer-in-automatic-speech-recognition-using-python-661f18b518a5)
-- [WER-in-python](https://github.com/zszyellow/WER-in-python/tree/master);
-  hypothesis and/or reference may need data cleaning depending on use-case
-
-</div>
-
-### 4.2. Cortext vs manual analysis
-
-A synthesis of the workshop was proposed by the NEO project, which is comparitavly
-rich when compared to this lexical analysis. Many more conclusions and
-observations are drawn with more detail and meaning in the manual synthesis. This
-highlights the main limitation of Cortext in this application: _Cortext is intended_
-_to analyse document corpuses at scale_.
-
-In addition, the approach is limited by the quality of the transcriptions; much
-of the recorded sessions were not included as the audio quality was insufficient
-and inconsistent. Although manually reviewing the transcripts is always necessary
-to some degree, even in a manual approach. Some manual corrections and methodology
-adustment were also necessary for this analysis. For example, the detected location
-entity `France` was initially identified as `de France`.
-
-However, this methodology still has applications in the following settings, given
-that the transcription quality is sufficient:
-
-- When the number of transcriptions is too large for a manual analysis
-- When the goal of the analysis is to get a general overview of the content or to
-  supplement the conclusions of a manual analysis
-- When a domain expert is not available to perform a manual analysis
-
-<div class="note">
-
-The author of this analysis is not as knowledgeable in the domain
-of urban planning and development as the workshop participants or the author
-of the manual analysis and could not have performed a manual analysis of the
-same quality.
-
-</div>
+Third, term occurences and co-occurence results were calculated by round table discussion
+by default, which did not yeild interesting results with so few (only 3) documents
+in the corpus. Term extraction _by sentence (co-)occurrences_ may be more insightful.
 
 ## 5. References and links
 
 ```bibtex
 @software{cortext_manager_v2_bibtex,
-  keywords = {natural language processing, social network analysis, geospatial analysis, descriptive statistics, scientometrics, biliometrics},
-  author = {Breucker, Philippe and Cointet, Jean-Philippe and Hannud Abdo, Alexandre and Orsal, Guillaume and de Quatrebarbes, Constance and Duong, Tam-Kien and Martinez, Cristian and Ospina Delgado, Juan Pablo and Medina Zuluaga, Luis Daniel and Gómez Peña, Diego Fernando and Sánchez Castaño, Tatiana Andrea and Marques da Costa, Joenio and Laglil, Hajar and Villard, Lionel and Barbier, Marc},
+  keywords = {natural language processing, social network analysis, geospatial analysis,
+    descriptive statistics, scientometrics, biliometrics},
+  author = {Breucker, Philippe and Cointet, Jean-Philippe and Hannud Abdo, Alexandre
+    and Orsal, Guillaume and de Quatrebarbes, Constance and Duong, Tam-Kien and
+    Martinez, Cristian and Ospina Delgado, Juan Pablo and Medina Zuluaga, Luis Daniel
+    and Gómez Peña, Diego Fernando and Sánchez Castaño, Tatiana Andrea and Marques
+    da Costa, Joenio and Laglil, Hajar and Villard, Lionel and Barbier, Marc},
   month = {10},
   title = {CorTexT Manager},
   url = {https://docs.cortext.net},
   year = {2016}
 }
+
+@InProceedings{manning-EtAl:2014:P14-5,
+  author    = {Manning, Christopher D. and  Surdeanu, Mihai  and  Bauer, John  and
+    Finkel, Jenny  and  Bethard, Steven J. and  McClosky, David},
+  title     = {The {Stanford} {CoreNLP} Natural Language Processing Toolkit},
+  booktitle = {Association for Computational Linguistics (ACL) System Demonstrations},
+  year      = {2014},
+  pages     = {55--60},
+  url       = {http://www.aclweb.org/anthology/P/P14/P14-5010}
+}
+
 ```
 
 ### 5.1. [Cortext documentation: Named Entity Recognition](https://docs.cortext.net/named-entity-recognizer/)
@@ -393,3 +341,5 @@ same quality.
 ### 5.2. [Cortext documentation: (Multi)Term extraction](https://docs.cortext.net/lexical-extraction/)
 
 ### 5.3. [Word Error Rate](https://en.wikipedia.org/wiki/Word_error_rate)
+
+### 5.4. [Stanza](https://stanfordnlp.github.io/stanza/)

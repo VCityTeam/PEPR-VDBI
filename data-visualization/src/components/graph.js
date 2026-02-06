@@ -606,13 +606,6 @@ export class Graph {
       .forceSimulation(this.nodes)
       .force("link", d3.forceLink(this.links).id(this.keyMap))
       .force(
-        "charge",
-        d3
-          .forceManyBody()
-          .strength(this.chargeStrength)
-          .distanceMax(this.width / 2),
-      )
-      .force(
         "collide",
         d3
           .forceCollide()

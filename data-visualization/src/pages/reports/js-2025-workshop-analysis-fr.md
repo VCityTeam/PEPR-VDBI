@@ -233,9 +233,7 @@ et **#processus-de-co-construction** sont les termes les plus couramment utilis�
 | #projet                           | #métropole                           |
 | **#processus-de-co-construction** | **#processus-de-co-construction**    |
 
-${fig_2}
-
-<!-- $ -->
+${fig_2}<!-- $ -->
 
 <figcaption>Fig 2. Les 10 termes les plus fréquents</figcaption>
 
@@ -243,7 +241,6 @@ ${fig_2}
 const fig_2 = new WordBubbles(
   {
     nodes: freq_words([...nouns], {
-      labelCropFactor: 1000,
       rFactor: 7,
     }),
   },
@@ -251,9 +248,18 @@ const fig_2 = new WordBubbles(
 ).getSVG();
 ```
 
-${new WordBubbles({nodes: group_freq_words([...nouns])}, graph_config_workshop).getSVG()}
+${fig_3}<!-- $ -->
 
-<!-- $ -->
+```js
+const fig_3 = new WordBubbles(
+  {
+    nodes: group_freq_words([...nouns], {
+      rFactor: 13,
+    }),
+  },
+  graph_config_workshop,
+).getSVG();
+```
 
 <figcaption>Fig 3. Les 10 termes les plus fréquents par groupe</figcaption>
 

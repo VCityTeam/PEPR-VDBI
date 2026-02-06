@@ -24,8 +24,8 @@ export const entity_type_map = new Map([
 ]);
 
 export const column_title_map = new Map([
-  ["C-value", "Fig 5. Top 30 terms by frequency"],
-  ["Gfidf", "Fig 6. Top 30 terms by group frequency"],
+  ["C-value", "Fig 5. Top terms by frequency"],
+  ["Gfidf", "Fig 6. Top terms by group frequency"],
   // ["Specificity chi2", "Fig 7. Terms by specificity"],
   // ["Occurrences", "Fig 8. Terms by group occurrences"],
   // ["Cooccurrences", "Fig 9. Terms by group co-occurrences"],
@@ -39,7 +39,7 @@ export const column_label_map = new Map([
   // ["Cooccurrences", "Group co-occurrences"],
 ]);
 
-export const freq_words = (data, { limit = 10, rFactor = 6 } = {}) =>
+export const freq_words = (data, { limit = 100, rFactor = 6 } = {}) =>
   data
     .sort((a, b) => b["C-value"] - a["C-value"])
     .slice(0, limit)
@@ -49,7 +49,7 @@ export const freq_words = (data, { limit = 10, rFactor = 6 } = {}) =>
       r: d["C-value"] * rFactor,
     }));
 
-export const group_freq_words = (data, { limit = 10, rFactor = 6 } = {}) =>
+export const group_freq_words = (data, { limit = 100, rFactor = 6 } = {}) =>
   data
     .sort((a, b) => b["Gfidf"] - a["Gfidf"])
     .slice(0, limit)
@@ -103,10 +103,12 @@ export const generateExtractedTermsPlot = (
         // axis: "both",
         nice: true,
       },
+      y: {
+        label: "Term",
+      },
       width: width,
       marginLeft: marginLeft,
       grid: true,
-      caption: column_title_map.get(x_column),
       marks: [
         Plot.frame(),
         Plot.barX(
@@ -148,6 +150,9 @@ export const extractedTermsByGroupHtmlTemplate = (data) =>
         ticks: d3.max(data.map((d) => d["C-value"])) === 1 ? 1 : undefined,
         // axis: "both",
         nice: true,
+      },
+      y: {
+        label: "Term",
       },
       fx: { label: "Group" },
       symbol: { legend: true },
