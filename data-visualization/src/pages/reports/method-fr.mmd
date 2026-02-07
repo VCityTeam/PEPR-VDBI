@@ -1,0 +1,39 @@
+---
+displayMode: compact
+---
+
+stateDiagram-v2
+
+  v   : Enregistrement vidéo de la table ronde
+  a   : Enregistrement audio de la table ronde
+  t   : Transcription de la table ronde
+  e   : Entités nommées
+  i   : Résumé de la table ronde
+
+  [*] --> v
+  v --> a : Extraire l'audio
+  a --> t : Transcrire avec Whisper
+
+  state fork1 <<fork>>
+    t --> fork1
+    fork1 --> Cortext : Analyse lexicométrique
+    fork1 --> i       : Analyse manuelle
+
+    state Cortext {
+        %% direction LR
+
+        state fork2 <<fork>>
+        [*] --> fork2
+        fork2 --> e           : Extraire des entités
+        fork2 --> Multiterms  : Extraire les termes
+
+        state join2 <<join>>
+        e --> join2
+        Multiterms --> join2
+        join2 --> [*]
+    }
+
+  state join1 <<join>>
+    Cortext --> join1
+    i --> join1
+    join1 --> [*]

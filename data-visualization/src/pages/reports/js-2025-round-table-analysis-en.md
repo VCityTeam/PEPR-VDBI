@@ -90,8 +90,8 @@ and entities from a corpus. This analysis uses two main Cortext tasks:
 The identified terms and entities were reviewed and corrected manually
 
 - People identified as entities or terms were removed for privacy reasons
-- Mistyped entities were reclassified (e.g., "PEPR VDBI" was retyped as an organization)
--
+- Mistyped entities were reclassified (e.g., "PEPR VDBI" was retyped as an organization).
+  These changes are made available as a [git diff](https://git-scm.com/docs/git-diff).
 
 <div class="note">
 
@@ -111,34 +111,39 @@ stateDiagram-v2
 
   %% direction LR
 
-  v   : Round table video recording
-  a   : Round table audio recording
-  t   : Round table transcript
-  c   : Transcript corpus
-  e   : Named entities
-  f   : Clean results
+  v     : Round table video recording
+  a     : Round table audio recording
+  t     : Round table transcript
+  e     : Named entities
+  i     : Round table summary
 
   [*] --> v
-  v --> a         : Extract audio
-  a --> t         : Transcribe with Whisper
-  t --> Cortext   : Clean and import into Cortext
+  v --> a   : Extract audio
+  a --> t   : Transcribe with Whisper
 
-  state Cortext {
-    %% direction LR
+  state fork1 <<fork>>
+    t --> fork1
+    fork1 --> Cortext   : Lexicometric analysis
+    fork1 --> i         : Manual analysis
 
-    state fork2 <<fork>>
-      c --> fork2
-      fork2 --> e    : Named Entity Recognition
-      fork2 --> Multiterms  : Extract multiterms
+    state Cortext {
+        %% direction LR
 
-    state join2 <<join>>
-      e --> join2
-      Multiterms --> join2
-      join2 --> [*]
-  }
+        state fork2 <<fork>>
+        [*] --> fork2
+        fork2 --> e    : Named Entity Recognition
+        fork2 --> Multiterms  : Extract multiterms
 
-  Cortext --> f : Clean entities and terms
-  f --> [*]
+        state join2 <<join>>
+        e --> join2
+        Multiterms --> join2
+        join2 --> [*]
+    }
+
+  state join1 <<join>>
+    Cortext --> join1
+    i --> join1
+    join1 --> [*]
 ```
 
 <figcaption>Fig 1. Analysis Process</figcaption>
