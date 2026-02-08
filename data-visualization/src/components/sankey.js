@@ -1,13 +1,13 @@
-import * as d3_sankey from "d3-sankey"
-import { InternMap, scaleOrdinal, create, interpolateSpectral } from "d3"
-import { cropText } from "./utilities.js"
+import * as d3_sankey from 'd3-sankey'
+import { InternMap, scaleOrdinal, create, interpolateSpectral } from 'd3'
+import { cropText } from './utilities.js'
 
 // Code adapted from https://observablehq.com/@d3/parallel-sets
 
 /**
  * Transform csv data to a graph interoperable with the SankeyDiagram example
  * @param {object[]} data - a tablular dataset. Each object is a row with key-value pairs
- * @param {string[]} keys - An array of keys to use for the nodes
+ * @param {string[]} keys - A column (key) whitelist to use for the nodes
  * @returns {object[]} - Graph object with 'nodes' and 'links' arrays:
  *   {
  *     nodes: [{ name: 'Node1' }, { name: 'Node2' }, ...],
@@ -30,6 +30,9 @@ export function parallelSetToGraph(data, keys) {
       const node = { id: d[key] }
       nodes.push(node)
       nodeByKey.set(d[key], node)
+      if (!node.id) {
+        console.error('Node id is undefined for key', key, 'and datum', d)
+      }
     }
   }
 
@@ -76,7 +79,7 @@ export function parallelSetToGraph(data, keys) {
  * @param {Function} text - function to map a node to its label
  * @param {scaleOrdinal|Function} nodeFill - color scale for nodes
  * @param {scaleOrdinal|Function} linkStroke - color scale for links
- * @param {Number} fillOpacity - opacity for node fill colors
+ * @param {Number} linkFillOpacity - opacity for node fill colors
  * @param {Number} height - height of the SVG element
  * @param {Number} font_size - font size for node labels
  * @param {null|undefined} node_sort - node_sort paramters for d3-sankey,
@@ -92,14 +95,14 @@ export function sankeyDiagram(
     idMap = (d) => d.id,
     width = 928,
     height = 720,
-    nodeFill = "black",
-    linkStroke = (d) => d.color || "#ccc",
-    fillOpacity = 0.7,
+    nodeFill = 'black',
+    linkStroke = (d) => d.color || '#ccc',
+    linkFillOpacity = 0.7,
     font_size = 12,
     text = (d) => cropText(idMap(d), 85),
     node_sort = null,
     link_sort = null,
-  } = {}
+  } = {},
 ) {
   const sankeyGenerator = d3_sankey
     .sankey()
@@ -114,63 +117,63 @@ export function sankeyDiagram(
       [width, height - 5],
     ])
 
-  const svg = create("svg")
-    .attr("viewBox", [0, 0, width, height])
-    .attr("width", width)
-    .attr("height", height)
-    .attr("style", "max-width: 100%; height: auto;")
+  const svg = create('svg')
+    .attr('viewBox', [0, 0, width, height])
+    .attr('width', width)
+    .attr('height', height)
+    .attr('style', 'max-width: 100%; height: auto;')
 
-  console.debug("Input graph:", graph)
+  console.debug('Input graph:', graph)
 
   const { nodes, links } = sankeyGenerator({
     nodes: graph.nodes.map((d) => Object.create(d)),
     links: graph.links.map((d) => Object.create(d)),
   })
 
-  console.debug("Sankey nodes:", nodes)
-  console.debug("Sankey links:", links)
+  console.debug('Sankey nodes:', nodes)
+  console.debug('Sankey links:', links)
 
   svg
-    .append("g")
-    .selectAll("rect")
+    .append('g')
+    .selectAll('rect')
     .data(nodes)
-    .join("rect")
-    .attr("x", (d) => d.x0)
-    .attr("y", (d) => d.y0)
-    .attr("height", (d) => d.y1 - d.y0)
-    .attr("width", (d) => d.x1 - d.x0)
-    .attr("fill", nodeFill)
-    .append("title")
+    .join('rect')
+    .attr('x', (d) => d.x0)
+    .attr('y', (d) => d.y0)
+    .attr('height', (d) => d.y1 - d.y0)
+    .attr('width', (d) => d.x1 - d.x0)
+    .attr('fill', nodeFill)
+    .append('title')
     .text((d) => `${idMap(d)}\n${d.value.toLocaleString()}`)
 
   svg
-    .append("g")
-    .attr("fill", "none")
-    .selectAll("g")
+    .append('g')
+    .attr('fill', 'none')
+    .selectAll('g')
     .data(links)
-    .join("path")
-    .attr("d", d3_sankey.sankeyLinkHorizontal())
-    .attr("stroke", linkStroke)
-    .attr("stroke-width", (d) => d.width)
-    .attr("stroke-opacity", fillOpacity)
-    .style("mix-blend-mode", "multiply")
-    .append("title")
+    .join('path')
+    .attr('d', d3_sankey.sankeyLinkHorizontal())
+    .attr('stroke', linkStroke)
+    .attr('stroke-width', (d) => d.width)
+    .attr('stroke-opacity', linkFillOpacity)
+    .style('mix-blend-mode', 'multiply')
+    .append('title')
     .text((d) => d.value.toLocaleString())
 
   svg
-    .append("g")
-    .style("font", "10px sans-serif")
-    .selectAll("text")
+    .append('g')
+    .style('font', '10px sans-serif')
+    .selectAll('text')
     .data(nodes)
-    .join("text")
-    .attr("x", (d) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
-    .attr("y", (d) => (d.y1 + d.y0) / 2)
-    .attr("dy", "0.35em")
-    .attr("font-size", font_size)
-    .attr("text-anchor", (d) => (d.x0 < width / 2 ? "start" : "end"))
+    .join('text')
+    .attr('x', (d) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
+    .attr('y', (d) => (d.y1 + d.y0) / 2)
+    .attr('dy', '0.35em')
+    .attr('font-size', font_size)
+    .attr('text-anchor', (d) => (d.x0 < width / 2 ? 'start' : 'end'))
     .text(text)
-    .append("tspan")
-    .attr("fill-opacity", 0.7)
+    .append('tspan')
+    .attr('fill-opacity', 0.7)
     .text((d) => ` ${d.value.toLocaleString()}`)
 
   return svg.node()
@@ -196,6 +199,7 @@ export function sankeyDiagram(
  * @param {Function} text - function to map a node to its label
  * @param {scaleOrdinal|Function} nodeFill - color scale for nodes
  * @param {scaleOrdinal|Function} linkStroke - color scale for links
+ * @param {Number} link_opacity - opacity for link stroke colors
  * @param {Number} height - height of the SVG element
  * @param {Number} font_size - font size for node labels
  * @param {null|undefined} node_sort - node_sort paramters for d3-sankey,
@@ -212,14 +216,15 @@ export function parallelSet(
     pathMap = (d) => d.path,
     width = 928,
     height = 720,
-    nodeFill = "black",
+    nodeFill = 'black',
     linkStroke = (d) =>
-      scaleOrdinal(interpolateSpectral).unknown("#ccc")(pathMap(d)[0]),
+      scaleOrdinal(interpolateSpectral).unknown('#ccc')(pathMap(d)[0]),
+    link_opacity = 0.7,
     font_size = 12,
     text = (d) => cropText(idMap(d), 85),
     node_sort = null,
     link_sort = null,
-  } = {}
+  } = {},
 ) {
   const sankeyGenerator = d3_sankey
     .sankey()
@@ -234,62 +239,63 @@ export function parallelSet(
       [width, height - 5],
     ])
 
-  const svg = create("svg")
-    .attr("viewBox", [0, 0, width, height])
-    .attr("width", width)
-    .attr("height", height)
-    .attr("style", "max-width: 100%; height: auto;")
+  const svg = create('svg')
+    .attr('viewBox', [0, 0, width, height])
+    .attr('width', width)
+    .attr('height', height)
+    .attr('style', 'max-width: 100%; height: auto;')
 
-  console.debug("Input graph:", graph)
+  console.debug('Input graph:', graph)
 
   const { nodes, links } = sankeyGenerator({
     nodes: graph.nodes.map((d) => Object.create(d)),
     links: graph.links.map((d) => Object.create(d)),
   })
 
-  console.debug("Sankey nodes:", nodes)
-  console.debug("Sankey links:", links)
+  console.debug('Sankey nodes:', nodes)
+  console.debug('Sankey links:', links)
 
   svg
-    .append("g")
-    .selectAll("rect")
+    .append('g')
+    .selectAll('rect')
     .data(nodes)
-    .join("rect")
-    .attr("x", (d) => d.x0)
-    .attr("y", (d) => d.y0)
-    .attr("height", (d) => d.y1 - d.y0)
-    .attr("width", (d) => d.x1 - d.x0)
-    .attr("fill", nodeFill)
-    .append("title")
+    .join('rect')
+    .attr('x', (d) => d.x0)
+    .attr('y', (d) => d.y0)
+    .attr('height', (d) => d.y1 - d.y0)
+    .attr('width', (d) => d.x1 - d.x0)
+    .attr('fill', nodeFill)
+    .append('title')
     .text((d) => `${idMap(d)}\n${d.value.toLocaleString()}`)
 
   svg
-    .append("g")
-    .attr("fill", "none")
-    .selectAll("g")
+    .append('g')
+    .attr('fill', 'none')
+    .selectAll('g')
     .data(links)
-    .join("path")
-    .attr("d", d3_sankey.sankeyLinkHorizontal())
-    .attr("stroke", linkStroke)
-    .attr("stroke-width", (d) => d.width)
-    .style("mix-blend-mode", "multiply")
-    .append("title")
-    .text((d) => `${pathMap(d).join(" → ")}\n${d.value.toLocaleString()}`)
+    .join('path')
+    .attr('d', d3_sankey.sankeyLinkHorizontal())
+    .attr('stroke', linkStroke)
+    .attr('stroke-width', (d) => d.width)
+    .attr('stroke-opacity', link_opacity)
+    .style('mix-blend-mode', 'multiply')
+    .append('title')
+    .text((d) => `${pathMap(d).join(' → ')}\n${d.value.toLocaleString()}`)
 
   svg
-    .append("g")
-    .style("font", "10px sans-serif")
-    .selectAll("text")
+    .append('g')
+    .style('font', '10px sans-serif')
+    .selectAll('text')
     .data(nodes)
-    .join("text")
-    .attr("x", (d) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
-    .attr("y", (d) => (d.y1 + d.y0) / 2)
-    .attr("dy", "0.35em")
-    .attr("font-size", font_size)
-    .attr("text-anchor", (d) => (d.x0 < width / 2 ? "start" : "end"))
+    .join('text')
+    .attr('x', (d) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
+    .attr('y', (d) => (d.y1 + d.y0) / 2)
+    .attr('dy', '0.35em')
+    .attr('font-size', font_size)
+    .attr('text-anchor', (d) => (d.x0 < width / 2 ? 'start' : 'end'))
     .text(text)
-    .append("tspan")
-    .attr("fill-opacity", 0.7)
+    .append('tspan')
+    .attr('fill-opacity', 0.7)
     .text((d) => ` ${d.value.toLocaleString()}`)
 
   return svg.node()

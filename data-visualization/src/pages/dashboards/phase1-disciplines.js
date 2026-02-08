@@ -1,13 +1,26 @@
-import { countEntities, exclude, sparkbar } from '/components/utilities.js'
-import { cnu_category_map } from '/components/cnu.js'
-import { getCategoryFromCNU, colorCNU } from '/components/color.js'
-import { generateIntersectionMatrix } from '/components/chord.js'
-import { donutChart } from '/components/pie-chart.js'
 import * as d3 from 'npm:d3'
 import { html } from 'npm:htl'
 import * as Plot from 'npm:@observablehq/plot'
+import {
+  cropText,
+  countEntities,
+  exclude,
+  sparkbar,
+} from '/components/utilities.js'
+import { cnu_category_map } from '/components/cnu.js'
+import {
+  getCategoryFromCNU,
+  colorCNU,
+  cnu_color_map,
+  interpolated_cnu_color,
+  erc_color_scale,
+  hceres_color_scale,
+} from '/components/color.js'
+import { generateIntersectionMatrix } from '/components/chord.js'
+import { donutChart } from '/components/pie-chart.js'
+import { parallelSetToGraph } from '/components/sankey.js'
 
-export const cnu_plot_legend_options = {
+const cnu_plot_legend_options = {
   marginLeft: 18,
   marginRight: 300,
   domain: [1, 0.1],
@@ -139,75 +152,63 @@ export const cnu_plot = (data, width, cnu_plot_sort) =>
     ],
   })
 
-export function generateCnuPlotOptions(
-  data,
-  sort = 'y',
-  height = 350,
-  width = 500,
-) {
-  return {
-    width: width,
-    height: height,
-    marginTop: 50,
-    marginRight: width / 2,
-    y: {
-      label: 'CNU',
-      tickRotate: 10,
-      axis: 'right',
-      lineWidth: 35,
-      textOverflow: 'ellipsis',
-    },
-    x: {
-      reverse: true,
-      grid: true,
-      axis: 'top',
-      label: 'Occurences',
-    },
-    marks: [
-      Plot.barX(data, {
-        y: (d) => d[0],
-        x: (d) => d[1],
-        // fill: (d) => d3
-        // .scaleOrdinal(d3.schemeCategory10)
-        // .domain(cnu_category_map.keys())
-        // .unknown("grey")(getCategoryFromCNU(d[0])),
-        fill: (d) => colorCNU(d, Math.max(...data.map((d) => d[1]))),
-        stroke: 'black',
-        strokeOpacity: 0.1,
-        // sort: {y: "y"},
-        // sort: {y: "-x"},
-        sort: { y: sort },
-        tip: {
-          format: {
-            fill: false,
-          },
-          lineWidth: 25,
-          textOverflow: 'ellipsis-end',
-        },
-      }),
-      Plot.barX(
-        data,
-        Plot.pointerY({
-          y: (d) => d[0],
-          x: (d) => d[1],
-          fill: 'white',
-          opacity: 0.5,
-        }),
-      ),
-      // Plot.text(data, {
-      //   x: 0,
-      //   y: (d) => d[1],
-      // })
-    ],
-  }
-}
-
-export const erc_category_colors = new Map([
-  ['PE - Sciences & Technologies', d3.schemeCategory10[0]],
-  ['LS - Vie & Santé', d3.schemeCategory10[4]],
-  ['SH - Sciences Humaines & Sociales', d3.schemeCategory10[2]],
-  ['non chercheur', 'grey'],
-])
+// function generateCnuPlotOptions(data, sort = 'y', height = 350, width = 500) {
+//   return {
+//     width: width,
+//     height: height,
+//     marginTop: 50,
+//     marginRight: width / 2,
+//     y: {
+//       label: 'CNU',
+//       tickRotate: 10,
+//       axis: 'right',
+//       lineWidth: 35,
+//       textOverflow: 'ellipsis',
+//     },
+//     x: {
+//       reverse: true,
+//       grid: true,
+//       axis: 'top',
+//       label: 'Occurences',
+//     },
+//     marks: [
+//       Plot.barX(data, {
+//         y: (d) => d[0],
+//         x: (d) => d[1],
+//         // fill: (d) => d3
+//         // .scaleOrdinal(d3.schemeCategory10)
+//         // .domain(cnu_category_map.keys())
+//         // .unknown("grey")(getCategoryFromCNU(d[0])),
+//         fill: (d) => colorCNU(d, Math.max(...data.map((d) => d[1]))),
+//         stroke: 'black',
+//         strokeOpacity: 0.1,
+//         // sort: {y: "y"},
+//         // sort: {y: "-x"},
+//         sort: { y: sort },
+//         tip: {
+//           format: {
+//             fill: false,
+//           },
+//           lineWidth: 25,
+//           textOverflow: 'ellipsis-end',
+//         },
+//       }),
+//       Plot.barX(
+//         data,
+//         Plot.pointerY({
+//           y: (d) => d[0],
+//           x: (d) => d[1],
+//           fill: 'white',
+//           opacity: 0.5,
+//         }),
+//       ),
+//       // Plot.text(data, {
+//       //   x: 0,
+//       //   y: (d) => d[1],
+//       // })
+//     ],
+//   }
+// }
 
 const default_donut_config = {
   keyMap: (d) => d[0],
@@ -235,11 +236,7 @@ export const erc_donut = (data, width) =>
     ...default_donut_config,
     width: width * 0.6,
     legendWidth: width * 0.5,
-    color: d3
-      .scaleOrdinal(d3.schemeCategory10)
-      .domain(erc_category_colors.keys())
-      .range(erc_category_colors.values())
-      .unknown('grey'),
+    color: erc_color_scale,
   })
 
 // Get relevant data by project,
@@ -325,34 +322,34 @@ function formatResearcherDataByProject(
     grouped_projects_by_theme,
   )
 
-  const theme_graph = {
-    nodes: [
-      ...new Set(
-        filtered_researchers.flatMap((reasearcher) =>
-          reasearcher.themes.map((theme) => ({
-            id: theme,
-            label: theme,
-            type: 'Theme',
-          })),
-        ),
-      ),
-    ],
-    links: filtered_researchers.flatMap((researcher) =>
-      researcher.themes.flatMap((source_theme) =>
-        researcher.themes
-          .map((target_theme) =>
-            source_theme === target_theme
-              ? null
-              : {
-                  source: source_theme,
-                  target: target_theme,
-                  label: 'Shared researcher',
-                },
-          )
-          .filter((d) => !!d),
-      ),
-    ),
-  }
+  // const theme_graph = {
+  //   nodes: [
+  //     ...new Set(
+  //       filtered_researchers.flatMap((reasearcher) =>
+  //         reasearcher.themes.map((theme) => ({
+  //           id: theme,
+  //           label: theme,
+  //           type: 'Theme',
+  //         })),
+  //       ),
+  //     ),
+  //   ],
+  //   links: filtered_researchers.flatMap((researcher) =>
+  //     researcher.themes.flatMap((source_theme) =>
+  //       researcher.themes
+  //         .map((target_theme) =>
+  //           source_theme === target_theme
+  //             ? null
+  //             : {
+  //                 source: source_theme,
+  //                 target: target_theme,
+  //                 label: 'Shared researcher',
+  //               },
+  //         )
+  //         .filter((d) => !!d),
+  //     ),
+  //   ),
+  // }
 
   return {
     discipline_erc_count,
@@ -361,7 +358,7 @@ function formatResearcherDataByProject(
     theme_count,
     theme_project_matrix,
     projects: [...grouped_projects_by_theme.keys()],
-    theme_graph,
+    // theme_graph,
   }
 }
 
@@ -608,7 +605,7 @@ export function formatDomainPercents(label, data) {
 }
 
 // Table //
-export const generateSparkbar = sparkbar(1, {
+const generateSparkbar = sparkbar(1, {
   format: (x) => `${(x * 100).toPrecision(3)}%`,
   float: 'right',
 })
@@ -691,3 +688,148 @@ export function isFinanced(projects, financed_projects) {
   }
   return false
 }
+
+// Compare project status per discipline
+// - sankey across project status by
+//   - themes,
+//   - CNUs,
+//   - ERC
+// - Look at which themes were financed
+
+const sankey_config = (data, width) => ({
+  width: width,
+  height: data.nodes.length * 40,
+  nodeFill: () => 'rgba(1,1,1,0.9)',
+})
+
+export const projects_by_aap_status_graph = (projects) =>
+  parallelSetToGraph(
+    projects.map((d) => ({
+      submitted: 'submitted',
+      auditioned: d.auditioned ? 'auditioned' : 'not auditioned',
+      financed: d.financed ? 'financed' : 'not financed',
+    })),
+    ['submitted', 'auditioned', 'financed'],
+  )
+
+// CNUs
+
+export const cnu_by_aap_status = (researchers, projects) =>
+  researchers
+    .map((d) => {
+      const researcher_projects = d.project.map((project_name) =>
+        projects.find((p) => p.acronyme === project_name),
+      )
+      return {
+        cnu: cropText(d.cnu, 30),
+        cnu_category: getCategoryFromCNU(d.cnu) || 'Unknown',
+        auditioned: researcher_projects.some((p) => p.auditioned)
+          ? 'auditioned'
+          : 'not auditioned',
+        financed: researcher_projects.some((p) => p.financed)
+          ? 'financed'
+          : 'not financed',
+      }
+    })
+    .sort((a, b) => Number(a.cnu.slice(0, 2)) - Number(b.cnu.slice(0, 2)))
+
+export const cnu_by_aap_status_graph = (cnu_by_aap_status) =>
+  parallelSetToGraph(cnu_by_aap_status, ['cnu', 'auditioned', 'financed'])
+
+export const cnu_category_by_aap_status_graph = (cnu_by_aap_status, category) =>
+  cnu_by_aap_status_graph(
+    cnu_by_aap_status.filter((d) => d.cnu_category === category),
+  )
+
+export const cnu_categories_by_aap_status_graph = (cnu_by_aap_status) =>
+  parallelSetToGraph(cnu_by_aap_status, [
+    'cnu_category',
+    'auditioned',
+    'financed',
+  ])
+
+export const project_state_color_scale = d3.scaleOrdinal(
+  [
+    'submitted-auditioned',
+    'submitted-not auditioned',
+    'auditioned-financed',
+    'auditioned-not financed',
+    'not auditioned-financed',
+    'not auditioned-not financed',
+  ],
+  ['lightblue', 'pink', 'lightgreen', 'pink', 'pink', 'pink'],
+)
+
+export const cnu_link_color_scale = (d) => interpolated_cnu_color(d.path[0])
+// cnu_color_map.get(getCategoryFromCNU(d.path[0]))
+
+export const cnu_category_link_color_scale = (d) => cnu_color_map.get(d.path[0])
+
+export const cnu_sankey_config = (data, width, total_cnu_count) => ({
+  ...sankey_config(data, width),
+  linkStroke: (d) => cnu_link_color_scale(d, total_cnu_count),
+})
+
+// ERC
+
+export const lab_by_aap_status = (labs, projects) =>
+  projects.flatMap((project) => {
+    const project_labs = project.labs.map((lab_name) =>
+      labs.find((l) => l.lab === lab_name),
+    )
+    return project_labs
+      .filter((l) => l !== undefined)
+      .map((l) => ({
+        lab: cropText(l.lab, 30),
+        erc: l.domain_erc || '',
+        hceres: l.domain_hceres || '',
+        auditioned: project.auditioned ? 'auditioned' : 'not auditioned',
+        financed: project.financed ? 'financed' : 'not financed',
+      }))
+  })
+
+export const erc_by_aap_status = (labs, projects) =>
+  d3.sort(
+    lab_by_aap_status(labs, projects)
+      .filter((d) => d.erc !== '' && d.erc !== 'Non Renseigné')
+      .flatMap((d) =>
+        d.erc.split(';').map((erc) => ({
+          ...d,
+          erc: erc.trim(),
+        })),
+      ),
+    (d) => d.erc,
+  )
+
+export const erc_by_aap_status_graph = (erc_by_aap_status) =>
+  parallelSetToGraph(erc_by_aap_status, ['erc', 'auditioned', 'financed'])
+
+export const erc_sankey_config = (data, width) => ({
+  ...sankey_config(data, width),
+  linkStroke: (d) => erc_color_scale(d.path[0]),
+  linkFillOpacity: 0.4,
+})
+
+// HCERES
+
+export const hceres_by_aap_status = (labs, projects) =>
+  d3.sort(
+    lab_by_aap_status(labs, projects)
+      .filter((d) => d.hceres !== '' && d.hceres !== 'Non renseigné')
+      .flatMap((d) =>
+        d.hceres.split('-').map((hceres) => ({
+          ...d,
+          hceres: hceres.trim().replace('SV ', 'SVE '), // TODO: move correction to data processing
+        })),
+      ),
+    (d) => d.hceres,
+  )
+
+export const hceres_by_aap_status_graph = (hceres_by_aap_status) =>
+  parallelSetToGraph(hceres_by_aap_status, ['hceres', 'auditioned', 'financed'])
+
+export const hceres_sankey_config = (data, width) => ({
+  ...sankey_config(data, width),
+  linkStroke: (d) => hceres_color_scale(d.path[0]),
+  linkFillOpacity: 0.4,
+})

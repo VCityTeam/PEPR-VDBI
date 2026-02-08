@@ -1,40 +1,40 @@
-import * as d3 from "d3"
-import { exclude } from "./utilities.js"
-import { cnu_category_map } from "./cnu.js"
+import * as d3 from 'd3'
+import { exclude } from './utilities.js'
+import { cnu_category_map } from './cnu.js'
 
 // PEPR VDBI colors //
 // - #3557a2
 // - #ff722c
 export const vdbi_color_scheme = {
-  blue: "#3558A2",
-  orange: "#FF732C",
+  blue: '#3558A2',
+  orange: '#FF732C',
 }
 
 export const vdbi_color_scale_diverging = d3
   .scaleDiverging()
-  .range([vdbi_color_scheme.blue, "white", vdbi_color_scheme.orange])
-  .unknown("grey")
+  .range([vdbi_color_scheme.blue, 'white', vdbi_color_scheme.orange])
+  .unknown('grey')
 
 export const vdbi_orange_analogic_color_scheme = [
   // "#ffe6bf",
   // "#ffd9bf",
   // "#ffcc80",
   // "#ffb380",
-  "#ff9900",
-  "#ff6600",
-  "#b36b00",
-  "#b34700",
+  '#ff9900',
+  '#ff6600',
+  '#b36b00',
+  '#b34700',
 ]
 
 export const vdbi_blue_analogic_color_scheme = [
   // "#bfe2ff",
   // "#c9c8ff",
   // "#9390ff",
-  "#80c6ff",
-  "#0064b5",
-  "#00467f",
+  '#80c6ff',
+  '#0064b5',
+  '#00467f',
   // "#1b17b0",
-  "#13107b",
+  '#13107b',
 ]
 
 export const vdbi_analogic_color_scale = d3
@@ -42,37 +42,53 @@ export const vdbi_analogic_color_scale = d3
   .range(
     d3
       .zip(vdbi_orange_analogic_color_scheme, vdbi_blue_analogic_color_scheme)
-      .flat()
+      .flat(),
   )
-  .unknown("grey")
+  .unknown('grey')
 
 export const vdbi_orange_analogic_color_scale = d3
   .scaleQuantize()
   .range(vdbi_orange_analogic_color_scheme)
-  .unknown("grey")
+  .unknown('grey')
 
 export const vdbi_blue_analogic_color_scale = d3
   .scaleQuantize()
   .range(vdbi_blue_analogic_color_scheme)
-  .unknown("grey")
+  .unknown('grey')
 
 export const project_color_scale = d3
   .scaleOrdinal(
     [
-      "INTEGREEN",
-      "NEO",
-      "RESILIENCE",
-      "TRACES",
-      "URBHEALTH",
-      "VF++",
-      "VILLEGARDEN",
-      "WHAOU",
+      'INTEGREEN',
+      'NEO',
+      'RESILIENCE',
+      'TRACES',
+      'URBHEALTH',
+      'VF++',
+      'VILLEGARDEN',
+      'WHAOU',
     ],
-    d3.schemeCategory10.slice(0, 8)
+    d3.schemeCategory10.slice(0, 8),
   )
-  .unknown("grey")
+  .unknown('grey')
 
 // CNU Colors //
+
+export const cnu_color_map = new Map([
+  ['Lettres et sciences humaines', 'lightgreen'],
+  ['Sections de santé', 'violet'],
+  ['Sciences', 'lightblue'],
+  ['Droit, économie et gestion', 'pink'],
+  ['Pluridisciplinaire', 'yellow'],
+])
+
+export const cnu_color_range_map = new Map([
+  ['Lettres et sciences humaines', d3.interpolateGreens],
+  ['Sections de santé', d3.interpolatePurples],
+  ['Sciences', d3.interpolateBlues],
+  ['Droit, économie et gestion', d3.interpolateReds],
+  ['Pluridisciplinaire', d3.interpolateRgbBasis(['white', 'yellow', 'brown'])],
+])
 
 /**
  * Determine the category of a CNU number.
@@ -86,7 +102,7 @@ export function getCategoryFromCNU(cnu) {
     console.warn(`empty cnu: ${cnu}`)
     return null
   }
-  if (cnu == "Administratif") return cnu
+  if (cnu == 'Administratif') return cnu
 
   // Given a string starting with a CNU number, return the number
   const cnu_number = Number(cnu.trim().substring(0, 2))
@@ -111,25 +127,53 @@ export function colorCNU(d, max) {
   // note: we can't pass values below 1 to logarithmic scales
   const color_value = d3.scaleLog([1, max], [0.4, 1])(d[1] > 1 ? d[1] : 1)
 
-  // determine color range by category
-  const color_map = new Map([
-    ["Lettres et sciences humaines", d3.interpolateGreens],
-    ["Sections de santé", d3.interpolatePurples],
-    ["Sciences", d3.interpolateBlues],
-    ["Droit, économie et gestion", d3.interpolateReds],
-    [
-      "Pluridisciplinaire",
-      d3.interpolateRgbBasis(["white", "yellow", "brown"]),
-    ],
-  ])
-
-  if (exclude(cnu_category) && color_map.has(cnu_category)) {
-    return color_map.get(cnu_category)(color_value)
+  if (exclude(cnu_category) && cnu_color_range_map.has(cnu_category)) {
+    return cnu_color_range_map.get(cnu_category)(color_value)
   } else if (!exclude(cnu_category)) {
     console.error(`color CNU not implemented for ${d[0]}`)
   }
   return d3.interpolateGreys(color_value)
 }
+
+export function interpolated_cnu_color(cnu) {
+  const cnu_category = getCategoryFromCNU(cnu)
+  const cnu_category_values = cnu_category_map.get(cnu_category)
+
+  return d3
+    .scaleOrdinal(
+      cnu_category_values,
+      d3.quantize(
+        cnu_color_range_map.get(cnu_category),
+        cnu_category_values.length + 1,
+      ),
+    )
+    .unknown('grey')(Number(cnu.substring(0, 2)))
+}
+
+// ERC Colors //
+
+export const erc_category_colors = new Map([
+  ['PE - Sciences & Technologies', d3.schemeCategory10[0]],
+  ['LS - Vie & Santé', d3.schemeCategory10[4]],
+  ['SH - Sciences Humaines & Sociales', d3.schemeCategory10[2]],
+  ['non chercheur', 'grey'],
+])
+
+export const erc_color_scale = d3
+  .scaleOrdinal(erc_category_colors.keys(), erc_category_colors.values())
+  .unknown('grey')
+
+// HCERES Colors //
+
+export const hceres_category_colors = new Map([
+  ['ST Sciences et Technologies', d3.schemeCategory10[0]],
+  ['SHS Sciences humaines et sociales', d3.schemeCategory10[2]],
+  ['SVE Sciences du vivant et environnement', d3.schemeCategory10[4]],
+])
+
+export const hceres_color_scale = d3
+  .scaleOrdinal(hceres_category_colors.keys(), hceres_category_colors.values())
+  .unknown('grey')
 
 // Legal nature colors //
 // (Code 0) Organisme de placement collectif en valeurs mobilières sans personnalité morale
@@ -144,18 +188,18 @@ export function colorCNU(d, max) {
 // (Code 9) Groupement de droit privé
 export const legal_nature_colors = d3
   .scaleOrdinal([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], d3.schemeSet3)
-  .unknown("grey")
+  .unknown('grey')
 
 export const interpolated_legal_nature_color = (
   code,
-  domain = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  domain = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
 ) =>
   d3
     .scaleOrdinal(
       domain,
       d3.quantize(
-        d3.interpolateRgb(legal_nature_colors(code), "white"),
-        domain.length + 1
-      )
+        d3.interpolateRgb(legal_nature_colors(code), 'white'),
+        domain.length + 1,
+      ),
     )
-    .unknown("grey")
+    .unknown('grey')
