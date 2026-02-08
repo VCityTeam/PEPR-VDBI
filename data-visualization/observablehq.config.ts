@@ -21,7 +21,7 @@ export default {
           path: 'pages/dashboards/phase1-map-dashboard',
         },
         {
-          name: 'Phase 1 Researchers by discipline',
+          name: 'Phase 1 Scientific disciplines',
           path: 'pages/dashboards/phase1-disciplines',
         },
         {

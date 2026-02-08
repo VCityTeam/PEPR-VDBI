@@ -1,7 +1,7 @@
-import { map, merge, rollups, filter, selectAll, create } from "d3";
-import { button } from "@observablehq/inputs";
-import { nameByRace } from "fantasy-name-generator";
-import { html } from "htl";
+import { map, merge, rollups, filter, selectAll, create } from 'd3'
+import { button } from '@observablehq/inputs'
+import { nameByRace } from 'fantasy-name-generator'
+import { html } from 'npm:htl'
 
 // TODO: mapCounts and mergeCounts need to be reworked with new countEntities
 
@@ -15,17 +15,17 @@ import { html } from "htl";
  * @returns {Object[]} - An array of all datum with mapped types from each dataset
  */
 export function mapCounts(datasets, count_types) {
-  const mappedData = [];
+  const mappedData = []
 
   for (let index = 0; index < datasets.length; index++) {
     datasets[index].forEach((d) => {
-      const typed_d = { ...d };
-      typed_d.type = count_types[index];
-      mappedData.push(typed_d);
-    });
+      const typed_d = { ...d }
+      typed_d.type = count_types[index]
+      mappedData.push(typed_d)
+    })
   }
 
-  return mappedData;
+  return mappedData
 }
 
 /**
@@ -39,22 +39,22 @@ export function mapCounts(datasets, count_types) {
  */
 export function mergeCounts(datasets, count_types) {
   // TODO: this can be optimized and simplified with a map, reduce, Array.concat
-  const mappedData = new Map();
+  const mappedData = new Map()
 
   for (let index = 0; index < datasets.length; index++) {
     datasets[index].forEach((d) => {
-      if (typeof mappedData.get(d[0]) === "undefined") {
-        const new_d = { entity: d[0] };
+      if (typeof mappedData.get(d[0]) === 'undefined') {
+        const new_d = { entity: d[0] }
         count_types.forEach((count_type) => {
-          new_d[count_type] = 0;
-        });
-        mappedData.set(d[0], new_d);
+          new_d[count_type] = 0
+        })
+        mappedData.set(d[0], new_d)
       }
-      mappedData.get(d[0])[count_types[index]] = d[1];
-    });
+      mappedData.get(d[0])[count_types[index]] = d[1]
+    })
   }
 
-  return mappedData;
+  return mappedData
 }
 
 /**
@@ -76,7 +76,7 @@ export function countEntities(data, mapFunction) {
     merge(map(data, (d) => mapFunction(d))),
     (D) => D.length,
     (d) => d,
-  );
+  )
 }
 
 /**
@@ -98,40 +98,40 @@ export function addEntityProjectOwnerAndPartnerCounts(
   // calculate count data for all entities
   const owner_count = countEntities(source_data, (d) =>
     d[source_key].slice(0, 1),
-  );
+  )
   const partner_count = countEntities(source_data, (d) =>
     d[source_key].slice(1),
-  );
+  )
 
   // console.log("owner_count", owner_count);
   // console.log("test_count", test_count);
   target_data.forEach((target_d) => {
-    const target_d_entity = target_d[target_key];
+    const target_d_entity = target_d[target_key]
 
     // add owner counts
     const source_owner_count = owner_count.find(
       (source_d) => target_d_entity === source_d[0],
-    );
+    )
     target_d.project_owner_count =
-      typeof source_owner_count === "undefined" ? 0 : source_owner_count[1];
+      typeof source_owner_count === 'undefined' ? 0 : source_owner_count[1]
 
     // add partner counts
     const source_partner_count = partner_count.find(
       (source_d) => target_d_entity === source_d[0],
-    );
+    )
     target_d.project_partner_count =
-      typeof source_partner_count === "undefined" ? 0 : source_partner_count[1];
+      typeof source_partner_count === 'undefined' ? 0 : source_partner_count[1]
 
     // add total  counts
     target_d.project_total_count =
-      target_d.project_owner_count + target_d.project_partner_count;
-  });
+      target_d.project_owner_count + target_d.project_partner_count
+  })
 }
 
 export function joinOnKey(source_data, target_data, foreign_key, primary_key) {
   source_data[foreign_key] = target_data.find(
     (d) => d[primary_key] === foreign_key,
-  );
+  )
   // TODO add join from target to source
 }
 
@@ -144,18 +144,18 @@ export function joinOnKeys(
 ) {
   source_data.forEach((source_d) => {
     for (let index = 0; index < source_d[source_foreign_keys].length; index++) {
-      const foreign_key = source_d[source_foreign_keys][index];
+      const foreign_key = source_d[source_foreign_keys][index]
       source_d[source_foreign_keys][index] = target_data.find(
         (target_d) => target_d[target_primary_key] === foreign_key,
-      );
+      )
     }
-  });
+  })
 
   target_data.forEach((target_d) => {
     target_d[target_foreign_key] = filter(source_data, (source_d) =>
       source_d[source_foreign_keys].includes(target_d),
-    );
-  });
+    )
+  })
 }
 
 export function joinOnOwnerPartnerKeys(
@@ -168,30 +168,30 @@ export function joinOnOwnerPartnerKeys(
 ) {
   source_data.forEach((source_d) => {
     for (let index = 0; index < source_d[source_foreign_keys].length; index++) {
-      const foreign_key = source_d[source_foreign_keys][index];
+      const foreign_key = source_d[source_foreign_keys][index]
       const foreign_entity = target_data.find(
         (target_d) => target_d[target_primary_key] === foreign_key,
-      );
+      )
       source_d[source_foreign_keys][index] = foreign_entity
         ? foreign_entity
-        : source_d[source_foreign_keys][index];
+        : source_d[source_foreign_keys][index]
     }
-  });
+  })
 
   for (let index = 0; index < target_data.length; index++) {
     if (target_foreign_key_filter) {
-      target_foreign_key_filter(target_data[index]);
+      target_foreign_key_filter(target_data[index])
     } else {
-      target_data[index]["owner_" + target_foreign_key] = filter(
+      target_data[index]['owner_' + target_foreign_key] = filter(
         source_data,
         (source_d) => source_d[source_foreign_keys][0] === target_data[index],
-      );
+      )
 
-      target_data[index]["partner_" + target_foreign_key] = filter(
+      target_data[index]['partner_' + target_foreign_key] = filter(
         source_data,
         (source_d) =>
           source_d[source_foreign_keys].slice(1).includes(target_data[index]),
-      );
+      )
     }
   }
 }
@@ -202,7 +202,7 @@ export function joinOnOwnerPartnerKeys(
  * @returns {string} anonymized entry
  */
 export function anonymizeEntry() {
-  return Math.random().toString(36).substring(2, 15);
+  return Math.random().toString(36).substring(2, 15)
 }
 
 /**
@@ -213,59 +213,59 @@ export function anonymizeEntry() {
  * @param {string} type - the type of name to generate; based on high fantasy races
  * @returns {string} anonymized entry
  */
-export function pseudoanonymizeEntry(entry, dictionary, type = "human") {
+export function pseudoanonymizeEntry(entry, dictionary, type = 'human') {
   if (!dictionary.has(entry)) {
     dictionary.set(
       entry,
       nameByRace(type, {
-        gender: Math.floor(Math.random() * 2) ? "male" : "female",
+        gender: Math.floor(Math.random() * 2) ? 'male' : 'female',
         allowMultipleNames: Math.floor(Math.random() * 2) ? true : false,
       }),
-    );
+    )
   }
-  return dictionary.get(entry);
+  return dictionary.get(entry)
 }
 
 export function createTooltip() {
-  const tooltip = document.createElement("div");
-  tooltip.classList.add("tooltip");
-  tooltip.classList.add("card");
-  tooltip.style.position = "absolute";
-  return tooltip;
+  const tooltip = document.createElement('div')
+  tooltip.classList.add('tooltip')
+  tooltip.classList.add('card')
+  tooltip.style.position = 'absolute'
+  return tooltip
 }
 
 export function cropText(text, maxLength = 20) {
-  if (!text) return "";
+  if (!text) return ''
 
   return text.length > maxLength
-    ? text.slice(0, maxLength - 3).concat("...")
-    : text;
+    ? text.slice(0, maxLength - 3).concat('...')
+    : text
 }
 
 export function wrapText(
   text,
   maxWidth = 20,
-  newlineCharter = "\n",
+  newlineCharter = '\n',
   delimeter = /\s+|-|\//,
 ) {
-  const words = text.split(delimeter);
-  console.debug("words", words);
-  let lines = [];
-  let currentLine = "";
+  const words = text.split(delimeter)
+  console.debug('words', words)
+  let lines = []
+  let currentLine = ''
 
   for (let word of words) {
     if (currentLine.length === 0) {
-      currentLine = word + " ";
+      currentLine = word + ' '
     } else if (currentLine.length + word.length > maxWidth - 1) {
-      lines.push(currentLine.trim());
-      currentLine = word + " ";
+      lines.push(currentLine.trim())
+      currentLine = word + ' '
     } else {
-      currentLine += word + " ";
+      currentLine += word + ' '
     }
   }
-  lines.push(currentLine.trim());
+  lines.push(currentLine.trim())
 
-  return lines.join(newlineCharter);
+  return lines.join(newlineCharter)
 }
 
 /**
@@ -278,21 +278,21 @@ export function wrapText(
 export const exclude = (d) =>
   ![
     null,
-    "non renseignée",
-    "Non connue",
-    "non connue",
-    "non connues",
-    "Non Renseigné",
-  ].includes(d);
+    'non renseignée',
+    'Non connue',
+    'non connue',
+    'non connues',
+    'Non Renseigné',
+  ].includes(d)
 
 export function sparkbar(
   max,
   {
-    background = "var(--theme-foreground-focus)",
-    // background = "var(--theme-foreground-focus-alt)",
-    color = "black",
-    float = "right",
-    format = (x) => x.toLocaleString("en-US"),
+    // background = 'var(--theme-foreground-focus)',
+    background = 'var(--theme-foreground-focus-alt)',
+    color = 'black',
+    float = 'right',
+    format = (x) => x.toLocaleString('en-US'),
   } = {},
 ) {
   // code source: https://observablehq.com/framework/inputs/table
@@ -307,18 +307,18 @@ export function sparkbar(
         box-sizing: border-box;
         overflow: visible;
         display: flex;
-        justify-content: ${float === "right" ? "end" : "start"};"
+        justify-content: ${float === 'right' ? 'end' : 'start'};"
     >
       ${format(x)}
-    </div>`;
+    </div>`
 }
 
 export function filterEmptyArray(data) {
   return filter(
     // use array substring for (headerless) ranges?
     data,
-    (d) => typeof d !== "undefined" && d !== 0,
-  );
+    (d) => typeof d !== 'undefined' && d !== 0,
+  )
 }
 
 /**
@@ -328,12 +328,12 @@ export function filterEmptyArray(data) {
  * @returns {any} - formatted datum
  */
 export function formatIfString(d) {
-  if (typeof d === "string") {
-    return d.trim() ? d.trim() : null;
-  } else if (typeof d === "undefined") {
-    return null;
+  if (typeof d === 'string') {
+    return d.trim() ? d.trim() : null
+  } else if (typeof d === 'undefined') {
+    return null
   }
-  return d;
+  return d
 }
 
 /**
@@ -345,14 +345,14 @@ export function formatIfString(d) {
  * @returns {string} The processed string
  */
 export function toLowerPreservingAcronyms(str) {
-  if (!str) return str;
+  if (!str) return str
   // Match chunks of words/numbers (including accents) to process them individually
   // This allows handling hyphenated words like "Micro-USB" correctly
   return str.replace(/[\w\u00C0-\u00FF]+/g, (word) => {
     // If the word contains ANY lowercase letter, convert it to lowercase
     // Otherwise (all caps, numbers, or symbols), keep it as is
-    return /[a-z]/.test(word) ? word.toLowerCase() : word;
-  });
+    return /[a-z]/.test(word) ? word.toLowerCase() : word
+  })
 }
 
 /**
@@ -370,15 +370,15 @@ export function toLowerPreservingAcronyms(str) {
  * console.log(getAttributeByPath(obj, "other")); // undefined
  */
 export function getAttributeByPath(obj, path) {
-  const segs = path.split(".");
-  let val = obj;
+  const segs = path.split('.')
+  let val = obj
   for (const seg of segs) {
-    val = val[seg];
+    val = val[seg]
     if (val === undefined) {
-      break;
+      break
     }
   }
-  return val;
+  return val
 }
 
 /**
@@ -395,9 +395,9 @@ export function getAttributeByPath(obj, path) {
  */
 export function copyTableToClipboardButton(
   data,
-  { columns = null, label = "Copy to clipboard", delimeter = "," } = {},
+  { columns = null, label = 'Copy to clipboard', delimeter = ',' } = {},
 ) {
-  if (columns === null) columns = Object.keys(data[0]);
+  if (columns === null) columns = Object.keys(data[0])
 
   return button(label, {
     value: null,
@@ -405,11 +405,11 @@ export function copyTableToClipboardButton(
       navigator.clipboard.writeText(
         data.reduce(
           (a, v) =>
-            a + columns.map((col) => v[col] || "").join(delimeter) + "\n",
-          columns.join(delimeter) + "\n",
+            a + columns.map((col) => v[col] || '').join(delimeter) + '\n',
+          columns.join(delimeter) + '\n',
         ),
       ),
-  });
+  })
 }
 
 /**
@@ -422,24 +422,24 @@ export function copyTableToClipboardButton(
  */
 export function copySVGToClipboardButton(
   element,
-  label = "Copy to clipboard",
+  label = 'Copy to clipboard',
   callback = undefined,
 ) {
   if (!element && !callback) {
-    console.warn("copySVGToClipboardButton: element and callback are empty");
-    return button(label, { value: null, reduce: () => {} });
+    console.warn('copySVGToClipboardButton: element and callback are empty')
+    return button(label, { value: null, reduce: () => {} })
   }
 
   // add the xmlns attribute to the element if it is not present
-  if (element && !element.attributes.getNamedItem("xmlns")) {
-    element.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  if (element && !element.attributes.getNamedItem('xmlns')) {
+    element.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
   }
 
   return button(label, {
     value: null,
     reduce: () =>
       navigator.clipboard.writeText(callback ? callback() : element.outerHTML),
-  });
+  })
 }
 
 /**
@@ -456,34 +456,34 @@ export function copySVGToClipboardButton(
 export function downloadTableButton(
   callback,
   {
-    label = "Download (.csv)",
-    filename = "download.csv",
+    label = 'Download (.csv)',
+    filename = 'download.csv',
     columns = null,
-    delimeter = ";",
+    delimeter = ';',
   } = {},
 ) {
   return button(label, {
     value: null,
     reduce: () => {
-      console.debug("downloading data with callback: ", callback());
-      const data = callback();
+      console.debug('downloading data with callback: ', callback())
+      const data = callback()
 
-      if (columns === null) columns = Object.keys(data[0]);
+      if (columns === null) columns = Object.keys(data[0])
       writeToFile(
         data.reduce(
           (a, v) =>
             a +
             columns
-              .map((col) => String(v[col]).replace(/(\r\n|\r|\n)/g, " ") || "")
+              .map((col) => String(v[col]).replace(/(\r\n|\r|\n)/g, ' ') || '')
               .join(delimeter) +
-            "\n",
-          columns.join(delimeter) + "\n",
+            '\n',
+          columns.join(delimeter) + '\n',
         ),
         filename,
-        "text/csv",
-      );
+        'text/csv',
+      )
     },
-  });
+  })
 }
 
 /**
@@ -497,16 +497,16 @@ export function downloadTableButton(
  */
 export function downloadJSONButton(
   callback,
-  { label = "Download", filename = "download.json" } = {},
+  { label = 'Download', filename = 'download.json' } = {},
 ) {
   return button(label, {
     value: null,
     reduce: () => {
-      const data = callback();
-      console.debug("downloading data: ", data);
-      writeToFile(JSON.stringify(data, null, 2), filename, "application/json");
+      const data = callback()
+      console.debug('downloading data: ', data)
+      writeToFile(JSON.stringify(data, null, 2), filename, 'application/json')
     },
-  });
+  })
 }
 
 /**
@@ -529,48 +529,48 @@ export function downloadJSONButton(
  */
 export function downloadSVGButton(
   selector,
-  label = "Download (.svg)",
-  filename = "download.svg",
+  label = 'Download (.svg)',
+  filename = 'download.svg',
 ) {
   return button(label, {
     value: null,
     reduce: () => {
-      console.debug("downloading content with selector: ", selector);
-      let width = 0;
-      let height = 0;
-      const content = create("svg")
-        .attr("xmlns", "http://www.w3.org/2000/svg")
-        .attr("xmlns:xlink", "http://www.w3.org/1999/xlink");
+      console.debug('downloading content with selector: ', selector)
+      let width = 0
+      let height = 0
+      const content = create('svg')
+        .attr('xmlns', 'http://www.w3.org/2000/svg')
+        .attr('xmlns:xlink', 'http://www.w3.org/1999/xlink')
 
       selectAll(selector)
         .nodes()
         .forEach((d) => {
-          content.html(content.html() + d.outerHTML);
+          content.html(content.html() + d.outerHTML)
 
           width = Math.max(
             width,
-            Math.floor(d.attributes["width"] ? d.attributes["width"].value : 0),
-          );
+            Math.floor(d.attributes['width'] ? d.attributes['width'].value : 0),
+          )
           height += Math.floor(
-            d.attributes["height"] ? d.attributes["height"].value : 0,
-          );
-        });
+            d.attributes['height'] ? d.attributes['height'].value : 0,
+          )
+        })
 
       content
-        .attr("width", width)
-        .attr("height", height)
-        .attr("viewBox", `-5 0 ${width + 5} ${height}`);
+        .attr('width', width)
+        .attr('height', height)
+        .attr('viewBox', `-5 0 ${width + 5} ${height}`)
 
       // serialize the svg content
-      const serializer = new XMLSerializer();
-      let source = serializer.serializeToString(content.node());
+      const serializer = new XMLSerializer()
+      let source = serializer.serializeToString(content.node())
 
       //add xml declaration
-      source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
+      source = '<?xml version="1.0" standalone="no"?>\r\n' + source
 
-      writeToFile(source, filename, "image/svg+xml");
+      writeToFile(source, filename, 'image/svg+xml')
     },
-  });
+  })
 }
 
 /**
@@ -591,36 +591,36 @@ export function downloadSVGButton(
  * @returns {Promise<XMLHttpRequest>} Request promise
  */
 export function request(method, url, options = {}) {
-  const args = options || {};
-  const body = args.body || "";
-  const responseType = args.responseType || null;
-  const urlParameters = args.urlParameters || null;
+  const args = options || {}
+  const body = args.body || ''
+  const responseType = args.responseType || null
+  const urlParameters = args.urlParameters || null
   return new Promise((resolve, reject) => {
-    const req = new XMLHttpRequest();
+    const req = new XMLHttpRequest()
     if (urlParameters) {
-      url += "?";
+      url += '?'
       for (const [paramKey, paramValue] of Object.entries(urlParameters)) {
         url += `${encodeURIComponent(paramKey)}=${encodeURIComponent(
           paramValue,
-        )}&`;
+        )}&`
       }
     }
-    req.open(method, url, true);
+    req.open(method, url, true)
 
     if (responseType) {
-      req.responseType = responseType;
+      req.responseType = responseType
     }
 
-    req.send(body);
+    req.send(body)
 
     req.onload = () => {
       if (req.status >= 200 && req.status < 300) {
-        resolve(req);
+        resolve(req)
       } else {
-        reject(req.responseText);
+        reject(req.responseText)
       }
-    };
-  });
+    }
+  })
 }
 
 /**
@@ -636,33 +636,33 @@ export function request(method, url, options = {}) {
  */
 export function writeToFile(
   content,
-  filename = "download.txt",
-  content_type = "text/plain;charset=utf-8",
+  filename = 'download.txt',
+  content_type = 'text/plain;charset=utf-8',
 ) {
   // Ensure the content type declares UTF-8 for text-like MIME types
   if (
     content_type &&
-    (content_type.startsWith("text/") || content_type === "application/json") &&
+    (content_type.startsWith('text/') || content_type === 'application/json') &&
     !/charset=/i.test(content_type)
   ) {
-    content_type = `${content_type};charset=utf-8`;
+    content_type = `${content_type};charset=utf-8`
   }
 
   // Ensure we write text; for text/CSV and JSON include a BOM so Excel/Windows
   // will correctly detect UTF-8 encoding when opening the file.
-  const text = typeof content === "string" ? content : String(content);
+  const text = typeof content === 'string' ? content : String(content)
   const needsBom =
-    content_type.startsWith("text/") || content_type === "application/json";
-  const bom = needsBom ? "\uFEFF" : "";
+    content_type.startsWith('text/') || content_type === 'application/json'
+  const bom = needsBom ? '\uFEFF' : ''
 
   // Use Blob (more conventional for binary/text downloads) instead of File
-  const blob = new Blob([bom + text], { type: content_type });
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  window.URL.revokeObjectURL(url);
+  const blob = new Blob([bom + text], { type: content_type })
+  const url = window.URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  window.URL.revokeObjectURL(url)
 }
