@@ -14,7 +14,9 @@ import {
   cnu_color_map,
   interpolated_cnu_color,
   erc_color_scale,
+  interpolated_erc_color,
   hceres_color_scale,
+  interpolated_hceres_color,
 } from '/components/color.js'
 import { generateIntersectionMatrix } from '/components/chord.js'
 import { donutChart } from '/components/pie-chart.js'
@@ -266,6 +268,18 @@ function formatResearcherDataByProject(
         : true),
   )
 
+  const filtered_laboratories = phase_1_data.project_by_laboratories
+    .filter(
+      (d) =>
+        (project ? d.project === project : true) &&
+        (auditioned ? auditioned_projects.includes(d.project) : true) &&
+        (financed ? financed_projects.includes(d.project) : true),
+    )
+    .map((d) => ({
+      ...phase_1_data.laboratories.find((l) => l.lab === d.lab),
+      project: d.project,
+    }))
+
   const discipline_erc_count = countEntities(
     filtered_researchers,
     (d) => d.discipline_erc,
@@ -322,34 +336,41 @@ function formatResearcherDataByProject(
     grouped_projects_by_theme,
   )
 
-  // const theme_graph = {
-  //   nodes: [
-  //     ...new Set(
-  //       filtered_researchers.flatMap((reasearcher) =>
-  //         reasearcher.themes.map((theme) => ({
-  //           id: theme,
-  //           label: theme,
-  //           type: 'Theme',
-  //         })),
-  //       ),
-  //     ),
-  //   ],
-  //   links: filtered_researchers.flatMap((researcher) =>
-  //     researcher.themes.flatMap((source_theme) =>
-  //       researcher.themes
-  //         .map((target_theme) =>
-  //           source_theme === target_theme
-  //             ? null
-  //             : {
-  //                 source: source_theme,
-  //                 target: target_theme,
-  //                 label: 'Shared researcher',
-  //               },
-  //         )
-  //         .filter((d) => !!d),
-  //     ),
-  //   ),
-  // }
+  const projects_by_erc = filtered_laboratories.map((lab) => ({
+    project: lab.project,
+    erc: lab.domain_erc
+      ? lab.domain_erc.split(';').map((erc) => erc.trim())
+      : [],
+    erc_disciplines: phase_1_data.laboratories_by_disciplines_erc
+      .filter((l) => l.lab === lab.lab)
+      .map((l) => l.discipline),
+    hceres: lab.domain_hceres
+      ? lab.domain_hceres.split('-').map((hceres) => hceres.trim())
+      : [],
+    hceres_disciplines: phase_1_data.laboratories_by_disciplines_hceres
+      .filter((l) => l.lab === lab.lab)
+      .map((l) => l.discipline),
+  }))
+
+  const grouped_projects_by_erc = d3.rollup(
+    projects_by_erc,
+    (D) => new Set(D.flatMap((d) => d.erc_disciplines)),
+    (d) => d.project,
+  )
+
+  const grouped_projects_by_hceres = d3.rollup(
+    projects_by_erc,
+    (D) => new Set(D.flatMap((d) => d.hceres_disciplines)),
+    (d) => d.project,
+  )
+
+  console.debug('grouped_projects_by_erc', grouped_projects_by_erc)
+  console.debug('grouped_projects_by_hceres', grouped_projects_by_hceres)
+
+  const erc_project_matrix = generateIntersectionMatrix(grouped_projects_by_erc)
+  const hceres_project_matrix = generateIntersectionMatrix(
+    grouped_projects_by_hceres,
+  )
 
   return {
     discipline_erc_count,
@@ -357,8 +378,11 @@ function formatResearcherDataByProject(
     cnu_count_by_category,
     theme_count,
     theme_project_matrix,
-    projects: [...grouped_projects_by_theme.keys()],
-    // theme_graph,
+    theme_projects: [...grouped_projects_by_theme.keys()],
+    erc_project_matrix,
+    erc_projects: [...grouped_projects_by_erc.keys()],
+    hceres_project_matrix,
+    hceres_projects: [...grouped_projects_by_hceres.keys()],
   }
 }
 
@@ -689,13 +713,6 @@ export function isFinanced(projects, financed_projects) {
   return false
 }
 
-// Compare project status per discipline
-// - sankey across project status by
-//   - themes,
-//   - CNUs,
-//   - ERC
-// - Look at which themes were financed
-
 const sankey_config = (data, width) => ({
   width: width,
   height: data.nodes.length * 40,
@@ -712,26 +729,32 @@ export const projects_by_aap_status_graph = (projects) =>
     ['submitted', 'auditioned', 'financed'],
   )
 
+// researcher
+
+export const researcher_by_aap_status = (researchers, projects) =>
+  researchers.map((d) => {
+    const researcher_projects = d.project.map((project_name) =>
+      projects.find((p) => p.acronyme === project_name),
+    )
+    return {
+      cnu: cropText(d.cnu, 30),
+      cnu_category: getCategoryFromCNU(d.cnu) || 'Unknown',
+      themes: d.themes,
+      auditioned: researcher_projects.some((p) => p.auditioned)
+        ? 'auditioned'
+        : 'not auditioned',
+      financed: researcher_projects.some((p) => p.financed)
+        ? 'financed'
+        : 'not financed',
+    }
+  })
+
 // CNUs
 
-export const cnu_by_aap_status = (researchers, projects) =>
-  researchers
-    .map((d) => {
-      const researcher_projects = d.project.map((project_name) =>
-        projects.find((p) => p.acronyme === project_name),
-      )
-      return {
-        cnu: cropText(d.cnu, 30),
-        cnu_category: getCategoryFromCNU(d.cnu) || 'Unknown',
-        auditioned: researcher_projects.some((p) => p.auditioned)
-          ? 'auditioned'
-          : 'not auditioned',
-        financed: researcher_projects.some((p) => p.financed)
-          ? 'financed'
-          : 'not financed',
-      }
-    })
-    .sort((a, b) => Number(a.cnu.slice(0, 2)) - Number(b.cnu.slice(0, 2)))
+export const cnu_by_aap_status = (researcher_by_aap_status) =>
+  researcher_by_aap_status.sort(
+    (a, b) => Number(a.cnu.slice(0, 2)) - Number(b.cnu.slice(0, 2)),
+  )
 
 export const cnu_by_aap_status_graph = (cnu_by_aap_status) =>
   parallelSetToGraph(cnu_by_aap_status, ['cnu', 'auditioned', 'financed'])
@@ -748,7 +771,7 @@ export const cnu_categories_by_aap_status_graph = (cnu_by_aap_status) =>
     'financed',
   ])
 
-export const project_state_color_scale = d3.scaleOrdinal(
+export const aap_state_color_scale = d3.scaleOrdinal(
   [
     'submitted-auditioned',
     'submitted-not auditioned',
@@ -770,9 +793,42 @@ export const cnu_sankey_config = (data, width, total_cnu_count) => ({
   linkStroke: (d) => cnu_link_color_scale(d, total_cnu_count),
 })
 
-// ERC
+// themes
 
-export const lab_by_aap_status = (labs, projects) =>
+export const theme_by_aap_status = (researcher_by_aap_status) =>
+  d3.sort(
+    researcher_by_aap_status
+      .filter((d) => d.themes)
+      .flatMap((d) =>
+        d.themes.map((t) => ({
+          ...d,
+          theme: t,
+          submitted: 'submitted',
+        })),
+      ),
+    (d) => d.theme,
+  )
+
+export const theme_by_aap_status_graph = (theme_by_aap_status) =>
+  parallelSetToGraph(theme_by_aap_status, [
+    'submitted',
+    'auditioned',
+    'financed',
+  ])
+
+export const theme_sankey_config = (data, width) => ({
+  ...sankey_config(data, width),
+  linkStroke: (d) => aap_state_color_scale(d.path.slice(-2).join('-')),
+})
+
+// labs
+
+export const lab_by_aap_status = (
+  labs,
+  projects,
+  lab_erc_discipline_map,
+  lab_hceres_discipline_map,
+) =>
   projects.flatMap((project) => {
     const project_labs = project.labs.map((lab_name) =>
       labs.find((l) => l.lab === lab_name),
@@ -782,15 +838,23 @@ export const lab_by_aap_status = (labs, projects) =>
       .map((l) => ({
         lab: cropText(l.lab, 30),
         erc: l.domain_erc || '',
+        erc_disciplines: lab_erc_discipline_map
+          .filter((d) => d.lab === l.lab)
+          .map((d) => d.discipline),
         hceres: l.domain_hceres || '',
+        hceres_disciplines: lab_hceres_discipline_map
+          .filter((d) => d.lab === l.lab)
+          .map((d) => d.discipline),
         auditioned: project.auditioned ? 'auditioned' : 'not auditioned',
         financed: project.financed ? 'financed' : 'not financed',
       }))
   })
 
-export const erc_by_aap_status = (labs, projects) =>
+// ERC
+
+export const erc_by_aap_status = (lab_by_aap_status) =>
   d3.sort(
-    lab_by_aap_status(labs, projects)
+    lab_by_aap_status
       .filter((d) => d.erc !== '' && d.erc !== 'Non Renseigné')
       .flatMap((d) =>
         d.erc.split(';').map((erc) => ({
@@ -804,17 +868,53 @@ export const erc_by_aap_status = (labs, projects) =>
 export const erc_by_aap_status_graph = (erc_by_aap_status) =>
   parallelSetToGraph(erc_by_aap_status, ['erc', 'auditioned', 'financed'])
 
+export const erc_disciplines_by_aap_status = (lab_by_aap_status) =>
+  d3.sort(
+    lab_by_aap_status.flatMap((d) =>
+      d.erc_disciplines.map((discipline) => ({
+        ...d,
+        erc_discipline: cropText(discipline, 40),
+      })),
+    ),
+    (d) => Number(d.erc_discipline.substring(2, 4)),
+  )
+
+export const erc_disciplines_by_aap_status_graph = (
+  erc_disciplines_by_aap_status,
+) =>
+  parallelSetToGraph(erc_disciplines_by_aap_status, [
+    'erc_discipline',
+    'auditioned',
+    'financed',
+  ])
+
+export const erc_discipline_category_by_aap_status_graph = (
+  erc_disciplines_by_aap_status,
+  category,
+) =>
+  erc_disciplines_by_aap_status_graph(
+    erc_disciplines_by_aap_status.filter(
+      (d) => d.erc_discipline.substring(0, 2) === category,
+    ),
+  )
+
 export const erc_sankey_config = (data, width) => ({
   ...sankey_config(data, width),
   linkStroke: (d) => erc_color_scale(d.path[0]),
   linkFillOpacity: 0.4,
 })
 
+export const erc_disciplines_sankey_config = (data, width) => ({
+  ...sankey_config(data, width),
+  linkStroke: (d) => interpolated_erc_color(d.path[0]),
+  linkFillOpacity: 0.4,
+})
+
 // HCERES
 
-export const hceres_by_aap_status = (labs, projects) =>
+export const hceres_by_aap_status = (lab_by_aap_status) =>
   d3.sort(
-    lab_by_aap_status(labs, projects)
+    lab_by_aap_status
       .filter((d) => d.hceres !== '' && d.hceres !== 'Non renseigné')
       .flatMap((d) =>
         d.hceres.split('-').map((hceres) => ({
@@ -828,8 +928,58 @@ export const hceres_by_aap_status = (labs, projects) =>
 export const hceres_by_aap_status_graph = (hceres_by_aap_status) =>
   parallelSetToGraph(hceres_by_aap_status, ['hceres', 'auditioned', 'financed'])
 
+export const hceres_disciplines_by_aap_status = (lab_by_aap_status) =>
+  d3.sort(
+    lab_by_aap_status.flatMap((d) =>
+      d.hceres_disciplines.map((discipline) => ({
+        ...d,
+        hceres_discipline: cropText(discipline, 40),
+      })),
+    ),
+    (d) => d.hceres_discipline,
+  )
+
+export const hceres_disciplines_by_aap_status_graph = (
+  hceres_disciplines_by_aap_status,
+) =>
+  parallelSetToGraph(hceres_disciplines_by_aap_status, [
+    'hceres_discipline',
+    'auditioned',
+    'financed',
+  ])
+
+export const hceres_discipline_category_by_aap_status_graph = (
+  hceres_disciplines_by_aap_status,
+  category,
+) =>
+  hceres_disciplines_by_aap_status_graph(
+    hceres_disciplines_by_aap_status.filter((d) =>
+      d.hceres_discipline.startsWith(category),
+    ),
+  )
+
 export const hceres_sankey_config = (data, width) => ({
   ...sankey_config(data, width),
   linkStroke: (d) => hceres_color_scale(d.path[0]),
+  linkFillOpacity: 0.4,
+})
+
+export const hceres_disciplines_sankey_config = (data, width) => ({
+  ...sankey_config(data, width),
+  linkStroke: (d) =>
+    interpolated_hceres_color(
+      d.path[0],
+      data.nodes
+        .filter(
+          (d) =>
+            ![
+              'auditioned',
+              'not auditioned',
+              'financed',
+              'not financed',
+            ].includes(d.id),
+        )
+        .map((d) => d.id),
+    ),
   linkFillOpacity: 0.4,
 })

@@ -98,7 +98,8 @@ export function sankeyDiagram(
     nodeFill = 'black',
     linkStroke = (d) => d.color || '#ccc',
     linkFillOpacity = 0.7,
-    font_size = 12,
+    font_size = 13,
+    font_color = 'black',
     text = (d) => cropText(idMap(d), 85),
     node_sort = null,
     link_sort = null,
@@ -169,6 +170,7 @@ export function sankeyDiagram(
     .attr('x', (d) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
     .attr('y', (d) => (d.y1 + d.y0) / 2)
     .attr('dy', '0.35em')
+    .attr('fill', font_color)
     .attr('font-size', font_size)
     .attr('text-anchor', (d) => (d.x0 < width / 2 ? 'start' : 'end'))
     .text(text)

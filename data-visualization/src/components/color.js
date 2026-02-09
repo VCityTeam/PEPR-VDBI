@@ -142,10 +142,12 @@ export function interpolated_cnu_color(cnu) {
   return d3
     .scaleOrdinal(
       cnu_category_values,
-      d3.quantize(
-        cnu_color_range_map.get(cnu_category),
-        cnu_category_values.length + 1,
-      ),
+      d3
+        .quantize(
+          cnu_color_range_map.get(cnu_category),
+          Math.round(cnu_category_values.length * 3),
+        )
+        .slice(Math.round(cnu_category_values.length / 2)),
     )
     .unknown('grey')(Number(cnu.substring(0, 2)))
 }
@@ -156,12 +158,35 @@ export const erc_category_colors = new Map([
   ['PE - Sciences & Technologies', d3.schemeCategory10[0]],
   ['LS - Vie & Santé', d3.schemeCategory10[4]],
   ['SH - Sciences Humaines & Sociales', d3.schemeCategory10[2]],
-  ['non chercheur', 'grey'],
+])
+
+export const erc_color_range_map = new Map([
+  ['PE - Sciences & Technologies', d3.interpolateGreens],
+  ['LS - Vie & Santé', d3.interpolatePurples],
+  ['SH - Sciences Humaines & Sociales', d3.interpolateBlues],
 ])
 
 export const erc_color_scale = d3
   .scaleOrdinal(erc_category_colors.keys(), erc_category_colors.values())
   .unknown('grey')
+
+export function getCategoryFromErcDiscipline(erc_discipline) {
+  if (!erc_discipline) {
+    console.warn(`empty erc discipline: ${erc_discipline}`)
+    return null
+  }
+  return erc_category_colors
+    .keys()
+    .find((d) => d.startsWith(erc_discipline.substring(0, 2)))
+}
+
+export function interpolated_erc_color(erc_discipline) {
+  const erc_category = getCategoryFromErcDiscipline(erc_discipline)
+  const color_scale = d3
+    .scaleSequential([1, 12], erc_color_range_map.get(erc_category))
+    .unknown('grey')
+  return color_scale(Number(erc_discipline.substring(2, 4)))
+}
 
 // HCERES Colors //
 
@@ -171,9 +196,39 @@ export const hceres_category_colors = new Map([
   ['SVE Sciences du vivant et environnement', d3.schemeCategory10[4]],
 ])
 
+export const hceres_color_range_map = new Map([
+  ['ST Sciences et Technologies', d3.interpolateGreens],
+  ['SHS Sciences humaines et sociales', d3.interpolateBlues],
+  ['SVE Sciences du vivant et environnement', d3.interpolatePurples],
+])
+
 export const hceres_color_scale = d3
   .scaleOrdinal(hceres_category_colors.keys(), hceres_category_colors.values())
   .unknown('grey')
+
+export function getCategoryFromHceresDiscipline(hceres_discipline) {
+  if (!hceres_discipline) {
+    console.warn(`empty hceres discipline: ${hceres_discipline}`)
+    return null
+  }
+  return hceres_category_colors
+    .keys()
+    .find((d) => d.startsWith(hceres_discipline.substring(0, 2)))
+}
+
+export function interpolated_hceres_color(hceres_discipline, domain = [1, 12]) {
+  const hceres_category = getCategoryFromHceresDiscipline(hceres_discipline)
+  const color_scale = d3
+    .scaleOrdinal(
+      domain,
+      d3.quantize(
+        hceres_color_range_map.get(hceres_category),
+        domain.length + 1,
+      ),
+    )
+    .unknown('grey')
+  return color_scale(hceres_discipline)
+}
 
 // Legal nature colors //
 // (Code 0) Organisme de placement collectif en valeurs mobilières sans personnalité morale

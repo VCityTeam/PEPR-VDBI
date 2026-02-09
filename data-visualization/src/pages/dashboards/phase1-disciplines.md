@@ -120,14 +120,21 @@ const overview_table_cnu = Inputs.table(
 
 ## Subjects, themes, and research interests
 
+```js
+display('phase_1_data')
+display(phase_1_data)
+display('selected_project_data')
+display(selected_project_data)
+```
+
 <div class="grid grid-cols-3">
-  <div id="theme-container" class="card">
+  <div id="theme-container" class="card grid-rowspan-2">
     <h2>Researcher subjects, themes, and research interests</h2>
     <div>${theme_plot_search_input}</div>
     <div>${theme_plot_sort_input}</div>
-    <div style="max-height: 1100px; overflow: auto;">
+    <div style="max-height: 2400px; overflow: auto;">
       ${resize((width) => page.theme_plot(theme_plot_search_results, width, theme_plot_sort))}
-    <!-- $ -->
+      <!-- $ -->
     </div>
     ${downloadTableButton(() => selected_project_data.theme_count)}
     <!-- $ -->
@@ -138,8 +145,22 @@ const overview_table_cnu = Inputs.table(
     ${resize((width) =>
       chordDiagram(
         selected_project_data.theme_project_matrix,
-        selected_project_data.projects,
-        d3.scaleOrdinal(selected_project_data.projects, d3.schemeCategory10).range(),
+        selected_project_data.theme_projects,
+        d3.scaleOrdinal(selected_project_data.theme_projects, d3.schemeCategory10).range(),
+        { width: width, height: width, margin: 100 }
+      )
+    )}<!-- $ -->
+    ${downloadTableButton(() => selected_project_data.theme_count)}
+    <!-- $ -->
+    ${downloadSVGButton("#theme-chord-container svg")}
+    <!-- $ -->
+  </div>
+  <div id="erc-chord-container" class="card grid-colspan-2">
+    ${resize((width) =>
+      chordDiagram(
+        selected_project_data.erc_project_matrix,
+        selected_project_data.erc_projects,
+        d3.scaleOrdinal(selected_project_data.erc_projects, d3.schemeCategory10).range(),
         { width: width, height: width, margin: 100 }
       )
     )}<!-- $ -->
@@ -222,7 +243,7 @@ console.debug('financed_projects', financed_projects)
       height: 300,
       nodeFill: () => 'rgba(1,1,1,0.9)',
       linkStroke: (d) =>
-        page.project_state_color_scale.unknown('lightgrey')(d.path.slice(-2).join('-')),
+        page.aap_state_color_scale.unknown('lightgrey')(d.path.slice(-2).join('-')),
     })
   )}
   <!-- $ -->
@@ -242,7 +263,7 @@ console.debug('financed_projects', financed_projects)
   <!-- $ -->
 </div>
 
-<div class="grid grid-cols-2">
+<div class="grid grid-cols-3">
 
   <div class="card grid-rowspan-2">
     ${resize((width) => sankeyDiagram(
@@ -258,17 +279,17 @@ console.debug('financed_projects', financed_projects)
     )}
     <!-- $ -->
   </div>
-  <div class="card">
-    ${resize((width) => sankeyDiagram(
-      cnu_law_aap_dynamics,
-      page.cnu_sankey_config(cnu_law_aap_dynamics, width, total_cnu_count))
-    )}
-    <!-- $ -->
-  </div>
   <div class="card grid-rowspan-3">
     ${resize((width) => sankeyDiagram(
       cnu_sciences_aap_dynamics,
       page.cnu_sankey_config(cnu_sciences_aap_dynamics, width, total_cnu_count))
+    )}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    ${resize((width) => sankeyDiagram(
+      cnu_law_aap_dynamics,
+      page.cnu_sankey_config(cnu_law_aap_dynamics, width, total_cnu_count))
     )}
     <!-- $ -->
   </div>
@@ -298,10 +319,14 @@ const project_aap_dynamics = page.projects_by_aap_status_graph(
 ```
 
 ```js
-const cnu_by_aap_status = page.cnu_by_aap_status(
+const researcher_by_aap_status = page.researcher_by_aap_status(
   phase_1_data.researchers,
   phase_1_data.projects,
 )
+```
+
+```js
+const cnu_by_aap_status = page.cnu_by_aap_status(researcher_by_aap_status)
 
 const cnu_aap_dynamics = page.cnu_by_aap_status_graph(cnu_by_aap_status)
 
@@ -328,46 +353,177 @@ const cnu_categories_by_aap_status_graph =
   page.cnu_categories_by_aap_status_graph(cnu_by_aap_status)
 ```
 
-### Laboratory domains by AAP status
+### ERC by AAP status
 
-```js
-display(phase_1_data)
-display(erc_by_aap_status)
-display(erc_aap_dynamics)
-```
+<div class="card">
+  ${resize((width) => sankeyDiagram(
+    erc_aap_dynamics,
+    page.erc_sankey_config(erc_aap_dynamics, width))
+  )}
+  <!-- $ -->
+</div>
 
-<div class="grid grid-cols-2">
+<div class="grid grid-cols-3">
   <div class="card">
     ${resize((width) => sankeyDiagram(
-      erc_aap_dynamics,
-      page.erc_sankey_config(erc_aap_dynamics, width))
-    )}
+      erc_discipline_LS_by_aap_status_graph,
+      page.erc_disciplines_sankey_config(
+        erc_discipline_LS_by_aap_status_graph,
+        width
+      )
+    ))}
     <!-- $ -->
   </div>
   <div class="card">
     ${resize((width) => sankeyDiagram(
-      hceres_aap_dynamics,
-      page.hceres_sankey_config(hceres_aap_dynamics, width))
-    )}
+      erc_discipline_PE_by_aap_status_graph,
+      page.erc_disciplines_sankey_config(
+        erc_discipline_PE_by_aap_status_graph,
+        width
+      )
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    ${resize((width) => sankeyDiagram(
+      erc_discipline_SH_by_aap_status_graph,
+      page.erc_disciplines_sankey_config(
+        erc_discipline_SH_by_aap_status_graph,
+        width
+      )
+    ))}
     <!-- $ -->
   </div>
 </div>
 
 ```js
-const erc_by_aap_status = page.erc_by_aap_status(
+const lab_by_aap_status = page.lab_by_aap_status(
   phase_1_data.laboratories,
   phase_1_data.projects,
+  phase_1_data.laboratories_by_disciplines_erc,
+  phase_1_data.laboratories_by_disciplines_hceres,
 )
+```
+
+```js
+const erc_by_aap_status = page.erc_by_aap_status(lab_by_aap_status)
 
 const erc_aap_dynamics = page.erc_by_aap_status_graph(erc_by_aap_status)
+```
 
-const hceres_by_aap_status = page.hceres_by_aap_status(
-  phase_1_data.laboratories,
-  phase_1_data.projects,
+```js
+const erc_disciplines_by_aap_status =
+  page.erc_disciplines_by_aap_status(lab_by_aap_status)
+
+const erc_disciplines_aap_dynamics = page.erc_disciplines_by_aap_status_graph(
+  erc_disciplines_by_aap_status,
 )
+
+const erc_discipline_LS_by_aap_status_graph =
+  page.erc_discipline_category_by_aap_status_graph(
+    erc_disciplines_by_aap_status,
+    'LS',
+  )
+const erc_discipline_PE_by_aap_status_graph =
+  page.erc_discipline_category_by_aap_status_graph(
+    erc_disciplines_by_aap_status,
+    'PE',
+  )
+const erc_discipline_SH_by_aap_status_graph =
+  page.erc_discipline_category_by_aap_status_graph(
+    erc_disciplines_by_aap_status,
+    'SH',
+  )
+```
+
+### HCERES by AAP status
+
+<div class="card">
+  ${resize((width) => sankeyDiagram(
+    hceres_aap_dynamics,
+    page.hceres_sankey_config(hceres_aap_dynamics, width))
+  )}
+  <!-- $ -->
+</div>
+
+<div class="grid grid-cols-3">
+  <div class="card">
+    ${resize((width) => sankeyDiagram(
+      hceres_discipline_SHS_by_aap_status_graph,
+      page.hceres_disciplines_sankey_config(
+        hceres_discipline_SHS_by_aap_status_graph,
+        width
+      )
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    ${resize((width) => sankeyDiagram(
+      hceres_discipline_ST_by_aap_status_graph,
+      page.hceres_disciplines_sankey_config(
+        hceres_discipline_ST_by_aap_status_graph,
+        width
+      )
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    ${resize((width) => sankeyDiagram(
+      hceres_discipline_SVE_by_aap_status_graph,
+      page.hceres_disciplines_sankey_config(
+        hceres_discipline_SVE_by_aap_status_graph,
+        width
+      )
+    ))}
+    <!-- $ -->
+  </div>
+</div>
+
+```js
+const hceres_by_aap_status = page.hceres_by_aap_status(lab_by_aap_status)
 
 const hceres_aap_dynamics =
   page.hceres_by_aap_status_graph(hceres_by_aap_status)
+```
+
+```js
+const hceres_disciplines_by_aap_status =
+  page.hceres_disciplines_by_aap_status(lab_by_aap_status)
+
+const hceres_disciplines_aap_dynamics =
+  page.hceres_disciplines_by_aap_status_graph(hceres_disciplines_by_aap_status)
+
+const hceres_discipline_SHS_by_aap_status_graph =
+  page.hceres_discipline_category_by_aap_status_graph(
+    hceres_disciplines_by_aap_status,
+    'SHS',
+  )
+const hceres_discipline_ST_by_aap_status_graph =
+  page.hceres_discipline_category_by_aap_status_graph(
+    hceres_disciplines_by_aap_status,
+    'ST',
+  )
+const hceres_discipline_SVE_by_aap_status_graph =
+  page.hceres_discipline_category_by_aap_status_graph(
+    hceres_disciplines_by_aap_status,
+    'SVE',
+  )
+```
+
+### Theme by AAP status
+
+<div class="card">
+  ${resize((width) => sankeyDiagram(
+    theme_aap_dynamics,
+    page.theme_sankey_config(theme_aap_dynamics, width))
+  )}
+  <!-- $ -->
+</div>
+
+```js
+const theme_by_aap_status = page.theme_by_aap_status(researcher_by_aap_status)
+
+const theme_aap_dynamics = page.theme_by_aap_status_graph(theme_by_aap_status)
 ```
 
 ## Data quality metrics
