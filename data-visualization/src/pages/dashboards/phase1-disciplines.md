@@ -155,18 +155,18 @@ display(selected_project_data)
     ${downloadSVGButton("#theme-chord-container svg")}
     <!-- $ -->
   </div>
-  <div id="erc-chord-container" class="card grid-colspan-2">
+  <div id="cnu-chord-container" class="card grid-colspan-2">
     ${resize((width) =>
       chordDiagram(
-        selected_project_data.erc_project_matrix,
-        selected_project_data.erc_projects,
-        d3.scaleOrdinal(selected_project_data.erc_projects, d3.schemeCategory10).range(),
+        selected_project_data.cnu_project_matrix,
+        selected_project_data.cnu_projects,
+        d3.scaleOrdinal(selected_project_data.cnu_projects, d3.schemeCategory10).range(),
         { width: width, height: width, margin: 100 }
       )
     )}<!-- $ -->
     ${downloadTableButton(() => selected_project_data.theme_count)}
     <!-- $ -->
-    ${downloadSVGButton("#theme-chord-container svg")}
+    ${downloadSVGButton("#cnu-chord-container svg")}
     <!-- $ -->
   </div>
 </div>
@@ -300,6 +300,13 @@ console.debug('financed_projects', financed_projects)
     )}
     <!-- $ -->
   </div>
+  <div class="card grid-rowspan-2">
+    ${resize((width) => sankeyDiagram(
+      cnu_CNRS_SHS_category_by_aap_status_graph,
+      page.cnu_sankey_config(cnu_CNRS_SHS_category_by_aap_status_graph, width, total_cnu_count))
+    )}
+    <!-- $ -->
+  </div>
 </div>
 
 ```js
@@ -351,6 +358,9 @@ const cnu_multidisciplinary_aap_dynamics =
 
 const cnu_categories_by_aap_status_graph =
   page.cnu_categories_by_aap_status_graph(cnu_by_aap_status)
+
+const cnu_CNRS_SHS_category_by_aap_status_graph =
+  page.cnu_CNRS_SHS_category_by_aap_status_graph(cnu_by_aap_status)
 ```
 
 ### ERC by AAP status

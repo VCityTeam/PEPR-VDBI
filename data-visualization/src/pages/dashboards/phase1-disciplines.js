@@ -268,17 +268,17 @@ function formatResearcherDataByProject(
         : true),
   )
 
-  const filtered_laboratories = phase_1_data.project_by_laboratories
-    .filter(
-      (d) =>
-        (project ? d.project === project : true) &&
-        (auditioned ? auditioned_projects.includes(d.project) : true) &&
-        (financed ? financed_projects.includes(d.project) : true),
-    )
-    .map((d) => ({
-      ...phase_1_data.laboratories.find((l) => l.lab === d.lab),
-      project: d.project,
-    }))
+  // const filtered_laboratories = phase_1_data.project_by_laboratories
+  //   .filter(
+  //     (d) =>
+  //       (project ? d.project === project : true) &&
+  //       (auditioned ? auditioned_projects.includes(d.project) : true) &&
+  //       (financed ? financed_projects.includes(d.project) : true),
+  //   )
+  //   .map((d) => ({
+  //     ...phase_1_data.laboratories.find((l) => l.lab === d.lab),
+  //     project: d.project,
+  //   }))
 
   const discipline_erc_count = countEntities(
     filtered_researchers,
@@ -309,24 +309,26 @@ function formatResearcherDataByProject(
     .filter((d) => !!d[0])
     .sort((a, b) => d3.descending(a[1], b[1]))
 
-  const projects_by_theme = filtered_researchers.flatMap((researcher) =>
-    researcher.project
-      .filter(
-        (researcher_project) =>
-          (project ? researcher_project === project : true) &&
-          (auditioned
-            ? auditioned_projects.includes(researcher_project)
-            : true) &&
-          (financed ? financed_projects.includes(researcher_project) : true),
-      )
-      .map((project) => ({
-        project,
-        themes: researcher.themes,
-      })),
+  const filtered_researcher_projects = filtered_researchers.flatMap(
+    (researcher) =>
+      researcher.project
+        .filter(
+          (researcher_project) =>
+            (project ? researcher_project === project : true) &&
+            (auditioned
+              ? auditioned_projects.includes(researcher_project)
+              : true) &&
+            (financed ? financed_projects.includes(researcher_project) : true),
+        )
+        .map((project) => ({
+          project,
+          themes: researcher.themes,
+          cnu: researcher.cnu,
+        })),
   )
 
   const grouped_projects_by_theme = d3.rollup(
-    projects_by_theme,
+    filtered_researcher_projects,
     (D) => new Set(D.flatMap((d) => d.themes)),
     (d) => d.project,
   )
@@ -336,41 +338,50 @@ function formatResearcherDataByProject(
     grouped_projects_by_theme,
   )
 
-  const projects_by_erc = filtered_laboratories.map((lab) => ({
-    project: lab.project,
-    erc: lab.domain_erc
-      ? lab.domain_erc.split(';').map((erc) => erc.trim())
-      : [],
-    erc_disciplines: phase_1_data.laboratories_by_disciplines_erc
-      .filter((l) => l.lab === lab.lab)
-      .map((l) => l.discipline),
-    hceres: lab.domain_hceres
-      ? lab.domain_hceres.split('-').map((hceres) => hceres.trim())
-      : [],
-    hceres_disciplines: phase_1_data.laboratories_by_disciplines_hceres
-      .filter((l) => l.lab === lab.lab)
-      .map((l) => l.discipline),
-  }))
-
-  const grouped_projects_by_erc = d3.rollup(
-    projects_by_erc,
-    (D) => new Set(D.flatMap((d) => d.erc_disciplines)),
+  const grouped_projects_by_cnu = d3.rollup(
+    filtered_researcher_projects,
+    (D) => new Set(D.map((d) => d.cnu)),
     (d) => d.project,
   )
+  console.debug('grouped_projects_by_cnu', grouped_projects_by_cnu)
 
-  const grouped_projects_by_hceres = d3.rollup(
-    projects_by_erc,
-    (D) => new Set(D.flatMap((d) => d.hceres_disciplines)),
-    (d) => d.project,
-  )
+  const cnu_project_matrix = generateIntersectionMatrix(grouped_projects_by_cnu)
 
-  console.debug('grouped_projects_by_erc', grouped_projects_by_erc)
-  console.debug('grouped_projects_by_hceres', grouped_projects_by_hceres)
+  // const projects_by_erc = filtered_laboratories.map((lab) => ({
+  //   project: lab.project,
+  //   erc: lab.domain_erc
+  //     ? lab.domain_erc.split(';').map((erc) => erc.trim())
+  //     : [],
+  //   erc_disciplines: phase_1_data.laboratories_by_disciplines_erc
+  //     .filter((l) => l.lab === lab.lab)
+  //     .map((l) => l.discipline),
+  //   hceres: lab.domain_hceres
+  //     ? lab.domain_hceres.split('-').map((hceres) => hceres.trim())
+  //     : [],
+  //   hceres_disciplines: phase_1_data.laboratories_by_disciplines_hceres
+  //     .filter((l) => l.lab === lab.lab)
+  //     .map((l) => l.discipline),
+  // }))
 
-  const erc_project_matrix = generateIntersectionMatrix(grouped_projects_by_erc)
-  const hceres_project_matrix = generateIntersectionMatrix(
-    grouped_projects_by_hceres,
-  )
+  // const grouped_projects_by_erc = d3.rollup(
+  //   projects_by_erc,
+  //   (D) => new Set(D.flatMap((d) => d.erc_disciplines)),
+  //   (d) => d.project,
+  // )
+
+  // const grouped_projects_by_hceres = d3.rollup(
+  //   projects_by_erc,
+  //   (D) => new Set(D.flatMap((d) => d.hceres_disciplines)),
+  //   (d) => d.project,
+  // )
+
+  // console.debug('grouped_projects_by_erc', grouped_projects_by_erc)
+  // console.debug('grouped_projects_by_hceres', grouped_projects_by_hceres)
+
+  // const erc_project_matrix = generateIntersectionMatrix(grouped_projects_by_erc)
+  // const hceres_project_matrix = generateIntersectionMatrix(
+  //   grouped_projects_by_hceres,
+  // )
 
   return {
     discipline_erc_count,
@@ -379,10 +390,12 @@ function formatResearcherDataByProject(
     theme_count,
     theme_project_matrix,
     theme_projects: [...grouped_projects_by_theme.keys()],
-    erc_project_matrix,
-    erc_projects: [...grouped_projects_by_erc.keys()],
-    hceres_project_matrix,
-    hceres_projects: [...grouped_projects_by_hceres.keys()],
+    cnu_project_matrix,
+    cnu_projects: [...grouped_projects_by_cnu.keys()],
+    // erc_project_matrix,
+    // erc_projects: [...grouped_projects_by_erc.keys()],
+    // hceres_project_matrix,
+    // hceres_projects: [...grouped_projects_by_hceres.keys()],
   }
 }
 
@@ -762,6 +775,17 @@ export const cnu_by_aap_status_graph = (cnu_by_aap_status) =>
 export const cnu_category_by_aap_status_graph = (cnu_by_aap_status, category) =>
   cnu_by_aap_status_graph(
     cnu_by_aap_status.filter((d) => d.cnu_category === category),
+  )
+
+export const cnu_CNRS_SHS_category_by_aap_status_graph = (cnu_by_aap_status) =>
+  cnu_by_aap_status_graph(
+    cnu_by_aap_status.filter((d) =>
+      [
+        'Droit, économie et gestion',
+        'Pluridisciplinaire',
+        'Lettres et sciences humaines',
+      ].includes(d.cnu_category),
+    ),
   )
 
 export const cnu_categories_by_aap_status_graph = (cnu_by_aap_status) =>

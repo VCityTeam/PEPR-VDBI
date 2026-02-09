@@ -78,16 +78,20 @@ export const cnu_color_map = new Map([
   ['Lettres et sciences humaines', 'lightgreen'],
   ['Sections de santé', 'violet'],
   ['Sciences', 'lightblue'],
-  ['Droit, économie et gestion', 'pink'],
-  ['Pluridisciplinaire', 'yellow'],
+  // ['Droit, économie et gestion', 'pink'],
+  // ['Pluridisciplinaire', 'yellow'],
+  ['Droit, économie et gestion', 'lightgreen'],
+  ['Pluridisciplinaire', 'lightgreen'],
 ])
 
 export const cnu_color_range_map = new Map([
   ['Lettres et sciences humaines', d3.interpolateGreens],
   ['Sections de santé', d3.interpolatePurples],
   ['Sciences', d3.interpolateBlues],
-  ['Droit, économie et gestion', d3.interpolateReds],
-  ['Pluridisciplinaire', d3.interpolateRgbBasis(['white', 'yellow', 'brown'])],
+  // ['Droit, économie et gestion', d3.interpolateReds],
+  // ['Pluridisciplinaire', d3.interpolateRgbBasis(['white', 'yellow', 'brown'])],
+  ['Droit, économie et gestion', d3.interpolateGreens],
+  ['Pluridisciplinaire', d3.interpolateGreens],
 ])
 
 /**
