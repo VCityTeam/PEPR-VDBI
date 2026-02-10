@@ -1,10 +1,10 @@
 ---
 style: /css/vdbi-page.css
 sql:
-  entities: "/data/private/VDBI_JS_2025_atelier_NEO_entities.tsv"
+  entities: '/data/private/VDBI_JS_2025_atelier_NEO_entities.tsv'
   # extracted_terms: "/data/private/VDBI_JS_2025_atelier_NEO_extracted_terms.tsv"
-  nouns_by_group: "/data/private/VDBI_JS_2025_atelier_NEO_nouns_by_group.tsv"
-  nouns: "/data/private/VDBI_JS_2025_atelier_NEO_nouns.tsv"
+  nouns_by_group: '/data/private/VDBI_JS_2025_atelier_NEO_nouns_by_group.tsv'
+  nouns: '/data/private/VDBI_JS_2025_atelier_NEO_nouns.tsv'
   # verbs: "/data/private/VDBI_JS_2025_atelier_NEO_verbs.tsv"
   # adj: "/data/private/VDBI_JS_2025_atelier_NEO_adj.tsv"
 ---
@@ -156,14 +156,15 @@ stateDiagram-v2
 
 The following parameters were used to configure the Cortext tasks as of 19/12/2025.
 
-| Task                    | Parameter                | Value |
-| :---------------------- | ------------------------ | ----- |
-| Terms extraction        | Textual Fields           | text  |
-| Terms extraction        | Minimum Frequency        | 2     |
-| Terms extraction        | language                 | fr    |
-| Terms extraction        | Monogramms are forbidden | no    |
-| Named Entity Recognizer | Textual Fields           | text  |
-| Named Entity Recognizer | language                 | fr    |
+| Task                    | Parameter                | Value       |
+| :---------------------- | ------------------------ | ----------- |
+| Terms extraction        | Textual Fields           | text        |
+| Terms extraction        | Minimum Frequency        | 2           |
+| Terms extraction        | language                 | fr          |
+| Terms extraction        | grammatical criterion    | noun phrase |
+| Terms extraction        | Monogramms are forbidden | no          |
+| Named Entity Recognizer | Textual Fields           | text        |
+| Named Entity Recognizer | language                 | fr          |
 
 <div class="note">Unmentioned parameters use their default settings</div>
 
@@ -174,20 +175,9 @@ import {
   downloadSVGButton,
   downloadTableButton,
   cropText,
-} from "/components/utilities.js";
-import { Graph } from "/components/graph.js";
-import {
-  freq_words,
-  group_freq_words,
-  graph_config_workshop,
-  entity_type_map,
-  generateWorkshopEntitiesPlot,
-  column_title_map,
-  column_label_map,
-  generateExtractedTermsPlot,
-  extractedTermsHtmlTemplate,
-  extractedTermsByGroupHtmlTemplate,
-} from "./js-2025-analysis.js";
+} from '/components/utilities.js'
+import { WordBubbles } from '/components/graph.js'
+import * as page from './js-2025-analysis.js'
 ```
 
 ```sql id=nouns_by_group
@@ -225,14 +215,30 @@ are the most commonly used terms.
 | #projet                           | #métropole                        |
 | **#processus-de-co-construction** | **#processus-de-co-construction** |
 
-${new Graph({nodes: freq_words([...nouns])}, graph_config_workshop).getSVG()}
+${fig_2}<!-- $ -->
 
-<!-- $ -->
 <figcaption>Fig 2. Top 10 terms by frequency</figcaption>
 
-${new Graph({nodes: group_freq_words([...nouns])}, graph_config_workshop).getSVG()}
+```js
+const fig_2 = new WordBubbles(
+  page.freq_words([...nouns], {
+    rFactor: 6,
+  }),
+).getSVG()
+```
+
+${fig_3}
+
+```js
+const fig_3 = new WordBubbles(
+  page.group_freq_words([...nouns], {
+    rFactor: 12,
+  }),
+).getSVG()
+```
 
 <!-- $ -->
+
 <figcaption>Fig 3. Top 10 terms by group frequency</figcaption>
 
 Interestingly, group 3 evokes the term **#processus** and **#processus-de-co-construction**
@@ -263,13 +269,19 @@ question.
 | #PEPR                                 | #expertise-locale          | #évaluation                   |
 |                                       | #villes-moyennes           | #apprendisage-réciproque      |
 
-${resize((width) => generateWorkshopEntitiesPlot(entities, width))}<!-- $ -->
+${resize((width) => page.generateWorkshopEntitiesPlot(entities, width))}
+
+<!-- $ -->
 
 <!-- ${downloadSVGButton("#entities svg")} -->
 
-${extractedTermsByGroupHtmlTemplate([...nouns_by_group])}<!-- $ -->
+${page.extractedTermsByGroupHtmlTemplate([...nouns_by_group])}
 
-${extractedTermsHtmlTemplate([...nouns])}<!-- $ -->
+<!-- $ -->
+
+${page.extractedTermsHtmlTemplate([...nouns])}
+
+<!-- $ -->
 
 ## 4. Method review
 
@@ -374,12 +386,45 @@ terms and entities in english may yield more accurate and/or more detailed resul
 
 </div>
 
+Several improvements to the methodology have been identified for perspective analyses
+using Cortext.
+
+First, this analysis only extracted _noun phrases_ as terms, but other parts of
+speech could be extracted for the purposes of keyword identification such as _verbs_
+and _adjectives_ using Cortext. While identified n-gram nouns phrases can
+contain adjectives (e.g., "jeu-sérieux"), few were identified in this analysis.
+An initial extraction of verbs and adjectives was done but excluded from the results.
+This was due to the fact that only monograms can be extracted for verbs and adjectives
+using Cortext and the resulting terms require more involved data treatment to improve
+their usefulness (e.g., _definition and removal of unwanted stop words, lemmatization_,
+etc.)
+
+<div class="note">
+
+Cortext does not provide a lemmatization function in place of stemming but this
+is a well know NLP task that can be done on French text using libraries such as
+Stanza [[5.4]](#54-stanza)
+
+</div>
+
+Second, the identified _entities and terms could be combined_ into a single, more
+comprehensive list of terms for a more comprehensive keyword analysis.
+
+Third, term occurences and co-occurence results were calculated by round table discussion
+by default, which did not yeild interesting results with so few (only 3) documents
+in the corpus. Term extraction _by sentence (co-)occurrences_ may be more insightful.
+
 ## 5. References and links
 
 ```bibtex
 @software{cortext_manager_v2_bibtex,
-  keywords = {natural language processing, social network analysis, geospatial analysis, descriptive statistics, scientometrics, biliometrics},
-  author = {Breucker, Philippe and Cointet, Jean-Philippe and Hannud Abdo, Alexandre and Orsal, Guillaume and de Quatrebarbes, Constance and Duong, Tam-Kien and Martinez, Cristian and Ospina Delgado, Juan Pablo and Medina Zuluaga, Luis Daniel and Gómez Peña, Diego Fernando and Sánchez Castaño, Tatiana Andrea and Marques da Costa, Joenio and Laglil, Hajar and Villard, Lionel and Barbier, Marc},
+  keywords = {natural language processing, social network analysis, geospatial analysis,
+    descriptive statistics, scientometrics, biliometrics},
+  author = {Breucker, Philippe and Cointet, Jean-Philippe and Hannud Abdo, Alexandre
+    and Orsal, Guillaume and de Quatrebarbes, Constance and Duong, Tam-Kien and
+    Martinez, Cristian and Ospina Delgado, Juan Pablo and Medina Zuluaga, Luis Daniel
+    and Gómez Peña, Diego Fernando and Sánchez Castaño, Tatiana Andrea and Marques
+    da Costa, Joenio and Laglil, Hajar and Villard, Lionel and Barbier, Marc},
   month = {10},
   title = {CorTexT Manager},
   url = {https://docs.cortext.net},
@@ -392,3 +437,17 @@ terms and entities in english may yield more accurate and/or more detailed resul
 ### 5.2. [Cortext documentation: (Multi)Term extraction](https://docs.cortext.net/lexical-extraction/)
 
 ### 5.3. [Word Error Rate](https://en.wikipedia.org/wiki/Word_error_rate)
+
+### 5.4. [Stanza](https://stanfordnlp.github.io/stanza/)
+
+```bibtex
+@InProceedings{manning-EtAl:2014:P14-5,
+  author    = {Manning, Christopher D. and  Surdeanu, Mihai  and  Bauer, John  and
+    Finkel, Jenny  and  Bethard, Steven J. and  McClosky, David},
+  title     = {The {Stanford} {CoreNLP} Natural Language Processing Toolkit},
+  booktitle = {Association for Computational Linguistics (ACL) System Demonstrations},
+  year      = {2014},
+  pages     = {55--60},
+  url       = {http://www.aclweb.org/anthology/P/P14/P14-5010}
+}
+```

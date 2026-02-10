@@ -1,12 +1,12 @@
 ---
 style: /css/vdbi-page.css
 sql:
-  locations: "/data/private/js-2025-tables-rondes-loc-1-1.tsv"
-  miscellaneous: "/data/private/js-2025-tables-rondes-misc-1-1.tsv"
-  organizations: "/data/private/js-2025-tables-rondes-org-1-1.tsv"
-  nouns: "/data/private/js-2025-tables-rondes-nouns-extracted-terms.tsv"
-  verbs: "/data/private/js-2025-tables-rondes-verbs-extracted-terms.tsv"
-  adjectives: "/data/private/js-2025-tables-rondes-adj-extracted-terms.tsv"
+  locations: '/data/private/js-2025-tables-rondes-loc-1-1.tsv'
+  miscellaneous: '/data/private/js-2025-tables-rondes-misc-1-1.tsv'
+  organizations: '/data/private/js-2025-tables-rondes-org-1-1.tsv'
+  nouns: '/data/private/js-2025-tables-rondes-nouns-extracted-terms.tsv'
+  verbs: '/data/private/js-2025-tables-rondes-verbs-extracted-terms.tsv'
+  adjectives: '/data/private/js-2025-tables-rondes-adj-extracted-terms.tsv'
 ---
 
 ```js
@@ -14,20 +14,9 @@ import {
   downloadSVGButton,
   downloadTableButton,
   cropText,
-} from "/components/utilities.js";
-import { Graph, WordBubbles } from "/components/graph.js";
-import {
-  freq_words,
-  group_freq_words,
-  graph_config_round_table,
-  entity_type_map,
-  generateRoundTableEntitiesPlot,
-  column_title_map,
-  column_label_map,
-  generateExtractedTermsPlot,
-  extractedTermsHtmlTemplate,
-  extractedTermsByGroupHtmlTemplate,
-} from "./js-2025-analysis.js";
+} from '/components/utilities.js'
+import { Graph, WordBubbles } from '/components/graph.js'
+import * as page from './js-2025-analysis.js'
 ```
 
 # VDBI JS 2025 Round Table Lexicometric Analysis <!-- omit in toc -->
@@ -47,7 +36,7 @@ discussions and their context.
 The report is structured as follows:
 
 - [Section 2](#2-method) details the proposed methodology and steps for reproducibility
-- [Section 3](#3-results) presents the results of the lexicometric
+- [Section 3](#3-results-and-discussion) presents the results of the lexicometric
   analysis
 
 <div class="tip">
@@ -167,7 +156,7 @@ The following parameters were used to configure the Cortext tasks as of 4/1/2026
 ## 3. Results and discussion
 
 ```js
-const term_search = view(Inputs.search(extracted_terms));
+const term_search = view(Inputs.search(extracted_terms))
 ```
 
 ${Inputs.table(term_search, { layout: "auto"})}
@@ -246,13 +235,13 @@ ${fig_2}<!-- $ -->
 ```js
 const fig_2 = new WordBubbles(
   {
-    nodes: freq_words([...(await sql`select * from nouns`)], {
+    nodes: page.freq_words([...(await sql`select * from nouns`)], {
       limit: 30,
       rFactor: 4,
     }),
   },
-  graph_config_round_table,
-).getSVG();
+  page.graph_config_round_table,
+).getSVG()
 ```
 
 ${fig_3}<!-- $ -->
@@ -262,23 +251,23 @@ ${fig_3}<!-- $ -->
 ```js
 const fig_3 = new WordBubbles(
   {
-    nodes: group_freq_words([...(await sql`select * from nouns`)], {
+    nodes: page.group_freq_words([...(await sql`select * from nouns`)], {
       limit: 30,
       rFactor: 4.9,
     }),
   },
-  graph_config_round_table,
-).getSVG();
+  page.graph_config_round_table,
+).getSVG()
 ```
 
-${resize((width) => generateRoundTableEntitiesPlot(extracted_entities, width))}
+${resize((width) => page.generateRoundTableEntitiesPlot(extracted_entities, width))}
 
 <!-- $ -->
 
-${extractedTermsHtmlTemplate(
+${resize((width) => page.extractedTermsHtmlTemplate(
 [...(await sql`select * from nouns`)],
-{marginLeft: 120}
-)}<!-- $ -->
+{width, marginLeft: 120}
+))}<!-- $ -->
 
 <figcaption>Fig 5. Top terms by frequency and by round table frequency</figcaption>
 
@@ -328,17 +317,6 @@ in the corpus. Term extraction _by sentence (co-)occurrences_ may be more insigh
   url = {https://docs.cortext.net},
   year = {2016}
 }
-
-@InProceedings{manning-EtAl:2014:P14-5,
-  author    = {Manning, Christopher D. and  Surdeanu, Mihai  and  Bauer, John  and
-    Finkel, Jenny  and  Bethard, Steven J. and  McClosky, David},
-  title     = {The {Stanford} {CoreNLP} Natural Language Processing Toolkit},
-  booktitle = {Association for Computational Linguistics (ACL) System Demonstrations},
-  year      = {2014},
-  pages     = {55--60},
-  url       = {http://www.aclweb.org/anthology/P/P14/P14-5010}
-}
-
 ```
 
 ### 5.1. [Cortext documentation: Named Entity Recognition](https://docs.cortext.net/named-entity-recognizer/)
@@ -348,3 +326,15 @@ in the corpus. Term extraction _by sentence (co-)occurrences_ may be more insigh
 ### 5.3. [Word Error Rate](https://en.wikipedia.org/wiki/Word_error_rate)
 
 ### 5.4. [Stanza](https://stanfordnlp.github.io/stanza/)
+
+```bibtex
+@InProceedings{manning-EtAl:2014:P14-5,
+  author    = {Manning, Christopher D. and  Surdeanu, Mihai  and  Bauer, John  and
+    Finkel, Jenny  and  Bethard, Steven J. and  McClosky, David},
+  title     = {The {Stanford} {CoreNLP} Natural Language Processing Toolkit},
+  booktitle = {Association for Computational Linguistics (ACL) System Demonstrations},
+  year      = {2014},
+  pages     = {55--60},
+  url       = {http://www.aclweb.org/anthology/P/P14/P14-5010}
+}
+```

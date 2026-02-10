@@ -1,6 +1,6 @@
-import * as d3 from "d3";
-import { circleLegend } from "./legend.js";
-import { cropText, wrapText } from "./utilities.js";
+import * as d3 from 'd3'
+import { circleLegend } from './legend.js'
+import { cropText, wrapText } from './utilities.js'
 
 /**
  * Map the elements of an array of objects (a table) to a graph with the following rules:
@@ -22,35 +22,35 @@ import { cropText, wrapText } from "./utilities.js";
 export function mapTableToPropertyGraphLinks(
   data,
   {
-    id_key = "id", // the key used to identify a row
+    id_key = 'id', // the key used to identify a row
     column, // columns NOT in this list are ignored. Use all columns by default
     reflexive = false, // if there is a link from A to B, should a link be generated from B to A?
   } = {},
 ) {
-  const links = [];
+  const links = []
   // create links for each "row" and add them to an array (representing the links)
   data.forEach((row) => {
     // iterate though every property of every row
     for (const [key, value] of Object.entries(row)) {
       if (column && !column.includes(key)) {
-        continue; // column not whitelisted
+        continue // column not whitelisted
       } else if (key == id_key || value == null || value == undefined) {
-        continue;
-      } else if (typeof value == "string" || typeof value == "number") {
+        continue
+      } else if (typeof value == 'string' || typeof value == 'number') {
         // get rows with the same value
         const rows_to_link = data.filter(
           (d) => d[id_key] != row[id_key] && d[key] == row[key],
-        );
+        )
 
         for (let index = 0; index < rows_to_link.length; index++) {
-          const row_to_link = rows_to_link[index];
+          const row_to_link = rows_to_link[index]
           if (
             !reflexive &&
             links.some(
               (l) => l.source == row_to_link[id_key] && l.target == row[id_key],
             )
           ) {
-            continue; // link already exists
+            continue // link already exists
           }
 
           links.push({
@@ -58,37 +58,37 @@ export function mapTableToPropertyGraphLinks(
             target: row_to_link[id_key],
             label: key,
             value: value,
-          });
+          })
         }
       } else if (value instanceof Array) {
-        const rows_to_link = [];
+        const rows_to_link = []
         // create link if other rows contain elements from this array
         for (let index = 0; index < value.length; index++) {
-          const element = value[index];
+          const element = value[index]
           if (!element) {
-            console.warn("No element found", index, key, value);
-            continue;
+            console.warn('No element found', index, key, value)
+            continue
           }
           // get rows with intersecting elements and add them to rows_to_link
           data
             .filter((d) => d[id_key] != row[id_key] && d[key].includes(element))
-            .forEach((node) => rows_to_link.push(node));
+            .forEach((node) => rows_to_link.push(node))
           rows_to_link.forEach((d) => {
             links.push({
               source: row[id_key],
               target: d[id_key],
               label: key,
               value: element,
-            });
-          });
+            })
+          })
         }
       } else {
-        console.warn("Unknown property type", key, value);
+        console.warn('Unknown property type', key, value)
       }
     }
-  });
+  })
 
-  return links;
+  return links
 }
 
 /**
@@ -115,63 +115,63 @@ export function mapTableToPropertyGraphLinks(
 export function mapTableToTriples(
   data,
   {
-    id_key = "id", // the key used to identify a row
+    id_key = 'id', // the key used to identify a row
     column, // columns NOT in this list are ignored. Use all columns by default
     // type_nodes = false, // create an RDF Type triple for each node
   } = {},
 ) {
   // create triples for each row and add them to an array (representing the graph)
-  const nodes = [];
-  const links = [];
+  const nodes = []
+  const links = []
 
   data.forEach((row) => {
     // create node
-    nodes.push({ id: row[id_key], label: row[id_key], type: id_key });
+    nodes.push({ id: row[id_key], label: row[id_key], type: id_key })
 
     // iterate though every entry of each row
     for (const [key, value] of Object.entries(row)) {
       if (column && !column.includes(key)) {
-        continue; // column not whitelisted
+        continue // column not whitelisted
       } else if (
         key == id_key ||
-        value == "" ||
+        value == '' ||
         value == null ||
         value == undefined
       ) {
-        continue; // ignore id key and null values
-      } else if (typeof value == "string" || typeof value == "number") {
+        continue // ignore id key and null values
+      } else if (typeof value == 'string' || typeof value == 'number') {
         // create target node if necessary
         if (!nodes.some(({ id, type }) => id == value && type == key))
-          nodes.push({ id: value, label: value, type: key });
+          nodes.push({ id: value, label: value, type: key })
 
         // push value of row properties to graph
-        links.push({ source: row[id_key], label: key, target: value });
+        links.push({ source: row[id_key], label: key, target: value })
       } else if (value instanceof Array) {
         for (let index = 0; index < value.length; index++) {
-          const element = value[index];
+          const element = value[index]
           if (!element) {
-            console.warn("No element found", index, key, value);
-            continue;
+            console.warn('No element found', index, key, value)
+            continue
           }
 
           // create target node if necessary
           if (!nodes.some(({ id, type }) => id == element && type == key))
-            nodes.push({ id: element, label: element, type: key });
+            nodes.push({ id: element, label: element, type: key })
 
           // push value of row Array elements to graph
           links.push({
             source: row[id_key],
             label: key,
             target: element,
-          });
+          })
         }
       } else {
-        console.warn("Unknown property type", key, value);
+        console.warn('Unknown property type', key, value)
       }
     }
-  });
+  })
 
-  return { nodes: nodes, links: links };
+  return { nodes: nodes, links: links }
 }
 
 /**
@@ -194,28 +194,28 @@ export function parseTabularGraph(
     colorMap = (d) => d.color || null,
   } = {},
 ) {
-  const nodeByID = new Map();
+  const nodeByID = new Map()
   for (const link of links) {
     if (!nodeByID.has(sourceMap(link)))
       nodeByID.set(sourceMap(link), {
         id: sourceMap(link),
         value: valueMap(link),
         color: colorMap(link),
-      });
+      })
     else {
-      nodeByID.get(sourceMap(link)).value += valueMap(link);
+      nodeByID.get(sourceMap(link)).value += valueMap(link)
     }
     if (!nodeByID.has(targetMap(link)))
       nodeByID.set(targetMap(link), {
         id: targetMap(link),
         value: valueMap(link),
         color: colorMap(link),
-      });
+      })
     else {
-      nodeByID.get(targetMap(link)).value += valueMap(link);
+      nodeByID.get(targetMap(link)).value += valueMap(link)
     }
   }
-  return { nodes: Array.from(nodeByID.values()), links };
+  return { nodes: Array.from(nodeByID.values()), links }
 }
 
 /**
@@ -223,8 +223,8 @@ export function parseTabularGraph(
  */
 export function mapProjectsToRDFGraph(projects, colorMap = {}) {
   // create triples for each project and add them to an array (representing the graph)
-  const nodes = [];
-  const links = [];
+  const nodes = []
+  const links = []
 
   // nodes.push({ id: "PEPR VDBI", color: 0 });
 
@@ -237,34 +237,34 @@ export function mapProjectsToRDFGraph(projects, colorMap = {}) {
     // });
     // iterate though every entry of each project
     for (const [key, value] of Object.entries(project)) {
-      if (key == "acronyme") {
-        nodes.push({ id: project.acronyme, color: colorMap.acronyme });
-      } else if (typeof value == "string") {
+      if (key == 'acronyme') {
+        nodes.push({ id: project.acronyme, color: colorMap.acronyme })
+      } else if (typeof value == 'string') {
         if (!nodes.find((d) => d.id == value)) {
-          nodes.push({ id: value, color: colorMap[key] });
+          nodes.push({ id: value, color: colorMap[key] })
         }
-        links.push({ source: project.acronyme, label: key, target: value });
+        links.push({ source: project.acronyme, label: key, target: value })
       } else {
         // push value of project properties to graph
         for (let index = 0; index < value.length; index++) {
-          const element = value[index];
+          const element = value[index]
           if (!element) {
-            console.warn("No element found", index, key, value);
+            console.warn('No element found', index, key, value)
           }
           if (!nodes.find((d) => d.id == element)) {
-            nodes.push({ id: element, color: colorMap[key] });
+            nodes.push({ id: element, color: colorMap[key] })
           }
           links.push({
             source: project.acronyme, // project id
             label: key, // property name
             target: element, // unique value
-          });
+          })
         }
       }
     }
-  });
+  })
 
-  return { nodes: nodes, links: links };
+  return { nodes: nodes, links: links }
 }
 
 /**
@@ -318,7 +318,7 @@ export class Graph {
    * @param {number} options.nodeLabelOpacity - default node label opacity
    * @param {number} options.linkLabelOpacity - default link label opacity
    * @param {number} options.highlightOpacity - mouseover label opacity
-   * @param {Function} options.nodeLabelOffset - move node label placement
+   * @param {Function} options.nodeLabelXOffset - move node label placement
    * @param {element} options.legend - legend for the graph
    * @param {number} options.legendX - horizontal location of legend
    * @param {number} options.legendY - vertical location of legend
@@ -326,7 +326,7 @@ export class Graph {
   constructor(
     { nodes = [], links = [] },
     {
-      id = "d3_graph_" + Math.random().toString(36).substring(7),
+      id = 'd3_graph_' + Math.random().toString(36).substring(7),
       performanceMode = false,
       width = 500,
       height = 500,
@@ -348,87 +348,85 @@ export class Graph {
       fontSize = 10,
       r = (d) => d.r || 3,
       textLength = 15,
-      stroke = "black",
+      stroke = 'black',
       strokeWidth = 0.5,
       nodeStrokeOpacity = 0.4,
       linkStrokeOpacity = 0.6,
-      textColor = "black",
-      halo = "GhostWhite",
+      textColor = 'black',
+      halo = 'GhostWhite',
       haloWidth = 0.25,
       nodeLabelOpacity = 0.1,
       linkLabelOpacity = 0.1,
       highlightOpacity = 0.7,
-      nodeLabelOffset = (d) => r(d) + 1.5,
-      legend = circleLegend(
-        [
-          ...new Set(
-            nodes
-              .map((d) => valueMap(d))
-              .filter((d) => d != null)
-              .sort(d3.ascending),
-          ),
-        ],
-        {
-          keyMap: (d) => d,
-          valueMap: (d) => d,
-          color: color,
-          lineSeparation: 20,
-          text: (d) => cropText(d, 40),
-          backgroundColor: "black",
-          backgroundStroke: "black",
-          backgroundOpacity: 0.1,
-        },
-      ),
+      nodeLabelXOffset = (d) => r(d) + 1.5,
+      legend = () =>
+        circleLegend(
+          [
+            ...new Set(
+              nodes
+                .map((d) => valueMap(d))
+                .filter((d) => d != null)
+                .sort(d3.ascending),
+            ),
+          ],
+          {
+            keyMap: (d) => d,
+            valueMap: (d) => d,
+            color: color,
+            lineSeparation: 20,
+            text: (d) => cropText(d, 40),
+            backgroundColor: 'black',
+            backgroundStroke: 'black',
+            backgroundOpacity: 0.1,
+          },
+        ),
       legendX = -width / 2 + 10,
       legendY = -height / 2 + 10,
     } = {},
   ) {
-    this.nodes = [...nodes].map((d) => ({ ...d }));
-    this.links = [...links].map((d) => ({ ...d }));
-    this.id = id;
-    this.performanceMode = performanceMode;
-    this.width = width;
-    this.height = height;
-    this.viewBox = viewBox;
-    this.scaleExtent = scaleExtent;
-    this.translateExtent = translateExtent;
-    this.keyMap = keyMap;
-    this.labelMap = labelMap;
-    this.titleMap = titleMap;
-    this.relationMap = relationMap;
-    this.valueMap = valueMap;
-    this.chargeStrength = chargeStrength;
-    this.xMap = xMap;
-    this.yMap = yMap;
-    this.color = color;
-    this.fontSize = fontSize;
-    this.r = r;
-    this.textLength = textLength;
-    this.stroke = stroke;
-    this.strokeWidth = strokeWidth;
-    this.nodeStrokeOpacity = nodeStrokeOpacity;
-    this.linkStrokeOpacity = linkStrokeOpacity;
-    this.textColor = textColor;
-    this.halo = halo;
-    this.haloWidth = haloWidth;
-    this.nodeLabelOpacity = nodeLabelOpacity;
-    this.linkLabelOpacity = linkLabelOpacity;
-    this.highlightOpacity = highlightOpacity;
-    this.nodeLabelOffset = nodeLabelOffset;
-    this.legend = legend;
-    this.legendX = legendX;
-    this.legendY = legendY;
+    this.nodes = [...nodes].map((d) => ({ ...d }))
+    this.links = [...links].map((d) => ({ ...d }))
+    this.id = id
+    this.performanceMode = performanceMode
+    this.width = width
+    this.height = height
+    this.viewBox = viewBox
+    this.scaleExtent = scaleExtent
+    this.translateExtent = translateExtent
+    this.keyMap = keyMap
+    this.labelMap = labelMap
+    this.titleMap = titleMap
+    this.relationMap = relationMap
+    this.valueMap = valueMap
+    this.chargeStrength = chargeStrength
+    this.xMap = xMap
+    this.yMap = yMap
+    this.color = color
+    this.fontSize = fontSize
+    this.r = r
+    this.textLength = textLength
+    this.stroke = stroke
+    this.strokeWidth = strokeWidth
+    this.nodeStrokeOpacity = nodeStrokeOpacity
+    this.linkStrokeOpacity = linkStrokeOpacity
+    this.textColor = textColor
+    this.halo = halo
+    this.haloWidth = haloWidth
+    this.nodeLabelOpacity = nodeLabelOpacity
+    this.linkLabelOpacity = linkLabelOpacity
+    this.highlightOpacity = highlightOpacity
+    this.nodeLabelXOffset = nodeLabelXOffset
 
     this.svg = d3
-      .create("svg")
-      .attr("id", id)
-      .attr("class", "d3_graph")
-      .attr("viewBox", viewBox)
-      .style("display", "hidden")
-      .style("overflow", "hidden");
+      .create('svg')
+      .attr('id', id)
+      .attr('class', 'd3_graph')
+      .attr('viewBox', viewBox)
+      .style('display', 'hidden')
+      .style('overflow', 'hidden')
 
     // Add styles for the user interaction.
-    this.svg.append("style").text(`
+    this.svg.append('style').text(`
       .hover circle.highlight { opacity: ${highlightOpacity} }
       .hover circle { opacity: 0.1; }
       .hover line.highlight { opacity: ${highlightOpacity}; }
@@ -436,95 +434,95 @@ export class Graph {
       .hover text.highlight { font-weight: bold; opacity: ${highlightOpacity}; }
       .hover text.secondary { opacity: ${highlightOpacity}; }
       .hover text { opacity: 0.1; }
-    `);
+    `)
 
     this.svg
-      .append("g")
-      .attr("class", "links")
-      .attr("stroke", stroke)
-      .attr("stroke-opacity", linkStrokeOpacity);
+      .append('g')
+      .attr('class', 'links')
+      .attr('stroke', stroke)
+      .attr('stroke-opacity', linkStrokeOpacity)
 
-    this.svg.append("g").attr("class", "nodes");
+    this.svg.append('g').attr('class', 'nodes')
 
     this.svg
-      .append("g")
-      .attr("class", "link_labels")
-      .style("text-anchor", "middle")
-      .style("font-family", "Arial")
+      .append('g')
+      .attr('class', 'link_labels')
+      .style('text-anchor', 'middle')
+      .style('font-family', 'Arial')
       // .style("font-size", this.fontSize)
-      .style("fill", this.textColor)
+      .style('fill', this.textColor)
       // .style('fill', 'white')
       // .style('visibility', 'hidden')
-      .style("opacity", this.linkLabelOpacity)
-      .style("pointer-events", "none");
+      .style('opacity', this.linkLabelOpacity)
+      .style('pointer-events', 'none')
 
     this.svg
-      .append("g")
-      .attr("class", "node_labels")
-      .style("text-anchor", "middle")
-      .style("font-family", "Arial")
+      .append('g')
+      .attr('class', 'node_labels')
+      .style('text-anchor', 'middle')
+      .style('font-family', 'Arial')
       // .style("font-size", this.fontSize)
-      .style("fill", this.textColor)
-      .style("opacity", this.nodeLabelOpacity)
+      .style('fill', this.textColor)
+      .style('opacity', this.nodeLabelOpacity)
       // .style('fill', 'white')
       // .style('visibility', 'hidden')
-      .style("pointer-events", "none");
+      .style('pointer-events', 'none')
 
     if (legend) {
       const legend_svg = this.svg
-        .append("g")
-        .attr("transform", `translate(${legendX},${legendY})`);
-      legend_svg.append(() => legend);
+        .append('g')
+        .attr('transform', `translate(${legendX},${legendY})`)
+      legend_svg.append(() => legend())
     }
 
-    this.simulation = this.createSimulation();
-    Object.assign(this.svg.node(), { simulation: this.simulation });
+    this.simulation = this.createSimulation()
+    Object.assign(this.svg.node(), { simulation: this.simulation })
 
-    this.update();
+    this.update()
 
     this.zoom = d3
       .zoom()
       .scaleExtent(scaleExtent)
       .translateExtent(translateExtent)
-      .on("zoom", this.handleZoom(id));
-    this.svg.call(this.zoom);
+      .on('zoom', this.handleZoom(id))
+    this.svg.call(this.zoom)
   }
 
   /**
    * Update the graph with new nodes and links.
    */
   update() {
-    this.simulation.nodes(this.nodes);
-    this.simulation.force("link").links(this.links);
-    this.simulation.restart();
+    this.simulation.nodes(this.nodes)
+    this.simulation.force('link').links(this.links)
+    this.simulation.restart()
 
     this.getNodes()
       .data(this.nodes)
-      .join("circle")
-      .attr("r", this.r)
-      .attr("stroke-opacity", this.nodeStrokeOpacity)
-      .attr("stroke-width", this.strokeWidth)
-      .attr("stroke", this.stroke)
-      .attr("fill", (d) => this.color(this.valueMap(d)))
-      .on("pointerup", this.handleNodePointerup())
-      .on("pointerdown", this.handleNodePointerdown())
-      .on("pointerenter", this.handleNodePointerEnter())
-      .on("pointerout", this.handleNodePointerout())
-      .style("pointer-events", "all")
-      .call(this.handleDrag(this.simulation));
-    this.getNodes().append("title").text(this.titleMap);
+      .join('circle')
+      .attr('r', this.r)
+      .attr('stroke-opacity', this.nodeStrokeOpacity)
+      .attr('stroke-width', this.strokeWidth)
+      .attr('stroke', this.stroke)
+      .attr('fill', (d) => this.color(this.valueMap(d)))
+      .on('pointerup', this.handleNodePointerup())
+      .on('pointerdown', this.handleNodePointerdown())
+      .on('pointerenter', this.handleNodePointerEnter())
+      .on('pointerout', this.handleNodePointerout())
+      .style('pointer-events', 'all')
+      .call(this.handleDrag(this.simulation))
+    this.getNodes().append('title').text(this.titleMap)
 
     this.getLinks()
       .data(this.links)
-      .join("line")
-      .style("pointer-events", "none")
-      .attr("stroke-width", this.strokeWidth);
+      .join('line')
+      .style('pointer-events', 'none')
+      .attr('stroke-width', this.strokeWidth)
 
     this.getNodeLabels()
       .data(this.nodes)
-      .join("text")
+      .join('text')
       .text((d) => this.labelMap(d))
-      .attr("font-size", this.fontSize);
+      .attr('font-size', this.fontSize)
     // .attr("stroke-linejoin", "round")
     // .attr("stroke-width", this.haloWidth)
     // .attr("stroke", this.halo)
@@ -532,9 +530,9 @@ export class Graph {
 
     this.getLinkLabels()
       .data(this.links)
-      .join("text")
-      .text((d) => cropText(this.relationMap(d) || "", this.textLength))
-      .attr("font-size", this.fontSize);
+      .join('text')
+      .text((d) => cropText(this.relationMap(d) || '', this.textLength))
+      .attr('font-size', this.fontSize)
     // .attr("stroke-linejoin", "round")
     // .attr("stroke-width", this.haloWidth)
     // .attr("stroke", this.halo)
@@ -547,55 +545,55 @@ export class Graph {
    * Get the SVG element of the graph
    * @returns {d3.node} the SVG node of the graph
    */
-  getSVG = () => this.svg.node();
+  getSVG = () => this.svg.node()
 
   /**
    * Get the SVG node group of the graph
    * @returns {d3.selection} the node group
    */
-  getNodeGroup = () => this.svg.selectAll(`#${this.id} g.nodes`);
+  getNodeGroup = () => this.svg.selectAll(`#${this.id} g.nodes`)
 
   /**
    * Get the SVG link group of the graph
    * @returns {d3.selection} the link group
    */
-  getLinkGroup = () => this.svg.selectAll(`#${this.id} g.links`);
+  getLinkGroup = () => this.svg.selectAll(`#${this.id} g.links`)
 
   /**
    * Get the SVG node label group of the graph
    * @returns {d3.selection} the node label group
    */
-  getNodeLabelGroup = () => this.svg.selectAll(`#${this.id} g.node_labels`);
+  getNodeLabelGroup = () => this.svg.selectAll(`#${this.id} g.node_labels`)
 
   /**
    * Get the SVG link label group of the graph
    * @returns {d3.selection} the link label group
    */
-  getLinkLabelGroup = () => this.svg.selectAll(`#${this.id} g.link_labels`);
+  getLinkLabelGroup = () => this.svg.selectAll(`#${this.id} g.link_labels`)
 
   /**
    * Get the SVG nodes of the graph
    * @returns {d3.selection} the SVG nodes
    */
-  getNodes = () => this.getNodeGroup().selectAll("circle");
+  getNodes = () => this.getNodeGroup().selectAll('circle')
 
   /**
    * Get the SVG link group of the graph
    * @returns {d3.selection} the SVG links
    */
-  getLinks = () => this.getLinkGroup().selectAll("line");
+  getLinks = () => this.getLinkGroup().selectAll('line')
 
   /**
    * Get the SVG node label group of the graph
    * @returns {d3.selection} the SVG node labels
    */
-  getNodeLabels = () => this.getNodeLabelGroup().selectAll("text");
+  getNodeLabels = () => this.getNodeLabelGroup().selectAll('text')
 
   /**
    * Get the SVG link label group of the graph
    * @returns {d3.selection} the SVG link labels
    */
-  getLinkLabels = () => this.getLinkLabelGroup().selectAll("text");
+  getLinkLabels = () => this.getLinkLabelGroup().selectAll('text')
 
   /**
    * Start a force simulation from graph data
@@ -604,17 +602,17 @@ export class Graph {
   createSimulation = () =>
     d3
       .forceSimulation(this.nodes)
-      .force("link", d3.forceLink(this.links).id(this.keyMap))
+      .force('link', d3.forceLink(this.links).id(this.keyMap))
       .force(
-        "collide",
+        'collide',
         d3
           .forceCollide()
           .radius((d) => this.r(d) * 1.1)
           .iterations(3),
       )
-      .force("x", d3.forceX())
-      .force("y", d3.forceY())
-      .on("tick", this.handleTick());
+      .force('x', d3.forceX())
+      .force('y', d3.forceY())
+      .on('tick', this.handleTick())
 
   /**
    * Create a drag effect for graph nodes within the context of a force simulation
@@ -626,9 +624,9 @@ export class Graph {
      * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
      */
     function dragstarted(event) {
-      if (!event.active) simulation.alpha(0.3).restart();
-      event.subject.fx = event.subject.x;
-      event.subject.fy = event.subject.y;
+      if (!event.active) simulation.alpha(0.3).restart()
+      event.subject.fx = event.subject.x
+      event.subject.fy = event.subject.y
     }
 
     /**
@@ -636,8 +634,8 @@ export class Graph {
      * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
      */
     function dragged(event) {
-      event.subject.fx = event.x;
-      event.subject.fy = event.y;
+      event.subject.fx = event.x
+      event.subject.fy = event.y
     }
 
     /**
@@ -645,16 +643,16 @@ export class Graph {
      * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
      */
     function dragended(event) {
-      if (!event.active) simulation.alphaTarget(0);
-      event.subject.fx = null;
-      event.subject.fy = null;
+      if (!event.active) simulation.alphaTarget(0)
+      event.subject.fx = null
+      event.subject.fy = null
     }
 
     return d3
       .drag()
-      .on("start", dragstarted)
-      .on("drag", dragged)
-      .on("end", dragended);
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended)
   }
 
   /**
@@ -664,41 +662,41 @@ export class Graph {
   handleZoom() {
     return (event) => {
       this.getNodeGroup()
-        .attr("height", "100%")
-        .attr("width", "100%")
-        .attr("transform", event.transform);
+        .attr('height', '100%')
+        .attr('width', '100%')
+        .attr('transform', event.transform)
 
       this.getLinkGroup()
-        .attr("height", "100%")
-        .attr("width", "100%")
-        .attr("transform", event.transform);
+        .attr('height', '100%')
+        .attr('width', '100%')
+        .attr('transform', event.transform)
 
       this.getNodeLabelGroup()
         // .style("font-size", fontSize / event.transform.k + "px")
         .attr(
-          "transform",
-          "translate(" +
+          'transform',
+          'translate(' +
             event.transform.x +
-            "," +
+            ',' +
             event.transform.y +
-            ") scale(" +
+            ') scale(' +
             event.transform.k +
-            ")",
-        );
+            ')',
+        )
 
       this.getLinkLabelGroup()
         // .style("font-size", fontSize / event.transform.k + "px")
         .attr(
-          "transform",
-          "translate(" +
+          'transform',
+          'translate(' +
             event.transform.x +
-            "," +
+            ',' +
             event.transform.y +
-            ") scale(" +
+            ') scale(' +
             event.transform.k +
-            ")",
-        );
-    };
+            ')',
+        )
+    }
   }
 
   /**
@@ -707,20 +705,21 @@ export class Graph {
   handleTick() {
     return () => {
       this.getNodes()
-        .attr("cx", (d) => d.x)
-        .attr("cy", (d) => d.y);
+        .attr('cx', (d) => d.x)
+        .attr('cy', (d) => d.y)
       this.getNodeLabels()
-        .attr("x", (d) => d.x)
-        .attr("y", (d) => d.y - this.nodeLabelOffset(d));
+        .attr('x', (d) => d.x)
+        .attr('y', (d) => d.y)
+        .attr('dy', (d) => this.nodeLabelXOffset(d))
       this.getLinks()
-        .attr("x1", (d) => d.source.x)
-        .attr("y1", (d) => d.source.y)
-        .attr("x2", (d) => d.target.x)
-        .attr("y2", (d) => d.target.y);
+        .attr('x1', (d) => d.source.x)
+        .attr('y1', (d) => d.source.y)
+        .attr('x2', (d) => d.target.x)
+        .attr('y2', (d) => d.target.y)
       this.getLinkLabels()
-        .attr("x", (d) => (d.source.x + d.target.x) / 2)
-        .attr("y", (d) => (d.source.y + d.target.y) / 2);
-    };
+        .attr('x', (d) => (d.source.x + d.target.x) / 2)
+        .attr('y', (d) => (d.source.y + d.target.y) / 2)
+    }
   }
 
   // Event handlers for node interactions //
@@ -730,49 +729,49 @@ export class Graph {
    */
   handleNodePointerEnter() {
     return (_event, datum) => {
-      this.svg.classed("hover", true);
+      this.svg.classed('hover', true)
       this.getNodes()
         .filter((d) => d === datum)
-        .classed("highlight", true);
-      const label = this.getNodeLabels().filter((d) => d === datum);
-      label.classed("highlight", true);
-      label.text(this.labelMap(datum));
+        .classed('highlight', true)
+      const label = this.getNodeLabels().filter((d) => d === datum)
+      label.classed('highlight', true)
+      label.text(this.labelMap(datum))
 
       const connectedLinks = this.getLinks().filter(
         (l) => l.source === datum || l.target === datum,
-      );
-      connectedLinks.classed("highlight", true);
-      this.getLinkLabelGroup().style("opacity", 0.5);
+      )
+      connectedLinks.classed('highlight', true)
+      this.getLinkLabelGroup().style('opacity', 0.5)
       if (!this.performanceMode) {
         this.getLinkLabels().classed(
-          "secondary",
+          'secondary',
           ({ source, target }) => datum === target || datum === source,
-        );
-        this.getLinkLabels().text((d) => this.relationMap(d));
+        )
+        this.getLinkLabels().text((d) => this.relationMap(d))
       }
 
-      this.getNodeLabelGroup().style("opacity", 1);
+      this.getNodeLabelGroup().style('opacity', 1)
       connectedLinks.each((link) => {
         if (!this.performanceMode) {
           this.getNodes()
             .filter((d) => d === link.source || d === link.target)
-            .classed("highlight", true);
+            .classed('highlight', true)
           this.getNodeLabels()
             .filter((d) => d === link.source || d === link.target)
-            .classed("secondary", true);
+            .classed('secondary', true)
         } else {
           this.getNodes()
             .find((d) => d === link.source)
-            .classed("highlight", true);
+            .classed('highlight', true)
         }
-      });
+      })
 
       if (this.color.domain) {
-        d3.selectAll(".legend g text")
+        d3.selectAll('.legend g text')
           .data(this.color.domain())
-          .classed("highlight", (v) => v == this.valueMap(datum));
+          .classed('highlight', (v) => v == this.valueMap(datum))
       }
-    };
+    }
   }
 
   /**
@@ -780,19 +779,19 @@ export class Graph {
    */
   handleNodePointerout() {
     return () => {
-      this.svg.classed("hover", false);
-      this.getNodes().classed("highlight", false);
+      this.svg.classed('hover', false)
+      this.getNodes().classed('highlight', false)
       this.getNodeLabels()
-        .classed("highlight", false)
-        .classed("secondary", false)
-        .text((d) => cropText(this.relationMap(d), this.textLength));
-      this.getNodeLabelGroup().style("opacity", this.nodeLabelOpacity);
-      this.getLinks().classed("highlight", false);
+        .classed('highlight', false)
+        .classed('secondary', false)
+        .text((d) => cropText(this.relationMap(d), this.textLength))
+      this.getNodeLabelGroup().style('opacity', this.nodeLabelOpacity)
+      this.getLinks().classed('highlight', false)
       this.getLinkLabels()
-        .classed("secondary", false)
-        .text((d) => cropText(this.relationMap(d), this.textLength));
-      this.getLinkLabelGroup().style("opacity", this.linkLabelOpacity);
-    };
+        .classed('secondary', false)
+        .text((d) => cropText(this.relationMap(d), this.textLength))
+      this.getLinkLabelGroup().style('opacity', this.linkLabelOpacity)
+    }
   }
 
   /**
@@ -820,8 +819,8 @@ export class Graph {
  * @deprecated, use the `Graph` class instead
  */
 export function forceGraph(data, options = {}) {
-  const graph = new Graph(data, options);
-  return graph.getSVG();
+  const graph = new Graph(data, options)
+  return graph.getSVG()
 }
 
 export class StaticGraph extends Graph {
@@ -864,7 +863,7 @@ export class StaticGraph extends Graph {
         },
         arguments[1],
       ),
-    );
+    )
   }
 
   /**
@@ -872,52 +871,52 @@ export class StaticGraph extends Graph {
    *
    */
   handleDrag() {
-    return d3.drag().on("start", null).on("drag", null).on("end", null);
+    return d3.drag().on('start', null).on('drag', null).on('end', null)
   }
 }
 
 export class ForceLayoutStaticGraph extends StaticGraph {
   constructor(data, options) {
-    super(data, options);
+    super(data, options)
     // this.simulation.stop()
-    this.progress = 0;
+    this.progress = 0
 
     this.svg
-      .style("opacity", 0.5)
-      .append("g")
-      .attr("class", "loading")
-      .attr("transform", `translate(${this.width / 2}, ${15})`)
-      .append("text")
-      .text("Loading...")
-      .attr("text-anchor", "middle")
-      .attr("dominant-baseline", "middle")
-      .attr("font-size", 20)
-      .attr("fill", "black");
+      .style('opacity', 0.5)
+      .append('g')
+      .attr('class', 'loading')
+      .attr('transform', `translate(${this.width / 2}, ${15})`)
+      .append('text')
+      .text('Loading...')
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'middle')
+      .attr('font-size', 20)
+      .attr('fill', 'black')
   }
 
   createSimulation() {
-    const worker = new Worker("./force-layout-simulation-worker.js");
+    const worker = new Worker('./force-layout-simulation-worker.js')
 
     worker.postMessage({
       nodes: this.nodes,
       links: this.links,
-    });
+    })
 
     worker.onmessage = function (event) {
       switch (event.data.type) {
-        case "tick":
+        case 'tick':
           return () => {
-            this.progress = event.data.progress;
-            this.svg.select(".loading text").text(`${this.progress * 100}%`);
-          };
-        case "end":
+            this.progress = event.data.progress
+            this.svg.select('.loading text').text(`${this.progress * 100}%`)
+          }
+        case 'end':
           return () => {
-            this.nodes = event.data.nodes;
-            this.links = event.data.links;
-            this.update();
-          };
+            this.nodes = event.data.nodes
+            this.links = event.data.links
+            this.update()
+          }
       }
-    };
+    }
   }
 
   /**
@@ -926,35 +925,35 @@ export class ForceLayoutStaticGraph extends StaticGraph {
   update() {
     this.getNodes()
       .data(this.nodes)
-      .join("circle")
-      .attr("r", this.r)
-      .attr("stroke-opacity", this.nodeStrokeOpacity)
-      .attr("stroke-width", this.strokeWidth)
-      .attr("stroke", this.stroke)
-      .attr("fill", (d) => this.color(this.valueMap(d)))
-      .on("pointerup", this.handleNodePointerup())
-      .on("pointerdown", this.handleNodePointerdown())
-      .on("pointerenter", this.handleNodePointerEnter())
-      .on("pointerout", this.handleNodePointerout())
-      .style("pointer-events", "all")
-      .call(this.handleDrag());
-    this.getNodes().append("title").text(this.labelMap);
+      .join('circle')
+      .attr('r', this.r)
+      .attr('stroke-opacity', this.nodeStrokeOpacity)
+      .attr('stroke-width', this.strokeWidth)
+      .attr('stroke', this.stroke)
+      .attr('fill', (d) => this.color(this.valueMap(d)))
+      .on('pointerup', this.handleNodePointerup())
+      .on('pointerdown', this.handleNodePointerdown())
+      .on('pointerenter', this.handleNodePointerEnter())
+      .on('pointerout', this.handleNodePointerout())
+      .style('pointer-events', 'all')
+      .call(this.handleDrag())
+    this.getNodes().append('title').text(this.labelMap)
 
     this.getLinks()
       .data(this.links)
-      .join("line")
-      .style("pointer-events", "none")
-      .attr("stroke-width", this.strokeWidth);
+      .join('line')
+      .style('pointer-events', 'none')
+      .attr('stroke-width', this.strokeWidth)
 
     this.getNodeLabels()
       .data(this.nodes)
-      .join("text")
-      .text((d) => cropText(this.labelMap(d), this.textLength));
+      .join('text')
+      .text((d) => cropText(this.labelMap(d), this.textLength))
 
     this.getLinkLabels()
       .data(this.links)
-      .join("text")
-      .text((d) => cropText(this.relationMap(d) || "", this.textLength));
+      .join('text')
+      .text((d) => cropText(this.relationMap(d) || '', this.textLength))
   }
 }
 
@@ -966,12 +965,12 @@ export class MuralGraph extends StaticGraph {
    * @param {object} options - Same as super constructor with the addition of several properties.
    */
   constructor(data, options) {
-    super(data, options);
-    this.selectedNode = null; // the currently selected node's datum
-    this.svg.append("style").text(`
+    super(data, options)
+    this.selectedNode = null // the currently selected node's datum
+    this.svg.append('style').text(`
       circle.selected { opacity: 1; stroke-width: ${this.nodeStroke * 1.5}; }
       text.selected { font-weight: bold; opacity: 1; }
-    `);
+    `)
   }
 
   /**
@@ -981,85 +980,102 @@ export class MuralGraph extends StaticGraph {
     return (_event, datum) => {
       if (!this.selectedNode) {
         // select the clicked node
-        this.selectedNode = datum;
-        this.getNodes().classed("selected", (d) => d === datum);
-        this.getNodeLabels().classed("selected", (d) => d === datum);
+        this.selectedNode = datum
+        this.getNodes().classed('selected', (d) => d === datum)
+        this.getNodeLabels().classed('selected', (d) => d === datum)
       } else if (this.selectedNode !== datum) {
         // get label
-        const label = prompt("new link label:");
+        const label = prompt('new link label:')
         if (!label) {
           // reset if no label provided
-          this.selectedNode = null;
-          this.getNodes().classed("selected", false);
-          this.getNodeLabels().classed("selected", false);
-          return;
+          this.selectedNode = null
+          this.getNodes().classed('selected', false)
+          this.getNodeLabels().classed('selected', false)
+          return
         }
         // if a different node is already selected, create a link to the clicked node
         this.links.push({
           source: this.selectedNode,
           target: datum,
           label: label,
-        });
-        this.update();
+        })
+        this.update()
         // this.simulation.nodes(this.nodes).force('link').links(this.links);
         // this.simulation.tick();
-        this.selectedNode = null; // reset selected node
-        this.getNodes().classed("selected", false);
-        this.getNodeLabels().classed("selected", false);
+        this.selectedNode = null // reset selected node
+        this.getNodes().classed('selected', false)
+        this.getNodeLabels().classed('selected', false)
       } else {
         // if the clicked node is already selected, deselect it
-        this.selectedNode = null;
-        this.getNodes().classed("selected", false);
-        this.getNodeLabels().classed("selected", false);
+        this.selectedNode = null
+        this.getNodes().classed('selected', false)
+        this.getNodeLabels().classed('selected', false)
       }
-    };
+    }
   }
 }
 
 export class WordBubbles extends Graph {
-  constructor(nodes, links, options = {}) {
-    options.nodeLabelOffset = () => 0;
-    super(nodes, links, options);
-    this.simulation = this.createSimulation();
-    Object.assign(this.svg.node(), { simulation: this.simulation });
-    this.simulation.restart();
+  constructor(
+    nodes,
+    {
+      textLength = 60,
+      nodeLabelOpacity = 1,
+      textColor = 'white',
+      color = () => 'var(--theme-foreground-focus)',
+      r = (d) => d.r || 3,
+      fontSize = (d) => d.r / 3.5,
+      labelMap = (d) => wrapText(cropText(d.label, textLength), r(d) / 4),
+      nodeLabelXOffset = (d) =>
+        `${1 - labelMap(d).split('\n').length * 0.75}em`,
+      legend = null,
+    } = {},
+  ) {
+    super(
+      { nodes, links: [] },
+      {
+        textLength,
+        nodeLabelOpacity,
+        textColor,
+        color,
+        r,
+        fontSize,
+        labelMap,
+        nodeLabelXOffset,
+        legend,
+        ...arguments[1],
+      },
+    )
+    this.simulation = this.createSimulation()
+    Object.assign(this.svg.node(), { simulation: this.simulation })
+    this.simulation.restart()
   }
 
   update() {
-    super.update();
-
-    const nodeLabelXOffset = (d) =>
-      `${1 - wrapText(this.labelMap(d), this.r(d) / 4).split("\n").length * 0.75}em`;
-
-    this.getNodeLabels()
-      .data(this.nodes)
-      .join("text")
-      .attr("font-size", this.fontSize)
-      .attr("dy", nodeLabelXOffset)
-      .style("white-space", "break-spaces")
-      .text((d) => wrapText(this.labelMap(d), this.r(d) / 4));
+    super.update()
+    this.getNodeLabels().style('white-space', 'break-spaces')
   }
 
   createSimulation = () =>
     d3
       .forceSimulation(this.nodes)
       .force(
-        "charge",
+        'charge',
         d3
           .forceManyBody()
           .strength(this.chargeStrength)
           .distanceMax(this.width / 2),
       )
       .force(
-        "collide",
+        'collide',
         d3
           .forceCollide()
           .radius((d) => this.r(d) * 1.1)
           .iterations(3),
       )
-      .force("x", d3.forceX())
-      .force("y", d3.forceY())
-      .on("tick", this.handleTick());
+      .force('x', d3.forceX())
+      .force('y', d3.forceY())
+      .on('tick', this.handleTick())
 
   handleNodePointerEnter() {}
 
@@ -1069,19 +1085,19 @@ export class WordBubbles extends Graph {
 export function filterLinks(graph, filterFunction, keyMap = (d) => d.id) {
   const filteredGraph = {
     links: d3.filter(graph.links, filterFunction),
-  };
+  }
   // because force simulations may edit link source and target properties to point to
   // the actual node objects instead of just string identifiers, we check if this is
   // the case using the first link
   if (
     filteredGraph.links.length > 0 &&
-    typeof filteredGraph.links[0].source == "string"
+    typeof filteredGraph.links[0].source == 'string'
   ) {
     filteredGraph.nodes = d3.filter(graph.nodes, (node) =>
       filteredGraph.links.find(
         (link) => link.source == keyMap(node) || link.target == keyMap(node),
       ),
-    );
+    )
   } else {
     filteredGraph.nodes = d3.filter(graph.nodes, (node) =>
       filteredGraph.links.find(
@@ -1089,10 +1105,10 @@ export function filterLinks(graph, filterFunction, keyMap = (d) => d.id) {
           keyMap(link.source) == keyMap(node) ||
           keyMap(link.target) == keyMap(node),
       ),
-    );
+    )
   }
 
-  return filteredGraph;
+  return filteredGraph
 }
 
 /**
@@ -1128,11 +1144,11 @@ export function arcDiagramVertical(
     rMouseover = 3.5,
     // order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by degree"),
     // order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("input"),
-    order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by name"),
+    order = sortNodes({ nodes, links }, { keyMap, valueMap }).get('by name'),
     // order = sortNodes({ nodes, links }, { keyMap, valueMap }).get("by property"),
     yDistribution = d3.scalePoint(order, [marginTop, height - marginBottom]),
     fontSize = 12,
-    fontFill = "black",
+    fontFill = 'black',
     fontMouseoverOpacity = 0.3,
     arcMouseoverOpacity = 0.1,
     labelRotate = 0,
@@ -1153,9 +1169,9 @@ export function arcDiagramVertical(
           )
           .reverse(),
       )
-      .unknown("#aaa"),
-    nodeFill = "GhostWhite",
-    nodeStroke = "grey",
+      .unknown('#aaa'),
+    nodeFill = 'GhostWhite',
+    nodeStroke = 'grey',
     // create a circle legend from possible arc values
     legend = circleLegend(
       [
@@ -1177,48 +1193,46 @@ export function arcDiagramVertical(
 ) {
   // A function of a link, that checks that source and target have the same group and returns
   // the group; otherwise null. Used to color the links.
-  const groups = new Map(nodes.map((d) => [keyMap(d), valueMap(d)]));
+  const groups = new Map(nodes.map((d) => [keyMap(d), valueMap(d)]))
 
   function sameGroup({ source, target }) {
-    return groups.get(source) === groups.get(target)
-      ? groups.get(source)
-      : null;
+    return groups.get(source) === groups.get(target) ? groups.get(source) : null
   }
 
   // Create the SVG container.
   const svg = d3
-    .create("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("viewBox", [0, 0, width, height])
-    .attr("style", "max-width: 100%; height: auto;");
+    .create('svg')
+    .attr('width', width)
+    .attr('height', height)
+    .attr('viewBox', [0, 0, width, height])
+    .attr('style', 'max-width: 100%; height: auto;')
 
   // The current position, indexed by id. Will be interpolated.
   const y_positions = new Map(
     nodes.map((d) => [keyMap(d), yDistribution(keyMap(d))]),
-  );
+  )
 
   // Add an arc for each link.
   // can this be done more simply with d3.arc ?
   function arc(d) {
-    const y1 = y_positions.get(d.source);
-    const y2 = y_positions.get(d.target);
-    const r = Math.abs(y2 - y1) / 2;
+    const y1 = y_positions.get(d.source)
+    const y2 = y_positions.get(d.target)
+    const r = Math.abs(y2 - y1) / 2
     return `M${marginLeft},${y1}A${r},${r} 0,0,${
       y1 < y2 ? 1 : 0
-    } ${marginLeft},${y2}`;
+    } ${marginLeft},${y2}`
   }
 
   const path = svg
-    .insert("g", "*")
-    .attr("fill", "none")
-    .attr("stroke-opacity", 0.6)
-    .attr("stroke-width", 1.5)
-    .selectAll("path")
+    .insert('g', '*')
+    .attr('fill', 'none')
+    .attr('stroke-opacity', 0.6)
+    .attr('stroke-width', 1.5)
+    .selectAll('path')
     .data(links)
-    .join("path")
-    .attr("stroke", (d) => color(sameGroup(d)))
-    .attr("d", arc);
+    .join('path')
+    .attr('stroke', (d) => color(sameGroup(d)))
+    .attr('d', arc)
   // .join(
   //   (enter) => {
   //     console.debug("enter", enter);
@@ -1235,16 +1249,16 @@ export function arcDiagramVertical(
 
   // Add a text label and a dot for each node.
   const label = svg
-    .append("g")
-    .attr("font-family", "sans-serif")
-    .attr("font-size", fontSize)
-    .attr("fill", fontFill)
-    .attr("text-anchor", "end")
-    .selectAll("g")
+    .append('g')
+    .attr('font-family', 'sans-serif')
+    .attr('font-size', fontSize)
+    .attr('fill', fontFill)
+    .attr('text-anchor', 'end')
+    .selectAll('g')
     .data(nodes)
-    .join("g")
+    .join('g')
     .attr(
-      "transform",
+      'transform',
       (d) =>
         `translate(${marginLeft},${y_positions.get(
           keyMap(d),
@@ -1252,19 +1266,19 @@ export function arcDiagramVertical(
     )
     .call((g) =>
       g
-        .append("text")
-        .attr("x", -6)
-        .attr("dy", "0.35em")
+        .append('text')
+        .attr('x', -6)
+        .attr('dy', '0.35em')
         // .attr("fill", (d) => color(valueMap(d)))
         .text((d) => keyMap(d)),
     )
     .call((g) =>
       g
-        .append("circle")
-        .attr("r", r)
-        .attr("fill", nodeFill)
-        .attr("stroke", nodeStroke),
-    );
+        .append('circle')
+        .attr('r', r)
+        .attr('fill', nodeFill)
+        .attr('stroke', nodeStroke),
+    )
   // .join(
   //   (enter) => {
   //     console.debug("enter", enter);
@@ -1297,47 +1311,45 @@ export function arcDiagramVertical(
 
   // Add invisible rects that update the class of the elements on mouseover.
   label
-    .append("rect")
-    .attr("fill", "none")
-    .attr("width", marginLeft + 40)
-    .attr("height", step)
-    .attr("x", -marginLeft)
-    .attr("y", -step / 2)
-    .attr("fill", "none")
-    .attr("pointer-events", "all")
-    .on("pointerenter", (_e, d) => {
-      svg.classed("hover", true);
-      label.classed("primary", (n) => n === d);
-      label.classed("secondary", (n) =>
+    .append('rect')
+    .attr('fill', 'none')
+    .attr('width', marginLeft + 40)
+    .attr('height', step)
+    .attr('x', -marginLeft)
+    .attr('y', -step / 2)
+    .attr('fill', 'none')
+    .attr('pointer-events', 'all')
+    .on('pointerenter', (_e, d) => {
+      svg.classed('hover', true)
+      label.classed('primary', (n) => n === d)
+      label.classed('secondary', (n) =>
         links.some(
           ({ source, target }) =>
             (keyMap(n) === source && keyMap(d) === target) ||
             (keyMap(n) === target && keyMap(d) === source),
         ),
-      );
+      )
       path
         .classed(
-          "primary",
+          'primary',
           (l) => l.source === keyMap(d) || l.target === keyMap(d),
         )
-        .filter(".primary")
-        .raise();
-      d3.selectAll(".legend g text")
+        .filter('.primary')
+        .raise()
+      d3.selectAll('.legend g text')
         .data(color.domain())
-        .classed("primary", (v) => v == valueMap(d));
+        .classed('primary', (v) => v == valueMap(d))
     })
-    .on("pointerout", () => {
-      svg.classed("hover", false);
-      label.classed("primary", false);
-      label.classed("secondary", false);
-      path.classed("primary", false).order();
-      d3.select(".legend g text")
-        .data(color.domain())
-        .classed("primary", false);
-    });
+    .on('pointerout', () => {
+      svg.classed('hover', false)
+      label.classed('primary', false)
+      label.classed('secondary', false)
+      path.classed('primary', false).order()
+      d3.select('.legend g text').data(color.domain()).classed('primary', false)
+    })
 
   // Add styles for the hover interaction.
-  svg.append("style").text(`
+  svg.append('style').text(`
     .hover text { opacity: ${fontMouseoverOpacity}; }
     .hover g.primary text { font-weight: bold; opacity: 1; }
     .hover g.primary circle { r: ${rMouseover} }
@@ -1345,12 +1357,12 @@ export function arcDiagramVertical(
     .hover path { opacity: ${arcMouseoverOpacity}; }
     .hover path.primary { opacity: 1; }
     .hover .legend text.primary { opacity: 1; }
-  `);
+  `)
 
   // A function that updates the positions of the labels and recomputes the arcs
   // when passed a new order.
   function update(order) {
-    yDistribution.domain(order);
+    yDistribution.domain(order)
 
     label
       .sort((a, b) =>
@@ -1359,33 +1371,33 @@ export function arcDiagramVertical(
       .transition()
       .duration(750)
       .delay((d, i) => i * 20) // Make the movement start from the top.
-      .attrTween("transform", (d) => {
+      .attrTween('transform', (d) => {
         const i = d3.interpolateNumber(
           y_positions.get(keyMap(d)),
           yDistribution(keyMap(d)),
-        );
+        )
         return (t) => {
-          const y = i(t);
-          y_positions.set(keyMap(d), y);
-          return `translate(${marginLeft},${y}), rotate(${labelRotate})`;
-        };
-      });
+          const y = i(t)
+          y_positions.set(keyMap(d), y)
+          return `translate(${marginLeft},${y}), rotate(${labelRotate})`
+        }
+      })
 
     path
       .transition()
       .duration(750 + nodes.length * 20) // Cover the maximum delay of the label transition.
-      .attrTween("d", (d) => () => arc(d));
+      .attrTween('d', (d) => () => arc(d))
   }
 
   if (legend) {
     svg
-      .append("g")
-      .attr("transform", `translate(${width - marginRight},${marginTop})`)
-      .append(() => legend);
+      .append('g')
+      .attr('transform', `translate(${width - marginRight},${marginTop})`)
+      .append(() => legend)
   }
 
   // return svg.node();
-  return Object.assign(svg.node(), { update });
+  return Object.assign(svg.node(), { update })
 }
 
 /**
@@ -1420,14 +1432,14 @@ export function sortNodes(
     ]),
     (v) => d3.sum(v, ({ count }) => count),
     ({ node }) => node,
-  );
+  )
   // console.debug("degree", degree);
   return new Map([
-    ["by name", d3.sort(nodes.map(keyMap))],
-    ["by property", d3.sort(nodes, valueMap, keyMap).map(keyMap)],
+    ['by name', d3.sort(nodes.map(keyMap))],
+    ['by property', d3.sort(nodes, valueMap, keyMap).map(keyMap)],
     //    ["input", nodes.map(keyMap)],
     [
-      "by degree",
+      'by degree',
       d3
         .sort(
           nodes,
@@ -1440,5 +1452,5 @@ export function sortNodes(
         )
         .map(keyMap),
     ],
-  ]);
+  ])
 }

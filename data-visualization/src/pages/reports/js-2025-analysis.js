@@ -2,20 +2,6 @@ import { resize } from 'observablehq:stdlib'
 import * as Plot from '@observablehq/plot'
 import * as d3 from 'npm:d3'
 import { html } from 'npm:htl'
-import { cropText } from '/components/utilities.js'
-
-export const graph_config_workshop = {
-  textLength: 60,
-  nodeLabelOpacity: 1,
-  textColor: 'white',
-  color: () => 'var(--theme-foreground-focus)',
-  fontSize: (d) => d.r / 3.5,
-  nodeLabelOffset: () => 0,
-}
-
-export const graph_config_round_table = {
-  ...graph_config_workshop,
-}
 
 export const entity_type_map = new Map([
   ['loc', 'Location'],
@@ -91,7 +77,7 @@ export const generateRoundTableEntitiesPlot = (data, width) =>
     caption: 'Fig 4. Top 20 most frequent extracted entities',
   })
 
-export const generateExtractedTermsPlot = (
+const generateExtractedTermsPlot = (
   data,
   { x_column, limit, marginLeft } = {},
 ) =>

@@ -1,19 +1,27 @@
 ---
 style: /css/vdbi-page.css
 sql:
-  entities: "/data/private/VDBI_JS_2025_atelier_NEO_entities.tsv"
+  entities: '/data/private/VDBI_JS_2025_atelier_NEO_entities.tsv'
   # extracted_terms: "/data/private/VDBI_JS_2025_atelier_NEO_extracted_terms.tsv"
-  nouns_by_group: "/data/private/VDBI_JS_2025_atelier_NEO_nouns_by_group.tsv"
-  nouns: "/data/private/VDBI_JS_2025_atelier_NEO_nouns.tsv"
+  nouns_by_group: '/data/private/VDBI_JS_2025_atelier_NEO_nouns_by_group.tsv'
+  nouns: '/data/private/VDBI_JS_2025_atelier_NEO_nouns.tsv'
   # verbs: "/data/private/VDBI_JS_2025_atelier_NEO_verbs.tsv"
   # adj: "/data/private/VDBI_JS_2025_atelier_NEO_adj.tsv"
 ---
 
-# VDBI JS 2025 Analyse lexicométrique <!-- omit in toc -->
+# VDBI JS 2025 Analyse lexicométrique - Atelier NEO/SoLocal <!-- omit in toc -->
 
-## Atelier NEO/SoLocal <!-- omit in toc -->
+## Diego Vinasco-Alvarez; PEPR VDBI; <diego.vinasco-alvarez@cnrs.fr> <!-- omit in toc -->
 
-Auteur: Diego Vinasco-Alvarez; PEPR VDBI; <diego.vinasco-alvarez@cnrs.fr>
+```js
+import {
+  downloadSVGButton,
+  downloadTableButton,
+  cropText,
+} from '/components/utilities.js'
+import { WordBubbles } from '/components/graph.js'
+import * as page from './js-2025-analysis.js'
+```
 
 ## 1. Contexte
 
@@ -164,39 +172,19 @@ stateDiagram-v2
 
 Les paramètres suivants ont été utilisés pour configurer les tâches Cortext au 19/12/2025.
 
-| Task                    | Parameter                | Value |
-| :---------------------- | ------------------------ | ----- |
-| Terms extraction        | Textual Fields           | text  |
-| Terms extraction        | Minimum Frequency        | 2     |
-| Terms extraction        | language                 | fr    |
-| Terms extraction        | Monogramms are forbidden | no    |
-| Named Entity Recognizer | Textual Fields           | text  |
-| Named Entity Recognizer | language                 | fr    |
+| Task                    | Parameter                | Value       |
+| :---------------------- | ------------------------ | ----------- |
+| Terms extraction        | Textual Fields           | text        |
+| Terms extraction        | Minimum Frequency        | 2           |
+| Terms extraction        | language                 | fr          |
+| Terms extraction        | grammatical criterion    | noun phrase |
+| Terms extraction        | Monogramms are forbidden | no          |
+| Named Entity Recognizer | Textual Fields           | text        |
+| Named Entity Recognizer | language                 | fr          |
 
 <div class="note">Les paramètres non mentionnés utilisent leurs paramètres par défaut.</div>
 
 ## 3. Résultats de l'analyse lexicale
-
-```js
-import {
-  downloadSVGButton,
-  downloadTableButton,
-  cropText,
-} from "/components/utilities.js";
-import { WordBubbles } from "/components/graph.js";
-import {
-  freq_words,
-  group_freq_words,
-  graph_config_workshop,
-  entity_type_map,
-  generateWorkshopEntitiesPlot,
-  column_title_map,
-  column_label_map,
-  generateExtractedTermsPlot,
-  extractedTermsHtmlTemplate,
-  extractedTermsByGroupHtmlTemplate,
-} from "./js-2025-analysis.js";
-```
 
 ```sql id=nouns_by_group
 select * from nouns_by_group
@@ -239,26 +227,20 @@ ${fig_2}<!-- $ -->
 
 ```js
 const fig_2 = new WordBubbles(
-  {
-    nodes: freq_words([...nouns], {
-      rFactor: 7,
-    }),
-  },
-  graph_config_workshop,
-).getSVG();
+  page.freq_words([...nouns], {
+    rFactor: 7,
+  }),
+).getSVG()
 ```
 
 ${fig_3}<!-- $ -->
 
 ```js
 const fig_3 = new WordBubbles(
-  {
-    nodes: group_freq_words([...nouns], {
-      rFactor: 13,
-    }),
-  },
-  graph_config_workshop,
-).getSVG();
+  page.group_freq_words([...nouns], {
+    rFactor: 13,
+  }),
+).getSVG()
 ```
 
 <figcaption>Fig 3. Les 10 termes les plus fréquents par groupe</figcaption>
@@ -293,13 +275,13 @@ aperçu (quelque peu vague) de la manière dont chaque groupe a répondu à sa q
 | #PEPR                                 | #expertise-locale                | #évaluation                      |
 |                                       | #villes-moyennes                 | #apprendisage-réciproque         |
 
-${resize((width) => generateWorkshopEntitiesPlot(entities, width))}<!-- $ -->
+${resize((width) => page.generateWorkshopEntitiesPlot(entities, width))}<!-- $ -->
 
 <!-- ${downloadSVGButton("#entities svg")} -->
 
-${extractedTermsByGroupHtmlTemplate([...nouns_by_group])}<!-- $ -->
+${page.extractedTermsByGroupHtmlTemplate([...nouns_by_group])}<!-- $ -->
 
-${extractedTermsHtmlTemplate([...nouns])}<!-- $ -->
+${page.extractedTermsHtmlTemplate([...nouns])}<!-- $ -->
 
 ## 4. Revue de la méthode
 
@@ -417,12 +399,47 @@ plus précis et/ou plus détaillés.
 
 </div>
 
+Plusieurs améliorations ont été apportées à la méthodologie utilisée pour les analyses
+prospectives à l'aide de Cortext.
+
+Tout d'abord, cette analyse n'a extrait que des _groupes nominaux_ comme termes,
+mais d'autres parties du discours pourraient être extraites à des fins d'identification
+de mots-clés, telles que les _verbes_ et les _adjectifs_ à l'aide de Cortext.
+Bien que les groupes nominaux n-grammes identifiés puissent contenir des adjectifs
+(par exemple, « jeu-sérieux »), peu d'entre eux ont été identifiés dans cette analyse.
+Une extraction initiale des verbes et des adjectifs a été effectuée, mais ceux-ci
+ont été exclus des résultats. En effet, seuls les monogrammes peuvent être extraits
+pour les verbes et les adjectifs à l'aide de Cortext et les termes obtenus nécessitent
+un traitement plus complexe des données afin d'améliorer leur utilité (par exemple,
+définition et suppression des mots vides indésirables, lemmatisation, etc.).
+
+<div class="note">
+
+Cortext ne fournit pas de fonction de lemmatisation à la place du stemming, mais
+il s'agit d'une tâche de NLP bien connue qui peut être effectuée sur des textes
+français à l'aide de bibliothèques telles que Stanza [[5.4]](#54-stanza)
+
+</div>
+
+Deuxièmement, les entités et les termes identifiés pourraient être combinés en une
+seule liste de termes plus complète afin de permettre une analyse plus complète
+des mots-clés. Troisièmement, les occurrences des termes et les résultats de cooccurrence
+ont été calculés par discussion en table ronde par défaut, ce qui n'a pas donné
+de résultats intéressants avec si peu de documents (seulement 3) dans le corpus.
+L'extraction de termes par occurrences (cooccurrences) de phrases pourrait être
+plus pertinente.
+
 ## 5. Références et liens
 
 ```bibtex
 @software{cortext_manager_v2_bibtex,
-  keywords = {natural language processing, social network analysis, geospatial analysis, descriptive statistics, scientometrics, biliometrics},
-  author = {Breucker, Philippe and Cointet, Jean-Philippe and Hannud Abdo, Alexandre and Orsal, Guillaume and de Quatrebarbes, Constance and Duong, Tam-Kien and Martinez, Cristian and Ospina Delgado, Juan Pablo and Medina Zuluaga, Luis Daniel and Gómez Peña, Diego Fernando and Sánchez Castaño, Tatiana Andrea and Marques da Costa, Joenio and Laglil, Hajar and Villard, Lionel and Barbier, Marc},
+  keywords = {natural language processing, social network analysis, geospatial analysis,
+    descriptive statistics, scientometrics, biliometrics},
+  author = {Breucker, Philippe and Cointet, Jean-Philippe and Hannud Abdo, Alexandre
+    and Orsal, Guillaume and de Quatrebarbes, Constance and Duong, Tam-Kien and
+    Martinez, Cristian and Ospina Delgado, Juan Pablo and Medina Zuluaga, Luis Daniel
+    and Gómez Peña, Diego Fernando and Sánchez Castaño, Tatiana Andrea and Marques
+    da Costa, Joenio and Laglil, Hajar and Villard, Lionel and Barbier, Marc},
   month = {10},
   title = {CorTexT Manager},
   url = {https://docs.cortext.net},
@@ -435,3 +452,17 @@ plus précis et/ou plus détaillés.
 ### 5.2. [Cortext documentation: (Multi)Term extraction](https://docs.cortext.net/lexical-extraction/)
 
 ### 5.3. [Word Error Rate](https://en.wikipedia.org/wiki/Word_error_rate)
+
+### 5.4. [Stanza](https://stanfordnlp.github.io/stanza/)
+
+```bibtex
+@InProceedings{manning-EtAl:2014:P14-5,
+  author    = {Manning, Christopher D. and  Surdeanu, Mihai  and  Bauer, John  and
+    Finkel, Jenny  and  Bethard, Steven J. and  McClosky, David},
+  title     = {The {Stanford} {CoreNLP} Natural Language Processing Toolkit},
+  booktitle = {Association for Computational Linguistics (ACL) System Demonstrations},
+  year      = {2014},
+  pages     = {55--60},
+  url       = {http://www.aclweb.org/anthology/P/P14/P14-5010}
+}
+```

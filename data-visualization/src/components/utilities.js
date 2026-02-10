@@ -249,7 +249,7 @@ export function wrapText(
   delimeter = /\s+|-|\//,
 ) {
   const words = text.split(delimeter)
-  console.debug('words', words)
+  // console.debug('words', words)
   let lines = []
   let currentLine = ''
 
