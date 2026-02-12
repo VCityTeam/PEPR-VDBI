@@ -1,15 +1,16 @@
 ---
-title: Initial tree test
 style: /css/vdbi-page.css
 ---
 
 # Visualize Workbook data using Trees
 
-Visualize the first sheet from the phase 1 Excel document using trees and dendrogram diagrams.
+Visualize the first sheet from the phase 1 Excel document using trees and dendrogram
+diagrams.
 
 ## Data integration
 
-Take the data imported from the [initial-import-test](test-excel-import.md) and transform the table into a tree formalism.
+Take the data imported from the [initial-import-test](test-excel-import.md) and
+transform the table into a tree formalism.
 To do this, we need to set up a component to transform the data.
 
 **Input:**
@@ -52,7 +53,9 @@ import {
   mapEntitesToProductToProjectTree,
   collapsableRadialDendrogram,
 } from "/components/radial-dendrogram.js"
+```
 
+```js echo
 const workbook1 = FileAttachment(
   "/data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
 ).xlsx()
