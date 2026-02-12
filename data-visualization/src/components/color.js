@@ -83,11 +83,11 @@ export const cnu_color_map = new Map([
 ])
 
 export const cnu_color_range_map = new Map([
-  ['Lettres et sciences humaines', d3.interpolateGreens],
-  ['Sections de santé', d3.interpolatePurples],
-  ['Sciences', d3.interpolateBlues],
-  ['Droit, économie et gestion', d3.interpolateReds],
-  ['Pluridisciplinaire', d3.interpolateRgbBasis(['white', 'yellow', 'brown'])],
+  ['Lettres et sciences humaines', d3.interpolateViridis],
+  ['Sections de santé', d3.interpolateWarm],
+  ['Sciences', d3.interpolateCool],
+  ['Droit, économie et gestion', d3.interpolateCividis],
+  ['Pluridisciplinaire', d3.interpolateSinebow],
 ])
 
 /**
@@ -142,12 +142,7 @@ export function quantized_cnu_color(cnu, num_colors = 6) {
   return d3
     .scaleOrdinal(
       cnu_category_values,
-      d3.quantize(
-        cnu_color_range_map.get(cnu_category),
-        num_colors,
-        // Math.round(cnu_category_values.length * 3),
-      ),
-      // .slice(Math.round(cnu_category_values.length / 2)),
+      d3.quantize(cnu_color_range_map.get(cnu_category), num_colors),
     )
     .unknown('grey')(Number(cnu.substring(0, 2)))
 }
@@ -191,9 +186,9 @@ export const erc_category_colors = new Map([
 ])
 
 export const erc_color_range_map = new Map([
-  ['PE - Sciences & Technologies', d3.interpolateGreens],
-  ['LS - Vie & Santé', d3.interpolatePurples],
-  ['SH - Sciences Humaines & Sociales', d3.interpolateBlues],
+  ['PE - Sciences & Technologies', d3.interpolateCool],
+  ['LS - Vie & Santé', d3.interpolateWarm],
+  ['SH - Sciences Humaines & Sociales', d3.interpolateViridis],
 ])
 
 export const erc_color_scale = d3
@@ -227,9 +222,9 @@ export const hceres_category_colors = new Map([
 ])
 
 export const hceres_color_range_map = new Map([
-  ['ST Sciences et Technologies', d3.interpolateGreens],
-  ['SHS Sciences humaines et sociales', d3.interpolateBlues],
-  ['SVE Sciences du vivant et environnement', d3.interpolatePurples],
+  ['ST Sciences et Technologies', d3.interpolateCool],
+  ['SHS Sciences humaines et sociales', d3.interpolateViridis],
+  ['SVE Sciences du vivant et environnement', d3.interpolateWarm],
 ])
 
 export const hceres_color_scale = d3

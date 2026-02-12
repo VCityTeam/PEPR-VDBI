@@ -263,47 +263,40 @@ console.debug('financed_projects', financed_projects)
   <!-- $ -->
 </div>
 
-<div class="grid grid-cols-3">
+<div class="card grid grid-cols-3">
 
-  <div class="card grid-rowspan-2">
+  <div class="grid-rowspan-2">
     ${resize((width) => sankeyDiagram(
       cnu_letters_aap_dynamics,
       page.cnu_sankey_config(cnu_letters_aap_dynamics, width))
     )}
     <!-- $ -->
   </div>
-  <div class="card grid-rowspan-2">
+  <div class="grid-rowspan-2">
     ${resize((width) => sankeyDiagram(
       cnu_health_aap_dynamics,
       page.cnu_sankey_config(cnu_health_aap_dynamics, width))
     )}
     <!-- $ -->
   </div>
-  <div class="card grid-rowspan-3">
+  <div class="grid-rowspan-3">
     ${resize((width) => sankeyDiagram(
       cnu_sciences_aap_dynamics,
       page.cnu_sankey_config(cnu_sciences_aap_dynamics, width))
     )}
     <!-- $ -->
   </div>
-  <div class="card">
+  <div>
     ${resize((width) => sankeyDiagram(
       cnu_law_aap_dynamics,
       page.cnu_sankey_config(cnu_law_aap_dynamics, width))
     )}
     <!-- $ -->
   </div>
-  <div class="card">
+  <div>
     ${resize((width) => sankeyDiagram(
       cnu_multidisciplinary_aap_dynamics,
       page.cnu_sankey_config(cnu_multidisciplinary_aap_dynamics, width))
-    )}
-    <!-- $ -->
-  </div>
-  <div class="card grid-rowspan-2">
-    ${resize((width) => sankeyDiagram(
-      cnu_CNRS_SHS_category_by_aap_status_graph,
-      page.cnu_sankey_config(cnu_CNRS_SHS_category_by_aap_status_graph, width))
     )}
     <!-- $ -->
   </div>
@@ -324,7 +317,9 @@ const researcher_by_aap_status = page.researcher_by_aap_status(
 
 ```js
 const cnu_by_aap_status = page.cnu_by_aap_status(researcher_by_aap_status)
+```
 
+```js
 const cnu_aap_dynamics = page.cnu_by_aap_status_graph(cnu_by_aap_status)
 
 const cnu_letters_aap_dynamics = page.cnu_category_by_aap_status_graph(
@@ -348,7 +343,41 @@ const cnu_multidisciplinary_aap_dynamics =
 
 const cnu_categories_by_aap_status_graph =
   page.cnu_categories_by_aap_status_graph(cnu_by_aap_status)
+```
 
+### CNRS categories by AAP status
+
+<div class="card">
+  ${resize((width) => sankeyDiagram(cnu_categories_by_aap_status_graph, {
+      width: width,
+      height: cnu_categories_by_aap_status_graph.nodes.length * 50,
+      nodeFill: () => 'rgba(1,1,1,0.9)',
+      linkStroke: (d) =>
+        page.cnrs_category_link_color_scale(d),
+    })
+  )}
+  <!-- $ -->
+</div>
+
+<div class="card grid grid-cols-3">
+    ${resize((width) => sankeyDiagram(
+      cnu_CNRS_SHS_category_by_aap_status_graph,
+      page.cnrs_sankey_config(cnu_CNRS_SHS_category_by_aap_status_graph, width))
+    )}
+    <!-- $ -->
+    ${resize((width) => sankeyDiagram(
+      cnu_health_aap_dynamics,
+      page.cnrs_sankey_config(cnu_health_aap_dynamics, width))
+    )}
+    <!-- $ -->
+    ${resize((width) => sankeyDiagram(
+      cnu_sciences_aap_dynamics,
+      page.cnrs_sankey_config(cnu_sciences_aap_dynamics, width))
+    )}
+    <!-- $ -->
+</div>
+
+```js
 const cnu_CNRS_SHS_category_by_aap_status_graph =
   page.cnu_CNRS_SHS_category_by_aap_status_graph(cnu_by_aap_status)
 ```

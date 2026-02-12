@@ -133,6 +133,10 @@ export default {
           path: 'pages/test_pages/chord-diagram',
         },
         {
+          name: 'Bilevel edge bundling',
+          path: 'pages/test_pages/bilevel-edge-bundling',
+        },
+        {
           name: 'Word Clouds',
           path: 'pages/test_pages/word-cloud',
         },

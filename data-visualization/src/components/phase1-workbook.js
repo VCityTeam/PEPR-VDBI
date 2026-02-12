@@ -1,11 +1,11 @@
-import { map, filter, rollup, merge } from "d3"
+import { map, filter, rollup, merge } from 'd3'
 import {
   anonymizeEntry,
   pseudoanonymizeEntry,
   filterEmptyArray,
   toLowerPreservingAcronyms,
-} from "./utilities.js"
-import * as Plot from "@observablehq/plot"
+} from './utilities.js'
+import * as Plot from '@observablehq/plot'
 
 /**
  * Extract data from the GÉNÉRALITÉ sheet
@@ -17,7 +17,7 @@ import * as Plot from "@observablehq/plot"
 export function getGeneralSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[0], {
     // range: 'A1:BQ9',
-    range: "A1:HV41",
+    range: 'A1:HV41',
     headers: true,
   })
 }
@@ -32,7 +32,7 @@ export function getGeneralSheet(workbook) {
 export function getResearcherSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[1], {
     // range: 'A1:AA298',
-    range: "A1:AE1087",
+    range: 'A1:AE1087',
     headers: true,
   })
 }
@@ -46,7 +46,7 @@ export function getResearcherSheet(workbook) {
  */
 export function getLabSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[4], {
-    range: "A1:K262",
+    range: 'A1:K262',
     headers: true,
   })
 }
@@ -60,7 +60,7 @@ export function getLabSheet(workbook) {
  */
 export function getInstitutionSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[5], {
-    range: "A1:A111",
+    range: 'A1:A111',
     headers: true,
   })
 }
@@ -97,83 +97,83 @@ export function resolveGeneralEntities(
 ) {
   return map(sheet, (d) => {
     const mapped_entities = {
-      acronyme: d["ACRONYME Projet"]
-        ? cleanUpProjectLabel(d["ACRONYME Projet"])
+      acronyme: d['ACRONYME Projet']
+        ? cleanUpProjectLabel(d['ACRONYME Projet'])
         : null,
-      present: String(d["Présent aux journées"]).toUpperCase() == "OUI", // GGE: not needed
-      auditioned: String(d["AUDITIONNÉ"]).toUpperCase() == "OUI", // not a list, will this cause a problem with generic map reduce functions looking for lists?
-      financed: String(d["Financé"]).toUpperCase() == "OUI", // not a list, will this cause a problem with generic map reduce functions looking for lists?
-      budget: d["Budget (demandé) en M€"] ? d["Budget (demandé) en M€"] : null,
-      grade: d["Note du jury"] ? d["Note du jury"] : null,
-      challenge: d["Défi"] ? d["Défi"] : null,
-      name_fr: d["NOM COMPLET FR"] ? d["NOM COMPLET FR"] : null,
-      name_en: d["NOM COMPLET ANGLAIS"] ? d["NOM COMPLET ANGLAIS"] : null,
+      present: String(d['Présent aux journées']).toUpperCase() == 'OUI', // GGE: not needed
+      auditioned: String(d['AUDITIONNÉ']).toUpperCase() == 'OUI', // not a list, will this cause a problem with generic map reduce functions looking for lists?
+      financed: String(d['Financé']).toUpperCase() == 'OUI', // not a list, will this cause a problem with generic map reduce functions looking for lists?
+      budget: cleanDatum(d['Budget (demandé) en M€']),
+      grade: cleanDatum(d['Note du jury']),
+      challenge: cleanDatum(d['Défi']),
+      name_fr: cleanDatum(d['NOM COMPLET FR']),
+      name_en: cleanDatum(d['NOM COMPLET ANGLAIS']),
       institutions: filterEmptyArray([
-        d["Établissement porteur"],
-        d["Établissement 2"],
-        d["Établissement 3"],
-        d["Établissement 4"],
-        d["Établissement 5"],
-        d["Établissement 6"],
-        d["Établissement 7"],
-        d["Établissement 8"],
-        d["Établissement 9"],
-        d["Établissement 10"],
-        d["Établissement 11"],
-        d["Établissement 12"],
-        d["Établissement 13"],
-        d["Établissement 14"],
-        d["Établissement 15"],
+        d['Établissement porteur'],
+        d['Établissement 2'],
+        d['Établissement 3'],
+        d['Établissement 4'],
+        d['Établissement 5'],
+        d['Établissement 6'],
+        d['Établissement 7'],
+        d['Établissement 8'],
+        d['Établissement 9'],
+        d['Établissement 10'],
+        d['Établissement 11'],
+        d['Établissement 12'],
+        d['Établissement 13'],
+        d['Établissement 14'],
+        d['Établissement 15'],
       ]),
       labs: filterEmptyArray([
-        d["LABORATOIRE DU PORTEUR"],
-        d["LABORATOIRE 2"],
-        d["LABORATOIRE 3"],
-        d["LABORATOIRE 4"],
-        d["LABORATOIRE 5"],
-        d["LABORATOIRE 6"],
-        d["LABORATOIRE 7"],
-        d["LABORATOIRE 8"],
-        d["LABORATOIRE 9"],
-        d["LABORATOIRE 10"],
-        d["LABORATOIRE 11"],
-        d["LABORATOIRE 12"],
-        d["LABORATOIRE 13"],
-        d["LABORATOIRE 14"],
-        d["LABORATOIRE 15"],
-        d["LABORATOIRE 16"],
-        d["LABORATOIRE 17"],
-        d["LABORATOIRE 18"],
-        d["LABORATOIRE 19"],
-        d["LABORATOIRE 20"],
-        d["LABORATOIRE 21"],
+        d['LABORATOIRE DU PORTEUR'],
+        d['LABORATOIRE 2'],
+        d['LABORATOIRE 3'],
+        d['LABORATOIRE 4'],
+        d['LABORATOIRE 5'],
+        d['LABORATOIRE 6'],
+        d['LABORATOIRE 7'],
+        d['LABORATOIRE 8'],
+        d['LABORATOIRE 9'],
+        d['LABORATOIRE 10'],
+        d['LABORATOIRE 11'],
+        d['LABORATOIRE 12'],
+        d['LABORATOIRE 13'],
+        d['LABORATOIRE 14'],
+        d['LABORATOIRE 15'],
+        d['LABORATOIRE 16'],
+        d['LABORATOIRE 17'],
+        d['LABORATOIRE 18'],
+        d['LABORATOIRE 19'],
+        d['LABORATOIRE 20'],
+        d['LABORATOIRE 21'],
       ]),
       partners: filterEmptyArray([
-        d["Partenaire 1"],
-        d["Partenaire 2"],
-        d["Partenaire 3"],
-        d["Partenaire 4"],
-        d["Partenaire 5"],
-        d["Partenaire 6"],
-        d["Partenaire 7"],
-        d["Partenaire 8"],
-        d["Partenaire 9"],
-        d["Partenaire 10"],
-        d["Partenaire 11"],
-        d["Partenaire 12"],
-        d["Partenaire 13"],
-        d["Partenaire 14"],
-        d["Partenaire 15"],
-        d["Partenaire 16"],
-        d["Partenaire 17"],
-        d["Partenaire 18"],
-        d["Partenaire 19"],
-        d["Partenaire 20"],
+        d['Partenaire 1'],
+        d['Partenaire 2'],
+        d['Partenaire 3'],
+        d['Partenaire 4'],
+        d['Partenaire 5'],
+        d['Partenaire 6'],
+        d['Partenaire 7'],
+        d['Partenaire 8'],
+        d['Partenaire 9'],
+        d['Partenaire 10'],
+        d['Partenaire 11'],
+        d['Partenaire 12'],
+        d['Partenaire 13'],
+        d['Partenaire 14'],
+        d['Partenaire 15'],
+        d['Partenaire 16'],
+        d['Partenaire 17'],
+        d['Partenaire 18'],
+        d['Partenaire 19'],
+        d['Partenaire 20'],
       ]),
-      action: d["ACTION (de recherche)"] ? d["ACTION (de recherche)"] : null, // empty column?
-      how: d["COMMENT"] ? d["COMMENT"] : null, // empty column?
-      why: d["POUR QUOI FAIRE"] ? d["POUR QUOI FAIRE"] : null, // empty column?
-      notes: d["Notes"] ? d["Notes"] : null, // not empty but almost?
+      action: cleanDatum(d['ACTION (de recherche)']), // empty column?
+      how: cleanDatum(d['COMMENT']), // empty column?
+      why: cleanDatum(d['POUR QUOI FAIRE']), // empty column?
+      notes: cleanDatum(d['Notes']), // not empty but almost?
     }
 
     // clean up labels
@@ -183,17 +183,17 @@ export function resolveGeneralEntities(
       mapped_entities.acronyme = pseudoanonymizeEntry(
         mapped_entities.acronyme,
         pseudoanonymousDict,
-        "dragon",
+        'dragon',
       )
       mapped_entities.name_fr = pseudoanonymizeEntry(
         mapped_entities.name_fr,
         pseudoanonymousDict,
-        "darkelf",
+        'darkelf',
       )
       mapped_entities.name_en = pseudoanonymizeEntry(
         mapped_entities.name_en,
         pseudoanonymousDict,
-        "drow",
+        'drow',
       )
       for (
         let index = 0;
@@ -203,21 +203,21 @@ export function resolveGeneralEntities(
         mapped_entities.institutions[index] = pseudoanonymizeEntry(
           mapped_entities.institutions[index],
           pseudoanonymousDict,
-          "dwarf",
+          'dwarf',
         )
       }
       for (let index = 0; index < mapped_entities.labs.length; index++) {
         mapped_entities.labs[index] = pseudoanonymizeEntry(
           mapped_entities.labs[index],
           pseudoanonymousDict,
-          "highelf",
+          'highelf',
         )
       }
       for (let index = 0; index < mapped_entities.partners.length; index++) {
         mapped_entities.partners[index] = pseudoanonymizeEntry(
           mapped_entities.partners[index],
           pseudoanonymousDict,
-          "goblin",
+          'goblin',
         )
       }
     }
@@ -243,61 +243,57 @@ export function resolveResearcherEntities(
       sheet,
       (D) => {
         const researcher = {
-          id: typeof D[0]["id"] == "number" ? D[0]["id"] : null,
-          fullname: D[0]["NOM et Prénom"] ? D[0]["NOM et Prénom"] : null,
-          lastname: D[0]["NOM"] ? D[0]["NOM"] : null,
-          firstname: D[0]["Prénom"] ? D[0]["Prénom"] : null,
-          gender: D[0]["sexe"] ? D[0]["sexe"] : null,
-          themes: D[0]["objets, thèmes, intérêts de recherche"]
-            ? D[0]["objets, thèmes, intérêts de recherche"]
-                .split(",")
+          id: typeof D[0]['id'] == 'number' ? D[0]['id'] : null,
+          fullname: cleanDatum(D[0]['NOM et Prénom']),
+          lastname: cleanDatum(D[0]['NOM']),
+          firstname: cleanDatum(D[0]['Prénom']),
+          gender: cleanDatum(D[0]['sexe']),
+          themes: D[0]['objets, thèmes, intérêts de recherche']
+            ? D[0]['objets, thèmes, intérêts de recherche']
+                .split(',')
                 .map((d) => toLowerPreservingAcronyms(d.trim()))
             : [],
-          discipline_erc: D[0]["discipline ERC chercheur"]
-            ? D[0]["discipline ERC chercheur"].split(";").map((d) => d.trim())
+          discipline_erc: D[0]['discipline ERC chercheur']
+            ? D[0]['discipline ERC chercheur'].split(';').map((d) => d.trim())
             : [],
-          position: D[0]["position statutaire"]
-            ? D[0]["position statutaire"]
-            : null,
-          cnu: D[0]["discipline CNU"] ? D[0]["discipline CNU"] : null,
-          site: D[0]["Sites"] ? D[0]["Sites"] : null,
-          orcid: D[0]["ORCID"] ? D[0]["ORCID"] : null,
-          idhal: D[0]["IDHAL"] ? D[0]["IDHAL"] : null,
-          lab: D[0]["Identifiant Laboratoire"]
-            ? D[0]["Identifiant Laboratoire"]
-            : null,
-          domain_erc_lab: D[0]["DOMAINE ERC LABO (sources RNSR)"]
-            ? D[0]["DOMAINE ERC LABO (sources RNSR)"]
-            : null,
+          position: cleanDatum(D[0]['position statutaire']),
+          cnu: cleanDatum(D[0]['discipline CNU']),
+          site: cleanDatum(D[0]['Sites']),
+          orcid: cleanDatum(D[0]['ORCID']),
+          idhal: cleanDatum(D[0]['IDHAL']),
+          lab: cleanDatum(D[0]['Identifiant Laboratoire']),
+          domain_erc_lab: cleanDatum(D[0]['DOMAINE ERC LABO (sources RNSR)']),
           disciplines_erc_lab: filterEmptyArray([
-            D[0]["DISCIPLINES ERC LABO 1 (sources RNSR)"],
-            D[0]["DISCIPLINES ERC LABO 2 (sources RNSR)"],
-            D[0]["DISCIPLINES ERC LABO 3 (sources RNSR)"],
-            D[0]["DISCIPLINES ERC LABO 4 (sources RNSR)"],
-            D[0]["DISCIPLINES ERC LABO 5 (sources RNSR)"],
-            D[0]["DISCIPLINES ERC LABO 6 (sources RNSR)"],
-            D[0]["DISCIPLINES ERC LABO 7 (sources RNSR)"],
-            D[0]["DISCIPLINES ERC LABO 8 (sources RNSR)"],
-            D[0]["DISCIPLINES ERC LABO 9 (sources RNSR)"],
+            D[0]['DISCIPLINES ERC LABO 1 (sources RNSR)'],
+            D[0]['DISCIPLINES ERC LABO 2 (sources RNSR)'],
+            D[0]['DISCIPLINES ERC LABO 3 (sources RNSR)'],
+            D[0]['DISCIPLINES ERC LABO 4 (sources RNSR)'],
+            D[0]['DISCIPLINES ERC LABO 5 (sources RNSR)'],
+            D[0]['DISCIPLINES ERC LABO 6 (sources RNSR)'],
+            D[0]['DISCIPLINES ERC LABO 7 (sources RNSR)'],
+            D[0]['DISCIPLINES ERC LABO 8 (sources RNSR)'],
+            D[0]['DISCIPLINES ERC LABO 9 (sources RNSR)'],
           ]),
-          domain_hceres: D[0]["Domaines scientifique HCERES 1 (sources RNSR)"],
+          domain_hceres: cleanDatum(
+            D[0]['Domaines scientifique HCERES 1 (sources RNSR)'],
+          ),
           disciplines_hceres: filterEmptyArray([
-            D[0]["Sous-domaines scientifique HCERES 1  (sources RNSR)"],
-            D[0]["Sous-Domaines scientifique HCERES 2  (sources RNSR)"],
-            D[0]["Sous-Domaine Scientifique HCERES 3  (sources RNSR)"],
-            D[0]["sous-domaine scientifique HCERES 4  (sources RNSR)"],
-            D[0]["sous-domaine scientifique HCERES 5  (sources RNSR)"],
-            D[0]["sous-domaine scientifique HCERES 6  (sources RNSR)"],
+            D[0]['Sous-domaines scientifique HCERES 1  (sources RNSR)'],
+            D[0]['Sous-Domaines scientifique HCERES 2  (sources RNSR)'],
+            D[0]['Sous-Domaine Scientifique HCERES 3  (sources RNSR)'],
+            D[0]['sous-domaine scientifique HCERES 4  (sources RNSR)'],
+            D[0]['sous-domaine scientifique HCERES 5  (sources RNSR)'],
+            D[0]['sous-domaine scientifique HCERES 6  (sources RNSR)'],
           ]),
           project: [],
-          notes: D[0]["notes"] ? D[0]["notes"] : null,
+          notes: cleanDatum(D[0]['notes']),
         }
         D.forEach((row) => {
           // every row in group should corresopond to a project the researcher is in,
           // so add every project
           researcher.project.push(
-            row["ACRONYME Projet"]
-              ? cleanUpProjectLabel(row["ACRONYME Projet"])
+            row['ACRONYME Projet']
+              ? cleanUpProjectLabel(row['ACRONYME Projet'])
               : null,
           )
         })
@@ -311,19 +307,19 @@ export function resolveResearcherEntities(
           researcher.lab = pseudoanonymizeEntry(
             researcher.lab,
             pseudoanonymousDict,
-            "highelf",
+            'highelf',
           )
           for (let index = 0; index < researcher.project.length; index++) {
             researcher.project[index] = pseudoanonymizeEntry(
               researcher.project[index],
               pseudoanonymousDict,
-              "dragon",
+              'dragon',
             )
           }
         }
         return researcher
       },
-      (d) => (d["id"] ? d["id"] : d["NOM et Prénom"]), // group researcher by id if available, otherwise by name
+      (d) => (d['id'] ? cleanDatum(d['id']) : cleanDatum(d['NOM et Prénom'])), // group researcher by id if available, otherwise by name
     ),
     (d) => d[1],
   )
@@ -344,34 +340,34 @@ export function resolveLabEntities(
 ) {
   return map(sheet, (d) => {
     const lab = {
-      id: d["Identifiant Laboratoire"]
-        ? d["Identifiant Laboratoire"].split(" ")[0]
+      id: d['Identifiant Laboratoire']
+        ? d['Identifiant Laboratoire'].split(' ')[0]
         : null,
-      umr: d["Identifiant Laboratoire"].match(/UMR \d*/g)
-        ? d["Identifiant Laboratoire"].match(/UMR \d*/g)[0]
+      umr: d['Identifiant Laboratoire'].match(/UMR \d*/g)
+        ? d['Identifiant Laboratoire'].match(/UMR \d*/g)[0]
         : null,
-      lab: d["Identifiant Laboratoire"] ? d["Identifiant Laboratoire"] : null,
-      name: d["Nom Laboratoire"] ? d["Nom Laboratoire"] : null,
+      lab: cleanDatum(d['Identifiant Laboratoire']),
+      name: cleanDatum(d['Nom Laboratoire']),
       institution: filterEmptyArray([
-        d["C"],
-        d["D"],
-        d["E"],
-        d["F"],
-        d["G"],
-        d["H"],
-        d["I"],
-        d["J"],
-        d["K"],
+        d['C'],
+        d['D'],
+        d['E'],
+        d['F'],
+        d['G'],
+        d['H'],
+        d['I'],
+        d['J'],
+        d['K'],
       ]),
     }
     if (anonymize) {
-      lab.lab = pseudoanonymizeEntry(lab.lab, pseudoanonymousDict, "highelf")
-      lab.name = pseudoanonymizeEntry(lab.name, pseudoanonymousDict, "gnome")
+      lab.lab = pseudoanonymizeEntry(lab.lab, pseudoanonymousDict, 'highelf')
+      lab.name = pseudoanonymizeEntry(lab.name, pseudoanonymousDict, 'gnome')
       for (let index = 0; index < lab.institution.length; index++) {
         lab.institution[index] = pseudoanonymizeEntry(
           lab.institution[index],
           pseudoanonymousDict,
-          "dwarf",
+          'dwarf',
         )
       }
     }
@@ -395,13 +391,13 @@ export function resolveInstitutionEntities(
   return map(sheet, (d) => {
     const institution = {
       // just 1 column for the moment
-      name: d["Nom des établissements"] ? d["Nom des établissements"] : null,
+      name: cleanDatum(d['Nom des établissements']),
     }
     if (anonymize) {
       institution.name = pseudoanonymizeEntry(
         institution.name,
         pseudoanonymousDict,
-        "gnome",
+        'gnome',
       )
     }
     return institution
@@ -506,7 +502,7 @@ export function extractPhase1Workbook(
   let laboratories_by_disciplines_hceres = new Map()
   researchers.forEach((researcher) => {
     const lab = laboratories.find((lab) => lab.lab == researcher.lab)
-    if (typeof lab !== "undefined") {
+    if (typeof lab !== 'undefined') {
       lab.domain_erc = researcher.domain_erc_lab
       if (!laboratories_by_disciplines_erc.has(lab.lab)) {
         laboratories_by_disciplines_erc.set(lab.lab, new Set())
@@ -528,7 +524,7 @@ export function extractPhase1Workbook(
       delete researcher.domain_hceres
       delete researcher.disciplines_hceres
     } else {
-      console.warn("laboratory not found:", researcher.lab)
+      console.warn('laboratory not found:', researcher.lab)
     }
   })
 
@@ -566,7 +562,13 @@ export function extractPhase1Workbook(
  * @returns {string} The cleaned-up project label
  */
 function cleanUpProjectLabel(label) {
-  return label.toUpperCase().replace(/É/g, "E")
+  return label.toUpperCase().replace(/É/g, 'E')
+}
+
+function cleanDatum(d) {
+  if (!d) return null
+  if (typeof d === 'string') return d.trim()
+  return d
 }
 
 /**
@@ -585,7 +587,7 @@ export function filterOnInput(data, input_criteria, criteria_functions) {
     for (let index = 0; index < input_criteria.length; index++) {
       const critereon = input_criteria[index]
       const critereon_function = criteria_functions[index]
-      if (critereon_function(d) != critereon && critereon !== "All") {
+      if (critereon_function(d) != critereon && critereon !== 'All') {
         return false
       }
     }
@@ -601,27 +603,27 @@ export function filterOnInput(data, input_criteria, criteria_functions) {
  * @returns {String[]} an Array of the possible options found in the column
  */
 export function getColumnOptions(data, key) {
-  const options = new Set(["All"])
+  const options = new Set(['All'])
   data.forEach((d) => options.add(d[key]))
   return options
 }
 
 export function getSortable3DCountPlot(
   data,
-  x = "count",
-  y = "type",
-  fy = "entity",
+  x = 'count',
+  y = 'type',
+  fy = 'entity',
   width = 1500,
   row_height = 17,
   margin_left = 60,
   margin_right = 140,
-  color_scheme = "Plasma",
-  x_label = "Occurrences",
+  color_scheme = 'Plasma',
+  x_label = 'Occurrences',
   domain_min = 0,
   domain_max = 1, // added to max occurrences to define the domain max
   fy_tick_format_cuttoff = 25, // cut off label after this many characters
-  fy_label = "Entity",
-  sort_criteria = "-x",
+  fy_label = 'Entity',
+  sort_criteria = '-x',
   tip = true,
 ) {
   return Plot.plot({
@@ -634,14 +636,14 @@ export function getSortable3DCountPlot(
     },
     x: {
       grid: true,
-      axis: "top",
+      axis: 'top',
       label: x_label,
       // domain useful for constraining ticks between 0 and max occurrences + 1
       domain: [domain_min, Math.max(...data.map((d) => d[x])) + domain_max],
     },
     fy: {
       tickFormat: (d) =>
-        d.length > fy_tick_format_cuttoff ? d.slice(0, 23).concat("...") : d, // cut off long tick labels
+        d.length > fy_tick_format_cuttoff ? d.slice(0, 23).concat('...') : d, // cut off long tick labels
       label: fy_label,
     },
     marks: [
@@ -659,21 +661,21 @@ export function getSortable3DCountPlot(
 
 export function getSortable2MarkCountPlot(
   data,
-  x1 = "count",
+  x1 = 'count',
   // y1 = "type",
-  x2 = "count",
-  y2 = "type",
+  x2 = 'count',
+  y2 = 'type',
   width = 1500,
   row_height = 17,
   margin_left = 60,
   margin_right = 140,
-  color_scheme = "Plasma",
-  x_label = "Occurrences",
+  color_scheme = 'Plasma',
+  x_label = 'Occurrences',
   domain_min = 0,
   domain_max = 1, // added to max occurrences to define the domain max
   y_tick_format_cuttoff = 25, // cut off label after this many characters
-  y_label = "Entity",
-  sort_criteria = "-x",
+  y_label = 'Entity',
+  sort_criteria = '-x',
   tip = true,
 ) {
   return Plot.plot({
@@ -686,14 +688,14 @@ export function getSortable2MarkCountPlot(
     },
     x: {
       grid: true,
-      axis: "top",
+      axis: 'top',
       label: x_label,
       // domain useful for constraining ticks between 0 and max occurrences + 1
       domain: [domain_min, Math.max(...data.map((d) => d[x1])) + domain_max],
     },
     y: {
       tickFormat: (d) =>
-        d.length > y_tick_format_cuttoff ? d.slice(0, 23).concat("...") : d, // cut off long tick labels
+        d.length > y_tick_format_cuttoff ? d.slice(0, 23).concat('...') : d, // cut off long tick labels
       label: y_label,
     },
     // marks: [

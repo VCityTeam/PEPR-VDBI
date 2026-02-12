@@ -13,6 +13,7 @@ import {
   colorCNU,
   cnu_color_map,
   quantized_cnu_color,
+  cnrs_color_map,
   quantized_cnrs_color,
   erc_color_scale,
   interpolated_erc_color,
@@ -813,9 +814,23 @@ export const cnu_category_link_color_scale = (d) => cnu_color_map.get(d.path[0])
 
 export const cnu_sankey_config = (data, width) => ({
   ...sankey_config(data, width),
-  // linkStroke: (d) => quantized_cnu_color(d.path[0], data.nodes.length - 4),
+  linkStroke: (d) => quantized_cnu_color(d.path[0], data.nodes.length - 4),
+})
+
+// CNRS section
+
+export const cnrs_section_by_aap_status = (researcher_by_aap_status) =>
+  researcher_by_aap_status.sort(
+    (a, b) => Number(a.cnu.slice(0, 2)) - Number(b.cnu.slice(0, 2)),
+  )
+
+export const cnrs_sankey_config = (data, width) => ({
+  ...sankey_config(data, width),
   linkStroke: (d) => quantized_cnrs_color(d.path[0], data.nodes.length - 4),
 })
+
+export const cnrs_category_link_color_scale = (d) =>
+  cnrs_color_map.get(d.path[0])
 
 // themes
 
