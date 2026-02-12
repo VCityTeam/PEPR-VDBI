@@ -392,8 +392,7 @@ const cnu_CNRS_SHS_category_by_aap_status_graph =
   <!-- $ -->
 </div>
 
-<div class="grid grid-cols-3">
-  <div class="card">
+<div class="card grid grid-cols-3">
     ${resize((width) => sankeyDiagram(
       erc_discipline_LS_by_aap_status_graph,
       page.erc_disciplines_sankey_config(
@@ -402,8 +401,6 @@ const cnu_CNRS_SHS_category_by_aap_status_graph =
       )
     ))}
     <!-- $ -->
-  </div>
-  <div class="card">
     ${resize((width) => sankeyDiagram(
       erc_discipline_PE_by_aap_status_graph,
       page.erc_disciplines_sankey_config(
@@ -412,8 +409,6 @@ const cnu_CNRS_SHS_category_by_aap_status_graph =
       )
     ))}
     <!-- $ -->
-  </div>
-  <div class="card">
     ${resize((width) => sankeyDiagram(
       erc_discipline_SH_by_aap_status_graph,
       page.erc_disciplines_sankey_config(
@@ -422,7 +417,6 @@ const cnu_CNRS_SHS_category_by_aap_status_graph =
       )
     ))}
     <!-- $ -->
-  </div>
 </div>
 
 ```js
@@ -475,8 +469,7 @@ const erc_discipline_SH_by_aap_status_graph =
   <!-- $ -->
 </div>
 
-<div class="grid grid-cols-3">
-  <div class="card">
+<div class="card grid grid-cols-3">
     ${resize((width) => sankeyDiagram(
       hceres_discipline_SHS_by_aap_status_graph,
       page.hceres_disciplines_sankey_config(
@@ -485,8 +478,6 @@ const erc_discipline_SH_by_aap_status_graph =
       )
     ))}
     <!-- $ -->
-  </div>
-  <div class="card">
     ${resize((width) => sankeyDiagram(
       hceres_discipline_ST_by_aap_status_graph,
       page.hceres_disciplines_sankey_config(
@@ -495,8 +486,6 @@ const erc_discipline_SH_by_aap_status_graph =
       )
     ))}
     <!-- $ -->
-  </div>
-  <div class="card">
     ${resize((width) => sankeyDiagram(
       hceres_discipline_SVE_by_aap_status_graph,
       page.hceres_disciplines_sankey_config(
@@ -505,7 +494,6 @@ const erc_discipline_SH_by_aap_status_graph =
       )
     ))}
     <!-- $ -->
-  </div>
 </div>
 
 ```js
