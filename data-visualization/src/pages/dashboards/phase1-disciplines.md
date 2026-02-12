@@ -268,58 +268,48 @@ console.debug('financed_projects', financed_projects)
   <div class="card grid-rowspan-2">
     ${resize((width) => sankeyDiagram(
       cnu_letters_aap_dynamics,
-      page.cnu_sankey_config(cnu_letters_aap_dynamics, width, total_cnu_count))
+      page.cnu_sankey_config(cnu_letters_aap_dynamics, width))
     )}
     <!-- $ -->
   </div>
   <div class="card grid-rowspan-2">
     ${resize((width) => sankeyDiagram(
       cnu_health_aap_dynamics,
-      page.cnu_sankey_config(cnu_health_aap_dynamics, width, total_cnu_count))
+      page.cnu_sankey_config(cnu_health_aap_dynamics, width))
     )}
     <!-- $ -->
   </div>
   <div class="card grid-rowspan-3">
     ${resize((width) => sankeyDiagram(
       cnu_sciences_aap_dynamics,
-      page.cnu_sankey_config(cnu_sciences_aap_dynamics, width, total_cnu_count))
+      page.cnu_sankey_config(cnu_sciences_aap_dynamics, width))
     )}
     <!-- $ -->
   </div>
   <div class="card">
     ${resize((width) => sankeyDiagram(
       cnu_law_aap_dynamics,
-      page.cnu_sankey_config(cnu_law_aap_dynamics, width, total_cnu_count))
+      page.cnu_sankey_config(cnu_law_aap_dynamics, width))
     )}
     <!-- $ -->
   </div>
   <div class="card">
     ${resize((width) => sankeyDiagram(
       cnu_multidisciplinary_aap_dynamics,
-      page.cnu_sankey_config(cnu_multidisciplinary_aap_dynamics, width, total_cnu_count))
+      page.cnu_sankey_config(cnu_multidisciplinary_aap_dynamics, width))
     )}
     <!-- $ -->
   </div>
   <div class="card grid-rowspan-2">
     ${resize((width) => sankeyDiagram(
       cnu_CNRS_SHS_category_by_aap_status_graph,
-      page.cnu_sankey_config(cnu_CNRS_SHS_category_by_aap_status_graph, width, total_cnu_count))
+      page.cnu_sankey_config(cnu_CNRS_SHS_category_by_aap_status_graph, width))
     )}
     <!-- $ -->
   </div>
 </div>
 
 ```js
-const total_cnu_count = Math.max(
-  ...d3
-    .rollups(
-      phase_1_data.researchers,
-      (d) => d.length,
-      (d) => d.cnu,
-    )
-    .map((d) => d[1]),
-)
-
 const project_aap_dynamics = page.projects_by_aap_status_graph(
   phase_1_data.projects,
 )

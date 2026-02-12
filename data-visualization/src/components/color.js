@@ -78,20 +78,16 @@ export const cnu_color_map = new Map([
   ['Lettres et sciences humaines', 'lightgreen'],
   ['Sections de santé', 'violet'],
   ['Sciences', 'lightblue'],
-  // ['Droit, économie et gestion', 'pink'],
-  // ['Pluridisciplinaire', 'yellow'],
-  ['Droit, économie et gestion', 'lightgreen'],
-  ['Pluridisciplinaire', 'lightgreen'],
+  ['Droit, économie et gestion', 'pink'],
+  ['Pluridisciplinaire', 'yellow'],
 ])
 
 export const cnu_color_range_map = new Map([
   ['Lettres et sciences humaines', d3.interpolateGreens],
   ['Sections de santé', d3.interpolatePurples],
   ['Sciences', d3.interpolateBlues],
-  // ['Droit, économie et gestion', d3.interpolateReds],
-  // ['Pluridisciplinaire', d3.interpolateRgbBasis(['white', 'yellow', 'brown'])],
-  ['Droit, économie et gestion', d3.interpolateGreens],
-  ['Pluridisciplinaire', d3.interpolateGreens],
+  ['Droit, économie et gestion', d3.interpolateReds],
+  ['Pluridisciplinaire', d3.interpolateRgbBasis(['white', 'yellow', 'brown'])],
 ])
 
 /**
@@ -139,19 +135,49 @@ export function colorCNU(d, max) {
   return d3.interpolateGreys(color_value)
 }
 
-export function interpolated_cnu_color(cnu) {
+export function quantized_cnu_color(cnu, num_colors = 6) {
   const cnu_category = getCategoryFromCNU(cnu)
   const cnu_category_values = cnu_category_map.get(cnu_category)
 
   return d3
     .scaleOrdinal(
       cnu_category_values,
-      d3
-        .quantize(
-          cnu_color_range_map.get(cnu_category),
-          Math.round(cnu_category_values.length * 3),
-        )
-        .slice(Math.round(cnu_category_values.length / 2)),
+      d3.quantize(
+        cnu_color_range_map.get(cnu_category),
+        num_colors,
+        // Math.round(cnu_category_values.length * 3),
+      ),
+      // .slice(Math.round(cnu_category_values.length / 2)),
+    )
+    .unknown('grey')(Number(cnu.substring(0, 2)))
+}
+
+// CNU-CNRS section Colors //
+
+export const cnrs_color_map = new Map([
+  ['Lettres et sciences humaines', 'lightgreen'],
+  ['Sections de santé', 'violet'],
+  ['Sciences', 'lightblue'],
+  ['Droit, économie et gestion', 'lightgreen'],
+  ['Pluridisciplinaire', 'lightgreen'],
+])
+
+export const cnrs_color_range_map = new Map([
+  ['Lettres et sciences humaines', d3.interpolateViridis],
+  ['Sections de santé', d3.interpolateWarm],
+  ['Sciences', d3.interpolateCool],
+  ['Droit, économie et gestion', d3.interpolateViridis],
+  ['Pluridisciplinaire', d3.interpolateViridis],
+])
+
+export function quantized_cnrs_color(cnu, num_colors = 6) {
+  const cnu_category = getCategoryFromCNU(cnu)
+  const cnu_category_values = cnu_category_map.get(cnu_category)
+
+  return d3
+    .scaleOrdinal(
+      cnu_category_values,
+      d3.quantize(cnrs_color_range_map.get(cnu_category), num_colors),
     )
     .unknown('grey')(Number(cnu.substring(0, 2)))
 }

@@ -12,7 +12,8 @@ import {
   getCategoryFromCNU,
   colorCNU,
   cnu_color_map,
-  interpolated_cnu_color,
+  quantized_cnu_color,
+  quantized_cnrs_color,
   erc_color_scale,
   interpolated_erc_color,
   hceres_color_scale,
@@ -730,6 +731,7 @@ const sankey_config = (data, width) => ({
   width: width,
   height: data.nodes.length * 40,
   nodeFill: () => 'rgba(1,1,1,0.9)',
+  linkFillOpacity: 0.3,
 })
 
 export const projects_by_aap_status_graph = (projects) =>
@@ -807,14 +809,12 @@ export const aap_state_color_scale = d3.scaleOrdinal(
   ['lightblue', 'pink', 'lightgreen', 'pink', 'pink', 'pink'],
 )
 
-export const cnu_link_color_scale = (d) => interpolated_cnu_color(d.path[0])
-// cnu_color_map.get(getCategoryFromCNU(d.path[0]))
-
 export const cnu_category_link_color_scale = (d) => cnu_color_map.get(d.path[0])
 
-export const cnu_sankey_config = (data, width, total_cnu_count) => ({
+export const cnu_sankey_config = (data, width) => ({
   ...sankey_config(data, width),
-  linkStroke: (d) => cnu_link_color_scale(d, total_cnu_count),
+  // linkStroke: (d) => quantized_cnu_color(d.path[0], data.nodes.length - 4),
+  linkStroke: (d) => quantized_cnrs_color(d.path[0], data.nodes.length - 4),
 })
 
 // themes
