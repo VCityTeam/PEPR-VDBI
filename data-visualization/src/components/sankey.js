@@ -31,7 +31,7 @@ export function parallelSetToGraph(data, keys) {
       nodes.push(node)
       nodeByKey.set(d[key], node)
       if (!node.id) {
-        console.error('Node id is undefined for key', key, 'and datum', d)
+        console.warn('Node id is undefined for key', key, 'and datum', d)
       }
     }
   }

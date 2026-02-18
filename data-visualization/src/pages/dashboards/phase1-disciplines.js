@@ -9,9 +9,9 @@ import {
 } from '/components/utilities.js'
 import { cnu_category_map } from '/components/cnu.js'
 import {
-  getCategoryFromCNU,
-  colorCNU,
+  getGroupFromCNU,
   cnu_color_map,
+  cnu_dark_color_map,
   quantized_cnu_color,
   cnrs_color_map,
   quantized_cnrs_color,
@@ -19,114 +19,27 @@ import {
   interpolated_erc_color,
   hceres_color_scale,
   interpolated_hceres_color,
+  keyword_color_scale,
 } from '/components/color.js'
 import { generateIntersectionMatrix } from '/components/chord.js'
 import { donutChart } from '/components/pie-chart.js'
 import { parallelSetToGraph } from '/components/sankey.js'
-
-const cnu_plot_legend_options = {
-  marginLeft: 18,
-  marginRight: 300,
-  domain: [1, 0.1],
-  range: [1, 0.4],
-  format: (d) => Number(d),
-  type: 'log',
-}
-
-export const cnu_plot_legend = (width) =>
-  html`${Plot.legend({
-    label: 'Droit, économie et gestion',
-    width: width,
-    marginLeft: cnu_plot_legend_options.marginLeft,
-    marginRight: cnu_plot_legend_options.marginRight,
-    tickFormat: cnu_plot_legend_options.format,
-    color: {
-      domain: cnu_plot_legend_options.domain,
-      range: cnu_plot_legend_options.range,
-      type: cnu_plot_legend_options.type,
-      scheme: 'Reds',
-    },
-  })}
-  ${Plot.legend({
-    label: 'Lettres et sciences humaines',
-    width: width,
-    marginLeft: cnu_plot_legend_options.marginLeft,
-    marginRight: cnu_plot_legend_options.marginRight,
-    tickFormat: cnu_plot_legend_options.format,
-    color: {
-      domain: cnu_plot_legend_options.domain,
-      range: cnu_plot_legend_options.range,
-      type: cnu_plot_legend_options.type,
-      scheme: 'Greens',
-    },
-  })}
-  ${Plot.legend({
-    label: 'Sciences',
-    width: width,
-    marginLeft: cnu_plot_legend_options.marginLeft,
-    marginRight: cnu_plot_legend_options.marginRight,
-    tickFormat: cnu_plot_legend_options.format,
-    color: {
-      domain: cnu_plot_legend_options.domain,
-      range: cnu_plot_legend_options.range,
-      type: cnu_plot_legend_options.type,
-      scheme: 'Blues',
-    },
-  })}
-  ${Plot.legend({
-    label: 'Sections de santé',
-    width: width,
-    marginLeft: cnu_plot_legend_options.marginLeft,
-    marginRight: cnu_plot_legend_options.marginRight,
-    tickFormat: cnu_plot_legend_options.format,
-    color: {
-      domain: cnu_plot_legend_options.domain,
-      range: cnu_plot_legend_options.range,
-      type: cnu_plot_legend_options.type,
-      scheme: 'Purples',
-    },
-  })}
-  ${Plot.legend({
-    label: 'Pluridisciplinaire',
-    width: width,
-    marginLeft: cnu_plot_legend_options.marginLeft,
-    marginRight: cnu_plot_legend_options.marginRight,
-    tickFormat: cnu_plot_legend_options.format,
-    color: {
-      domain: cnu_plot_legend_options.domain,
-      range: cnu_plot_legend_options.range,
-      // range: [0.7, 0.1],
-      type: cnu_plot_legend_options.type,
-      // scheme: "YlOrBr",
-      interpolate: d3.interpolateRgbBasis(['white', 'yellow', 'brown']),
-    },
-  })}
-  ${Plot.legend({
-    label: 'Autre',
-    width: width,
-    marginLeft: cnu_plot_legend_options.marginLeft,
-    marginRight: cnu_plot_legend_options.marginRight,
-    tickFormat: cnu_plot_legend_options.format,
-    color: {
-      domain: cnu_plot_legend_options.domain,
-      range: cnu_plot_legend_options.range,
-      type: cnu_plot_legend_options.type,
-      scheme: 'Greys',
-    },
-  })}`
 
 export const cnu_plot = (data, width, cnu_plot_sort) =>
   Plot.plot({
     width: width,
     // height: 800,
     marginTop: 50,
-    marginLeft: cnu_plot_legend_options.marginLeft,
-    marginRight: cnu_plot_legend_options.marginRight,
+    marginLeft: 18,
+    marginRight: 300,
     x: {
       reverse: true,
       grid: true,
       axis: 'both',
       label: 'Occurences',
+    },
+    color: {
+      legend: true,
     },
     marks: [
       Plot.axisY({
@@ -138,7 +51,7 @@ export const cnu_plot = (data, width, cnu_plot_sort) =>
       Plot.barX(data.cnu_count, {
         y: (d) => d[0],
         x: (d) => d[1],
-        fill: (d) => colorCNU(d, Math.max(...data.cnu_count.map((d) => d[1]))),
+        fill: (d) => cnu_dark_color_map.get(getGroupFromCNU(d[0])),
         stroke: 'black',
         strokeOpacity: 0.1,
         sort: { y: cnu_plot_sort },
@@ -155,64 +68,6 @@ export const cnu_plot = (data, width, cnu_plot_sort) =>
       ),
     ],
   })
-
-// function generateCnuPlotOptions(data, sort = 'y', height = 350, width = 500) {
-//   return {
-//     width: width,
-//     height: height,
-//     marginTop: 50,
-//     marginRight: width / 2,
-//     y: {
-//       label: 'CNU',
-//       tickRotate: 10,
-//       axis: 'right',
-//       lineWidth: 35,
-//       textOverflow: 'ellipsis',
-//     },
-//     x: {
-//       reverse: true,
-//       grid: true,
-//       axis: 'top',
-//       label: 'Occurences',
-//     },
-//     marks: [
-//       Plot.barX(data, {
-//         y: (d) => d[0],
-//         x: (d) => d[1],
-//         // fill: (d) => d3
-//         // .scaleOrdinal(d3.schemeCategory10)
-//         // .domain(cnu_category_map.keys())
-//         // .unknown("grey")(getCategoryFromCNU(d[0])),
-//         fill: (d) => colorCNU(d, Math.max(...data.map((d) => d[1]))),
-//         stroke: 'black',
-//         strokeOpacity: 0.1,
-//         // sort: {y: "y"},
-//         // sort: {y: "-x"},
-//         sort: { y: sort },
-//         tip: {
-//           format: {
-//             fill: false,
-//           },
-//           lineWidth: 25,
-//           textOverflow: 'ellipsis-end',
-//         },
-//       }),
-//       Plot.barX(
-//         data,
-//         Plot.pointerY({
-//           y: (d) => d[0],
-//           x: (d) => d[1],
-//           fill: 'white',
-//           opacity: 0.5,
-//         }),
-//       ),
-//       // Plot.text(data, {
-//       //   x: 0,
-//       //   y: (d) => d[1],
-//       // })
-//     ],
-//   }
-// }
 
 const default_donut_config = {
   keyMap: (d) => d[0],
@@ -302,7 +157,7 @@ function formatResearcherDataByProject(
     .rollups(
       filtered_researchers,
       (D) => D.length,
-      (d) => (d.cnu ? getCategoryFromCNU(d.cnu) : null),
+      (d) => (d.cnu ? getGroupFromCNU(d.cnu) : null),
     )
     .filter((d) => !!d[0])
     .sort((a, b) => d3.descending(a[1], b[1]))
@@ -310,6 +165,24 @@ function formatResearcherDataByProject(
   const theme_count = countEntities(filtered_researchers, (d) => d.themes)
     .filter((d) => !!d[0])
     .sort((a, b) => d3.descending(a[1], b[1]))
+
+  const themes_by_cnu = d3
+    .rollups(
+      filtered_researchers.filter((d) => getGroupFromCNU(d.cnu)),
+      (D) => D.flatMap((d) => d.themes),
+      (d) => d.cnu,
+    )
+    .flatMap(([cnu, themes]) => themes.flatMap((theme) => ({ cnu, theme })))
+
+  const unique_themes_by_cnu = d3
+    .rollups(
+      filtered_researchers.filter((d) => getGroupFromCNU(d.cnu)),
+      (D) => new Set(D.flatMap((d) => d.themes)),
+      (d) => d.cnu,
+    )
+    .flatMap(([cnu, themes]) =>
+      [...themes].flatMap((theme) => ({ cnu, theme })),
+    )
 
   const filtered_researcher_projects = filtered_researchers.flatMap(
     (researcher) =>
@@ -385,6 +258,33 @@ function formatResearcherDataByProject(
   //   grouped_projects_by_hceres,
   // )
 
+  // const cnu_count_by_category = d3
+  //   .rollups(
+  //     filtered_researchers,
+  //     (D) => D.length,
+  //     (d) => (d.cnu ? getGroupFromCNU(d.cnu) : null),
+  //   )
+  //   .filter((d) => !!d[0])
+  //   .sort((a, b) => d3.descending(a[1], b[1]))
+
+  const grouped_cnu_group_by_keyword = d3.rollup(
+    filtered_researcher_projects.filter((d) => getGroupFromCNU(d.cnu)),
+    (D) => new Set(D.flatMap((d) => d.themes)),
+    (d) => getGroupFromCNU(d.cnu),
+  )
+
+  const cnu_group_keyword_matrix = generateIntersectionMatrix(
+    grouped_cnu_group_by_keyword,
+  )
+
+  const grouped_cnu_by_keyword = d3.rollup(
+    filtered_researcher_projects.filter((d) => getGroupFromCNU(d.cnu)),
+    (D) => new Set(D.flatMap((d) => d.themes)),
+    (d) => cropText(d.cnu),
+  )
+
+  const cnu_keyword_matrix = generateIntersectionMatrix(grouped_cnu_by_keyword)
+
   return {
     discipline_erc_count,
     cnu_count,
@@ -392,63 +292,61 @@ function formatResearcherDataByProject(
     theme_count,
     theme_project_matrix,
     theme_projects: [...grouped_projects_by_theme.keys()],
+    themes_by_cnu,
+    unique_themes_by_cnu,
     cnu_project_matrix,
     cnu_projects: [...grouped_projects_by_cnu.keys()],
     // erc_project_matrix,
     // erc_projects: [...grouped_projects_by_erc.keys()],
     // hceres_project_matrix,
     // hceres_projects: [...grouped_projects_by_hceres.keys()],
+    cnu_group_keyword_matrix,
+    cnu_group_keywords: [...grouped_cnu_group_by_keyword.keys()],
+    cnu_keyword_matrix,
+    cnu_keywords: [...grouped_cnu_by_keyword.keys()],
   }
 }
 
-export const theme_plot = (data, width, theme_plot_sort) =>
+export const theme_plot = (data, width, theme_plot_sort, theme_color_scale) =>
   Plot.plot({
     width: width,
-    height: data.length * 20,
-    marginTop: 50,
-    marginBottom: 10,
-    marginRight: 200,
+    height: 800,
     x: {
       label: 'Occurences',
       grid: true,
       axis: 'both',
       reverse: true,
+      nice: true,
     },
     y: {
-      label: 'Subjects, themes, or research interests',
-      tickRotate: -20,
+      // label: 'Researcher keywords',
+      // tickRotate: -20,
       axis: 'right',
       lineWidth: 20,
       textOverflow: 'ellipsis',
+      tickFormat: (d) => cropText(d, 40),
     },
+    marginTop: 50,
+    marginBottom: 10,
+    marginRight: 200,
     marks: [
       Plot.barX(data, {
-        y: (d) => d[0],
-        x: (d) => d[1],
-        stroke: 'black',
-        strokeOpacity: 0.1,
-        fill: 'var(--theme-foreground-focus)',
+        y: 'cnu',
+        x: 1,
+        fill: (d) => theme_color_scale(d.theme),
         sort: { y: theme_plot_sort },
         tip: {
+          lineWidth: 25,
+          textOverflow: 'ellipsis-end',
           format: {
             fill: false,
           },
-          lineWidth: 25,
-          textOverflow: 'ellipsis-end',
         },
       }),
-      Plot.barX(
-        data,
-        Plot.pointerY({
-          y: (d) => d[0],
-          x: (d) => d[1],
-          fill: 'white',
-          opacity: 0.5,
-        }),
-      ),
     ],
   })
 
+// TODO: this should be refactored to work asynchronously
 export const generateDisciplineDataByProject = (
   phase_1_data,
   auditioned_projects,
@@ -643,7 +541,12 @@ export function formatDomainPercents(label, data) {
   }
 }
 
+export const chord_config = {
+  formatValue: (d) => '',
+}
+
 // Table //
+
 const generateSparkbar = sparkbar(1, {
   format: (x) => `${(x * 100).toPrecision(3)}%`,
   float: 'right',
@@ -728,7 +631,7 @@ export function isFinanced(projects, financed_projects) {
   return false
 }
 
-const sankey_config = (data, width) => ({
+export const sankey_config = (data, width) => ({
   width: width,
   height: data.nodes.length * 40,
   nodeFill: () => 'rgba(1,1,1,0.9)',
@@ -754,7 +657,7 @@ export const researcher_by_aap_status = (researchers, projects) =>
     )
     return {
       cnu: cropText(d.cnu, 30),
-      cnu_category: getCategoryFromCNU(d.cnu) || 'Unknown',
+      cnu_category: getGroupFromCNU(d.cnu) || 'Unknown',
       themes: d.themes,
       auditioned: researcher_projects.some((p) => p.auditioned)
         ? 'auditioned'
@@ -817,7 +720,24 @@ export const cnu_sankey_config = (data, width) => ({
   linkStroke: (d) => quantized_cnu_color(d.path[0], data.nodes.length - 4),
 })
 
-// CNRS section
+// CNRS-ésque section
+
+const cnu_erc_map = new Map([
+  ['Lettres et sciences humaines', 'SH - Sciences Humaines & Sociales'],
+  ['Sections de santé', 'LS - Vie & Santé'],
+  ['Sciences', 'PE - Sciences & Technologies'],
+  ['Droit, économie et gestion', 'SH - Sciences Humaines & Sociales'],
+  ['Pluridisciplinaire', 'SH - Sciences Humaines & Sociales'],
+])
+
+export const custom_discipline_by_aap_status_graph = (cnu_by_aap_status) =>
+  parallelSetToGraph(
+    cnu_by_aap_status.map((d) => ({
+      ...d,
+      erc_discipline: cnu_erc_map.get(d.cnu_category),
+    })),
+    ['erc_discipline', 'auditioned', 'financed'],
+  )
 
 export const cnrs_section_by_aap_status = (researcher_by_aap_status) =>
   researcher_by_aap_status.sort(

@@ -1,5 +1,4 @@
 import * as d3 from 'd3'
-import { exclude } from './utilities.js'
 import { cnu_category_map } from './cnu.js'
 
 // PEPR VDBI colors //
@@ -82,12 +81,28 @@ export const cnu_color_map = new Map([
   ['Pluridisciplinaire', 'yellow'],
 ])
 
+export const cnu_dark_color_map = new Map([
+  ['Lettres et sciences humaines', 'green'],
+  ['Sections de santé', 'violet'],
+  ['Sciences', 'darkblue'],
+  ['Droit, économie et gestion', 'red'],
+  ['Pluridisciplinaire', 'orange'],
+])
+
 export const cnu_color_range_map = new Map([
   ['Lettres et sciences humaines', d3.interpolateViridis],
   ['Sections de santé', d3.interpolateWarm],
   ['Sciences', d3.interpolateCool],
   ['Droit, économie et gestion', d3.interpolateCividis],
   ['Pluridisciplinaire', d3.interpolateSinebow],
+])
+
+export const cnu_string_color_range_map = new Map([
+  ['Lettres et sciences humaines', 'Viridis'],
+  ['Sections de santé', 'Warm'],
+  ['Sciences', 'Cool'],
+  ['Droit, économie et gestion', 'Cividis'],
+  ['Pluridisciplinaire', 'Sinebow'],
 ])
 
 /**
@@ -97,7 +112,7 @@ export const cnu_color_range_map = new Map([
  * @param {String} cnu - CNU full name to categorize
  * @returns {Number} The CNU category number
  */
-export function getCategoryFromCNU(cnu) {
+export function getGroupFromCNU(cnu) {
   if (!cnu) {
     console.warn(`empty cnu: ${cnu}`)
     return null
@@ -115,34 +130,41 @@ export function getCategoryFromCNU(cnu) {
   return category ? category[0] : null
 }
 
-/**
- * Determine the color value of a CNU string.
- *
- * @param {}  -
- * @returns {}
- */
-export function colorCNU(d, max) {
-  const cnu_category = getCategoryFromCNU(d[0])
-  // calculate color value
-  // note: we can't pass values below 1 to logarithmic scales
-  const color_value = d3.scaleLog([1, max], [0.4, 1])(d[1] > 1 ? d[1] : 1)
+// /**
+//  * Determine the color value of a CNU string.
+//  *
+//  * @param {}  -
+//  * @returns {}
+//  */
+// export function colorCNU(d, max) {
+//   const cnu_category = getGroupFromCNU(d[0])
+//   // calculate color value
+//   // note: we can't pass values below 1 to logarithmic scales
+//   const color_value = d3.scaleLog([1, max], [0.4, 1])(d[1] > 1 ? d[1] : 1)
 
-  if (exclude(cnu_category) && cnu_color_range_map.has(cnu_category)) {
-    return cnu_color_range_map.get(cnu_category)(color_value)
-  } else if (!exclude(cnu_category)) {
-    console.error(`color CNU not implemented for ${d[0]}`)
-  }
-  return d3.interpolateGreys(color_value)
-}
+//   if (exclude(cnu_category) && cnu_color_range_map.has(cnu_category)) {
+//     return cnu_color_range_map.get(cnu_category)(color_value)
+//   } else if (!exclude(cnu_category)) {
+//     console.error(`color CNU not implemented for ${d[0]}`)
+//   }
+//   return d3.interpolateGreys(color_value)
+// }
 
-export function quantized_cnu_color(cnu, num_colors = 6) {
-  const cnu_category = getCategoryFromCNU(cnu)
-  const cnu_category_values = cnu_category_map.get(cnu_category)
+export function quantized_cnu_color(cnu, num_colors = 10) {
+  const cnu_category = getGroupFromCNU(cnu)
+  const cnu_category_values = cnu_category_map.has(cnu_category)
+    ? cnu_category_map.get(cnu_category)
+    : []
 
   return d3
     .scaleOrdinal(
       cnu_category_values,
-      d3.quantize(cnu_color_range_map.get(cnu_category), num_colors),
+      d3.quantize(
+        cnu_color_range_map.has(cnu_category)
+          ? cnu_color_range_map.get(cnu_category)
+          : d3.interpolateGreys,
+        num_colors,
+      ),
     )
     .unknown('grey')(Number(cnu.substring(0, 2)))
 }
@@ -166,7 +188,7 @@ export const cnrs_color_range_map = new Map([
 ])
 
 export function quantized_cnrs_color(cnu, num_colors = 6) {
-  const cnu_category = getCategoryFromCNU(cnu)
+  const cnu_category = getGroupFromCNU(cnu)
   const cnu_category_values = cnu_category_map.get(cnu_category)
 
   return d3
@@ -281,5 +303,15 @@ export const interpolated_legal_nature_color = (
         d3.interpolateRgb(legal_nature_colors(code), 'white'),
         domain.length + 1,
       ),
+    )
+    .unknown('grey')
+
+// keyword colors //
+
+export const keyword_color_scale = (keywords) =>
+  d3
+    .scaleOrdinal(
+      keywords,
+      d3.quantize(d3.interpolateSinebow, keywords.length + 1),
     )
     .unknown('grey')

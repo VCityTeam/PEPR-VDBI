@@ -9,7 +9,11 @@ import {
   downloadSVGButton,
 } from '/components/utilities.js'
 import { extractPhase1Workbook } from '/components/phase1-workbook.js'
-import { getCategoryFromCNU } from '/components/color.js'
+import {
+  getGroupFromCNU,
+  quantized_cnu_color,
+  cnu_dark_color_map,
+} from '/components/color.js'
 import { chordDiagram } from '/components/chord.js'
 import * as page from './phase1-disciplines.js'
 import { sankeyDiagram, parallelSet } from '/components/sankey.js'
@@ -27,6 +31,17 @@ import { sankeyDiagram, parallelSet } from '/components/sankey.js'
   </ul>
 </div>
 
+### CNU group color legend
+
+${Plot.legend({
+color: {
+domain: cnu_dark_color_map.keys(),
+range: cnu_dark_color_map.values(),
+type: "ordinal"},
+})}
+
+<!-- $ -->
+
 ```js
 const workbook1 = await FileAttachment(
   '/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
@@ -34,6 +49,18 @@ const workbook1 = await FileAttachment(
 
 const phase_1_data = extractPhase1Workbook(workbook1, false)
 console.debug('phase_1_data', phase_1_data)
+```
+
+```js
+const auditioned_projects = phase_1_data.projects
+  .filter((d) => d.auditioned)
+  .map((d) => d.acronyme)
+const financed_projects = phase_1_data.projects
+  .filter((d) => d.financed)
+  .map((d) => d.acronyme)
+
+console.debug('auditioned_projects', auditioned_projects)
+console.debug('financed_projects', financed_projects)
 ```
 
 ```js
@@ -45,25 +72,408 @@ const selected_project = view(
 )
 ```
 
-## ${selected_project} Disciplines by CNU and ERC
+## ${selected_project} Disciplines
 
 <div class="grid grid-cols-2">
-  <div class="card grid-colspan-1 grid-rowspan-2">
+  <div class="card grid-rowspan-2">
     <h2>Researcher CNU sections</h2>
-    <div id="cnu-legend">
-      <h3>CNU group legend</h3>
-      ${resize((width) => page.cnu_plot_legend(width))}
-      ${downloadSVGButton("#cnu-legend svg")}<!-- $ -->
-    </div>
     <div>${cnu_plot_sort_input}</div>
     <div id="cnu-container">
-      ${resize((width) => page.cnu_plot(selected_project_data, width, cnu_plot_sort))}
+      ${resize((width) => page.cnu_plot(
+        selected_project_data,
+        width,
+        cnu_plot_sort,
+      ))}
       <!-- $ -->
       ${downloadTableButton(() => selected_project_data.cnu_count)}
       <!-- $ -->
       ${downloadSVGButton("#cnu-container svg")}
       <!-- $ -->
     </div>
+  </div>
+  <div id="cnu-theme-plot-container" class="card grid-rowspan-2">
+    <h2>Researcher CNU by keywords</h2>
+    ${resize((width, height) =>
+      html`<div style="
+          margin-bottom: 30px;
+          max-height: ${height - 150}px;
+          overflow: auto;">
+        ${page.theme_plot(
+          theme_plot_search_results,
+          width,
+          theme_plot_sort,
+          getThemeColor,
+        )}
+        <!-- $ -->
+        </div>
+        ${downloadTableButton(() => selected_project_data.theme_count)}
+        <!-- $ -->
+        ${downloadSVGButton("#cnu-theme-plot-container svg")}
+        <!-- $ -->
+      </div>`
+    )}
+  </div>
+  <div id="cnu-theme-plot-container" class="card grid-rowspan-2">
+    <h2>Researcher CNU by unique keywords</h2>
+    ${resize((width, height) =>
+      html`<div style="
+          margin-bottom: 30px;
+          max-height: ${height - 150}px;
+          overflow: auto;">
+        ${page.theme_plot(
+          selected_project_data.unique_themes_by_cnu,
+          width,
+          theme_plot_sort,
+          getThemeColor,
+        )}
+        <!-- $ -->
+        </div>
+        ${downloadTableButton(() => selected_project_data.unique_themes_by_cnu)}
+        <!-- $ -->
+        ${downloadSVGButton("#cnu-theme-plot-container svg")}
+        <!-- $ -->
+      </div>`
+    )}
+  </div>
+  <div id="theme-plot-container" class="card grid-rowspan-2">
+    <h2>Researcher keywords by CNU</h2>
+    ${theme_plot_search_input}
+    <!-- $ -->
+    ${theme_plot_sort_input}
+    <!-- $ -->
+    ${resize((width, height) =>
+      html`<div style="
+          margin-bottom: 30px;
+          max-height: ${height - 150}px;
+          overflow: auto;">
+        ${Plot.plot({
+          width: width,
+          height: theme_plot_search_results.length * 10,
+          x: {
+            label: 'Occurences',
+            grid: true,
+            axis: 'both',
+            reverse: true,
+            nice: true,
+          },
+          y: {
+            // label: 'Researcher keywords',
+            // tickRotate: -20,
+            axis: 'right',
+            lineWidth: 20,
+            textOverflow: 'ellipsis',
+          },
+          // marginTop: 50,
+          marginBottom: 10,
+          marginRight: 200,
+          color: {
+            legend: true,
+            domain: cnu_dark_color_map.keys(),
+            range: cnu_dark_color_map.values(),
+            type: 'ordinal',
+          },
+          marks: [
+            Plot.barX(theme_plot_search_results, {
+              y: (d) => d.theme,
+              x: 1,
+              fill: (d) =>
+                cnu_dark_color_map.get(getGroupFromCNU(d.cnu)) ||
+                'grey',
+              sort: { y: theme_plot_sort },
+              tip: {
+                lineWidth: 25,
+                textOverflow: 'ellipsis-end',
+                format: {
+                  fill: false,
+                  cnu: true,
+                },
+              },
+            }),
+          ],
+        })}
+        <!-- $ -->
+        </div>
+        ${downloadTableButton(() => selected_project_data.theme_count)}
+        <!-- $ -->
+        ${downloadSVGButton("#theme-plot-container svg")}
+        <!-- $ -->
+      </div>`
+    )}
+  </div>
+  <div class="card grid-rowspan-2">
+    <h2>Researcher keywords by CNU Lettres et sciences humaines</h2>
+    ${resize((width, height) =>
+      html`<div style="
+          margin-bottom: 30px;
+          max-height: ${height - 150}px;
+          overflow: auto;">
+        ${Plot.plot({
+          width: width,
+          height: theme_plot_search_results
+            .filter((d) =>
+              getGroupFromCNU(d.cnu) === 'Lettres et sciences humaines')
+            .length * 10,
+          x: {
+            label: 'Occurences',
+            grid: true,
+            axis: 'both',
+            reverse: true,
+            nice: true,
+          },
+          y: {
+            // label: 'Researcher keywords',
+            // tickRotate: -20,
+            axis: 'right',
+            lineWidth: 20,
+            textOverflow: 'ellipsis',
+          },
+          marginTop: 50,
+          marginBottom: 10,
+          marginRight: 200,
+          color: { legend: true },
+          marks: [
+            Plot.barX(theme_plot_search_results
+                .filter((d) =>
+                  getGroupFromCNU(d.cnu) === 'Lettres et sciences humaines'), {
+              y: (d) => d.theme,
+              x: 1,
+              fill: 'cnu',
+              sort: { y: theme_plot_sort },
+              tip: {
+                lineWidth: 25,
+                textOverflow: 'ellipsis-end',
+                format: {
+                  fill: false,
+                  cnu: true,
+                },
+              },
+            }),
+          ],
+        })}
+        <!-- $ -->
+        </div>
+      </div>`
+    )}
+  </div>
+  <div class="card grid-rowspan-2">
+    <h2>Researcher keywords by CNU Sections de santé</h2>
+    ${resize((width, height) =>
+      html`<div style="
+          margin-bottom: 30px;
+          max-height: ${height - 150}px;
+          overflow: auto;">
+        ${Plot.plot({
+          width: width,
+          height: theme_plot_search_results
+            .filter((d) =>
+              getGroupFromCNU(d.cnu) === 'Sections de santé')
+            .length * 10,
+          x: {
+            label: 'Occurences',
+            grid: true,
+            axis: 'both',
+            reverse: true,
+            nice: true,
+          },
+          y: {
+            // label: 'Researcher keywords',
+            // tickRotate: -20,
+            axis: 'right',
+            lineWidth: 20,
+            textOverflow: 'ellipsis',
+          },
+          marginTop: 50,
+          marginBottom: 10,
+          marginRight: 200,
+          color: { legend: true },
+          marks: [
+            Plot.barX(theme_plot_search_results
+                .filter((d) =>
+                  getGroupFromCNU(d.cnu) === 'Sections de santé'), {
+              y: (d) => d.theme,
+              x: 1,
+              fill: 'cnu',
+              sort: { y: theme_plot_sort },
+              tip: {
+                lineWidth: 25,
+                textOverflow: 'ellipsis-end',
+                format: {
+                  fill: false,
+                  cnu: true,
+                },
+              },
+            }),
+          ],
+        })}
+        <!-- $ -->
+        </div>
+      </div>`
+    )}
+  </div>
+  <div class="card grid-rowspan-2">
+    <h2>Researcher keywords by CNU Sciences</h2>
+    ${resize((width, height) =>
+      html`<div style="
+          margin-bottom: 30px;
+          max-height: ${height - 150}px;
+          overflow: auto;">
+        ${Plot.plot({
+          width: width,
+          height: theme_plot_search_results
+            .filter((d) =>
+              getGroupFromCNU(d.cnu) === 'Sciences')
+            .length * 10,
+          x: {
+            label: 'Occurences',
+            grid: true,
+            axis: 'both',
+            reverse: true,
+            nice: true,
+          },
+          y: {
+            // label: 'Researcher keywords',
+            // tickRotate: -20,
+            axis: 'right',
+            lineWidth: 20,
+            textOverflow: 'ellipsis',
+          },
+          marginTop: 50,
+          marginBottom: 10,
+          marginRight: 200,
+          color: { legend: true },
+          marks: [
+            Plot.barX(theme_plot_search_results
+                .filter((d) =>
+                  getGroupFromCNU(d.cnu) === 'Sciences'), {
+              y: (d) => d.theme,
+              x: 1,
+              fill: 'cnu',
+              sort: { y: theme_plot_sort },
+              tip: {
+                lineWidth: 25,
+                textOverflow: 'ellipsis-end',
+                format: {
+                  fill: false,
+                  cnu: true,
+                },
+              },
+            }),
+          ],
+        })}
+        <!-- $ -->
+        </div>
+      </div>`
+    )}
+  </div>
+  <div class="card">
+    <h2>Researcher keywords by CNU Droit, économie et gestion</h2>
+    ${resize((width, height) =>
+      html`<div style="
+          margin-bottom: 30px;
+          max-height: ${height}px;
+          overflow: auto;">
+        ${Plot.plot({
+          width: width,
+          height: theme_plot_search_results
+            .filter((d) =>
+              getGroupFromCNU(d.cnu) === 'Droit, économie et gestion')
+            .length * 15,
+          x: {
+            label: 'Occurences',
+            grid: true,
+            axis: 'both',
+            reverse: true,
+            nice: true,
+          },
+          y: {
+            // label: 'Researcher keywords',
+            // tickRotate: -20,
+            axis: 'right',
+            lineWidth: 20,
+            textOverflow: 'ellipsis',
+          },
+          marginTop: 50,
+          marginBottom: 10,
+          marginRight: 200,
+          color: { legend: true },
+          marks: [
+            Plot.barX(theme_plot_search_results
+                .filter((d) =>
+                  getGroupFromCNU(d.cnu) === 'Droit, économie et gestion'), {
+              y: (d) => d.theme,
+              x: 1,
+              fill: 'cnu',
+              sort: { y: theme_plot_sort },
+              tip: {
+                lineWidth: 25,
+                textOverflow: 'ellipsis-end',
+                format: {
+                  fill: false,
+                  cnu: true,
+                },
+              },
+            }),
+          ],
+        })}
+        <!-- $ -->
+        </div>
+      </div>`
+    )}
+  </div>
+  <div class="card">
+    <h2>Researcher keywords by CNU Pluridisciplinaire</h2>
+    ${resize((width, height) =>
+      html`<div style="
+          margin-bottom: 30px;
+          max-height: ${height - 150}px;
+          overflow: auto;">
+        ${Plot.plot({
+          width: width,
+          height: theme_plot_search_results
+            .filter((d) =>
+              getGroupFromCNU(d.cnu) === 'Pluridisciplinaire')
+            .length * 50,
+          x: {
+            label: 'Occurences',
+            grid: true,
+            axis: 'both',
+            reverse: true,
+            nice: true,
+          },
+          y: {
+            // label: 'Researcher keywords',
+            // tickRotate: -20,
+            axis: 'right',
+            lineWidth: 20,
+            textOverflow: 'ellipsis',
+          },
+          marginTop: 50,
+          marginBottom: 10,
+          marginRight: 200,
+          color: { legend: true },
+          marks: [
+            Plot.barX(theme_plot_search_results
+                .filter((d) =>
+                  getGroupFromCNU(d.cnu) === 'Pluridisciplinaire'), {
+              y: (d) => d.theme,
+              x: 1,
+              fill: 'cnu',
+              sort: { y: theme_plot_sort },
+              tip: {
+                lineWidth: 25,
+                textOverflow: 'ellipsis-end',
+                format: {
+                  fill: false,
+                  cnu: true,
+                },
+              },
+            }),
+          ],
+        })}
+        <!-- $ -->
+        </div>
+      </div>`
+    )}
   </div>
   <div id="cnu-group-container" class="card">
     <h2>Researcher CNU groups</h2>
@@ -87,6 +497,13 @@ const selected_project = view(
     <!-- $ -->
   </div>
 </div>
+
+```js
+import { keyword_color_scale } from '/components/color.js'
+const getThemeColor = keyword_color_scale([
+  ...new Set(selected_project_data.themes_by_cnu.map((d) => d.theme)),
+])
+```
 
 ### Percent Summary
 
@@ -118,62 +535,72 @@ const overview_table_cnu = Inputs.table(
 )
 ```
 
-## Subjects, themes, and research interests
+## Discipline intersections
 
-```js
-display('phase_1_data')
-display(phase_1_data)
-display('selected_project_data')
-display(selected_project_data)
-```
-
-<div class="grid grid-cols-3">
-  <div id="theme-container" class="card grid-rowspan-2">
-    <h2>Researcher subjects, themes, and research interests</h2>
-    <div>${theme_plot_search_input}</div>
-    <div>${theme_plot_sort_input}</div>
-    <div style="max-height: 2400px; overflow: auto;">
-      ${resize((width) => page.theme_plot(theme_plot_search_results, width, theme_plot_sort))}
-      <!-- $ -->
-    </div>
-    ${downloadTableButton(() => selected_project_data.theme_count)}
-    <!-- $ -->
-    ${downloadSVGButton("#theme-container svg")}
-    <!-- $ -->
-  </div>
-  <div id="theme-chord-container" class="card grid-colspan-2">
+<div class="grid grid-cols-2">
+  <div id="theme-chord-container" class="card">
+    <h2>Theme intersections by project</h2>
     ${resize((width) =>
       chordDiagram(
         selected_project_data.theme_project_matrix,
         selected_project_data.theme_projects,
-        d3.scaleOrdinal(selected_project_data.theme_projects, d3.schemeCategory10).range(),
-        { width: width, height: width, margin: 100 }
+        d3.schemeCategory10,
+        { ...page.chord_config, width: width, height: width }
       )
     )}<!-- $ -->
-    ${downloadTableButton(() => selected_project_data.theme_count)}
-    <!-- $ -->
-    ${downloadSVGButton("#theme-chord-container svg")}
-    <!-- $ -->
   </div>
-  <div id="cnu-chord-container" class="card grid-colspan-2">
+  <div id="cnu-chord-container" class="card">
+    <h2>CNU intersections by project</h2>
     ${resize((width) =>
       chordDiagram(
         selected_project_data.cnu_project_matrix,
         selected_project_data.cnu_projects,
-        d3.scaleOrdinal(selected_project_data.cnu_projects, d3.schemeCategory10).range(),
-        { width: width, height: width, margin: 100 }
+        d3.schemeCategory10,
+        { ...page.chord_config, width: width, height: width }
       )
     )}<!-- $ -->
-    ${downloadTableButton(() => selected_project_data.theme_count)}
+  </div>
+  <div id="cnu-group-chord-container" class="card">
+    <h2>CNU group intersections by keyword</h2>
+    ${resize((width) =>
+      chordDiagram(
+        selected_project_data.cnu_group_keyword_matrix,
+        selected_project_data.cnu_group_keywords,
+        d3.schemeCategory10,
+        { ...page.chord_config, width: width, height: width, margin: 100 }
+      )
+    )}<!-- $ -->
+  </div>
+  <div id="cnu-chord-container" class="card">
+    <h2>CNU intersections by keyword</h2>
+    ${cnu_keywords_colors_input}
     <!-- $ -->
-    ${downloadSVGButton("#cnu-chord-container svg")}
-    <!-- $ -->
+    ${resize((width) =>
+      chordDiagram(
+        selected_project_data.cnu_keyword_matrix,
+        selected_project_data.cnu_keywords,
+        selected_project_data.cnu_keywords.map((d) =>
+          cnu_keywords_colors
+            ? cnu_dark_color_map.get(getGroupFromCNU(d))
+            : quantized_cnu_color(d)),
+        { ...page.chord_config, width: width, height: width, margin: 100 }
+      )
+    )}<!-- $ -->
   </div>
 </div>
 
 ```js
 const selected_project_data = discipline_data_by_project.get(selected_project)
 console.debug('selected_project_data', selected_project_data)
+```
+
+```js
+const cnu_keywords_colors_input = Inputs.toggle({
+  label: 'Colors by CNU group?',
+  value: true,
+})
+
+const cnu_keywords_colors = Generators.input(cnu_keywords_colors_input)
 ```
 
 ```js
@@ -205,7 +632,7 @@ const theme_plot_sort = Generators.input(theme_plot_sort_input)
 
 ```js
 const theme_plot_search_input = Inputs.search(
-  selected_project_data.theme_count,
+  selected_project_data.themes_by_cnu,
   {
     placeholder: 'Search themes...',
   },
@@ -224,15 +651,8 @@ console.debug('discipline_data_by_project', discipline_data_by_project)
 ```
 
 ```js
-const auditioned_projects = phase_1_data.projects
-  .filter((d) => d.auditioned)
-  .map((d) => d.acronyme)
-const financed_projects = phase_1_data.projects
-  .filter((d) => d.financed)
-  .map((d) => d.acronyme)
-
-console.debug('auditioned_projects', auditioned_projects)
-console.debug('financed_projects', financed_projects)
+display(phase_1_data)
+display(selected_project_data)
 ```
 
 ## Call for project dynamics
@@ -345,17 +765,13 @@ const cnu_categories_by_aap_status_graph =
   page.cnu_categories_by_aap_status_graph(cnu_by_aap_status)
 ```
 
-### CNRS categories by AAP status
+### CNU section as ERC discipline by AAP status
 
 <div class="card">
-  ${resize((width) => sankeyDiagram(cnu_categories_by_aap_status_graph, {
-      width: width,
-      height: cnu_categories_by_aap_status_graph.nodes.length * 50,
-      nodeFill: () => 'rgba(1,1,1,0.9)',
-      linkStroke: (d) =>
-        page.cnrs_category_link_color_scale(d),
-    })
-  )}
+  ${resize((width) => sankeyDiagram(
+    custom_discipline_by_aap_status_graph,
+    page.erc_sankey_config(custom_discipline_by_aap_status_graph, width),
+  ))}
   <!-- $ -->
 </div>
 
@@ -378,6 +794,9 @@ const cnu_categories_by_aap_status_graph =
 </div>
 
 ```js
+const custom_discipline_by_aap_status_graph =
+  page.custom_discipline_by_aap_status_graph(cnu_by_aap_status)
+
 const cnu_CNRS_SHS_category_by_aap_status_graph =
   page.cnu_CNRS_SHS_category_by_aap_status_graph(cnu_by_aap_status)
 ```
@@ -599,7 +1018,7 @@ const missing_financed_cnu_count = d3.rollup(
 // const cnu_categorization = d3.rollup(
 //   phase_1_data.researchers,
 //   (D) => D.length,
-//   (d) => Boolean(getCategoryFromCNU(d.cnu))
+//   (d) => Boolean(getGroupFromCNU(d.cnu))
 // )
 
 // const cnu_categorization_value = cnu_categorization.get(false) / phase_1_data.researchers.length
