@@ -1,5 +1,4 @@
 import * as d3 from 'npm:d3'
-import { html } from 'npm:htl'
 import * as Plot from 'npm:@observablehq/plot'
 import {
   cropText,
@@ -19,7 +18,6 @@ import {
   interpolated_erc_color,
   hceres_color_scale,
   interpolated_hceres_color,
-  keyword_color_scale,
 } from '/components/color.js'
 import { generateIntersectionMatrix } from '/components/chord.js'
 import { donutChart } from '/components/pie-chart.js'

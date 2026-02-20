@@ -80,6 +80,10 @@ export default {
       name: 'Under Construction',
       pages: [
         {
+          name: 'Phase 2 Overview',
+          path: 'pages/dashboards/phase2-overview',
+        },
+        {
           name: 'Phase 1 socio-economic partners',
           path: 'pages/dashboards/working/phase1-partner-dashboard',
         },

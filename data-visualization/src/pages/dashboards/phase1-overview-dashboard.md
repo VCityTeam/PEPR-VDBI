@@ -9,7 +9,8 @@ sql:
 # Phase 1 Overview
 
 <div class="warning" label="Data visualization notice">
-  Data visualizations are unverified and errors may exist. Regard these data visualizations as estimations and not a "ground truth".
+  Data visualizations are unverified and errors may exist. Regard these data
+  visualizations as estimations and not a "ground truth".
 </div>
 
 <div class="grid grid-cols-4">
@@ -26,8 +27,8 @@ sql:
     <h2>University count <span class="muted">(Total / Auditioned / Financed)</span></h2>
     <span class="big">
       <span class="muted">${university_data.size.toLocaleString()}</span> /
-      <span class="muted">${auditioned_university_data.size.toLocaleString()}</span> /
-      ${financed_university_data.size.toLocaleString()}
+      <span class="muted">${auditioned_university_data.size.toLocaleString()}</span>
+      / ${financed_university_data.size.toLocaleString()}
     </span>
 
   </div>
@@ -35,8 +36,8 @@ sql:
     <h2>Laboratory count <span class="muted">(Total / Auditioned / Financed)</span></h2>
     <span class="big">
       <span class="muted">${laboratory_data.size.toLocaleString()}</span> /
-      <span class="muted">${auditioned_laboratory_data.size.toLocaleString()}</span> /
-      ${financed_laboratory_data.size.toLocaleString()}
+      <span class="muted">${auditioned_laboratory_data.size.toLocaleString()}</span>
+      / ${financed_laboratory_data.size.toLocaleString()}
     </span>
 
   </div>
@@ -44,8 +45,8 @@ sql:
     <h2>Partner count <span class="muted">(Total / Auditioned / Financed)</span></h2>
     <span class="big">
       <span class="muted">${partner_data.size.toLocaleString()}</span> /
-      <span class="muted">${auditioned_partner_data.size.toLocaleString()}</span> /
-      ${financed_partner_data.size.toLocaleString()}
+      <span class="muted">${auditioned_partner_data.size.toLocaleString()}</span>
+      / ${financed_partner_data.size.toLocaleString()}
     </span>
 
   </div>

@@ -15,13 +15,14 @@ import {
   cnu_dark_color_map,
 } from '/components/color.js'
 import { chordDiagram } from '/components/chord.js'
-import * as page from './phase1-disciplines.js'
+import * as page from './aap-disciplines.js'
 import { sankeyDiagram, parallelSet } from '/components/sankey.js'
 ```
 
 <div class="warning" label="Data visualization notice">
   <ul>
-    <li>Researchers with multiple disciplines are counted once per discipline.</li>
+    <li>Researchers with multiple disciplines or keywords are counted once per
+    item unless otherwise specified</li>
     <li>Missing researcher data is not visualized by default.</li>
     <li>Data has not yet been verified. Some visualizations may be incorrect.</li>
     <li>
