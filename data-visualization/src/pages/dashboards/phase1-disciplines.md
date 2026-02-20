@@ -115,20 +115,21 @@ const selected_project = view(
   </div>
   <div id="cnu-theme-plot-container" class="card grid-rowspan-2">
     <h2>Researcher CNU by unique keywords</h2>
+    ${unique_theme_plot_search_input}
     ${resize((width, height) =>
       html`<div style="
           margin-bottom: 30px;
           max-height: ${height - 150}px;
           overflow: auto;">
         ${page.theme_plot(
-          selected_project_data.unique_themes_by_cnu,
+          unique_theme_plot_search_results,
           width,
           theme_plot_sort,
           getThemeColor,
         )}
         <!-- $ -->
         </div>
-        ${downloadTableButton(() => selected_project_data.unique_themes_by_cnu)}
+        ${downloadTableButton(() => unique_theme_plot_search_results)}
         <!-- $ -->
         ${downloadSVGButton("#cnu-theme-plot-container svg")}
         <!-- $ -->
@@ -639,6 +640,17 @@ const theme_plot_search_input = Inputs.search(
 )
 
 const theme_plot_search_results = Generators.input(theme_plot_search_input)
+```
+
+```js
+const unique_theme_plot_search_input = Inputs.search(
+  selected_project_data.unique_themes_by_cnu,
+  {
+    placeholder: 'Search themes...',
+  },
+)
+
+const unique_theme_plot_search_results = Generators.input(unique_theme_plot_search_input)
 ```
 
 ```js
