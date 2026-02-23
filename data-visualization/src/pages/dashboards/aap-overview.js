@@ -1,5 +1,6 @@
 import * as Inputs from 'npm:@observablehq/inputs'
 import * as Plot from 'npm:@observablehq/plot'
+import * as d3 from 'npm:d3'
 
 const laureateCheckbox = () =>
   Inputs.toggle({
@@ -21,7 +22,7 @@ const sortSelect = (label = 'Label') =>
     },
   )
 
-const projectCountPlot = (
+const partnerCountPlot = (
   data,
   {
     width,
@@ -66,4 +67,49 @@ const projectCountPlot = (
     ],
   })
 
-export { laureateCheckbox, sortSelect, projectCountPlot }
+const projectCountPlot = (
+  data,
+  {
+    width,
+    marginLeft = 150,
+    x_label,
+    y_label,
+    sort_value,
+    x_accessor,
+    y_accessor,
+  } = {},
+) =>
+  Plot.plot({
+    width: width,
+    height: width,
+    y: {
+      label: x_label,
+      grid: true,
+    },
+    x: {
+      tickRotate: -10,
+      label: y_label,
+      nice: true,
+      type: 'band',
+    },
+    marginLeft: marginLeft,
+    color: {
+      scheme: 'Blues',
+      zero: true,
+    },
+    marks: [
+      Plot.barY(data, {
+        x: x_accessor,
+        y: y_accessor,
+        fill: y_accessor,
+        sort: { x: sort_value },
+        tip: {
+          format: {
+            fill: false,
+          },
+        },
+      }),
+    ],
+  })
+
+export { laureateCheckbox, sortSelect, partnerCountPlot, projectCountPlot }
