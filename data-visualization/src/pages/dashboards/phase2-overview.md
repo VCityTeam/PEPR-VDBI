@@ -9,6 +9,11 @@ sql:
 
 ## Survol des soumissions
 
+```js
+import * as page from './aap-overview.js'
+import { cropText } from  '/components/utilities.js'
+```
+
 ## Chiffres clés
 
 <div class="grid grid-cols-4">
@@ -290,9 +295,6 @@ total_unique_partners.delete('Non renseigné')
 </div>
 
 ```js
-import * as page from './aap-overview.js'
-import { cropText } from  '/components/utilities.js'
-
 display('projects')
 display(Inputs.table(projects))
 display('AAP2_submission_metadata')
