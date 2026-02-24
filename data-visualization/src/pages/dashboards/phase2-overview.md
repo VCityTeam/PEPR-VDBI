@@ -11,7 +11,7 @@ sql:
 
 ```js
 import * as page from './aap-overview.js'
-import { cropText } from  '/components/utilities.js'
+import { cropText } from '/components/utilities.js'
 ```
 
 ## Chiffres clés
@@ -280,8 +280,164 @@ total_unique_partners.delete('Non renseigné')
 
 ## Défis
 
-```js
+<div class="grid grid-cols-2">
+  <div class="card">
+    ${resize((width) => bubbleChartX(
+      [...challenge_count_1],
+      {
+        width,
+        height: width / 3,
+        x_accessor: (d) => d[0],
+        r_accessor: (d) => d[1],
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    ${resize((width) => bubbleChartX(
+      [...challenge_count_2],
+      {
+        width,
+        height: width / 3,
+        x_accessor: (d) => d[0],
+        r_accessor: (d) => d[1],
+      }
+    ))}
+    <!-- $ -->
+  </div>
+</div>
 
+```js
+import { bubbleChartX } from '../../components/bubble-chart.js'
+
+const challenge_count_1 = new Map([
+  [
+    'defi_1',
+    d3
+      .rollup(
+        projects,
+        (D) => D.length,
+        (d) => d.defi_1_1,
+      )
+      .get(true) || 0,
+  ],
+  [
+    'defi_2',
+    d3
+      .rollup(
+        projects,
+        (D) => D.length,
+        (d) => d.defi_2_1,
+      )
+      .get(true) || 0,
+  ],
+  [
+    'defi_3',
+    d3
+      .rollup(
+        projects,
+        (D) => D.length,
+        (d) => d.defi_3_1,
+      )
+      .get(true) || 0,
+  ],
+  [
+    'defi_4',
+    d3
+      .rollup(
+        projects,
+        (D) => D.length,
+        (d) => d.defi_4_1,
+      )
+      .get(true) || 0,
+  ],
+  [
+    'defi_5',
+    d3
+      .rollup(
+        projects,
+        (D) => D.length,
+        (d) => d.defi_5_1,
+      )
+      .get(true) || 0,
+  ],
+  [
+    'defi_6',
+    d3
+      .rollup(
+        projects,
+        (D) => D.length,
+        (d) => d.defi_6_1,
+      )
+      .get(true) || 0,
+  ],
+])
+
+const challenge_count_2 = new Map([
+  [
+    'defi_1',
+    d3
+      .rollup(
+        projects,
+        (D) => D.length,
+        (d) => d.defi_1_2,
+      )
+      .get(true) || 0,
+  ],
+  [
+    'defi_2',
+    d3
+      .rollup(
+        projects,
+        (D) => D.length,
+        (d) => d.defi_2_2,
+      )
+      .get(true) || 0,
+  ],
+  [
+    'defi_3',
+    d3
+      .rollup(
+        projects,
+        (D) => D.length,
+        (d) => d.defi_3_2,
+      )
+      .get(true) || 0,
+  ],
+  [
+    'defi_4',
+    d3
+      .rollup(
+        projects,
+        (D) => D.length,
+        (d) => d.defi_4_2,
+      )
+      .get(true) || 0,
+  ],
+  [
+    'defi_5',
+    d3
+      .rollup(
+        projects,
+        (D) => D.length,
+        (d) => d.defi_5_2,
+      )
+      .get(true) || 0,
+  ],
+  [
+    'defi_6',
+    d3
+      .rollup(
+        projects,
+        (D) => D.length,
+        (d) => d.defi_6_2,
+      )
+      .get(true) || 0,
+  ],
+])
+
+display([...challenge_count_1])
+display(challenge_count_2)
 ```
 
 ## Data quality
@@ -320,35 +476,43 @@ display(Inputs.table(all_partners_by_project))
 ```sql id=projects
 select
   DOCID,
-  -- TYPE,
-  -- DATE,
   STATUT,
   TYPDOC,
-  -- ABSTRACT,
-  TITLE,
-  -- SPEAKERS,
-  -- CORRESPONDING,
-  -- AUTHORS,
-  -- LABOS,
-  -- FILE,
-  -- FILE_SRC,
-  -- DATEPRODUCT,
-  -- COMMENTAIRE,
-  -- LANGUE,
-  -- CREATEUSERID,
-  -- MAIL,
-  TOPIC,
-  list_transform(split(MOTCLE, ';'), x -> trim(x)) as MOTCLE,
-  NOTE
-  -- titre,
   type_projet,
+  '' as SHORT_TITLE,
+  TITLE,
+  list_contains(
+    split(TOPIC, ','),
+    'Changement climatique et préservation de la biodiversité'
+  ) as defi_1_1,
+  list_contains(
+    split(TOPIC, ','),
+    'Vers des villes et/ou des bâtiments résilient(e)s'
+  ) as defi_2_1,
+  list_contains(
+    split(TOPIC, ','),
+    'Villes et/ou bâtiments sobres et frugaux'
+  ) as defi_3_1,
+  list_contains(
+    split(TOPIC, ','),
+    'Vers des villes et/ou bâtiments inclusifs et équitables'
+  ) as defi_4_1,
+  list_contains(
+    split(TOPIC, ','),
+    'Villes et/ou bâtiments durable, santé et bien-être'
+  ) as defi_5_1,
+  list_contains(
+    split(TOPIC, ','),
+    'Défis émergents'
+  ) as defi_6_1,
+  "defi-1" = 'On' as defi_1_2,
+  "defi-2" = 'On' as defi_2_2,
+  "defi-3" = 'On' as defi_3_2,
+  "defi-4" = 'On' as defi_4_2,
+  "defi-5" = 'On' as defi_5_2,
+  "defi-6" = 'On' as defi_6_2,
+  list_transform(split(MOTCLE, ';'), x -> trim(x)) as MOTCLE,
   list_transform(split(keywords, ';'), x -> trim(x)) as keywords,
-  "defi-1" = 'On' as defi_1,
-  "defi-2" = 'On' as defi_2,
-  "defi-3" = 'On' as defi_3,
-  "defi-4" = 'On' as defi_4,
-  "defi-5" = 'On' as defi_5,
-  "defi-6" = 'On' as defi_6,
   list_transform(split(disciplines, ';'), x -> trim(x)) as disciplines,
   filter(
     list_distinct([
@@ -388,8 +552,24 @@ select
   "no ecole-2" as ed_thesis_3,
   "budget-0" as budget,
   "budget-1" as supplementary_budget,
+  NOTE,
+  -- TYPE,
+  -- DATE,
+  -- ABSTRACT,
+  -- SPEAKERS,
+  -- CORRESPONDING,
+  -- AUTHORS,
+  -- LABOS,
+  -- FILE,
+  -- FILE_SRC,
+  -- DATEPRODUCT,
+  -- COMMENTAIRE,
+  -- LANGUE,
+  -- CREATEUSERID,
+  -- MAIL,
+  -- titre,
 from AAP2_submission_metadata
-join AAP2_template_export
+left join AAP2_template_export
 on AAP2_submission_metadata.DOCID =
   replace(AAP2_template_export.column000, '.pdf', '')
 ```

@@ -1,6 +1,15 @@
 import * as Inputs from 'npm:@observablehq/inputs'
 import * as Plot from 'npm:@observablehq/plot'
-import * as d3 from 'npm:d3'
+// import * as d3 from 'npm:d3'
+
+const challenge_map = new Map([
+  ['defi_1', 'Changement climatique et préservation de la biodiversité'],
+  ['defi_2', 'Vers des villes et/ou des bâtiments résilient(e)s'],
+  ['defi_3', 'Villes et/ou bâtiments sobres et frugaux'],
+  ['defi_4', 'Vers des villes et/ou bâtiments inclusifs et équitables'],
+  ['defi_5', 'Villes et/ou bâtiments durable, santé et bien-être'],
+  ['defi_6', 'Défis émergents'],
+])
 
 const laureateCheckbox = () =>
   Inputs.toggle({
@@ -112,4 +121,10 @@ const projectCountPlot = (
     ],
   })
 
-export { laureateCheckbox, sortSelect, partnerCountPlot, projectCountPlot }
+export {
+  challenge_map,
+  laureateCheckbox,
+  sortSelect,
+  partnerCountPlot,
+  projectCountPlot,
+}
