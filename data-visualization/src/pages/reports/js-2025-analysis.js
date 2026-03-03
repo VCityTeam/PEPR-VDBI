@@ -10,11 +10,11 @@ export const entity_type_map = new Map([
 ])
 
 export const column_title_map = new Map([
-  ['C-value', 'Fig 5. Top terms by frequency'],
-  ['Gfidf', 'Fig 6. Top terms by group frequency'],
-  // ["Specificity chi2", "Fig 7. Terms by specificity"],
-  // ["Occurrences", "Fig 8. Terms by group occurrences"],
-  // ["Cooccurrences", "Fig 9. Terms by group co-occurrences"],
+  ['C-value', 'Fig 6. Top terms by frequency'],
+  ['Gfidf', 'Fig 7. Top terms by group frequency'],
+  // ["Specificity chi2", "Fig 8. Terms by specificity"],
+  // ["Occurrences", "Fig 9. Terms by group occurrences"],
+  // ["Cooccurrences", "Fig 10. Terms by group co-occurrences"],
 ])
 
 export const column_label_map = new Map([
@@ -25,7 +25,7 @@ export const column_label_map = new Map([
   // ["Cooccurrences", "Group co-occurrences"],
 ])
 
-export const freq_words = (data, { limit = 100, rFactor = 6 } = {}) =>
+export const freq_words = (data, { limit = 15, rFactor = 6 } = {}) =>
   data
     .sort((a, b) => b['C-value'] - a['C-value'])
     .slice(0, limit)
@@ -35,7 +35,7 @@ export const freq_words = (data, { limit = 100, rFactor = 6 } = {}) =>
       r: d['C-value'] * rFactor,
     }))
 
-export const group_freq_words = (data, { limit = 100, rFactor = 6 } = {}) =>
+export const group_freq_words = (data, { limit = 15, rFactor = 6 } = {}) =>
   data
     .sort((a, b) => b['Gfidf'] - a['Gfidf'])
     .slice(0, limit)
@@ -79,7 +79,7 @@ export const generateRoundTableEntitiesPlot = (data, width) =>
 
 const generateExtractedTermsPlot = (
   data,
-  { x_column, limit, marginLeft } = {},
+  { x_column, limit, marginLeft, caption } = {},
 ) =>
   resize((width) =>
     Plot.plot({
@@ -95,6 +95,7 @@ const generateExtractedTermsPlot = (
       width: width,
       marginLeft: marginLeft,
       grid: true,
+      caption: caption,
       marks: [
         Plot.frame(),
         Plot.barX(
@@ -122,6 +123,7 @@ export const extractedTermsHtmlTemplate = (
             x_column: column,
             marginLeft,
             limit,
+            caption: column_title_map.get(column),
           })}
         </div>`,
     )}

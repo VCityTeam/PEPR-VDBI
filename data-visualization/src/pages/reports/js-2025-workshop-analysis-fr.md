@@ -223,7 +223,7 @@ et **#processus-de-co-construction** sont les termes les plus couramment utilis�
 
 ${fig_2}<!-- $ -->
 
-<figcaption>Fig 2. Les 10 termes les plus fréquents</figcaption>
+<figcaption>Fig 2. Les 15 termes les plus fréquents</figcaption>
 
 ```js
 const fig_2 = new WordBubbles(
@@ -243,7 +243,7 @@ const fig_3 = new WordBubbles(
 ).getSVG()
 ```
 
-<figcaption>Fig 3. Les 10 termes les plus fréquents par groupe</figcaption>
+<figcaption>Fig 3. Les 15 termes les plus fréquents par groupe</figcaption>
 
 Il est intéressant de noter que le groupe 3 évoque davantage les termes **#processus**
 et **#processus-de-co-construction** que le groupe 2, bien que les questions des
@@ -302,7 +302,7 @@ L'exactitude de la transcription de Whisper a été mesurée avec le
 WER=\frac{S+D+I}{N}=\frac{S+D+I}{S+D+C}
 ```
 
-Where
+Où
 
 - ${tex`S`} est le nombre des substitutions,
 - ${tex`D`} est le nombre des délétions,

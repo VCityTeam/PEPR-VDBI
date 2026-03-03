@@ -217,7 +217,7 @@ are the most commonly used terms.
 
 ${fig_2}<!-- $ -->
 
-<figcaption>Fig 2. Top 10 terms by frequency</figcaption>
+<figcaption>Fig 2. Top 15 terms by frequency</figcaption>
 
 ```js
 const fig_2 = new WordBubbles(
@@ -239,7 +239,7 @@ const fig_3 = new WordBubbles(
 
 <!-- $ -->
 
-<figcaption>Fig 3. Top 10 terms by group frequency</figcaption>
+<figcaption>Fig 3. Top 15 terms by group frequency</figcaption>
 
 Interestingly, group 3 evokes the term **#processus** and **#processus-de-co-construction**
 more than group 2 despite both groups' questions being about processes (fig 5).
