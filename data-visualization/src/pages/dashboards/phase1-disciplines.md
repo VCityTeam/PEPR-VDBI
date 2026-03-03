@@ -651,21 +651,180 @@ const unique_theme_plot_search_input = Inputs.search(
   },
 )
 
-const unique_theme_plot_search_results = Generators.input(unique_theme_plot_search_input)
-```
-
-```js
-const discipline_data_by_project = page.generateDisciplineDataByProject(
-  phase_1_data,
-  auditioned_projects,
-  financed_projects,
+const unique_theme_plot_search_results = Generators.input(
+  unique_theme_plot_search_input,
 )
-console.debug('discipline_data_by_project', discipline_data_by_project)
 ```
 
 ```js
-display(phase_1_data)
-display(selected_project_data)
+const All_Projects_discipline_data_by_project = [
+  'All Projects',
+  page.formatResearcherDataByProject(
+    phase_1_data,
+    auditioned_projects,
+    financed_projects,
+    false,
+    false,
+    false,
+  ),
+]
+```
+
+```js
+const Auditioned_Projects_discipline_data_by_project = [
+  'Auditioned Projects',
+  page.formatResearcherDataByProject(
+    phase_1_data,
+    auditioned_projects,
+    financed_projects,
+    false,
+    true,
+    false,
+  ),
+]
+```
+
+```js
+const Financed_Projects_discipline_data_by_project = [
+  'Financed Projects',
+  page.formatResearcherDataByProject(
+    phase_1_data,
+    auditioned_projects,
+    financed_projects,
+    false,
+    true,
+    true,
+  ),
+]
+```
+
+```js
+const NEO_discipline_data_by_project = [
+  'NEO',
+  page.formatResearcherDataByProject(
+    phase_1_data,
+    auditioned_projects,
+    financed_projects,
+    'NEO',
+    true,
+    true,
+  ),
+]
+```
+
+```js
+const RESILIENCE_discipline_data_by_project = [
+  'RESILIENCE',
+  page.formatResearcherDataByProject(
+    phase_1_data,
+    auditioned_projects,
+    financed_projects,
+    'RESILIENCE',
+    true,
+    true,
+  ),
+]
+```
+
+```js
+const TRACES_discipline_data_by_project = [
+  'TRACES',
+  page.formatResearcherDataByProject(
+    phase_1_data,
+    auditioned_projects,
+    financed_projects,
+    'TRACES',
+    true,
+    true,
+  ),
+]
+```
+
+```js
+const VFpp_discipline_data_by_project = [
+  'VF++',
+  page.formatResearcherDataByProject(
+    phase_1_data,
+    auditioned_projects,
+    financed_projects,
+    'VF++',
+    true,
+    true,
+  ),
+]
+```
+
+```js
+const VILLEGARDEN_discipline_data_by_project = [
+  'VILLEGARDEN',
+  page.formatResearcherDataByProject(
+    phase_1_data,
+    auditioned_projects,
+    financed_projects,
+    'VILLEGARDEN',
+    true,
+    true,
+  ),
+]
+```
+
+```js
+const WHAOU_discipline_data_by_project = [
+  'WHAOU',
+  page.formatResearcherDataByProject(
+    phase_1_data,
+    auditioned_projects,
+    financed_projects,
+    'WHAOU',
+    true,
+    true,
+  ),
+]
+```
+
+```js
+const INTEGREEN_discipline_data_by_project = [
+  'INTEGREEN',
+  page.formatResearcherDataByProject(
+    phase_1_data,
+    auditioned_projects,
+    financed_projects,
+    'INTEGREEN',
+    true,
+    true,
+  ),
+]
+```
+
+```js
+const URBHEALTH_discipline_data_by_project = [
+  'URBHEALTH',
+  page.formatResearcherDataByProject(
+    phase_1_data,
+    auditioned_projects,
+    financed_projects,
+    'URBHEALTH',
+    true,
+    true,
+  ),
+]
+```
+
+```js
+const discipline_data_by_project = new Map([
+  All_Projects_discipline_data_by_project,
+  Auditioned_Projects_discipline_data_by_project,
+  Financed_Projects_discipline_data_by_project,
+  NEO_discipline_data_by_project,
+  RESILIENCE_discipline_data_by_project,
+  TRACES_discipline_data_by_project,
+  VFpp_discipline_data_by_project,
+  VILLEGARDEN_discipline_data_by_project,
+  WHAOU_discipline_data_by_project,
+  INTEGREEN_discipline_data_by_project,
+  URBHEALTH_discipline_data_by_project,
+])
+console.debug('discipline_data_by_project', discipline_data_by_project)
 ```
 
 ## Call for project dynamics
@@ -852,12 +1011,7 @@ const cnu_CNRS_SHS_category_by_aap_status_graph =
 </div>
 
 ```js
-const lab_by_aap_status = page.lab_by_aap_status(
-  phase_1_data.laboratories,
-  phase_1_data.projects,
-  phase_1_data.laboratories_by_disciplines_erc,
-  phase_1_data.laboratories_by_disciplines_hceres,
-)
+const lab_by_aap_status = page.lab_by_aap_status(phase_1_data)
 ```
 
 ```js

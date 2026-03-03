@@ -99,7 +99,7 @@ export const erc_donut = (data, width) =>
 // Get relevant data by project,
 // set auditioned flag to true if filtering out non-auditioned project data
 // set financed flag to true if filtering out non-financed project data
-function formatResearcherDataByProject(
+export function formatResearcherDataByProject(
   phase_1_data,
   auditioned_projects,
   financed_projects,
@@ -220,51 +220,6 @@ function formatResearcherDataByProject(
 
   const cnu_project_matrix = generateIntersectionMatrix(grouped_projects_by_cnu)
 
-  // const projects_by_erc = filtered_laboratories.map((lab) => ({
-  //   project: lab.project,
-  //   erc: lab.domain_erc
-  //     ? lab.domain_erc.split(';').map((erc) => erc.trim())
-  //     : [],
-  //   erc_disciplines: phase_1_data.laboratories_by_disciplines_erc
-  //     .filter((l) => l.lab === lab.lab)
-  //     .map((l) => l.discipline),
-  //   hceres: lab.domain_hceres
-  //     ? lab.domain_hceres.split('-').map((hceres) => hceres.trim())
-  //     : [],
-  //   hceres_disciplines: phase_1_data.laboratories_by_disciplines_hceres
-  //     .filter((l) => l.lab === lab.lab)
-  //     .map((l) => l.discipline),
-  // }))
-
-  // const grouped_projects_by_erc = d3.rollup(
-  //   projects_by_erc,
-  //   (D) => new Set(D.flatMap((d) => d.erc_disciplines)),
-  //   (d) => d.project,
-  // )
-
-  // const grouped_projects_by_hceres = d3.rollup(
-  //   projects_by_erc,
-  //   (D) => new Set(D.flatMap((d) => d.hceres_disciplines)),
-  //   (d) => d.project,
-  // )
-
-  // console.debug('grouped_projects_by_erc', grouped_projects_by_erc)
-  // console.debug('grouped_projects_by_hceres', grouped_projects_by_hceres)
-
-  // const erc_project_matrix = generateIntersectionMatrix(grouped_projects_by_erc)
-  // const hceres_project_matrix = generateIntersectionMatrix(
-  //   grouped_projects_by_hceres,
-  // )
-
-  // const cnu_count_by_category = d3
-  //   .rollups(
-  //     filtered_researchers,
-  //     (D) => D.length,
-  //     (d) => (d.cnu ? getGroupFromCNU(d.cnu) : null),
-  //   )
-  //   .filter((d) => !!d[0])
-  //   .sort((a, b) => d3.descending(a[1], b[1]))
-
   const grouped_cnu_group_by_keyword = d3.rollup(
     filtered_researcher_projects.filter((d) => getGroupFromCNU(d.cnu)),
     (D) => new Set(D.flatMap((d) => d.themes)),
@@ -294,10 +249,6 @@ function formatResearcherDataByProject(
     unique_themes_by_cnu,
     cnu_project_matrix,
     cnu_projects: [...grouped_projects_by_cnu.keys()],
-    // erc_project_matrix,
-    // erc_projects: [...grouped_projects_by_erc.keys()],
-    // hceres_project_matrix,
-    // hceres_projects: [...grouped_projects_by_hceres.keys()],
     cnu_group_keyword_matrix,
     cnu_group_keywords: [...grouped_cnu_group_by_keyword.keys()],
     cnu_keyword_matrix,
@@ -343,136 +294,6 @@ export const theme_plot = (data, width, theme_plot_sort, theme_color_scale) =>
       }),
     ],
   })
-
-// TODO: this should be refactored to work asynchronously
-export const generateDisciplineDataByProject = (
-  phase_1_data,
-  auditioned_projects,
-  financed_projects,
-) =>
-  new Map([
-    [
-      'All Projects',
-      formatResearcherDataByProject(
-        phase_1_data,
-        auditioned_projects,
-        financed_projects,
-        false,
-        false,
-        false,
-      ),
-    ],
-    [
-      'Auditioned Projects',
-      formatResearcherDataByProject(
-        phase_1_data,
-        auditioned_projects,
-        financed_projects,
-        false,
-        true,
-        false,
-      ),
-    ],
-    [
-      'Financed Projects',
-      formatResearcherDataByProject(
-        phase_1_data,
-        auditioned_projects,
-        financed_projects,
-        false,
-        true,
-        true,
-      ),
-    ],
-    [
-      'NEO',
-      formatResearcherDataByProject(
-        phase_1_data,
-        auditioned_projects,
-        financed_projects,
-        'NEO',
-        true,
-        true,
-      ),
-    ],
-    [
-      'RESILIENCE',
-      formatResearcherDataByProject(
-        phase_1_data,
-        auditioned_projects,
-        financed_projects,
-        'RESILIENCE',
-        true,
-        true,
-      ),
-    ],
-    [
-      'TRACES',
-      formatResearcherDataByProject(
-        phase_1_data,
-        auditioned_projects,
-        financed_projects,
-        'TRACES',
-        true,
-        true,
-      ),
-    ],
-    [
-      'VF++',
-      formatResearcherDataByProject(
-        phase_1_data,
-        auditioned_projects,
-        financed_projects,
-        'VF++',
-        true,
-        true,
-      ),
-    ],
-    [
-      'VILLEGARDEN',
-      formatResearcherDataByProject(
-        phase_1_data,
-        auditioned_projects,
-        financed_projects,
-        'VILLEGARDEN',
-        true,
-        true,
-      ),
-    ],
-    [
-      'WHAOU',
-      formatResearcherDataByProject(
-        phase_1_data,
-        auditioned_projects,
-        financed_projects,
-        'WHAOU',
-        true,
-        true,
-      ),
-    ],
-    [
-      'INTEGREEN',
-      formatResearcherDataByProject(
-        phase_1_data,
-        auditioned_projects,
-        financed_projects,
-        'INTEGREEN',
-        true,
-        true,
-      ),
-    ],
-    [
-      'URBHEALTH',
-      formatResearcherDataByProject(
-        phase_1_data,
-        auditioned_projects,
-        financed_projects,
-        'URBHEALTH',
-        true,
-        true,
-      ),
-    ],
-  ])
 
 export function formatDomainPercents(label, data) {
   // debugger;
@@ -780,26 +601,25 @@ export const theme_sankey_config = (data, width) => ({
 
 // labs
 
-export const lab_by_aap_status = (
-  labs,
-  projects,
-  lab_erc_discipline_map,
-  lab_hceres_discipline_map,
-) =>
-  projects.flatMap((project) => {
+export const lab_by_aap_status = (aap_data) =>
+  aap_data.projects.flatMap((project) => {
     const project_labs = project.labs.map((lab_name) =>
-      labs.find((l) => l.lab === lab_name),
+      aap_data.laboratories.find((l) => l.lab === lab_name),
     )
     return project_labs
       .filter((l) => l !== undefined)
       .map((l) => ({
         lab: cropText(l.lab, 30),
-        erc: l.domain_erc || '',
-        erc_disciplines: lab_erc_discipline_map
+        erc: aap_data.laboratories_by_domains_erc
+          .filter((d) => d.lab === l.lab)
+          .map((d) => d.domain),
+        erc_disciplines: aap_data.laboratories_by_disciplines_erc
           .filter((d) => d.lab === l.lab)
           .map((d) => d.discipline),
-        hceres: l.domain_hceres || '',
-        hceres_disciplines: lab_hceres_discipline_map
+        hceres: aap_data.laboratories_by_domains_hceres
+          .filter((d) => d.lab === l.lab)
+          .map((d) => d.domain),
+        hceres_disciplines: aap_data.laboratories_by_disciplines_hceres
           .filter((d) => d.lab === l.lab)
           .map((d) => d.discipline),
         auditioned: project.auditioned ? 'auditioned' : 'not auditioned',
@@ -812,13 +632,12 @@ export const lab_by_aap_status = (
 export const erc_by_aap_status = (lab_by_aap_status) =>
   d3.sort(
     lab_by_aap_status
-      .filter((d) => d.erc !== '' && d.erc !== 'Non Renseigné')
-      .flatMap((d) =>
-        d.erc.split(';').map((erc) => ({
-          ...d,
-          erc: erc.trim(),
-        })),
-      ),
+      .filter(
+        (d) =>
+          d.erc.filter((domain) => !['', 'Non Renseigné'].includes(domain))
+            .length > 0,
+      )
+      .flatMap((d) => d.erc.map((domain) => ({ ...d, erc: domain }))),
     (d) => d.erc,
   )
 
@@ -872,13 +691,8 @@ export const erc_disciplines_sankey_config = (data, width) => ({
 export const hceres_by_aap_status = (lab_by_aap_status) =>
   d3.sort(
     lab_by_aap_status
-      .filter((d) => d.hceres !== '' && d.hceres !== 'Non renseigné')
-      .flatMap((d) =>
-        d.hceres.split('-').map((hceres) => ({
-          ...d,
-          hceres: hceres.trim().replace('SV ', 'SVE '), // TODO: move correction to data processing
-        })),
-      ),
+      .filter((d) => d.hceres.filter((h) => h !== 'Non renseigné').length > 0)
+      .flatMap((d) => d.hceres.map((domain) => ({ ...d, hceres: domain }))),
     (d) => d.hceres,
   )
 
