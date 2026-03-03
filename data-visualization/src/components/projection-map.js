@@ -1,78 +1,78 @@
-import * as d3 from "d3"
-import * as Plot from "@observablehq/plot"
-import { FileAttachment } from "observablehq:stdlib"
-import { vdbi_color_scheme } from "/components/color.js"
+import * as d3 from 'd3'
+import * as Plot from '@observablehq/plot'
+import { FileAttachment } from 'observablehq:stdlib'
+import { vdbi_color_scheme } from '/components/color.js'
 
 // geospatial address data
 
-export const corse_department_codes = ["2A", "2B"]
+export const corse_department_codes = ['2A', '2B']
 
 export const idf_department_codes = [
-  "95",
-  "94",
-  "93",
-  "92",
-  "91",
-  "78",
-  "77",
-  "75",
+  '95',
+  '94',
+  '93',
+  '92',
+  '91',
+  '78',
+  '77',
+  '75',
 ]
 
 // geojson maps
 
 export const europe_geojson = await FileAttachment(
-  "/data/europe.geo.json"
+  '/data/europe.geo.json',
 ).json()
 
 export const france_geojson = europe_geojson.features.find(
-  ({ properties }) => (properties.name = "France")
+  ({ properties }) => (properties.name = 'France'),
 )
 
 export const france_regions_geojson = await FileAttachment(
-  "/data/france_regions.json"
+  '/data/france_regions.json',
 ).json()
 
 export const mainland_france_regions_geojson = {
-  type: "FeatureCollection",
+  type: 'FeatureCollection',
   features: france_regions_geojson.features.filter(
-    ({ properties }) => properties.code > 10 && properties.nom != "Corse"
+    ({ properties }) => properties.code > 10 && properties.nom != 'Corse',
   ),
 }
 
 export const france_departements_geojson = await FileAttachment(
-  "/data/france_departements.json"
+  '/data/france_departements.json',
 ).json()
 
 export const mainland_france_departements_geojson = {
-  type: "FeatureCollection",
+  type: 'FeatureCollection',
   features: france_departements_geojson.features.filter(
-    ({ properties }) => !corse_department_codes.includes(properties.code)
+    ({ properties }) => !corse_department_codes.includes(properties.code),
   ),
 }
 
 const mainland_france_departements_by_idf = d3.group(
   mainland_france_departements_geojson.features,
-  ({ properties }) => idf_department_codes.includes(properties.code)
+  ({ properties }) => idf_department_codes.includes(properties.code),
 )
 
 export const mainland_france_departements_no_idf_geojson = {
-  type: "FeatureCollection",
+  type: 'FeatureCollection',
   features: mainland_france_departements_by_idf.get(false),
 }
 
 export const idf_departements_geojson = {
-  type: "FeatureCollection",
+  type: 'FeatureCollection',
   features: mainland_france_departements_by_idf.get(true),
 }
 
 export const italy_regions_geojson = FileAttachment(
-  "/data/italy_regions.json"
+  '/data/italy_regions.json',
 ).json()
 
 // default map options
 
 export const france_projection = {
-  type: "equal-earth",
+  type: 'equal-earth',
   domain: d3
     .geoCircle()
     .center(d3.geoCentroid(mainland_france_regions_geojson))
@@ -80,7 +80,7 @@ export const france_projection = {
 }
 
 export const paris_projection = {
-  type: "equal-earth",
+  type: 'equal-earth',
   domain: d3.geoCircle().center([2.35, 48.85]).radius(0.2)(),
   // domain: d3
   //   .geoCircle()
@@ -95,19 +95,19 @@ export const paris_projection = {
 }
 
 export const idf_projection = {
-  type: "equal-earth",
+  type: 'equal-earth',
   domain: d3
     .geoCircle()
     .center(
       d3.geoCentroid(
-        france_regions_geojson.features.find((d) => d.properties.code === "11")
-      )
+        france_regions_geojson.features.find((d) => d.properties.code === '11'),
+      ),
     )
     .radius(0.8)(),
 }
 
 export const italy_projection = {
-  type: "equal-earth",
+  type: 'equal-earth',
   domain: d3.geoCircle().center([13, 43.5]).radius(2)(),
   // domain: d3
   //   .geoCircle()
@@ -119,13 +119,13 @@ export const italy_projection = {
 
 export const default_mainland_france_marks = [
   Plot.geo(mainland_france_departements_geojson, {
-    stroke: "white",
+    stroke: 'white',
     strokeWidth: 0.1,
     fill: vdbi_color_scheme.blue,
     fillOpacity: 0.3,
   }),
   Plot.geo(mainland_france_regions_geojson, {
-    stroke: "white",
+    stroke: 'white',
     strokeOpacity: 0.5,
   }),
 ]
@@ -159,7 +159,7 @@ export const italy_choropleth_marks = [
  * https://adresse.data.gouv.fr/csv
  * and a geojson file of world borders
  *
- * @param {Object} data - input dataset, by default expects a grouped d3 array. See:
+ * @param {object} data - input dataset, by default expects a grouped d3 array. See:
  * - https://d3js.org/d3-array/group#groups
  * - https://d3js.org/d3-array/group#rollups
  * @returns {d3.node} - SVG node containing the map
@@ -182,14 +182,14 @@ export function projectionMap(
      * ];
      */
     borderList = [], // list of borders to draw
-    borderListStrokes = borderList.map(() => "var(--theme-foreground-faint)"), // list of border colors; use 'var(--theme-foreground-faint)' for default
+    borderListStrokes = borderList.map(() => 'var(--theme-foreground-faint)'), // list of border colors; use 'var(--theme-foreground-faint)' for default
     borderListStrokeOpacity = borderList.map(() => 1),
-    projectionType = "equal-earth",
+    projectionType = 'equal-earth',
     projectionDomain = d3.geoCircle().center([2, 47]).radius(5)(), // centered on France
-    stroke = "#f43f5e",
-    fill = "#f43f5e",
+    stroke = '#f43f5e',
+    fill = '#f43f5e',
     fillOpacity = 0.5,
-    entity_label = "City",
+    entity_label = 'City',
     channels = {
       entity: {
         value: keyMap,
@@ -197,15 +197,15 @@ export function projectionMap(
       },
       count: {
         value: valueMap,
-        label: "Occurences",
+        label: 'Occurences',
       },
       longitude: {
         value: lonMap,
-        label: "Lon",
+        label: 'Lon',
       },
       latitude: {
         value: latMap,
-        label: "Lat",
+        label: 'Lat',
       },
     },
     tip = {
@@ -243,23 +243,23 @@ export function projectionMap(
     //         Math.max(...data.map((d) => valueMap(d))),
     //       ])(d)
     //   ),
-  } = {}
+  } = {},
 ) {
   // add borders
   const bordersToDraw = d3.zip(
     borderList,
     borderListStrokes,
-    borderListStrokeOpacity
+    borderListStrokeOpacity,
   )
   bordersToDraw.forEach((borderAndStroke) => {
     marks.push(
       Plot.geo(borderAndStroke[0], {
         stroke: borderAndStroke[1],
         strokeOpacity: borderAndStroke[2],
-      })
+      }),
     )
   })
-  console.debug("bordersToDraw", bordersToDraw)
+  console.debug('bordersToDraw', bordersToDraw)
 
   return Plot.plot({
     width: width,

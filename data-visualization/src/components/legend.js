@@ -5,7 +5,7 @@ import * as d3 from 'd3'
  *
  * @param {Object[]} data - input dataset, by default expects an array of key (string)
  *  and value (number) pairs. Modify keyMap and valueMap in the options if this is not the case.
- * @param {Object} options - configuration options for the legend
+ * @param {object} options - configuration options for the legend
  * @returns {d3.node} - SVG node containing the legend
  */
 export function circleLegend(

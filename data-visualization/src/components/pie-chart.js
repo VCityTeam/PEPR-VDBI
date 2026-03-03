@@ -1,6 +1,6 @@
-import * as d3 from "d3"
-import { circleLegend } from "./legend.js"
-import { createTooltip, cropText } from "./utilities.js"
+import * as d3 from 'd3'
+import { circleLegend } from './legend.js'
+import { createTooltip, cropText } from './utilities.js'
 
 /**
  * Create a donut chart
@@ -10,7 +10,7 @@ import { createTooltip, cropText } from "./utilities.js"
  *
  * @param {Object[]} data - input dataset, by default expects an array of key (string)
  *  and value (number) pairs. Modify keyMap and valueMap in the options if this is not the case.
- * @param {Object} options - configuration options for the chart
+ * @param {object} options - configuration options for the chart
  * @param {number} options.width - width of the chart
  * @param {number} options.height - height of the chart
  * @param {number} options.innerRadiusRatio - ratio of the radius to the inner radius
@@ -49,11 +49,11 @@ export function donutChart(
     colorMap = keyMap,
     // sort = (a, b) => d3.descending(a.count, b.count),
     fontSize = 16,
-    fontFamily = "sans-serif",
-    sliceStrokeColor = "black",
+    fontFamily = 'sans-serif',
+    sliceStrokeColor = 'black',
     // strokeWidth = 1,
     // strokeOpacity = 0.5,
-    fill = "white",
+    fill = 'white',
     fillOpacity = 1,
     // majorLabelText = (d) => cropText(keyMap(d.data), 30),
     // minorLabelText = (d) =>
@@ -71,7 +71,7 @@ export function donutChart(
     color = d3
       .scaleOrdinal(d3.schemeObservable10)
       .domain(new Set(data.map(keyMap)))
-      .unknown("grey"),
+      .unknown('grey'),
     legendWidth = 80,
     legendTextLength = 30,
     legendText = (d) =>
@@ -122,17 +122,12 @@ export function donutChart(
   const cuttoffData = pieData.filter((d) => !isMajorArc(d)).map((d) => d.data)
 
   const svg = d3
-    .create("svg")
-    .classed("donut-chart", true)
-    .attr("width", width)
-    .attr("height", height)
-    .attr("viewBox", [
-      -width / 2,
-      -height / 2,
-      width,
-      height,
-    ])
-    .attr("style", "max-width: 100%; height: auto;")
+    .create('svg')
+    .classed('donut-chart', true)
+    .attr('width', width)
+    .attr('height', height)
+    .attr('viewBox', [-width / 2, -height / 2, width, height])
+    .attr('style', 'max-width: 100%; height: auto;')
 
   const tooltip = createTooltip()
   // console.debug(tooltip);
@@ -140,13 +135,13 @@ export function donutChart(
   // const labelText = (d) => `${keyMap(d.data)}: ${d.value.toLocaleString()}`;
 
   svg
-    .append("g")
+    .append('g')
     .selectAll()
     .data(pieData)
-    .join("path")
-    .attr("fill", (d) => color(colorMap(d.data)))
-    .attr("d", arc)
-    .on("mouseover", (_e, d) => {
+    .join('path')
+    .attr('fill', (d) => color(colorMap(d.data)))
+    .attr('d', arc)
+    .on('mouseover', (_e, d) => {
       // add legend tooltip if arc is too small for a label and highlight arc
       if (!isMajorArc(d)) {
         const legend = circleLegend(cuttoffData, {
@@ -157,43 +152,41 @@ export function donutChart(
           lineSeparation: 25,
           // if the key in the legend is the same as the mouseovered arc, bold the text
           fontWeight: (d2) =>
-            keyMap(d2) == keyMap(d.data) ? "bold" : "normal",
+            keyMap(d2) == keyMap(d.data) ? 'bold' : 'normal',
         })
         tooltip.appendChild(legend)
       } else {
         tooltip.textContent = `${d.value.toLocaleString()}: ${keyMap(d.data)}`
       }
-      d3.select("body").append(() => tooltip)
+      d3.select('body').append(() => tooltip)
       // highlight the arc
       d3.select(_e.target)
-        .attr("stroke", sliceStrokeColor)
+        .attr('stroke', sliceStrokeColor)
         // .attr('stroke-opacity', 0.8)
-        .attr("stroke-width", 1)
+        .attr('stroke-width', 1)
     })
-    .on("mousemove", (event) =>
+    .on('mousemove', (event) =>
       d3
-        .select(".tooltip")
-        .style("top", event.pageY - 10 + "px")
-        .style("left", event.pageX + 15 + "px"),
+        .select('.tooltip')
+        .style('top', event.pageY - 10 + 'px')
+        .style('left', event.pageX + 15 + 'px'),
     )
-    .on("mouseout", (event) => {
+    .on('mouseout', (event) => {
       // console.debug("mouseout");
-      tooltip.textContent = ""
+      tooltip.textContent = ''
       tooltip.parentNode.removeChild(tooltip)
-      d3.select(event.target).attr("stroke-width", 0)
+      d3.select(event.target).attr('stroke-width', 0)
     })
-
-  // TODO: add configuration options for label background placement and sizing
 
   // add major label background
   svg
-    .append("g")
-    .attr("fill", "black")
-    .attr("fill-opacity", 0.5)
+    .append('g')
+    .attr('fill', 'black')
+    .attr('fill-opacity', 0.5)
     .selectAll()
     .data(pieData)
-    .join("rect")
-    .attr("transform", (d) => `translate(${arc.centroid(d)})`)
+    .join('rect')
+    .attr('transform', (d) => `translate(${arc.centroid(d)})`)
   // .call((rect) =>
   //   rect
   //     .filter((d) => isMajorArc(d))
@@ -207,13 +200,13 @@ export function donutChart(
 
   // add minor label background
   svg
-    .append("g")
-    .attr("fill", "black")
-    .attr("fill-opacity", 0.5)
+    .append('g')
+    .attr('fill', 'black')
+    .attr('fill-opacity', 0.5)
     .selectAll()
     .data(pieData)
-    .join("rect")
-    .attr("transform", (d) => `translate(${arc.centroid(d)})`)
+    .join('rect')
+    .attr('transform', (d) => `translate(${arc.centroid(d)})`)
   // .call((rect) =>
   //   rect
   //     .filter((d) => isMajorArc(d))
@@ -224,19 +217,19 @@ export function donutChart(
   // )
 
   svg
-    .append("g")
-    .attr("font-family", fontFamily)
-    .attr("font-size", fontSize)
-    .attr("text-anchor", "middle")
+    .append('g')
+    .attr('font-family', fontFamily)
+    .attr('font-size', fontSize)
+    .attr('text-anchor', 'middle')
     // .attr("stroke", strokeColor)
     // .attr("stroke-width", strokeWidth)
     // .attr("stroke-opacity", strokeOpacity)
-    .attr("fill", fill)
-    .attr("fill-opacity", fillOpacity)
+    .attr('fill', fill)
+    .attr('fill-opacity', fillOpacity)
     .selectAll()
     .data(pieData)
-    .join("text")
-    .attr("transform", (d) => `translate(${arc.centroid(d)})`)
+    .join('text')
+    .attr('transform', (d) => `translate(${arc.centroid(d)})`)
   // // add major label for major arcs
   // .call((text) =>
   //   text
@@ -261,11 +254,8 @@ export function donutChart(
   // Create legend
   if (legend) {
     svg
-      .append("g")
-      .attr(
-        "transform",
-        `translate(${width - legendWidth} ${-height / 2})`,
-      )
+      .append('g')
+      .attr('transform', `translate(${width - legendWidth} ${-height / 2})`)
       .append(() => legend)
   }
 

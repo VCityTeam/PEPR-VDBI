@@ -65,23 +65,23 @@ export function parallelSetToGraph(data, keys) {
 /**
  * Create a Sankey diagram from a graph object
  *
- * @param {Object} graph - a graph object containing nodes and links
+ * @param {object} graph - a graph object containing nodes and links
  * @param {Object[]} graph.nodes
- * @param {String} graph.nodes[].id - node id
+ * @param {string} graph.nodes[].id - node id
  * @param {Object[]} graph.links
- * @param {String} graph.links[].source
- * @param {String} graph.links[].target
- * @param {Number} graph.links[].value - link value, used to determine width link width
+ * @param {string} graph.links[].source
+ * @param {string} graph.links[].target
+ * @param {number} graph.links[].value - link value, used to determine width link width
  * @param {String[]} graph.links[].path - array of node ids corresponding to the link path
- * @param {Number} width - width of the SVG element
- * @param {Number} height - height of the SVG element
+ * @param {number} width - width of the SVG element
+ * @param {number} height - height of the SVG element
  * @param {Function} idMap - function to map a node to its label
  * @param {Function} text - function to map a node to its label
  * @param {scaleOrdinal|Function} nodeFill - color scale for nodes
  * @param {scaleOrdinal|Function} linkStroke - color scale for links
- * @param {Number} linkFillOpacity - opacity for node fill colors
- * @param {Number} height - height of the SVG element
- * @param {Number} font_size - font size for node labels
+ * @param {number} linkFillOpacity - opacity for node fill colors
+ * @param {number} height - height of the SVG element
+ * @param {number} font_size - font size for node labels
  * @param {null|undefined} node_sort - node_sort paramters for d3-sankey,
  *  set to undefined for default behavior
  * @param {null|undefined} link_sort - link_sort paramters for d3-sankey,
@@ -186,24 +186,24 @@ export function sankeyDiagram(
  * Use @function parallelSetToGraph to convert tabular data to a graph object to pass to
  * this function
  *
- * @param {Object} graph - a graph object containing nodes and links
+ * @param {object} graph - a graph object containing nodes and links
  * @param {Object[]} graph.nodes
- * @param {String} graph.nodes[].id - node id
+ * @param {string} graph.nodes[].id - node id
  * @param {Object[]} graph.links
- * @param {String} graph.links[].source
- * @param {String} graph.links[].target
- * @param {Number} graph.links[].value - link value, used to determine width link width
+ * @param {string} graph.links[].source
+ * @param {string} graph.links[].target
+ * @param {number} graph.links[].value - link value, used to determine width link width
  * @param {String[]} graph.links[].path - array of node ids corresponding to the link path
- * @param {Number} width - width of the SVG element
- * @param {Number} height - height of the SVG element
+ * @param {number} width - width of the SVG element
+ * @param {number} height - height of the SVG element
  * @param {Function} idMap - function to map a node to its label
  * @param {Function} pathMap - function to map a link to its path
  * @param {Function} text - function to map a node to its label
  * @param {scaleOrdinal|Function} nodeFill - color scale for nodes
  * @param {scaleOrdinal|Function} linkStroke - color scale for links
- * @param {Number} link_opacity - opacity for link stroke colors
- * @param {Number} height - height of the SVG element
- * @param {Number} font_size - font size for node labels
+ * @param {number} link_opacity - opacity for link stroke colors
+ * @param {number} height - height of the SVG element
+ * @param {number} font_size - font size for node labels
  * @param {null|undefined} node_sort - node_sort paramters for d3-sankey,
  *  set to undefined for default behavior
  * @param {null|undefined} link_sort - link_sort paramters for d3-sankey,

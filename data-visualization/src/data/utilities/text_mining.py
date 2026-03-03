@@ -109,7 +109,7 @@ def clean_and_count_words(
         reader = csv.reader(file, delimiter=delimiter)
 
         logging.info(f"Lemmatizing words for language: {language}")
-        # TODO: migrate to spaCy
+
         lemmatized_words = lemmatize_words([row[0] for row in reader], language)
 
     # logging.debug(f"lemmatized words: {lemmatized_words}")

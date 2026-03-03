@@ -109,8 +109,8 @@ export const cnu_string_color_range_map = new Map([
  * Determine the category of a CNU number.
  * Based on https://conseil-national-des-universites.fr/
  *
- * @param {String} cnu - CNU full name to categorize
- * @returns {Number} The CNU category number
+ * @param {string} cnu - CNU full name to categorize
+ * @returns {number} The CNU category number
  */
 export function getGroupFromCNU(cnu) {
   if (!cnu) {

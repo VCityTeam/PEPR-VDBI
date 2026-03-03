@@ -1,5 +1,5 @@
-import { merge } from 'd3';
-import { formatIfString } from './utilities.js';
+import { merge } from 'd3'
+import { formatIfString } from './utilities.js'
 
 /**
  * Format known project entities from the Financing sheet
@@ -8,8 +8,8 @@ import { formatIfString } from './utilities.js';
  * @returns {Object[]} Formatted sheet data
  */
 export function resolveProjectFinancingEntities(workbook, project = null) {
-  const personnel = [];
-  const partners = [];
+  const personnel = []
+  const partners = []
 
   // iterate over partner sheets
   for (let index = 3; index < workbook.sheetNames.length; index++) {
@@ -20,8 +20,8 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
         range: index === 3 ? 'C257:E264' : 'C256:E263',
         headers: false,
       }),
-      project
-    );
+      project,
+    )
 
     // personnel without a financing request
     // const personnel_no_request = mapPersonnelFinancingEntities(
@@ -44,8 +44,8 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
       false,
       project,
       project_partners[0] ? project_partners[0].name : null,
-      project_partners[0] ? project_partners[0].siret : null
-    );
+      project_partners[0] ? project_partners[0].siret : null,
+    )
 
     // civil servant personnel
     // const personnel_public = mapPersonnelFinancingEntities(
@@ -60,7 +60,7 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
     // );
 
     // aggregate data
-    project_partners.forEach((partner) => partners.push(partner));
+    project_partners.forEach((partner) => partners.push(partner))
 
     // merge and filter out unwanted personnel types then add to dataset
     merge([
@@ -69,16 +69,16 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
       // personnel_public
     ]).forEach((person) => {
       // cleanup description
-      person.type_post = null;
+      person.type_post = null
       const clean_description = person.description
         ? person.description.trim().toLocaleUpperCase()
-        : null;
+        : null
 
       // check if description is empty
       if (!clean_description) {
-        person.type_post = 'other/unknown';
-        personnel.push(person);
-        return;
+        person.type_post = 'other/unknown'
+        personnel.push(person)
+        return
       }
 
       // known prefiltered post description keyword mappings to non civil servant classification
@@ -103,7 +103,7 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
         ['Ingérieur', 'IR'],
         // ['data', 'IR'],
         // ['Statisticien', 'IR'],
-      ]);
+      ])
 
       // known prefiltered post description token mappings to non civil servant classification
       const personnel_token_type_map = new Map([
@@ -124,25 +124,25 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
         ['AI', 'AI'],
         // ['Ingénieur', 'IR'],
         // ['data', 'IR'],
-      ]);
+      ])
 
       // categorize contract dsecriptions
 
       // check if description contains a keyword
       for (const mapping of personnel_keyword_type_map) {
         if (clean_description.includes(mapping[0].toLocaleUpperCase())) {
-          person.type_post = mapping[1];
-          break;
+          person.type_post = mapping[1]
+          break
         }
       }
       // check if description contains a token
-      const tokenized_description = clean_description.split(' ');
+      const tokenized_description = clean_description.split(' ')
       for (const mapping of personnel_token_type_map) {
         for (let index = 0; index < tokenized_description.length; index++) {
-          const token = tokenized_description[index];
+          const token = tokenized_description[index]
           if (token == mapping[0].toLocaleUpperCase()) {
-            person.type_post = mapping[1];
-            break;
+            person.type_post = mapping[1]
+            break
           }
         }
       }
@@ -152,19 +152,19 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
         (person.type_post == 'IR' || person.type_post == 'IE') &&
         clean_description.includes('assist')
       ) {
-        person.type_post = 'AI';
+        person.type_post = 'AI'
       }
 
       // default case
       if (!person.type_post) {
-        person.type_post = 'other/unknown';
+        person.type_post = 'other/unknown'
       }
 
-      personnel.push(person);
-    });
+      personnel.push(person)
+    })
   }
 
-  return { personnel, partners };
+  return { personnel, partners }
 }
 
 /**
@@ -180,7 +180,7 @@ function mapPersonnelFinancingEntities(
   civil_servants,
   project = null,
   default_employer = null,
-  default_employer_id = null
+  default_employer_id = null,
 ) {
   const mapped_data = data.map((d) => {
     const person = {
@@ -197,15 +197,15 @@ function mapPersonnelFinancingEntities(
       assistance: formatIfString(d['H']), // additional requested financing
       support: formatIfString(d['I']), // support cost
       total_cost: formatIfString(d['G']), // total cost
-    };
+    }
 
     // handle special cases
 
     // Column D mixes contract type and employer depending on if civil servant
     if (civil_servants) {
-      person.type_contract = 'CDI';
+      person.type_contract = 'CDI'
     } else {
-      person.employer = default_employer;
+      person.employer = default_employer
     }
     // contract type may declare post description
     const known_doctoral_CDD_types = [
@@ -213,32 +213,32 @@ function mapPersonnelFinancingEntities(
       'POSTDOC',
       'POST-DOC',
       'POST-DOCTORAL',
-    ];
+    ]
     if (!civil_servants && person.type_contract) {
-      const contract_type_tokens = person.type_contract.trim().split(' ');
+      const contract_type_tokens = person.type_contract.trim().split(' ')
       for (let index = 0; index < known_doctoral_CDD_types.length; index++) {
-        const type = known_doctoral_CDD_types[index];
+        const type = known_doctoral_CDD_types[index]
         const match = contract_type_tokens.find(
-          (token) => token.toUpperCase() == type
-        );
+          (token) => token.toUpperCase() == type,
+        )
         if (match) {
-          person.description += ` (${match})`;
+          person.description += ` (${match})`
           person.type_contract = contract_type_tokens
             .filter((d) => d != match)
-            .join(' ');
-          break;
+            .join(' ')
+          break
         }
       }
     }
 
-    return person;
-  });
+    return person
+  })
 
   // filter out empty values
   return mapped_data.filter(
     ({ description, months, cost, assistance, support, total_cost }) =>
-      description || months || cost || assistance || support || total_cost
-  );
+      description || months || cost || assistance || support || total_cost,
+  )
 }
 
 /**
@@ -252,16 +252,16 @@ function mapPartnerFinancingEntities(data, project) {
   return data
     .map((d) => {
       // format complete_name and type
-      let complete_name = formatIfString(d['C']);
-      let type = null;
+      let complete_name = formatIfString(d['C'])
+      let type = null
       const tokens = complete_name
         ? complete_name.split(' ').map((d) => d.trim())
-        : [];
+        : []
 
       // if last token is wrapped in parentheses update the complete name and type
       if (/^\(.*\)$/.test(tokens[tokens.length - 1])) {
-        complete_name = tokens.slice(0, tokens.length - 1).join(' ');
-        type = tokens[tokens.length - 1].replace(/^\(|\)$/g, '');
+        complete_name = tokens.slice(0, tokens.length - 1).join(' ')
+        type = tokens[tokens.length - 1].replace(/^\(|\)$/g, '')
       }
 
       return {
@@ -271,9 +271,9 @@ function mapPartnerFinancingEntities(data, project) {
         type: type, // partner type
         siret: d['E'] ? d['E'].replace(/[^0-9]/g, '') : null, // partner SIRET, filter out non numeric characters
         project: project, // project name
-      };
+      }
     })
-    .filter(({ complete_name, name, siret }) => complete_name || name || siret);
+    .filter(({ complete_name, name, siret }) => complete_name || name || siret)
 }
 
 /**
@@ -284,17 +284,18 @@ function mapPartnerFinancingEntities(data, project) {
  */
 function anonymizeDescription(description) {
   if (!description) {
-    return null;
+    return null
   }
   const tokens = description
     .trim()
     // replace special characters with spaces but keep accents
     .replace(/[^a-zA-ZÀ-ž0-9\s]/g, ' ')
-    .split(' ');
+    .split(' ')
   const anonymized_tokens = tokens.filter(
-    (token) => known_tokens.includes(token.toUpperCase()) || /^\d+$/.test(token)
-  );
-  return anonymized_tokens.join(' ');
+    (token) =>
+      known_tokens.includes(token.toUpperCase()) || /^\d+$/.test(token),
+  )
+  return anonymized_tokens.join(' ')
 }
 
 // all known token used for post description classification
@@ -425,4 +426,4 @@ const known_tokens = [
   'TR',
   'TSCDD',
   'universités',
-].map((token) => token.trim().toLocaleUpperCase());
+].map((token) => token.trim().toLocaleUpperCase())

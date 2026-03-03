@@ -1,6 +1,6 @@
-import * as d3 from "d3"
-import d3_cloud from "d3-cloud"
-import { vdbi_orange_analogic_color_scale } from "./color.js"
+import * as d3 from 'd3'
+import d3_cloud from 'd3-cloud'
+import { vdbi_orange_analogic_color_scale } from './color.js'
 
 /**
  * Create a word cloud using d3-cloud.
@@ -34,13 +34,13 @@ export function wordCloud(
     font = () =>
       d3.scaleQuantize().range([
         // "Verdana, sans-serif",
-        "Trebuchet MS, sans-serif",
+        'Trebuchet MS, sans-serif',
         // "Impact, sans-serif",
         // "Georgia, serif",
         // "Garamond, serif",
       ])(Math.random()),
-    font_style = "normal",
-    font_weight = "bold",
+    font_style = 'normal',
+    font_weight = 'bold',
     // font_weight = "normal",
     // font_weight = (d) =>
     //   d3.scaleQuantize(domain, ["lighter", "lighter", "normal", "bold"])(
@@ -56,7 +56,7 @@ export function wordCloud(
       (~~(Math.random() * angle_number) - angle_number / 2) * angle_width +
       angle_offset,
     color = () => vdbi_orange_analogic_color_scale(Math.random()),
-  } = {}
+  } = {},
 ) {
   const cloud = d3_cloud()
     .size([width, height])
@@ -66,33 +66,33 @@ export function wordCloud(
     .fontStyle(font_style)
     .fontWeight(font_weight)
     .fontSize(font_size)
-    .on("end", draw)
+    .on('end', draw)
 
   const svg = d3
-    .create("svg")
-    .attr("width", cloud.size()[0])
-    .attr("height", cloud.size()[1])
+    .create('svg')
+    .attr('width', cloud.size()[0])
+    .attr('height', cloud.size()[1])
 
   const words = svg
-    .append("g")
+    .append('g')
     .attr(
-      "transform",
-      `translate(${cloud.size()[0] / 2},${cloud.size()[1] / 2})`
+      'transform',
+      `translate(${cloud.size()[0] / 2},${cloud.size()[1] / 2})`,
     )
 
   function draw(data) {
-    console.debug("wordcloud data", data)
+    console.debug('wordcloud data', data)
     words
-      .selectAll("text")
+      .selectAll('text')
       .data(data)
-      .join("text")
-      .style("font-size", (d) => d.size + "px")
-      .style("font-family", (d) => d.font)
-      .style("font-style", (d) => d.style)
-      .style("font-weight", (d) => d.weight)
-      .style("fill", color)
-      .attr("text-anchor", "middle")
-      .attr("transform", (d) => `translate(${[d.x, d.y]})rotate(${d.rotate})`)
+      .join('text')
+      .style('font-size', (d) => d.size + 'px')
+      .style('font-family', (d) => d.font)
+      .style('font-style', (d) => d.style)
+      .style('font-weight', (d) => d.weight)
+      .style('fill', color)
+      .attr('text-anchor', 'middle')
+      .attr('transform', (d) => `translate(${[d.x, d.y]})rotate(${d.rotate})`)
       .text(keyMap)
   }
 

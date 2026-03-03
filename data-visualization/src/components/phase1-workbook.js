@@ -262,7 +262,11 @@ export function resolveResearcherEntities(
           orcid: cleanDatum(D[0]['ORCID']),
           idhal: cleanDatum(D[0]['IDHAL']),
           lab: cleanDatum(D[0]['Identifiant Laboratoire']),
-          domain_erc_lab: cleanDatum(D[0]['DOMAINE ERC LABO (sources RNSR)']),
+          domain_erc_lab: D[0]['DOMAINE ERC LABO (sources RNSR)']
+            ? D[0]['DOMAINE ERC LABO (sources RNSR)']
+                .split(';')
+                .map((d) => d.trim())
+            : [],
           disciplines_erc_lab: filterEmptyArray([
             D[0]['DISCIPLINES ERC LABO 1 (sources RNSR)'],
             D[0]['DISCIPLINES ERC LABO 2 (sources RNSR)'],
@@ -274,9 +278,11 @@ export function resolveResearcherEntities(
             D[0]['DISCIPLINES ERC LABO 8 (sources RNSR)'],
             D[0]['DISCIPLINES ERC LABO 9 (sources RNSR)'],
           ]),
-          domain_hceres: cleanDatum(
-            D[0]['Domaines scientifique HCERES 1 (sources RNSR)'],
-          ),
+          domain_hceres: D[0]['Domaines scientifique HCERES 1 (sources RNSR)']
+            ? D[0]['Domaines scientifique HCERES 1 (sources RNSR)']
+                .split(' - ')
+                .map((d) => d.trim().replace('SV ', 'SVE '))
+            : [],
           disciplines_hceres: filterEmptyArray([
             D[0]['Sous-domaines scientifique HCERES 1  (sources RNSR)'],
             D[0]['Sous-Domaines scientifique HCERES 2  (sources RNSR)'],
@@ -498,12 +504,21 @@ export function extractPhase1Workbook(
     // delete project.labs
   })
 
+  let laboratories_by_domains_erc = new Map()
   let laboratories_by_disciplines_erc = new Map()
+  let laboratories_by_domains_hceres = new Map()
   let laboratories_by_disciplines_hceres = new Map()
   researchers.forEach((researcher) => {
     const lab = laboratories.find((lab) => lab.lab == researcher.lab)
     if (typeof lab !== 'undefined') {
       lab.domain_erc = researcher.domain_erc_lab
+      if (!laboratories_by_domains_erc.has(lab.lab)) {
+        laboratories_by_domains_erc.set(lab.lab, new Set())
+      }
+      researcher.domain_erc_lab.forEach((d) =>
+        laboratories_by_domains_erc.get(lab.lab).add(d),
+      )
+
       if (!laboratories_by_disciplines_erc.has(lab.lab)) {
         laboratories_by_disciplines_erc.set(lab.lab, new Set())
       }
@@ -512,6 +527,13 @@ export function extractPhase1Workbook(
       )
 
       lab.domain_hceres = researcher.domain_hceres
+      if (!laboratories_by_domains_hceres.has(lab.lab)) {
+        laboratories_by_domains_hceres.set(lab.lab, new Set())
+      }
+      researcher.domain_hceres.forEach((d) =>
+        laboratories_by_domains_hceres.get(lab.lab).add(d),
+      )
+
       if (!laboratories_by_disciplines_hceres.has(lab.lab)) {
         laboratories_by_disciplines_hceres.set(lab.lab, new Set())
       }
@@ -533,11 +555,19 @@ export function extractPhase1Workbook(
     researchers,
     laboratories,
     project_by_laboratories,
+    laboratories_by_domains_erc: merge(
+      laboratories_by_domains_erc.keys().map((lab) =>
+        [...laboratories_by_domains_erc.get(lab)].map((domain) => ({
+          lab: lab,
+          domain: domain || null,
+        })),
+      ),
+    ),
     laboratories_by_disciplines_erc: merge(
       laboratories_by_disciplines_erc.keys().map((lab) =>
         [...laboratories_by_disciplines_erc.get(lab)].map((discipline) => ({
           lab: lab,
-          discipline: discipline ? discipline : null,
+          discipline: discipline || null,
         })),
       ),
     ),
@@ -545,7 +575,15 @@ export function extractPhase1Workbook(
       laboratories_by_disciplines_hceres.keys().map((lab) =>
         [...laboratories_by_disciplines_hceres.get(lab)].map((discipline) => ({
           lab: lab,
-          discipline: discipline ? discipline : null,
+          discipline: discipline || null,
+        })),
+      ),
+    ),
+    laboratories_by_domains_hceres: merge(
+      laboratories_by_domains_hceres.keys().map((lab) =>
+        [...laboratories_by_domains_hceres.get(lab)].map((domain) => ({
+          lab: lab,
+          domain: domain || null,
         })),
       ),
     ),
@@ -599,7 +637,7 @@ export function filterOnInput(data, input_criteria, criteria_functions) {
  * Return the possible options of a column
  *
  * @param {Object[]} data - the dataset
- * @param {String} key - the column to search in
+ * @param {string} key - the column to search in
  * @returns {String[]} an Array of the possible options found in the column
  */
 export function getColumnOptions(data, key) {

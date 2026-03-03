@@ -49,21 +49,21 @@ import {
   getLabSheet,
   resolvePhase1Entities,
   resolveLaboEntities,
-} from "/components/240117-proposals-labs-establishments.js"
+} from '/components/240117-proposals-labs-establishments.js'
 import {
   getProductSheet,
   resolveProjectEntities,
-} from "/components/240108-proposals-keywords.js"
-import { mapProjectsToRDFGraph } from "/components/graph.js"
-import { mapCounts, mergeCounts } from "/components/utilities.js"
+} from '/components/240108-proposals-keywords.js'
+import { mapProjectsToRDFGraph } from '/components/graph.js'
+import { mapCounts } from '/components/utilities.js'
 ```
 
 ```js
 const workbook1 = FileAttachment(
-  "/data/private/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx"
+  '/data/private/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx',
 ).xlsx()
 const workbook2 = FileAttachment(
-  "/data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
+  '/data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx',
 ).xlsx()
 ```
 
@@ -73,12 +73,12 @@ const acronymousDict = new Map()
 const projects_product = resolveProjectEntities(
   getProductSheet(workbook1),
   anonymize,
-  acronymousDict
+  acronymousDict,
 )
 const projects_phase_1 = resolvePhase1Entities(
   getPhase1Sheet(workbook2),
   anonymize,
-  acronymousDict
+  acronymousDict,
 )
 ```
 
@@ -94,7 +94,7 @@ Projects from laboratory workbook:
 display(projects_phase_1)
 ```
 
-### Simple XBar plot - count keywords
+## Simple XBar plot - count keywords
 
 Map-group-reduce-sort the keywords of each project to an array and count the
 occurences of each word
@@ -107,7 +107,7 @@ function countEntities(data, mapFunction) {
   const entityCounts = d3.rollup(
     entity_list,
     (D) => D.length,
-    (d) => d
+    (d) => d,
   )
   // map entityCounts to a [{x: entity, y: count}] data structure
   const formatted_entity_counts = d3.map(
@@ -117,7 +117,7 @@ function countEntities(data, mapFunction) {
         entity: key,
         count: value,
       }
-    }
+    },
   )
   // sort by entity and return
   return d3.sort(formatted_entity_counts, (d) => d.entity)
@@ -125,7 +125,7 @@ function countEntities(data, mapFunction) {
 
 const sorted_keyword_counts = countEntities(
   projects_product,
-  (project) => project.motClefs
+  (project) => project.motClefs,
 )
 display(sorted_keyword_counts)
 ```
@@ -144,32 +144,32 @@ display(
     height: sorted_keyword_counts.length * 15,
     marginLeft: 150,
     color: {
-      scheme: "Spectral",
+      scheme: 'Spectral',
     },
     x: {
       grid: true,
-      axis: "both",
-      anchor: "top",
+      axis: 'both',
+      anchor: 'top',
     },
     y: {
       // cut off long tick labels
-      tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat("...") : d),
+      tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat('...') : d),
       fontSize: 20,
     },
     marks: [
       Plot.barX(sorted_keyword_counts, {
-        x: "count",
-        y: "entity",
-        title: "entity",
+        x: 'count',
+        y: 'entity',
+        title: 'entity',
         // shift up the color values to be more visible
         fill: d3.map(sorted_keyword_counts, (d) => d.count + 2),
       }),
     ],
-  })
+  }),
 )
 ```
 
-### Sorted Grouped XBar plot - count project universities and partners
+## Sorted Grouped XBar plot - count project universities and partners
 
 <!--
 Map table to graph first
@@ -183,7 +183,7 @@ A count of establishment owners (or a count of projects per establishment owner)
 ```js echo
 const sorted_establishment_owner_counts = countEntities(
   projects_phase_1,
-  (project) => project.etablissements.slice(0, 1)
+  (project) => project.etablissements.slice(0, 1),
 )
 display(sorted_establishment_owner_counts)
 ```
@@ -193,7 +193,7 @@ A count of establishment partners (or a count of projects per establishment part
 ```js echo
 const sorted_establishment_partner_counts = countEntities(
   projects_phase_1,
-  (project) => project.etablissements.slice(1)
+  (project) => project.etablissements.slice(1),
 )
 display(sorted_establishment_partner_counts)
 ```
@@ -219,7 +219,7 @@ Combine counts to one array and calculate count totals
 ```js echo
 const establishment_counts = mapCounts(
   [sorted_establishment_owner_counts, sorted_establishment_partner_counts],
-  ["owner", "partner"]
+  ['owner', 'partner'],
 )
 
 const total_establishment_counts = d3.sort(
@@ -234,13 +234,13 @@ const total_establishment_counts = d3.sort(
         return {
           entity: D[0].entity,
           count: count,
-          type: "total",
+          type: 'total',
         }
       },
-      (d) => d.entity
+      (d) => d.entity,
     )
     .values(),
-  (d) => d.entity
+  (d) => d.entity,
 )
 ```
 
@@ -250,7 +250,7 @@ Merge counts into one dataset
 const sorted_establishment_counts = d3.sort(
   establishment_counts.concat(total_establishment_counts),
   (d) => d.count,
-  (d) => d.entity
+  (d) => d.entity,
 )
 display(sorted_establishment_counts)
 ```
@@ -266,40 +266,40 @@ display(
     marginLeft: 60,
     marginRight: 150,
     color: {
-      scheme: "Plasma",
+      scheme: 'Plasma',
     },
     x: {
       grid: true,
-      axis: "both",
-      anchor: "top",
+      axis: 'both',
+      anchor: 'top',
     },
     fy: {
       // cut off long tick labels
-      tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat("...") : d),
+      tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat('...') : d),
     },
     marks: [
       Plot.barX(sorted_establishment_counts, {
-        x: "count",
-        y: "type",
-        fy: "entity",
-        title: "entity",
-        fill: "count",
-        sort: { fy: "-x" },
+        x: 'count',
+        y: 'type',
+        fy: 'entity',
+        title: 'entity',
+        fill: 'count',
+        sort: { fy: '-x' },
       }),
     ],
-  })
+  }),
 )
 ```
 
-### Sorted YBar plot - count project cities
+## Sorted YBar plot - count project cities
 
 Get lab cities (from workbook for now)
 
 ```js echo
 const city_data = getVillesSheet(workbook2).map((d) => {
   return {
-    etablissement: [d["Etablissements"]],
-    lieu: [d["Lieu"]],
+    etablissement: [d['Etablissements']],
+    lieu: [d['Lieu']],
   }
 })
 display(city_data)
@@ -310,7 +310,7 @@ A count of project cities
 ```js echo
 const city_count = countEntities(
   city_data,
-  (establishment) => establishment.lieu
+  (establishment) => establishment.lieu,
 )
 display(city_count)
 ```
@@ -324,7 +324,7 @@ display(
     height: 600,
     marginBottom: 60,
     color: {
-      scheme: "Turbo",
+      scheme: 'Turbo',
     },
     x: {
       tickRotate: 30,
@@ -334,17 +334,17 @@ display(
     },
     marks: [
       Plot.barY(city_count, {
-        x: "entity",
-        y: "count",
-        fill: "count",
-        sort: { x: "y" },
+        x: 'entity',
+        y: 'count',
+        fill: 'count',
+        sort: { x: 'y' },
       }),
     ],
-  })
+  }),
 )
 ```
 
-### Sorted YLine plot - count project laboratories (project owners and partners)
+## Sorted YLine plot - count project laboratories (project owners and partners)
 
 <!--
 Get lab data (from workbook for now)
@@ -359,7 +359,7 @@ A count of lab project owners
 
 ```js echo
 const lab_owner_count = countEntities(projects_phase_1, (project) =>
-  project.laboratoires.slice(0, 1)
+  project.laboratoires.slice(0, 1),
 )
 display(lab_owner_count)
 ```
@@ -368,7 +368,7 @@ A count of lab project partners
 
 ```js echo
 const lab_partner_count = countEntities(projects_phase_1, (project) =>
-  project.laboratoires.slice(1)
+  project.laboratoires.slice(1),
 )
 display(lab_partner_count)
 ```
@@ -378,66 +378,10 @@ Combine counts to one array and calculate count totals
 ```js echo
 const lab_counts = mapCounts(
   [lab_owner_count, lab_partner_count],
-  ["owner", "partner"]
+  ['owner', 'partner'],
 )
 
-const total_lab_counts = d3.sort(
-  d3
-    .rollup(
-      lab_counts,
-      (D) => {
-        let count = 0
-        D.forEach((d) => {
-          count = count + d.count
-        })
-        return {
-          entity: D[0].entity,
-          count: count,
-          type: "total",
-        }
-      },
-      (d) => d.entity
-    )
-    .values(),
-  (d) => d.entity
-)
-```
-
-Group counts together
-
-```js echo
-// const sorted_lab_counts = d3.sort(
-//   lab_counts.concat(total_lab_counts),
-//   (d) => d.entity
-//   // (d) => d.count,
-// );
-
-const sorted_lab_counts = []
-
-d3.sort(
-  mergeCounts(
-    [lab_owner_count, lab_partner_count, total_lab_counts],
-    ["owner_count", "partner_count", "total_count"]
-  ).values(),
-  (d) => d.entity
-).forEach((d) => {
-  sorted_lab_counts.push({
-    entity: d.entity,
-    count: d.owner_count,
-    type: "owner",
-  })
-  sorted_lab_counts.push({
-    entity: d.entity,
-    count: d.partner_count,
-    type: "partner",
-  })
-  sorted_lab_counts.push({
-    entity: d.entity,
-    count: d.total_count,
-    type: "total",
-  })
-})
-display(sorted_lab_counts)
+display(lab_counts)
 ```
 
 ... and plot data
@@ -446,7 +390,7 @@ display(sorted_lab_counts)
 display(
   Plot.plot({
     // assure adequate horizontal space for each line
-    height: sorted_lab_counts.length * 7,
+    height: lab_counts.length * 7,
     width: 1000,
     marginLeft: 150,
     color: {
@@ -454,24 +398,24 @@ display(
     },
     x: {
       grid: true,
-      axis: "both",
+      axis: 'both',
     },
     y: {
       grid: true,
       // cut off long tick labels
-      tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat("...") : d),
+      tickFormat: (d) => (d.length > 25 ? d.slice(0, 23).concat('...') : d),
       ticks: 10,
     },
     marks: [
-      Plot.lineY(sorted_lab_counts, {
-        x: "count",
-        y: "entity",
-        z: "type",
-        title: "entity",
-        stroke: "type",
+      Plot.lineY(lab_counts, {
+        x: 'count',
+        y: 'entity',
+        z: 'type',
+        title: 'entity',
+        stroke: 'type',
         marker: true,
       }),
     ],
-  })
+  }),
 )
 ```

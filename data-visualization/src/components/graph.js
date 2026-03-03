@@ -16,7 +16,7 @@ import { cropText, wrapText } from './utilities.js'
  * - !`null` and `undefined` properties are NOT ignored!
  * This function is useful for creating the links of a directed property graph
  * @param {Object[]} data - input table
- * @param {Object} options - configuration options
+ * @param {object} options - configuration options
  * @returns {Object<Array, Array>}
  */
 export function mapTableToPropertyGraphLinks(
@@ -109,7 +109,7 @@ export function mapTableToPropertyGraphLinks(
  * - `null` and `undefined` property values are ignored
  * This function is useful for creating the links of a directed graph
  * @param {Object[]} data - input table
- * @param {Object} options - configuration options
+ * @param {object} options - configuration options
  * @returns {Object<Array, Array>}
  */
 export function mapTableToTriples(
@@ -178,11 +178,11 @@ export function mapTableToTriples(
  * Parse tabular data to a graph object.
  * Adapted from https://observablehq.com/@d3/nike-quarterly-statement?collection=@d3/d3-sankey
  * @param {Object[]} data - input table
- * @param {String} data.source - link source
- * @param {String} data.target - link target
- * @param {String} data.value - link target
- * @param {String} data.color - link color
- * @param {Object} options - configuration options
+ * @param {string} data.source - link source
+ * @param {string} data.target - link target
+ * @param {string} data.value - link target
+ * @param {string} data.color - link color
+ * @param {object} options - configuration options
  * @returns {Object<Array, Array>}
  */
 export function parseTabularGraph(
@@ -1115,8 +1115,8 @@ export function filterLinks(graph, filterFunction, keyMap = (d) => d.id) {
 * Create an arc diagram from a graph dataset
 * Adapted from: https://observablehq.com/@d3/arc-diagram
 *
-* @param {Object} - a graph object with properites `nodes` and `links`
-# @param {Object} options - configuration options for the diagram 
+* @param {object} - a graph object with properites `nodes` and `links`
+# @param {object} options - configuration options for the diagram 
 * @returns {d3.node} - SVG node containing the arc diagram
 */
 export function arcDiagramVertical(
@@ -1410,7 +1410,7 @@ export function arcDiagramVertical(
  * - "by property": the nodes are sorted by a node property
  * - "by degree": the nodes are sorted by their group
  *
- * @param {Object} - a graph object with properites `nodes` and `links`
+ * @param {object} - a graph object with properites `nodes` and `links`
  * @returns {Map} - a map of the node sort functions
  */
 export function sortNodes(

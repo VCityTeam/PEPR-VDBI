@@ -1,57 +1,24 @@
-import { map, merge, rollups, filter, selectAll, create } from 'd3'
+import { rollups, filter, selectAll, create } from 'd3'
 import { button } from '@observablehq/inputs'
 import { nameByRace } from 'fantasy-name-generator'
 import { html } from 'npm:htl'
-
-// TODO: mapCounts and mergeCounts need to be reworked with new countEntities
 
 /**
  * Map a type attribute to each datum of a count dataset
  *
  * @param {Object[]} datasets - An array of count datasets of length n
- * @param {Object[]} datasets[].entity - a datum value
- * @param {Object[]} datasets[].count - the count of the datum's value in a dataset
- * @param {string[]} count_types An array of types of length n
- * @returns {Object[]} - An array of all datum with mapped types from each dataset
+ * @param {string} datasets[].entity - a datum value
+ * @param {number} datasets[].count - the count of the datum's value in a dataset
+ * @param {String[]} count_types An array of types of length n
+ * @returns {Object[]} - An array of all datum with types
  */
 export function mapCounts(datasets, count_types) {
   const mappedData = []
 
   for (let index = 0; index < datasets.length; index++) {
-    datasets[index].forEach((d) => {
-      const typed_d = { ...d }
-      typed_d.type = count_types[index]
-      mappedData.push(typed_d)
-    })
-  }
-
-  return mappedData
-}
-
-/**
- * Merge each count dataset from countEntities()
- *
- * @param {Object[]} datasets - An array of count datasets of length n
- * @param {Object[]} datasets[].entity - a datum value
- * @param {Object[]} datasets[].count - the count of the datum's value in a dataset
- * @param {string[]} count_types An array of types of length n
- * @returns {Object[]} - An array of all datum with mapped types from each dataset
- */
-export function mergeCounts(datasets, count_types) {
-  // TODO: this can be optimized and simplified with a map, reduce, Array.concat
-  const mappedData = new Map()
-
-  for (let index = 0; index < datasets.length; index++) {
-    datasets[index].forEach((d) => {
-      if (typeof mappedData.get(d[0]) === 'undefined') {
-        const new_d = { entity: d[0] }
-        count_types.forEach((count_type) => {
-          new_d[count_type] = 0
-        })
-        mappedData.set(d[0], new_d)
-      }
-      mappedData.get(d[0])[count_types[index]] = d[1]
-    })
+    datasets[index].forEach((d) =>
+      mappedData.push({ ...d, type: count_types[index] }),
+    )
   }
 
   return mappedData
@@ -73,7 +40,9 @@ export function countEntities(data, mapFunction) {
   // extract the entity from the dataset as an array and merge all entites
   // rollup to a count of each unique entity,
   return rollups(
-    merge(map(data, (d) => mapFunction(d))),
+    data.flatMap((d) =>
+      Array.isArray(mapFunction(d)) ? mapFunction(d) : [mapFunction(d)],
+    ),
     (D) => D.length,
     (d) => d,
   )
@@ -389,8 +358,8 @@ export function getAttributeByPath(obj, path) {
  * @param {object} options - button options
  * @param {Array|null} options.columns - a list of columns to be copied, if null all columns
  *  will be copied
- * @param {String} options.label - button label
- * @param {String} options.delimeter -
+ * @param {string} options.label - button label
+ * @param {string} options.delimeter -
  * @returns {button} - a button element that copies the data to the clipboard
  */
 export function copyTableToClipboardButton(
@@ -416,7 +385,7 @@ export function copyTableToClipboardButton(
  * A button for copying an SVG element to the clipboard.
  *
  * @param {Element} element - the element to be copied. Ignored if callback is set
- * @param {String} label - button label
+ * @param {string} label - button label
  * @param {Function} callback - an optional callback function to dynamically return the SVG
  * @returns {button} - a button element that copies the element html to the clipboard
  */
@@ -449,8 +418,8 @@ export function copySVGToClipboardButton(
  *
  * @param {Function} callback - a callback function to get the data to be downloaded,
  *   rows should contain keys corresponding to the columns of the table
- * @param {String} label - button label
- * @param {String} filename - downloaded file name
+ * @param {string} label - button label
+ * @param {string} filename - downloaded file name
  * @returns {button} - a button element that copies the element html to the clipboard
  */
 export function downloadTableButton(
@@ -491,8 +460,8 @@ export function downloadTableButton(
  *
  * @param {Function} callback - a callback function to get the data to be downloaded,
  *   rows should contain keys corresponding to the columns of the table
- * @param {String} label - button label
- * @param {String} filename - downloaded file name
+ * @param {string} label - button label
+ * @param {string} filename - downloaded file name
  * @returns {button} - a button element that copies the element html to the clipboard
  */
 export function downloadJSONButton(
@@ -522,9 +491,9 @@ export function downloadJSONButton(
 /**
  * A button for downloading one or many an SVG elements with a d3 selector.
  *
- * @param {String} selector - a d3 selector string for returning the svg elements to be downloaded.
- * @param {String} label - button label
- * @param {String} filename - downloaded file name
+ * @param {string} selector - a d3 selector string for returning the svg elements to be downloaded.
+ * @param {string} label - button label
+ * @param {string} filename - downloaded file name
  * @returns {button} - a button element that copies the element html to the clipboard
  */
 export function downloadSVGButton(
@@ -630,7 +599,7 @@ export function request(method, url, options = {}) {
  * Used Github Copilot to improve BOM handling for UTF-8 text files.
  *
  * @param {any} content - content to write
- * @param {String} content_type - file content mime type
+ * @param {string} content_type - file content mime type
  *
  * @returns {button}
  */
