@@ -17,6 +17,7 @@
     "d3": "latest",
     "d3-cloud": "^1.2.7",
     "d3-sankey": "^0.12.3",
+    "exceljs": "^4.4.0",
     "fantasy-name-generator": "^2.0.0",
     "geocoder": "^0.1.0"
   },

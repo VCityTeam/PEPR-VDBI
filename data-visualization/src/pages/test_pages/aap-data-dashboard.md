@@ -19,12 +19,6 @@ import {
 ```
 
 ```js
-const workbook = FileAttachment(
-  '/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
-).xlsx()
-```
-
-```js
 const financed_only = view(
   Inputs.toggle({ label: 'Only financed projects?', value: true }),
 )
@@ -32,7 +26,9 @@ const financed_only = view(
 
 ```js
 const phase_1_data = extractPhase1Workbook(
-  workbook,
+  await FileAttachment(
+    '/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
+  ).xlsx(),
   false,
   false,
   financed_only,

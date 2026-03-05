@@ -1,11 +1,11 @@
-import { map, filter, rollup, merge } from 'd3'
+import { map, filter, rollup, merge } from 'npm:d3'
 import {
   anonymizeEntry,
   pseudoanonymizeEntry,
   filterEmptyArray,
   toLowerPreservingAcronyms,
 } from '../../components/utilities.js'
-import * as Plot from '@observablehq/plot'
+import * as Plot from 'npm:@observablehq/plot'
 
 /**
  * Extract data from the GÉNÉRALITÉ sheet
@@ -599,11 +599,11 @@ export function extractPhase1Workbook(
  * @param {string} label - The project label to clean up
  * @returns {string} The cleaned-up project label
  */
-function cleanUpProjectLabel(label) {
+export function cleanUpProjectLabel(label) {
   return label.toUpperCase().replace(/É/g, 'E')
 }
 
-function cleanDatum(d) {
+export function cleanDatum(d) {
   if (!d) return null
   if (typeof d === 'string') return d.trim()
   return d
