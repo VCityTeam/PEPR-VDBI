@@ -1,7 +1,6 @@
 ---
 sql:
-  # remember to export or reencode the template as UTF-8
-  AAP2_template_export: /data/private/AAP2_template_export.csv
+  AAP2_template_export: /data/AAP2_template_export.csv
   AAP2_submission_metadata: /data/private/AAP2_submission_metadata.csv
 ---
 
@@ -442,14 +441,6 @@ display(challenge_count_2)
 
 ## Data quality
 
-<div class="card">
-  <h2>Empty template exports</h2>
-  ${Inputs.table(sql`
-    SELECT column000 as "pdf_name" FROM AAP2_template_export WHERE titre IS NULL
-  `)}
-
-</div>
-
 ```js
 display('projects')
 display(Inputs.table(projects))
@@ -475,7 +466,7 @@ display(Inputs.table(all_partners_by_project))
 
 ```sql id=projects
 select
-  DOCID,
+  AAP2_submission_metadata.DOCID,
   STATUT,
   TYPDOC,
   type_projet,
@@ -541,6 +532,10 @@ select
       trim("CNU2.12"::VARCHAR),
       trim("CNU2.13"::VARCHAR),
       trim("CNU2.14"::VARCHAR),
+      trim("cnu-6-0"::VARCHAR),
+      trim("cnu-6-1"::VARCHAR),
+      trim("cnu-6-2"::VARCHAR),
+      trim("cnu-6-3"::VARCHAR),
     ]),
     x -> x is not null
   ) as cnus,
@@ -571,7 +566,7 @@ select
 from AAP2_submission_metadata
 left join AAP2_template_export
 on AAP2_submission_metadata.DOCID =
-  replace(AAP2_template_export.column000, '.pdf', '')
+  AAP2_template_export.DOCID
 ```
 
 ```js
@@ -593,7 +588,7 @@ select * from(
         "siret-5"::VARCHAR,
         "siret-6"::VARCHAR,
         "siret-7"::VARCHAR,
-        "siret"::VARCHAR,
+        "siret-8"::VARCHAR,
         "siret-9"::VARCHAR,
         "SIRET2.0"::VARCHAR,
         "SIRET2.1"::VARCHAR,
@@ -778,7 +773,7 @@ select * from(
 ```sql id=all_institutions_by_project
 select project_id, id as institution_id from (
   select
-    replace(column000, '.pdf', '') as project_id,
+    DOCID as project_id,
     unnest(
       apply([
         "siret-0"::VARCHAR,
@@ -789,7 +784,7 @@ select project_id, id as institution_id from (
         "siret-5"::VARCHAR,
         "siret-6"::VARCHAR,
         "siret-7"::VARCHAR,
-        "siret"::VARCHAR,
+        "siret-8"::VARCHAR,
         "siret-9"::VARCHAR,
         "SIRET2.0"::VARCHAR,
         "SIRET2.1"::VARCHAR,
@@ -846,7 +841,7 @@ select project_id, id as institution_id from (
 ```sql id=all_unites_by_project
 select project_id, id as unite_id from (
   select
-    replace(column000, '.pdf', '') as project_id,
+    DOCID as project_id,
     unnest(
       apply([
         "rnsr-0"::VARCHAR,
@@ -914,7 +909,7 @@ select project_id, id as unite_id from (
 ```sql id=all_partners_by_project
 select project_id, id as partner_id from (
   select
-    replace(column000, '.pdf', '') as project_id,
+    DOCID as project_id,
     unnest(
       apply([
         "SIRET le cas échéant 1"::VARCHAR,
