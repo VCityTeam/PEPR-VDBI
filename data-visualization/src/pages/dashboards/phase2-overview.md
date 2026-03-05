@@ -31,7 +31,7 @@ import { cropText } from '/components/utilities.js'
     <h2>N° Intitutions <span class="muted">(Totale / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
-        ${total_identified_institutions.size.toLocaleString()}
+        ${[...all_institutions].length.toLocaleString()}
         <!-- $ -->
       </span> / 0
       <!-- ${financed_university_data.size.toLocaleString()} -->
@@ -42,7 +42,7 @@ import { cropText } from '/components/utilities.js'
     <h2>N° Unités <span class="muted">(Totale / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
-        ${total_unique_unites.size.toLocaleString()}
+        ${[...all_unites].length.toLocaleString()}
         <!-- $ -->
       </span> / 0
       <!-- ${financed_laboratory_data.size.toLocaleString()} -->
@@ -53,7 +53,7 @@ import { cropText } from '/components/utilities.js'
     <h2>N° Partenaires <span class="muted">(Totale / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
-        ${total_unique_partners.size.toLocaleString()}
+        ${[...all_partners].length.toLocaleString()}
         <!-- $ -->
       </span> / 0
       <!-- ${financed_partner_data.size.toLocaleString()} -->
@@ -66,7 +66,7 @@ import { cropText } from '/components/utilities.js'
 
 <div class="grid grid-cols-3">
   <div class="card">
-    <h2>University count by Project</h2>
+    <h2>Top 15 projets par n° d'institutions</h2>
     ${project_universities_laureate_input}
     <!-- $ -->
     ${project_universities_sort_input}
@@ -75,20 +75,17 @@ import { cropText } from '/components/utilities.js'
       total_projects_by_institution,
       {
         width,
-        y_label: "University",
-        x_label: "Occurences",
+        y_label: "Projets",
+        x_label: "N° Institutions",
         sort_value: project_universities_sort,
-        y_accessor: (d) => cropText(
-          [...projects].find((p) => p.DOCID == d[0]).TITLE,
-          25,
-        ),
+        y_accessor: (d) => cropText(d[0], 25),
         x_accessor: (d) => d[1].length,
       }
     ))}
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Laboratory count by Project</h2>
+    <h2>Top 15 projets par n° d'unités</h2>
     ${project_laboratories_laureate_input}
     <!-- $ -->
     ${project_laboratories_sort_input}
@@ -97,20 +94,17 @@ import { cropText } from '/components/utilities.js'
       total_projects_by_unite,
       {
         width,
-        y_label: "Laboratory",
-        x_label: "Occurences",
+        y_label: "Projets",
+        x_label: "N° Unités",
         sort_value: project_laboratories_sort,
-        y_accessor: (d) => cropText(
-          [...projects].find((p) => p.DOCID == d[0]).TITLE,
-          25,
-        ),
+        y_accessor: (d) => cropText(d[0], 25),
         x_accessor: (d) => d[1].length,
       }
     ))}
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Partner count by Project</h2>
+    <h2>Top 15 projets par n° de partenaires</h2>
     ${project_partners_laureate_input}
     <!-- $ -->
     ${project_partners_sort_input}
@@ -119,13 +113,10 @@ import { cropText } from '/components/utilities.js'
       total_projects_by_partner,
       {
         width,
-        y_label: "Partner",
-        x_label: "Occurences",
+        y_label: "Projets",
+        x_label: "N° Partenaires",
         sort_value: project_partners_sort,
-        y_accessor: (d) => cropText(
-          [...projects].find((p) => p.DOCID == d[0]).TITLE,
-          25,
-        ),
+        y_accessor: (d) => cropText(d[0], 25),
         x_accessor: (d) => d[1].length,
       }
     ))}
@@ -139,7 +130,7 @@ const project_universities_laureate = Generators.input(
   project_universities_laureate_input,
 )
 
-const project_universities_sort_input = page.sortSelect()
+const project_universities_sort_input = page.ySortSelect()
 const project_universities_sort = Generators.input(
   project_universities_sort_input,
 )
@@ -149,7 +140,7 @@ const project_laboratories_laureate = Generators.input(
   project_laboratories_laureate_input,
 )
 
-const project_laboratories_sort_input = page.sortSelect()
+const project_laboratories_sort_input = page.ySortSelect()
 const project_laboratories_sort = Generators.input(
   project_laboratories_sort_input,
 )
@@ -159,89 +150,81 @@ const project_partners_laureate = Generators.input(
   project_partners_laureate_input,
 )
 
-const project_partners_sort_input = page.sortSelect()
+const project_partners_sort_input = page.ySortSelect()
 const project_partners_sort = Generators.input(project_partners_sort_input)
 ```
 
 ```js
 const total_projects_by_institution = d3.groups(
   [...all_institutions_by_project],
-  (d) => d.project_id,
+  (d) => d.DOCID,
 )
-const total_projects_by_identified_institution = new Map(
-  total_projects_by_institution,
-)
-total_projects_by_identified_institution.delete('Non renseigné')
 ```
 
 ```js
 const total_projects_by_unite = d3.groups(
   [...all_unites_by_project],
-  (d) => d.project_id,
+  (d) => d.DOCID,
 )
-const total_projects_by_unique_unite = new Map(total_projects_by_unite)
-total_projects_by_unique_unite.delete('Non renseigné')
 ```
 
 ```js
 const total_projects_by_partner = d3.groups(
   [...all_partners_by_project],
-  (d) => d.project_id,
+  (d) => d.DOCID,
 )
-const total_projects_by_unique_partner = new Map(total_projects_by_partner)
-total_projects_by_unique_partner.delete('Non renseigné')
 ```
 
 ## Partenaires
 
 <div class="grid grid-cols-3">
   <div class="card">
-    <h2>University count by Project</h2>
+    <h2>Top 15 institutions par n° d'occurences</h2>
     ${universities_sort_input}
     <!-- $ -->
     ${resize((width) => page.partnerCountPlot(
-      total_institutions,
+      [...all_institutions],
       {
         width,
-        y_label: "University",
-        x_label: "Occurences",
+        y_label: "Institution",
+        x_label: "N° Occurences",
         sort_value: universities_sort,
-        y_accessor: (d) => cropText(d[1][0].label, 25),
-        x_accessor: (d) => d[1].length,
+        y_accessor: "id",
+        x_accessor: "count",
       }
     ))}
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Laboratory count by Project</h2>
+    <h2>Top 15 unités de recherche par n° d'occurences</h2>
     ${laboratories_sort_input}
     <!-- $ -->
     ${resize((width) => page.partnerCountPlot(
-      total_unites,
+      [...all_unites],
       {
         width,
-        y_label: "Laboratory",
-        x_label: "Occurences",
+        y_label: "Unité",
+        x_label: "N° Occurences",
         sort_value: laboratories_sort,
-        y_accessor: (d) => cropText(d[1][0].label, 25),
-        x_accessor: (d) => d[1].length,
+        y_accessor: "id",
+        x_accessor: "count",
       }
     ))}
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Partner count by Project</h2>
+    <h2>Top 15 partnaires par n° d'occurences</h2>
     ${partners_sort_input}
     <!-- $ -->
     ${resize((width) => page.partnerCountPlot(
-      total_partners,
+      [...all_partners],
       {
         width,
-        y_label: "Partner",
-        x_label: "Occurences",
+        y_label: "Partnaire",
+        x_label: "N° Occurences",
         sort_value: partners_sort,
-        y_accessor: (d) => cropText(d[1][0].label, 25),
-        x_accessor: (d) => d[1].length,
+        y_accessor: "id",
+        x_accessor: "count",
       }
     ))}
     <!-- $ -->
@@ -249,32 +232,14 @@ total_projects_by_unique_partner.delete('Non renseigné')
 </div>
 
 ```js
-const universities_sort_input = page.sortSelect()
+const universities_sort_input = page.ySortSelect()
 const universities_sort = Generators.input(universities_sort_input)
 
-const laboratories_sort_input = page.sortSelect()
+const laboratories_sort_input = page.ySortSelect()
 const laboratories_sort = Generators.input(laboratories_sort_input)
 
-const partners_sort_input = page.sortSelect()
+const partners_sort_input = page.ySortSelect()
 const partners_sort = Generators.input(partners_sort_input)
-```
-
-```js
-const total_institutions = d3.groups([...all_institutions], (d) => d.id)
-const total_identified_institutions = new Map(total_institutions)
-total_identified_institutions.delete('Non renseigné')
-```
-
-```js
-const total_unites = d3.groups([...all_unites], (d) => d.id)
-const total_unique_unites = new Map(total_unites)
-total_unique_unites.delete('Non renseigné')
-```
-
-```js
-const total_partners = d3.groups([...all_partners], (d) => d.id)
-const total_unique_partners = new Map(total_partners)
-total_unique_partners.delete('Non renseigné')
 ```
 
 ## Défis
@@ -284,10 +249,15 @@ total_unique_partners.delete('Non renseigné')
     ${resize((width) => bubbleChartX(
       [...challenge_count_1],
       {
-        width,
-        height: width / 3,
-        x_accessor: (d) => d[0],
+        width: width,
+        height: 150,
+        title: "Défis des métadonnées des soumissions",
+        subtitle: `Les défis indiqués dans les métadonnées des soumissions sur
+          le site du dépôt`,
+        x_accessor: (d) => page.challenge_map.get(d[0]),
+        x_label: "Défis",
         r_accessor: (d) => d[1],
+        r_label: "Occurences",
       }
     ))}
     <!-- $ -->
@@ -296,10 +266,14 @@ total_unique_partners.delete('Non renseigné')
     ${resize((width) => bubbleChartX(
       [...challenge_count_2],
       {
-        width,
-        height: width / 3,
-        x_accessor: (d) => d[0],
+        width: width,
+        height: 150,
+        title: "Défis des templates des soumissions",
+        subtitle: "Les défis indiqués dans les templates (.PDFs) des soumissions",
+        x_accessor: (d) => page.challenge_map.get(d[0]),
+        x_label: "Défis",
         r_accessor: (d) => d[1],
+        r_label: "Occurences",
       }
     ))}
     <!-- $ -->
@@ -434,39 +408,17 @@ const challenge_count_2 = new Map([
       .get(true) || 0,
   ],
 ])
-
-display([...challenge_count_1])
-display(challenge_count_2)
 ```
 
 ## Data quality
 
-```js
-display('projects')
-display(Inputs.table(projects))
-display('AAP2_submission_metadata')
-display(Inputs.table(sql`select * from AAP2_submission_metadata`))
-display('AAP2_template_export')
-display(Inputs.table(sql`select * from AAP2_template_export`))
-display('all_institutions')
-display(Inputs.table(all_institutions))
-display('all_unites')
-display(Inputs.table(all_unites))
-display('all_partners')
-display(Inputs.table(all_partners))
-display('all_institutions_by_project')
-display(Inputs.table(all_institutions_by_project))
-display('all_unites_by_project')
-display(Inputs.table(all_unites_by_project))
-display('all_partners_by_project')
-display(Inputs.table(all_partners_by_project))
-```
-
 <!-- DATA IMPORT -->
 
-```sql id=projects
+### projects
+
+```sql id=projects display
 select
-  AAP2_submission_metadata.DOCID,
+  AAP2_submission_metadata.DOCID as DOCID,
   STATUT,
   TYPDOC,
   type_projet,
@@ -575,72 +527,91 @@ const [total_project_count] = await sql`
   from AAP2_submission_metadata`
 ```
 
-```sql id=all_institutions
-select * from(
+### all_institutions
+
+```sql id=all_institutions display
+select
+  id,
+  list_distinct(list(label)) as labels,
+  count(*) as count,
+from (
   select distinct
     unnest(
-      apply([
-        "siret-0"::VARCHAR,
-        "siret-1"::VARCHAR,
-        "siret-2"::VARCHAR,
-        "siret-3"::VARCHAR,
-        "siret-4"::VARCHAR,
-        "siret-5"::VARCHAR,
-        "siret-6"::VARCHAR,
-        "siret-7"::VARCHAR,
-        "siret-8"::VARCHAR,
-        "siret-9"::VARCHAR,
-        "SIRET2.0"::VARCHAR,
-        "SIRET2.1"::VARCHAR,
-        "SIRET2.2"::VARCHAR,
-        "SIRET2.3"::VARCHAR,
-        "SIRET2.4"::VARCHAR,
-        "SIRET2.5"::VARCHAR,
-        "SIRET2.6"::VARCHAR,
-        "SIRET2.7"::VARCHAR,
-        "SIRET2.8"::VARCHAR,
-        "SIRET2.9"::VARCHAR,
-        "SIRET2.10"::VARCHAR,
-        "SIRET2.11"::VARCHAR,
-        "SIRET2.12"::VARCHAR,
-        "SIRET2.13"::VARCHAR,
-        "SIRET2.14"::VARCHAR,
-      ],
-      x -> replace(x, ' ', ''))
+      apply(
+        [
+          "siret-0"::VARCHAR,
+          "siret-1"::VARCHAR,
+          "siret-2"::VARCHAR,
+          "siret-3"::VARCHAR,
+          "siret-4"::VARCHAR,
+          "siret-5"::VARCHAR,
+          "siret-6"::VARCHAR,
+          "siret-7"::VARCHAR,
+          "siret-8"::VARCHAR,
+          "siret-9"::VARCHAR,
+          "SIRET2.0"::VARCHAR,
+          "SIRET2.1"::VARCHAR,
+          "SIRET2.2"::VARCHAR,
+          "SIRET2.3"::VARCHAR,
+          "SIRET2.4"::VARCHAR,
+          "SIRET2.5"::VARCHAR,
+          "SIRET2.6"::VARCHAR,
+          "SIRET2.7"::VARCHAR,
+          "SIRET2.8"::VARCHAR,
+          "SIRET2.9"::VARCHAR,
+          "SIRET2.10"::VARCHAR,
+          "SIRET2.11"::VARCHAR,
+          "SIRET2.12"::VARCHAR,
+          "SIRET2.13"::VARCHAR,
+          "SIRET2.14"::VARCHAR,
+        ],
+        x -> replace(x, ' ', ''))
     ) as id,
-    unnest([
-      "institution-0"::VARCHAR,
-      "institution-1"::VARCHAR,
-      "institution-2"::VARCHAR,
-      "institution-3"::VARCHAR,
-      "institution-4"::VARCHAR,
-      "institution-5"::VARCHAR,
-      "institution-6"::VARCHAR,
-      "institution-7"::VARCHAR,
-      "institution-8"::VARCHAR,
-      "institution-9"::VARCHAR,
-      "Institution2.0"::VARCHAR,
-      "Institution2.1"::VARCHAR,
-      "Institution2.2"::VARCHAR,
-      "Institution2.3"::VARCHAR,
-      "Institution2.4"::VARCHAR,
-      "Institution2.5"::VARCHAR,
-      "Institution2.6"::VARCHAR,
-      "Institution2.7"::VARCHAR,
-      "Institution2.8"::VARCHAR,
-      "Institution2.9"::VARCHAR,
-      "Institution2.10"::VARCHAR,
-      "Institution2.11"::VARCHAR,
-      "Institution2.12"::VARCHAR,
-      "Institution2.13"::VARCHAR,
-      "Institution2.14"::VARCHAR,
-    ]) as label,
+    unnest(
+      apply(
+        [
+          "institution-0"::VARCHAR,
+          "institution-1"::VARCHAR,
+          "institution-2"::VARCHAR,
+          "institution-3"::VARCHAR,
+          "institution-4"::VARCHAR,
+          "institution-5"::VARCHAR,
+          "institution-6"::VARCHAR,
+          "institution-7"::VARCHAR,
+          "institution-8"::VARCHAR,
+          "institution-9"::VARCHAR,
+          "Institution2.0"::VARCHAR,
+          "Institution2.1"::VARCHAR,
+          "Institution2.2"::VARCHAR,
+          "Institution2.3"::VARCHAR,
+          "Institution2.4"::VARCHAR,
+          "Institution2.5"::VARCHAR,
+          "Institution2.6"::VARCHAR,
+          "Institution2.7"::VARCHAR,
+          "Institution2.8"::VARCHAR,
+          "Institution2.9"::VARCHAR,
+          "Institution2.10"::VARCHAR,
+          "Institution2.11"::VARCHAR,
+          "Institution2.12"::VARCHAR,
+          "Institution2.13"::VARCHAR,
+          "Institution2.14"::VARCHAR,
+        ],
+        x -> trim(x)
+      )
+    ) as label,
   from AAP2_template_export
 ) where id is not null and label is not null
+group by id
 ```
 
-```sql id=all_unites
-select * from(
+### all_unites
+
+```sql id=all_unites display
+select
+  id,
+  list_distinct(list(label)) as labels,
+  count(*) as count,
+from (
   select distinct
     unnest(
       apply([
@@ -670,41 +641,53 @@ select * from(
         "RNSR2.13"::VARCHAR,
         "RNSR2.14"::VARCHAR,
       ],
-      x -> replace(x, ' ', ''))
+      x -> regexp_replace(x, '\\W', ''))
     ) as id,
-    unnest([
-      "unite-0"::VARCHAR,
-      "unite-1"::VARCHAR,
-      "unite-2"::VARCHAR,
-      "unite-3"::VARCHAR,
-      "unite-4"::VARCHAR,
-      "unite-5"::VARCHAR,
-      "unite-6"::VARCHAR,
-      "unite-7"::VARCHAR,
-      "unite-8"::VARCHAR,
-      "unite-9"::VARCHAR,
-      "Unité2.0"::VARCHAR,
-      "Unité2.1"::VARCHAR,
-      "Unité2.2"::VARCHAR,
-      "Unité2.3"::VARCHAR,
-      "Unité2.4"::VARCHAR,
-      "Unité2.5"::VARCHAR,
-      "Unité2.6"::VARCHAR,
-      "Unité2.7"::VARCHAR,
-      "Unité2.8"::VARCHAR,
-      "Unité2.9"::VARCHAR,
-      "Unité2.10"::VARCHAR,
-      "Unité2.11"::VARCHAR,
-      "Unité2.12"::VARCHAR,
-      "Unité2.13"::VARCHAR,
-      "Unité2.14"::VARCHAR,
-    ]) as label,
+    unnest(
+      apply(
+        [
+          "unite-0"::VARCHAR,
+          "unite-1"::VARCHAR,
+          "unite-2"::VARCHAR,
+          "unite-3"::VARCHAR,
+          "unite-4"::VARCHAR,
+          "unite-5"::VARCHAR,
+          "unite-6"::VARCHAR,
+          "unite-7"::VARCHAR,
+          "unite-8"::VARCHAR,
+          "unite-9"::VARCHAR,
+          "Unité2.0"::VARCHAR,
+          "Unité2.1"::VARCHAR,
+          "Unité2.2"::VARCHAR,
+          "Unité2.3"::VARCHAR,
+          "Unité2.4"::VARCHAR,
+          "Unité2.5"::VARCHAR,
+          "Unité2.6"::VARCHAR,
+          "Unité2.7"::VARCHAR,
+          "Unité2.8"::VARCHAR,
+          "Unité2.9"::VARCHAR,
+          "Unité2.10"::VARCHAR,
+          "Unité2.11"::VARCHAR,
+          "Unité2.12"::VARCHAR,
+          "Unité2.13"::VARCHAR,
+          "Unité2.14"::VARCHAR,
+        ],
+        x -> trim(x))
+    ) as label,
   from AAP2_template_export
 ) where id is not null and label is not null
+group by id
 ```
 
-```sql id=all_partners
-select * from(
+### all_partners
+
+```sql id=all_partners display
+select
+  id,
+  list_distinct(list(label)) as labels,
+  list_distinct(list(activity)) as activities,
+  count(*) as count,
+from (
   select distinct
     unnest(
       apply([
@@ -728,52 +711,63 @@ select * from(
       ],
       x -> replace(x, ' ', ''))
     ) as id,
-    unnest([
-      "Nom 1"::VARCHAR,
-      "Nom 1"::VARCHAR,
-      "Nom 2"::VARCHAR,
-      "Nom 3"::VARCHAR,
-      "Nom 4"::VARCHAR,
-      "Nom 5"::VARCHAR,
-      "Nom 6"::VARCHAR,
-      "Nom 7"::VARCHAR,
-      "Nom 8"::VARCHAR,
-      "Nom 1_2"::VARCHAR,
-      "Nom 2_2"::VARCHAR,
-      "Nom 3_2"::VARCHAR,
-      "Nom 4_2"::VARCHAR,
-      "Nom 5_2"::VARCHAR,
-      "Nom 6_2"::VARCHAR,
-      "Nom 7_2"::VARCHAR,
-      "Nom 8_2"::VARCHAR,
-    ]) as label,
-    unnest([
-      "Activité  secteurs dactivité 1"::VARCHAR,
-      "Activité  secteurs dactivité 1"::VARCHAR,
-      "Activité  secteurs dactivité 2"::VARCHAR,
-      "Activité  secteurs dactivité 3"::VARCHAR,
-      "Activité  secteurs dactivité 4"::VARCHAR,
-      "Activité  secteurs dactivité 5"::VARCHAR,
-      "Activité  secteurs dactivité 6"::VARCHAR,
-      "Activité  secteurs dactivité 7"::VARCHAR,
-      "Activité  secteurs dactivité 8"::VARCHAR,
-      "Activité  secteurs dactivité 1_2"::VARCHAR,
-      "Activité  secteurs dactivité 2_2"::VARCHAR,
-      "Activité  secteurs dactivité 3_2"::VARCHAR,
-      "Activité  secteurs dactivité 4_2"::VARCHAR,
-      "Activité  secteurs dactivité 5_2"::VARCHAR,
-      "Activité  secteurs dactivité 6_2"::VARCHAR,
-      "Activité  secteurs dactivité 7_2"::VARCHAR,
-      "Activité  secteurs dactivité 8_2"::VARCHAR,
-    ]) as activity,
+    unnest(
+      apply(
+        [
+          "Nom 1"::VARCHAR,
+          "Nom 1"::VARCHAR,
+          "Nom 2"::VARCHAR,
+          "Nom 3"::VARCHAR,
+          "Nom 4"::VARCHAR,
+          "Nom 5"::VARCHAR,
+          "Nom 6"::VARCHAR,
+          "Nom 7"::VARCHAR,
+          "Nom 8"::VARCHAR,
+          "Nom 1_2"::VARCHAR,
+          "Nom 2_2"::VARCHAR,
+          "Nom 3_2"::VARCHAR,
+          "Nom 4_2"::VARCHAR,
+          "Nom 5_2"::VARCHAR,
+          "Nom 6_2"::VARCHAR,
+          "Nom 7_2"::VARCHAR,
+          "Nom 8_2"::VARCHAR,
+        ],
+        x -> trim(x))
+    ) as label,
+    unnest(
+      apply(
+        [
+          "Activité  secteurs dactivité 1"::VARCHAR,
+          "Activité  secteurs dactivité 1"::VARCHAR,
+          "Activité  secteurs dactivité 2"::VARCHAR,
+          "Activité  secteurs dactivité 3"::VARCHAR,
+          "Activité  secteurs dactivité 4"::VARCHAR,
+          "Activité  secteurs dactivité 5"::VARCHAR,
+          "Activité  secteurs dactivité 6"::VARCHAR,
+          "Activité  secteurs dactivité 7"::VARCHAR,
+          "Activité  secteurs dactivité 8"::VARCHAR,
+          "Activité  secteurs dactivité 1_2"::VARCHAR,
+          "Activité  secteurs dactivité 2_2"::VARCHAR,
+          "Activité  secteurs dactivité 3_2"::VARCHAR,
+          "Activité  secteurs dactivité 4_2"::VARCHAR,
+          "Activité  secteurs dactivité 5_2"::VARCHAR,
+          "Activité  secteurs dactivité 6_2"::VARCHAR,
+          "Activité  secteurs dactivité 7_2"::VARCHAR,
+          "Activité  secteurs dactivité 8_2"::VARCHAR,
+        ],
+        x -> trim(x))
+    ) as activity,
   from AAP2_template_export
 ) where id is not null and label is not null
+group by id
 ```
 
-```sql id=all_institutions_by_project
-select project_id, id as institution_id from (
+### all_institutions_by_project
+
+```sql id=all_institutions_by_project display
+select distinct DOCID, institution_id from (
   select
-    DOCID as project_id,
+    DOCID,
     unnest(
       apply([
         "siret-0"::VARCHAR,
@@ -803,7 +797,7 @@ select project_id, id as institution_id from (
         "SIRET2.14"::VARCHAR,
       ],
       x -> replace(x, ' ', ''))
-    ) as id,
+    ) as institution_id,
     unnest(
       apply([
         "institution-0"::VARCHAR,
@@ -832,16 +826,18 @@ select project_id, id as institution_id from (
         "Institution2.13"::VARCHAR,
         "Institution2.14"::VARCHAR,
       ],
-      x -> replace(x, ' ', ''))
+      x -> trim(x))
     ) as label,
   from AAP2_template_export
-) where id is not null and label is not null
+) where institution_id is not null and label is not null
 ```
 
-```sql id=all_unites_by_project
-select project_id, id as unite_id from (
+### all_unites_by_project
+
+```sql id=all_unites_by_project display
+select distinct DOCID, unite_id from (
   select
-    DOCID as project_id,
+    DOCID,
     unnest(
       apply([
         "rnsr-0"::VARCHAR,
@@ -870,8 +866,8 @@ select project_id, id as unite_id from (
         "RNSR2.13"::VARCHAR,
         "RNSR2.14"::VARCHAR,
       ],
-      x -> replace(x, ' ', ''))
-    ) as id,
+      x -> regexp_replace(x, '\\W', ''))
+    ) as unite_id,
     unnest(
       apply([
         "unite-0"::VARCHAR,
@@ -900,16 +896,18 @@ select project_id, id as unite_id from (
         "Unité2.13"::VARCHAR,
         "Unité2.14"::VARCHAR,
       ],
-      x -> replace(x, ' ', ''))
+      x -> trim(x))
     ) as label,
   from AAP2_template_export
-) where id is not null and label is not null
+) where unite_id is not null and label is not null
 ```
 
-```sql id=all_partners_by_project
-select project_id, id as partner_id from (
+### all_partners_by_project
+
+```sql id=all_partners_by_project display
+select distinct DOCID, partner_id from (
   select
-    DOCID as project_id,
+    DOCID,
     unnest(
       apply([
         "SIRET le cas échéant 1"::VARCHAR,
@@ -931,7 +929,7 @@ select project_id, id as partner_id from (
         "SIRET le cas échéant 8_2"::VARCHAR,
       ],
       x -> replace(x, ' ', ''))
-    ) as id,
+    ) as partner_id,
     unnest(
       apply([
         "Nom 1"::VARCHAR,
@@ -952,7 +950,7 @@ select project_id, id as partner_id from (
         "Nom 7_2"::VARCHAR,
         "Nom 8_2"::VARCHAR,
       ],
-      x -> replace(x, ' ', ''))
+      x -> trim(x))
     ) as label,
     unnest(
       apply([
@@ -974,8 +972,8 @@ select project_id, id as partner_id from (
         "Activité  secteurs dactivité 7_2"::VARCHAR,
         "Activité  secteurs dactivité 8_2"::VARCHAR,
       ],
-      x -> replace(x, ' ', ''))
+      x -> trim(x))
     ) as activity,
   from AAP2_template_export
-) where id is not null and label is not null
+) where partner_id is not null and label is not null
 ```

@@ -2,7 +2,16 @@ import * as Inputs from 'npm:@observablehq/inputs'
 import * as Plot from 'npm:@observablehq/plot'
 // import * as d3 from 'npm:d3'
 
-const challenge_map = new Map([
+export const challenge_map = new Map([
+  ['defi_1', 'Défi 1'],
+  ['defi_2', 'Défi 2'],
+  ['defi_3', 'Défi 3'],
+  ['defi_4', 'Défi 4'],
+  ['defi_5', 'Défi 5'],
+  ['defi_6', 'Défi 6'],
+])
+
+export const detailed_challenge_map = new Map([
   ['defi_1', 'Changement climatique et préservation de la biodiversité'],
   ['defi_2', 'Vers des villes et/ou des bâtiments résilient(e)s'],
   ['defi_3', 'Villes et/ou bâtiments sobres et frugaux'],
@@ -11,13 +20,13 @@ const challenge_map = new Map([
   ['defi_6', 'Défis émergents'],
 ])
 
-const laureateCheckbox = () =>
+export const laureateCheckbox = () =>
   Inputs.toggle({
     value: false,
     label: 'Laureates only?',
   })
 
-const sortSelect = (label = 'Label') =>
+export const xSortSelect = (label = 'Label') =>
   Inputs.select(
     new Map([
       [`${label} ⇧`, 'x'],
@@ -26,16 +35,32 @@ const sortSelect = (label = 'Label') =>
       [`Occurrences ⇩`, '-y'],
     ]),
     {
-      value: 'x',
+      value: '-y',
       label: 'Sort by',
     },
   )
 
-const partnerCountPlot = (
+export const ySortSelect = (label = 'Label') =>
+  Inputs.select(
+    new Map([
+      [`${label} ⇧`, 'y'],
+      [`${label} ⇩`, '-y'],
+      [`Occurrences ⇧`, 'x'],
+      [`Occurrences ⇩`, '-x'],
+    ]),
+    {
+      value: '-x',
+      label: 'Sort by',
+    },
+  )
+
+export const partnerCountPlot = (
   data,
   {
     width,
+    height = 400,
     marginLeft = 150,
+    limit = 15,
     x_label,
     y_label,
     sort_value,
@@ -45,7 +70,7 @@ const partnerCountPlot = (
 ) =>
   Plot.plot({
     width: width,
-    height: width,
+    height: height,
     x: {
       label: x_label,
       grid: true,
@@ -66,7 +91,7 @@ const partnerCountPlot = (
         x: x_accessor,
         y: y_accessor,
         fill: x_accessor,
-        sort: { y: sort_value },
+        sort: { y: sort_value, limit: limit },
         tip: {
           format: {
             fill: false,
@@ -76,7 +101,7 @@ const partnerCountPlot = (
     ],
   })
 
-const projectCountPlot = (
+export const projectCountPlot = (
   data,
   {
     width,
@@ -120,11 +145,3 @@ const projectCountPlot = (
       }),
     ],
   })
-
-export {
-  challenge_map,
-  laureateCheckbox,
-  sortSelect,
-  partnerCountPlot,
-  projectCountPlot,
-}

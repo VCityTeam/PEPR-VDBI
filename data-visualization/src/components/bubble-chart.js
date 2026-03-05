@@ -3,7 +3,7 @@ import * as d3 from 'npm:d3'
 
 // adapted from https://github.com/observablehq/framework/blob/main/examples/us-dams/src/index.md
 
-export function bubbleChartXY(
+export const bubbleChartXY = (
   data,
   {
     width,
@@ -18,8 +18,8 @@ export function bubbleChartXY(
     r_accessor,
     color_range,
   } = {},
-) {
-  return Plot.plot({
+) =>
+  Plot.plot({
     width,
     height: height - 30,
     marginLeft: 100,
@@ -51,32 +51,40 @@ export function bubbleChartXY(
       ),
     ],
   })
-}
 
-export function bubbleChartX(
+export const bubbleChartX = (
   data,
   {
     width = 600,
     height = 300,
+    marginBottom = 40,
+    title,
+    subtitle,
+    caption,
     x_label = '',
     x_accessor = (d) => d[0],
     x_domain = new Set(data.map(x_accessor)),
     r_label = '',
     r_accessor = (d) => d[1],
+    r_max = Math.min(width / data.length, height) / 2 - 20,
     color_range = d3.schemeTableau10,
   } = {},
-) {
-  return Plot.plot({
+) =>
+  Plot.plot({
     width,
-    height: height - 30,
+    height,
+    title,
+    subtitle,
+    caption,
+    marginBottom,
     grid: true,
     x: { domain: x_domain, label: x_label },
-    r: { range: [0, 25], label: r_label },
-    // color: {
-    //   domain: x_domain,
-    //   range: color_range,
-    //   label: x_label,
-    // },
+    r: { range: [0, r_max], label: r_label },
+    color: {
+      domain: x_domain,
+      range: color_range,
+      label: x_label,
+    },
     marks: [
       Plot.dot(data, {
         x: x_accessor,
@@ -88,4 +96,3 @@ export function bubbleChartX(
       }),
     ],
   })
-}
