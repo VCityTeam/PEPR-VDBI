@@ -49,11 +49,11 @@ import {
   getLabSheet,
   resolvePhase1Entities,
   resolveLaboEntities,
-} from '/components/240117-proposals-labs-establishments.js'
+} from '/data/utilities/240117-proposals-labs-establishments.js'
 import {
   getProductSheet,
   resolveProjectEntities,
-} from '/components/240108-proposals-keywords.js'
+} from '/data/utilities/240108-proposals-keywords.js'
 import { mapProjectsToRDFGraph } from '/components/graph.js'
 import { mapCounts } from '/components/utilities.js'
 ```

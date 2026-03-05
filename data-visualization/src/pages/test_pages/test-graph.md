@@ -47,18 +47,18 @@ import {
   getProductSheet,
   resolveProjectEntities,
   projectColorMap,
-} from "/components/240108-proposals-keywords.js"
+} from '/data/utilities/240108-proposals-keywords.js'
 import {
   mapProjectsToRDFGraph,
   filterLinks,
   forceGraph,
-} from "/components/graph.js"
+} from '/components/graph.js'
 
 const workbook1 = FileAttachment(
-  "/data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
+  '/data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx',
 ).xlsx()
 const workbook2 = FileAttachment(
-  "/data/private/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx"
+  '/data/private/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx',
 ).xlsx()
 ```
 
@@ -73,7 +73,7 @@ const anonymizeDict = new Map()
 const productData = resolveProjectEntities(
   getProductSheet(workbook2),
   anonymize,
-  anonymizeDict
+  anonymizeDict,
 ).slice(0, 15) // limit for better performace
 display(productData)
 ```
@@ -130,7 +130,7 @@ const filter_value = Generators.input(filter_input)
 ```js echo
 const filteredProductGraph = filterLinks(
   productGraph,
-  (d) => d.label == filter_value
+  (d) => d.label == filter_value,
 )
 ```
 
@@ -156,7 +156,7 @@ const filteredProductForceGraph = forceGraph(filteredProductGraph, {
 
 ```js echo
 const jsonfile = view(
-  Inputs.file({ label: "JSON file", accept: ".json", required: true })
+  Inputs.file({ label: 'JSON file', accept: '.json', required: true }),
 )
 ```
 

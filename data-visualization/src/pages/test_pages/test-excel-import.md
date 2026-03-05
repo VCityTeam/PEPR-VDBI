@@ -9,7 +9,7 @@ Import and visualize the first sheet from the phase 1 Excel document.
 ## Integration process
 
 D3 and the Observable framework can import [`.xlsx` files](https://observablehq.com/framework/lib/xlsx).
-Then the data should be transformed into an array using a [component](../../components/240117-proposals-labs-establishments.js).
+Then the data should be transformed into an array using a [component](../../data/utilities/240117-proposals-labs-establishments.js).
 Columns with obviously identical entities are combined.
 E.g. `Etablissement`, `Etablissement 2`, ... `Etablissement n` are merged into
 the same column.
@@ -45,10 +45,10 @@ First a component for transforming the Workbook data is imported, followed by
 the reading and storing of the Workbook itself.
 
 ```js echo
-import { resolvePhase1Entities } from "/components/240117-proposals-labs-establishments.js"
-import { anonymizeEntry } from "/components/utilities.js"
+import { resolvePhase1Entities } from '/data/utilities/240117-proposals-labs-establishments.js'
+import { anonymizeEntry } from '/components/utilities.js'
 const workbook = FileAttachment(
-  "/data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
+  '/data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx',
 ).xlsx()
 ```
 
@@ -61,7 +61,7 @@ A function is used to extract the relevant cells from the 1st sheet of the workb
 ```js echo
 function getProjectSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[0], {
-    range: "A1:DR78",
+    range: 'A1:DR78',
     headers: true,
   })
 }
@@ -70,7 +70,7 @@ const acronymousDict = new Map()
 const projects_phase_1 = resolvePhase1Entities(
   getProjectSheet(workbook),
   anonymize,
-  acronymousDict
+  acronymousDict,
 )
 ```
 
@@ -103,7 +103,7 @@ A searchable table can also be created.
 
 ```js echo
 const search = view(
-  Inputs.search(projects_phase_1, { placeholder: "Search projects..." })
+  Inputs.search(projects_phase_1, { placeholder: 'Search projects...' }),
 )
 ```
 

@@ -4,7 +4,7 @@ import {
   pseudoanonymizeEntry,
   filterEmptyArray,
   toLowerPreservingAcronyms,
-} from './utilities.js'
+} from '../../components/utilities.js'
 import * as Plot from '@observablehq/plot'
 
 /**

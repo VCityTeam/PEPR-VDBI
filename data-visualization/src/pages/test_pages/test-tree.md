@@ -47,20 +47,20 @@ flowchart TD
 import {
   getProductSheet,
   resolveProjectEntities,
-} from "/components/240108-proposals-keywords.js"
+} from '/data/utilities/240108-proposals-keywords.js'
 import {
   mapEntitesToProjectTree,
   mapEntitesToProductToProjectTree,
   collapsableRadialDendrogram,
-} from "/components/radial-dendrogram.js"
+} from '/components/radial-dendrogram.js'
 ```
 
 ```js echo
 const workbook1 = FileAttachment(
-  "/data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx"
+  '/data/private/240117 consortium laboratoire, établissement CNRS-SHS_Stat.xlsx',
 ).xlsx()
 const workbook2 = FileAttachment(
-  "/data/private/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx"
+  '/data/private/240108_consortium, contenus des propositions CNRS-SHS_GGE_JYT_ANRT.xlsx',
 ).xlsx()
 ```
 
@@ -151,7 +151,7 @@ const collapsableRadialProducts = collapsableRadialDendrogram(
     fontsize: 15,
     depth: 150,
     duration: 500,
-  }
+  },
 )
 display(collapsableRadialProducts)
 ```

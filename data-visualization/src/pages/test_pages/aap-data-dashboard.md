@@ -2,10 +2,10 @@
 style: /css/vdbi-page.css
 ---
 
-# Phase 1 Data
+# AAP Data
 
 <div class="warning">
-  There are known data quality errors in the workbook.
+  There are known data quality errors in the data sources.
   This page is largely for debugging purposes only.
 </div>
 

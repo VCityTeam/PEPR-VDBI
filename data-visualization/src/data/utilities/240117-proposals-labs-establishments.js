@@ -1,31 +1,31 @@
-import { map, filter } from 'd3';
-import { anonymizeEntry } from './utilities.js';
+import { map, filter } from 'd3'
+import { anonymizeEntry } from '../../components/utilities.js'
 
 export function getPhase1Sheet(workbook) {
   return workbook.sheet(workbook.sheetNames[0], {
     range: 'A1:DR78',
     headers: true,
-  });
+  })
 }
 
 export function getVillesSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[1], {
     range: 'A1:E69',
     headers: true,
-  });
+  })
 }
 
 export function getLabSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[4], {
     range: 'A1:AK252',
     headers: true,
-  });
+  })
 }
 
 export function resolvePhase1Entities(
   sheet,
   anonymize = false,
-  acronymousDict = new Map()
+  acronymousDict = new Map(),
 ) {
   // Map raw project data to a simple array of strings and objects
   return map(sheet, (d) => {
@@ -33,7 +33,7 @@ export function resolvePhase1Entities(
       acronyme: filter([d['Acronyme']], (d) => typeof d !== 'undefined'),
       changements: filter(
         [d['changements à préciser depuis le 16-17 octobre 2023']],
-        (d) => typeof d !== 'undefined'
+        (d) => typeof d !== 'undefined',
       ),
       noms: filter(
         [
@@ -68,7 +68,7 @@ export function resolvePhase1Entities(
           d['nom 29'],
           d['nom 30'],
         ],
-        (d) => typeof d !== 'undefined'
+        (d) => typeof d !== 'undefined',
       ),
       etablissements: filter(
         [
@@ -84,7 +84,7 @@ export function resolvePhase1Entities(
           d['Etablissement 10'],
           d['Etablissement 11'],
         ],
-        (d) => typeof d !== 'undefined' && d !== 0
+        (d) => typeof d !== 'undefined' && d !== 0,
       ),
       partenaires: filter(
         [
@@ -101,7 +101,7 @@ export function resolvePhase1Entities(
           d['Partenaire 11'],
           d['Partenaire 12'],
         ],
-        (d) => typeof d !== 'undefined'
+        (d) => typeof d !== 'undefined',
       ),
       laboratoires: filter(
         [
@@ -128,7 +128,7 @@ export function resolvePhase1Entities(
           d['Labo 21'],
           d['Labo 22'],
         ],
-        (d) => typeof d !== 'undefined'
+        (d) => typeof d !== 'undefined',
       ),
       disciplines: filter(
         [
@@ -144,7 +144,7 @@ export function resolvePhase1Entities(
           d['discipline 10'],
           d['discipline 11'],
         ],
-        (d) => typeof d !== 'undefined'
+        (d) => typeof d !== 'undefined',
       ),
       erc: filter([d['ERC']], (d) => typeof d !== 'undefined'),
       mot_clefs: filter(
@@ -163,7 +163,7 @@ export function resolvePhase1Entities(
           d['Mot clef 12'],
           d['Mot clef 13'],
         ],
-        (d) => typeof d !== 'undefined'
+        (d) => typeof d !== 'undefined',
       ),
       sites: filter(
         [
@@ -179,7 +179,7 @@ export function resolvePhase1Entities(
           d['site 10'],
           d['site 11'],
         ],
-        (d) => typeof d !== 'undefined'
+        (d) => typeof d !== 'undefined',
       ),
       defis: filter(
         [
@@ -191,42 +191,42 @@ export function resolvePhase1Entities(
           d['autre défi 5'],
           d['autre défi 6'],
         ],
-        (d) => typeof d !== 'undefined'
+        (d) => typeof d !== 'undefined',
       ),
       nom_complet: filter([d['Nom complet']], (d) => typeof d !== 'undefined'),
       notes: filter([d['Notes']], (d) => typeof d !== 'undefined'),
-    };
+    }
     if (anonymize) {
-      projectMap.acronyme = anonymizeEntry(projectMap.acronyme, acronymousDict);
-      projectMap.noms = anonymizeEntry(projectMap.noms, acronymousDict);
-      console.log(projectMap);
+      projectMap.acronyme = anonymizeEntry(projectMap.acronyme, acronymousDict)
+      projectMap.noms = anonymizeEntry(projectMap.noms, acronymousDict)
+      console.log(projectMap)
       for (let index = 0; index < projectMap.etablissements.length; index++) {
         projectMap.etablissements[index] = anonymizeEntry(
           projectMap.etablissements[index],
-          acronymousDict
-        );
+          acronymousDict,
+        )
       }
       for (let index = 0; index < projectMap.laboratoires.length; index++) {
         projectMap.laboratoires[index] = anonymizeEntry(
           projectMap.laboratoires[index],
-          acronymousDict
-        );
+          acronymousDict,
+        )
       }
       for (let index = 0; index < projectMap.partenaires.length; index++) {
         projectMap.partenaires[index] = anonymizeEntry(
           projectMap.partenaires[index],
-          acronymousDict
-        );
+          acronymousDict,
+        )
       }
       for (let index = 0; index < projectMap.sites.length; index++) {
         projectMap.sites[index] = anonymizeEntry(
           projectMap.sites[index],
-          acronymousDict
-        );
+          acronymousDict,
+        )
       }
     }
-    return projectMap;
-  });
+    return projectMap
+  })
 }
 
 export function resolveLaboEntities(sheet) {
@@ -236,13 +236,13 @@ export function resolveLaboEntities(sheet) {
       label: filter([d['Libellé']], (d) => typeof d !== 'undefined'),
       type: filter(
         [d['Labo/ stuctures autres']],
-        (d) => typeof d !== 'undefined' && d !== 0
+        (d) => typeof d !== 'undefined' && d !== 0,
       ),
       nom: filter([d['Nom']], (d) => typeof d !== 'undefined' && d !== 0),
       numero: filter([d['numéro']], (d) => typeof d !== 'undefined'),
       nin: filter(
         [d['Numéro identifiant National']],
-        (d) => typeof d !== 'undefined'
+        (d) => typeof d !== 'undefined',
       ),
       classement_erc: filter(
         [
@@ -257,7 +257,7 @@ export function resolveLaboEntities(sheet) {
           d['ERC 8'],
           d['ERC 9'],
         ],
-        (d) => typeof d !== 'undefined'
+        (d) => typeof d !== 'undefined',
       ),
       domaine: filter(
         [
@@ -270,7 +270,7 @@ export function resolveLaboEntities(sheet) {
           d['Domaine scientifique 7'],
           d['Domaine scientifique 8'],
         ],
-        (d) => typeof d !== 'undefined' && d !== 0
+        (d) => typeof d !== 'undefined' && d !== 0,
       ),
       etablissements: filter(
         [
@@ -286,10 +286,10 @@ export function resolveLaboEntities(sheet) {
           d['Etablissements J'],
           d['Etablissements K'],
         ],
-        (d) => typeof d !== 'undefined' && d !== 0
+        (d) => typeof d !== 'undefined' && d !== 0,
       ),
-    };
-  });
+    }
+  })
 
-  return labMap;
+  return labMap
 }

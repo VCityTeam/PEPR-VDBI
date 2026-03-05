@@ -109,7 +109,7 @@ export default {
         },
         {
           name: 'Raw Data Export',
-          path: 'pages/test_pages/phase1-data-dashboard',
+          path: 'pages/test_pages/aap-data-dashboard',
         },
       ],
     },

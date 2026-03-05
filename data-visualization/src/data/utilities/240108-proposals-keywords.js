@@ -1,11 +1,11 @@
-import { map, filter } from 'd3';
-import { anonymizeEntry } from './utilities.js';
+import { map, filter } from 'd3'
+import { anonymizeEntry } from '../../components/utilities.js'
 
 export function getProductSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[1], {
     range: 'A1:AG78',
     headers: true,
-  });
+  })
 }
 
 export const projectColorMap = {
@@ -21,12 +21,12 @@ export const projectColorMap = {
   objetOuDispositifImplique: 9,
   motClefs: 10,
   defi: 11,
-};
+}
 
 export function resolveProjectEntities(
   sheet,
   anonymize = false,
-  acronymousDict = new Map()
+  acronymousDict = new Map(),
 ) {
   // Map raw project data to a simple 2D array
   return map(sheet, (d) => {
@@ -45,8 +45,8 @@ export function resolveProjectEntities(
           d['Produit (ou résultat) de la recherche (Secondaire)'],
         ],
         (d) => {
-          return typeof d !== 'undefined';
-        }
+          return typeof d !== 'undefined'
+        },
       ),
       objetOuDispositifImplique: filter(
         [
@@ -55,8 +55,8 @@ export function resolveProjectEntities(
           d['Objets et dispositifs urbains impliqués  3'],
         ],
         (d) => {
-          return typeof d !== 'undefined';
-        }
+          return typeof d !== 'undefined'
+        },
       ),
       motClefs: filter(
         [
@@ -75,8 +75,8 @@ export function resolveProjectEntities(
           d['Mot clef 13'],
         ],
         (d) => {
-          return typeof d !== 'undefined';
-        }
+          return typeof d !== 'undefined'
+        },
       ),
       defi: filter(
         [
@@ -89,14 +89,14 @@ export function resolveProjectEntities(
           d['autre défi 6'],
         ],
         (d) => {
-          return typeof d !== 'undefined';
-        }
+          return typeof d !== 'undefined'
+        },
       ),
-    };
-    if (anonymize) {
-      projectMap.acronyme = anonymizeEntry(projectMap.acronyme, acronymousDict);
-      projectMap.nom = anonymizeEntry(projectMap.nom, acronymousDict);
     }
-    return projectMap;
-  });
+    if (anonymize) {
+      projectMap.acronyme = anonymizeEntry(projectMap.acronyme, acronymousDict)
+      projectMap.nom = anonymizeEntry(projectMap.nom, acronymousDict)
+    }
+    return projectMap
+  })
 }
