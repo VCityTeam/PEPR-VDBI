@@ -33,16 +33,16 @@ flowchart TD
 ```
 
 ```js
-import { countEntities, cropText } from "/components/utilities.js"
-import { extractPhase1Workbook } from "/components/phase1-workbook.js"
+import { countEntities, cropText } from '/components/utilities.js'
+import { extractPhase1Workbook } from '/data/utilities/phase1-workbook.js'
 import {
   arcDiagramVertical,
   mapTableToPropertyGraphLinks,
   sortNodes,
-} from "/components/graph.js"
+} from '/components/graph.js'
 
 const workbook = FileAttachment(
-  "/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
+  '/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx',
 ).xlsx()
 ```
 
@@ -62,8 +62,8 @@ const anonymize = false
 const anonymizeDict = new Map()
 const researcher_data = extractPhase1Workbook(
   workbook,
-  false
-).researchers.filter((d) => d.project.includes("VF++"))
+  false,
+).researchers.filter((d) => d.project.includes('VF++'))
 ```
 
 ```js
@@ -99,9 +99,9 @@ To reduce the size of the visualized data we filter on researcher positions as w
 
 ```js echo
 const researcher_links = mapTableToPropertyGraphLinks(researcher_data, {
-  id_key: "fullname",
-  columns: ["fullname", "position"],
-}).filter((d) => d.label == "position")
+  id_key: 'fullname',
+  columns: ['fullname', 'position'],
+}).filter((d) => d.label == 'position')
 ```
 
 ```js
@@ -126,8 +126,8 @@ display(
       marginRight: 200,
       keyMap: (d) => d.fullname,
       valueMap: (d) => d.position,
-    }
-  )
+    },
+  ),
 )
 ```
 
@@ -152,7 +152,7 @@ const arc_sort_map = sortNodes(
   {
     keyMap: (d) => d.fullname,
     valueMap: (d) => d.position,
-  }
+  },
 )
 ```
 
@@ -162,7 +162,7 @@ display(arc_sort_map)
 
 ```js echo
 const sort_select_input = Inputs.select(arc_sort_map, {
-  label: "Sort",
+  label: 'Sort',
   sort: true,
   unique: true,
 })
@@ -178,13 +178,13 @@ const sortable_arc_diagram = arcDiagramVertical(
     marginRight: 200,
     keyMap: (d) => d.fullname,
     valueMap: (d) => d.position,
-  }
+  },
 )
 
 // This doesn't work with Observable.Generator (or at least we don't understand how)
 // without regenerating the svg and missing the update() function.
-sort_select_input.addEventListener("input", () =>
-  sortable_arc_diagram.update(sort_select_input.value)
+sort_select_input.addEventListener('input', () =>
+  sortable_arc_diagram.update(sort_select_input.value),
 )
 sortable_arc_diagram.update(sort_select_input.value)
 ```

@@ -16,16 +16,16 @@ import {
   cropText,
   copyTableToClipboardButton,
   downloadTableButton,
-} from "/components/utilities.js"
-import { parallelSetToGraph, sankeyDiagram } from "/components/sankey.js"
-import { chordDiagram } from "/components/chord.js"
-import { parseTabularGraph } from "/components/graph.js"
+} from '/components/utilities.js'
+import { parallelSetToGraph, sankeyDiagram } from '/components/sankey.js'
+import { chordDiagram } from '/components/chord.js'
+import { parseTabularGraph } from '/components/graph.js'
 import {
   project_color_scale,
   legal_nature_colors,
   interpolated_legal_nature_color,
-} from "/components/color.js"
-import { extractPhase1Workbook } from "/components/phase1-workbook.js"
+} from '/components/color.js'
+import { extractPhase1Workbook } from '/data/utilities/phase1-workbook.js'
 ```
 
 <div class="card">
@@ -37,13 +37,13 @@ import { extractPhase1Workbook } from "/components/phase1-workbook.js"
 
 ```js
 const workbook = FileAttachment(
-  "/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx"
+  '/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
 ).xlsx()
 ```
 
 ```js
 const phase_1_data = extractPhase1Workbook(workbook, false).projects.filter(
-  (d) => d.financed
+  (d) => d.financed,
 )
 
 let phase_1_partner_links = [
@@ -68,7 +68,7 @@ phase_1_data.forEach(({ acronyme, institutions, labs, partners }) => {
 
   // add lab -> project links
   phase_1_partner_links.push({
-    source: "Laboratoires de recherche",
+    source: 'Laboratoires de recherche',
     target: acronyme,
     value: labs.length,
   })
@@ -76,7 +76,7 @@ phase_1_data.forEach(({ acronyme, institutions, labs, partners }) => {
   labs.forEach((lab) => lab_set.add(lab))
   // add socioeconomic partner -> project links
   phase_1_partner_links.push({
-    source: "Socio-économiques",
+    source: 'Socio-économiques',
     target: acronyme,
     value: partners.length,
   })
@@ -87,13 +87,13 @@ phase_1_data.forEach(({ acronyme, institutions, labs, partners }) => {
 const phase_1_partner_graph = parseTabularGraph(phase_1_partner_links)
 // remove duplicate partner counts
 phase_1_partner_graph.nodes.find(
-  (d) => d.id === "Établissements d'enseignement supérieur"
+  (d) => d.id === "Établissements d'enseignement supérieur",
 ).value = institution_set.size
 
 display(
   phase_1_partner_graph.nodes.find(
-    (d) => d.id === "Établissements d'enseignement supérieur"
-  )
+    (d) => d.id === "Établissements d'enseignement supérieur",
+  ),
 )
 
 display(phase_1_partner_links)
@@ -109,7 +109,7 @@ const partnerChordDiagram = chordDiagram([], [], [])
 
 ```js
 const filter_no_result = view(
-  Inputs.toggle({ label: "Exclude results with no SIREN", value: true })
+  Inputs.toggle({ label: 'Exclude results with no SIREN', value: true }),
 )
 ```
 
@@ -117,16 +117,16 @@ Excluded data sources:
 
 ```js
 const filter_annex_data = view(
-  Inputs.toggle({ label: "Financial annexes", value: false })
+  Inputs.toggle({ label: 'Financial annexes', value: false }),
 )
 const filter_general_data = view(
-  Inputs.toggle({ label: "AAP generality", value: true })
+  Inputs.toggle({ label: 'AAP generality', value: true }),
 )
 const filter_aap_data = view(
   Inputs.toggle({
-    label: "AAP partenaires_aap2023",
+    label: 'AAP partenaires_aap2023',
     value: true,
-  })
+  }),
 )
 ```
 
@@ -357,9 +357,9 @@ function filterResults(d) {
   }
   const sources = new Set(d.sources)
 
-  if (filter_annex_data) sources.delete("financed_annex_partners_by_project")
-  if (filter_general_data) sources.delete("generality")
-  if (filter_aap_data) sources.delete("partenaires_aap2023")
+  if (filter_annex_data) sources.delete('financed_annex_partners_by_project')
+  if (filter_general_data) sources.delete('generality')
+  if (filter_aap_data) sources.delete('partenaires_aap2023')
 
   return sources.size > 0
 }
@@ -369,9 +369,9 @@ function filterResults(d) {
 const level_1_select = Inputs.select(
   new Set(filtered_legal_natures.map((d) => d.cjn1_code)),
   {
-    label: "Select level 1 legal nature",
+    label: 'Select level 1 legal nature',
     value: 0,
-  }
+  },
 )
 
 const level_1_value = Generators.input(level_1_select)
@@ -393,8 +393,8 @@ const filtered_partners_by_project_links_1_2 = [
 ].filter(filterResults)
 
 console.debug(
-  "filtered_partners_by_project_links_1_2",
-  filtered_partners_by_project_links_1_2.map((d) => d.toJSON())
+  'filtered_partners_by_project_links_1_2',
+  filtered_partners_by_project_links_1_2.map((d) => d.toJSON()),
 )
 
 const filtered_partners_by_project_ids_1_2_by_key = new Map()
@@ -408,25 +408,25 @@ filtered_partners_by_project_links_1_2.forEach(({ target }) => {
 
 ```js
 const partner_graph_1_2 = parallelSetToGraph(filtered_legal_natures, [
-  "total",
-  "cjn1_label",
-  "cjn2_label",
+  'total',
+  'cjn1_label',
+  'cjn2_label',
   // "cjn3_label",
   // "project_name",
 ])
-console.debug("partner_graph_1_2", partner_graph_1_2)
+console.debug('partner_graph_1_2', partner_graph_1_2)
 ```
 
 ```js
 const selected_filtered_legal_natures = filtered_legal_natures.filter(
-  (d) => d.cjn1_code == level_1_value
+  (d) => d.cjn1_code == level_1_value,
 )
 
 const partner_graph_2_3 = parallelSetToGraph(selected_filtered_legal_natures, [
   // "total",
-  "cjn1_label",
-  "cjn2_label",
-  "cjn3_label",
+  'cjn1_label',
+  'cjn2_label',
+  'cjn3_label',
   // "project_name",
 ])
 
@@ -434,13 +434,13 @@ const filtered_cjn2_codes = [
   ...new Set(selected_filtered_legal_natures.map((d) => d.cjn2_code % 10)),
 ]
 
-console.debug("partner_graph_2_3", partner_graph_2_3)
-console.debug("filtered_cjn2_codes", filtered_cjn2_codes)
+console.debug('partner_graph_2_3', partner_graph_2_3)
+console.debug('filtered_cjn2_codes', filtered_cjn2_codes)
 ```
 
 ```js
 const partners_by_city = d3.groups(filtered_partner_data, (d) =>
-  d.code_postal ? d.code_postal.slice(0, 2) : null
+  d.code_postal ? d.code_postal.slice(0, 2) : null,
 )
 ```
 
@@ -452,19 +452,19 @@ const legal_nature_plot_config = (data, width, height = undefined) => {
     marginBottom: 60,
     x: {
       tickRotate: -20,
-      label: "Legal nature",
+      label: 'Legal nature',
       tickFormat: (d) => cropText(d, 15),
     },
     y: {
       grid: true,
-      label: "Occurences",
+      label: 'Occurences',
     },
     marks: [
       Plot.barY(data, {
         x: (d) => d[0],
         y: (d) => d[1],
         fill: (d) => d[1],
-        sort: { x: "x" },
+        sort: { x: 'x' },
         tip: {
           format: {
             fill: false,
@@ -480,12 +480,12 @@ const legal_nature_plot_config = (data, width, height = undefined) => {
 ```js
 const filtered_partner_data_search = Inputs.search(filtered_partner_data)
 const filtered_partner_data_value = Generators.input(
-  filtered_partner_data_search
+  filtered_partner_data_search,
 )
 
 const filtered_legal_natures_search = Inputs.search(filtered_legal_natures)
 const filtered_legal_natures_value = Generators.input(
-  filtered_legal_natures_search
+  filtered_legal_natures_search,
 )
 ```
 
@@ -763,23 +763,23 @@ GROUP BY ALL;
 const debug = false
 
 if (debug) {
-  display("annex_partners")
+  display('annex_partners')
   display(Inputs.table(await sql`select * from annex_partners`))
   display([...(await sql`select * from annex_partners`)].length)
-  display("general_partners")
+  display('general_partners')
   display(Inputs.table(await sql`select * from general_partners`))
   display([...(await sql`select * from general_partners`)].length)
-  display("aap_partners")
+  display('aap_partners')
   display(Inputs.table(await sql`select * from aap_partners`))
   display([...(await sql`select * from aap_partners`)].length)
 
-  display("all_partner_data")
+  display('all_partner_data')
   display(Inputs.table(all_partner_data))
-  display("filtered_partner_data")
+  display('filtered_partner_data')
   display(Inputs.table(filtered_partner_data))
-  display("legal_natures")
+  display('legal_natures')
   display(Inputs.table(legal_natures))
-  display("filtered_legal_natures")
+  display('filtered_legal_natures')
   display(Inputs.table(filtered_legal_natures))
 }
 ```

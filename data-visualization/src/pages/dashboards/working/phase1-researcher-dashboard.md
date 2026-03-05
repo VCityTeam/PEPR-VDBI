@@ -5,21 +5,21 @@ title: Researcher Dashboard
 # Researcher Dashboard
 
 ```js
-import { countEntities, cropText } from "/components/utilities.js"
+import { countEntities, cropText } from '/components/utilities.js'
 import {
   extractPhase1Workbook,
   // getColumnOptions,
   // filterOnInput,
-} from "/components/phase1-workbook.js"
-import { donutChart } from "/components/pie-chart.js"
-import { projectionMap } from "/components/projection-map.js"
+} from '/data/utilities/phase1-workbook.js'
+import { donutChart } from '/components/pie-chart.js'
+import { projectionMap } from '/components/projection-map.js'
 import {
   arcDiagramVertical,
   forceGraph,
   mapTableToPropertyGraphLinks,
   sortNodes,
   mapTableToTriples,
-} from "/components/graph.js"
+} from '/components/graph.js'
 ```
 
 ```js
@@ -27,21 +27,21 @@ import {
 const exclude = (d) =>
   ![
     null,
-    "non renseignée",
-    "Non connue",
-    "non connues",
-    "Non Renseigné",
+    'non renseignée',
+    'Non connue',
+    'non connues',
+    'Non Renseigné',
   ].includes(d)
 
 const workbook1 = FileAttachment(
-  "/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx"
+  '/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx',
 ).xlsx()
 
 const geocoded_researcher_sites = FileAttachment(
-  "/data/researcher_sites.geocoded.csv"
+  '/data/researcher_sites.geocoded.csv',
 ).csv()
 
-const world = FileAttachment("/data/world.json").json()
+const world = FileAttachment('/data/world.json').json()
 ```
 
 ```js
@@ -54,7 +54,7 @@ const phase_1_data = extractPhase1Workbook(workbook1, false)
 phase_1_data.researchers.forEach((researcher) => {
   // join on Sites
   const locale = geocoded_researcher_sites.find(
-    (d) => d.Sites === researcher.site
+    (d) => d.Sites === researcher.site,
   )
   if (!locale) return
 
@@ -66,12 +66,12 @@ phase_1_data.researchers.forEach((researcher) => {
   researcher.geo_result_score = locale.result_score
 })
 
-console.debug("phase_1_data.researchers", phase_1_data.researchers)
-console.debug("geocoded_researcher_sites", geocoded_researcher_sites)
+console.debug('phase_1_data.researchers', phase_1_data.researchers)
+console.debug('geocoded_researcher_sites', geocoded_researcher_sites)
 
 // Filter financed
 const financed_input = Inputs.toggle(phase_1_data.researchers, {
-  label: "Filter Financed Projects",
+  label: 'Filter Financed Projects',
   value: true,
 })
 
@@ -81,7 +81,7 @@ const financed = Generators.input(financed_input)
 ```js
 // global search //
 const global_search_input = Inputs.search(phase_1_data.researchers, {
-  placeholder: "Search dataset...",
+  placeholder: 'Search dataset...',
 })
 
 const global_search = Generators.input(global_search_input)
@@ -91,7 +91,7 @@ const global_search = Generators.input(global_search_input)
 // display(phase_1_data)
 // Researcher table //
 const researcher_search_input = Inputs.search(global_search, {
-  placeholder: "Search researchers...",
+  placeholder: 'Search researchers...',
 })
 
 const researcher_search = Generators.input(researcher_search_input)
@@ -104,33 +104,33 @@ const researcher_table = Inputs.table(researcher_search, {
     // "fullname",
     // "firstname",
     // "lastname",
-    "position",
-    "project",
-    "gender",
-    "disciplines",
-    "discipline_erc",
-    "cnu",
-    "site",
+    'position',
+    'project',
+    'gender',
+    'disciplines',
+    'discipline_erc',
+    'cnu',
+    'site',
     // "orcid",
     // "idhal",
-    "lab",
-    "notes",
+    'lab',
+    'notes',
   ],
   header: {
     // "fullname": "Name",
     // "lastname": "Lastname",
-    firstname: "Firstname",
-    position: "Position",
-    project: "Project(s)",
-    gender: "Gender",
-    disciplines: "Discipline(s)",
-    discipline_erc: "ERC discipline",
-    cnu: "CNU",
-    site: "Site",
+    firstname: 'Firstname',
+    position: 'Position',
+    project: 'Project(s)',
+    gender: 'Gender',
+    disciplines: 'Discipline(s)',
+    discipline_erc: 'ERC discipline',
+    cnu: 'CNU',
+    site: 'Site',
     // "orcid": "ORCiD",
     // "idhal": "idHAL",
-    lab: "Laboratory",
-    notes: "Notes",
+    lab: 'Laboratory',
+    notes: 'Notes',
   },
 })
 ```
@@ -139,7 +139,7 @@ const researcher_table = Inputs.table(researcher_search, {
 // ERC Discipline count //
 const discipline_erc_count = countEntities(
   global_search,
-  (d) => d.discipline_erc
+  (d) => d.discipline_erc,
 )
   .filter((d) => exclude(d[0]))
   .sort((a, b) => d3.descending(a[1], b[1]))
@@ -158,13 +158,12 @@ const discipline_erc_pie = donutChart(discipline_erc_count, {
 
 ```js
 // Discipline count //
-const discipline_count = countEntities(
-  global_search,
-  (d) => d.themes
-).sort((a, b) => d3.descending(a[1], b[1]))
+const discipline_count = countEntities(global_search, (d) => d.themes).sort(
+  (a, b) => d3.descending(a[1], b[1]),
+)
 
 const discipline_search_input = Inputs.search(discipline_count, {
-  placeholder: "Search researcher themes...",
+  placeholder: 'Search researcher themes...',
 })
 
 const discipline_search = Generators.input(discipline_search_input)
@@ -179,17 +178,17 @@ const discipline_plot = Plot.plot({
   marginTop: 30,
   marginLeft: 100,
   color: {
-    scheme: "Plasma",
+    scheme: 'Plasma',
   },
   y: {
-    label: "Discipline",
+    label: 'Discipline',
     tickRotate: 30,
     tickFormat: (d) => cropText(d),
   },
   x: {
     grid: true,
-    axis: "top",
-    label: "Occurences",
+    axis: 'top',
+    label: 'Occurences',
     // ticks: 5,
     // domain: [0, Math.max(...discipline_search.map((d) => d.count)) + 1],
   },
@@ -198,12 +197,12 @@ const discipline_plot = Plot.plot({
       y: (d) => d[0],
       x: (d) => d[1],
       fill: (d) => d[1],
-      sort: { y: "-x" },
+      sort: { y: '-x' },
       tip: { format: { fill: false } },
     }),
     Plot.barX(
       discipline_search,
-      Plot.pointerY({ x: (d) => d[1], y: (d) => d[0], opacity: 0.2 })
+      Plot.pointerY({ x: (d) => d[1], y: (d) => d[0], opacity: 0.2 }),
     ),
   ],
 })
@@ -215,13 +214,13 @@ const cnu_count = d3
   .rollups(
     global_search,
     (d) => d.length,
-    (d) => d.cnu
+    (d) => d.cnu,
   )
   .filter((d) => exclude(d[0]))
   .sort((a, b) => d3.descending(a[1], b[1]))
 
 const cnu_search_input = Inputs.search(cnu_count, {
-  placeholder: "Search CNUs...",
+  placeholder: 'Search CNUs...',
 })
 
 const cnu_search = Generators.input(cnu_search_input)
@@ -235,17 +234,17 @@ const cnu_plot = Plot.plot({
   marginTop: 50,
   marginLeft: 100,
   color: {
-    scheme: "Plasma",
+    scheme: 'Plasma',
   },
   y: {
-    label: "CNU",
+    label: 'CNU',
     tickRotate: 30,
     tickFormat: (d) => cropText(d),
   },
   x: {
     grid: true,
-    axis: "top",
-    label: "Occurences",
+    axis: 'top',
+    label: 'Occurences',
     // ticks: 5,
     // domain: [0, Math.max(...cnu_search.map((d) => d.count)) + 1],
   },
@@ -254,18 +253,18 @@ const cnu_plot = Plot.plot({
       y: (d) => d[0],
       x: (d) => d[1],
       fill: (d) => d[1],
-      sort: { y: "-x" },
+      sort: { y: '-x' },
       tip: {
         format: {
           fill: false,
         },
         lineWidth: 25,
-        textOverflow: "ellipsis-end",
+        textOverflow: 'ellipsis-end',
       },
     }),
     Plot.barX(
       cnu_search,
-      Plot.pointerY({ x: (d) => d[1], y: (d) => d[0], opacity: 0.2 })
+      Plot.pointerY({ x: (d) => d[1], y: (d) => d[0], opacity: 0.2 }),
     ),
   ],
 })
@@ -277,7 +276,7 @@ const position_count = d3
   .rollups(
     global_search,
     (d) => d.length,
-    (d) => d.position
+    (d) => d.position,
   )
   .filter((d) => exclude(d[0]))
   .sort((a, b) => d3.descending(a[1], b[1]))
@@ -301,9 +300,11 @@ const position_pie = donutChart(position_count, {
 const ok_geocoded_researcher_sites = d3.groups(
   global_search.filter(
     (d) =>
-      d.geo_result_status == "ok" && exclude(d.site) && d.geo_result_score > 0.5
+      d.geo_result_status == 'ok' &&
+      exclude(d.site) &&
+      d.geo_result_score > 0.5,
   ),
-  (d) => d.site
+  (d) => d.site,
 )
 
 const researcher_sites_projection = projectionMap(
@@ -315,10 +316,10 @@ const researcher_sites_projection = projectionMap(
       topojson.feature(world, world.objects.land),
       topojson.mesh(world, world.objects.countries, (a, b) => a !== b),
     ],
-  }
+  },
 )
 
-console.debug("ok_geocoded_researcher_sites", ok_geocoded_researcher_sites)
+console.debug('ok_geocoded_researcher_sites', ok_geocoded_researcher_sites)
 ```
 
 ```js
@@ -326,58 +327,58 @@ console.debug("ok_geocoded_researcher_sites", ok_geocoded_researcher_sites)
 const graph_columns = new Map([
   // ["Fullname", "fullname"],
   // ["Project", "project"],
-  ["Disciplines", "disciplines"],
-  ["ERC Discipline", "discipline_erc"],
-  ["Position", "position"],
-  ["CNU", "cnu"],
-  ["Site", "site"],
+  ['Disciplines', 'disciplines'],
+  ['ERC Discipline', 'discipline_erc'],
+  ['Position', 'position'],
+  ['CNU', 'cnu'],
+  ['Site', 'site'],
 ])
 const arc_value_maps = new Map([
-  ["id", (d) => d.id],
-  ["project", (d) => d.project],
-  ["disciplines", (d) => d.disciplines[0]], // for property values of Array, just use the first item. This will determine node/arc color
-  ["discipline_erc", (d) => d.discipline_erc[0]],
-  ["position", (d) => d.position],
-  ["cnu", (d) => d.cnu],
-  ["site", (d) => d.site],
+  ['id', (d) => d.id],
+  ['project', (d) => d.project],
+  ['disciplines', (d) => d.disciplines[0]], // for property values of Array, just use the first item. This will determine node/arc color
+  ['discipline_erc', (d) => d.discipline_erc[0]],
+  ['position', (d) => d.position],
+  ['cnu', (d) => d.cnu],
+  ['site', (d) => d.site],
 ])
 
 const researcher_arcs_by_project_select_input = Inputs.select(
   global_search.flatMap((d) => d.project),
   {
-    label: "Select project",
+    label: 'Select project',
     sort: true,
     unique: true,
-  }
+  },
 )
 
 const researcher_arcs_by_project_select = Generators.input(
-  researcher_arcs_by_project_select_input
+  researcher_arcs_by_project_select_input,
 )
 
 const researcher_arcs_by_property_select_input = Inputs.select(graph_columns, {
-  label: "Select relationship",
+  label: 'Select relationship',
   sort: true,
   unique: true,
 })
 
 const researcher_arcs_by_property_select = Generators.input(
-  researcher_arcs_by_property_select_input
+  researcher_arcs_by_property_select_input,
 )
 ```
 
 ```js
 const researcher_arcs_by_project = global_search.filter((d) =>
-  d.project.includes(researcher_arcs_by_project_select)
+  d.project.includes(researcher_arcs_by_project_select),
 )
 const researcher_property_links = mapTableToPropertyGraphLinks(
   researcher_arcs_by_project,
   {
-    id_key: "id",
+    id_key: 'id',
     column: [...graph_columns.values()],
-  }
+  },
 ).filter(
-  (d) => d.label == researcher_arcs_by_property_select && d.value != null
+  (d) => d.label == researcher_arcs_by_property_select && d.value != null,
 )
 
 // console.debug("researcher_arcs_by_project", researcher_arcs_by_project);
@@ -393,11 +394,11 @@ const arc_sort_map = sortNodes(
   {
     keyMap: (d) => d.id,
     valueMap: arc_value_maps.get(researcher_arcs_by_property_select),
-  }
+  },
 )
 
 const arc_sort_input = Inputs.select(arc_sort_map, {
-  label: "Sort",
+  label: 'Sort',
   sort: true,
   unique: true,
 })
@@ -421,11 +422,11 @@ const arc_diagram = arcDiagramVertical(
     sortInitKey: arc_sort_input.value,
     keyMap: (d) => d.id,
     valueMap: arc_value_maps.get(researcher_arcs_by_property_select),
-  }
+  },
 )
 
-arc_sort_input.addEventListener("input", () =>
-  arc_diagram.update(arc_sort_input.value)
+arc_sort_input.addEventListener('input', () =>
+  arc_diagram.update(arc_sort_input.value),
 )
 arc_diagram.update(arc_sort_input.value)
 ```
@@ -436,46 +437,46 @@ const researcher_triples_predicate_select_input = Inputs.select(
   // we don't use global search here in case 0 results are returned by the search
   Object.keys(phase_1_data.researchers[0]),
   {
-    label: "Select property",
+    label: 'Select property',
     sort: true,
     unique: true,
-  }
+  },
 )
 
 const researcher_triples_predicate_select = Generators.input(
-  researcher_triples_predicate_select_input
+  researcher_triples_predicate_select_input,
 )
 ```
 
 ```js
 const researcher_triples = mapTableToTriples(global_search, {
-  id_key: "id",
+  id_key: 'id',
   column: [...graph_columns.values()],
 })
 
 const filtered_researcher_triples = {
   nodes: researcher_triples.nodes.filter(
-    ({ type }) => type == researcher_triples_predicate_select || type == "id"
+    ({ type }) => type == researcher_triples_predicate_select || type == 'id',
   ),
   links: researcher_triples.links.filter(
-    ({ label }) => label == researcher_triples_predicate_select
+    ({ label }) => label == researcher_triples_predicate_select,
   ),
 }
 
 const color = d3
   .scaleOrdinal()
-  .domain(["id", researcher_triples_predicate_select])
+  .domain(['id', researcher_triples_predicate_select])
   .range(
-    d3.quantize(d3.interpolatePlasma, 2)
+    d3.quantize(d3.interpolatePlasma, 2),
     // .reverse()
   )
-  .unknown("#aaa")
+  .unknown('#aaa')
 
-console.debug("researcher_triples", researcher_triples)
-console.debug("color", color)
+console.debug('researcher_triples', researcher_triples)
+console.debug('color', color)
 
 const researcher_force_graph = forceGraph(filtered_researcher_triples, {
-  id: "researcher_force_graph",
+  id: 'researcher_force_graph',
   width: 1300,
   height: 1300,
   color: color,

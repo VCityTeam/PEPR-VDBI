@@ -15,7 +15,7 @@ import {
   extractPhase1Workbook,
   getColumnOptions,
   filterOnInput,
-} from '/components/phase1-workbook.js'
+} from '/data/utilities/phase1-workbook.js'
 ```
 
 ```js

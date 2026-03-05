@@ -8,7 +8,7 @@ import {
   downloadTableButton,
   downloadSVGButton,
 } from '/components/utilities.js'
-import { extractPhase1Workbook } from '/components/phase1-workbook.js'
+import { extractPhase1Workbook } from '/data/utilities/phase1-workbook.js'
 import {
   getGroupFromCNU,
   quantized_cnu_color,

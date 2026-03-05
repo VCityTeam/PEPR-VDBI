@@ -18,7 +18,7 @@ function chart() {
   const outerRadius = Math.min(width, height) * 0.5 - 60
   const innerRadius = outerRadius - 10
   const tickStep = d3.tickStep(0, d3.sum(data.flat()), 100)
-  const formatValue = d3.format(".1~%")
+  const formatValue = d3.format('.1~%')
 
   const chord = d3
     .chord()
@@ -36,78 +36,78 @@ function chart() {
   const color = d3.scaleOrdinal(names, colors)
 
   const svg = d3
-    .create("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .attr("viewBox", [-width / 2, -height / 2, width, height])
-    .attr("style", "width: 100%; height: auto; font: 10px sans-serif;")
+    .create('svg')
+    .attr('width', width)
+    .attr('height', height)
+    .attr('viewBox', [-width / 2, -height / 2, width, height])
+    .attr('style', 'width: 100%; height: auto; font: 10px sans-serif;')
 
   const chords = chord(data)
 
-  const group = svg.append("g").selectAll().data(chords.groups).join("g")
+  const group = svg.append('g').selectAll().data(chords.groups).join('g')
 
   group
-    .append("path")
-    .attr("fill", (d) => color(names[d.index]))
-    .attr("d", arc)
+    .append('path')
+    .attr('fill', (d) => color(names[d.index]))
+    .attr('d', arc)
 
   group
-    .append("title")
+    .append('title')
     .text((d) => `${names[d.index]}\n${formatValue(d.value)}`)
 
   const groupTick = group
-    .append("g")
+    .append('g')
     .selectAll()
     .data((d) => groupTicks(d, tickStep))
-    .join("g")
+    .join('g')
     .attr(
-      "transform",
+      'transform',
       (d) =>
-        `rotate(${(d.angle * 180) / Math.PI - 90}) translate(${outerRadius},0)`
+        `rotate(${(d.angle * 180) / Math.PI - 90}) translate(${outerRadius},0)`,
     )
 
-  groupTick.append("line").attr("stroke", "currentColor").attr("x2", 6)
+  groupTick.append('line').attr('stroke', 'currentColor').attr('x2', 6)
 
   groupTick
-    .append("text")
-    .attr("x", 8)
-    .attr("dy", "0.35em")
-    .attr("transform", (d) =>
-      d.angle > Math.PI ? "rotate(180) translate(-16)" : null
+    .append('text')
+    .attr('x', 8)
+    .attr('dy', '0.35em')
+    .attr('transform', (d) =>
+      d.angle > Math.PI ? 'rotate(180) translate(-16)' : null,
     )
-    .attr("text-anchor", (d) => (d.angle > Math.PI ? "end" : null))
+    .attr('text-anchor', (d) => (d.angle > Math.PI ? 'end' : null))
     .text((d) => formatValue(d.value))
 
   group
-    .select("text")
-    .attr("font-weight", "bold")
+    .select('text')
+    .attr('font-weight', 'bold')
     .text(function (d) {
-      return this.getAttribute("text-anchor") === "end"
+      return this.getAttribute('text-anchor') === 'end'
         ? `↑ ${names[d.index]}`
         : `${names[d.index]} ↓`
     })
 
   svg
-    .append("g")
-    .attr("fill-opacity", 0.8)
-    .selectAll("path")
+    .append('g')
+    .attr('fill-opacity', 0.8)
+    .selectAll('path')
     .data(chords)
-    .join("path")
-    .style("mix-blend-mode", "multiply")
-    .attr("fill", (d) => color(names[d.source.index]))
-    .attr("d", ribbon)
-    .append("title")
+    .join('path')
+    .style('mix-blend-mode', 'multiply')
+    .attr('fill', (d) => color(names[d.source.index]))
+    .attr('d', ribbon)
+    .append('title')
     .text(
       (d) =>
         `${formatValue(d.source.value)} ${names[d.target.index]} → ${
           names[d.source.index]
         }${
           d.source.index === d.target.index
-            ? ""
+            ? ''
             : `\n${formatValue(d.target.value)} ${names[d.source.index]} → ${
                 names[d.target.index]
               }`
-        }`
+        }`,
     )
 
   return svg.node()
@@ -150,26 +150,26 @@ const data = Object.assign(
   ],
   {
     names: [
-      "Apple",
-      "HTC",
-      "Huawei",
-      "LG",
-      "Nokia",
-      "Samsung",
-      "Sony",
-      "Other",
+      'Apple',
+      'HTC',
+      'Huawei',
+      'LG',
+      'Nokia',
+      'Samsung',
+      'Sony',
+      'Other',
     ],
     colors: [
-      "#c4c4c4",
-      "#69b40f",
-      "#ec1d25",
-      "#c8125c",
-      "#008fc8",
-      "#10218b",
-      "#134b24",
-      "#737373",
+      '#c4c4c4',
+      '#69b40f',
+      '#ec1d25',
+      '#c8125c',
+      '#008fc8',
+      '#10218b',
+      '#134b24',
+      '#737373',
     ],
-  }
+  },
 )
 ```
 
@@ -182,13 +182,13 @@ and using [this gist](https://gist.github.com/nbremer/a23f7f85f30f5cd9e1e8602a5a
 code
 
 ```js echo
-import * as chord from "/components/chord.js"
-import { extractPhase1Workbook } from "/components/phase1-workbook.js"
+import * as chord from '/components/chord.js'
+import { extractPhase1Workbook } from '/data/utilities/phase1-workbook.js'
 import {
   project_color_scale,
   legal_nature_colors,
   interpolated_legal_nature_color,
-} from "/components/color.js"
+} from '/components/color.js'
 ```
 
 ```js echo
@@ -197,7 +197,7 @@ display(phase_1_data)
 
 ```js echo
 const workbook = await FileAttachment(
-  "/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx"
+  '/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
 ).xlsx()
 const phase_1_data = extractPhase1Workbook(workbook, false)
 ```
@@ -213,7 +213,7 @@ display(chord_projects_partners)
 const partners_by_labs = new Map(
   phase_1_data.projects
     .filter((d) => d.financed)
-    .map((d) => [d.acronyme, new Set(d.labs)])
+    .map((d) => [d.acronyme, new Set(d.labs)]),
 )
 const total_labs = new Set(d3.merge(partners_by_labs.values())).size
 
@@ -221,7 +221,7 @@ const project_lab_intersection_matrix = d3
   .cross(
     partners_by_labs.values(),
     partners_by_labs.values(),
-    (a, b) => a.intersection(b).size / total_labs
+    (a, b) => a.intersection(b).size / total_labs,
   )
   // https://stackoverflow.com/questions/4492385/convert-simple-array-into-two-dimensional-array-matrix
   .reduce(
@@ -229,12 +229,12 @@ const project_lab_intersection_matrix = d3
       (index % partners_by_labs.size == 0
         ? matrix.push([key])
         : matrix[matrix.length - 1].push(key)) && matrix,
-    []
+    [],
   )
 
 const chord_projects_partners = chord.chordDiagram(
   project_lab_intersection_matrix,
   [...partners_by_labs.keys()],
-  partners_by_labs.keys().map((d) => project_color_scale(d))
+  partners_by_labs.keys().map((d) => project_color_scale(d)),
 )
 ```
