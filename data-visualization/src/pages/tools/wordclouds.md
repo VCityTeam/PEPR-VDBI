@@ -1,27 +1,27 @@
 ---
 style: /css/vdbi-page.css
 sql:
-  integreen_wps_en_cleaned: "/data/private/integreen_wps_en_cleaned.csv"
-  neo_wps_en_cleaned: "/data/private/neo_wps_en_cleaned.csv"
-  resilience_wps_en_cleaned: "/data/private/resilience_wps_en_cleaned.csv"
-  traces_wps_en_cleaned: "/data/private/traces_wps_en_cleaned.csv"
-  urbhealth_wps_en_cleaned: "/data/private/urbhealth_wps_en_cleaned.csv"
-  vfpp_wps_en_cleaned: "/data/private/vfpp_wps_en_cleaned.csv"
-  villegarden_wps_en_cleaned: "/data/private/villegarden_wps_en_cleaned.csv"
-  whaou_wps_en_cleaned: "/data/private/whaou_wps_en_cleaned.csv"
-  js_vdbi_2025_roundtable_1: "/data/js_vdbi_2025_roundtable_1.csv"
-  js_vdbi_2025_roundtable_2: "/data/js_vdbi_2025_roundtable_2.csv"
-  js_vdbi_2025_roundtable_3: "/data/js_vdbi_2025_roundtable_3.csv"
+  integreen_wps_en_cleaned: '/data/private/integreen_wps_en_cleaned.csv'
+  neo_wps_en_cleaned: '/data/private/neo_wps_en_cleaned.csv'
+  resilience_wps_en_cleaned: '/data/private/resilience_wps_en_cleaned.csv'
+  traces_wps_en_cleaned: '/data/private/traces_wps_en_cleaned.csv'
+  urbhealth_wps_en_cleaned: '/data/private/urbhealth_wps_en_cleaned.csv'
+  vfpp_wps_en_cleaned: '/data/private/vfpp_wps_en_cleaned.csv'
+  villegarden_wps_en_cleaned: '/data/private/villegarden_wps_en_cleaned.csv'
+  whaou_wps_en_cleaned: '/data/private/whaou_wps_en_cleaned.csv'
+  js_vdbi_2025_roundtable_1: '/data/js_vdbi_2025_roundtable_1.csv'
+  js_vdbi_2025_roundtable_2: '/data/js_vdbi_2025_roundtable_2.csv'
+  js_vdbi_2025_roundtable_3: '/data/js_vdbi_2025_roundtable_3.csv'
 ---
 
 <!-- imports -->
 
 ```js
-import { wordCloud } from "/components/cloud.js"
+import { wordCloud } from '/components/cloud.js'
 ```
 
 ```js
-import { downloadSVGButton } from "/components/utilities.js"
+import { downloadSVGButton } from '/components/utilities.js'
 ```
 
 ```js
@@ -29,7 +29,7 @@ import {
   vdbi_orange_analogic_color_scale,
   vdbi_blue_analogic_color_scale,
   vdbi_color_scheme,
-} from "/components/color.js"
+} from '/components/color.js'
 ```
 
 # Word Cloud Generator
@@ -93,28 +93,25 @@ import {
 const _invalidator_1 = refresh
 
 const cloud = resize((width) =>
-  wordCloud(
-    filtered_wordcount,
-    {
-      width: width,
-      height: width * 0.56,
-      angle_number: selected_angle_number_value,
-      angle_width: selected_angle_width_value,
-      angle_offset: selected_angle_offset_value,
-      font_size_range: [
-        selected_font_size_min_value,
-        selected_font_size_max_value,
-      ],
-      color: selected_color_value,
-    }
-  )
+  wordCloud(filtered_wordcount, {
+    width: width,
+    height: width * 0.56,
+    angle_number: selected_angle_number_value,
+    angle_width: selected_angle_width_value,
+    angle_offset: selected_angle_offset_value,
+    font_size_range: [
+      selected_font_size_min_value,
+      selected_font_size_max_value,
+    ],
+    color: selected_color_value,
+  }),
 )
 ```
 
 ```js
 const copy_button = downloadSVGButton(
-  "#word_cloud_container svg",
-  "Download cloud"
+  '#word_cloud_container svg',
+  'Download cloud',
 )
 ```
 
@@ -127,24 +124,24 @@ const flip = () => (refresh.value = !refresh.value)
 const selected_wordcount = Inputs.select(
   new Map([
     [
-      "Uploaded word count",
+      'Uploaded word count',
       uploaded_wordcount_value ? uploaded_wordcount_value.csv() : [],
     ],
-    ["integreen work package words (EN)", integreen_words],
-    ["neo work package words (EN)", neo_words],
-    ["resilience work package words (EN)", resilience_words],
-    ["traces work package words (EN)", traces_words],
-    ["urbhealth work package words (EN)", urbhealth_words],
-    ["vfpp work package words (EN)", vfpp_words],
-    ["villegarden work package words (EN)", villegarden_words],
-    ["whaou work package words (EN)", whaou_words],
-    ["JS VDBI 2025 Roundtable 1 (EN)", roundtable_1_words],
-    ["JS VDBI 2025 Roundtable 2 (EN)", roundtable_2_words],
-    ["JS VDBI 2025 Roundtable 3 (EN)", roundtable_3_words],
+    ['integreen work package words (EN)', integreen_words],
+    ['neo work package words (EN)', neo_words],
+    ['resilience work package words (EN)', resilience_words],
+    ['traces work package words (EN)', traces_words],
+    ['urbhealth work package words (EN)', urbhealth_words],
+    ['vfpp work package words (EN)', vfpp_words],
+    ['villegarden work package words (EN)', villegarden_words],
+    ['whaou work package words (EN)', whaou_words],
+    ['JS VDBI 2025 Roundtable 1 (EN)', roundtable_1_words],
+    ['JS VDBI 2025 Roundtable 2 (EN)', roundtable_2_words],
+    ['JS VDBI 2025 Roundtable 3 (EN)', roundtable_3_words],
   ]),
   {
-    label: "Select a word count",
-  }
+    label: 'Select a word count',
+  },
 )
 ```
 
@@ -153,52 +150,52 @@ const selected_wordcount_value = Generators.input(selected_wordcount)
 ```
 
 ```js
-const uploaded_wordcount = Inputs.file({ accept: ".csv" })
+const uploaded_wordcount = Inputs.file({ accept: '.csv' })
 ```
 
 ```js
 const selected_color = Inputs.select(
   new Map([
-    ["Orange", () => vdbi_orange_analogic_color_scale(Math.random())],
-    ["Blue", () => vdbi_blue_analogic_color_scale(Math.random())],
+    ['Orange', () => vdbi_orange_analogic_color_scale(Math.random())],
+    ['Blue', () => vdbi_blue_analogic_color_scale(Math.random())],
   ]),
   {
-    label: "Select color scheme",
-  }
+    label: 'Select color scheme',
+  },
 )
 
 const selected_font_size_min = Inputs.range([1, 300], {
-  label: "Font size minimum",
+  label: 'Font size minimum',
   step: 1,
   value: 50,
 })
 
 const selected_font_size_max = Inputs.range([1, 300], {
-  label: "Font size maximum",
+  label: 'Font size maximum',
   step: 1,
   value: 100,
 })
 
 const selected_angle_number = Inputs.range([0, 10], {
-  label: "Angle number",
+  label: 'Angle number',
   step: 1,
   value: 1,
 })
 
 const selected_angle_width = Inputs.range([0, 360], {
-  label: "Angle width",
+  label: 'Angle width',
   step: 1,
   value: 0,
 })
 
 const selected_angle_offset = Inputs.range([0, 360], {
-  label: "Angle offset",
+  label: 'Angle offset',
   step: 1,
   value: 0,
 })
 
 const selected_word_limit = Inputs.range([1, 100], {
-  label: "Word limit",
+  label: 'Word limit',
   step: 1,
   value: 20,
 })
@@ -222,14 +219,14 @@ const filtered_wordcount = [...selected_wordcount_value]
 ```
 
 ```js
-console.debug("selected_wordcount_value", selected_wordcount_value)
-console.debug("uploaded_wordcount_value", uploaded_wordcount_value)
-console.debug("selected_color_value", selected_color_value)
-console.debug("selected_font_size_min_value", selected_font_size_min_value)
-console.debug("selected_font_size_max_value", selected_font_size_max_value)
-console.debug("selected_angle_number_value", selected_angle_number_value)
-console.debug("selected_angle_width_value", selected_angle_width_value)
-console.debug("selected_angle_offset_value", selected_angle_offset_value)
+console.debug('selected_wordcount_value', selected_wordcount_value)
+console.debug('uploaded_wordcount_value', uploaded_wordcount_value)
+console.debug('selected_color_value', selected_color_value)
+console.debug('selected_font_size_min_value', selected_font_size_min_value)
+console.debug('selected_font_size_max_value', selected_font_size_max_value)
+console.debug('selected_angle_number_value', selected_angle_number_value)
+console.debug('selected_angle_width_value', selected_angle_width_value)
+console.debug('selected_angle_offset_value', selected_angle_offset_value)
 ```
 
 <!-- word counts -->

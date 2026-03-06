@@ -6,7 +6,7 @@ style: /css/vdbi-page.css
 
 ```js
 import { chordDiagram } from '/components/chord.js'
-import { extractPhase1Workbook } from '/data/utilities/phase1-workbook.js'
+// import { extractPhase1Workbook } from '/data/utilities/phase1-workbook.js'
 import {
   project_color_scale,
   legal_nature_colors,
@@ -61,10 +61,7 @@ ${projects.join(", ")}
 ${Inputs.table(selected_dataset)}
 
 ```js
-const workbook = await FileAttachment(
-  '/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
-).xlsx()
-const phase_1_data = extractPhase1Workbook(workbook, false, new Map(), true)
+const phase_1_data = await FileAttachment('/data/phase1-workbook.json').json()
 
 const projects = phase_1_data.projects.map((d) => d.acronyme)
 ```

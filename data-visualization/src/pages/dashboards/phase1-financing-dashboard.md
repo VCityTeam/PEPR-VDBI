@@ -84,19 +84,19 @@ flowchart TD
 ```
 
 ```js
-import { resolveProjectFinancingEntities } from "/components/financing.js"
-import { sparkbar, countEntities, cropText } from "/components/utilities.js"
-import { donutChart } from "/components/pie-chart.js"
+import { resolveProjectFinancingEntities } from '/components/financing.js'
+import { sparkbar, countEntities, cropText } from '/components/utilities.js'
+import { donutChart } from '/components/pie-chart.js'
 ```
 
 ```js
 const category_color_map = new Map([
-  ["IR", d3.schemeCategory10[0]],
-  ["Doctorant", d3.schemeCategory10[1]],
-  ["Postdoctorant", d3.schemeCategory10[2]],
-  ["IE", d3.schemeCategory10[2]],
-  ["AI", d3.schemeCategory10[3]],
-  ["Tech", d3.schemeCategory10[4]],
+  ['IR', d3.schemeCategory10[0]],
+  ['Doctorant', d3.schemeCategory10[1]],
+  ['Postdoctorant', d3.schemeCategory10[2]],
+  ['IE', d3.schemeCategory10[2]],
+  ['AI', d3.schemeCategory10[3]],
+  ['Tech', d3.schemeCategory10[4]],
 ])
 
 function default_personnel_table_config(data, width) {
@@ -109,58 +109,58 @@ function default_personnel_table_config(data, width) {
     maxWidth: width,
     columns: [
       // "project",
-      "description",
-      "type_contract",
-      "type_post",
-      "employer",
-      "months",
-      "cost",
-      "assistance",
-      "support",
-      "total_cost",
+      'description',
+      'type_contract',
+      'type_post',
+      'employer',
+      'months',
+      'cost',
+      'assistance',
+      'support',
+      'total_cost',
     ],
     header: {
-      description: "Post description",
-      type_contract: "Contract type",
-      type_post: "Contract category",
-      employer: "Employer",
-      months: "Contract length (months)",
-      cost: "Unitary cost",
-      assistance: "Financial assistance requested",
-      support: "Support cost",
-      total_cost: "Total cost",
+      description: 'Post description',
+      type_contract: 'Contract type',
+      type_post: 'Contract category',
+      employer: 'Employer',
+      months: 'Contract length (months)',
+      cost: 'Unitary cost',
+      assistance: 'Financial assistance requested',
+      support: 'Support cost',
+      total_cost: 'Total cost',
     },
     align: {
-      total_cost: "left",
+      total_cost: 'left',
     },
     format: {
       cost: sparkbar(
         d3.max(data, (d) => d.cost),
-        { background: "var(--theme-green)" },
+        { background: 'var(--theme-green)' },
       ),
       assistance: sparkbar(
         d3.max(data, (d) => d.assistance),
-        { background: "var(--theme-green)" },
+        { background: 'var(--theme-green)' },
       ),
       support: sparkbar(
         d3.max(data, (d) => d.support),
-        { background: "var(--theme-green)" },
+        { background: 'var(--theme-green)' },
       ),
       total_cost: sparkbar(
         d3.max(data, (d) => d.total_cost),
-        { background: "var(--theme-green)" },
+        { background: 'var(--theme-green)' },
       ),
     },
   }
 }
 
 const default_partner_table_config = {
-  columns: ["complete_name", "name", "type", "siret"],
+  columns: ['complete_name', 'name', 'type', 'siret'],
   header: {
-    complete_name: "Complete name",
-    name: "Name",
-    type: "Type",
-    siret: "SIRET",
+    complete_name: 'Complete name',
+    name: 'Name',
+    type: 'Type',
+    siret: 'SIRET',
   },
 }
 
@@ -177,28 +177,28 @@ function default_x_plot_options(label, data, width, height) {
     },
     x: {
       grid: true,
-      axis: "top",
-      label: "Occurences",
+      axis: 'top',
+      label: 'Occurences',
     },
     color: {
-      type: "linear",
-      scheme: "Blues",
+      type: 'linear',
+      scheme: 'Blues',
     },
     marks: [
       Plot.barX(data, {
         y: (d) => d[0],
         x: (d) => d[1],
         fill: (d) => d[1],
-        stroke: "black",
+        stroke: 'black',
         strokeOpacity: 0.1,
         // sort: {y: "y"},
-        sort: { y: "-x" },
+        sort: { y: '-x' },
         tip: {
           format: {
             fill: false,
           },
           lineWidth: 25,
-          textOverflow: "ellipsis-end",
+          textOverflow: 'ellipsis-end',
         },
       }),
       Plot.barX(
@@ -206,7 +206,7 @@ function default_x_plot_options(label, data, width, height) {
         Plot.pointerY({
           x: (d) => d[1],
           y: (d) => d[0],
-          fill: "white",
+          fill: 'white',
           opacity: 0.5,
         }),
       ),
@@ -222,34 +222,34 @@ function default_employer_plot_options(data, width, height = 500) {
     marginTop: 50,
     marginBottom: 75,
     x: {
-      label: "Employer",
+      label: 'Employer',
       tickRotate: 20,
       tickFormat: (d) => cropText(d, 25),
     },
     y: {
-      label: "Occurences",
+      label: 'Occurences',
       grid: true,
     },
     color: {
-      type: "linear",
-      scheme: "Blues",
+      type: 'linear',
+      scheme: 'Blues',
     },
     marks: [
       Plot.barY(data, {
         y: (d) => d[1],
         x: (d) => d[2],
         fill: (d) => d[1],
-        stroke: "black",
+        stroke: 'black',
         strokeOpacity: 0.5,
         // sort: {x: "-y"},
-        sort: { x: "x" },
+        sort: { x: 'x' },
         channels: { Siret: (d) => d[0] },
         tip: {
           format: {
             fill: false,
           },
           lineWidth: 25,
-          textOverflow: "ellipsis-end",
+          textOverflow: 'ellipsis-end',
         },
       }),
       Plot.barY(
@@ -257,7 +257,7 @@ function default_employer_plot_options(data, width, height = 500) {
         Plot.pointerX({
           x: (d) => d[2],
           y: (d) => d[1],
-          fill: "white",
+          fill: 'white',
           opacity: 0.5,
         }),
       ),
@@ -276,7 +276,7 @@ function default_pie_options(width, left_margin = 110) {
       .scaleOrdinal(d3.schemeCategory10)
       .domain(category_color_map.keys())
       .range(category_color_map.values())
-      .unknown("grey"),
+      .unknown('grey'),
     legendWidth: left_margin,
   }
 }
@@ -350,19 +350,19 @@ const all_employer_count_by_siret_by_name = d3.rollups(
 )
 
 if (debug) {
-  display("all_data")
+  display('all_data')
   display(all_data)
   // display("all_description_count");
   // display(all_description_count);
   // display("all_type_contract_count");
   // display(all_type_contract_count);
-  display("all_type_post_count")
+  display('all_type_post_count')
   display(all_type_post_count)
-  display("all_employer_count_by_siret")
+  display('all_employer_count_by_siret')
   display(all_employer_count_by_siret)
-  display("all_employer_count_by_siret_by_name")
+  display('all_employer_count_by_siret_by_name')
   display(all_employer_count_by_siret_by_name)
-  display("all_employer_count_by_siret")
+  display('all_employer_count_by_siret')
   display(all_employer_count_by_siret)
 }
 ```
@@ -634,14 +634,14 @@ if (debug) {
 
 ```js
 const inteGREEN_workbook = FileAttachment(
-  "/data/private/inteGREEN_France2030_aap_pepr_vdbi_2023_AnnexeFinanciere.xlsx",
+  '/data/private/inteGREEN_France2030_aap_pepr_vdbi_2023_AnnexeFinanciere.xlsx',
 ).xlsx()
 ```
 
 ```js
 const inteGREEN_data = resolveProjectFinancingEntities(
   inteGREEN_workbook,
-  "inteGREEN",
+  'inteGREEN',
 )
 
 const inteGREEN_type_post_count = d3
@@ -738,14 +738,14 @@ if (debug) {
 
 ```js
 const VILLEGARDEN_workbook = FileAttachment(
-  "/data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_VILLEGARDEN_07_02_2024.xlsx",
+  '/data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_VILLEGARDEN_07_02_2024.xlsx',
 ).xlsx()
 ```
 
 ```js
 const VILLEGARDEN_data = resolveProjectFinancingEntities(
   VILLEGARDEN_workbook,
-  "VILLEGARDEN",
+  'VILLEGARDEN',
 )
 
 const VILLEGARDEN_type_post_count = d3
@@ -842,12 +842,12 @@ if (debug) {
 
 ```js
 const NEO_workbook = FileAttachment(
-  "/data/private/NEO_AnnexeFinanciere_totale_finale.xlsx",
+  '/data/private/NEO_AnnexeFinanciere_totale_finale.xlsx',
 ).xlsx()
 ```
 
 ```js
-const NEO_data = resolveProjectFinancingEntities(NEO_workbook, "NEO")
+const NEO_data = resolveProjectFinancingEntities(NEO_workbook, 'NEO')
 
 const NEO_type_post_count = d3
   .rollups(
@@ -943,14 +943,14 @@ if (debug) {
 
 ```js
 const RESILIENCE_workbook = FileAttachment(
-  "/data/private/PEPR_RESILIENCE_07022024.xlsx",
+  '/data/private/PEPR_RESILIENCE_07022024.xlsx',
 ).xlsx()
 ```
 
 ```js
 const RESILIENCE_data = resolveProjectFinancingEntities(
   RESILIENCE_workbook,
-  "RESILIENCE",
+  'RESILIENCE',
 )
 
 const RESILIENCE_type_post_count = d3
@@ -1047,12 +1047,12 @@ if (debug) {
 
 ```js
 const TRACES_workbook = FileAttachment(
-  "/data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_TRACES.xlsx",
+  '/data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_TRACES.xlsx',
 ).xlsx()
 ```
 
 ```js
-const TRACES_data = resolveProjectFinancingEntities(TRACES_workbook, "TRACES")
+const TRACES_data = resolveProjectFinancingEntities(TRACES_workbook, 'TRACES')
 
 const TRACES_type_post_count = d3
   .rollups(
@@ -1148,14 +1148,14 @@ if (debug) {
 
 ```js
 const URBHEALTH_workbook = FileAttachment(
-  "/data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_URBHEALTH_2024_02_05.xlsx",
+  '/data/private/France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_URBHEALTH_2024_02_05.xlsx',
 ).xlsx()
 ```
 
 ```js
 const URBHEALTH_data = resolveProjectFinancingEntities(
   URBHEALTH_workbook,
-  "URBHEALTH",
+  'URBHEALTH',
 )
 
 const URBHEALTH_type_post_count = d3
@@ -1252,12 +1252,12 @@ if (debug) {
 
 ```js
 const VFpp_workbook = FileAttachment(
-  "/data/private/VF2PLUS_France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_global.xlsx",
+  '/data/private/VF2PLUS_France2030_aap_pepr_vdbi_2023_AnnexeFinanciere_global.xlsx',
 ).xlsx()
 ```
 
 ```js
-const VFpp_data = resolveProjectFinancingEntities(VFpp_workbook, "VF++")
+const VFpp_data = resolveProjectFinancingEntities(VFpp_workbook, 'VF++')
 
 const VFpp_type_post_count = d3
   .rollups(
@@ -1353,12 +1353,12 @@ if (debug) {
 
 ```js
 const WHAOU_workbook = FileAttachment(
-  "/data/private/WHAOU_PEPR_VDBI_AnnexeFinanciere.xlsx",
+  '/data/private/WHAOU_PEPR_VDBI_AnnexeFinanciere.xlsx',
 ).xlsx()
 ```
 
 ```js
-const WHAOU_data = resolveProjectFinancingEntities(WHAOU_workbook, "WHAOU")
+const WHAOU_data = resolveProjectFinancingEntities(WHAOU_workbook, 'WHAOU')
 
 const WHAOU_type_post_count = d3
   .rollups(

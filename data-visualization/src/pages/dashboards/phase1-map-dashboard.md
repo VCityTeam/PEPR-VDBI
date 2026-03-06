@@ -31,21 +31,6 @@ import {
 
 ```js
 import {
-  getGeneralSheet,
-  getResearcherSheet,
-  getLabSheet,
-  getInstitutionSheet,
-  resolveGeneralEntities,
-  resolveResearcherEntities,
-  resolveLabEntities,
-  resolveInstitutionEntities,
-  getColumnOptions,
-  filterOnInput,
-} from '/data/utilities/phase1-workbook.js'
-```
-
-```js
-import {
   forceGraph,
   mapTableToPropertyGraphLinks,
   mapTableToTriples,

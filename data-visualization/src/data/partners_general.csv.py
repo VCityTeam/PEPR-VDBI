@@ -2,7 +2,7 @@ import logging
 import sys
 import csv
 from utilities.siret import queryAndFormatRe, defaultCsvHeader
-from utilities.utils import initDefaultLogger
+from utilities.io_utils import initDefaultLogger
 
 
 def main():

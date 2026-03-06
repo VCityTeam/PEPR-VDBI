@@ -25,7 +25,6 @@ import {
   legal_nature_colors,
   interpolated_legal_nature_color,
 } from '/components/color.js'
-import { extractPhase1Workbook } from '/data/utilities/phase1-workbook.js'
 ```
 
 <div class="card">
@@ -42,9 +41,9 @@ const workbook = FileAttachment(
 ```
 
 ```js
-const phase_1_data = extractPhase1Workbook(workbook, false).projects.filter(
-  (d) => d.financed,
-)
+const phase_1_data = FileAttachment(
+  '/data/phase1-workbook.json',
+).projects.filter((d) => d.financed)
 
 let phase_1_partner_links = [
   // {

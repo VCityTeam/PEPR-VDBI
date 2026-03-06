@@ -1,7 +1,7 @@
 import * as d3 from 'd3'
 import * as Plot from '@observablehq/plot'
 import { FileAttachment } from 'observablehq:stdlib'
-import { vdbi_color_scheme } from '/components/color.js'
+import { vdbi_color_scheme } from './color.js'
 
 // geospatial address data
 

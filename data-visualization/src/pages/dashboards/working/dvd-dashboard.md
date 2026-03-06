@@ -2,11 +2,6 @@
 
 ```js
 import { countEntities, cropText } from '/components/utilities.js'
-import {
-  extractPhase1Workbook,
-  // getColumnOptions,
-  // filterOnInput,
-} from '/data/utilities/phase1-workbook.js'
 import { donutChart } from '/components/pie-chart.js'
 import { projectionMap } from '/components/projection-map.js'
 import {
@@ -29,10 +24,6 @@ const exclude = (d) =>
     'Non Renseigné',
   ].includes(d)
 
-const workbook1 = FileAttachment(
-  '/data/private/250120 PEPR_VBDI_analyse modifiée JYT_financed_redacted.xlsx',
-).xlsx()
-
 const geocoded_researcher_sites = FileAttachment(
   '/data/researcher_sites.geocoded.csv',
 ).csv()
@@ -42,7 +33,7 @@ const world = FileAttachment('/data/world.json').json()
 
 ```js
 // format data
-const phase_1_data = extractPhase1Workbook(workbook1, false)
+const phase_1_data = FileAttachment('/data/phase1-workbook.json')
 ```
 
 ```js

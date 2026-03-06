@@ -1,4 +1,4 @@
-from utilities.utils import initDefaultLogger
+from utilities.io_utils import initDefaultLogger
 from utilities.siret import queryRE, formatReResponse
 import pandas as pd
 

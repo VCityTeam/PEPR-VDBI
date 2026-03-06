@@ -13,8 +13,8 @@ import {
   MuralGraph,
   mapTableToPropertyGraphLinks,
   mapTableToTriples,
-} from "/components/graph.js"
-import { circleLegend } from "/components/legend.js"
+} from '/components/graph.js'
+import { circleLegend } from '/components/legend.js'
 ```
 
 # Mural link editor
@@ -28,63 +28,63 @@ and a workplace for integrating the PEPR VDBI Participative Constellation.
 const selected_source = view(
   Inputs.select(
     new Map([
-      ["Partner Constellation", ""],
-      ["Object Constellation", "2"],
-      ["Uploaded files", "user"],
+      ['Partner Constellation', ''],
+      ['Object Constellation', '2'],
+      ['Uploaded files', 'user'],
     ]),
     {
-      label: "Select a dataset to use",
-    }
-  )
+      label: 'Select a dataset to use',
+    },
+  ),
 )
 ```
 
 ```js
 const csvfile = view(
   Inputs.file({
-    label: "Upload a Mural CSV export",
-    accept: ".csv",
+    label: 'Upload a Mural CSV export',
+    accept: '.csv',
     required: false,
-  })
+  }),
 )
 ```
 
 ```js
 const linkfile = view(
   Inputs.file({
-    label: "Upload a CSV of links [source, target, label]",
-    accept: ".csv",
+    label: 'Upload a CSV of links [source, target, label]',
+    accept: '.csv',
     required: false,
-  })
+  }),
 )
 ```
 
 ```js
 const mural_export =
-  selected_source !== "user"
+  selected_source !== 'user'
     ? [...(await sql([`select * from mural_store${[selected_source]}`]))].map(
-        (d) => d.toJSON()
+        (d) => d.toJSON(),
       )
     : csvfile.csv()
 ```
 
 ```js
 const links_export =
-  selected_source !== "user"
+  selected_source !== 'user'
     ? [...(await sql([`select * from link_store${[selected_source]}`]))].map(
-        (d) => d.toJSON()
+        (d) => d.toJSON(),
       )
     : linkfile.csv()
 ```
 
 ```js
 mural_export.forEach((d) => {
-  d.id = String(d["ID"])
-  d.label = String(d["Text"])
-  d.type = d["BG Color"]
-  d.shape = d["Sticky type"]
-  d.fx = Number(d["Position X"])
-  d.fy = Number(d["Position Y"])
+  d.id = String(d['ID'])
+  d.label = String(d['Text'])
+  d.type = d['BG Color']
+  d.shape = d['Sticky type']
+  d.fx = Number(d['Position X'])
+  d.fy = Number(d['Position Y'])
 })
 
 const project_graph_data = {
@@ -103,22 +103,22 @@ ${downloadSVGButton("#graph_container svg")}
 ```js echo
 const mural_color_scale = new Map([
   // project constellation
-  ["#AAED92", "Projet PEPR VDBI"],
-  ["#FCF281", "Projet externe ou vulnérabilité humaine"],
-  ["#9EDCFA", "Centre Opérationel"],
-  ["#FCB6D4", "Projet PEPR (externe) ou espace physique"],
-  ["#0561A6", "Structure"],
-  ["#FFC061", "Pratiques, organisation ou autre"],
+  ['#AAED92', 'Projet PEPR VDBI'],
+  ['#FCF281', 'Projet externe ou vulnérabilité humaine'],
+  ['#9EDCFA', 'Centre Opérationel'],
+  ['#FCB6D4', 'Projet PEPR (externe) ou espace physique'],
+  ['#0561A6', 'Structure'],
+  ['#FFC061', 'Pratiques, organisation ou autre'],
   // object constellation
   // ["#AAED92", "Projet PEPR VDBI"],
   // ["#9EDCFA", "Centre Opérationel"],
-  ["#767656", "Risque, épisode"],
+  ['#767656', 'Risque, épisode'],
   // ["#FCF281", "Vulnérabilité humaine"],
   // ["#FCB6D4", "Espaces physique"],
-  ["#D8D8B1", "Méthode, approche, outil"],
-  ["#D8C7FF", "Phénomène écoulement"],
-  ["#86E6D9", "Savoirs locaux"],
-  ["#EDEDED", "Acteurs"],
+  ['#D8D8B1', 'Méthode, approche, outil'],
+  ['#D8C7FF', 'Phénomène écoulement'],
+  ['#86E6D9', 'Savoirs locaux'],
+  ['#EDEDED', 'Acteurs'],
   // ["#FFC061", "Pratiques, organisation"],
 ])
 
@@ -128,7 +128,7 @@ const color_scale = d3.scaleOrdinal(
 )
 
 const project_graph = new MuralGraph(project_graph_data, {
-  id: "mural_graph",
+  id: 'mural_graph',
   width: 1000,
   height: 1000,
   margin: 500,
@@ -147,8 +147,8 @@ const project_graph = new MuralGraph(project_graph_data, {
     lineSeparation: 120,
     text: (d) => d,
     fontSize: 100,
-    backgroundColor: "black",
-    backgroundStroke: "black",
+    backgroundColor: 'black',
+    backgroundStroke: 'black',
     backgroundOpacity: 0.1,
   }),
 })
@@ -183,7 +183,7 @@ import {
   downloadSVGButton,
   downloadTableButton,
   downloadJSONButton,
-} from "/components/utilities.js"
+} from '/components/utilities.js'
 ```
 
 ```js
@@ -206,20 +206,20 @@ const mural_links = (async function* () {
 ```js
 const color_filter = view(
   Inputs.checkbox(mural_color_scale, {
-    label: "Select types",
+    label: 'Select types',
     keyof: (d) => d[1],
     valueof: (d) => d[0],
     value: mural_color_scale.keys(),
-  })
+  }),
 )
 ```
 
 ```js
 const search_nodes = view(
-  Inputs.search(constellation_data.nodes, { placeholder: "Search nodes…" })
+  Inputs.search(constellation_data.nodes, { placeholder: 'Search nodes…' }),
 )
 const search_links = view(
-  Inputs.search(constellation_data.links, { placeholder: "Search links…" })
+  Inputs.search(constellation_data.links, { placeholder: 'Search links…' }),
 )
 ```
 
@@ -253,15 +253,15 @@ filtered_constellation
 
 ```js
 const constellation_file = FileAttachment(
-  "/data/private/Constellation PEPR VDBI graph.json"
+  '/data/private/Constellation PEPR VDBI graph.json',
 )
 const constellation_data = await constellation_file.json()
-console.debug("constellation_data", constellation_data)
+console.debug('constellation_data', constellation_data)
 ```
 
 ```js
 const filtered_constellation_nodes = search_nodes.filter((d) =>
-  color_filter.includes(d.type)
+  color_filter.includes(d.type),
 )
 ```
 
@@ -271,7 +271,7 @@ const filtered_constellation_links = search_links.filter(
     (color_filter.includes(l.source.type) ||
       color_filter.includes(l.target.type)) &&
     (filtered_constellation_nodes.includes(l.source) ||
-      filtered_constellation_nodes.includes(l.target))
+      filtered_constellation_nodes.includes(l.target)),
 )
 ```
 
@@ -284,7 +284,7 @@ const filtered_constellation = {
         filtered_constellation_nodes,
         filtered_constellation_links.map(({ source }) => source),
         filtered_constellation_links.map(({ target }) => target),
-      ])
+      ]),
     ),
   ],
   links: filtered_constellation_links,

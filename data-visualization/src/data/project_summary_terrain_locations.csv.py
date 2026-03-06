@@ -2,7 +2,7 @@ import logging
 import sys
 import csv
 import json
-from utilities.utils import initDefaultLogger
+from utilities.io_utils import initDefaultLogger
 from geopy.geocoders import Nominatim
 
 
@@ -31,7 +31,8 @@ def main():
 
     # query Nominatim api using partner names and aggregate data
     geolocator = Nominatim(
-        user_agent="https://github.com/VCityTeam/PEPR-VDBI", timeout=10  # type: ignore
+        user_agent="https://github.com/VCityTeam/PEPR-VDBI",
+        timeout=10,  # type: ignore
     )
     for terrain in terrains:
         logging.debug(f"processing terrain: {terrain}")

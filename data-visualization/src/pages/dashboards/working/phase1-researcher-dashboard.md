@@ -6,11 +6,6 @@ title: Researcher Dashboard
 
 ```js
 import { countEntities, cropText } from '/components/utilities.js'
-import {
-  extractPhase1Workbook,
-  // getColumnOptions,
-  // filterOnInput,
-} from '/data/utilities/phase1-workbook.js'
 import { donutChart } from '/components/pie-chart.js'
 import { projectionMap } from '/components/projection-map.js'
 import {
@@ -46,7 +41,7 @@ const world = FileAttachment('/data/world.json').json()
 
 ```js
 // format data
-const phase_1_data = extractPhase1Workbook(workbook1, false)
+const phase_1_data = FileAttachment('/data/phase1-workbook.json')
 ```
 
 ```js

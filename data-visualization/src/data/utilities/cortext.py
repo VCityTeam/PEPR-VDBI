@@ -1,7 +1,7 @@
 import csv
 import os
 from tqdm import tqdm
-from .utils import initDefaultLogger
+from .io_utils import initDefaultLogger
 from .text_mining import lemmatize_words
 
 

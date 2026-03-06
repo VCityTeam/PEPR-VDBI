@@ -5,8 +5,8 @@ import {
   countEntities,
   exclude,
   sparkbar,
-} from '/components/utilities.js'
-import { cnu_category_map } from '/components/cnu.js'
+} from '../../components/utilities.js'
+import { cnu_category_map } from '../../components/cnu.js'
 import {
   getGroupFromCNU,
   cnu_color_map,
@@ -18,10 +18,10 @@ import {
   interpolated_erc_color,
   hceres_color_scale,
   interpolated_hceres_color,
-} from '/components/color.js'
-import { generateIntersectionMatrix } from '/components/chord.js'
-import { donutChart } from '/components/pie-chart.js'
-import { parallelSetToGraph } from '/components/sankey.js'
+} from '../../components/color.js'
+import { generateIntersectionMatrix } from '../../components/chord.js'
+import { donutChart } from '../../components/pie-chart.js'
+import { parallelSetToGraph } from '../../components/sankey.js'
 
 export const cnu_plot = (data, width, cnu_plot_sort) =>
   Plot.plot({

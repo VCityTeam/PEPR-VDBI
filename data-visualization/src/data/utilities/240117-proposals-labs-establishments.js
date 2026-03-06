@@ -1,5 +1,5 @@
 import { map, filter } from 'd3'
-import { anonymizeEntry } from '../../components/utilities.js'
+import { anonymizeEntry } from './data_utilities.js'
 
 export function getPhase1Sheet(workbook) {
   return workbook.sheet(workbook.sheetNames[0], {

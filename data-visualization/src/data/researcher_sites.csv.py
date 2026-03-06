@@ -1,5 +1,5 @@
 import pandas as pd
-from utilities.utils import initDefaultLogger
+from utilities.io_utils import initDefaultLogger
 from geopy.geocoders import Nominatim
 from time import sleep
 
@@ -27,7 +27,8 @@ def main():
 
     # geocode sites
     geolocator = Nominatim(
-        user_agent="https://github.com/VCityTeam/PEPR-VDBI", timeout=10  # type: ignore
+        user_agent="https://github.com/VCityTeam/PEPR-VDBI",
+        timeout=10,  # type: ignore
     )
 
     for site in grouped_sites.index:

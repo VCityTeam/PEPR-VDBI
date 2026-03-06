@@ -6,7 +6,7 @@ from utilities.orcid import (
     getFirstname,
     getLastname,
 )
-from utilities.utils import initDefaultLogger
+from utilities.io_utils import initDefaultLogger
 
 
 def main():

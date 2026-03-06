@@ -1,7 +1,7 @@
 import logging
 import sys
 import csv
-from utilities.utils import initDefaultLogger
+from utilities.io_utils import initDefaultLogger
 from geopy.geocoders import Nominatim
 
 
@@ -23,7 +23,8 @@ def main():
 
     # query Nominatim api using partner names and aggregate data
     geolocator = Nominatim(
-        user_agent="https://github.com/VCityTeam/PEPR-VDBI", timeout=10  # type: ignore
+        user_agent="https://github.com/VCityTeam/PEPR-VDBI",
+        timeout=10,  # type: ignore
     )
     for row in phase1_partner_data[1:]:
         project_name = row[0].strip()

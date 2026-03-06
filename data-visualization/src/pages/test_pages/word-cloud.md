@@ -1,15 +1,15 @@
 ---
 style: /css/vdbi-page.css
 sql:
-  integreen_wps_en_cleaned: "/data/private/integreen_wps_en_cleaned.csv"
+  integreen_wps_en_cleaned: '/data/private/integreen_wps_en_cleaned.csv'
 ---
 
 # Word cloud/bubble test
 
 ```js
 // import { createCanvas } from 'canvas';
-import d3_cloud from "d3-cloud"
-import * as d3 from "d3"
+import d3_cloud from 'd3-cloud'
+import * as d3 from 'd3'
 ```
 
 Word cloud example using the [d3-cloud](https://github.com/jasondavies/d3-cloud)
@@ -27,15 +27,15 @@ Input words:
 
 ```js echo
 const words = [
-  "Hello",
-  "world",
-  "normally",
-  "you",
-  "want",
-  "more",
-  "words",
-  "than",
-  "this",
+  'Hello',
+  'world',
+  'normally',
+  'you',
+  'want',
+  'more',
+  'words',
+  'than',
+  'this',
 ].map((d) => {
   return { text: d, value: 1000 + Math.random() * 90 }
 })
@@ -51,15 +51,15 @@ const cloud = d3_cloud()
   .size([500, 500])
   .words(words)
   .rotate(() => Math.random() * 2 * 90)
-  .font("Impact")
+  .font('Impact')
 
-cloud.on("end", (words) => draw(words, cloud, "#container_1"))
+cloud.on('end', (words) => draw(words, cloud, '#container_1'))
 
 cloud.start()
 
 function draw(words, cloud, element) {
-  console.debug("words:", words)
-  console.debug("cloud:", cloud)
+  console.debug('words:', words)
+  console.debug('cloud:', cloud)
   const container = d3.select(element)
 
   if (!container.empty()) {
@@ -67,23 +67,23 @@ function draw(words, cloud, element) {
   }
 
   container
-    .append("svg")
-    .attr("width", cloud.size()[0])
-    .attr("height", cloud.size()[1])
-    .append("g")
+    .append('svg')
+    .attr('width', cloud.size()[0])
+    .attr('height', cloud.size()[1])
+    .append('g')
     .attr(
-      "transform",
+      'transform',
       `translate( ${cloud.size()[0] / 2}, ${cloud.size()[1] / 2} )`,
     )
-    .selectAll("text")
+    .selectAll('text')
     .data(words)
-    .join("text")
-    .style("font-size", (d) => d.size + "px")
-    .style("font-family", (d) => d.font)
-    .attr("text-anchor", "middle")
+    .join('text')
+    .style('font-size', (d) => d.size + 'px')
+    .style('font-family', (d) => d.font)
+    .attr('text-anchor', 'middle')
     .attr(
-      "transform",
-      (d) => "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")",
+      'transform',
+      (d) => 'translate(' + [d.x, d.y] + ')rotate(' + d.rotate + ')',
     )
     .text((d) => d.text)
 }
@@ -107,11 +107,11 @@ const formatted_words = [...integreen_words].map((d) => d.toJSON())
 ```
 
 ```js
-import { vdbi_orange_analogic_color_scale } from "/components/color.js"
+import { vdbi_orange_analogic_color_scale } from '/components/color.js'
 ```
 
 ```js
-import { copySVGToClipboardButton } from "/components/utilities.js"
+import { copySVGToClipboardButton } from '/components/utilities.js'
 ```
 
 container_2:
@@ -133,7 +133,7 @@ await sleep(3000)
 console.log(2)
 
 display(
-  copySVGToClipboardButton(d3.select("#container_2").select("svg").node()),
+  copySVGToClipboardButton(d3.select('#container_2').select('svg').node()),
 )
 ```
 
@@ -157,35 +157,35 @@ function generateWordCloud(
     .size([width, height])
     .words(data)
     .rotate(() => (~~(Math.random() * 8) - 3) * 15)
-    .font("Arial")
+    .font('Arial')
     .fontSize((d) =>
       d3.scaleLog(range, [font_size_min, font_size_max])(d.value),
     )
-    .on("end", draw)
+    .on('end', draw)
 
   const svg = d3
-    .create("svg")
-    .attr("width", cloud.size()[0])
-    .attr("height", cloud.size()[1])
+    .create('svg')
+    .attr('width', cloud.size()[0])
+    .attr('height', cloud.size()[1])
 
   const words = svg
-    .append("g")
+    .append('g')
     .attr(
-      "transform",
+      'transform',
       `translate(${cloud.size()[0] / 2},${cloud.size()[1] / 2})`,
     )
 
   function draw(data) {
-    console.debug("data", data)
+    console.debug('data', data)
     words
-      .selectAll("text")
+      .selectAll('text')
       .data(data)
-      .join("text")
-      .style("font-size", (d) => d.size + "px")
-      .style("font-family", (d) => d.font)
-      .style("fill", color)
-      .attr("text-anchor", "middle")
-      .attr("transform", (d) => `translate(${[d.x, d.y]})rotate(${d.rotate})`)
+      .join('text')
+      .style('font-size', (d) => d.size + 'px')
+      .style('font-family', (d) => d.font)
+      .style('fill', color)
+      .attr('text-anchor', 'middle')
+      .attr('transform', (d) => `translate(${[d.x, d.y]})rotate(${d.rotate})`)
       .text((d) => d.text)
   }
 
@@ -198,14 +198,14 @@ function generateWordCloud(
 ## Again, but from imported code
 
 ```js echo
-import { wordCloud } from "/components/cloud.js"
+import { wordCloud } from '/components/cloud.js'
 ```
 
 ```js
 const refresh = Mutable(true)
 const flip = () => (refresh.value = !refresh.value)
 display(
-  Inputs.button("refresh cloud", {
+  Inputs.button('refresh cloud', {
     reduce: flip,
   }),
 )
@@ -224,17 +224,17 @@ display(
 
 ```js
 const fonts = [
-  "Arial", // sans-serif
-  "Verdana", // sans-serif
-  "Tahoma", // sans-serif
-  "Trebuchet MS", // sans-serif
-  "Times New Roman", // serif
-  "Georgia", // serif
-  "Garamond", // serif
-  "Courier New", // monospace
-  "Brush Script MT", // cursive
+  'Arial', // sans-serif
+  'Verdana', // sans-serif
+  'Tahoma', // sans-serif
+  'Trebuchet MS', // sans-serif
+  'Times New Roman', // serif
+  'Georgia', // serif
+  'Garamond', // serif
+  'Courier New', // monospace
+  'Brush Script MT', // cursive
 ]
-const weights = ["normal", "bold", "bolder", "lighter"]
+const weights = ['normal', 'bold', 'bolder', 'lighter']
 ```
 
 ```js
@@ -260,7 +260,7 @@ fonts.forEach((font) => {
 An alternative to wordclouds that better represents word occurrences
 
 ```js echo
-import { Graph } from "/components/graph.js"
+import { Graph } from '/components/graph.js'
 
 const word_graph = {
   nodes: words.map((d) => ({
@@ -271,15 +271,13 @@ const word_graph = {
   links: [],
 }
 
-const word_bubble = new Graph(
-  word_graph,
-  {
-    nodeLabelOffset: -5,
-    nodeLabelOpacity: 1,
-    textColor: "white",
-  }
-)
+const word_bubble = new Graph(word_graph, {
+  nodeLabelOffset: -5,
+  nodeLabelOpacity: 1,
+  textColor: 'white',
+})
 ```
 
 ${word_bubble.getSVG()}
+
 <!-- $ -->

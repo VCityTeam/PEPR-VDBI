@@ -1,11 +1,10 @@
-import { map, filter, rollup, merge } from 'npm:d3'
+import { map, rollup, merge } from 'd3'
 import {
   anonymizeEntry,
   pseudoanonymizeEntry,
   filterEmptyArray,
   toLowerPreservingAcronyms,
 } from './data_utilities.js'
-import * as Plot from 'npm:@observablehq/plot'
 
 /**
  * Extract data from the GÉNÉRALITÉ sheet
@@ -14,12 +13,15 @@ import * as Plot from 'npm:@observablehq/plot'
  * @returns {Object[]} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
-export function getGeneralSheet(workbook) {
-  return workbook.sheet(workbook.sheetNames[0], {
-    // range: 'A1:BQ9',
-    range: 'A1:HV41',
-    headers: true,
-  })
+function getGeneralSheet(workbook) {
+  mapRowToColumnKeys(workbook, 0)
+  return rowsToObjectArray(workbook.worksheets[0].getRows(2, 40))
+  // return Object.fromEntries(new Map(entries))
+  // return workbook.sheet(workbook.worksheets[0], {
+  //   // range: 'A1:BQ9',
+  //   range: 'A1:HV41',
+  //   headers: true,
+  // })
 }
 
 /**
@@ -29,12 +31,14 @@ export function getGeneralSheet(workbook) {
  * @returns {Object[]} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
-export function getResearcherSheet(workbook) {
-  return workbook.sheet(workbook.sheetNames[1], {
-    // range: 'A1:AA298',
-    range: 'A1:AE1087',
-    headers: true,
-  })
+function getResearcherSheet(workbook) {
+  mapRowToColumnKeys(workbook, 1)
+  return rowsToObjectArray(workbook.worksheets[1].getRows(2, 1086))
+  // return workbook.sheet(workbook.worksheets[1], {
+  //   // range: 'A1:AA298',
+  //   range: 'A1:AE1087',
+  //   headers: true,
+  // })
 }
 
 /**
@@ -44,11 +48,13 @@ export function getResearcherSheet(workbook) {
  * @returns {Object[]} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
-export function getLabSheet(workbook) {
-  return workbook.sheet(workbook.sheetNames[4], {
-    range: 'A1:K262',
-    headers: true,
-  })
+function getLabSheet(workbook) {
+  mapRowToColumnKeys(workbook, 4)
+  return rowsToObjectArray(workbook.worksheets[4].getRows(2, 261))
+  // return workbook.sheet(workbook.worksheets[4], {
+  //   range: 'A1:K262',
+  //   headers: true,
+  // })
 }
 
 /**
@@ -58,12 +64,28 @@ export function getLabSheet(workbook) {
  * @returns {Object[]} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
-export function getInstitutionSheet(workbook) {
-  return workbook.sheet(workbook.sheetNames[5], {
-    range: 'A1:A111',
-    headers: true,
-  })
+function getInstitutionSheet(workbook) {
+  mapRowToColumnKeys(workbook, 5)
+  return rowsToObjectArray(workbook.worksheets[5].getRows(2, 110))
+  // return workbook.sheet(workbook.worksheets[5], {
+  //   range: 'A1:A111',
+  //   headers: true,
+  // })
 }
+
+const mapRowToColumnKeys = (workbook, sheetNumber, rowNumber = 0) =>
+  workbook.worksheets[sheetNumber]._rows[rowNumber].eachCell((cell) => {
+    cell._column.key = cell.text
+  })
+
+const rowsToObjectArray = (rows) =>
+  rows
+    .map((row) =>
+      row._cells
+        .map((cell) => [cell._column.key, cell.text])
+        .filter((d) => !!d),
+    )
+    .map((row) => Object.fromEntries(row))
 
 /**
  * Format known project entities from the GÉNÉRALITÉ sheet as:
@@ -85,12 +107,12 @@ export function getInstitutionSheet(workbook) {
  *    notes: string
  *  }
  *
- * @param {Object[]} sheet - Extracted sheet data
+ * @param {Row[]} sheet - Extracted sheet data
  * @param {boolean} pseudoanonymize - Pseudoanonymize data or not
  * @param {Map} pseudoacronymousDict - A preset dictionary of pseudoanomymized entry mappings
  * @returns {Object[]} Formatted sheet data
  */
-export function resolveGeneralEntities(
+function resolveGeneralEntities(
   sheet,
   anonymize = false,
   pseudoanonymousDict = new Map(),
@@ -233,7 +255,7 @@ export function resolveGeneralEntities(
  * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Object[]} Formatted sheet data
  */
-export function resolveResearcherEntities(
+function resolveResearcherEntities(
   sheet,
   anonymize = true,
   pseudoanonymousDict = new Map(),
@@ -339,7 +361,7 @@ export function resolveResearcherEntities(
  * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Object[]} Formatted sheet data
  */
-export function resolveLabEntities(
+function resolveLabEntities(
   sheet,
   anonymize = false,
   pseudoanonymousDict = new Map(),
@@ -389,7 +411,7 @@ export function resolveLabEntities(
  * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Object[]} Formatted sheet data
  */
-export function resolveInstitutionEntities(
+function resolveInstitutionEntities(
   sheet,
   anonymize = false,
   pseudoanonymousDict = new Map(),
@@ -421,9 +443,11 @@ export function resolveInstitutionEntities(
  */
 export function extractPhase1Workbook(
   workbook,
-  pseudoanonymize = true,
-  pseudoanonymousDict = new Map(),
-  onlyFinanced = false,
+  {
+    pseudoanonymize = false,
+    pseudoanonymousDict = new Map(),
+    onlyFinanced = false,
+  } = {},
 ) {
   const projects = resolveGeneralEntities(
     getGeneralSheet(workbook),
@@ -504,10 +528,10 @@ export function extractPhase1Workbook(
     // delete project.labs
   })
 
-  let laboratories_by_domains_erc = new Map()
-  let laboratories_by_disciplines_erc = new Map()
-  let laboratories_by_domains_hceres = new Map()
-  let laboratories_by_disciplines_hceres = new Map()
+  const laboratories_by_domains_erc = new Map()
+  const laboratories_by_disciplines_erc = new Map()
+  const laboratories_by_domains_hceres = new Map()
+  const laboratories_by_disciplines_hceres = new Map()
   researchers.forEach((researcher) => {
     const lab = laboratories.find((lab) => lab.lab == researcher.lab)
     if (typeof lab !== 'undefined') {
@@ -556,7 +580,7 @@ export function extractPhase1Workbook(
     laboratories,
     project_by_laboratories,
     laboratories_by_domains_erc: merge(
-      laboratories_by_domains_erc.keys().map((lab) =>
+      [...laboratories_by_domains_erc.keys()].map((lab) =>
         [...laboratories_by_domains_erc.get(lab)].map((domain) => ({
           lab: lab,
           domain: domain || null,
@@ -564,7 +588,7 @@ export function extractPhase1Workbook(
       ),
     ),
     laboratories_by_disciplines_erc: merge(
-      laboratories_by_disciplines_erc.keys().map((lab) =>
+      [...laboratories_by_disciplines_erc.keys()].map((lab) =>
         [...laboratories_by_disciplines_erc.get(lab)].map((discipline) => ({
           lab: lab,
           discipline: discipline || null,
@@ -572,7 +596,7 @@ export function extractPhase1Workbook(
       ),
     ),
     laboratories_by_disciplines_hceres: merge(
-      laboratories_by_disciplines_hceres.keys().map((lab) =>
+      [...laboratories_by_disciplines_hceres.keys()].map((lab) =>
         [...laboratories_by_disciplines_hceres.get(lab)].map((discipline) => ({
           lab: lab,
           discipline: discipline || null,
@@ -580,7 +604,7 @@ export function extractPhase1Workbook(
       ),
     ),
     laboratories_by_domains_hceres: merge(
-      laboratories_by_domains_hceres.keys().map((lab) =>
+      [...laboratories_by_domains_hceres.keys()].map((lab) =>
         [...laboratories_by_domains_hceres.get(lab)].map((domain) => ({
           lab: lab,
           domain: domain || null,
@@ -599,160 +623,12 @@ export function extractPhase1Workbook(
  * @param {string} label - The project label to clean up
  * @returns {string} The cleaned-up project label
  */
-export function cleanUpProjectLabel(label) {
+function cleanUpProjectLabel(label) {
   return label.toUpperCase().replace(/É/g, 'E')
 }
 
-export function cleanDatum(d) {
+function cleanDatum(d) {
   if (!d) return null
   if (typeof d === 'string') return d.trim()
   return d
-}
-
-/**
- * Create a filtered dataset, that filters based on 2 input criteria
- *
- * @param {Array} data - dataset to filter
- * @param {Array} input_criteria - all critereon to consider
- * @param {Function[]} criteria_functions - functions to use for each critereon.
- *    Keys contain the critereon to meet and the values contain the function to
- *    execute if a critereon is met. Functions should return true or false. If 'All'
- *    is passed in as criterion, the criterion is ignored (and accepted)
- * @returns {Array} filtered dataset
- */
-export function filterOnInput(data, input_criteria, criteria_functions) {
-  return filter(data, (d) => {
-    for (let index = 0; index < input_criteria.length; index++) {
-      const critereon = input_criteria[index]
-      const critereon_function = criteria_functions[index]
-      if (critereon_function(d) != critereon && critereon !== 'All') {
-        return false
-      }
-    }
-    return true
-  })
-}
-
-/**
- * Return the possible options of a column
- *
- * @param {Object[]} data - the dataset
- * @param {string} key - the column to search in
- * @returns {String[]} an Array of the possible options found in the column
- */
-export function getColumnOptions(data, key) {
-  const options = new Set(['All'])
-  data.forEach((d) => options.add(d[key]))
-  return options
-}
-
-export function getSortable3DCountPlot(
-  data,
-  x = 'count',
-  y = 'type',
-  fy = 'entity',
-  width = 1500,
-  row_height = 17,
-  margin_left = 60,
-  margin_right = 140,
-  color_scheme = 'Plasma',
-  x_label = 'Occurrences',
-  domain_min = 0,
-  domain_max = 1, // added to max occurrences to define the domain max
-  fy_tick_format_cuttoff = 25, // cut off label after this many characters
-  fy_label = 'Entity',
-  sort_criteria = '-x',
-  tip = true,
-) {
-  return Plot.plot({
-    height: data.length * row_height, // assure adequate horizontal space for each line
-    width: width,
-    marginLeft: margin_left,
-    marginRight: margin_right,
-    color: {
-      scheme: color_scheme,
-    },
-    x: {
-      grid: true,
-      axis: 'top',
-      label: x_label,
-      // domain useful for constraining ticks between 0 and max occurrences + 1
-      domain: [domain_min, Math.max(...data.map((d) => d[x])) + domain_max],
-    },
-    fy: {
-      tickFormat: (d) =>
-        d.length > fy_tick_format_cuttoff ? d.slice(0, 23).concat('...') : d, // cut off long tick labels
-      label: fy_label,
-    },
-    marks: [
-      Plot.barX(data, {
-        x: x,
-        y: y,
-        fy: fy,
-        fill: x,
-        sort: { fy: sort_criteria },
-        tip: tip,
-      }),
-    ],
-  })
-}
-
-export function getSortable2MarkCountPlot(
-  data,
-  x1 = 'count',
-  // y1 = "type",
-  x2 = 'count',
-  y2 = 'type',
-  width = 1500,
-  row_height = 17,
-  margin_left = 60,
-  margin_right = 140,
-  color_scheme = 'Plasma',
-  x_label = 'Occurrences',
-  domain_min = 0,
-  domain_max = 1, // added to max occurrences to define the domain max
-  y_tick_format_cuttoff = 25, // cut off label after this many characters
-  y_label = 'Entity',
-  sort_criteria = '-x',
-  tip = true,
-) {
-  return Plot.plot({
-    height: data.length * row_height, // assure adequate horizontal space for each line
-    width: width,
-    marginLeft: margin_left,
-    marginRight: margin_right,
-    color: {
-      scheme: color_scheme,
-    },
-    x: {
-      grid: true,
-      axis: 'top',
-      label: x_label,
-      // domain useful for constraining ticks between 0 and max occurrences + 1
-      domain: [domain_min, Math.max(...data.map((d) => d[x1])) + domain_max],
-    },
-    y: {
-      tickFormat: (d) =>
-        d.length > y_tick_format_cuttoff ? d.slice(0, 23).concat('...') : d, // cut off long tick labels
-      label: y_label,
-    },
-    // marks: [
-    //   Plot.barX(data, {
-    //     x: x1,
-    //     y: y1,
-    //     fill: x1,
-    //     sort: { y1: sort_criteria },
-    //     tip: tip,
-    //   }),
-    // ],
-    marks: [
-      Plot.barX(data, {
-        x: x2,
-        y: y2,
-        fill: x2,
-        sort: { y2: sort_criteria },
-        tip: tip,
-      }),
-    ],
-  })
 }

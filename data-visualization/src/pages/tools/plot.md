@@ -15,9 +15,9 @@ const file = view(
 )
 
 const delimeter = view(
-  Inputs.radio(["CSV", "TSV", "DSV"], {
-    label: "Delimeter",
-    value: "TSV",
+  Inputs.radio(['CSV', 'TSV', 'DSV'], {
+    label: 'Delimeter',
+    value: 'TSV',
   }),
 )
 ```
@@ -26,18 +26,18 @@ Uploaded data:
 
 ```js
 let data = []
-if (delimeter === "CSV") {
+if (delimeter === 'CSV') {
   data = await file.csv({ typed: true })
-} else if (delimeter === "TSV") {
+} else if (delimeter === 'TSV') {
   data = await file.tsv({ typed: true })
-} else if (delimeter === "DSV") {
+} else if (delimeter === 'DSV') {
   data = await file.dsv({ typed: true })
 } else {
-  throw new Error("Invalid delimeter")
+  throw new Error('Invalid delimeter')
 }
 
 display(Inputs.table(data))
-console.debug("data", data)
+console.debug('data', data)
 ```
 
 ## ${formatted_plot_options.mark || "Auto"} Plot
@@ -47,105 +47,105 @@ const plot_config = view(
   Inputs.form(
     {
       x: Inputs.select(data.columns.concat([null]), {
-        label: "X Column:",
+        label: 'X Column:',
       }),
-      xType: Inputs.radio(["number", "category"], {
-        label: "X Type:",
+      xType: Inputs.radio(['number', 'category'], {
+        label: 'X Type:',
       }),
       xZero: Inputs.toggle({
-        label: "X Zero:",
+        label: 'X Zero:',
       }),
       y: Inputs.select(data.columns.concat([null]), {
-        label: "Y Column:",
+        label: 'Y Column:',
       }),
-      yType: Inputs.radio(["number", "category"], {
-        label: "Y Type:",
+      yType: Inputs.radio(['number', 'category'], {
+        label: 'Y Type:',
       }),
       yZero: Inputs.toggle({
-        label: "Y Zero:",
+        label: 'Y Zero:',
       }),
       fx: Inputs.select(data.columns.concat([null]), {
-        label: "FX Column:",
+        label: 'FX Column:',
         value: null,
       }),
-      fxType: Inputs.radio(["number", "category"], {
-        label: "FX Type:",
+      fxType: Inputs.radio(['number', 'category'], {
+        label: 'FX Type:',
       }),
       fxZero: Inputs.toggle({
-        label: "FX Zero:",
+        label: 'FX Zero:',
       }),
       fy: Inputs.select(data.columns.concat([null]), {
-        label: "FY Column:",
+        label: 'FY Column:',
         value: null,
       }),
-      fyType: Inputs.radio(["number", "category"], {
-        label: "FY Type:",
+      fyType: Inputs.radio(['number', 'category'], {
+        label: 'FY Type:',
       }),
       fyZero: Inputs.toggle({
-        label: "FY Zero:",
+        label: 'FY Zero:',
       }),
       mark: Inputs.select(
         [
           undefined,
-          "area",
-          "bar",
+          'area',
+          'bar',
           // "rect",
-          "cell",
-          "dot",
-          "line",
+          'cell',
+          'dot',
+          'line',
           // "rule"
         ],
         {
-          label: "Plot type:",
+          label: 'Plot type:',
           // value: "bar",
         },
       ),
       fill: Inputs.text({
-        label: "Fill Column:",
-        value: "#3558A2",
-        placeholder: "#3558A2",
+        label: 'Fill Column:',
+        value: '#3558A2',
+        placeholder: '#3558A2',
         datalist: data.columns,
       }),
-      fillType: Inputs.radio(["number", "category"], {
-        label: "Fill Type:",
+      fillType: Inputs.radio(['number', 'category'], {
+        label: 'Fill Type:',
       }),
       width: Inputs.range([0, 2000], {
-        label: "Width:",
+        label: 'Width:',
         value: 700,
         step: 1,
       }),
       height: Inputs.range([0, 2000], {
-        label: "Height:",
+        label: 'Height:',
         value: 500,
         step: 1,
       }),
       marginTop: Inputs.range([0, 200], {
-        label: "Top margin:",
+        label: 'Top margin:',
         value: 30,
         step: 1,
       }),
       marginBottom: Inputs.range([0, 200], {
-        label: "Bottom margin:",
+        label: 'Bottom margin:',
         value: 30,
         step: 1,
       }),
       marginLeft: Inputs.range([0, 200], {
-        label: "Left margin:",
+        label: 'Left margin:',
         value: 30,
         step: 1,
       }),
       marginRight: Inputs.range([0, 200], {
-        label: "Right margin:",
+        label: 'Right margin:',
         value: 30,
         step: 1,
       }),
       xTickRotate: Inputs.range([-90, 90], {
-        label: "X tick rotate:",
+        label: 'X tick rotate:',
         value: 0,
         step: 1,
       }),
       yTickRotate: Inputs.range([-90, 90], {
-        label: "Y tick rotate:",
+        label: 'Y tick rotate:',
         value: 0,
         step: 1,
       }),
@@ -172,7 +172,7 @@ const formatted_plot_options = {}
 
 if (plot_config.x) {
   formatted_plot_options.x = (d) =>
-    plot_config.xType === "number"
+    plot_config.xType === 'number'
       ? Number(d[plot_config.x])
       : String(d[plot_config.x])
   formatted_plot_options.xZero = true
@@ -180,7 +180,7 @@ if (plot_config.x) {
 
 if (plot_config.y) {
   formatted_plot_options.y = (d) =>
-    plot_config.yType === "number"
+    plot_config.yType === 'number'
       ? Number(d[plot_config.y])
       : String(d[plot_config.y])
   formatted_plot_options.yZero = true
@@ -188,7 +188,7 @@ if (plot_config.y) {
 
 if (plot_config.fx) {
   formatted_plot_options.fx = (d) =>
-    plot_config.fxType === "number"
+    plot_config.fxType === 'number'
       ? Number(d[plot_config.fx])
       : String(d[plot_config.fx])
   formatted_plot_options.fxZero = true
@@ -196,7 +196,7 @@ if (plot_config.fx) {
 
 if (plot_config.fy) {
   formatted_plot_options.fy = (d) =>
-    plot_config.fyType === "number"
+    plot_config.fyType === 'number'
       ? Number(d[plot_config.fy])
       : String(d[plot_config.fy])
   formatted_plot_options.fyZero = true
@@ -204,7 +204,7 @@ if (plot_config.fy) {
 
 if (plot_config.fill) {
   formatted_plot_options.color = (d) =>
-    plot_config.fillType === "number"
+    plot_config.fillType === 'number'
       ? Number(d[plot_config.fill])
       : String(d[plot_config.fill])
 }
@@ -233,43 +233,43 @@ ${downloadSVGButton("#plot svg")}<!-- $ -->
 ## Pie Chart
 
 ```js
-import { donutChart } from "/components/pie-chart.js"
-import { downloadSVGButton } from "/components/utilities.js"
+import { donutChart } from '/components/pie-chart.js'
+import { downloadSVGButton } from '/components/utilities.js'
 ```
 
 ```js
 const pie_config = view(
   Inputs.form({
     x: Inputs.select(data.columns, {
-      label: "X Column",
+      label: 'X Column',
     }),
     y: Inputs.select(data.columns, {
-      label: "Y Column",
+      label: 'Y Column',
     }),
     fill: Inputs.select(data.columns, {
-      label: "Fill Column",
+      label: 'Fill Column',
     }),
     color_scheme: Inputs.select(
       new Map([
-        ["schemeObservable10", d3.schemeObservable10],
+        ['schemeObservable10', d3.schemeObservable10],
         // ["schemeObservable9", d3.schemeObservable9],
       ]),
       {
-        value: "schemeObservable10",
-        label: "Color scheme:",
+        value: 'schemeObservable10',
+        label: 'Color scheme:',
       },
     ),
     legendWidth: Inputs.range([0, 500], {
       value: 150,
-      label: "Legend offset:",
+      label: 'Legend offset:',
     }),
     innerRadiusRatio: Inputs.range([0, 1], {
       value: 0.5,
-      label: "Inner radius ratio:",
+      label: 'Inner radius ratio:',
     }),
     outerRadiusRatio: Inputs.range([0, 1], {
       value: 1,
-      label: "Outer radius ratio:",
+      label: 'Outer radius ratio:',
     }),
     // legendTextCuttoff: Inputs.range([0, 200], {
     //   value: 50,

@@ -1,4 +1,4 @@
-from utilities.utils import extractSheet, initDefaultLogger
+from utilities.io_utils import extractSheet, initDefaultLogger
 
 
 def main():
