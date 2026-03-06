@@ -11,11 +11,7 @@ style: /css/vdbi-page.css
 
 ```js
 import { downloadTableButton } from '/components/utilities.js'
-import {
-  extractPhase1Workbook,
-  getColumnOptions,
-  filterOnInput,
-} from '/data/utilities/phase1-workbook.js'
+import { getColumnOptions, filterOnInput } from '/components/plot.js'
 ```
 
 ```js
@@ -25,14 +21,7 @@ const financed_only = view(
 ```
 
 ```js
-const phase_1_data = extractPhase1Workbook(
-  await FileAttachment(
-    '/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
-  ).xlsx(),
-  false,
-  false,
-  financed_only,
-)
+const phase_1_data = await FileAttachment('/data/phase1-workbook.json').json()
 
 display(phase_1_data)
 ```

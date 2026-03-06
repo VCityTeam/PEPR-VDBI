@@ -14,9 +14,10 @@ import {
  * @returns {Object[]} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
-function getGeneralSheet(workbook) {
-  return workbook.worksheets[0].getRows(0, 41)
-  // TODO map the cell values to a simple array of objects
+export function getGeneralSheet(workbook) {
+  mapRowToColumnKeys(workbook, 0)
+  return rowsToObjectArray(workbook.worksheets[0].getRows(2, 40))
+  // return Object.fromEntries(new Map(entries))
   // return workbook.sheet(workbook.worksheets[0], {
   //   // range: 'A1:BQ9',
   //   range: 'A1:HV41',
@@ -32,7 +33,8 @@ function getGeneralSheet(workbook) {
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
 function getResearcherSheet(workbook) {
-  return workbook.worksheets[1].getRows()
+  mapRowToColumnKeys(workbook, 1)
+  return rowsToObjectArray(workbook.worksheets[1].getRows(2, 1086))
   // return workbook.sheet(workbook.worksheets[1], {
   //   // range: 'A1:AA298',
   //   range: 'A1:AE1087',
@@ -48,7 +50,8 @@ function getResearcherSheet(workbook) {
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
 function getLabSheet(workbook) {
-  return workbook.worksheets[4].getRows()
+  mapRowToColumnKeys(workbook, 4)
+  return rowsToObjectArray(workbook.worksheets[4].getRows(2, 261))
   // return workbook.sheet(workbook.worksheets[4], {
   //   range: 'A1:K262',
   //   headers: true,
@@ -63,12 +66,27 @@ function getLabSheet(workbook) {
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
 function getInstitutionSheet(workbook) {
-  return workbook.worksheets[5].getRows()
+  mapRowToColumnKeys(workbook, 5)
+  return rowsToObjectArray(workbook.worksheets[5].getRows(2, 110))
   // return workbook.sheet(workbook.worksheets[5], {
   //   range: 'A1:A111',
   //   headers: true,
   // })
 }
+
+const mapRowToColumnKeys = (workbook, sheetNumber, rowNumber = 0) =>
+  workbook.worksheets[sheetNumber]._rows[rowNumber].eachCell((cell) => {
+    cell._column.key = cell.text
+  })
+
+const rowsToObjectArray = (rows) =>
+  rows
+    .map((row) =>
+      row._cells
+        .map((cell) => [cell._column.key, cell.text])
+        .filter((d) => !!d),
+    )
+    .map((row) => Object.fromEntries(row))
 
 /**
  * Format known project entities from the GÉNÉRALITÉ sheet as:
@@ -100,8 +118,6 @@ function resolveGeneralEntities(
   anonymize = false,
   pseudoanonymousDict = new Map(),
 ) {
-  console.log('sheet', sheet[1].getCell(1))
-  // console.log('sheet', sheet[1].getCell('ACRONYME Projet'))
   return map(sheet, (d) => {
     const mapped_entities = {
       acronyme: d['ACRONYME Projet']
@@ -428,7 +444,7 @@ function resolveInstitutionEntities(
  */
 function extractPhase1Workbook(
   workbook,
-  pseudoanonymize = true,
+  pseudoanonymize = false,
   pseudoanonymousDict = new Map(),
   onlyFinanced = false,
 ) {
@@ -556,13 +572,14 @@ function extractPhase1Workbook(
       console.warn('laboratory not found:', researcher.lab)
     }
   })
+
   return {
     projects,
     researchers,
     laboratories,
     project_by_laboratories,
     laboratories_by_domains_erc: merge(
-      laboratories_by_domains_erc.keys().map((lab) =>
+      [...laboratories_by_domains_erc.keys()].map((lab) =>
         [...laboratories_by_domains_erc.get(lab)].map((domain) => ({
           lab: lab,
           domain: domain || null,
@@ -570,7 +587,7 @@ function extractPhase1Workbook(
       ),
     ),
     laboratories_by_disciplines_erc: merge(
-      laboratories_by_disciplines_erc.keys().map((lab) =>
+      [...laboratories_by_disciplines_erc.keys()].map((lab) =>
         [...laboratories_by_disciplines_erc.get(lab)].map((discipline) => ({
           lab: lab,
           discipline: discipline || null,
@@ -578,7 +595,7 @@ function extractPhase1Workbook(
       ),
     ),
     laboratories_by_disciplines_hceres: merge(
-      laboratories_by_disciplines_hceres.keys().map((lab) =>
+      [...laboratories_by_disciplines_hceres.keys()].map((lab) =>
         [...laboratories_by_disciplines_hceres.get(lab)].map((discipline) => ({
           lab: lab,
           discipline: discipline || null,
@@ -586,7 +603,7 @@ function extractPhase1Workbook(
       ),
     ),
     laboratories_by_domains_hceres: merge(
-      laboratories_by_domains_hceres.keys().map((lab) =>
+      [...laboratories_by_domains_hceres.keys()].map((lab) =>
         [...laboratories_by_domains_hceres.get(lab)].map((domain) => ({
           lab: lab,
           domain: domain || null,
@@ -619,8 +636,7 @@ const workbook = new ExcelJS.Workbook()
 await workbook.xlsx.readFile(
   'src/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
 )
-// console.log(workbook.worksheets)
-const data = extractPhase1Workbook(workbook)
-// console.debug('data', data)
 
-// process.stdout.write(JSON.stringify(data))
+const data = extractPhase1Workbook(workbook)
+
+process.stdout.write(JSON.stringify(data))
