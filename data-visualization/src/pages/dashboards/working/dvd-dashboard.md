@@ -145,12 +145,12 @@ const discipline_erc_pie = donutChart(discipline_erc_count, {
 
 ```js
 // Discipline count //
-const discipline_count = countEntities(global_search, (d) => d.themes).sort(
+const discipline_count = countEntities(global_search, (d) => d.keywords).sort(
   (a, b) => d3.descending(a[1], b[1]),
 )
 
 const discipline_search_input = Inputs.search(discipline_count, {
-  placeholder: 'Search researcher themes...',
+  placeholder: 'Search researcher keywords...',
 })
 
 const discipline_search = Generators.input(discipline_search_input)

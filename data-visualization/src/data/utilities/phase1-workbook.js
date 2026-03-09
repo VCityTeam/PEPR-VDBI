@@ -4,7 +4,10 @@ import {
   pseudoanonymizeEntry,
   filterEmptyArray,
   toLowerPreservingAcronyms,
+  mapRowToColumnKeys,
+  rowsToObjectArray,
 } from './data_utilities.js'
+import { v4 as uuidv4 } from 'uuid'
 
 /**
  * Extract data from the GÉNÉRALITÉ sheet
@@ -72,20 +75,6 @@ function getInstitutionSheet(workbook) {
   //   headers: true,
   // })
 }
-
-const mapRowToColumnKeys = (workbook, sheetNumber, rowNumber = 0) =>
-  workbook.worksheets[sheetNumber]._rows[rowNumber].eachCell((cell) => {
-    cell._column.key = cell.text
-  })
-
-const rowsToObjectArray = (rows) =>
-  rows
-    .map((row) =>
-      row._cells
-        .map((cell) => [cell._column.key, cell.text])
-        .filter((d) => !!d),
-    )
-    .map((row) => Object.fromEntries(row))
 
 /**
  * Format known project entities from the GÉNÉRALITÉ sheet as:
@@ -265,12 +254,15 @@ function resolveResearcherEntities(
       sheet,
       (D) => {
         const researcher = {
-          id: typeof D[0]['id'] == 'number' ? D[0]['id'] : null,
+          id:
+            typeof D[0]['id'] === 'number' && D[0]['id'] !== ''
+              ? D[0]['id']
+              : uuidv4(),
           fullname: cleanDatum(D[0]['NOM et Prénom']),
           lastname: cleanDatum(D[0]['NOM']),
           firstname: cleanDatum(D[0]['Prénom']),
           gender: cleanDatum(D[0]['sexe']),
-          themes: D[0]['objets, thèmes, intérêts de recherche']
+          keywords: D[0]['objets, thèmes, intérêts de recherche']
             ? D[0]['objets, thèmes, intérêts de recherche']
                 .split(',')
                 .map((d) => toLowerPreservingAcronyms(d.trim()))
@@ -492,15 +484,31 @@ export function extractPhase1Workbook(
       : true,
   )
 
-  // Extract socioeconomic partners from projects
-  let socioeconomic_partners = []
-  projects.forEach((project) => {
-    socioeconomic_partners = socioeconomic_partners.concat(
-      project.partners.map((partner) => ({
-        project: project.acronyme,
-        partner: partner,
+  // Extract keywords from researchers
+  let researcher_by_keywords = []
+  researchers.forEach((researcher) => {
+    researcher_by_keywords = researcher_by_keywords.concat(
+      researcher.keywords.map((keyword) => ({
+        researcher: researcher.id,
+        keyword: keyword,
       })),
     )
+  })
+
+  // Extract socioeconomic partners from projects
+  const socioeconomic_partners = [
+    ...new Set(projects.flatMap(({ partners }) => partners)),
+  ].map((d) => ({ label: d }))
+
+  let project_by_socioeconomic_partners = []
+  projects.forEach((project) => {
+    project_by_socioeconomic_partners =
+      project_by_socioeconomic_partners.concat(
+        project.partners.map((partner) => ({
+          project: project.acronyme,
+          partner: partner,
+        })),
+      )
   })
 
   // Move university-project links from projects to project_by_universities
@@ -577,6 +585,7 @@ export function extractPhase1Workbook(
   return {
     projects,
     researchers,
+    researcher_by_keywords,
     laboratories,
     project_by_laboratories,
     laboratories_by_domains_erc: merge(
@@ -614,6 +623,7 @@ export function extractPhase1Workbook(
     universities,
     project_by_universities,
     socioeconomic_partners,
+    project_by_socioeconomic_partners,
   }
 }
 

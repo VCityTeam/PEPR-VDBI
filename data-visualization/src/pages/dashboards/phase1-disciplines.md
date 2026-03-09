@@ -44,11 +44,7 @@ type: "ordinal"},
 <!-- $ -->
 
 ```js
-const workbook1 = await FileAttachment(
-  '/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
-).xlsx()
-
-const phase_1_data = extractPhase1Workbook(workbook1, false)
+const phase_1_data = await FileAttachment('/data/phase1-workbook.json').json()
 console.debug('phase_1_data', phase_1_data)
 ```
 
@@ -92,56 +88,56 @@ const selected_project = view(
       <!-- $ -->
     </div>
   </div>
-  <div id="cnu-theme-plot-container" class="card grid-rowspan-2">
+  <div id="cnu-keyword-plot-container" class="card grid-rowspan-2">
     <h2>Researcher CNU by keywords</h2>
     ${resize((width, height) =>
       html`<div style="
           margin-bottom: 30px;
           max-height: ${height - 150}px;
           overflow: auto;">
-        ${page.theme_plot(
-          theme_plot_search_results,
+        ${page.keyword_plot(
+          keyword_plot_search_results,
           width,
-          theme_plot_sort,
-          getThemeColor,
+          keyword_plot_sort,
+          getKeywordColor,
         )}
         <!-- $ -->
         </div>
-        ${downloadTableButton(() => selected_project_data.theme_count)}
+        ${downloadTableButton(() => selected_project_data.keyword_count)}
         <!-- $ -->
-        ${downloadSVGButton("#cnu-theme-plot-container svg")}
+        ${downloadSVGButton("#cnu-keyword-plot-container svg")}
         <!-- $ -->
       </div>`
     )}
   </div>
-  <div id="cnu-theme-plot-container" class="card grid-rowspan-2">
+  <div id="cnu-keyword-plot-container" class="card grid-rowspan-2">
     <h2>Researcher CNU by unique keywords</h2>
-    ${unique_theme_plot_search_input}
+    ${unique_keyword_plot_search_input}
     ${resize((width, height) =>
       html`<div style="
           margin-bottom: 30px;
           max-height: ${height - 150}px;
           overflow: auto;">
-        ${page.theme_plot(
-          unique_theme_plot_search_results,
+        ${page.keyword_plot(
+          unique_keyword_plot_search_results,
           width,
-          theme_plot_sort,
-          getThemeColor,
+          keyword_plot_sort,
+          getKeywordColor,
         )}
         <!-- $ -->
         </div>
-        ${downloadTableButton(() => unique_theme_plot_search_results)}
+        ${downloadTableButton(() => unique_keyword_plot_search_results)}
         <!-- $ -->
-        ${downloadSVGButton("#cnu-theme-plot-container svg")}
+        ${downloadSVGButton("#cnu-keyword-plot-container svg")}
         <!-- $ -->
       </div>`
     )}
   </div>
-  <div id="theme-plot-container" class="card grid-rowspan-2">
+  <div id="keyword-plot-container" class="card grid-rowspan-2">
     <h2>Researcher keywords by CNU</h2>
-    ${theme_plot_search_input}
+    ${keyword_plot_search_input}
     <!-- $ -->
-    ${theme_plot_sort_input}
+    ${keyword_plot_sort_input}
     <!-- $ -->
     ${resize((width, height) =>
       html`<div style="
@@ -150,7 +146,7 @@ const selected_project = view(
           overflow: auto;">
         ${Plot.plot({
           width: width,
-          height: theme_plot_search_results.length * 10,
+          height: keyword_plot_search_results.length * 10,
           x: {
             label: 'Occurences',
             grid: true,
@@ -175,13 +171,13 @@ const selected_project = view(
             type: 'ordinal',
           },
           marks: [
-            Plot.barX(theme_plot_search_results, {
-              y: (d) => d.theme,
+            Plot.barX(keyword_plot_search_results, {
+              y: (d) => d.keyword,
               x: 1,
               fill: (d) =>
                 cnu_dark_color_map.get(getGroupFromCNU(d.cnu)) ||
                 'grey',
-              sort: { y: theme_plot_sort },
+              sort: { y: keyword_plot_sort },
               tip: {
                 lineWidth: 25,
                 textOverflow: 'ellipsis-end',
@@ -195,9 +191,9 @@ const selected_project = view(
         })}
         <!-- $ -->
         </div>
-        ${downloadTableButton(() => selected_project_data.theme_count)}
+        ${downloadTableButton(() => selected_project_data.keyword_count)}
         <!-- $ -->
-        ${downloadSVGButton("#theme-plot-container svg")}
+        ${downloadSVGButton("#keyword-plot-container svg")}
         <!-- $ -->
       </div>`
     )}
@@ -211,7 +207,7 @@ const selected_project = view(
           overflow: auto;">
         ${Plot.plot({
           width: width,
-          height: theme_plot_search_results
+          height: keyword_plot_search_results
             .filter((d) =>
               getGroupFromCNU(d.cnu) === 'Lettres et sciences humaines')
             .length * 10,
@@ -234,13 +230,13 @@ const selected_project = view(
           marginRight: 200,
           color: { legend: true },
           marks: [
-            Plot.barX(theme_plot_search_results
+            Plot.barX(keyword_plot_search_results
                 .filter((d) =>
                   getGroupFromCNU(d.cnu) === 'Lettres et sciences humaines'), {
-              y: (d) => d.theme,
+              y: (d) => d.keyword,
               x: 1,
               fill: 'cnu',
-              sort: { y: theme_plot_sort },
+              sort: { y: keyword_plot_sort },
               tip: {
                 lineWidth: 25,
                 textOverflow: 'ellipsis-end',
@@ -266,7 +262,7 @@ const selected_project = view(
           overflow: auto;">
         ${Plot.plot({
           width: width,
-          height: theme_plot_search_results
+          height: keyword_plot_search_results
             .filter((d) =>
               getGroupFromCNU(d.cnu) === 'Sections de santé')
             .length * 10,
@@ -289,13 +285,13 @@ const selected_project = view(
           marginRight: 200,
           color: { legend: true },
           marks: [
-            Plot.barX(theme_plot_search_results
+            Plot.barX(keyword_plot_search_results
                 .filter((d) =>
                   getGroupFromCNU(d.cnu) === 'Sections de santé'), {
-              y: (d) => d.theme,
+              y: (d) => d.keyword,
               x: 1,
               fill: 'cnu',
-              sort: { y: theme_plot_sort },
+              sort: { y: keyword_plot_sort },
               tip: {
                 lineWidth: 25,
                 textOverflow: 'ellipsis-end',
@@ -321,7 +317,7 @@ const selected_project = view(
           overflow: auto;">
         ${Plot.plot({
           width: width,
-          height: theme_plot_search_results
+          height: keyword_plot_search_results
             .filter((d) =>
               getGroupFromCNU(d.cnu) === 'Sciences')
             .length * 10,
@@ -344,13 +340,13 @@ const selected_project = view(
           marginRight: 200,
           color: { legend: true },
           marks: [
-            Plot.barX(theme_plot_search_results
+            Plot.barX(keyword_plot_search_results
                 .filter((d) =>
                   getGroupFromCNU(d.cnu) === 'Sciences'), {
-              y: (d) => d.theme,
+              y: (d) => d.keyword,
               x: 1,
               fill: 'cnu',
-              sort: { y: theme_plot_sort },
+              sort: { y: keyword_plot_sort },
               tip: {
                 lineWidth: 25,
                 textOverflow: 'ellipsis-end',
@@ -376,7 +372,7 @@ const selected_project = view(
           overflow: auto;">
         ${Plot.plot({
           width: width,
-          height: theme_plot_search_results
+          height: keyword_plot_search_results
             .filter((d) =>
               getGroupFromCNU(d.cnu) === 'Droit, économie et gestion')
             .length * 15,
@@ -399,13 +395,13 @@ const selected_project = view(
           marginRight: 200,
           color: { legend: true },
           marks: [
-            Plot.barX(theme_plot_search_results
+            Plot.barX(keyword_plot_search_results
                 .filter((d) =>
                   getGroupFromCNU(d.cnu) === 'Droit, économie et gestion'), {
-              y: (d) => d.theme,
+              y: (d) => d.keyword,
               x: 1,
               fill: 'cnu',
-              sort: { y: theme_plot_sort },
+              sort: { y: keyword_plot_sort },
               tip: {
                 lineWidth: 25,
                 textOverflow: 'ellipsis-end',
@@ -431,7 +427,7 @@ const selected_project = view(
           overflow: auto;">
         ${Plot.plot({
           width: width,
-          height: theme_plot_search_results
+          height: keyword_plot_search_results
             .filter((d) =>
               getGroupFromCNU(d.cnu) === 'Pluridisciplinaire')
             .length * 50,
@@ -454,13 +450,13 @@ const selected_project = view(
           marginRight: 200,
           color: { legend: true },
           marks: [
-            Plot.barX(theme_plot_search_results
+            Plot.barX(keyword_plot_search_results
                 .filter((d) =>
                   getGroupFromCNU(d.cnu) === 'Pluridisciplinaire'), {
-              y: (d) => d.theme,
+              y: (d) => d.keyword,
               x: 1,
               fill: 'cnu',
-              sort: { y: theme_plot_sort },
+              sort: { y: keyword_plot_sort },
               tip: {
                 lineWidth: 25,
                 textOverflow: 'ellipsis-end',
@@ -502,8 +498,8 @@ const selected_project = view(
 
 ```js
 import { keyword_color_scale } from '/components/color.js'
-const getThemeColor = keyword_color_scale([
-  ...new Set(selected_project_data.themes_by_cnu.map((d) => d.theme)),
+const getKeywordColor = keyword_color_scale([
+  ...new Set(selected_project_data.keywords_by_cnu.map((d) => d.keyword)),
 ])
 ```
 
@@ -540,12 +536,12 @@ const overview_table_cnu = Inputs.table(
 ## Discipline intersections
 
 <div class="grid grid-cols-2">
-  <div id="theme-chord-container" class="card">
-    <h2>Theme intersections by project</h2>
+  <div id="keyword-chord-container" class="card">
+    <h2>Keyword intersections by project</h2>
     ${resize((width) =>
       chordDiagram(
-        selected_project_data.theme_project_matrix,
-        selected_project_data.theme_projects,
+        selected_project_data.keyword_project_matrix,
+        selected_project_data.keyword_projects,
         d3.schemeCategory10,
         { ...page.chord_config, width: width, height: width }
       )
@@ -618,9 +614,9 @@ const cnu_plot_sort_input = Inputs.select(
 
 const cnu_plot_sort = Generators.input(cnu_plot_sort_input)
 
-const theme_plot_sort_input = Inputs.select(
+const keyword_plot_sort_input = Inputs.select(
   new Map([
-    ['Theme', 'y'],
+    ['Keyword', 'y'],
     ['Occurrences', '-x'],
   ]),
   {
@@ -629,30 +625,30 @@ const theme_plot_sort_input = Inputs.select(
   },
 )
 
-const theme_plot_sort = Generators.input(theme_plot_sort_input)
+const keyword_plot_sort = Generators.input(keyword_plot_sort_input)
 ```
 
 ```js
-const theme_plot_search_input = Inputs.search(
-  selected_project_data.themes_by_cnu,
+const keyword_plot_search_input = Inputs.search(
+  selected_project_data.keywords_by_cnu,
   {
-    placeholder: 'Search themes...',
+    placeholder: 'Search keywords...',
   },
 )
 
-const theme_plot_search_results = Generators.input(theme_plot_search_input)
+const keyword_plot_search_results = Generators.input(keyword_plot_search_input)
 ```
 
 ```js
-const unique_theme_plot_search_input = Inputs.search(
-  selected_project_data.unique_themes_by_cnu,
+const unique_keyword_plot_search_input = Inputs.search(
+  selected_project_data.unique_keywords_by_cnu,
   {
-    placeholder: 'Search themes...',
+    placeholder: 'Search keywords...',
   },
 )
 
-const unique_theme_plot_search_results = Generators.input(
-  unique_theme_plot_search_input,
+const unique_keyword_plot_search_results = Generators.input(
+  unique_keyword_plot_search_input,
 )
 ```
 
@@ -1113,20 +1109,24 @@ const hceres_discipline_SVE_by_aap_status_graph =
   )
 ```
 
-### Theme by AAP status
+### Keyword by AAP status
 
 <div class="card">
   ${resize((width) => sankeyDiagram(
-    theme_aap_dynamics,
-    page.theme_sankey_config(theme_aap_dynamics, width))
+    keyword_aap_dynamics,
+    page.keyword_sankey_config(keyword_aap_dynamics, width))
   )}
   <!-- $ -->
 </div>
 
 ```js
-const theme_by_aap_status = page.theme_by_aap_status(researcher_by_aap_status)
+const keyword_by_aap_status = page.keyword_by_aap_status(
+  researcher_by_aap_status,
+)
 
-const theme_aap_dynamics = page.theme_by_aap_status_graph(theme_by_aap_status)
+const keyword_aap_dynamics = page.keyword_by_aap_status_graph(
+  keyword_by_aap_status,
+)
 ```
 
 ## Data quality metrics

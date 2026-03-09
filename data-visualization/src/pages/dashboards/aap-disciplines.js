@@ -160,26 +160,28 @@ export function formatResearcherDataByProject(
     .filter((d) => !!d[0])
     .sort((a, b) => d3.descending(a[1], b[1]))
 
-  const theme_count = countEntities(filtered_researchers, (d) => d.themes)
+  const keyword_count = countEntities(filtered_researchers, (d) => d.keywords)
     .filter((d) => !!d[0])
     .sort((a, b) => d3.descending(a[1], b[1]))
 
-  const themes_by_cnu = d3
+  const keywords_by_cnu = d3
     .rollups(
       filtered_researchers.filter((d) => getGroupFromCNU(d.cnu)),
-      (D) => D.flatMap((d) => d.themes),
+      (D) => D.flatMap((d) => d.keywords),
       (d) => d.cnu,
     )
-    .flatMap(([cnu, themes]) => themes.flatMap((theme) => ({ cnu, theme })))
+    .flatMap(([cnu, keywords]) =>
+      keywords.flatMap((keyword) => ({ cnu, keyword })),
+    )
 
-  const unique_themes_by_cnu = d3
+  const unique_keywords_by_cnu = d3
     .rollups(
       filtered_researchers.filter((d) => getGroupFromCNU(d.cnu)),
-      (D) => new Set(D.flatMap((d) => d.themes)),
+      (D) => new Set(D.flatMap((d) => d.keywords)),
       (d) => d.cnu,
     )
-    .flatMap(([cnu, themes]) =>
-      [...themes].flatMap((theme) => ({ cnu, theme })),
+    .flatMap(([cnu, keywords]) =>
+      [...keywords].flatMap((keyword) => ({ cnu, keyword })),
     )
 
   const filtered_researcher_projects = filtered_researchers.flatMap(
@@ -195,20 +197,20 @@ export function formatResearcherDataByProject(
         )
         .map((project) => ({
           project,
-          themes: researcher.themes,
+          keywords: researcher.keywords,
           cnu: researcher.cnu,
         })),
   )
 
-  const grouped_projects_by_theme = d3.rollup(
+  const grouped_projects_by_keyword = d3.rollup(
     filtered_researcher_projects,
-    (D) => new Set(D.flatMap((d) => d.themes)),
+    (D) => new Set(D.flatMap((d) => d.keywords)),
     (d) => d.project,
   )
-  console.debug('grouped_projects_by_theme', grouped_projects_by_theme)
+  console.debug('grouped_projects_by_keyword', grouped_projects_by_keyword)
 
-  const theme_project_matrix = generateIntersectionMatrix(
-    grouped_projects_by_theme,
+  const keyword_project_matrix = generateIntersectionMatrix(
+    grouped_projects_by_keyword,
   )
 
   const grouped_projects_by_cnu = d3.rollup(
@@ -222,7 +224,7 @@ export function formatResearcherDataByProject(
 
   const grouped_cnu_group_by_keyword = d3.rollup(
     filtered_researcher_projects.filter((d) => getGroupFromCNU(d.cnu)),
-    (D) => new Set(D.flatMap((d) => d.themes)),
+    (D) => new Set(D.flatMap((d) => d.keywords)),
     (d) => getGroupFromCNU(d.cnu),
   )
 
@@ -232,7 +234,7 @@ export function formatResearcherDataByProject(
 
   const grouped_cnu_by_keyword = d3.rollup(
     filtered_researcher_projects.filter((d) => getGroupFromCNU(d.cnu)),
-    (D) => new Set(D.flatMap((d) => d.themes)),
+    (D) => new Set(D.flatMap((d) => d.keywords)),
     (d) => cropText(d.cnu),
   )
 
@@ -242,11 +244,11 @@ export function formatResearcherDataByProject(
     discipline_erc_count,
     cnu_count,
     cnu_count_by_category,
-    theme_count,
-    theme_project_matrix,
-    theme_projects: [...grouped_projects_by_theme.keys()],
-    themes_by_cnu,
-    unique_themes_by_cnu,
+    keyword_count,
+    keyword_project_matrix,
+    keyword_projects: [...grouped_projects_by_keyword.keys()],
+    keywords_by_cnu,
+    unique_keywords_by_cnu,
     cnu_project_matrix,
     cnu_projects: [...grouped_projects_by_cnu.keys()],
     cnu_group_keyword_matrix,
@@ -256,7 +258,12 @@ export function formatResearcherDataByProject(
   }
 }
 
-export const theme_plot = (data, width, theme_plot_sort, theme_color_scale) =>
+export const keyword_plot = (
+  data,
+  width,
+  keyword_plot_sort,
+  keyword_color_scale,
+) =>
   Plot.plot({
     width: width,
     height: 800,
@@ -282,8 +289,8 @@ export const theme_plot = (data, width, theme_plot_sort, theme_color_scale) =>
       Plot.barX(data, {
         y: 'cnu',
         x: 1,
-        fill: (d) => theme_color_scale(d.theme),
-        sort: { y: theme_plot_sort },
+        fill: (d) => keyword_color_scale(d.keyword),
+        sort: { y: keyword_plot_sort },
         tip: {
           lineWidth: 25,
           textOverflow: 'ellipsis-end',
@@ -477,7 +484,7 @@ export const researcher_by_aap_status = (researchers, projects) =>
     return {
       cnu: cropText(d.cnu, 30),
       cnu_category: getGroupFromCNU(d.cnu) || 'Unknown',
-      themes: d.themes,
+      keywords: d.keywords,
       auditioned: researcher_projects.some((p) => p.auditioned)
         ? 'auditioned'
         : 'not auditioned',
@@ -571,30 +578,30 @@ export const cnrs_sankey_config = (data, width) => ({
 export const cnrs_category_link_color_scale = (d) =>
   cnrs_color_map.get(d.path[0])
 
-// themes
+// keywords
 
-export const theme_by_aap_status = (researcher_by_aap_status) =>
+export const keyword_by_aap_status = (researcher_by_aap_status) =>
   d3.sort(
     researcher_by_aap_status
-      .filter((d) => d.themes)
+      .filter((d) => d.keywords)
       .flatMap((d) =>
-        d.themes.map((t) => ({
+        d.keywords.map((t) => ({
           ...d,
-          theme: t,
+          keyword: t,
           submitted: 'submitted',
         })),
       ),
-    (d) => d.theme,
+    (d) => d.keyword,
   )
 
-export const theme_by_aap_status_graph = (theme_by_aap_status) =>
-  parallelSetToGraph(theme_by_aap_status, [
+export const keyword_by_aap_status_graph = (keyword_by_aap_status) =>
+  parallelSetToGraph(keyword_by_aap_status, [
     'submitted',
     'auditioned',
     'financed',
   ])
 
-export const theme_sankey_config = (data, width) => ({
+export const keyword_sankey_config = (data, width) => ({
   ...sankey_config(data, width),
   linkStroke: (d) => aap_state_color_scale(d.path.slice(-2).join('-')),
 })

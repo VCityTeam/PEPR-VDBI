@@ -35,7 +35,7 @@ export function filterEmptyArray(data) {
   return filter(
     // use array substring for (headerless) ranges?
     data,
-    (d) => typeof d !== 'undefined' && d !== 0,
+    (d) => typeof d !== 'undefined' && d !== 0 && d !== '',
   )
 }
 
@@ -57,3 +57,17 @@ export function toLowerPreservingAcronyms(str) {
     return /[a-z]/.test(word) ? word.toLowerCase() : word
   })
 }
+
+export const mapRowToColumnKeys = (workbook, sheetNumber, rowNumber = 0) =>
+  workbook.worksheets[sheetNumber]._rows[rowNumber].eachCell((cell) => {
+    cell._column.key = cell.text
+  })
+
+export const rowsToObjectArray = (rows) =>
+  rows
+    .map((row) =>
+      row._cells
+        .map((cell) => [cell._column.key, cell.text])
+        .filter((d) => !!d),
+    )
+    .map((row) => Object.fromEntries(row))

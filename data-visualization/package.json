@@ -12,6 +12,7 @@
     "observable": "observable"
   },
   "dependencies": {
+    "@duckdb/node-api": "^1.4.4-r.3",
     "@observablehq/framework": "latest",
     "@observablehq/plot": "^0.6.17",
     "d3": "latest",
@@ -19,7 +20,8 @@
     "d3-sankey": "^0.12.3",
     "exceljs": "^4.4.0",
     "fantasy-name-generator": "^2.0.0",
-    "geocoder": "^0.1.0"
+    "geocoder": "^0.1.0",
+    "uuid": "^13.0.0"
   },
   "engines": {
     "node": ">=20.6"
