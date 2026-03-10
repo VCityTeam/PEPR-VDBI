@@ -1,4 +1,4 @@
-import { csvParse, csvFormat } from 'd3-dsv'
+import { csvParse, tsvFormat } from 'd3-dsv'
 import { readFile } from 'node:fs/promises'
 
 // normally we should be able to load this csv through the an `sql` frontmatter
@@ -8,4 +8,4 @@ const data = csvParse(
   (await readFile('src/data/private/AAP2_template_export.csv')).toString(),
 )
 
-process.stdout.write(csvFormat(data))
+process.stdout.write(tsvFormat(data))
