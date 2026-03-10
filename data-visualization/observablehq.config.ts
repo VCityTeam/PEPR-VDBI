@@ -1,12 +1,15 @@
+import MarkdownItFootnote from 'markdown-it-footnote'
+
 // See https://observablehq.com/framework/config for documentation.
 export default {
+  markdownIt: (md) => md.use(MarkdownItFootnote),
   // The project’s title; used in the sidebar and webpage titles.
   title: 'VDBI Dashboards',
   // theme: ['light', 'dashboard'],
   head: '<link rel="icon" href="pepr-vdbi-logo.png" type="image/png" sizes="32x32">',
   style: 'css/vdbi-dashboard.css',
   search: true,
-  home: "VDBI Dashboards",
+  home: 'VDBI Dashboards',
   root: 'src', // path to the source root for preview
   pages: [
     {
@@ -32,7 +35,7 @@ export default {
           name: 'PEPR VDBI Constellation',
           path: 'pages/dashboards/vdbi-constellation',
         },
-      ]
+      ],
     },
     {
       name: 'Data Visualisation Tools',
@@ -57,7 +60,7 @@ export default {
           name: 'Plot generator',
           path: 'pages/tools/plot',
         },
-      ]
+      ],
     },
     {
       name: 'Reports',
@@ -74,7 +77,7 @@ export default {
           name: 'Lexicometric analysis - JS 2025: NEO/SoLocale Workshop (EN)',
           path: 'pages/reports/js-2025-workshop-analysis-en',
         },
-      ]
+      ],
     },
     {
       name: 'Under Construction',
@@ -190,4 +193,4 @@ export default {
   // toc: true, // whether to show the table of contents
   // pager: true, // whether to show previous & next links in the footer
   // output: "dist", // path to the output root for build
-};
+}

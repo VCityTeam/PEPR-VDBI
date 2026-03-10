@@ -21,6 +21,7 @@
     "exceljs": "^4.4.0",
     "fantasy-name-generator": "^2.0.0",
     "geocoder": "^0.1.0",
+    "markdown-it-footnote": "^4.0.0",
     "uuid": "^13.0.0"
   },
   "engines": {
