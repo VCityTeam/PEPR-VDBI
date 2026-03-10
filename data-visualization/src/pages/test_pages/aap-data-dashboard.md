@@ -1,4 +1,5 @@
 ---
+toc: true
 sql:
   aap1_projects: /data/phase1-projects.tsv
   aap1_researchers: /data/phase1-researchers.tsv
@@ -39,330 +40,670 @@ sql:
 import { downloadTableButton } from '/components/utilities.js'
 ```
 
+## AAP 1
+
 <div class="card">
   <h2>Projects</h2>
   </br>
-  ${projects_search_input}
+  ${aap1_projects_search_input}
   <!-- $ -->
   </br>
-  ${Inputs.table(projects_search, {
+  ${Inputs.table(aap1_projects_search, {
     layout: "auto",
   })}
   <!-- $ -->
   </br>
-  ${downloadTableButton(() => projects_search)}
+  ${downloadTableButton(() => aap1_projects_search)}
   <!-- $ -->
 </div>
 
 <div class="card">
   <h2>Project institutions</h2>
   </br>
-  ${project_by_institutions_search_input}
+  ${aap1_project_by_institutions_search_input}
   <!-- $ -->
   </br>
-  ${Inputs.table(project_by_institutions_search, {
+  ${Inputs.table(aap1_project_by_institutions_search, {
     layout: "auto",
   })}
   <!-- $ -->
   </br>
-  ${downloadTableButton(() => project_by_institutions_search)}
+  ${downloadTableButton(() => aap1_project_by_institutions_search)}
   <!-- $ -->
 </div>
 
 <div class="card">
   <h2>Project Laboratories</h2>
   </br>
-  ${project_by_laboratories_search_input}
+  ${aap1_project_by_laboratories_search_input}
   <!-- $ -->
   </br>
-  ${Inputs.table(project_by_laboratories_search, {
+  ${Inputs.table(aap1_project_by_laboratories_search, {
     layout: "auto",
   })}
   <!-- $ -->
   </br>
-  ${downloadTableButton(() => project_by_laboratories_search)}
+  ${downloadTableButton(() => aap1_project_by_laboratories_search)}
   <!-- $ -->
 </div>
 
 <div class="card">
   <h2>Laboratories</h2>
   </br>
-  ${laboratories_search_input}
+  ${aap1_laboratories_search_input}
   <!-- $ -->
   </br>
-  ${Inputs.table(laboratories_search, {
+  ${Inputs.table(aap1_laboratories_search, {
     layout: "auto",
   })}
   <!-- $ -->
   </br>
-  ${downloadTableButton(() => laboratories_search)}
+  ${downloadTableButton(() => aap1_laboratories_search)}
   <!-- $ -->
 </div>
 
 <div class="card">
   <h2>Laboratory ERC domains</h2>
   </br>
-  ${laboratories_by_domains_erc_search_input}
+  ${aap1_laboratories_by_domains_erc_search_input}
   <!-- $ -->
   </br>
-  ${Inputs.table(laboratories_by_domains_erc_search, {
+  ${Inputs.table(aap1_laboratories_by_domains_erc_search, {
     layout: "auto",
   })}
   <!-- $ -->
   </br>
-  ${downloadTableButton(() => laboratories_by_domains_erc_search)}
+  ${downloadTableButton(() => aap1_laboratories_by_domains_erc_search)}
   <!-- $ -->
 </div>
 
 <div class="card">
   <h2>Laboratory ERC disciplines</h2>
   </br>
-  ${laboratories_by_disciplines_erc_search_input}
+  ${aap1_laboratories_by_disciplines_erc_search_input}
   <!-- $ -->
   </br>
-  ${Inputs.table(laboratories_by_disciplines_erc_search, {
+  ${Inputs.table(aap1_laboratories_by_disciplines_erc_search, {
     layout: "auto",
   })}
   <!-- $ -->
   </br>
-  ${downloadTableButton(() => laboratories_by_disciplines_erc_search)}
+  ${downloadTableButton(() => aap1_laboratories_by_disciplines_erc_search)}
   <!-- $ -->
 </div>
 
 <div class="card">
   <h2>Laboratory HCERES domains</h2>
   </br>
-  ${laboratories_by_domains_hceres_search_input}
+  ${aap1_laboratories_by_domains_hceres_search_input}
   <!-- $ -->
   </br>
-  ${Inputs.table(laboratories_by_domains_hceres_search, {
+  ${Inputs.table(aap1_laboratories_by_domains_hceres_search, {
     layout: "auto",
   })}
   <!-- $ -->
   </br>
-  ${downloadTableButton(() => laboratories_by_domains_hceres_search)}
+  ${downloadTableButton(() => aap1_laboratories_by_domains_hceres_search)}
   <!-- $ -->
 </div>
 
 <div class="card">
   <h2>Laboratory HCERES disciplines</h2>
   </br>
-  ${laboratories_by_disciplines_hceres_search_input}
+  ${aap1_laboratories_by_disciplines_hceres_search_input}
   <!-- $ -->
   </br>
-  ${Inputs.table(laboratories_by_disciplines_hceres_search, {
+  ${Inputs.table(aap1_laboratories_by_disciplines_hceres_search, {
     layout: "auto",
   })}
   <!-- $ -->
   </br>
-  ${downloadTableButton(() => laboratories_by_disciplines_hceres_search)}
+  ${downloadTableButton(() => aap1_laboratories_by_disciplines_hceres_search)}
   <!-- $ -->
 </div>
 
 <div class="card">
   <h2>Institutions</h2>
   </br>
-  ${institutions_search_input}
+  ${aap1_institutions_search_input}
   <!-- $ -->
   </br>
-  ${Inputs.table(institutions_search, {
+  ${Inputs.table(aap1_institutions_search, {
     layout: "auto",
   })}
   <!-- $ -->
   </br>
-  ${downloadTableButton(() => institutions_search)}
+  ${downloadTableButton(() => aap1_institutions_search)}
   <!-- $ -->
 </div>
 
 <div class="card">
   <h2>Researchers</h2>
   </br>
-  ${researchers_search_input}
+  ${aap1_researchers_search_input}
   <!-- $ -->
   </br>
-  ${Inputs.table(researchers_search, {
+  ${Inputs.table(aap1_researchers_search, {
     layout: "auto",
   })}
   <!-- $ -->
   </br>
-  ${downloadTableButton(() => researchers_search)}
+  ${downloadTableButton(() => aap1_researchers_search)}
   <!-- $ -->
 </div>
 
 <div class="card">
   <h2>Researchers by keyword</h2>
   </br>
-  ${researcher_by_keywords_search_input}
+  ${aap1_researcher_by_keywords_search_input}
   <!-- $ -->
   </br>
-  ${Inputs.table(researcher_by_keywords_search, {
+  ${Inputs.table(aap1_researcher_by_keywords_search, {
     layout: "auto",
   })}
   <!-- $ -->
   </br>
-  ${downloadTableButton(() => researcher_by_keywords_search)}
+  ${downloadTableButton(() => aap1_researcher_by_keywords_search)}
   <!-- $ -->
 </div>
 
 <div class="card">
   <h2>Project socioeconomic partners</h2>
   </br>
-  ${socioeconomic_partners_search_input}
+  ${aap1_socioeconomic_partners_search_input}
   <!-- $ -->
   </br>
-  ${Inputs.table(socioeconomic_partners_search, {
+  ${Inputs.table(aap1_socioeconomic_partners_search, {
     layout: "auto",
   })}
   <!-- $ -->
   </br>
-  ${downloadTableButton(() => socioeconomic_partners_search)}
+  ${downloadTableButton(() => aap1_socioeconomic_partners_search)}
   <!-- $ -->
 </div>
 
 ```js
-const projects_search_input = Inputs.search(
+const aap1_projects_search_input = Inputs.search(
   await sql`select * from aap1_projects`,
   {
     placeholder: 'Search projects',
   },
 )
-const projects_search = Generators.input(projects_search_input)
+const aap1_projects_search = Generators.input(aap1_projects_search_input)
 ```
 
 ```js
-const project_by_institutions_search_input = Inputs.search(
+const aap1_project_by_institutions_search_input = Inputs.search(
   await sql`select * from aap1_project_by_institutions`,
   {
     placeholder: 'Search project_by_institutions',
   },
 )
-const project_by_institutions_search = Generators.input(
-  project_by_institutions_search_input,
+const aap1_project_by_institutions_search = Generators.input(
+  aap1_project_by_institutions_search_input,
 )
 ```
 
 ```js
-const project_by_laboratories_search_input = Inputs.search(
+const aap1_project_by_laboratories_search_input = Inputs.search(
   await sql`select * from aap1_project_by_laboratories`,
   {
     placeholder: 'Search project_by_laboratories',
   },
 )
-const project_by_laboratories_search = Generators.input(
-  project_by_laboratories_search_input,
+const aap1_project_by_laboratories_search = Generators.input(
+  aap1_project_by_laboratories_search_input,
 )
 ```
 
 ```js
-const laboratories_search_input = Inputs.search(
+const aap1_laboratories_search_input = Inputs.search(
   await sql`select * from aap1_laboratories`,
   {
     placeholder: 'Search laboratories',
   },
 )
-const laboratories_search = Generators.input(laboratories_search_input)
+const aap1_laboratories_search = Generators.input(
+  aap1_laboratories_search_input,
+)
 ```
 
 ```js
-const laboratories_by_domains_erc_search_input = Inputs.search(
+const aap1_laboratories_by_domains_erc_search_input = Inputs.search(
   await sql`select * from aap1_laboratories_by_domains_erc`,
   {
     placeholder: 'Search laboratories_by_domains_erc',
   },
 )
-const laboratories_by_domains_erc_search = Generators.input(
-  laboratories_by_domains_erc_search_input,
+const aap1_laboratories_by_domains_erc_search = Generators.input(
+  aap1_laboratories_by_domains_erc_search_input,
 )
 ```
 
 ```js
-const laboratories_by_disciplines_erc_search_input = Inputs.search(
+const aap1_laboratories_by_disciplines_erc_search_input = Inputs.search(
   await sql`select * from aap1_laboratories_by_disciplines_erc`,
   {
     placeholder: 'Search laboratories_by_disciplines_erc',
   },
 )
-const laboratories_by_disciplines_erc_search = Generators.input(
-  laboratories_by_disciplines_erc_search_input,
+const aap1_laboratories_by_disciplines_erc_search = Generators.input(
+  aap1_laboratories_by_disciplines_erc_search_input,
 )
 ```
 
 ```js
-const laboratories_by_domains_hceres_search_input = Inputs.search(
+const aap1_laboratories_by_domains_hceres_search_input = Inputs.search(
   await sql`select * from aap1_laboratories_by_domains_hceres`,
   {
     placeholder: 'Search laboratories_by_domains_hceres',
   },
 )
-const laboratories_by_domains_hceres_search = Generators.input(
-  laboratories_by_domains_hceres_search_input,
+const aap1_laboratories_by_domains_hceres_search = Generators.input(
+  aap1_laboratories_by_domains_hceres_search_input,
 )
 ```
 
 ```js
-const laboratories_by_disciplines_hceres_search_input = Inputs.search(
+const aap1_laboratories_by_disciplines_hceres_search_input = Inputs.search(
   await sql`select * from aap1_laboratories_by_disciplines_hceres`,
   {
     placeholder: 'Search laboratories_by_disciplines_hceres',
   },
 )
-const laboratories_by_disciplines_hceres_search = Generators.input(
-  laboratories_by_disciplines_hceres_search_input,
+const aap1_laboratories_by_disciplines_hceres_search = Generators.input(
+  aap1_laboratories_by_disciplines_hceres_search_input,
 )
 ```
 
 ```js
-const institutions_search_input = Inputs.search(
+const aap1_institutions_search_input = Inputs.search(
   await sql`select * from aap1_institutions`,
   {
     placeholder: 'Search institutions',
   },
 )
-const institutions_search = Generators.input(institutions_search_input)
+const aap1_institutions_search = Generators.input(
+  aap1_institutions_search_input,
+)
 ```
 
 ```js
-const researchers_search_input = Inputs.search(
+const aap1_researchers_search_input = Inputs.search(
   await sql`select * from aap1_researchers`,
   {
     placeholder: 'Search researchers',
   },
 )
-const researchers_search = Generators.input(researchers_search_input)
+const aap1_researchers_search = Generators.input(aap1_researchers_search_input)
 ```
 
 ```js
-const researcher_by_keywords_search_input = Inputs.search(
+const aap1_researcher_by_keywords_search_input = Inputs.search(
   await sql`select * from aap1_researcher_by_keywords`,
   {
     placeholder: 'Search researcher_by_keywords',
   },
 )
-const researcher_by_keywords_search = Generators.input(
-  researcher_by_keywords_search_input,
+const aap1_researcher_by_keywords_search = Generators.input(
+  aap1_researcher_by_keywords_search_input,
 )
 ```
 
 ```js
-const socioeconomic_partners_search_input = Inputs.search(
+const aap1_socioeconomic_partners_search_input = Inputs.search(
   await sql`select * from aap1_socioeconomic_partners`,
   {
     placeholder: 'Search socioeconomic_partners',
   },
 )
-const socioeconomic_partners_search = Generators.input(
-  socioeconomic_partners_search_input,
+const aap1_socioeconomic_partners_search = Generators.input(
+  aap1_socioeconomic_partners_search_input,
 )
 ```
 
 ```js
-const project_by_socioeconomic_partners_search_input = Inputs.search(
+const aap1_project_by_socioeconomic_partners_search_input = Inputs.search(
   await sql`select * from aap1_project_by_socioeconomic_partners`,
   {
     placeholder: 'Search socioeconomic_partners',
   },
 )
-const project_by_socioeconomic_partners_search = Generators.input(
-  project_by_socioeconomic_partners_search_input,
+const aap1_project_by_socioeconomic_partners_search = Generators.input(
+  aap1_project_by_socioeconomic_partners_search_input,
+)
+```
+
+## AAP 2
+
+<div class="card">
+  <h2>Projects</h2>
+  </br>
+  ${aap2_projects_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_projects_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_projects_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Project institutions</h2>
+  </br>
+  ${aap2_project_by_institutions_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_project_by_institutions_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_project_by_institutions_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Project Laboratories</h2>
+  </br>
+  ${aap2_project_by_laboratories_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_project_by_laboratories_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_project_by_laboratories_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Laboratories</h2>
+  </br>
+  ${aap2_laboratories_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_laboratories_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_laboratories_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Laboratory ERC domains</h2>
+  </br>
+  ${aap2_laboratories_by_domains_erc_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_laboratories_by_domains_erc_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_laboratories_by_domains_erc_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Laboratory ERC disciplines</h2>
+  </br>
+  ${aap2_laboratories_by_disciplines_erc_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_laboratories_by_disciplines_erc_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_laboratories_by_disciplines_erc_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Laboratory HCERES domains</h2>
+  </br>
+  ${aap2_laboratories_by_domains_hceres_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_laboratories_by_domains_hceres_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_laboratories_by_domains_hceres_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Laboratory HCERES disciplines</h2>
+  </br>
+  ${aap2_laboratories_by_disciplines_hceres_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_laboratories_by_disciplines_hceres_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_laboratories_by_disciplines_hceres_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Institutions</h2>
+  </br>
+  ${aap2_institutions_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_institutions_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_institutions_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Researchers</h2>
+  </br>
+  ${aap2_researchers_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_researchers_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_researchers_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Researchers by keyword</h2>
+  </br>
+  ${aap2_researcher_by_keywords_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_researcher_by_keywords_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_researcher_by_keywords_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Project socioeconomic partners</h2>
+  </br>
+  ${aap2_socioeconomic_partners_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_socioeconomic_partners_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_socioeconomic_partners_search)}
+  <!-- $ -->
+</div>
+
+```js
+const aap2_projects_search_input = Inputs.search(
+  await sql`select * from aap2_projects`,
+  {
+    placeholder: 'Search projects',
+  },
+)
+const aap2_projects_search = Generators.input(aap2_projects_search_input)
+```
+
+```js
+const aap2_project_by_institutions_search_input = Inputs.search(
+  await sql`select * from aap2_project_by_institutions`,
+  {
+    placeholder: 'Search project_by_institutions',
+  },
+)
+const aap2_project_by_institutions_search = Generators.input(
+  aap2_project_by_institutions_search_input,
+)
+```
+
+```js
+const aap2_project_by_laboratories_search_input = Inputs.search(
+  await sql`select * from aap2_project_by_laboratories`,
+  {
+    placeholder: 'Search project_by_laboratories',
+  },
+)
+const aap2_project_by_laboratories_search = Generators.input(
+  aap2_project_by_laboratories_search_input,
+)
+```
+
+```js
+const aap2_laboratories_search_input = Inputs.search(
+  await sql`select * from aap2_laboratories`,
+  {
+    placeholder: 'Search laboratories',
+  },
+)
+const aap2_laboratories_search = Generators.input(
+  aap2_laboratories_search_input,
+)
+```
+
+```js
+const aap2_laboratories_by_domains_erc_search_input = Inputs.search(
+  await sql`select * from aap2_laboratories_by_domains_erc`,
+  {
+    placeholder: 'Search laboratories_by_domains_erc',
+  },
+)
+const aap2_laboratories_by_domains_erc_search = Generators.input(
+  aap2_laboratories_by_domains_erc_search_input,
+)
+```
+
+```js
+const aap2_laboratories_by_disciplines_erc_search_input = Inputs.search(
+  await sql`select * from aap2_laboratories_by_disciplines_erc`,
+  {
+    placeholder: 'Search laboratories_by_disciplines_erc',
+  },
+)
+const aap2_laboratories_by_disciplines_erc_search = Generators.input(
+  aap2_laboratories_by_disciplines_erc_search_input,
+)
+```
+
+```js
+const aap2_laboratories_by_domains_hceres_search_input = Inputs.search(
+  await sql`select * from aap2_laboratories_by_domains_hceres`,
+  {
+    placeholder: 'Search laboratories_by_domains_hceres',
+  },
+)
+const aap2_laboratories_by_domains_hceres_search = Generators.input(
+  aap2_laboratories_by_domains_hceres_search_input,
+)
+```
+
+```js
+const aap2_laboratories_by_disciplines_hceres_search_input = Inputs.search(
+  await sql`select * from aap2_laboratories_by_disciplines_hceres`,
+  {
+    placeholder: 'Search laboratories_by_disciplines_hceres',
+  },
+)
+const aap2_laboratories_by_disciplines_hceres_search = Generators.input(
+  aap2_laboratories_by_disciplines_hceres_search_input,
+)
+```
+
+```js
+const aap2_institutions_search_input = Inputs.search(
+  await sql`select * from aap2_institutions`,
+  {
+    placeholder: 'Search institutions',
+  },
+)
+const aap2_institutions_search = Generators.input(
+  aap2_institutions_search_input,
+)
+```
+
+```js
+const aap2_researchers_search_input = Inputs.search(
+  await sql`select * from aap2_researchers`,
+  {
+    placeholder: 'Search researchers',
+  },
+)
+const aap2_researchers_search = Generators.input(aap2_researchers_search_input)
+```
+
+```js
+const aap2_researcher_by_keywords_search_input = Inputs.search(
+  await sql`select * from aap2_researcher_by_keywords`,
+  {
+    placeholder: 'Search researcher_by_keywords',
+  },
+)
+const aap2_researcher_by_keywords_search = Generators.input(
+  aap2_researcher_by_keywords_search_input,
+)
+```
+
+```js
+const aap2_socioeconomic_partners_search_input = Inputs.search(
+  await sql`select * from aap2_socioeconomic_partners`,
+  {
+    placeholder: 'Search socioeconomic_partners',
+  },
+)
+const aap2_socioeconomic_partners_search = Generators.input(
+  aap2_socioeconomic_partners_search_input,
+)
+```
+
+```js
+const aap2_project_by_socioeconomic_partners_search_input = Inputs.search(
+  await sql`select * from aap2_project_by_socioeconomic_partners`,
+  {
+    placeholder: 'Search socioeconomic_partners',
+  },
+)
+const aap2_project_by_socioeconomic_partners_search = Generators.input(
+  aap2_project_by_socioeconomic_partners_search_input,
 )
 ```
