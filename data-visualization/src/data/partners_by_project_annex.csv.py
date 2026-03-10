@@ -1,6 +1,6 @@
 import sys
 import csv
-from utilities.siret import queryAndFormatRe, defaultCsvHeader
+from utilities.siret import queryAndFormatRechercheEntreprises, initSiretTable
 from utilities.io_utils import initDefaultLogger
 
 
@@ -9,7 +9,7 @@ def main():
     logging = initDefaultLogger("partners_by_project_annex.log")
 
     PATH = "./src/data/private/financed_annex_partners_by_project.csv"
-    partner_data = [defaultCsvHeader()]
+    partner_data = initSiretTable()
 
     # get partner data
     phase1_partner_data = []
@@ -32,7 +32,7 @@ def main():
             continue
 
         partner_data += [
-            queryAndFormatRe(
+            queryAndFormatRechercheEntreprises(
                 partner,
                 project_name,
                 "financed_annex_partners_by_project",

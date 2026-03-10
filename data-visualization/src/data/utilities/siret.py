@@ -3,36 +3,38 @@ import time
 import logging
 
 
-def defaultCsvHeader() -> tuple:
-    """Return the default CSV header for a formatted SIRET API response.
+def initSiretTable() -> tuple:
+    """Return the default table formatted for the SIRET API response.
     Returns:
-    - a list of strings representing the header"""
-    return (
-        "siret",
-        "siren",
-        "nom_complet",
-        "source_label",
-        "nature_juridique",
-        "latitude",
-        "longitude",
-        "libelle_commune",
-        "commune",
-        "code_postal",
-        "region",
-        "project_name",
-        "project_coordinator",
-        "source",
-    )
+    - an array with a tuple of strings representing the header"""
+    return [
+        (
+            "siret",
+            "siren",
+            "nom_complet",
+            "source_label",
+            "nature_juridique",
+            "latitude",
+            "longitude",
+            "libelle_commune",
+            "commune",
+            "code_postal",
+            "region",
+            "project_name",
+            "project_coordinator",
+            "source",
+        )
+    ]
 
 
-def queryAndFormatRe(
+def queryAndFormatRechercheEntreprises(
     query: str,
     project_name: str,
     source: str,
     project_coordinator: bool | None = None,
     use_siege: bool = True,
 ) -> tuple:
-    response = queryRE(query)
+    response = queryRechercheEntreprises(query)
     default_response = (
         "",  # siret
         "",  # siren
@@ -52,7 +54,7 @@ def queryAndFormatRe(
     if response is None:
         return default_response
 
-    formatted_response = formatReResponse(
+    formatted_response = formatRechercheEntreprisesResponse(
         response,
         query,
         project_name,
@@ -66,7 +68,7 @@ def queryAndFormatRe(
         return formatted_response
 
 
-def queryRE(query: str, sleep: float = 0.2) -> dict | None:
+def queryRechercheEntreprises(query: str, sleep: float = 0.2) -> dict | None:
     """Send a basic query to the recherche-entreprises.api.gouv.fr Public API. Only top
     result is returned. https://recherche-entreprises.api.gouv.fr/
     Params:
@@ -107,7 +109,7 @@ def queryRE(query: str, sleep: float = 0.2) -> dict | None:
         return response.json()
 
 
-def formatReResponse(
+def formatRechercheEntreprisesResponse(
     response: dict,
     label: str,
     project_name: str,
@@ -125,7 +127,7 @@ def formatReResponse(
     - use_siege: prefer siege results over matching etablissements data. Recommend setting
         to True unless query is a precise identifer like a siret
     -----------
-    returns the response formatted according to defaultCsvHeader() or None."""
+    returns the response formatted according to initSiretTable() or None."""
     if response is not None and len(response["results"]) > 0:
         result = response["results"][0]
 

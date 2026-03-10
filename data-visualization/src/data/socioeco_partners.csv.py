@@ -1,5 +1,8 @@
 from utilities.io_utils import initDefaultLogger
-from utilities.siret import queryRE, formatReResponse
+from utilities.siret import (
+    queryRechercheEntreprises,
+    formatRechercheEntreprisesResponse,
+)
 import pandas as pd
 
 
@@ -24,8 +27,8 @@ def main():
             logging.warning(f"partner not found: {partner}")
             continue
 
-        response = queryRE(partner)
-        formatted_response = formatReResponse(
+        response = queryRechercheEntreprises(partner)
+        formatted_response = formatRechercheEntreprisesResponse(
             {} if response is None else response,
             label=partner,
             project_name="",
