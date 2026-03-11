@@ -2,9 +2,9 @@ import { DuckDBInstance } from '@duckdb/node-api'
 import { tsvFormat } from 'd3-dsv'
 
 const all_institutions_by_project_query = `
-  select distinct DOCID, institution_id from (
+  select distinct project, institution_id from (
     select
-      DOCID,
+      "Titre court" as project,
       unnest(
         apply([
           "siret-0"::VARCHAR,
@@ -66,6 +66,8 @@ const all_institutions_by_project_query = `
         x -> trim(regexp_replace(x, '[\n\r]', '', 'g')))
       ) as label,
     from 'src/data/private/AAP2_template_export.tsv'
+    join 'src/data/private/AAP2_submission_metadata.tsv'
+    on AAP2_template_export.DOCID = AAP2_submission_metadata.DOCID
   ) where institution_id is not null and label is not null
 `
 

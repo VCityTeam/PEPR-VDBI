@@ -7,30 +7,97 @@ const projects_query = `
     STATUT,
     TYPDOC,
     type_projet,
-    '' as acronyme,
+    "Titre court" as acronyme,
     TITLE as name_fr,
-    list_contains(
-      split(TOPIC, ','),
+    case
+      when length(split(TOPIC, ',')) = 1
+      then
+        if(
+          contains(
+            TOPIC,
+            'Changement climatique et préservation de la biodiversité'
+          ),
+          '1',
+          ''
+        ) ||
+        if(
+          contains(
+            TOPIC,
+            'Vers des villes et/ou des bâtiments résilient(e)s'
+          ),
+          '2',
+          ''
+        ) ||
+        if(
+          contains(
+            TOPIC,
+            'Villes et/ou bâtiments sobres et frugaux'
+          ),
+          '3',
+          ''
+        ) ||
+        if(
+          contains(
+            TOPIC,
+            'Vers des villes et/ou bâtiments inclusifs et équitables'
+          ),
+          '4',
+          ''
+        ) ||
+        if(
+          contains(
+            TOPIC,
+            'Villes et/ou bâtiments durable, santé et bien-être'
+          ),
+          '5',
+          ''
+        ) ||
+        if(
+          contains(
+            TOPIC,
+            'Défis émergents'
+          ),
+          '6',
+          ''
+        )
+      when
+        length(
+          filter(
+            ["defi-1","defi-2","defi-3","defi-4","defi-5","defi-6"],
+            lambda x: x = 'On'
+          )
+        ) = 1
+      then
+        if("defi-1" = 'On', '1', '') ||
+        if("defi-2" = 'On', '2', '') ||
+        if("defi-3" = 'On', '3', '') ||
+        if("defi-4" = 'On', '4', '') ||
+        if("defi-5" = 'On', '5', '') ||
+        if("defi-6" = 'On', '6', '')
+      else null
+    end as challenge,
+    contains(
+      TOPIC,
       'Changement climatique et préservation de la biodiversité'
     ) as defi_1_1,
-    list_contains(
-      split(TOPIC, ','),
+    contains(
+      TOPIC,
       'Vers des villes et/ou des bâtiments résilient(e)s'
     ) as defi_2_1,
-    list_contains(
-      split(TOPIC, ','),
+    contains(
+      TOPIC,
       'Villes et/ou bâtiments sobres et frugaux'
     ) as defi_3_1,
-    list_contains(
-      split(TOPIC, ','),
+    contains(
+      TOPIC,
       'Vers des villes et/ou bâtiments inclusifs et équitables'
     ) as defi_4_1,
-    list_contains(
-      split(TOPIC, ','),
+    contains(
+      TOPIC,
       'Villes et/ou bâtiments durable, santé et bien-être'
     ) as defi_5_1,
-    list_contains(
-      split(TOPIC, ','),
+    contains(
+      TOPIC,
       'Défis émergents'
     ) as defi_6_1,
     "defi-1" = 'On' as defi_1_2,
@@ -100,7 +167,7 @@ const projects_query = `
     -- CREATEUSERID,
     -- MAIL,
     -- titre,
-  from 'src/data/private/AAP2_submission_metadata.csv'
+  from 'src/data/private/AAP2_submission_metadata.tsv'
   left join 'src/data/private/AAP2_template_export.tsv'
   on AAP2_submission_metadata.DOCID =
     AAP2_template_export.DOCID

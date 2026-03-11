@@ -40,6 +40,106 @@ sql:
 import { downloadTableButton } from '/components/utilities.js'
 ```
 
+## AAP 1+2
+
+### Projects
+
+```sql
+(
+  select
+    acronyme,
+    present,
+    auditioned,
+    financed,
+    budget,
+    null as supplementary_budget,
+    grade,
+    challenge,
+    name_fr,
+    name_en,
+  from aap1_projects
+) union (
+  select
+    acronyme,
+    true as present,
+    null as auditioned,
+    null as financed,
+    budget,
+    supplementary_budget,
+    null as grade,
+    challenge,
+    name_fr,
+    null as name_en,
+  from aap2_projects
+)
+```
+
+### Project institutions
+
+```sql
+(
+  select
+    project,
+    university as institution,
+  from aap1_project_by_institutions
+) union (
+  select
+    project,
+    institution_id as institution
+  from aap2_project_by_institutions
+)
+```
+
+### Project Laboratories
+
+```sql
+```
+
+### Laboratories
+
+```sql
+```
+
+### Laboratory ERC domains
+
+```sql
+```
+
+### Laboratory ERC disciplines
+
+```sql
+```
+
+### Laboratory HCERES domains
+
+```sql
+```
+
+### Laboratory HCERES disciplines
+
+```sql
+```
+
+### Institutions
+
+```sql
+```
+
+### Researchers
+
+```sql
+```
+
+### Researchers by keyword
+
+```sql
+```
+
+### Project socioeconomic partners
+
+```sql
+```
+
 ## AAP 1
 
 <div class="card">

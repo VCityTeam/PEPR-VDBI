@@ -1,6 +1,7 @@
 ---
 sql:
   AAP2_template_export: /data/AAP2_template_export.csv
+  # todo: update to new data loader
   AAP2_submission_metadata: /data/private/AAP2_submission_metadata.csv
 ---
 
