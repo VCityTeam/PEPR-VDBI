@@ -1,6 +1,22 @@
 import { filter } from 'd3'
 import { nameByRace } from 'fantasy-name-generator'
 
+export const default_log_options = (
+  name,
+  destination = './data_loaders.js.log',
+) => ({
+  name: name,
+  level: 'warn',
+  sync: false,
+  transport: {
+    target: 'pino-pretty',
+    options: {
+      // colorize: true,
+      destination: destination,
+    },
+  },
+})
+
 /**
  * Anonymize a text entry
  *

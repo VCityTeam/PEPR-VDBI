@@ -1,25 +1,19 @@
-/**
- * Return the default table header for a formatted SIRET API response.
- *
- * @returns {string[]} An array of strings representing the header.
- */
-export function initSiretTable() {
-  return [
-    'siret',
-    'siren',
-    'nom_complet',
-    'source_label',
-    'nature_juridique',
-    'latitude',
-    'longitude',
-    'libelle_commune',
-    'commune',
-    'code_postal',
-    'region',
-    'project_name',
-    'project_coordinator',
-    'source',
-  ]
+import { pino } from 'pino'
+import { default_log_options } from './data_utilities.js'
+
+const logger = pino(default_log_options('siret utility'))
+
+const defaultResponse = {
+  siret: null,
+  siren: null,
+  nom_complet: null,
+  nature_juridique: null,
+  latitude: null,
+  longitude: null,
+  libelle_commune: null,
+  commune: null,
+  code_postal: null,
+  region: null,
 }
 
 /**
@@ -27,56 +21,70 @@ export function initSiretTable() {
  * returns a default response matching the CSV header structure.
  *
  * @param {string} query - The search query to be sent.
- * @param {string} projectName - The name of the project.
  * @param {string} source - The source of the data.
- * @param {boolean|null} [projectCoordinator=null] - Whether the partner is the project coordinator or not.
  * @param {boolean} [useSiege=true] - Prefer siege results over matching etablissements data.
- * @returns {Promise<string[]>} A promise resolving to an array of formatted string values.
+ * @returns {Promise<object[]>} A promise resolving to an object.
  */
 export async function queryAndFormatRechercheEntreprises(
   query,
-  projectName,
   source,
-  projectCoordinator = null,
   useSiege = true,
 ) {
   const response = await queryRechercheEntreprises(query)
 
-  const defaultResponse = [
-    '', // siret
-    '', // siren
-    '', // nom_complet
-    query, // source_label
-    '', // nature_juridique
-    '', // latitude
-    '', // longitude
-    '', // libelle_commune
-    '', // commune
-    '', // code_postal
-    '', // region
-    projectName,
-    projectCoordinator !== null ? String(projectCoordinator) : '',
-    source, // source
-  ]
-
-  if (response === null) {
-    return defaultResponse
+  const formattedResponse = {
+    ...defaultResponse,
+    source_label: query,
+    source: source,
   }
 
-  const formattedResponse = formatRechercheEntreprisesResponse(
-    response,
-    query,
-    projectName,
-    source,
-    projectCoordinator,
-    useSiege,
-  )
-
-  if (formattedResponse === null) {
-    return defaultResponse
-  } else {
+  if (!response) {
+    logger.error(
+      `Error formatting response: No response received; query: ${query}`,
+    )
     return formattedResponse
   }
+
+  if (!response?.results) {
+    logger.error(
+      `Error formatting response; Result format type mismatch: ${typeof response.results}; query: ${query}`,
+    )
+    return formattedResponse
+  }
+  if (response?.results?.length == 0) {
+    logger.warn(
+      `Could not format response; N° results returned: ${response?.results?.length}; query: ${query}`,
+    )
+    return formattedResponse
+  }
+
+  const result = response.results[0]
+
+  formattedResponse.siren = result.siren
+  formattedResponse.nom_complet = result.nom_complet
+  formattedResponse.nature_juridique = result.nature_juridique
+  formattedResponse.siret = result.siege.siret
+  formattedResponse.latitude = result.siege.latitude
+  formattedResponse.longitude = result.siege.longitude
+  formattedResponse.libelle_commune = result.siege.libelle_commune
+  formattedResponse.commune = result.siege.commune
+  formattedResponse.code_postal = result.siege.code_postal
+  formattedResponse.region = result.siege.region
+
+  // matching etablissements may have more accurate data otherwise keep siege data
+  if (!useSiege && result.matching_etablissements?.length > 0) {
+    const matchingEtablissement = result.matching_etablissements[0]
+
+    formattedResponse.siret = matchingEtablissement.siret
+    formattedResponse.latitude = matchingEtablissement.latitude
+    formattedResponse.longitude = matchingEtablissement.longitude
+    formattedResponse.libelle_commune = matchingEtablissement.libelle_commune
+    formattedResponse.commune = matchingEtablissement.commune
+    formattedResponse.code_postal = matchingEtablissement.code_postal
+    formattedResponse.region = matchingEtablissement.region
+  }
+
+  return formattedResponse
 }
 
 /**
@@ -88,7 +96,7 @@ export async function queryAndFormatRechercheEntreprises(
  * @returns {Promise<Object|null>} A promise resolving to a dictionary (object) of the request response if successful, or null.
  */
 export async function queryRechercheEntreprises(query, sleep = 0.2) {
-  console.debug(`Querying recherche-entreprises.api with query: ${query}`)
+  logger.debug(`Querying recherche-entreprises.api with query: ${query}`)
 
   // sleep to avoid rate limiting
   await new Promise((resolve) => setTimeout(resolve, sleep * 1000))
@@ -105,92 +113,23 @@ export async function queryRechercheEntreprises(query, sleep = 0.2) {
 
     if (!response.ok) {
       // Emulate response.raise_for_status()
-      throw new Error(`HTTP error! status: ${response.status}`)
+      throw new Error(`HTTP error! status: ${response.status}, query: ${query}`)
     }
 
     const data = await response.json()
-    console.debug(`recherche-entreprises.api response:`, data)
+    logger.debug(`recherche-entreprises.api response: ${data}`)
     return data
   } catch (err) {
     if (err.message && err.message.startsWith('HTTP error')) {
-      console.error(
+      logger.error(
         `HTTP error occurred when querying recherche-entreprises.api: ${err}`,
       )
     } else {
-      console.error(
+      logger.error(
         `Other error occurred when querying recherche-entreprises.api: ${err}`,
+        err.cause,
       )
     }
-    return null
-  }
-}
-
-/**
- * Format the response from the recherche-entreprises.api.gouv.fr Public API.
- *
- * @param {Object} response - The response from the API.
- * @param {string} label - The label from the source dataset used to identify the partner.
- * @param {string} projectName - The name of the project to be used in the response.
- * @param {string} source - The source of the data.
- * @param {boolean|null} [projectCoordinator=null] - Whether the partner is the project coordinator or not.
- * @param {boolean} [useSiege=true] - Prefer siege results over matching etablissements data. Recommend setting to true unless query is a precise identifier like a siret.
- * @returns {string[]|null} The response formatted according to initSiretTable() or null.
- */
-export function formatRechercheEntreprisesResponse(
-  response,
-  label,
-  projectName,
-  source,
-  projectCoordinator = null,
-  useSiege = true,
-) {
-  if (response !== null && response.results && response.results.length > 0) {
-    const result = response.results[0]
-
-    // matching etablissements may have more accurate data otherwise use siege
-    const matchingEtablissement =
-      !result.matching_etablissements ||
-      result.matching_etablissements.length === 0
-        ? null
-        : result.matching_etablissements[0]
-
-    if (!useSiege && matchingEtablissement !== null) {
-      return [
-        matchingEtablissement.siret,
-        result.siren,
-        result.nom_complet,
-        label,
-        result.nature_juridique,
-        matchingEtablissement.latitude,
-        matchingEtablissement.longitude,
-        matchingEtablissement.libelle_commune,
-        matchingEtablissement.commune,
-        matchingEtablissement.code_postal,
-        matchingEtablissement.region,
-        projectName,
-        projectCoordinator !== null ? String(projectCoordinator) : '',
-        source,
-      ]
-    } else {
-      return [
-        result.siege.siret,
-        result.siren,
-        result.nom_complet,
-        label,
-        result.nature_juridique,
-        result.siege.latitude,
-        result.siege.longitude,
-        result.siege.libelle_commune,
-        result.siege.commune,
-        result.siege.code_postal,
-        result.siege.region,
-        projectName,
-        projectCoordinator !== null ? String(projectCoordinator) : '',
-        source,
-      ]
-    }
-  } else {
-    console.warn('No results found for query')
     return null
   }
 }

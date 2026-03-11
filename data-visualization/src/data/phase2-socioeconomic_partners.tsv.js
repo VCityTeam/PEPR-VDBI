@@ -29,7 +29,7 @@ export const all_partners_query = `
           "SIRET le cas échéant 7_2"::VARCHAR,
           "SIRET le cas échéant 8_2"::VARCHAR,
         ],
-        x -> replace(x, ' ', ''))
+        x -> regexp_replace(x, '\s', '', 'g'))
       ) as id,
       unnest(
         apply(
@@ -52,7 +52,7 @@ export const all_partners_query = `
             "Nom 7_2"::VARCHAR,
             "Nom 8_2"::VARCHAR,
           ],
-          x -> trim(x))
+          x -> trim(regexp_replace(x, '[\n\r]', '', 'g')))
       ) as label,
       unnest(
         apply(
@@ -75,7 +75,7 @@ export const all_partners_query = `
             "Activité  secteurs dactivité 7_2"::VARCHAR,
             "Activité  secteurs dactivité 8_2"::VARCHAR,
           ],
-          x -> trim(x))
+          x -> trim(regexp_replace(x, '[\n\r]', '', 'g')))
       ) as activity,
     from 'src/data/private/AAP2_template_export.tsv'
   ) where id is not null and label is not null

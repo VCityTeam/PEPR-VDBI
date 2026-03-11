@@ -33,7 +33,7 @@ const all_unites_by_project_query = `
           "RNSR2.13"::VARCHAR,
           "RNSR2.14"::VARCHAR,
         ],
-        x -> regexp_replace(x, '\\W', ''))
+        x -> regexp_replace(x, '\s', '', 'g'))
       ) as unite_id,
       unnest(
         apply([
@@ -63,7 +63,7 @@ const all_unites_by_project_query = `
           "Unité2.13"::VARCHAR,
           "Unité2.14"::VARCHAR,
         ],
-        x -> trim(x))
+        x -> trim(regexp_replace(x, '[\n\r]', '', 'g')))
       ) as label,
     from 'src/data/private/AAP2_template_export.tsv'
   ) where unite_id is not null and label is not null

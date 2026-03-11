@@ -1,5 +1,6 @@
 import { DuckDBInstance } from '@duckdb/node-api'
 import { tsvFormat } from 'd3-dsv'
+import { queryAndFormatRechercheEntreprises } from './utilities/siret.js'
 
 const all_institutions_query = `
   select
@@ -37,7 +38,7 @@ const all_institutions_query = `
             "SIRET2.13"::VARCHAR,
             "SIRET2.14"::VARCHAR,
           ],
-          x -> replace(x, ' ', ''))
+          x -> regexp_replace(x, '\s', '', 'g'))
       ) as id,
       unnest(
         apply(
@@ -68,7 +69,7 @@ const all_institutions_query = `
             "Institution2.13"::VARCHAR,
             "Institution2.14"::VARCHAR,
           ],
-          x -> trim(x)
+          x -> trim(regexp_replace(x, '[\n\r]', '', 'g'))
         )
       ) as label,
     from 'src/data/private/AAP2_template_export.tsv'
@@ -81,6 +82,15 @@ const connection = await instance.connect()
 
 const reader = await connection.runAndReadAll(all_institutions_query)
 const rows = reader.getRowObjectsJson()
+
+for (let index = 0; index < rows.length; index++) {
+  const row = rows[index]
+  const response = await queryAndFormatRechercheEntreprises(
+    row.id,
+    'aap2_export',
+  )
+  rows[index] = { ...row, ...response }
+}
 
 process.stdout.write(tsvFormat(rows))
 
