@@ -1,5 +1,6 @@
 import { filter } from 'd3'
 import { nameByRace } from 'fantasy-name-generator'
+import pino from 'pino'
 
 export const default_log_options = (
   name,
@@ -16,6 +17,49 @@ export const default_log_options = (
     },
   },
 })
+
+/**
+ * Send an HTTP request to a URL API with some basic error handling and logging.
+ *
+ * @param {string} url - The endpoint url.
+ * @param {number} [sleep=0.2] - The number of seconds to sleep before sending the request to avoid rate limiting.
+ * @param {string} accept - The mimetype accept header.
+ * @param {pino.Logger} logger - A pino logger instance.
+ * @returns {Promise<Object|null>} A promise resolving to a dictionary (object) of the request response if successful, or null.
+ */
+export async function handleFetchJson(
+  url,
+  sleep = 0,
+  logger = pino(default_log_options('fetch url utility')),
+) {
+  logger.info(`HTTP request with: ${url}`)
+
+  await new Promise((resolve) => setTimeout(resolve, sleep * 1000))
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      // Emulate response.raise_for_status()
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const data = await response.json()
+    logger.debug(`${url} response: ${data}`)
+    return data
+  } catch (err) {
+    if (err.message && err.message.startsWith('HTTP error')) {
+      logger.error(`HTTP error occurred: ${err}`)
+    } else {
+      logger.error(`Other error occurred: ${err}; cause: ${err.cause}`)
+    }
+    return null
+  }
+}
 
 /**
  * Anonymize a text entry

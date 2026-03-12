@@ -27,7 +27,7 @@ def initSiretTable() -> tuple:
     ]
 
 
-def queryAndFormatRechercheEntreprises(
+def queryAndFormatRE(
     query: str,
     project_name: str,
     source: str,

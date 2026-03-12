@@ -1,6 +1,6 @@
 import sys
 import csv
-from utilities.siret import queryAndFormatRechercheEntreprises, initSiretTable
+from utilities.siret_api import queryAndFormatRE, initSiretTable
 from utilities.io_utils import initDefaultLogger
 
 
@@ -29,7 +29,7 @@ def main():
         coordinating_partner = row[1].strip()
         if coordinating_partner != "":
             partner_data += [
-                queryAndFormatRechercheEntreprises(
+                queryAndFormatRE(
                     coordinating_partner,
                     project_name,
                     "partenaires_aap2023",
@@ -41,7 +41,7 @@ def main():
         institutional_partner = row[3].strip()
         if institutional_partner != "":
             partner_data += [
-                queryAndFormatRechercheEntreprises(
+                queryAndFormatRE(
                     institutional_partner,
                     project_name,
                     "partenaires_aap2023",
@@ -53,7 +53,7 @@ def main():
         socio_eco_partner = row[4].strip()
         if socio_eco_partner != "":
             partner_data += [
-                queryAndFormatRechercheEntreprises(
+                queryAndFormatRE(
                     socio_eco_partner,
                     project_name,
                     "partenaires_aap2023",

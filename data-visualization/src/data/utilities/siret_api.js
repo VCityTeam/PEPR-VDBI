@@ -1,7 +1,7 @@
 import { pino } from 'pino'
-import { default_log_options } from './data_utilities.js'
+import { default_log_options, handleFetchJson } from './data_utilities.js'
 
-const logger = pino(default_log_options('siret utility'))
+const logger = pino(default_log_options('siret api utility'))
 
 const defaultResponse = {
   siret: null,
@@ -18,19 +18,21 @@ const defaultResponse = {
 
 /**
  * Queries the API and formats the response. If the query fails or yields no results,
- * returns a default response matching the CSV header structure.
+ * returns a default response matching the CSV header structure. Only top
+ * result is returned. https://recherche-entreprises.api.gouv.fr/
  *
  * @param {string} query - The search query to be sent.
  * @param {string} source - The source of the data.
  * @param {boolean} [useSiege=true] - Prefer siege results over matching etablissements data.
  * @returns {Promise<object[]>} A promise resolving to an object.
  */
-export async function queryAndFormatRechercheEntreprises(
-  query,
-  source,
-  useSiege = true,
-) {
-  const response = await queryRechercheEntreprises(query)
+export async function queryAndFormatRE(query, source, useSiege = true) {
+  const response = await handleFetchJson(
+    `https://recherche-entreprises.api.gouv.fr/search` +
+      `?q=${encodeURIComponent(query)}&page=1&per_page=1`,
+    0.2,
+    logger,
+  )
 
   const formattedResponse = {
     ...defaultResponse,
@@ -85,51 +87,4 @@ export async function queryAndFormatRechercheEntreprises(
   }
 
   return formattedResponse
-}
-
-/**
- * Send a basic query to the recherche-entreprises.api.gouv.fr Public API. Only top
- * result is returned. https://recherche-entreprises.api.gouv.fr/
- *
- * @param {string} query - The search query to be sent.
- * @param {number} [sleep=0.2] - The number of seconds to sleep before sending the request to avoid rate limiting.
- * @returns {Promise<Object|null>} A promise resolving to a dictionary (object) of the request response if successful, or null.
- */
-export async function queryRechercheEntreprises(query, sleep = 0.2) {
-  logger.debug(`Querying recherche-entreprises.api with query: ${query}`)
-
-  // sleep to avoid rate limiting
-  await new Promise((resolve) => setTimeout(resolve, sleep * 1000))
-
-  try {
-    const response = await fetch(
-      `https://recherche-entreprises.api.gouv.fr/search?q=${encodeURIComponent(query)}&page=1&per_page=1`,
-      {
-        headers: {
-          Accept: 'application/json',
-        },
-      },
-    )
-
-    if (!response.ok) {
-      // Emulate response.raise_for_status()
-      throw new Error(`HTTP error! status: ${response.status}, query: ${query}`)
-    }
-
-    const data = await response.json()
-    logger.debug(`recherche-entreprises.api response: ${data}`)
-    return data
-  } catch (err) {
-    if (err.message && err.message.startsWith('HTTP error')) {
-      logger.error(
-        `HTTP error occurred when querying recherche-entreprises.api: ${err}`,
-      )
-    } else {
-      logger.error(
-        `Other error occurred when querying recherche-entreprises.api: ${err}`,
-        err.cause,
-      )
-    }
-    return null
-  }
 }

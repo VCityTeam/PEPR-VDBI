@@ -1,7 +1,7 @@
 import logging
 import sys
 import csv
-from utilities.siret import queryAndFormatRechercheEntreprises, initSiretTable
+from utilities.siret_api import queryAndFormatRE, initSiretTable
 from utilities.io_utils import initDefaultLogger
 
 
@@ -31,7 +31,7 @@ def main():
         partner = row[9].strip()
         if partner != "":
             partner_data += [
-                queryAndFormatRechercheEntreprises(
+                queryAndFormatRE(
                     partner,
                     project_name,
                     "generality",
@@ -46,7 +46,7 @@ def main():
                 continue
 
             partner_data += [
-                queryAndFormatRechercheEntreprises(
+                queryAndFormatRE(
                     partner,
                     project_name,
                     "generality",
@@ -61,7 +61,7 @@ def main():
                 continue
 
             partner_data += [
-                queryAndFormatRechercheEntreprises(
+                queryAndFormatRE(
                     partner,
                     project_name,
                     "generality",

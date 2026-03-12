@@ -1,6 +1,6 @@
 import json
 import pandas as pd
-from utilities.orcid import (
+from utilities.orcid_api import (
     getORCiDSecrets,
     getAccessToken,
     queryOrcid,

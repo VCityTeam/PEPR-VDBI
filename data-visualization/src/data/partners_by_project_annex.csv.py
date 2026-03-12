@@ -1,6 +1,6 @@
 import sys
 import csv
-from utilities.siret import queryAndFormatRechercheEntreprises, initSiretTable
+from utilities.siret_api import queryAndFormatRE, initSiretTable
 from utilities.io_utils import initDefaultLogger
 
 
@@ -32,7 +32,7 @@ def main():
             continue
 
         partner_data += [
-            queryAndFormatRechercheEntreprises(
+            queryAndFormatRE(
                 partner,
                 project_name,
                 "financed_annex_partners_by_project",

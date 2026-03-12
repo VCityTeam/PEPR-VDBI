@@ -1,5 +1,5 @@
 from utilities.io_utils import initDefaultLogger
-from utilities.siret import (
+from utilities.siret_api import (
     queryRechercheEntreprises,
     formatRechercheEntreprisesResponse,
 )
