@@ -88,6 +88,18 @@ export const cnu_group_donut = (data, width) =>
       .unknown('grey'),
   })
 
+export const custom_cnu_group_donut = (data, width) =>
+  donutChart(data.cnu_count_by_custom_category, {
+    ...default_donut_config,
+    width: width * 0.6,
+    legendWidth: width * 0.5,
+    color: d3
+      .scaleOrdinal(d3.schemeSet1.slice(1))
+      // .scaleOrdinal(d3.schemeCategory10)
+      .domain(cnu_category_map.keys())
+      .unknown('grey'),
+  })
+
 export const erc_donut = (data, width) =>
   donutChart(data.discipline_erc_count, {
     ...default_donut_config,
@@ -159,6 +171,16 @@ export function formatResearcherDataByProject(
     )
     .filter((d) => !!d[0])
     .sort((a, b) => d3.descending(a[1], b[1]))
+
+  const cnu_count_by_custom_category = new Map(cnu_count_by_category)
+  cnu_count_by_custom_category.set(
+    'Lettres et sciences humaines',
+    cnu_count_by_custom_category.get('Lettres et sciences humaines') +
+      cnu_count_by_custom_category.get('Droit, économie et gestion') +
+      cnu_count_by_custom_category.get('Pluridisciplinaire'),
+  )
+  cnu_count_by_custom_category.delete('Droit, économie et gestion')
+  cnu_count_by_custom_category.delete('Pluridisciplinaire')
 
   const keyword_count = countEntities(filtered_researchers, (d) => d.keywords)
     .filter((d) => !!d[0])
@@ -244,6 +266,7 @@ export function formatResearcherDataByProject(
     discipline_erc_count,
     cnu_count,
     cnu_count_by_category,
+    cnu_count_by_custom_category: [...cnu_count_by_custom_category],
     keyword_count,
     keyword_project_matrix,
     keyword_projects: [...grouped_projects_by_keyword.keys()],

@@ -1,10 +1,18 @@
 :root {
-  --theme-foreground-focus: #3558a2;
-  --theme-foreground-focus-alt: #ff732c;
-  /* --sans-serif: Mariannen, Arial, sans-serif; */
+  --theme-foreground-focus: #ff732c;
+  --theme-foreground-focus-alt: #3558a2;
+  --sans-serif:
+    'marianne', -apple-system, BlinkMacSystemFont, 'avenir next', avenir,
+    helvetica, 'helvetica neue', ubuntu, roboto, noto, 'segoe ui', arial,
+    sans-serif;
+  /* --sans-serif: Marianne, Arial, sans-serif; */
   /* --serif: Spectral, Georgia, serif; */
   /* --sans-serif: Arial, sans-serif; */
   /* --serif: Georgia, serif; */
+}
+
+body {
+  font: 17px/1.5 var(--sans-serif);
 }
 
 table,

@@ -248,33 +248,10 @@ sql:
 
 ```js
 import { countEntities, sparkbar } from '/components/utilities.js'
-```
-
-```js
-import {
-  getGeneralSheet,
-  getResearcherSheet,
-  getLabSheet,
-  getInstitutionSheet,
-  resolveGeneralEntities,
-  resolveResearcherEntities,
-  resolveLabEntities,
-  resolveInstitutionEntities,
-  getColumnOptions,
-  filterOnInput,
-} from '/data/utilities/phase1-workbook.js'
-```
-
-```js
 import { Graph, mapTableToTriples } from '/components/graph.js'
-```
-
-```js
 import { projectionMap } from '/components/projection-map.js'
-```
-
-```js
 import { vdbi_color_scheme, project_color_scale } from '/components/color.js'
+import { getColumnOptions, filterOnInput } from '/components/plot.js'
 ```
 
 ```js
@@ -318,12 +295,6 @@ group by all
 ```
 
 ```js
-const workbook1 = FileAttachment(
-  '/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
-).xlsx()
-```
-
-```js
 const regions = FileAttachment('/data/france_regions.json').json()
 ```
 
@@ -332,22 +303,29 @@ const departements = FileAttachment('/data/france_departements.json').json()
 ```
 
 ```js
-const anonymize = false
-const anonymizeDict = new Map()
-
-const project_data = resolveGeneralEntities(
-  getGeneralSheet(workbook1),
-  anonymize,
-  anonymizeDict,
-)
+const project_data = (
+  await FileAttachment('/data/phase1-projects.tsv').tsv({
+    typed: true,
+  })
+).map((d) => (
+  // TODO replace this with the new data loaders 
+  {
+  ...d,
+  institutions: String(d.institutions).split(','),
+  partners: String(d.partners).split(','),
+  labs: String(d.labs).split(','),
+}))
 const financed_project_data = project_data.filter((d) => d.financed)
-const researcher_data = resolveResearcherEntities(
-  getResearcherSheet(workbook1),
-  anonymize,
-  anonymizeDict,
-)
-const financed_researcher_data = researcher_data.filter((d) => d.financed)
+```
 
+```js
+const researcher_data = await FileAttachment(
+  '/data/phase1-researchers.tsv',
+).tsv({ typed: true })
+const financed_researcher_data = researcher_data.filter((d) => d.financed)
+```
+
+```js
 const laboratory_data = new Set(
   d3.merge(project_data.map((d) => d.labs)).sort(),
 )
@@ -362,6 +340,9 @@ const financed_laboratory_data = new Set(
 //   anonymize,
 //   anonymizeDict
 // );
+```
+
+```js
 const university_data = new Set(
   d3.merge(project_data.map((d) => d.institutions)).sort(),
 )
@@ -378,14 +359,23 @@ const financed_university_data = new Set(
 //   anonymize,
 //   anonymizeDict
 // );
+```
+
+```js
 const partner_data = new Set(
   d3.merge(project_data.map((d) => d.partners)).sort(),
 )
+```
+
+```js
 const auditioned_partner_data = new Set(
   d3
     .merge(project_data.filter((d) => d.auditioned).map((d) => d.partners))
     .sort(),
 )
+```
+
+```js
 const financed_partner_data = new Set(
   d3.merge(financed_project_data.map((d) => d.partners)).sort(),
 )

@@ -38,6 +38,9 @@ def main():
             logging.warning(f"terrain not found in row: {row}")
             continue
 
+        # sleep to avoid rate limiting
+        sleep(0.5)
+
         terrain_geodata = geolocator.geocode(terrain)
         logging.debug(f"terrain_geodata from nominatim: {terrain_geodata}")
 

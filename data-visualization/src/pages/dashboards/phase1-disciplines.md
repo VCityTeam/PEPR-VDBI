@@ -494,6 +494,20 @@ const selected_project = view(
     ${downloadSVGButton("#erc-container svg:nth-of-type(1)")}
     <!-- $ -->
   </div>
+  <div id="custom-cnu-group-container" class="card">
+    <h2>Disciplines des chercheurs</h2>
+    ${resize((width) => page.custom_cnu_group_donut(selected_project_data, width))}
+    <!-- $ -->
+    <h3>
+      Groupes CNU des chercheurs avec les sections de droit, économie, gestion,
+      et pluridisciplinaire compté comme SHS. Cela suit de plus près
+      le schéma disciplinaire de l'ERC.
+    </h3>
+    ${downloadTableButton(() => selected_project_data.cnu_count_by_category)}
+    <!-- $ -->
+    ${downloadSVGButton("#custom-cnu-group-container svg:nth-of-type(1)")}
+    <!-- $ -->
+  </div>
 </div>
 
 ```js

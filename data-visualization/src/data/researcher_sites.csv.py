@@ -35,6 +35,9 @@ def main():
         if site is None or site == "":
             continue
 
+        # sleep to avoid rate limiting
+        sleep(0.5)
+
         logging.info(f"geocoding site: {site}")
         location = geolocator.geocode(site)
         logging.debug(f"location: {location}")

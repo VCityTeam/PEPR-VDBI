@@ -228,7 +228,7 @@ export function sparkbar(
   max,
   {
     // background = 'var(--theme-foreground-focus)',
-    background = 'var(--theme-foreground-focus-alt)',
+    background = 'var(--theme-foreground-focus)',
     color = 'black',
     float = 'right',
     format = (x) => x.toLocaleString('en-US'),

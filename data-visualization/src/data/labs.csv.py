@@ -62,7 +62,8 @@ def main():
             else:
                 logging.warning(f"No data found for laboratory {lab}")
 
-        sleep(0.2)  # to avoid overwhelming the server
+        # to avoid rate limiting
+        sleep(0.5)
 
     data.drop(columns=["type"], inplace=True)
     logging.info("Writing data to stdout")

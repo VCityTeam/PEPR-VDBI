@@ -117,16 +117,23 @@ export const italy_projection = {
 
 // default map marks
 
+export const default_projection_style = {
+  stroke: 'white',
+  fill: vdbi_color_scheme.blue,
+  strokeWidth: 1.5,
+  strokeOpacity: 0.7,
+  fillOpacity: 0.4,
+}
+
 export const default_mainland_france_marks = [
   Plot.geo(mainland_france_departements_geojson, {
-    stroke: 'white',
-    strokeWidth: 0.1,
-    fill: vdbi_color_scheme.blue,
-    fillOpacity: 0.3,
+    ...default_projection_style,
+    strokeWidth: 0.5,
   }),
   Plot.geo(mainland_france_regions_geojson, {
-    stroke: 'white',
-    strokeOpacity: 0.5,
+    ...default_projection_style,
+    fill: undefined,
+    fillOpacity: undefined,
   }),
 ]
 

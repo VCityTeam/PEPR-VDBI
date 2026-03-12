@@ -100,3 +100,17 @@ export function resolveProjectEntities(
     return projectMap
   })
 }
+
+export const challenge_label_id_map = new Map([
+  ['Le changement climatique', 1],
+  ['la préservation de la biodiversité', 1],
+  ['La préservation de la Biodiversité', 1],
+  ['La préservation de la biodiversité', 1],
+  ['La ville résiliente', 2],
+  ['La ville sobre et frugale', 3],
+  ['La ville inclusive et équitable', 4],
+  ['La ville durable, santé et bien-être', 5],
+  ['Les défis émergents, signaux faibles, nouvelles difficultés', 6],
+  ['les défis émergents, signaux faibles, nouvelles difficultés', 6],
+  ['Les défis émergents, signaux faibles, nouvelles difficulté', 6],
+])

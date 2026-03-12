@@ -12,7 +12,7 @@ import * as Plot from 'npm:@observablehq/plot'
  * @returns {Array} filtered dataset
  */
 export function filterOnInput(data, input_criteria, criteria_functions) {
-  return filter(data, (d) => {
+  return data.filter((d) => {
     for (let index = 0; index < input_criteria.length; index++) {
       const critereon = input_criteria[index]
       const critereon_function = criteria_functions[index]

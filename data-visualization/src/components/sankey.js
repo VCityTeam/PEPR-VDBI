@@ -124,15 +124,15 @@ export function sankeyDiagram(
     .attr('height', height)
     .attr('style', 'max-width: 100%; height: auto;')
 
-  console.debug('Input graph:', graph)
+  // console.debug('Input graph:', graph)
 
   const { nodes, links } = sankeyGenerator({
     nodes: graph.nodes.map((d) => Object.create(d)),
     links: graph.links.map((d) => Object.create(d)),
   })
 
-  console.debug('Sankey nodes:', nodes)
-  console.debug('Sankey links:', links)
+  // console.debug('Sankey nodes:', nodes)
+  // console.debug('Sankey links:', links)
 
   svg
     .append('g')

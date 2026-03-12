@@ -16,7 +16,7 @@ import { v4 as uuidv4 } from 'uuid'
  * @returns {Object[]} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
-function getGeneralSheet(workbook) {
+export function getGeneralSheet(workbook) {
   mapRowToColumnKeys(workbook, 0)
   return rowsToObjectArray(workbook.worksheets[0].getRows(2, 40))
   // return Object.fromEntries(new Map(entries))
@@ -34,7 +34,7 @@ function getGeneralSheet(workbook) {
  * @returns {Object[]} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
-function getResearcherSheet(workbook) {
+export function getResearcherSheet(workbook) {
   mapRowToColumnKeys(workbook, 1)
   return rowsToObjectArray(workbook.worksheets[1].getRows(2, 1086))
   // return workbook.sheet(workbook.worksheets[1], {
@@ -51,7 +51,7 @@ function getResearcherSheet(workbook) {
  * @returns {Object[]} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
-function getLabSheet(workbook) {
+export function getLabSheet(workbook) {
   mapRowToColumnKeys(workbook, 4)
   return rowsToObjectArray(workbook.worksheets[4].getRows(2, 261))
   // return workbook.sheet(workbook.worksheets[4], {
@@ -67,7 +67,7 @@ function getLabSheet(workbook) {
  * @returns {Object[]} A dictionary of the extracted sheet, each column header is used a key.
  *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
  */
-function getInstitutionSheet(workbook) {
+export function getInstitutionSheet(workbook) {
   mapRowToColumnKeys(workbook, 5)
   return rowsToObjectArray(workbook.worksheets[5].getRows(2, 110))
   // return workbook.sheet(workbook.worksheets[5], {
@@ -101,7 +101,7 @@ function getInstitutionSheet(workbook) {
  * @param {Map} pseudoacronymousDict - A preset dictionary of pseudoanomymized entry mappings
  * @returns {Object[]} Formatted sheet data
  */
-function resolveGeneralEntities(
+export function resolveGeneralEntities(
   sheet,
   anonymize = false,
   pseudoanonymousDict = new Map(),
@@ -244,7 +244,7 @@ function resolveGeneralEntities(
  * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Object[]} Formatted sheet data
  */
-function resolveResearcherEntities(
+export function resolveResearcherEntities(
   sheet,
   anonymize = true,
   pseudoanonymousDict = new Map(),
@@ -353,7 +353,7 @@ function resolveResearcherEntities(
  * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Object[]} Formatted sheet data
  */
-function resolveLabEntities(
+export function resolveLabEntities(
   sheet,
   anonymize = false,
   pseudoanonymousDict = new Map(),
@@ -403,7 +403,7 @@ function resolveLabEntities(
  * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Object[]} Formatted sheet data
  */
-function resolveInstitutionEntities(
+export function resolveInstitutionEntities(
   sheet,
   anonymize = false,
   pseudoanonymousDict = new Map(),

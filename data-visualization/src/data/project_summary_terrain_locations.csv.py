@@ -1,3 +1,4 @@
+from time import sleep
 import logging
 import sys
 import csv
@@ -42,6 +43,9 @@ def main():
         if terrain == "":
             logging.warning(f"terrain not found in terrain: {terrain}")
             continue
+
+        # sleep to avoid rate limiting
+        sleep(1)
 
         response = geolocator.geocode(terrain, addressdetails=True)
 

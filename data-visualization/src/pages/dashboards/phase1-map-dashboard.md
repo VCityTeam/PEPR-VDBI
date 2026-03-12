@@ -27,18 +27,13 @@ import {
   downloadSVGButton,
   writeToFile,
 } from '/components/utilities.js'
-```
-
-```js
 import {
   forceGraph,
   mapTableToPropertyGraphLinks,
   mapTableToTriples,
 } from '/components/graph.js'
-```
-
-```js
 import {
+  default_projection_style,
   europe_geojson,
   france_geojson,
   france_regions_geojson,
@@ -59,13 +54,7 @@ import {
   idf_choropleth_marks,
   italy_choropleth_marks,
 } from '/components/projection-map.js'
-```
-
-```js
 import { vdbi_color_scheme, project_color_scale } from '/components/color.js'
-```
-
-```js
 import { vectorFromArray } from 'npm:apache-arrow'
 ```
 
@@ -1069,7 +1058,8 @@ const tip_config = (datum, tip_anchor, big_labels) => ({
   textPadding: big_labels ? 5 : 3,
   strokeOpacity: 0,
   fillOpacity: 0.5,
-  fontSize: big_labels ? 30 : 12,
+  fontFamily: 'Marianne, sans-serif',
+  fontSize: big_labels ? 25 : 12,
   // fontWeight: "bold",
   anchor: tip_anchor,
 })
@@ -1156,10 +1146,7 @@ const defaultProjectionParis = (width, marks, caption = '') =>
     paris_projection,
     [
       Plot.geo(france_departements_geojson, {
-        stroke: 'white',
-        strokeOpacity: 0.5,
-        fill: vdbi_color_scheme.blue,
-        fillOpacity: 0.3,
+        ...default_projection_style,
       }),
       Plot.frame(),
       marks,
@@ -1174,10 +1161,7 @@ const defaultProjectionItaly = (width, marks, caption = '') =>
     italy_projection,
     [
       Plot.geo(italy_regions_geojson, {
-        stroke: 'white',
-        strokeOpacity: 0.5,
-        fill: vdbi_color_scheme.blue,
-        fillOpacity: 0.3,
+        ...default_projection_style,
       }),
       Plot.frame(),
       marks,
@@ -1205,9 +1189,10 @@ const map_legend_text = (terrain_legend, big_labels) =>
     y: (d) => d[3],
     dx: big_labels ? -5 : 0,
     dy: big_labels ? -25 : -15,
+    fontFamily: 'Marianne, sans-serif',
     fontWeight: 'bold',
-    fontSize: big_labels ? 30 : 12,
-    rotate: big_labels ? -20 : 0,
+    fontSize: big_labels ? 25 : 12,
+    rotate: big_labels ? -15 : 0,
     text: (d) => d[0],
     opacity: (d) => (isProjectSelected(d[0]) ? 1 : 0.2),
   })

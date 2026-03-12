@@ -6,6 +6,7 @@ sql:
   aap1_researcher_by_keywords: /data/phase1-researcher_by_keywords.tsv
   aap1_laboratories: /data/phase1-laboratories.tsv
   aap1_socioeconomic_partners: /data/phase1-socioeconomic_partners.tsv
+  aap1_project_by_keyword: /data/phase1-project_by_keyword.tsv
   aap1_project_by_institutions: /data/phase1-project_by_institutions.tsv
   aap1_project_by_laboratories: /data/phase1-project_by_laboratories.tsv
   aap1_laboratories_by_domains_erc: /data/phase1-laboratories_by_domains_erc.tsv
@@ -19,6 +20,7 @@ sql:
   # aap2_researcher_by_keywords: /data/phase2-researcher_by_keywords.tsv
   aap2_laboratories: /data/phase2-laboratories.tsv
   aap2_socioeconomic_partners: /data/phase2-socioeconomic_partners.tsv
+  aap2_project_by_keyword: /data/phase2-project_by_keyword.tsv
   aap2_project_by_institutions: /data/phase2-project_by_institutions.tsv
   aap2_project_by_laboratories: /data/phase2-project_by_laboratories.tsv
   # aap2_laboratories_by_domains_erc: /data/phase2-laboratories_by_domains_erc.tsv
@@ -159,6 +161,22 @@ import { downloadTableButton } from '/components/utilities.js'
 ### Researchers by keyword
 
 ```sql
+```
+
+### Project by keyword
+
+```sql
+(
+  select
+    acronyme,
+    keyword,
+  from aap1_project_by_keyword
+) union (
+  select
+    acronyme,
+    keyword,
+  from aap2_project_by_keyword
+)
 ```
 
 ### Project institutions
