@@ -1,6 +1,6 @@
 import { DuckDBInstance } from '@duckdb/node-api'
 import { tsvFormat } from 'd3-dsv'
-import { queryAndFormatRechercheEntreprises } from './utilities/siret.js'
+import { queryAndFormatRE } from './utilities/siret_api.js'
 
 const all_institutions_query = `
   select
@@ -85,10 +85,7 @@ const rows = reader.getRowObjectsJson()
 
 for (let index = 0; index < rows.length; index++) {
   const row = rows[index]
-  const response = await queryAndFormatRechercheEntreprises(
-    row.id,
-    'aap2_export',
-  )
+  const response = await queryAndFormatRE(row.id, 'aap2_export')
   rows[index] = { ...row, ...response }
 }
 

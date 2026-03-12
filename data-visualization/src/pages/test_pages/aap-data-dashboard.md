@@ -74,30 +74,27 @@ import { downloadTableButton } from '/components/utilities.js'
 )
 ```
 
-### Project institutions
+### Laboratories
 
 ```sql
 (
   select
-    project,
-    university as institution,
-  from aap1_project_by_institutions
+    id,
+    -- umr,
+    lab as labels,
+    -- name,
+    -- institution,
+    -- domain_erc,
+    -- domain_hceres
+  from aap1_laboratories
 ) union (
   select
-    project,
-    institution_id as institution
-  from aap2_project_by_institutions
+    id,
+    -- null as umr,
+    labels,
+    -- null as name,
+  from aap2_laboratories
 )
-```
-
-### Project Laboratories
-
-```sql
-```
-
-### Laboratories
-
-```sql
 ```
 
 ### Laboratory ERC domains
@@ -123,6 +120,35 @@ import { downloadTableButton } from '/components/utilities.js'
 ### Institutions
 
 ```sql
+(
+  select
+    null as id,
+    name as labels,
+  from aap1_institutions
+) union (
+  select
+    id,
+    labels,
+  from aap2_institutions
+)
+```
+
+### Socioeconomic partners
+
+```sql
+(
+  select
+    null as id,
+    label as labels,
+    null as activities,
+  from aap1_socioeconomic_partners
+) union (
+  select
+    id,
+    labels,
+    activities,
+  from aap2_socioeconomic_partners
+)
 ```
 
 ### Researchers
@@ -135,9 +161,52 @@ import { downloadTableButton } from '/components/utilities.js'
 ```sql
 ```
 
+### Project institutions
+
+```sql
+(
+  select
+    project,
+    university as institution,
+  from aap1_project_by_institutions
+) union (
+  select
+    project,
+    institution_id as institution
+  from aap2_project_by_institutions
+)
+```
+
+### Project Laboratories
+
+```sql
+(
+  select
+    project,
+    lab
+  from aap1_project_by_laboratories
+) union (
+  select
+    project,
+    unit_id as lab
+  from aap2_project_by_laboratories
+)
+```
+
 ### Project socioeconomic partners
 
 ```sql
+(
+  select
+    project,
+    partner
+  from aap1_project_by_socioeconomic_partners
+) union (
+  select
+    project,
+    partner_id as partner
+  from aap2_project_by_socioeconomic_partners
+)
 ```
 
 ## AAP 1
@@ -154,36 +223,6 @@ import { downloadTableButton } from '/components/utilities.js'
   <!-- $ -->
   </br>
   ${downloadTableButton(() => aap1_projects_search)}
-  <!-- $ -->
-</div>
-
-<div class="card">
-  <h2>Project institutions</h2>
-  </br>
-  ${aap1_project_by_institutions_search_input}
-  <!-- $ -->
-  </br>
-  ${Inputs.table(aap1_project_by_institutions_search, {
-    layout: "auto",
-  })}
-  <!-- $ -->
-  </br>
-  ${downloadTableButton(() => aap1_project_by_institutions_search)}
-  <!-- $ -->
-</div>
-
-<div class="card">
-  <h2>Project Laboratories</h2>
-  </br>
-  ${aap1_project_by_laboratories_search_input}
-  <!-- $ -->
-  </br>
-  ${Inputs.table(aap1_project_by_laboratories_search, {
-    layout: "auto",
-  })}
-  <!-- $ -->
-  </br>
-  ${downloadTableButton(() => aap1_project_by_laboratories_search)}
   <!-- $ -->
 </div>
 
@@ -304,6 +343,36 @@ import { downloadTableButton } from '/components/utilities.js'
   <!-- $ -->
   </br>
   ${downloadTableButton(() => aap1_researcher_by_keywords_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Project institutions</h2>
+  </br>
+  ${aap1_project_by_institutions_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap1_project_by_institutions_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap1_project_by_institutions_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Project Laboratories</h2>
+  </br>
+  ${aap1_project_by_laboratories_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap1_project_by_laboratories_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap1_project_by_laboratories_search)}
   <!-- $ -->
 </div>
 
@@ -492,36 +561,6 @@ const aap1_project_by_socioeconomic_partners_search = Generators.input(
 </div>
 
 <div class="card">
-  <h2>Project institutions</h2>
-  </br>
-  ${aap2_project_by_institutions_search_input}
-  <!-- $ -->
-  </br>
-  ${Inputs.table(aap2_project_by_institutions_search, {
-    layout: "auto",
-  })}
-  <!-- $ -->
-  </br>
-  ${downloadTableButton(() => aap2_project_by_institutions_search)}
-  <!-- $ -->
-</div>
-
-<div class="card">
-  <h2>Project Laboratories</h2>
-  </br>
-  ${aap2_project_by_laboratories_search_input}
-  <!-- $ -->
-  </br>
-  ${Inputs.table(aap2_project_by_laboratories_search, {
-    layout: "auto",
-  })}
-  <!-- $ -->
-  </br>
-  ${downloadTableButton(() => aap2_project_by_laboratories_search)}
-  <!-- $ -->
-</div>
-
-<div class="card">
   <h2>Laboratories</h2>
   </br>
   ${aap2_laboratories_search_input}
@@ -638,6 +677,36 @@ const aap1_project_by_socioeconomic_partners_search = Generators.input(
   <!-- $ -->
   </br>
   ${downloadTableButton(() => aap2_researcher_by_keywords_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Project institutions</h2>
+  </br>
+  ${aap2_project_by_institutions_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_project_by_institutions_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_project_by_institutions_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Project Laboratories</h2>
+  </br>
+  ${aap2_project_by_laboratories_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_project_by_laboratories_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_project_by_laboratories_search)}
   <!-- $ -->
 </div>
 

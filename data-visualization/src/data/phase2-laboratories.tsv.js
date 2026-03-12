@@ -1,7 +1,8 @@
 import { DuckDBInstance } from '@duckdb/node-api'
 import { tsvFormat } from 'd3-dsv'
+import { queryAndFormatESR } from './utilities/rnsr_api.js'
 
-const all_unites_query = `
+const all_units_query = `
   select
     id,
     list_distinct(list(label)) as labels,
@@ -77,8 +78,14 @@ const all_unites_query = `
 const instance = await DuckDBInstance.create()
 const connection = await instance.connect()
 
-const reader = await connection.runAndReadAll(all_unites_query)
+const reader = await connection.runAndReadAll(all_units_query)
 const rows = reader.getRowObjectsJson()
+
+for (let index = 0; index < rows.length; index++) {
+  const row = rows[index]
+  const response = await queryAndFormatESR(row.id, 'aap2_export')
+  rows[index] = { ...row, ...response }
+}
 
 process.stdout.write(tsvFormat(rows))
 

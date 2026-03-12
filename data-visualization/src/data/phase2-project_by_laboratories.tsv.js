@@ -1,10 +1,10 @@
 import { DuckDBInstance } from '@duckdb/node-api'
 import { tsvFormat } from 'd3-dsv'
 
-const all_unites_by_project_query = `
-  select distinct DOCID, unite_id from (
+const all_units_by_project_query = `
+  select distinct project, unit_id from (
     select
-      DOCID,
+      "Titre court" as project,
       unnest(
         apply([
           "rnsr-0"::VARCHAR,
@@ -34,7 +34,7 @@ const all_unites_by_project_query = `
           "RNSR2.14"::VARCHAR,
         ],
         x -> regexp_replace(x, '\s', '', 'g'))
-      ) as unite_id,
+      ) as unit_id,
       unnest(
         apply([
           "unite-0"::VARCHAR,
@@ -66,13 +66,15 @@ const all_unites_by_project_query = `
         x -> trim(regexp_replace(x, '[\n\r]', '', 'g')))
       ) as label,
     from 'src/data/private/AAP2_template_export.tsv'
-  ) where unite_id is not null and label is not null
+    join 'src/data/private/AAP2_submission_metadata.tsv'
+    on AAP2_template_export.DOCID = AAP2_submission_metadata.DOCID
+  ) where unit_id is not null and label is not null
 `
 
 const instance = await DuckDBInstance.create()
 const connection = await instance.connect()
 
-const reader = await connection.runAndReadAll(all_unites_by_project_query)
+const reader = await connection.runAndReadAll(all_units_by_project_query)
 const rows = reader.getRowObjectsJson()
 
 process.stdout.write(tsvFormat(rows))
