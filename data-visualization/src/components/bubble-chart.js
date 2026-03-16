@@ -63,10 +63,10 @@ export const bubbleChartX = (
     caption,
     x_label = '',
     x_accessor = (d) => d[0],
-    x_domain = new Set(data.map(x_accessor)),
+    x_domain = new Set([...data].map(x_accessor)),
     r_label = '',
     r_accessor = (d) => d[1],
-    r_max = Math.min(width / data.length, height) / 2 - 20,
+    r_max = Math.min(width / [...data].length, height) / 2 - 20,
     color_range = d3.schemeTableau10,
   } = {},
 ) =>

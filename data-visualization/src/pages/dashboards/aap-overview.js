@@ -1,3 +1,4 @@
+import { format } from 'd3'
 import * as Inputs from 'npm:@observablehq/inputs'
 import * as Plot from 'npm:@observablehq/plot'
 // import * as d3 from 'npm:d3'
@@ -59,6 +60,55 @@ export const partnerCountPlot = (
   {
     width,
     height = 400,
+    marginLeft = 250,
+    limit = 15,
+    x_label,
+    y_label,
+    sort_value,
+    x_accessor,
+    y_accessor,
+  } = {},
+) =>
+  Plot.plot({
+    width: width,
+    height: height,
+    x: {
+      label: x_label,
+      grid: true,
+    },
+    y: {
+      tickRotate: -5,
+      label: y_label,
+      nice: true,
+      type: 'band',
+    },
+    marginLeft: marginLeft,
+    color: {
+      scheme: 'Blues',
+      zero: true,
+    },
+    id: {
+      value: 'id',
+    },
+    marks: [
+      Plot.barX(data, {
+        x: x_accessor,
+        y: y_accessor,
+        fill: x_accessor,
+        channels: {
+          id: 'id',
+        },
+        sort: { y: sort_value, limit: limit },
+        tip: true,
+      }),
+    ],
+  })
+
+export const projectCountPlot = (
+  data,
+  {
+    width,
+    height = 400,
     marginLeft = 150,
     limit = 15,
     x_label,
@@ -92,56 +142,7 @@ export const partnerCountPlot = (
         y: y_accessor,
         fill: x_accessor,
         sort: { y: sort_value, limit: limit },
-        tip: {
-          format: {
-            fill: false,
-          },
-        },
-      }),
-    ],
-  })
-
-export const projectCountPlot = (
-  data,
-  {
-    width,
-    marginLeft = 150,
-    x_label,
-    y_label,
-    sort_value,
-    x_accessor,
-    y_accessor,
-  } = {},
-) =>
-  Plot.plot({
-    width: width,
-    height: width,
-    y: {
-      label: x_label,
-      grid: true,
-    },
-    x: {
-      tickRotate: -10,
-      label: y_label,
-      nice: true,
-      type: 'band',
-    },
-    marginLeft: marginLeft,
-    color: {
-      scheme: 'Blues',
-      zero: true,
-    },
-    marks: [
-      Plot.barY(data, {
-        x: x_accessor,
-        y: y_accessor,
-        fill: y_accessor,
-        sort: { x: sort_value },
-        tip: {
-          format: {
-            fill: false,
-          },
-        },
+        tip: true,
       }),
     ],
   })

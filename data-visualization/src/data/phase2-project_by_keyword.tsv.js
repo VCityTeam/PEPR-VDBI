@@ -7,9 +7,9 @@ with project_keywords as (
   select
     "Titre court" as acronyme,
     list_transform(
-      string_split_regex(MOTCLE, '[;,]'), x -> trim(regexp_replace(x, '[\n\r]', '', 'g'))
+      string_split_regex(MOTCLE, '[;,]'), x -> trim(regexp_replace(x, '[\n\r]', ' ', 'g'))
     ) || list_transform(
-      string_split_regex(keywords, '[;,]'), x -> trim(regexp_replace(x, '[\n\r]', '', 'g'))
+      string_split_regex(keywords, '[;,]'), x -> trim(regexp_replace(x, '[\n\r]', ' ', 'g'))
     )
     as keywords,
   from 'src/data/private/AAP2_submission_metadata.tsv'

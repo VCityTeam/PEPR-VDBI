@@ -38,7 +38,7 @@ const all_institutions_query = `
             "SIRET2.13"::VARCHAR,
             "SIRET2.14"::VARCHAR,
           ],
-          x -> regexp_replace(x, '\s', '', 'g'))
+          x -> regexp_replace(x, '[\s ]', '', 'g'))
       ) as id,
       unnest(
         apply(
@@ -69,7 +69,7 @@ const all_institutions_query = `
             "Institution2.13"::VARCHAR,
             "Institution2.14"::VARCHAR,
           ],
-          x -> trim(regexp_replace(x, '[\n\r]', '', 'g'))
+          x -> trim(regexp_replace(x, '[\n\r]', ' ', 'g'))
         )
       ) as label,
     from 'src/data/private/AAP2_template_export.tsv'

@@ -106,9 +106,9 @@ const projects_query = `
     "defi-4" = 'On' as defi_4_2,
     "defi-5" = 'On' as defi_5_2,
     "defi-6" = 'On' as defi_6_2,
-    list_transform(split(MOTCLE, ';'), x -> trim(regexp_replace(x, '[\n\r]', '', 'g'))) as MOTCLE,
-    list_transform(split(keywords, ';'), x -> trim(regexp_replace(x, '[\n\r]', '', 'g'))) as keywords,
-    list_transform(split(disciplines, ';'), x -> trim(regexp_replace(x, '[\n\r]', '', 'g'))) as disciplines,
+    list_transform(split(MOTCLE, ';'), x -> trim(regexp_replace(x, '[\n\r]', ' ', 'g'))) as MOTCLE,
+    list_transform(split(keywords, ';'), x -> trim(regexp_replace(x, '[\n\r]', ' ', 'g'))) as keywords,
+    list_transform(split(disciplines, ';'), x -> trim(regexp_replace(x, '[\n\r]', ' ', 'g'))) as disciplines,
     filter(
       list_distinct([
         trim("cnu-0"::VARCHAR),
