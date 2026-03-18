@@ -6,15 +6,15 @@ These tests attempt to identify efficient, open-source, and secure methods for e
 
 - [1. PDF to unstructured text](#1-pdf-to-unstructured-text)
   - [1.1. pypdf tests](#11-pypdf-tests)
-    - [1.2.1. Test: simple pdf to text conversion](#121-test-simple-pdf-to-text-conversion)
-    - [1.2.2. Test: pdf with table to text conversion](#122-test-pdf-with-table-to-text-conversion)
-    - [1.2.3. Test: Convert PEPR Résumés des lettres d’intention](#123-test-convert-pepr-résumés-des-lettres-dintention)
+    - [1.1.1. Test: simple pdf to text conversion](#111-test-simple-pdf-to-text-conversion)
+    - [1.1.2. Test: pdf with table to text conversion](#112-test-pdf-with-table-to-text-conversion)
+    - [1.1.3. Test: Convert PEPR Résumés des lettres d’intention](#113-test-convert-pepr-résumés-des-lettres-dintention)
 - [2. Unstructured text to structured text via GPT](#2-unstructured-text-to-structured-text-via-gpt)
   - [2.1. Ollama](#21-ollama)
     - [2.1.1. Test: simple keyword extraction in french](#211-test-simple-keyword-extraction-in-french)
     - [2.1.2. Test: simple keyword extraction in english](#212-test-simple-keyword-extraction-in-english)
     - [2.1.3. Test: Ollama server+python](#213-test-ollama-serverpython)
-    - [2.1.4 Test: Pagoda LIRIS Ollama Service](#214-test-pagoda-liris-ollama-service)
+    - [2.1.4. 2.1.4 Test: Pagoda LIRIS Ollama Service](#214-214-test-pagoda-liris-ollama-service)
   - [2.2. Workflow](#22-workflow)
     - [2.2.1. Test: Initial Python data workflow](#221-test-initial-python-data-workflow)
     - [2.2.2. Test: Structured Python data workflow](#222-test-structured-python-data-workflow)
@@ -25,11 +25,12 @@ These tests attempt to identify efficient, open-source, and secure methods for e
     - [2.2.7. Test: TEMPERATURE and top parameters test](#227-test-temperature-and-top-parameters-test)
   - [2.3. RAG tests](#23-rag-tests)
     - [2.3.1. Test: Langchain with single document and semi-structured data](#231-test-langchain-with-single-document-and-semi-structured-data)
-    - [2.3.2. Test R2R](#232-test-r2r)
+    - [2.3.2. Test: R2R](#232-test-r2r)
+    - [2.3.3. Test: RAGFlow](#233-test-ragflow)
 - [3. Unstructured audio to unstructured text](#3-unstructured-audio-to-unstructured-text)
   - [3.1. Whisper](#31-whisper)
-    - [Installation](#installation)
-    - [Results](#results)
+    - [3.1.1. Installation](#311-installation)
+    - [3.1.2. Results](#312-results)
 
 ```mermaid
 ---
@@ -91,14 +92,14 @@ title: "Proposed method for knowledge graph creation"
 stateDiagram-v2
 
     direction LR
-    
+
     [*] --> audio
-    
+
     state fork <<fork>>
         audio --> fork
         fork --> transcript : with Whisper
         fork --> diarization : with Whisper+pyannote
-    
+
     state join <<join>>
         transcript --> join
         diarization --> join
@@ -160,7 +161,7 @@ Dependency:
 
 - [pypdf](https://github.com/py-pdf/pypdf)
 
-#### 1.2.1. Test: simple pdf to text conversion
+#### 1.1.1. Test: simple pdf to text conversion
 
 ```bash
 python src/pypdf_pipeline.py test-data/résumé-thèse-fr.pdf test-data/pypdf_test.txt
@@ -175,7 +176,7 @@ Notes:
 - no formatting is retained (i.e., headers, bold, color, etc.)
 - perhaps markdown would be better if possible to retain some semi-structured text?
 
-#### 1.2.2. Test: pdf with table to text conversion
+#### 1.1.2. Test: pdf with table to text conversion
 
 ```bash
 python src/pypdf_pipeline.py test-data/résumé-thèse-tableau-fr.pdf test-data/pypdf_table_test.txt
@@ -189,7 +190,7 @@ Notes:
 - this causes structure of table to be lost
 - again perhaps markdown is better?
 
-#### 1.2.3. Test: Convert PEPR Résumés des lettres d’intention
+#### 1.1.3. Test: Convert PEPR Résumés des lettres d’intention
 
 Download and transform the PDF of project motivation letters.
 
@@ -320,7 +321,7 @@ python src/ollama_pipeline.py \
 > - The test script can be customized. Use `python src/ollama.py -h` to see the documentation.
 > - Also, you can use just `ollama serve` (without the `&`) in another terminal session to be able to view ollama API calls in real time
 
-#### 2.1.4 Test: Pagoda LIRIS Ollama Service
+#### 2.1.4. 2.1.4 Test: Pagoda LIRIS Ollama Service
 
 This test will examine the functionality of the [Ollama service hosted with on the Pagoda3](https://ollama-ui.pagoda.liris.cnrs.fr/).
 As instructed by [Olivier MBAREK](mailto:olivier.mbarek@univ-lyon1.fr), the http interface is accesible with the Ollama Python library (see test [2.1.3](#213-test-ollama-serverpython)).
@@ -484,15 +485,15 @@ TODO:
 
 **Tentative candidates:**
 
-| Tool/library                                                                                            | Type                              | Comment |
-| ------------------------------------------------------------------------------------------------------- | --------------------------------- | ------- |
-| [Langchain+Ollama](https://github.com/ollama/ollama/tree/v0.5.5/examples/langchain-python-rag-document) | Python Library                    |         |
-| [RAGFlow](https://github.com/infiniflow/ragflow)                                                        | CLI (Command line interface) tool |         |
-| [R2R](https://github.com/SciPhi-AI/R2R)                                                                 |                                   |         |
-| [rag-chatbot](https://github.com/datvodinh/rag-chatbot)                                                 |                                   |         |
-| [CRAG-Ollama-Chat](https://github.com/Nagi-ovo/CRAG-Ollama-Chat)                                        |                                   |         |
-| [chat-ollama](https://github.com/sugarforever/chat-ollama)                                              |                                   |         |
-| [Sparrow](https://github.com/katanaml/sparrow)                                                          |                                   |         |
+| Tool/library                                                                                            | Comment                   |
+| ------------------------------------------------------------------------------------------------------- | ------------------------- |
+| [Langchain+Ollama](https://github.com/ollama/ollama/tree/v0.5.5/examples/langchain-python-rag-document) |                           |
+| [RAGFlow](https://github.com/infiniflow/ragflow)                                                        |                           |
+| ~~[R2R](https://github.com/SciPhi-AI/R2R)~~                                                             | Seems no longer supported |
+| ~~[CRAG-Ollama-Chat](https://github.com/Nagi-ovo/CRAG-Ollama-Chat)~~                                    | Seems no longer supported |
+| [Sparrow](https://github.com/katanaml/sparrow)                                                          |                           |
+| [chat-ollama](https://github.com/sugarforever/chat-ollama)                                              |                           |
+| [rag-chatbot](https://github.com/datvodinh/rag-chatbot)                                                 |                           |
 
 > [!TIP]
 > See [the references](./references.md#retrieval) for more information about RAG
@@ -720,7 +721,6 @@ Results:
    27. 0000-0003-2921-4646
    28. 0000-0002-3552-1792
    29. 0000-0001-8023-738X
-
    - The 29 ORCiDs provided are all valid and correspond to researchers listed in the pdf
    - ID #13 corresponds to Bernard Kaufmann
    - The list begins with Laure Vidal-Beaudet and proceedes in order until Alessandro Florio, then restarts at the top with Bernard Kaufmann.
@@ -897,7 +897,6 @@ Results:
    29. 0000-0002-0264-1659
    30. 201823231C
    31. 199511664E
-
    - all of these RNSR#s and ORCiDs exist in the pdf.
 
 IdHAL information is removed from the template (to focus on ORCiDs). ORCiDs tokens are updated to match the same capitalization used in the pdf:
@@ -1021,9 +1020,15 @@ Result 6.1
 - TODO: Once templates/queries are stable test with larger contexts (larger pdfs, the online example is able to query a document of 100+ pages)
 - TODO: Once templates/queries are stable test with different models (e.g. Llama3.1 and Mistral). It is not clear which model works best for our use case.
 
-#### 2.3.2. [Test R2R](./r2r-tests.md)
+#### 2.3.2. [Test: R2R](./r2r-tests.md)
+
+> [!CAUTION]
+> R2R seems to be longer supported so testing has stopped.
+> The current candidate is [RAGFlow](#233-test-ragflow)
 
 Tests moved to [r2r-tests.md](./r2r-tests.md) to better accomodate their level of detail
+
+#### 2.3.3. [Test: RAGFlow](./ragflow-tests.md)
 
 ## 3. Unstructured audio to unstructured text
 
@@ -1038,7 +1043,7 @@ for a GPU accelerated docker installation.
 A audio file recorded from a conference meeting is used for testing. The main
 language spoken is French.
 
-#### Installation
+#### 3.1.1. Installation
 
 To get started pull the repository and enter the directory:
 
@@ -1059,7 +1064,7 @@ To see the script usage run:
 python ./src/whisper_pipeline.py --help
 ```
 
-#### Results
+#### 3.1.2. Results
 
 The input audio file has the following properties:
 
