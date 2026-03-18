@@ -37,36 +37,39 @@ def main():
     project_disciplines = []
     with open(file_path) as f:
         for row in csv.DictReader(f, delimiter="\t"):
-            if row["\ufeffDOCID"] == "":
-                continue
+            docid = row["filename"].split(".")[0]
+            if row["filename"] == "":
+                logging.error(f"Empty filename found in row {row}")
+                return 1
+            if docid not in project_ids:
+                logging.error(f"Project {docid} not found in project ids")
+                return 1
             project_disciplines.append(
                 {
-                    "DOCID": row["\ufeffDOCID"],
-                    "acronyme": project_ids[row["\ufeffDOCID"]],
+                    "acronyme": project_ids[docid],
                     "disciplines": row["disciplines"].replace(",", ";"),
                 }
             )
 
-    logging.debug(f"Project by discipline data: {project_disciplines}")
-
     nlp = stanza.Pipeline(
         lang="fr",
-        processors="tokenize,pos,lemma",
+        processors="tokenize,mwt,pos,lemma",
         tokenize_no_ssplit=True,
         logging_level="WARN",
         download_method=DownloadMethod.REUSE_RESOURCES,
     )
     doc = nlp("\n\n".join([row["disciplines"] for row in project_disciplines]))
 
-    # logging.debug(f"Project by discipline data: {doc}")
+    # logging.debug(f"Project by discipline data: {project_disciplines}")
+    # logging.debug(f"Project by discipline document: {doc}")
 
     lemmatized_data = [
         " ".join([word.lemma for word in sentence.words])
         for sentence in doc.sentences  # type: ignore
     ]
 
-    logging.debug(f"Number of projects: {len(project_disciplines)}")
-    logging.debug(f"Number of disciplines: {len(lemmatized_data)}")
+    logging.info(f"Number of projects: {len(project_disciplines)}")
+    logging.info(f"Number of disciplines: {len(lemmatized_data)}")
     logging.debug(f"Lemmatized data: {lemmatized_data}")
 
     for i, project_discipline in enumerate(project_disciplines):
@@ -74,7 +77,7 @@ def main():
             d.strip().lower() for d in lemmatized_data[i].split(";")
         ]
 
-    logging.debug(f"Lemmatized data: {project_disciplines}")
+    logging.debug(f"Cleaned lemmatized data: {project_disciplines}")
 
     logging.info("Writing data to stdout")
     csv.writer(sys.stdout, delimiter="\t").writerow(["acronyme", "discipline"])
@@ -87,36 +90,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-# import { DuckDBInstance } from '@duckdb/node-api'
-# import { tsvFormat } from 'd3-dsv'
-
-# const project_by_discipline_query = `
-# select distinct
-#   "Titre court" as acronyme,
-#   unnest(
-#     apply(
-#       string_split_regex(
-#         disciplines,
-#         '[;,]'
-#       ),
-#       x -> trim(regexp_replace(x, '[\n\r]', ' ', 'g'))
-#     )
-#   )
-#   as discipline,
-# from 'src/data/private/AAP2_submission_metadata.tsv'
-# left join 'src/data/private/AAP2_template_export.tsv'
-# on AAP2_submission_metadata.DOCID =
-#   AAP2_template_export.DOCID
-# `
-
-# const instance = await DuckDBInstance.create()
-# const connection = await instance.connect()
-
-# const reader = await connection.runAndReadAll(project_by_discipline_query)
-# const rows = reader.getRowObjectsJson()
-
-# process.stdout.write(tsvFormat(rows))
-
-# connection.closeSync()

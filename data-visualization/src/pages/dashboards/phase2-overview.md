@@ -24,6 +24,8 @@ sql:
   aap2_project_by_institutions: /data/phase2-project_by_institutions.tsv
   aap2_project_by_laboratories: /data/phase2-project_by_laboratories.tsv
   aap2_project_by_discipline: /data/phase2-project_by_discipline.tsv
+  aap2_project_by_cnu: /data/phase2-project_by_cnu.tsv
+  aap2_project_by_cnu_labels: /data/phase2-project_by_cnu_labels.tsv
   # aap2_laboratories_by_domains_erc: /data/phase2-laboratories_by_domains_erc.tsv
   # aap2_laboratories_by_disciplines_erc: /data/phase2-laboratories_by_disciplines_erc.tsv
   # aap2_laboratories_by_domains_hceres: /data/phase2-laboratories_by_domains_hceres.tsv
@@ -107,8 +109,6 @@ import { donutChart } from '../../components/pie-chart.js'
         y_label: "Projets",
         x_label: "N° Institutions",
         sort_value: project_universities_sort,
-        y_accessor: "project",
-        x_accessor: "count",
       }
     ))}
     <!-- $ -->
@@ -126,8 +126,6 @@ import { donutChart } from '../../components/pie-chart.js'
         y_label: "Projets",
         x_label: "N° Unités",
         sort_value: project_laboratories_sort,
-        y_accessor: "project",
-        x_accessor: "count",
       }
     ))}
     <!-- $ -->
@@ -145,8 +143,6 @@ import { donutChart } from '../../components/pie-chart.js'
         y_label: "Projets",
         x_label: "N° Partenaires",
         sort_value: project_partners_sort,
-        y_accessor: "project",
-        x_accessor: "count",
       }
     ))}
     <!-- $ -->
@@ -212,11 +208,9 @@ const project_partners_sort = Generators.input(project_partners_sort_input)
       aap2_institutions_count,
       {
         width,
-        y_label: "Institution",
+        y_label: "Institution (label / SIRET)",
         x_label: "N° Occurences",
         sort_value: universities_sort,
-        y_accessor: "id",
-        x_accessor: "count",
       }
     ))}
     <!-- $ -->
@@ -229,11 +223,9 @@ const project_partners_sort = Generators.input(project_partners_sort_input)
       aap2_laboratories_count,
       {
         width,
-        y_label: "Unité",
+        y_label: "Unité (label / RNSR)",
         x_label: "N° Occurences",
         sort_value: laboratories_sort,
-        y_accessor: "id",
-        x_accessor: "count",
       }
     ))}
     <!-- $ -->
@@ -246,11 +238,9 @@ const project_partners_sort = Generators.input(project_partners_sort_input)
       aap2_partners_count,
       {
         width,
-        y_label: "Partnaire",
+        y_label: "Partnaire (label / SIRET)",
         x_label: "N° Occurences",
         sort_value: partners_sort,
-        y_accessor: "id",
-        x_accessor: "count",
       }
     ))}
     <!-- $ -->
@@ -295,59 +285,46 @@ const partners_sort = Generators.input(partners_sort_input)
 
 ## Thématiques
 
-<div class="card">
-  ${resize((width) => Plot.plot({
-    width: width,
-    height: 600,
-    title: "Défis",
-    subtitle: `Les défis indiqués dans les métadonnées et les templates des
-      soumissions sur le site du dépôt`,
-    grid: true,
-    marks: [
-      Plot.barY(challenge_count, {
-        x: 'defi',
-        y: 'count',
-        fill: 'defi',
-        tip: true,
-      }),
-    ],
-  }))}
-  <!-- $ -->
+<div class="grid grid-cols-3">
+  <div class="card">
+    ${resize((width) => page.challengeCountPlot(challenge_count, { width }))}
+    <!-- $ -->
+  </div>
 </div>
 
 ```sql id=challenge_count
 select
-  'défi 1' as defi,
+  '1' as defi,
   count(*) as count
 from aap2_projects
 where defi_1_1 or defi_1_2
 union
 select
-  'défi 2' as defi,
+  '2' as defi,
   count(*) as count
 from aap2_projects
 where defi_2_1 or defi_2_2
 union
 select
-  'défi 3' as defi,
+  '3' as defi,
   count(*) as count
 from aap2_projects
 where defi_3_1 or defi_3_2
 union
 select
-  'défi 4' as defi,
+  '4' as defi,
   count(*) as count
 from aap2_projects
 where defi_4_1 or defi_4_2
 union
 select
-  'défi 5' as defi,
+  '5' as defi,
   count(*) as count
 from aap2_projects
 where defi_5_1 or defi_5_2
 union
 select
-  'défi 6' as defi,
+  '6' as defi,
   count(*) as count
 from aap2_projects
 where defi_6_1 or defi_6_2
@@ -360,6 +337,19 @@ select discipline, count(*) as count from aap2_project_by_discipline
 where discipline != ''
 group by discipline
 order by count desc
+```
+
+## CNUs
+
+```sql
+select cnu, count(*) as count from aap2_project_by_cnu
+where cnu::VARCHAR != ''
+group by cnu
+order by count desc
+```
+
+```sql
+select * from aap2_project_by_cnu_labels
 ```
 
 ## Keywords

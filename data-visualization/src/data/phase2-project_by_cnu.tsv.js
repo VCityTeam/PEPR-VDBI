@@ -1,54 +1,54 @@
 import { DuckDBInstance } from '@duckdb/node-api'
 import { tsvFormat } from 'd3-dsv'
-import { toLowerPreservingAcronyms } from './utilities/data_utilities.js'
 
 const cnu_query = `
 with project_cnus as (
   select
     "Titre court" as acronyme,
     filter(
-      [
-        trim("cnu-0"::VARCHAR),
-        trim("cnu-1"::VARCHAR),
-        trim("cnu-2"::VARCHAR),
-        trim("cnu-3"::VARCHAR),
-        trim("cnu-4"::VARCHAR),
-        trim("cnu-5"::VARCHAR),
-        trim("cnu-6"::VARCHAR),
-        trim("cnu-7"::VARCHAR),
-        trim("cnu-8"::VARCHAR),
-        trim("cnu-9"::VARCHAR),
-        trim("CNU2.0"::VARCHAR),
-        trim("CNU2.1"::VARCHAR),
-        trim("CNU2.2"::VARCHAR),
-        trim("CNU2.3"::VARCHAR),
-        trim("CNU2.4"::VARCHAR),
-        trim("CNU2.5"::VARCHAR),
-        trim("CNU2.6"::VARCHAR),
-        trim("CNU2.7"::VARCHAR),
-        trim("CNU2.8"::VARCHAR),
-        trim("CNU2.9"::VARCHAR),
-        trim("CNU2.10"::VARCHAR),
-        trim("CNU2.11"::VARCHAR),
-        trim("CNU2.12"::VARCHAR),
-        trim("CNU2.13"::VARCHAR),
-        trim("CNU2.14"::VARCHAR),
-        trim("cnu-6-0"::VARCHAR),
-        trim("cnu-6-1"::VARCHAR),
-        trim("cnu-6-2"::VARCHAR),
-        trim("cnu-6-3"::VARCHAR),
-      ],
-      x -> x is not null
+      flatten(
+        [
+          string_split_regex("cnu-0"::VARCHAR, '[^\\d*]'),
+          string_split_regex("cnu-1"::VARCHAR, '[^\\d*]'),
+          string_split_regex("cnu-2"::VARCHAR, '[^\\d*]'),
+          string_split_regex("cnu-3"::VARCHAR, '[^\\d*]'),
+          string_split_regex("cnu-4"::VARCHAR, '[^\\d*]'),
+          string_split_regex("cnu-5"::VARCHAR, '[^\\d*]'),
+          string_split_regex("cnu-6"::VARCHAR, '[^\\d*]'),
+          string_split_regex("cnu-7"::VARCHAR, '[^\\d*]'),
+          string_split_regex("cnu-8"::VARCHAR, '[^\\d*]'),
+          string_split_regex("cnu-9"::VARCHAR, '[^\\d*]'),
+          string_split_regex("CNU2.0"::VARCHAR, '[^\\d*]'),
+          string_split_regex("CNU2.1"::VARCHAR, '[^\\d*]'),
+          string_split_regex("CNU2.2"::VARCHAR, '[^\\d*]'),
+          string_split_regex("CNU2.3"::VARCHAR, '[^\\d*]'),
+          string_split_regex("CNU2.4"::VARCHAR, '[^\\d*]'),
+          string_split_regex("CNU2.5"::VARCHAR, '[^\\d*]'),
+          string_split_regex("CNU2.6"::VARCHAR, '[^\\d*]'),
+          string_split_regex("CNU2.7"::VARCHAR, '[^\\d*]'),
+          string_split_regex("CNU2.8"::VARCHAR, '[^\\d*]'),
+          string_split_regex("CNU2.9"::VARCHAR, '[^\\d*]'),
+          string_split_regex("CNU2.10"::VARCHAR, '[^\\d*]'),
+          string_split_regex("CNU2.11"::VARCHAR, '[^\\d*]'),
+          string_split_regex("CNU2.12"::VARCHAR, '[^\\d*]'),
+          string_split_regex("CNU2.13"::VARCHAR, '[^\\d*]'),
+          string_split_regex("CNU2.14"::VARCHAR, '[^\\d*]'),
+          string_split_regex("cnu-6-0"::VARCHAR, '[^\\d*]'),
+          string_split_regex("cnu-6-1"::VARCHAR, '[^\\d*]'),
+          string_split_regex("cnu-6-2"::VARCHAR, '[^\\d*]'),
+          string_split_regex("cnu-6-3"::VARCHAR, '[^\\d*]'),
+        ]
+      ),
+      x -> x is not null and x != ''
     ) as cnus,
   from 'src/data/private/AAP2_submission_metadata.tsv'
   left join 'src/data/private/AAP2_template_export.tsv'
-  on AAP2_submission_metadata.DOCID =
-    AAP2_template_export.DOCID
+  on AAP2_template_export.filename ^@ AAP2_submission_metadata.DOCID::VARCHAR
 )
 
 select
   acronyme,
-  unnest(cnus) as cnu,
+  unnest(filter(cnus, x -> x::INT1 > 0))::INT1 as cnu,
 from project_cnus
 `
 

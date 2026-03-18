@@ -72,8 +72,8 @@ export const all_partners_by_project_query = `
         x -> trim(regexp_replace(x, '[\n\r]', ' ', 'g')))
       ) as activity,
     from 'src/data/private/AAP2_template_export.tsv'
-    join 'src/data/private/AAP2_submission_metadata.tsv'
-    on AAP2_template_export.DOCID = AAP2_submission_metadata.DOCID
+    left join 'src/data/private/AAP2_submission_metadata.tsv'
+    on AAP2_template_export.filename ^@ AAP2_submission_metadata.DOCID::VARCHAR
   ) where partner_id is not null and label is not null
 `
 

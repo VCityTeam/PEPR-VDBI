@@ -14,8 +14,7 @@ with project_keywords as (
     as keywords,
   from 'src/data/private/AAP2_submission_metadata.tsv'
   left join 'src/data/private/AAP2_template_export.tsv'
-  on AAP2_submission_metadata.DOCID =
-    AAP2_template_export.DOCID
+  on AAP2_template_export.filename ^@ AAP2_submission_metadata.DOCID::VARCHAR
 )
 
 select distinct

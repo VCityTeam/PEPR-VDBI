@@ -3,10 +3,10 @@ import { tsvFormat } from 'd3-dsv'
 
 const projects_query = `
   select
-    AAP2_submission_metadata.DOCID as DOCID,
+    DOCID,
     STATUT,
     TYPDOC,
-    type_projet,
+    -- type_projet,
     "Titre court" as acronyme,
     TITLE as name_fr,
     case
@@ -132,8 +132,7 @@ const projects_query = `
     'aap2_export' as source,
   from 'src/data/private/AAP2_submission_metadata.tsv'
   left join 'src/data/private/AAP2_template_export.tsv'
-  on AAP2_submission_metadata.DOCID =
-    AAP2_template_export.DOCID
+  on AAP2_template_export.filename ^@ AAP2_submission_metadata.DOCID::VARCHAR
 `
 
 const instance = await DuckDBInstance.create()
