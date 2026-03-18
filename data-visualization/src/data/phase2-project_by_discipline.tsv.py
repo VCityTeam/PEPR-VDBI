@@ -71,7 +71,7 @@ def main():
 
     for i, project_discipline in enumerate(project_disciplines):
         project_discipline["disciplines"] = [
-            d.strip() for d in lemmatized_data[i].split(";")
+            d.strip().lower() for d in lemmatized_data[i].split(";")
         ]
 
     logging.debug(f"Lemmatized data: {project_disciplines}")

@@ -55,12 +55,12 @@ export const ySortSelect = (label = 'Label') =>
     },
   )
 
-export const partnerCountPlot = (
+export const projectCountPlot = (
   data,
   {
     width,
     height = 400,
-    marginLeft = 250,
+    marginLeft = 140,
     limit = 15,
     x_label,
     y_label,
@@ -77,7 +77,6 @@ export const partnerCountPlot = (
       grid: true,
     },
     y: {
-      tickRotate: -5,
       label: y_label,
       nice: true,
       type: 'band',
@@ -87,6 +86,48 @@ export const partnerCountPlot = (
       scheme: 'Blues',
       zero: true,
     },
+    marks: [
+      Plot.barX(data, {
+        x: x_accessor,
+        y: y_accessor,
+        fill: x_accessor,
+        sort: { y: sort_value, limit: limit },
+        tip: true,
+      }),
+    ],
+  })
+
+export const partnerCountPlot = (
+  data,
+  {
+    width,
+    height = 400,
+    marginLeft = 125,
+    limit = 15,
+    x_label,
+    y_label,
+    sort_value,
+    x_accessor,
+    y_accessor,
+  } = {},
+) =>
+  Plot.plot({
+    width: width,
+    height: height,
+    x: {
+      label: x_label,
+      grid: true,
+    },
+    y: {
+      label: y_label,
+      nice: true,
+      type: 'band',
+    },
+    marginLeft: marginLeft,
+    // color: {
+    //   scheme: 'Blues',
+    //   zero: true,
+    // },
     id: {
       value: 'id',
     },
@@ -94,55 +135,22 @@ export const partnerCountPlot = (
       Plot.barX(data, {
         x: x_accessor,
         y: y_accessor,
-        fill: x_accessor,
+        fill: 'var(--theme-foreground-focus-alt)',
         channels: {
           id: 'id',
         },
         sort: { y: sort_value, limit: limit },
         tip: true,
       }),
-    ],
-  })
-
-export const projectCountPlot = (
-  data,
-  {
-    width,
-    height = 400,
-    marginLeft = 150,
-    limit = 15,
-    x_label,
-    y_label,
-    sort_value,
-    x_accessor,
-    y_accessor,
-  } = {},
-) =>
-  Plot.plot({
-    width: width,
-    height: height,
-    x: {
-      label: x_label,
-      grid: true,
-    },
-    y: {
-      tickRotate: -10,
-      label: y_label,
-      nice: true,
-      type: 'band',
-    },
-    marginLeft: marginLeft,
-    color: {
-      scheme: 'Blues',
-      zero: true,
-    },
-    marks: [
-      Plot.barX(data, {
+      Plot.text(data, {
         x: x_accessor,
         y: y_accessor,
-        fill: x_accessor,
+        text: 'label',
+        fill: 'white',
+        textAnchor: 'end',
+        textOverflow: 'ellipsis-middle',
+        dx: -5,
         sort: { y: sort_value, limit: limit },
-        tip: true,
       }),
     ],
   })

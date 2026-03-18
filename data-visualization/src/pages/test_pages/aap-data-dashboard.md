@@ -21,14 +21,16 @@ sql:
   aap2_laboratories: /data/phase2-laboratories.tsv
   aap2_socioeconomic_partners: /data/phase2-socioeconomic_partners.tsv
   aap2_project_by_keyword: /data/phase2-project_by_keyword.tsv
+  aap2_project_by_discipline: /data/phase2-project_by_discipline.tsv
+  aap2_project_by_cnu: /data/phase2-project_by_cnu.tsv
   aap2_project_by_institutions: /data/phase2-project_by_institutions.tsv
   aap2_project_by_laboratories: /data/phase2-project_by_laboratories.tsv
+  aap2_project_by_socioeconomic_partners: /data/phase2-project_by_socioeconomic_partners.tsv
   # aap2_laboratories_by_domains_erc: /data/phase2-laboratories_by_domains_erc.tsv
   # aap2_laboratories_by_disciplines_erc: /data/phase2-laboratories_by_disciplines_erc.tsv
   # aap2_laboratories_by_domains_hceres: /data/phase2-laboratories_by_domains_hceres.tsv
   # aap2_laboratories_by_disciplines_hceres: /data/phase2-laboratories_by_disciplines_hceres.tsv
   aap2_institutions: /data/phase2-institutions.tsv
-  aap2_project_by_socioeconomic_partners: /data/phase2-project_by_socioeconomic_partners.tsv
 ---
 
 # AAP Data
@@ -102,21 +104,25 @@ import { downloadTableButton } from '/components/utilities.js'
 ### Laboratory ERC domains
 
 ```sql
+
 ```
 
 ### Laboratory ERC disciplines
 
 ```sql
+
 ```
 
 ### Laboratory HCERES domains
 
 ```sql
+
 ```
 
 ### Laboratory HCERES disciplines
 
 ```sql
+
 ```
 
 ### Institutions
@@ -156,11 +162,13 @@ import { downloadTableButton } from '/components/utilities.js'
 ### Researchers
 
 ```sql
+
 ```
 
 ### Researchers by keyword
 
 ```sql
+
 ```
 
 ### Project by keyword
@@ -579,6 +587,51 @@ const aap1_project_by_socioeconomic_partners_search = Generators.input(
 </div>
 
 <div class="card">
+  <h2>Projects by keyword</h2>
+  </br>
+  ${aap2_project_by_keyword_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_project_by_keyword_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_project_by_keyword_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Projects by discipline</h2>
+  </br>
+  ${aap2_project_by_discipline_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_project_by_discipline_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_project_by_discipline_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
+  <h2>Projects by CNU</h2>
+  </br>
+  ${aap2_project_by_cnu_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_project_by_cnu_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_project_by_cnu_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
   <h2>Laboratories</h2>
   </br>
   ${aap2_laboratories_search_input}
@@ -729,7 +782,7 @@ const aap1_project_by_socioeconomic_partners_search = Generators.input(
 </div>
 
 <div class="card">
-  <h2>Project socioeconomic partners</h2>
+  <h2>Socioeconomic partners</h2>
   </br>
   ${aap2_socioeconomic_partners_search_input}
   <!-- $ -->
@@ -743,6 +796,21 @@ const aap1_project_by_socioeconomic_partners_search = Generators.input(
   <!-- $ -->
 </div>
 
+<div class="card">
+  <h2>Projects by socioeconomic partners</h2>
+  </br>
+  ${aap2_project_by_socioeconomic_partners_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_project_by_socioeconomic_partners_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_project_by_socioeconomic_partners_search)}
+  <!-- $ -->
+</div>
+
 ```js
 const aap2_projects_search_input = Inputs.search(
   await sql`select * from aap2_projects`,
@@ -751,6 +819,42 @@ const aap2_projects_search_input = Inputs.search(
   },
 )
 const aap2_projects_search = Generators.input(aap2_projects_search_input)
+```
+
+```js
+const aap2_project_by_keyword_search_input = Inputs.search(
+  await sql`select * from aap2_project_by_keyword`,
+  {
+    placeholder: 'Search project_by_keyword',
+  },
+)
+const aap2_project_by_keyword_search = Generators.input(
+  aap2_project_by_keyword_search_input,
+)
+```
+
+```js
+const aap2_project_by_discipline_search_input = Inputs.search(
+  await sql`select * from aap2_project_by_discipline`,
+  {
+    placeholder: 'Search project_by_discipline',
+  },
+)
+const aap2_project_by_discipline_search = Generators.input(
+  aap2_project_by_discipline_search_input,
+)
+```
+
+```js
+const aap2_project_by_cnu_search_input = Inputs.search(
+  await sql`select * from aap2_project_by_cnu`,
+  {
+    placeholder: 'Search project_by_cnu',
+  },
+)
+const aap2_project_by_cnu_search = Generators.input(
+  aap2_project_by_cnu_search_input,
+)
 ```
 
 ```js

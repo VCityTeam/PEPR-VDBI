@@ -17,7 +17,7 @@ export async function queryAndFormatESR(query, source) {
     'https://data.enseignementsup-recherche.gouv.fr' +
       '/api/explore/v2.1/catalog/datasets' +
       '/fr-esr-structures-recherche-publiques-actives/records' +
-      `?where=numero_national_de_structure=${encodeURIComponent(query)}`,
+      `?where=numero_national_de_structure="${encodeURIComponent(query)}"`,
     0.5,
     logger,
   )

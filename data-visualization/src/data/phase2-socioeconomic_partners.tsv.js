@@ -1,5 +1,6 @@
 import { DuckDBInstance } from '@duckdb/node-api'
 import { tsvFormat } from 'd3-dsv'
+import { queryAndFormatRE } from './utilities/siret_api.js'
 
 export const all_partners_query = `
   select
@@ -87,6 +88,12 @@ const connection = await instance.connect()
 
 const reader = await connection.runAndReadAll(all_partners_query)
 const rows = reader.getRowObjectsJson()
+
+for (let index = 0; index < rows.length; index++) {
+  const row = rows[index]
+  const response = await queryAndFormatRE(row.id, 'aap2_export')
+  rows[index] = { ...row, ...response }
+}
 
 process.stdout.write(tsvFormat(rows))
 

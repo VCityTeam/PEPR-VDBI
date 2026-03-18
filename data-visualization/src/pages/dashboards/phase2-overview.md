@@ -215,7 +215,7 @@ const project_partners_sort = Generators.input(project_partners_sort_input)
         y_label: "Institution",
         x_label: "N° Occurences",
         sort_value: universities_sort,
-        y_accessor: (d) => cropText(d.label, 40),
+        y_accessor: "id",
         x_accessor: "count",
       }
     ))}
@@ -232,7 +232,7 @@ const project_partners_sort = Generators.input(project_partners_sort_input)
         y_label: "Unité",
         x_label: "N° Occurences",
         sort_value: laboratories_sort,
-        y_accessor: (d) => cropText(d.label, 40),
+        y_accessor: "id",
         x_accessor: "count",
       }
     ))}
@@ -249,7 +249,7 @@ const project_partners_sort = Generators.input(project_partners_sort_input)
         y_label: "Partnaire",
         x_label: "N° Occurences",
         sort_value: partners_sort,
-        y_accessor: (d) => cropText(d.label, 40),
+        y_accessor: "id",
         x_accessor: "count",
       }
     ))}
@@ -275,9 +275,11 @@ from aap2_laboratories
 
 ```sql id=aap2_partners_count
 select
-  split(labels, ',')[1] as label,
+  id,
+  if(nom_complet is null, split(labels, ',')[1], nom_complet) as label,
   count
 from aap2_socioeconomic_partners
+where id is not null and length(id) = 14
 ```
 
 ```js
@@ -382,6 +384,11 @@ TBD
     <!-- $ -->
   </div>
   <div class="card">
+    <h3>Missing Laboratories SIRETs</h3>
+    ${missing_laboratories_siret.count}
+    <!-- $ -->
+  </div>
+  <div class="card">
     <h3>Missing Partner SIRETs</h3>
     ${missing_partner_siret.count}
     <!-- $ -->
@@ -394,11 +401,16 @@ from aap2_institutions
 where siret is null
 ```
 
-```sql id=[missing_partner_siret] display
-select *
--- select count(*) as count
+```sql id=[missing_laboratories_siret]
+select count(*) as count
+from aap2_laboratories
+where numero_national_de_structure is null
+```
+
+```sql id=[missing_partner_siret]
+select count(*) as count
 from aap2_socioeconomic_partners
-where id is null or length(id) != 14
+where siret is null or length(id) != 14
 ```
 
 <!-- data import -->

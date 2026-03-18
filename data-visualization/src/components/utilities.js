@@ -356,8 +356,7 @@ export function copySVGToClipboardButton(
 
 /**
  * A button for downloading a table.
- * Semicolon delimited by default for EU Excel/List separator compatibility :
- * https://superuser.com/questions/606272/how-to-get-excel-to-interpret-the-comma-as-a-default-delimiter-in-csv-files
+ * Tab delimited by default
  *
  * @param {Function} callback - a callback function to get the data to be downloaded,
  *   rows should contain keys corresponding to the columns of the table
@@ -368,10 +367,10 @@ export function copySVGToClipboardButton(
 export function downloadTableButton(
   callback,
   {
-    label = 'Download (.csv)',
-    filename = 'download.csv',
+    label = 'Download (.tsv)',
+    filename = 'download.tsv',
     columns = null,
-    delimeter = ';',
+    delimeter = '\t',
   } = {},
 ) {
   return button(label, {
