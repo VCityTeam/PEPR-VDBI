@@ -33,22 +33,96 @@ sql:
   aap2_project_by_socioeconomic_partners: /data/phase2-project_by_socioeconomic_partners.tsv
 ---
 
-# AAP Phase 2 - PITT
+# Survol des Appels à Projets
 
-## Survol des soumissions
+## Phase 1 et 2
 
 ```js
-import * as page from './aap-overview.js'
-import { cropText } from '/components/utilities.js'
+import * as overview from './aap-overview.js'
+import * as disciplines from './aap-disciplines.js'
+import * as cnu from '../../components/cnu.js'
+import * as color from '../../components/color.js'
+import { cropText } from '../../components/utilities.js'
 import { bubbleChartX } from '../../components/bubble-chart.js'
 import { donutChart } from '../../components/pie-chart.js'
 ```
+
+<div class="warning" label="Notice sur les données">
+  Les visualisations de données n'ont pas été vérifiées et peuvent contenir des
+  erreurs. Considérez ces visualisations comme des estimations et non comme une
+  « réalité absolue ».
+</div>
 
 ## Chiffres clés
 
 <div class="grid grid-cols-4">
   <div class="card">
-    <h2>N° Projets <span class="muted">(Totale / Lauréats)</span></h2>
+    <h2>N° Projets AAP 1 <span class="muted">(Totale / Lauréats)</span></h2>
+    <span class="big">
+      <span class="muted">
+        ${[...await sql`select count(*) as count from aap1_projects`][0].count.toLocaleString()}
+        <!-- $ -->
+      </span> /
+      ${[...await sql`select count(*) as count from aap1_projects where financed`][0].count.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>N° Intitutions AAP 1 <span class="muted">(Totale / Lauréats)</span></h2>
+    <span class="big">
+      <span class="muted">
+        ${[...await sql`select count(*) as count from aap1_institutions`][0].count.toLocaleString()}
+        <!-- $ -->
+      </span> /
+      ${[...await sql`
+        select count(*) as count
+        from aap1_project_by_institutions
+        join aap1_projects
+        on aap1_project_by_institutions.project = aap1_projects.acronyme
+        where financed
+      `][0].count.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>N° Unités AAP 1 <span class="muted">(Totale / Lauréats)</span></h2>
+    <span class="big">
+      <span class="muted">
+        ${[...await sql`select count(*) as count from aap1_laboratories`][0].count.toLocaleString()}
+        <!-- $ -->
+      </span> /
+      ${[...await sql`
+        select count(*) as count
+        from aap1_project_by_laboratories
+        join aap1_projects
+        on aap1_project_by_laboratories.project = aap1_projects.acronyme
+        where financed
+      `][0].count.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>N° Partenaires AAP 1 <span class="muted">(Totale / Lauréats)</span></h2>
+    <span class="big">
+      <span class="muted">
+        ${[...await sql`select count(*) as count from aap1_socioeconomic_partners`][0].count.toLocaleString()}
+        <!-- $ -->
+      </span> /
+      ${[...await sql`
+        select count(*) as count
+        from aap1_project_by_socioeconomic_partners
+        join aap1_projects
+        on aap1_project_by_socioeconomic_partners.project = aap1_projects.acronyme
+        where financed
+      `][0].count.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
+</div>
+
+<div class="grid grid-cols-4">
+  <div class="card">
+    <h2>N° Projets AAP 2 <span class="muted">(Totale / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`select count(*) as count from aap2_projects`][0].count.toLocaleString()}
@@ -59,7 +133,7 @@ import { donutChart } from '../../components/pie-chart.js'
     </span>
   </div>
   <div class="card">
-    <h2>N° Intitutions <span class="muted">(Totale / Lauréats)</span></h2>
+    <h2>N° Intitutions AAP 2 <span class="muted">(Totale / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`select count(*) as count from aap2_institutions`][0].count.toLocaleString()}
@@ -70,7 +144,7 @@ import { donutChart } from '../../components/pie-chart.js'
     </span>
   </div>
   <div class="card">
-    <h2>N° Unités <span class="muted">(Totale / Lauréats)</span></h2>
+    <h2>N° Unités AAP 2 <span class="muted">(Totale / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`select count(*) as count from aap2_laboratories`][0].count.toLocaleString()}
@@ -81,7 +155,7 @@ import { donutChart } from '../../components/pie-chart.js'
     </span>
   </div>
   <div class="card">
-    <h2>N° Partenaires <span class="muted">(Totale / Lauréats)</span></h2>
+    <h2>N° Partenaires AAP 2 <span class="muted">(Totale / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`select count(*) as count from aap2_socioeconomic_partners`][0].count.toLocaleString()}
@@ -97,52 +171,138 @@ import { donutChart } from '../../components/pie-chart.js'
 
 <div class="grid grid-cols-3">
   <div class="card">
-    <h2>Top 15 projets par n° d'institutions</h2>
-    ${project_universities_laureate_input}
+    <h2>AAP 1 projets financées par n° d'institutions</h2>
+    <br/>
+    ${aap1_project_universities_sort_input}
     <!-- $ -->
-    ${project_universities_sort_input}
+    ${resize((width) => overview.projectCountPlot(
+      aap1_project_by_institutions_count,
+      {
+        width,
+        y_label: "Projets",
+        x_label: "N° Institutions",
+        sort_value: aap1_project_universities_sort,
+      }
+    ))}
     <!-- $ -->
-    ${resize((width) => page.projectCountPlot(
+  </div>
+  <div class="card">
+    <h2>AAP 1 projets financées par n° d'unités</h2>
+    <br/>
+    ${aap1_project_laboratories_sort_input}
+    <!-- $ -->
+    ${resize((width) => overview.projectCountPlot(
+      aap1_project_by_laboratories_count,
+      {
+        width,
+        y_label: "Projets",
+        x_label: "N° Unités",
+        sort_value: aap1_project_laboratories_sort,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>AAP 1 projets financées par n° de partenaires</h2>
+    <br/>
+    ${aap1_project_partners_sort_input}
+    <!-- $ -->
+    ${resize((width) => overview.projectCountPlot(
+      aap1_project_by_socioeconomic_partners_count,
+      {
+        width,
+        y_label: "Projets",
+        x_label: "N° Partenaires",
+        sort_value: aap1_project_partners_sort,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+</div>
+
+```sql id=aap1_project_by_institutions_count
+select count(*) as count, project
+from aap1_project_by_institutions
+where project in (select acronyme from aap1_projects where financed)
+group by project
+```
+
+```sql id=aap1_project_by_laboratories_count
+select count(*) as count, project
+from aap1_project_by_laboratories
+where project in (select acronyme from aap1_projects where financed)
+group by project
+```
+
+```sql id=aap1_project_by_socioeconomic_partners_count
+select count(*) as count, project
+from aap1_project_by_socioeconomic_partners
+where project in (select acronyme from aap1_projects where financed)
+group by project
+```
+
+```js
+const aap1_project_universities_sort_input = overview.ySortSelect()
+const aap1_project_universities_sort = Generators.input(
+  aap1_project_universities_sort_input,
+)
+
+const aap1_project_laboratories_sort_input = overview.ySortSelect()
+const aap1_project_laboratories_sort = Generators.input(
+  aap1_project_laboratories_sort_input,
+)
+
+const aap1_project_partners_sort_input = overview.ySortSelect()
+const aap1_project_partners_sort = Generators.input(
+  aap1_project_partners_sort_input,
+)
+```
+
+<div class="grid grid-cols-3">
+  <div class="card">
+    <h2>Top 15 AAP 2 projets par n° d'institutions</h2>
+    <br/>
+    ${aap2_project_universities_sort_input}
+    <!-- $ -->
+    ${resize((width) => overview.projectCountPlot(
       aap2_project_by_institutions_count,
       {
         width,
         y_label: "Projets",
         x_label: "N° Institutions",
-        sort_value: project_universities_sort,
+        sort_value: aap2_project_universities_sort,
       }
     ))}
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 projets par n° d'unités</h2>
-    ${project_laboratories_laureate_input}
+    <h2>Top 15 AAP 2 projets par n° d'unités</h2>
+    <br/>
+    ${aap2_project_laboratories_sort_input}
     <!-- $ -->
-    ${project_laboratories_sort_input}
-    <!-- $ -->
-    ${resize((width) => page.projectCountPlot(
+    ${resize((width) => overview.projectCountPlot(
       aap2_project_by_laboratories_count,
       {
         width,
         y_label: "Projets",
         x_label: "N° Unités",
-        sort_value: project_laboratories_sort,
+        sort_value: aap2_project_laboratories_sort,
       }
     ))}
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 projets par n° de partenaires</h2>
-    ${project_partners_laureate_input}
+    <h2>Top 15 AAP 2 projets par n° de partenaires</h2>
+    <br/>
+    ${aap2_project_partners_sort_input}
     <!-- $ -->
-    ${project_partners_sort_input}
-    <!-- $ -->
-    ${resize((width) => page.projectCountPlot(
+    ${resize((width) => overview.projectCountPlot(
       aap2_project_by_socioeconomic_partners_count,
       {
         width,
         y_label: "Projets",
         x_label: "N° Partenaires",
-        sort_value: project_partners_sort,
+        sort_value: aap2_project_partners_sort,
       }
     ))}
     <!-- $ -->
@@ -168,33 +328,20 @@ group by project
 ```
 
 ```js
-const project_universities_laureate_input = page.laureateCheckbox()
-const project_universities_laureate = Generators.input(
-  project_universities_laureate_input,
+const aap2_project_universities_sort_input = overview.ySortSelect()
+const aap2_project_universities_sort = Generators.input(
+  aap2_project_universities_sort_input,
 )
 
-const project_universities_sort_input = page.ySortSelect()
-const project_universities_sort = Generators.input(
-  project_universities_sort_input,
+const aap2_project_laboratories_sort_input = overview.ySortSelect()
+const aap2_project_laboratories_sort = Generators.input(
+  aap2_project_laboratories_sort_input,
 )
 
-const project_laboratories_laureate_input = page.laureateCheckbox()
-const project_laboratories_laureate = Generators.input(
-  project_laboratories_laureate_input,
+const aap2_project_partners_sort_input = overview.ySortSelect()
+const aap2_project_partners_sort = Generators.input(
+  aap2_project_partners_sort_input,
 )
-
-const project_laboratories_sort_input = page.ySortSelect()
-const project_laboratories_sort = Generators.input(
-  project_laboratories_sort_input,
-)
-
-const project_partners_laureate_input = page.laureateCheckbox()
-const project_partners_laureate = Generators.input(
-  project_partners_laureate_input,
-)
-
-const project_partners_sort_input = page.ySortSelect()
-const project_partners_sort = Generators.input(project_partners_sort_input)
 ```
 
 ## Partenaires
@@ -202,45 +349,145 @@ const project_partners_sort = Generators.input(project_partners_sort_input)
 <div class="grid grid-cols-3">
   <div class="card">
     <h2>Top 15 institutions par n° d'occurences</h2>
-    ${universities_sort_input}
+    ${aap1_universities_sort_input}
     <!-- $ -->
-    ${resize((width) => page.partnerCountPlot(
-      aap2_institutions_count,
+    ${resize((width) => overview.partnerCountPlot(
+      aap1_institutions_count,
       {
         width,
         y_label: "Institution (label / SIRET)",
         x_label: "N° Occurences",
-        sort_value: universities_sort,
+        sort_value: aap1_universities_sort,
       }
     ))}
     <!-- $ -->
   </div>
   <div class="card">
     <h2>Top 15 unités de recherche par n° d'occurences</h2>
-    ${laboratories_sort_input}
+    ${aap1_laboratories_sort_input}
     <!-- $ -->
-    ${resize((width) => page.partnerCountPlot(
-      aap2_laboratories_count,
+    ${resize((width) => overview.partnerCountPlot(
+      aap1_laboratories_count,
       {
         width,
-        y_label: "Unité (label / RNSR)",
+        marginLeft: 100,
+        y_label: "Unité (Sigle / RNSR)",
         x_label: "N° Occurences",
-        sort_value: laboratories_sort,
+        sort_value: aap1_laboratories_sort,
       }
     ))}
     <!-- $ -->
   </div>
   <div class="card">
     <h2>Top 15 partnaires par n° d'occurences</h2>
-    ${partners_sort_input}
+    ${aap1_partners_sort_input}
     <!-- $ -->
-    ${resize((width) => page.partnerCountPlot(
+    ${resize((width) => overview.partnerCountPlot(
+      aap1_partners_count,
+      {
+        width,
+        y_label: "Partnaire (label / SIRET)",
+        x_label: "N° Occurences",
+        sort_value: aap1_partners_sort,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+</div>
+
+```sql id=aap1_institutions_count display
+select *
+  -- siret as id,
+  -- if(first(nom_complet) is null, first(university), first(nom_complet)) as label,
+  -- count(*) as count
+from aap1_project_by_institutions
+  left join aap1_institutions
+  on aap1_project_by_institutions.university = aap1_institutions.name
+-- where project in (select acronyme from aap1_projects where financed)
+-- group by siret
+```
+
+```sql display
+select *
+  -- siret as id,
+  -- if(first(nom_complet) is null, first(university), first(nom_complet)) as label,
+  -- count(*) as count
+from aap1_institutions
+-- where project in (select acronyme from aap1_projects where financed)
+-- group by siret
+```
+
+```sql id=aap1_laboratories_count display
+select *
+  -- id,
+  -- if(sigle is null, split(labels, ',')[1], sigle) as label,
+  -- count
+from aap1_laboratories
+```
+
+```sql id=aap1_partners_count display
+select *
+  -- id,
+  -- if(nom_complet is null, split(labels, ',')[1], nom_complet) as label,
+  -- count
+from aap1_socioeconomic_partners
+where id is not null and length(id) = 14
+```
+
+```js
+const aap1_universities_sort_input = overview.ySortSelect()
+const aap1_universities_sort = Generators.input(aap1_universities_sort_input)
+
+const aap1_laboratories_sort_input = overview.ySortSelect()
+const aap1_laboratories_sort = Generators.input(aap1_laboratories_sort_input)
+
+const aap1_partners_sort_input = overview.ySortSelect()
+const aap1_partners_sort = Generators.input(aap1_partners_sort_input)
+```
+
+<div class="grid grid-cols-3">
+  <div class="card">
+    <h2>Top 15 institutions par n° d'occurences</h2>
+    ${aap2_universities_sort_input}
+    <!-- $ -->
+    ${resize((width) => overview.partnerCountPlot(
+      aap2_institutions_count,
+      {
+        width,
+        y_label: "Institution (label / SIRET)",
+        x_label: "N° Occurences",
+        sort_value: aap2_universities_sort,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Top 15 unités de recherche par n° d'occurences</h2>
+    ${aap2_laboratories_sort_input}
+    <!-- $ -->
+    ${resize((width) => overview.partnerCountPlot(
+      aap2_laboratories_count,
+      {
+        width,
+        marginLeft: 100,
+        y_label: "Unité (Sigle / RNSR)",
+        x_label: "N° Occurences",
+        sort_value: aap2_laboratories_sort,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Top 15 partnaires par n° d'occurences</h2>
+    ${aap2_partners_sort_input}
+    <!-- $ -->
+    ${resize((width) => overview.partnerCountPlot(
       aap2_partners_count,
       {
         width,
         y_label: "Partnaire (label / SIRET)",
         x_label: "N° Occurences",
-        sort_value: partners_sort,
+        sort_value: aap2_partners_sort,
       }
     ))}
     <!-- $ -->
@@ -258,7 +505,7 @@ from aap2_institutions
 ```sql id=aap2_laboratories_count
 select
   id,
-  split(labels, ',')[1] as label,
+  if(sigle is null, split(labels, ',')[1], sigle) as label,
   count
 from aap2_laboratories
 ```
@@ -273,21 +520,21 @@ where id is not null and length(id) = 14
 ```
 
 ```js
-const universities_sort_input = page.ySortSelect()
-const universities_sort = Generators.input(universities_sort_input)
+const aap2_universities_sort_input = overview.ySortSelect()
+const aap2_universities_sort = Generators.input(aap2_universities_sort_input)
 
-const laboratories_sort_input = page.ySortSelect()
-const laboratories_sort = Generators.input(laboratories_sort_input)
+const aap2_laboratories_sort_input = overview.ySortSelect()
+const aap2_laboratories_sort = Generators.input(aap2_laboratories_sort_input)
 
-const partners_sort_input = page.ySortSelect()
-const partners_sort = Generators.input(partners_sort_input)
+const aap2_partners_sort_input = overview.ySortSelect()
+const aap2_partners_sort = Generators.input(aap2_partners_sort_input)
 ```
 
-## Thématiques
+## Défis
 
 <div class="grid grid-cols-3">
   <div class="card">
-    ${resize((width) => page.challengeCountPlot(challenge_count, { width }))}
+    ${resize((width) => overview.challengeCountPlot(challenge_count, { width }))}
     <!-- $ -->
   </div>
 </div>
@@ -341,14 +588,68 @@ order by count desc
 
 ## CNUs
 
-```sql
-select cnu, count(*) as count from aap2_project_by_cnu
-where cnu::VARCHAR != ''
+### Legend
+
+${disciplines.erc_legend}
+
+<!-- $ -->
+
+<div class="grid grid-cols-2">
+  <div class="card">
+    <h2>Distribution des CNUs par catégorie</h2>
+    <br/>
+    ${resize((width, height) => disciplines.erc_donut(
+      aap2_project_by_cnu_erc,
+      width,
+      height - 50
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Distribution des CNUs par catégorie</h2>
+    <br/>
+    ${resize((width, height) => disciplines.erc_donut(
+      aap2_project_by_cnu_erc,
+      width,
+      height - 50
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card grid-rowspan-2">
+    <h2>Distribution des sections CNU</h2>
+    ${resize((width) => disciplines.cnu_plot_by_erc(
+      aap2_project_by_cnu,
+      {
+        width: width,
+        sort: 'y',
+        x_accessor: (d) => d.count,
+        y_accessor: (d) => cnu.cnu_section_label_map.get(Number(d.cnu)) || String(d.cnu),
+        marginTop: 0,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+</div>
+
+```sql id=aap2_project_by_cnu
+select
+  cnu,
+  count(*) as count
+from aap2_project_by_cnu
+where cnu is not null and cnu::VARCHAR != ''
 group by cnu
 order by count desc
 ```
 
-```sql
+```js
+const aap2_project_by_cnu_erc = d3.rollups(
+  aap2_project_by_cnu,
+  (v) => v.length,
+  (d) => cnu.getERCFromCNU(d.cnu),
+)
+```
+
+```sql id=aap2_project_by_cnu_labels
 select * from aap2_project_by_cnu_labels
 ```
 
@@ -405,6 +706,10 @@ where siret is null or length(id) != 14
 
 <!-- data import -->
 
+```sql
+select * from aap2_projects
+```
+
 ```sql id=projects
 (
   select
@@ -438,7 +743,7 @@ where siret is null or length(id) != 14
 ```
 
 ```sql id=laboratories
-(
+select * from (
   select
     id,
     -- umr,

@@ -1,5 +1,5 @@
 import * as d3 from 'd3'
-import { cnu_category_map } from './cnu.js'
+import { cnu_category_section_map, getGroupFromCNU } from './cnu.js'
 
 // PEPR VDBI colors //
 // - #3557a2
@@ -105,31 +105,6 @@ export const cnu_string_color_range_map = new Map([
   ['Pluridisciplinaire', 'Sinebow'],
 ])
 
-/**
- * Determine the category of a CNU number.
- * Based on https://conseil-national-des-universites.fr/
- *
- * @param {string} cnu - CNU full name to categorize
- * @returns {number} The CNU category number
- */
-export function getGroupFromCNU(cnu) {
-  if (!cnu) {
-    console.warn(`empty cnu: ${cnu}`)
-    return null
-  }
-  if (cnu == 'Administratif') return cnu
-
-  // Given a string starting with a CNU number, return the number
-  const cnu_number = Number(cnu.trim().substring(0, 2))
-  const category = cnu_category_map
-    .entries()
-    .find((d) => d[1].includes(cnu_number))
-
-  if (!category) console.warn(`could not categorize cnu: ${cnu}`)
-
-  return category ? category[0] : null
-}
-
 // /**
 //  * Determine the color value of a CNU string.
 //  *
@@ -152,8 +127,8 @@ export function getGroupFromCNU(cnu) {
 
 export function quantized_cnu_color(cnu, num_colors = 10) {
   const cnu_category = getGroupFromCNU(cnu)
-  const cnu_category_values = cnu_category_map.has(cnu_category)
-    ? cnu_category_map.get(cnu_category)
+  const cnu_category_values = cnu_category_section_map.has(cnu_category)
+    ? cnu_category_section_map.get(cnu_category)
     : []
 
   return d3
@@ -189,7 +164,7 @@ export const cnrs_color_range_map = new Map([
 
 export function quantized_cnrs_color(cnu, num_colors = 6) {
   const cnu_category = getGroupFromCNU(cnu)
-  const cnu_category_values = cnu_category_map.get(cnu_category)
+  const cnu_category_values = cnu_category_section_map.get(cnu_category)
 
   return d3
     .scaleOrdinal(

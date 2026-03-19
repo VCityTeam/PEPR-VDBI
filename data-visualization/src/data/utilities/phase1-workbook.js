@@ -8,6 +8,7 @@ import {
   rowsToObjectArray,
 } from './data_utilities.js'
 import { v4 as uuidv4 } from 'uuid'
+import { queryAndFormatRE } from './siret_api.js'
 
 /**
  * Extract data from the GÉNÉRALITÉ sheet
@@ -403,24 +404,11 @@ export function resolveLabEntities(
  * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Object[]} Formatted sheet data
  */
-export function resolveInstitutionEntities(
-  sheet,
-  anonymize = false,
-  pseudoanonymousDict = new Map(),
-) {
-  return map(sheet, (d) => {
-    const institution = {
-      // just 1 column for the moment
-      name: cleanDatum(d['Nom des établissements']),
-    }
-    if (anonymize) {
-      institution.name = pseudoanonymizeEntry(
-        institution.name,
-        pseudoanonymousDict,
-        'gnome',
-      )
-    }
-    return institution
+export async function resolveInstitutionEntities(sheet) {
+  return map(sheet, async (d) => {
+    const name = cleanDatum(d['Nom des établissements'])
+    const response = await queryAndFormatRE(name, 'aap1_export')
+    return { name, ...response }
   })
 }
 
@@ -433,7 +421,7 @@ export function resolveInstitutionEntities(
  * @param {boolean} onlyFinanced - Filter out non-financed projects?
  * @returns {Object[]} An object containing formatted tables
  */
-export function extractPhase1Workbook(
+export async function extractPhase1Workbook(
   workbook,
   {
     pseudoanonymize = false,
@@ -472,10 +460,12 @@ export function extractPhase1Workbook(
   ).filter((lab) =>
     onlyFinanced ? projects.some(({ labs }) => labs.includes(lab.lab)) : true,
   )
-  const universities = resolveInstitutionEntities(
-    getInstitutionSheet(workbook),
-    pseudoanonymize,
-    pseudoanonymousDict,
+  const universities = (
+    await resolveInstitutionEntities(
+      getInstitutionSheet(workbook),
+      pseudoanonymize,
+      pseudoanonymousDict,
+    )
   ).filter((university) =>
     onlyFinanced
       ? projects.some(({ institutions }) =>

@@ -39,7 +39,7 @@ with project_cnus as (
           string_split_regex("cnu-6-3"::VARCHAR, '[^\\d*]'),
         ]
       ),
-      x -> x is not null and x != ''
+      x -> x is not null and if(x = '', false, x::INT1 > 0)
     ) as cnus,
   from 'src/data/private/AAP2_submission_metadata.tsv'
   left join 'src/data/private/AAP2_template_export.tsv'
@@ -48,7 +48,7 @@ with project_cnus as (
 
 select
   acronyme,
-  unnest(filter(cnus, x -> x::INT1 > 0))::INT1 as cnu,
+  unnest(apply(cnus, x -> if(x::INT1 < 10, '0' || x::INT1, x)))::VARCHAR as cnu,
 from project_cnus
 `
 

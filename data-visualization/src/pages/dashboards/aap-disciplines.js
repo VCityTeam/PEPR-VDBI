@@ -6,9 +6,12 @@ import {
   exclude,
   sparkbar,
 } from '../../components/utilities.js'
-import { cnu_category_map } from '../../components/cnu.js'
 import {
+  cnu_category_section_map,
   getGroupFromCNU,
+  getERCFromCNU,
+} from '../../components/cnu.js'
+import {
   cnu_color_map,
   cnu_dark_color_map,
   quantized_cnu_color,
@@ -23,13 +26,42 @@ import { generateIntersectionMatrix } from '../../components/chord.js'
 import { donutChart } from '../../components/pie-chart.js'
 import { parallelSetToGraph } from '../../components/sankey.js'
 
-export const cnu_plot = (data, width, cnu_plot_sort) =>
+export const cnu_legend = Plot.legend({
+  color: {
+    domain: cnu_dark_color_map.keys(),
+    range: cnu_dark_color_map.values(),
+    type: 'ordinal',
+  },
+})
+
+export const erc_legend = Plot.legend({
+  color: {
+    domain: erc_color_scale.domain(),
+    range: erc_color_scale.range(),
+    type: 'ordinal',
+  },
+})
+
+export const cnu_plot = (
+  data,
+  {
+    width = 600,
+    marginTop = 50,
+    marginLeft = 18,
+    marginRight = 250,
+    sort = 'y',
+    x_accessor = (d) => d[1],
+    y_accessor = (d) => d[0],
+    fill_accessor = (d) =>
+      cnu_dark_color_map.get(getGroupFromCNU(y_accessor(d))),
+  } = {},
+) =>
   Plot.plot({
     width: width,
     // height: 800,
-    marginTop: 50,
-    marginLeft: 18,
-    marginRight: 300,
+    marginTop: marginTop,
+    marginLeft: marginLeft,
+    marginRight: marginRight,
     x: {
       reverse: true,
       grid: true,
@@ -38,28 +70,32 @@ export const cnu_plot = (data, width, cnu_plot_sort) =>
     },
     color: {
       legend: true,
+      type: 'band',
+    },
+    y: {
+      type: 'band',
     },
     marks: [
       Plot.axisY({
         label: 'CNU',
         anchor: 'right',
-        lineWidth: 30,
+        lineWidth: 24,
         textOverflow: 'ellipsis',
       }),
-      Plot.barX(data.cnu_count, {
-        y: (d) => d[0],
-        x: (d) => d[1],
-        fill: (d) => cnu_dark_color_map.get(getGroupFromCNU(d[0])),
+      Plot.barX(data, {
+        y: y_accessor,
+        x: x_accessor,
+        fill: fill_accessor,
         stroke: 'black',
         strokeOpacity: 0.1,
-        sort: { y: cnu_plot_sort },
+        sort: { y: sort },
         tip: true,
       }),
       Plot.barX(
-        data.cnu_count,
+        data,
         Plot.pointerY({
-          y: (d) => d[0],
-          x: (d) => d[1],
+          y: y_accessor,
+          x: x_accessor,
           fill: 'white',
           opacity: 0.5,
         }),
@@ -71,7 +107,7 @@ const default_donut_config = {
   keyMap: (d) => d[0],
   valueMap: (d) => d[1],
   colorMap: (d) => d[0],
-  legendTextLength: 18,
+  legendTextLength: 35,
   majorLabelText: () => '',
   minorLabelText: () => '',
 }
@@ -84,27 +120,52 @@ export const cnu_group_donut = (data, width) =>
     color: d3
       .scaleOrdinal(d3.schemeSet1.slice(1))
       // .scaleOrdinal(d3.schemeCategory10)
-      .domain(cnu_category_map.keys())
+      .domain(cnu_category_section_map.keys())
       .unknown('grey'),
   })
 
 export const custom_cnu_group_donut = (data, width) =>
-  donutChart(data.cnu_count_by_custom_category, {
+  donutChart(data, {
     ...default_donut_config,
     width: width * 0.6,
     legendWidth: width * 0.5,
     color: d3
       .scaleOrdinal(d3.schemeSet1.slice(1))
       // .scaleOrdinal(d3.schemeCategory10)
-      .domain(cnu_category_map.keys())
+      .domain(cnu_category_section_map.keys())
       .unknown('grey'),
   })
 
-export const erc_donut = (data, width) =>
-  donutChart(data.discipline_erc_count, {
+export const cnu_plot_by_erc = (
+  data,
+  {
+    width = 600,
+    marginTop = 50,
+    marginLeft = 18,
+    marginRight = 250,
+    sort = 'y',
+    x_accessor = (d) => d[1],
+    y_accessor = (d) => d[0],
+    fill_accessor = (d) => erc_color_scale(getERCFromCNU(y_accessor(d))),
+  } = {},
+) =>
+  cnu_plot(data, {
+    width: width,
+    marginTop: marginTop,
+    marginLeft: marginLeft,
+    marginRight: marginRight,
+    sort: sort,
+    x_accessor: x_accessor,
+    y_accessor: y_accessor,
+    fill_accessor: fill_accessor,
+  })
+
+export const erc_donut = (data, width, height) =>
+  donutChart(data, {
     ...default_donut_config,
     width: width * 0.6,
-    legendWidth: width * 0.5,
+    height: height,
+    legendWidth: width * 0.6,
     color: erc_color_scale,
   })
 

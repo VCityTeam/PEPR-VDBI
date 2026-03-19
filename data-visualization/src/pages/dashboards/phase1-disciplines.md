@@ -9,11 +9,8 @@ import {
   downloadSVGButton,
 } from '/components/utilities.js'
 import { extractPhase1Workbook } from '/data/utilities/phase1-workbook.js'
-import {
-  getGroupFromCNU,
-  quantized_cnu_color,
-  cnu_dark_color_map,
-} from '/components/color.js'
+import { quantized_cnu_color, cnu_dark_color_map } from '/components/color.js'
+import { getGroupFromCNU } from '/components/cnu.js'
 import { chordDiagram } from '/components/chord.js'
 import * as page from './aap-disciplines.js'
 import { sankeyDiagram, parallelSet } from '/components/sankey.js'
@@ -77,9 +74,11 @@ const selected_project = view(
     <div>${cnu_plot_sort_input}</div>
     <div id="cnu-container">
       ${resize((width) => page.cnu_plot(
-        selected_project_data,
-        width,
-        cnu_plot_sort,
+        selected_project_data.cnu_count,
+        {
+          width: width,
+          sort: cnu_plot_sort,
+        }
       ))}
       <!-- $ -->
       ${downloadTableButton(() => selected_project_data.cnu_count)}
@@ -487,7 +486,10 @@ const selected_project = view(
   </div>
   <div id="erc-container" class="card">
     <h2>Researcher ERC discipline</h2>
-    ${resize((width) => page.erc_donut(selected_project_data, width))}
+    ${resize((width) => page.erc_donut(
+      selected_project_data.discipline_erc_count,
+      width
+    ))}
     <!-- $ -->
     ${downloadTableButton(() => selected_project_data.discipline_erc_count)}
     <!-- $ -->
@@ -496,7 +498,10 @@ const selected_project = view(
   </div>
   <div id="custom-cnu-group-container" class="card">
     <h2>Disciplines des chercheurs</h2>
-    ${resize((width) => page.custom_cnu_group_donut(selected_project_data, width))}
+    ${resize((width) => page.custom_cnu_group_donut(
+      selected_project_data.cnu_count_by_custom_category,
+      width
+    ))}
     <!-- $ -->
     <h3>
       Groupes CNU des chercheurs avec les sections de droit, économie, gestion,
