@@ -405,11 +405,13 @@ export function resolveLabEntities(
  * @returns {Object[]} Formatted sheet data
  */
 export async function resolveInstitutionEntities(sheet) {
-  return map(sheet, async (d) => {
-    const name = cleanDatum(d['Nom des établissements'])
-    const response = await queryAndFormatRE(name, 'aap1_export')
-    return { name, ...response }
-  })
+  return Promise.all(
+    map(sheet, async (d) => {
+      const name = cleanDatum(d['Nom des établissements'])
+      const response = await queryAndFormatRE(name, 'aap1_export')
+      return { name, ...response }
+    }),
+  )
 }
 
 /**
@@ -460,6 +462,7 @@ export async function extractPhase1Workbook(
   ).filter((lab) =>
     onlyFinanced ? projects.some(({ labs }) => labs.includes(lab.lab)) : true,
   )
+
   const universities = (
     await resolveInstitutionEntities(
       getInstitutionSheet(workbook),

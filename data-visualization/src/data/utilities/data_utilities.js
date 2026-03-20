@@ -9,6 +9,7 @@ export const default_log_options = (
   name: name,
   level: 'warn',
   sync: false,
+  timestamp: () => `,"time":"${new Date().toISOString()}"`,
   transport: {
     target: 'pino-pretty',
     options: {
@@ -27,6 +28,8 @@ export const default_log_options = (
  * @param {pino.Logger} logger - A pino logger instance.
  * @returns {Promise<Object|null>} A promise resolving to a dictionary (object) of the request response if successful, or null.
  */
+let globalFetchQueue = Promise.resolve()
+
 export async function handleFetchJson(
   url,
   sleep = 0,
@@ -34,31 +37,38 @@ export async function handleFetchJson(
 ) {
   logger.info(`HTTP request with: ${url}`)
 
-  await new Promise((resolve) => setTimeout(resolve, sleep * 1000))
-
-  try {
-    const response = await fetch(url, {
-      headers: {
-        Accept: 'application/json',
-      },
-    })
-
-    if (!response.ok) {
-      // Emulate response.raise_for_status()
-      throw new Error(`HTTP error! status: ${response.status}`)
+  const executeFetch = async () => {
+    if (sleep > 0) {
+      await new Promise((resolve) => setTimeout(resolve, sleep * 1000))
     }
 
-    const data = await response.json()
-    logger.debug(`${url} response: ${data}`)
-    return data
-  } catch (err) {
-    if (err.message && err.message.startsWith('HTTP error')) {
-      logger.error(`HTTP error occurred: ${err}`)
-    } else {
-      logger.error(`Other error occurred: ${err}; cause: ${err.cause}`)
+    try {
+      const response = await fetch(url, {
+        headers: {
+          Accept: 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        // Emulate response.raise_for_status()
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      logger.debug(`${url} response: ${data}`)
+      return data
+    } catch (err) {
+      if (err.message && err.message.startsWith('HTTP error')) {
+        logger.error(`HTTP error occurred: ${err}`)
+      } else {
+        logger.error(`Other error occurred: ${err}; cause: ${err.cause}`)
+      }
+      return null
     }
-    return null
   }
+
+  globalFetchQueue = globalFetchQueue.then(executeFetch).catch(() => null)
+  return globalFetchQueue
 }
 
 /**
