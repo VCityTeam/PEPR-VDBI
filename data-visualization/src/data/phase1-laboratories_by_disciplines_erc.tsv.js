@@ -7,6 +7,6 @@ await workbook.xlsx.readFile(
   'src/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
 )
 
-const data = extractPhase1Workbook(workbook)
+const data = await extractPhase1Workbook(workbook)
 
 process.stdout.write(tsvFormat(data.laboratories_by_disciplines_erc))

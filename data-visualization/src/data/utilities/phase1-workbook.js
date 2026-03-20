@@ -9,6 +9,7 @@ import {
 } from './data_utilities.js'
 import { v4 as uuidv4 } from 'uuid'
 import { queryAndFormatRE } from './siret_api.js'
+import { queryAndFormatESR } from './rnsr_api.js'
 
 /**
  * Extract data from the GÉNÉRALITÉ sheet
@@ -346,62 +347,62 @@ export function resolveResearcherEntities(
   )
 }
 
+export function resolveResearcherByKeywords(researchers) {
+  let researcher_by_keywords = []
+  researchers.forEach((researcher) => {
+    researcher_by_keywords = researcher_by_keywords.concat(
+      researcher.keywords.map((keyword) => ({
+        researcher: researcher.id,
+        keyword: keyword,
+      })),
+    )
+  })
+  return researcher_by_keywords
+}
+
 /**
  * Format known entities from the Liste des labo sheet
  *
  * @param {Object[]} sheet - Extracted sheet data
- * @param {boolean} pseudoanonymize - Anonymize data or not
- * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Object[]} Formatted sheet data
  */
-export function resolveLabEntities(
-  sheet,
-  anonymize = false,
-  pseudoanonymousDict = new Map(),
-) {
-  return map(sheet, (d) => {
-    const lab = {
-      id: d['Identifiant Laboratoire']
-        ? d['Identifiant Laboratoire'].split(' ')[0]
-        : null,
-      umr: d['Identifiant Laboratoire'].match(/UMR \d*/g)
-        ? d['Identifiant Laboratoire'].match(/UMR \d*/g)[0]
-        : null,
-      lab: cleanDatum(d['Identifiant Laboratoire']),
-      name: cleanDatum(d['Nom Laboratoire']),
-      institution: filterEmptyArray([
-        d['C'],
-        d['D'],
-        d['E'],
-        d['F'],
-        d['G'],
-        d['H'],
-        d['I'],
-        d['J'],
-        d['K'],
-      ]),
-    }
-    if (anonymize) {
-      lab.lab = pseudoanonymizeEntry(lab.lab, pseudoanonymousDict, 'highelf')
-      lab.name = pseudoanonymizeEntry(lab.name, pseudoanonymousDict, 'gnome')
-      for (let index = 0; index < lab.institution.length; index++) {
-        lab.institution[index] = pseudoanonymizeEntry(
-          lab.institution[index],
-          pseudoanonymousDict,
-          'dwarf',
-        )
+export async function resolveLabEntities(sheet) {
+  return Promise.all(
+    map(sheet, async (d) => {
+      const lab = {
+        id: d['Identifiant Laboratoire']
+          ? d['Identifiant Laboratoire'].split(' ')[0]
+          : null,
+        umr: d['Identifiant Laboratoire'].match(/UMR \d*/g)
+          ? d['Identifiant Laboratoire'].match(/UMR \d*/g)[0]
+          : null,
+        lab: cleanDatum(d['Identifiant Laboratoire']),
+        name: cleanDatum(d['Nom Laboratoire']),
+        institution: filterEmptyArray([
+          d['C'],
+          d['D'],
+          d['E'],
+          d['F'],
+          d['G'],
+          d['H'],
+          d['I'],
+          d['J'],
+          d['K'],
+        ]),
+        ...(await queryAndFormatESR(
+          d['Identifiant Laboratoire'],
+          'aap1_export',
+        )),
       }
-    }
-    return lab
-  })
+      return lab
+    }),
+  )
 }
 
 /**
  * Format known entities from the Liste des établissements sheet
  *
  * @param {Object[]} sheet - Extracted sheet data
- * @param {boolean} pseudoanonymize - Anonymize data or not
- * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Object[]} Formatted sheet data
  */
 export async function resolveInstitutionEntities(sheet) {
@@ -455,20 +456,13 @@ export async function extractPhase1Workbook(
       )),
   )
 
-  const laboratories = resolveLabEntities(
-    getLabSheet(workbook),
-    pseudoanonymize,
-    pseudoanonymousDict,
-  ).filter((lab) =>
-    onlyFinanced ? projects.some(({ labs }) => labs.includes(lab.lab)) : true,
+  const laboratories = (await resolveLabEntities(getLabSheet(workbook))).filter(
+    (lab) =>
+      onlyFinanced ? projects.some(({ labs }) => labs.includes(lab.lab)) : true,
   )
 
   const universities = (
-    await resolveInstitutionEntities(
-      getInstitutionSheet(workbook),
-      pseudoanonymize,
-      pseudoanonymousDict,
-    )
+    await resolveInstitutionEntities(getInstitutionSheet(workbook))
   ).filter((university) =>
     onlyFinanced
       ? projects.some(({ institutions }) =>
@@ -476,17 +470,6 @@ export async function extractPhase1Workbook(
         )
       : true,
   )
-
-  // Extract keywords from researchers
-  let researcher_by_keywords = []
-  researchers.forEach((researcher) => {
-    researcher_by_keywords = researcher_by_keywords.concat(
-      researcher.keywords.map((keyword) => ({
-        researcher: researcher.id,
-        keyword: keyword,
-      })),
-    )
-  })
 
   // Extract socioeconomic partners from projects
   const socioeconomic_partners = [
@@ -578,7 +561,7 @@ export async function extractPhase1Workbook(
   return {
     projects,
     researchers,
-    researcher_by_keywords,
+    researcher_by_keywords: resolveResearcherByKeywords(researchers),
     laboratories,
     project_by_laboratories,
     laboratories_by_domains_erc: merge(

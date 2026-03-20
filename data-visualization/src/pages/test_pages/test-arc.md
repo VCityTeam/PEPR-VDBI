@@ -60,7 +60,7 @@ To reduce the amount of information displayed we apply a filter to retain only r
 ```js echo
 const anonymize = false
 const anonymizeDict = new Map()
-const researcher_data = extractPhase1Workbook(
+const researcher_data = await extractPhase1Workbook(
   workbook,
   false,
 ).researchers.filter((d) => d.project.includes('VF++'))

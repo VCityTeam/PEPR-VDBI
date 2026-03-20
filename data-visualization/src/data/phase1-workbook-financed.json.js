@@ -6,6 +6,6 @@ await workbook.xlsx.readFile(
   'src/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
 )
 
-const data = extractPhase1Workbook(workbook, { onlyFinanced: true })
+const data = await extractPhase1Workbook(workbook, { onlyFinanced: true })
 
 process.stdout.write(JSON.stringify(data))

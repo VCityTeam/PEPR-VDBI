@@ -6,7 +6,7 @@ const projects_query = `
     DOCID,
     STATUT,
     TYPDOC,
-    -- type_projet,
+    type_projet,
     "Titre court" as acronyme,
     TITLE as name_fr,
     case

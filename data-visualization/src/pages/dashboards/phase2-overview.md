@@ -395,26 +395,16 @@ const aap2_project_partners_sort = Generators.input(
   </div>
 </div>
 
-```sql id=aap1_institutions_count display
-select *
-  -- siret as id,
-  -- if(first(nom_complet) is null, first(university), first(nom_complet)) as label,
-  -- count(*) as count
+```sql id=aap1_institutions_count
+select
+  siret as id,
+  if(first(nom_complet) is null, first(university), first(nom_complet)) as label,
+  count(*) as count
 from aap1_project_by_institutions
   left join aap1_institutions
   on aap1_project_by_institutions.university = aap1_institutions.name
--- where project in (select acronyme from aap1_projects where financed)
--- group by siret
-```
-
-```sql display
-select *
-  -- siret as id,
-  -- if(first(nom_complet) is null, first(university), first(nom_complet)) as label,
-  -- count(*) as count
-from aap1_institutions
--- where project in (select acronyme from aap1_projects where financed)
--- group by siret
+where project in (select acronyme from aap1_projects where financed)
+group by siret
 ```
 
 ```sql id=aap1_laboratories_count display
