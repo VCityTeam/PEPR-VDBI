@@ -370,7 +370,8 @@ const aap2_project_partners_sort = Generators.input(
       aap1_laboratories_count,
       {
         width,
-        marginLeft: 100,
+        marginLeft: 120,
+        lineWidth: 10,
         y_label: "Unité (Sigle / RNSR)",
         x_label: "N° Occurences",
         sort_value: aap1_laboratories_sort,
@@ -397,31 +398,46 @@ const aap2_project_partners_sort = Generators.input(
 
 ```sql id=aap1_institutions_count
 select
-  siret as id,
-  if(first(nom_complet) is null, first(university), first(nom_complet)) as label,
+  if(siret is null, '', siret::VARCHAR) as id,
+  university as label,
   count(*) as count
 from aap1_project_by_institutions
   left join aap1_institutions
   on aap1_project_by_institutions.university = aap1_institutions.name
 where project in (select acronyme from aap1_projects where financed)
-group by siret
+  and university is not null
+group by siret, university
 ```
 
-```sql id=aap1_laboratories_count display
-select *
-  -- id,
-  -- if(sigle is null, split(labels, ',')[1], sigle) as label,
-  -- count
-from aap1_laboratories
+```sql id=aap1_laboratories_count
+select
+  if(
+    numero_national_de_structure is null,
+    '',
+    numero_national_de_structure::VARCHAR
+  ) as id,
+  name as label,
+  count(*) as count
+from aap1_project_by_laboratories
+  left join aap1_laboratories
+  on aap1_project_by_laboratories.lab = aap1_laboratories.lab
+where project in (select acronyme from aap1_projects where financed)
+  and aap1_laboratories.lab is not null
+group by numero_national_de_structure, name
 ```
 
-```sql id=aap1_partners_count display
-select *
-  -- id,
-  -- if(nom_complet is null, split(labels, ',')[1], nom_complet) as label,
-  -- count
-from aap1_socioeconomic_partners
-where id is not null and length(id) = 14
+```sql id=aap1_partners_count
+select
+  -- *
+  if(siret is null, '', siret::VARCHAR) as id,
+  label,
+  count(*) as count
+from aap1_project_by_socioeconomic_partners
+  left join aap1_socioeconomic_partners
+  on aap1_project_by_socioeconomic_partners.partner = aap1_socioeconomic_partners.label
+where project in (select acronyme from aap1_projects where financed)
+  and label is not null
+group by siret, label
 ```
 
 ```js
@@ -658,20 +674,35 @@ TBD
 
 ## Data quality
 
+### AAP1
+
+TBD
+
+### AAP2
+
 <div class="grid grid-cols-3">
   <div class="card">
     <h3>Missing Institution SIRETs</h3>
-    ${missing_institution_siret.count}
+    ${missing_institution_siret.count} /
+    ${[...await sql`
+      select count(*) as count from aap2_institutions
+    `][0].count.toLocaleString()}
     <!-- $ -->
   </div>
   <div class="card">
     <h3>Missing Laboratories SIRETs</h3>
-    ${missing_laboratories_siret.count}
+    ${missing_laboratories_siret.count} /
+    ${[...await sql`
+      select count(*) as count from aap2_laboratories
+    `][0].count.toLocaleString()}
     <!-- $ -->
   </div>
   <div class="card">
     <h3>Missing Partner SIRETs</h3>
-    ${missing_partner_siret.count}
+    ${missing_partner_siret.count} /
+    ${[...await sql`
+      select count(*) as count from aap2_socioeconomic_partners
+    `][0].count.toLocaleString()}
     <!-- $ -->
   </div>
 </div>

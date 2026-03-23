@@ -1,11 +1,10 @@
-import ExcelJS from 'exceljs'
-import { extractPhase1Workbook } from './utilities/phase1-workbook.js'
+import { readFile } from 'node:fs/promises'
+import { fileURLToPath } from 'node:url'
+import { tsvFormat } from 'd3-dsv'
 
-const workbook = new ExcelJS.Workbook()
-await workbook.xlsx.readFile(
-  'src/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
+const data = await readFile(
+  fileURLToPath(import.meta.resolve('./private/phase1-workbook.json')),
+  'utf-8',
 )
 
-const data = await extractPhase1Workbook(workbook, { onlyFinanced: true })
-
-process.stdout.write(JSON.stringify(data))
+process.stdout.write(tsvFormat(JSON.parse(data).projects))

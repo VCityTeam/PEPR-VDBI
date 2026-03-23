@@ -11,7 +11,8 @@
       "a",
       "span",
       "code",
-      "figcaption"
+      "figcaption",
+      "br"
     ]
   },
   "first-line-h1": false,

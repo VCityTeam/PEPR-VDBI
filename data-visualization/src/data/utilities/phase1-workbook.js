@@ -389,10 +389,12 @@ export async function resolveLabEntities(sheet) {
           d['J'],
           d['K'],
         ]),
-        ...(await queryAndFormatESR(
-          d['Identifiant Laboratoire'],
-          'aap1_export',
-        )),
+        ...(d['Identifiant Laboratoire']
+          ? await queryAndFormatESR(
+              d['Identifiant Laboratoire'].split(' ')[0],
+              'aap1_export',
+            )
+          : {}),
       }
       return lab
     }),
@@ -411,6 +413,15 @@ export async function resolveInstitutionEntities(sheet) {
       const name = cleanDatum(d['Nom des établissements'])
       const response = await queryAndFormatRE(name, 'aap1_export')
       return { name, ...response }
+    }),
+  )
+}
+
+export async function enrichSocioeconomicPartnersEntities(partners) {
+  return Promise.all(
+    map(partners, async (d) => {
+      const response = await queryAndFormatRE(d, 'aap1_export')
+      return { label: d, ...response }
     }),
   )
 }
@@ -472,9 +483,9 @@ export async function extractPhase1Workbook(
   )
 
   // Extract socioeconomic partners from projects
-  const socioeconomic_partners = [
+  const socioeconomic_partners = await enrichSocioeconomicPartnersEntities([
     ...new Set(projects.flatMap(({ partners }) => partners)),
-  ].map((d) => ({ label: d }))
+  ])
 
   let project_by_socioeconomic_partners = []
   projects.forEach((project) => {

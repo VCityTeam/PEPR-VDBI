@@ -1,3 +1,4 @@
+import { line } from 'd3'
 import * as Inputs from 'npm:@observablehq/inputs'
 import * as Plot from 'npm:@observablehq/plot'
 // import * as d3 from 'npm:d3'
@@ -110,8 +111,9 @@ export const partnerCountPlot = (
   {
     width,
     height = 400,
-    marginLeft = 220,
+    marginLeft = 200,
     limit = 15,
+    lineWidth = 18,
     x_label,
     y_label,
     sort_value,
@@ -139,6 +141,7 @@ export const partnerCountPlot = (
       zero: true,
     },
     marks: [
+      // bars
       Plot.barX(data, {
         x: x_accessor,
         y: y_accessor,
@@ -147,6 +150,7 @@ export const partnerCountPlot = (
         sort: { y: sort_value, limit: limit },
         tip: true,
       }),
+      // axis labels
       Plot.axisY({
         tickFormat: null,
       }),
@@ -160,10 +164,11 @@ export const partnerCountPlot = (
         },
         textAnchor: 'end',
         textOverflow: 'ellipsis-middle',
-        lineWidth: 20,
+        lineWidth: lineWidth,
         dx: -10,
         sort: { y: sort_value, limit: limit },
       }),
+      // id labels
       Plot.text(data, {
         x: x_accessor,
         y: y_accessor,
@@ -175,6 +180,8 @@ export const partnerCountPlot = (
         },
         fill: 'white',
         textAnchor: 'end',
+        lineWidth: lineWidth,
+        textOverflow: 'ellipsis-middle',
         dx: -5,
         sort: { y: sort_value, limit: limit },
       }),
@@ -189,6 +196,8 @@ export const partnerCountPlot = (
         },
         // fill: 'white',
         textAnchor: 'start',
+        lineWidth: lineWidth,
+        textOverflow: 'ellipsis-middle',
         dx: 5,
         sort: { y: sort_value, limit: limit },
       }),
