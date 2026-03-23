@@ -348,7 +348,7 @@ const aap2_project_partners_sort = Generators.input(
 
 <div class="grid grid-cols-3">
   <div class="card">
-    <h2>Top 15 institutions par n° d'occurences</h2>
+    <h2>Top 15 AAP 1 institutions financées par n° d'occurences</h2>
     ${aap1_universities_sort_input}
     <!-- $ -->
     ${resize((width) => overview.partnerCountPlot(
@@ -363,24 +363,25 @@ const aap2_project_partners_sort = Generators.input(
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 unités de recherche par n° d'occurences</h2>
+    <h2>Top 15 AAP 1 unités de recherche financées par n° d'occurences</h2>
     ${aap1_laboratories_sort_input}
     <!-- $ -->
     ${resize((width) => overview.partnerCountPlot(
       aap1_laboratories_count,
       {
         width,
-        marginLeft: 120,
-        lineWidth: 10,
+        marginLeft: 150,
+        lineWidth: 13,
         y_label: "Unité (Sigle / RNSR)",
         x_label: "N° Occurences",
         sort_value: aap1_laboratories_sort,
+        textOverflow: 'ellipsis',
       }
     ))}
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 partnaires par n° d'occurences</h2>
+    <h2>Top 15 AAP 1 partnaires financés par n° d'occurences</h2>
     ${aap1_partners_sort_input}
     <!-- $ -->
     ${resize((width) => overview.partnerCountPlot(
@@ -399,14 +400,14 @@ const aap2_project_partners_sort = Generators.input(
 ```sql id=aap1_institutions_count
 select
   if(siret is null, '', siret::VARCHAR) as id,
-  university as label,
+  if(nom_complet is null, university, nom_complet) as label,
   count(*) as count
 from aap1_project_by_institutions
   left join aap1_institutions
-  on aap1_project_by_institutions.university = aap1_institutions.name
+  on aap1_project_by_institutions.university = aap1_institutions.label
 where project in (select acronyme from aap1_projects where financed)
   and university is not null
-group by siret, university
+group by siret, nom_complet, university
 ```
 
 ```sql id=aap1_laboratories_count
@@ -416,14 +417,22 @@ select
     '',
     numero_national_de_structure::VARCHAR
   ) as id,
-  name as label,
+  if(
+    libelle is null,
+    label[12:],
+    if(
+      first(sigle) is not null,
+      first(sigle),
+      libelle
+    )
+  ) as label,
   count(*) as count
 from aap1_project_by_laboratories
   left join aap1_laboratories
-  on aap1_project_by_laboratories.lab = aap1_laboratories.lab
+  on aap1_project_by_laboratories.lab = aap1_laboratories.label
 where project in (select acronyme from aap1_projects where financed)
-  and aap1_laboratories.lab is not null
-group by numero_national_de_structure, name
+  and label is not null
+group by numero_national_de_structure, libelle, label
 ```
 
 ```sql id=aap1_partners_count
@@ -453,7 +462,7 @@ const aap1_partners_sort = Generators.input(aap1_partners_sort_input)
 
 <div class="grid grid-cols-3">
   <div class="card">
-    <h2>Top 15 institutions par n° d'occurences</h2>
+    <h2>Top 15 AAP 2 institutions par n° d'occurences</h2>
     ${aap2_universities_sort_input}
     <!-- $ -->
     ${resize((width) => overview.partnerCountPlot(
@@ -468,7 +477,7 @@ const aap1_partners_sort = Generators.input(aap1_partners_sort_input)
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 unités de recherche par n° d'occurences</h2>
+    <h2>Top 15 AAP 2 unités de recherche par n° d'occurences</h2>
     ${aap2_laboratories_sort_input}
     <!-- $ -->
     ${resize((width) => overview.partnerCountPlot(
@@ -484,7 +493,7 @@ const aap1_partners_sort = Generators.input(aap1_partners_sort_input)
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 partnaires par n° d'occurences</h2>
+    <h2>Top 15 AAP 2 partnaires par n° d'occurences</h2>
     ${aap2_partners_sort_input}
     <!-- $ -->
     ${resize((width) => overview.partnerCountPlot(

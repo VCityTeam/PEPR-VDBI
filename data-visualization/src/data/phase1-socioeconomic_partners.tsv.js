@@ -1,31 +1,20 @@
-// import { readFile } from 'node:fs/promises'
-// import { fileURLToPath } from 'node:url'
+import { group } from 'd3'
 import { tsvFormat } from 'd3-dsv'
-import {
-  resolveGeneralEntities,
-  getGeneralSheet,
-  enrichSocioeconomicPartnersEntities,
-} from './utilities/phase1-workbook.js'
+import { getPartnersSheet } from './utilities/partenaires_aap2023.js'
+import { queryAndFormatRE } from './utilities/siret_api.js'
 import ExcelJS from 'exceljs'
 
-// const data = await readFile(
-//   fileURLToPath(import.meta.resolve('./private/phase1-workbook.json')),
-//   'utf-8',
-// )
-
 const workbook = new ExcelJS.Workbook()
-await workbook.xlsx.readFile(
-  'src/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
-)
+await workbook.xlsx.readFile('src/data/private/partenaires_aap2023.xlsx')
 
-const projects = resolveGeneralEntities(getGeneralSheet(workbook))
+const partners = group(getPartnersSheet(workbook), (d) => d.type)
 
-const partners = [...new Set(projects.flatMap(({ partners }) => partners))]
-
-const socioeconomic_partners =
-  await enrichSocioeconomicPartnersEntities(partners)
-
-// console.log(socioeconomic_partners)
-// console.log(JSON.parse(data).socioeconomic_partners)
-
-process.stdout.write(tsvFormat(socioeconomic_partners))
+Promise.allSettled(
+  partners.get('SOCIOECONOMIQUE').map(async (d) => {
+    const label = d.label
+    const response = await queryAndFormatRE(d['ID primaire'], 'aap1_export')
+    return { label, ...response }
+  }),
+).then((results) => {
+  process.stdout.write(tsvFormat(results.map((r) => r.value)))
+})

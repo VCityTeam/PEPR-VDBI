@@ -435,7 +435,7 @@ export async function enrichSocioeconomicPartnersEntities(partners) {
  * @param {boolean} onlyFinanced - Filter out non-financed projects?
  * @returns {Object[]} An object containing formatted tables
  */
-export async function extractPhase1Workbook(
+export function extractPhase1Workbook(
   workbook,
   {
     pseudoanonymize = false,
@@ -467,25 +467,31 @@ export async function extractPhase1Workbook(
       )),
   )
 
-  const laboratories = (await resolveLabEntities(getLabSheet(workbook))).filter(
-    (lab) =>
-      onlyFinanced ? projects.some(({ labs }) => labs.includes(lab.lab)) : true,
-  )
+  const laboratories =
+    // (await resolveLabEntities(
+    getLabSheet(workbook)
+      // ))
+      .filter((lab) =>
+        onlyFinanced
+          ? projects.some(({ labs }) => labs.includes(lab.lab))
+          : true,
+      )
 
-  const universities = (
-    await resolveInstitutionEntities(getInstitutionSheet(workbook))
-  ).filter((university) =>
-    onlyFinanced
-      ? projects.some(({ institutions }) =>
-          institutions.includes(university.name),
-        )
-      : true,
-  )
+  const universities = getInstitutionSheet(workbook)
+    // await resolveInstitutionEntities(getInstitutionSheet(workbook))
+    .filter((university) =>
+      onlyFinanced
+        ? projects.some(({ institutions }) =>
+            institutions.includes(university.name),
+          )
+        : true,
+    )
 
   // Extract socioeconomic partners from projects
-  const socioeconomic_partners = await enrichSocioeconomicPartnersEntities([
-    ...new Set(projects.flatMap(({ partners }) => partners)),
-  ])
+  const socioeconomic_partners =
+    // await enrichSocioeconomicPartnersEntities(
+    [...new Set(projects.flatMap(({ partners }) => partners))]
+  // )
 
   let project_by_socioeconomic_partners = []
   projects.forEach((project) => {
