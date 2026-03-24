@@ -55,15 +55,27 @@ import { donutChart } from '../../components/pie-chart.js'
 
 ## Chiffres clés
 
+```sql
+select * from aap1_institutions
+```
+
+```sql
+select * from aap1_project_by_institutions
+```
+
 <div class="grid grid-cols-4">
   <div class="card">
     <h2>N° Projets AAP 1 <span class="muted">(Totale / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
-        ${[...await sql`select count(*) as count from aap1_projects`][0].count.toLocaleString()}
+        ${[...await sql`
+          select count(*) as count from aap1_projects
+        `][0].count.toLocaleString()}
         <!-- $ -->
       </span> /
-      ${[...await sql`select count(*) as count from aap1_projects where financed`][0].count.toLocaleString()}
+      ${[...await sql`
+        select count(*) as count from aap1_projects where financed
+      `][0].count.toLocaleString()}
       <!-- $ -->
     </span>
   </div>
@@ -71,15 +83,19 @@ import { donutChart } from '../../components/pie-chart.js'
     <h2>N° Intitutions AAP 1 <span class="muted">(Totale / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
-        ${[...await sql`select count(*) as count from aap1_institutions`][0].count.toLocaleString()}
+        ${[...await sql`
+          select count(*) as count from aap1_institutions
+        `][0].count.toLocaleString()}
         <!-- $ -->
       </span> /
       ${[...await sql`
-        select count(*) as count
+        select count(distinct university) as count
         from aap1_project_by_institutions
-        join aap1_projects
-        on aap1_project_by_institutions.project = aap1_projects.acronyme
-        where financed
+        where project in (
+          select acronyme
+          from aap1_projects
+          where financed
+        )
       `][0].count.toLocaleString()}
       <!-- $ -->
     </span>
@@ -88,15 +104,23 @@ import { donutChart } from '../../components/pie-chart.js'
     <h2>N° Unités AAP 1 <span class="muted">(Totale / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
-        ${[...await sql`select count(*) as count from aap1_laboratories`][0].count.toLocaleString()}
+        ${[...await sql`
+          select count(*) as count from aap1_laboratories
+        `][0].count.toLocaleString()}
         <!-- $ -->
       </span> /
       ${[...await sql`
         select count(*) as count
         from aap1_project_by_laboratories
-        join aap1_projects
-        on aap1_project_by_laboratories.project = aap1_projects.acronyme
-        where financed
+        where label in (
+          select university
+          from aap1_project_by_institutions
+          where project in (
+            select acronyme
+            from aap1_projects
+            where financed
+          )
+        )
       `][0].count.toLocaleString()}
       <!-- $ -->
     </span>
@@ -105,16 +129,18 @@ import { donutChart } from '../../components/pie-chart.js'
     <h2>N° Partenaires AAP 1 <span class="muted">(Totale / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
-        ${[...await sql`select count(*) as count from aap1_socioeconomic_partners`][0].count.toLocaleString()}
+        <!-- ${[...await sql`
+          select count(*) as count from aap1_socioeconomic_partners`][
+        0].count.toLocaleString()} -->
         <!-- $ -->
       </span> /
-      ${[...await sql`
+      <!-- ${[...await sql`
         select count(*) as count
         from aap1_project_by_socioeconomic_partners
         join aap1_projects
         on aap1_project_by_socioeconomic_partners.project = aap1_projects.acronyme
         where financed
-      `][0].count.toLocaleString()}
+      `][0].count.toLocaleString()} -->
       <!-- $ -->
     </span>
   </div>
@@ -125,7 +151,9 @@ import { donutChart } from '../../components/pie-chart.js'
     <h2>N° Projets AAP 2 <span class="muted">(Totale / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
-        ${[...await sql`select count(*) as count from aap2_projects`][0].count.toLocaleString()}
+        ${[...await sql`
+          select count(*) as count from aap2_projects
+        `][0].count.toLocaleString()}
         <!-- $ -->
       </span> / 0
       <!-- ${financed_project_count.c.toLocaleString()} -->
@@ -136,7 +164,9 @@ import { donutChart } from '../../components/pie-chart.js'
     <h2>N° Intitutions AAP 2 <span class="muted">(Totale / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
-        ${[...await sql`select count(*) as count from aap2_institutions`][0].count.toLocaleString()}
+        ${[...await sql`
+          select count(*) as count from aap2_institutions
+        `][0].count.toLocaleString()}
         <!-- $ -->
       </span> / 0
       <!-- ${financed_university_data.size.toLocaleString()} -->
@@ -147,7 +177,9 @@ import { donutChart } from '../../components/pie-chart.js'
     <h2>N° Unités AAP 2 <span class="muted">(Totale / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
-        ${[...await sql`select count(*) as count from aap2_laboratories`][0].count.toLocaleString()}
+        ${[...await sql`
+          select count(*) as count from aap2_laboratories
+        `][0].count.toLocaleString()}
         <!-- $ -->
       </span> / 0
       <!-- ${financed_laboratory_data.size.toLocaleString()} -->
@@ -158,7 +190,9 @@ import { donutChart } from '../../components/pie-chart.js'
     <h2>N° Partenaires AAP 2 <span class="muted">(Totale / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
-        ${[...await sql`select count(*) as count from aap2_socioeconomic_partners`][0].count.toLocaleString()}
+        ${[...await sql`
+          select count(*) as count from aap2_socioeconomic_partners
+        `][0].count.toLocaleString()}
         <!-- $ -->
       </span> / 0
       <!-- ${financed_partner_data.size.toLocaleString()} -->
@@ -693,6 +727,7 @@ TBD
   <div class="card">
     <h3>Missing Institution SIRETs</h3>
     ${missing_institution_siret.count} /
+    <!-- $ -->
     ${[...await sql`
       select count(*) as count from aap2_institutions
     `][0].count.toLocaleString()}
@@ -701,6 +736,7 @@ TBD
   <div class="card">
     <h3>Missing Laboratories SIRETs</h3>
     ${missing_laboratories_siret.count} /
+    <!-- $ -->
     ${[...await sql`
       select count(*) as count from aap2_laboratories
     `][0].count.toLocaleString()}
@@ -709,12 +745,44 @@ TBD
   <div class="card">
     <h3>Missing Partner SIRETs</h3>
     ${missing_partner_siret.count} /
+    <!-- $ -->
     ${[...await sql`
       select count(*) as count from aap2_socioeconomic_partners
     `][0].count.toLocaleString()}
     <!-- $ -->
   </div>
+  <div class="card grid-rowspan-2">
+    <h3>Project type inconsistencies</h3>
+    ${Inputs.table(
+      await sql`
+        select acronyme, TYPDOC, type_projet
+        from aap2_projects
+        where (TYPDOC = 'PITT - Trio de Thèses' and type_projet != 'Choice1')
+        or (TYPDOC = 'PITT - Interdisciplinaire' and type_projet != 'Choice2')
+      `, {
+        rows: 3,
+      }
+    )}
+    <!-- $ -->
+  </div>
 </div>
+
+```js
+const project_type_inconsistencies = await sql`
+  select acronyme, TYPDOC, type_projet
+  from aap2_projects
+  where (TYPDOC = 'PITT - Trio de Thèses' and type_projet != 'Choice1')
+  or (TYPDOC = 'PITT - Interdisciplinaire' and type_projet != 'Choice2')
+`
+
+// const project_type_inconsistencies_plot = Inputs.table(
+//   project_type_inconsistencies,
+// {
+//   maxWidth: width,
+//   maxHeight: height,
+// }
+// )
+```
 
 ```sql id=[missing_institution_siret]
 select count(*) as count
@@ -775,22 +843,81 @@ select * from aap2_projects
 ```sql id=laboratories
 select * from (
   select
-    id,
-    -- umr,
-    lab as labels,
-    -- name,
-    -- institution,
-    -- domain_erc,
-    -- domain_hceres
-    1 as aap,
+    source_label,
+    source,
+    numero_national_de_structure,
+    libelle,
+    sigle,
+    annee_de_creation,
+    type_de_structure,
+    code_de_type_de_structure,
+    code_de_niveau_de_structure,
+    site_web,
+    adresse,
+    code_postal,
+    commune,
+    nom_du_responsable,
+    prenom_du_responsable,
+    titre_du_responsable,
+    label_numero,
+    tutelles,
+    sigles_des_tutelles,
+    code_de_nature_de_tutelle,
+    nature_de_tutelle,
+    uai_des_tutelles,
+    siret_des_tutelles,
+    code_de_type_de_tutelle,
+    type_de_tutelle,
+    numero_de_structure_enfant,
+    numero_de_structure_parent,
+    numero_de_structure_historique,
+    type_de_succession,
+    code_de_type_de_succession,
+    annee_d_effet_historique,
+    code_domaine_scientifique,
+    domaine_scientifique,
+    code_panel_erc,
+    panel_erc,
+    fiche_rnsr,
   from aap1_laboratories
 ) union (
   select
-    id,
-    -- null as umr,
-    labels,
-    -- null as name,
-    2 as aap,
+    source_label,
+    source,
+    numero_national_de_structure,
+    libelle,
+    sigle,
+    annee_de_creation,
+    type_de_structure,
+    code_de_type_de_structure,
+    code_de_niveau_de_structure,
+    site_web,
+    adresse,
+    code_postal,
+    commune,
+    nom_du_responsable,
+    prenom_du_responsable,
+    titre_du_responsable,
+    label_numero,
+    tutelles,
+    sigles_des_tutelles,
+    code_de_nature_de_tutelle,
+    nature_de_tutelle,
+    uai_des_tutelles,
+    siret_des_tutelles,
+    code_de_type_de_tutelle,
+    type_de_tutelle,
+    numero_de_structure_enfant,
+    numero_de_structure_parent,
+    numero_de_structure_historique,
+    type_de_succession,
+    code_de_type_de_succession,
+    annee_d_effet_historique,
+    code_domaine_scientifique,
+    domaine_scientifique,
+    code_panel_erc,
+    panel_erc,
+    fiche_rnsr,
   from aap2_laboratories
 )
 ```
@@ -798,15 +925,33 @@ select * from (
 ```sql id=institutions
 (
   select
-    null as id,
-    name as labels,
-    1 as aap,
+    siret,
+    siren,
+    nom_complet,
+    nature_juridique,
+    latitude,
+    longitude,
+    libelle_commune,
+    commune,
+    code_postal,
+    region,
+    source_label,
+    source,
   from aap1_institutions
 ) union (
   select
-    id,
-    labels,
-    2 as aap,
+    siret,
+    siren,
+    nom_complet,
+    nature_juridique,
+    latitude,
+    longitude,
+    libelle_commune,
+    commune,
+    code_postal,
+    region,
+    source_label,
+    source,
   from aap2_institutions
 )
 ```
