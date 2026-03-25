@@ -9,7 +9,7 @@ export const cnu_category_section_map = new Map([
   ['Sciences', all_cnu.slice(25, 70).filter((d) => d <= 37 || d >= 60)],
   [
     'Sections de santé',
-    all_cnu.slice(42, 56).concat([80, 81, 82, 83, 85, 86, 87, 90, 91, 92]),
+    all_cnu.slice(42, 57).concat([80, 81, 82, 83, 85, 86, 87, 90, 91, 92]),
   ],
   ['Pluridisciplinaire', all_cnu.slice(70, 75)],
   ['Théologie', [76, 77]],

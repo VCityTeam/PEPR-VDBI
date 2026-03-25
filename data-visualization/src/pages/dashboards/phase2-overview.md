@@ -6,6 +6,9 @@ sql:
   aap1_laboratories: /data/phase1-laboratories.tsv
   aap1_socioeconomic_partners: /data/phase1-socioeconomic_partners.tsv
   aap1_project_by_keyword: /data/phase1-project_by_keyword.tsv
+  aap1_project_by_challenge: /data/phase1-project_by_challenge.tsv
+  # aap1_project_by_cnu: /data/phase1-project_by_cnu.tsv
+  # aap1_project_by_cnu_labels: /data/phase1-project_by_cnu_labels.tsv
   aap1_project_by_institutions: /data/phase1-project_by_institutions.tsv
   aap1_project_by_laboratories: /data/phase1-project_by_laboratories.tsv
   aap1_laboratories_by_domains_erc: /data/phase1-laboratories_by_domains_erc.tsv
@@ -15,12 +18,14 @@ sql:
   aap1_institutions: /data/phase1-institutions.tsv
   aap1_project_by_socioeconomic_partners: /data/phase1-project_by_socioeconomic_partners.tsv
   aap2_projects: /data/phase2-projects.tsv
-  # aap2_researchers: /data/phase2-researchers.tsv
+  aap2_researchers: /data/phase2-researchers.tsv
   # aap2_researcher_by_keywords: /data/phase2-researcher_by_keywords.tsv
+  aap2_researcher_by_cnu: /data/phase2-researcher_by_cnu.tsv
   aap2_institutions: /data/phase2-institutions.tsv
   aap2_laboratories: /data/phase2-laboratories.tsv
   aap2_socioeconomic_partners: /data/phase2-socioeconomic_partners.tsv
   aap2_project_by_keyword: /data/phase2-project_by_keyword.tsv
+  # aap2_project_by_challenge: /data/phase2-project_by_challenge.tsv
   aap2_project_by_institutions: /data/phase2-project_by_institutions.tsv
   aap2_project_by_laboratories: /data/phase2-project_by_laboratories.tsv
   aap2_project_by_discipline: /data/phase2-project_by_discipline.tsv
@@ -33,9 +38,9 @@ sql:
   aap2_project_by_socioeconomic_partners: /data/phase2-project_by_socioeconomic_partners.tsv
 ---
 
-# Survol des Appels à Projets
+# Résumé des projets PEPR VDBI
 
-## Phase 1 et 2
+## Appels de la phase 1 et 2
 
 ```js
 import * as overview from './aap-overview.js'
@@ -47,25 +52,22 @@ import { bubbleChartX } from '../../components/bubble-chart.js'
 import { donutChart } from '../../components/pie-chart.js'
 ```
 
-<div class="warning" label="Notice sur les données">
+<div class="warning" label="Avertissement sur la qualité des données">
   Les visualisations de données n'ont pas été vérifiées et peuvent contenir des
   erreurs. Considérez ces visualisations comme des estimations et non comme une
   « réalité absolue ».
 </div>
 
+<div class="note" label="Notice">
+  Les chiffres des partenaires socio-économiques comptent également les parties
+  prenantes dans ce page.
+</div>
+
 ## Chiffres clés
-
-```sql
-select * from aap1_institutions
-```
-
-```sql
-select * from aap1_project_by_institutions
-```
 
 <div class="grid grid-cols-4">
   <div class="card">
-    <h2>N° Projets AAP 1 <span class="muted">(Totale / Lauréats)</span></h2>
+    <h2>N° Projets AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
@@ -80,7 +82,7 @@ select * from aap1_project_by_institutions
     </span>
   </div>
   <div class="card">
-    <h2>N° Intitutions AAP 1 <span class="muted">(Totale / Lauréats)</span></h2>
+    <h2>N° Intitutions AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
@@ -89,29 +91,8 @@ select * from aap1_project_by_institutions
         <!-- $ -->
       </span> /
       ${[...await sql`
-        select count(distinct university) as count
-        from aap1_project_by_institutions
-        where project in (
-          select acronyme
-          from aap1_projects
-          where financed
-        )
-      `][0].count.toLocaleString()}
-      <!-- $ -->
-    </span>
-  </div>
-  <div class="card">
-    <h2>N° Unités AAP 1 <span class="muted">(Totale / Lauréats)</span></h2>
-    <span class="big">
-      <span class="muted">
-        ${[...await sql`
-          select count(*) as count from aap1_laboratories
-        `][0].count.toLocaleString()}
-        <!-- $ -->
-      </span> /
-      ${[...await sql`
         select count(*) as count
-        from aap1_project_by_laboratories
+        from aap1_institutions
         where label in (
           select university
           from aap1_project_by_institutions
@@ -126,21 +107,55 @@ select * from aap1_project_by_institutions
     </span>
   </div>
   <div class="card">
-    <h2>N° Partenaires AAP 1 <span class="muted">(Totale / Lauréats)</span></h2>
+    <h2>N° Unités AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
-        <!-- ${[...await sql`
-          select count(*) as count from aap1_socioeconomic_partners`][
-        0].count.toLocaleString()} -->
+        ${[...await sql`
+          select count(*) as count from aap1_laboratories
+        `][0].count.toLocaleString()}
         <!-- $ -->
       </span> /
-      <!-- ${[...await sql`
+      ${[...await sql`
         select count(*) as count
-        from aap1_project_by_socioeconomic_partners
-        join aap1_projects
-        on aap1_project_by_socioeconomic_partners.project = aap1_projects.acronyme
-        where financed
-      `][0].count.toLocaleString()} -->
+        from aap1_laboratories
+        where label in (
+          select lab
+          from aap1_project_by_laboratories
+          where project in (
+            select acronyme
+            from aap1_projects
+            where financed
+          )
+        )
+      `][0].count.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>
+      N° Partenaires socioéconomiques AAP 1
+      <br/><span class="muted">(Soumis / Lauréats)</span>
+    </h2>
+    <span class="big">
+      <span class="muted">
+        ${[...await sql`
+          select count(*) as count from aap1_socioeconomic_partners`][
+        0].count.toLocaleString()}
+        <!-- $ -->
+      </span> /
+      ${[...await sql`
+        select count(*) as count
+        from aap1_socioeconomic_partners
+        where label in (
+          select partner
+          from aap1_project_by_socioeconomic_partners
+          where project in (
+            select acronyme
+            from aap1_projects
+            where financed
+          )
+        )
+      `][0].count.toLocaleString()}
       <!-- $ -->
     </span>
   </div>
@@ -148,7 +163,7 @@ select * from aap1_project_by_institutions
 
 <div class="grid grid-cols-4">
   <div class="card">
-    <h2>N° Projets AAP 2 <span class="muted">(Totale / Lauréats)</span></h2>
+    <h2>N° Projets AAP 2 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
@@ -161,7 +176,7 @@ select * from aap1_project_by_institutions
     </span>
   </div>
   <div class="card">
-    <h2>N° Intitutions AAP 2 <span class="muted">(Totale / Lauréats)</span></h2>
+    <h2>N° Intitutions AAP 2 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
@@ -174,7 +189,7 @@ select * from aap1_project_by_institutions
     </span>
   </div>
   <div class="card">
-    <h2>N° Unités AAP 2 <span class="muted">(Totale / Lauréats)</span></h2>
+    <h2>N° Unités AAP 2 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
@@ -187,7 +202,10 @@ select * from aap1_project_by_institutions
     </span>
   </div>
   <div class="card">
-    <h2>N° Partenaires AAP 2 <span class="muted">(Totale / Lauréats)</span></h2>
+    <h2>
+      N° Partenaires socioéconomiques AAP 2
+      <br/><span class="muted">(Soumis / Lauréats)</span>
+    </h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
@@ -204,6 +222,7 @@ select * from aap1_project_by_institutions
 ## Projets par partenaires
 
 <div class="grid grid-cols-3">
+  <!-- AAP 1 -->
   <div class="card">
     <h2>AAP 1 projets financées par n° d'institutions</h2>
     <br/>
@@ -216,6 +235,7 @@ select * from aap1_project_by_institutions
         y_label: "Projets",
         x_label: "N° Institutions",
         sort_value: aap1_project_universities_sort,
+        max_partner_count: max_institutions_count,
       }
     ))}
     <!-- $ -->
@@ -232,6 +252,7 @@ select * from aap1_project_by_institutions
         y_label: "Projets",
         x_label: "N° Unités",
         sort_value: aap1_project_laboratories_sort,
+        max_partner_count: max_laboratories_count,
       }
     ))}
     <!-- $ -->
@@ -248,6 +269,59 @@ select * from aap1_project_by_institutions
         y_label: "Projets",
         x_label: "N° Partenaires",
         sort_value: aap1_project_partners_sort,
+        max_partner_count: max_socioeconomic_partners_count,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <!-- AAP 2 -->
+  <div class="card">
+    <h2>Top 15 AAP 2 projets par n° d'institutions</h2>
+    <br/>
+    ${aap2_project_universities_sort_input}
+    <!-- $ -->
+    ${resize((width) => overview.projectCountPlot(
+      aap2_project_by_institutions_count,
+      {
+        width,
+        y_label: "Projets",
+        x_label: "N° Institutions",
+        sort_value: aap2_project_universities_sort,
+        max_partner_count: max_institutions_count,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Top 15 AAP 2 projets par n° d'unités</h2>
+    <br/>
+    ${aap2_project_laboratories_sort_input}
+    <!-- $ -->
+    ${resize((width) => overview.projectCountPlot(
+      aap2_project_by_laboratories_count,
+      {
+        width,
+        y_label: "Projets",
+        x_label: "N° Unités",
+        sort_value: aap2_project_laboratories_sort,
+        max_partner_count: max_laboratories_count,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Top 15 AAP 2 projets par n° de partenaires</h2>
+    <br/>
+    ${aap2_project_partners_sort_input}
+    <!-- $ -->
+    ${resize((width) => overview.projectCountPlot(
+      aap2_project_by_socioeconomic_partners_count,
+      {
+        width,
+        y_label: "Projets",
+        x_label: "N° Partenaires",
+        sort_value: aap2_project_partners_sort,
+        max_partner_count: max_socioeconomic_partners_count,
       }
     ))}
     <!-- $ -->
@@ -275,74 +349,6 @@ where project in (select acronyme from aap1_projects where financed)
 group by project
 ```
 
-```js
-const aap1_project_universities_sort_input = overview.ySortSelect()
-const aap1_project_universities_sort = Generators.input(
-  aap1_project_universities_sort_input,
-)
-
-const aap1_project_laboratories_sort_input = overview.ySortSelect()
-const aap1_project_laboratories_sort = Generators.input(
-  aap1_project_laboratories_sort_input,
-)
-
-const aap1_project_partners_sort_input = overview.ySortSelect()
-const aap1_project_partners_sort = Generators.input(
-  aap1_project_partners_sort_input,
-)
-```
-
-<div class="grid grid-cols-3">
-  <div class="card">
-    <h2>Top 15 AAP 2 projets par n° d'institutions</h2>
-    <br/>
-    ${aap2_project_universities_sort_input}
-    <!-- $ -->
-    ${resize((width) => overview.projectCountPlot(
-      aap2_project_by_institutions_count,
-      {
-        width,
-        y_label: "Projets",
-        x_label: "N° Institutions",
-        sort_value: aap2_project_universities_sort,
-      }
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Top 15 AAP 2 projets par n° d'unités</h2>
-    <br/>
-    ${aap2_project_laboratories_sort_input}
-    <!-- $ -->
-    ${resize((width) => overview.projectCountPlot(
-      aap2_project_by_laboratories_count,
-      {
-        width,
-        y_label: "Projets",
-        x_label: "N° Unités",
-        sort_value: aap2_project_laboratories_sort,
-      }
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Top 15 AAP 2 projets par n° de partenaires</h2>
-    <br/>
-    ${aap2_project_partners_sort_input}
-    <!-- $ -->
-    ${resize((width) => overview.projectCountPlot(
-      aap2_project_by_socioeconomic_partners_count,
-      {
-        width,
-        y_label: "Projets",
-        x_label: "N° Partenaires",
-        sort_value: aap2_project_partners_sort,
-      }
-    ))}
-    <!-- $ -->
-  </div>
-</div>
-
 ```sql id=aap2_project_by_institutions_count
 select count(*) as count, project
 from aap2_project_by_institutions
@@ -359,6 +365,40 @@ group by project
 select count(*) as count, project
 from aap2_project_by_socioeconomic_partners
 group by project
+```
+
+```js
+const max_institutions_count = Math.max(
+  ...[...aap1_project_by_institutions_count].map((d) => d.count),
+  ...[...aap2_project_by_institutions_count].map((d) => d.count),
+)
+
+const max_laboratories_count = Math.max(
+  ...[...aap1_project_by_laboratories_count].map((d) => d.count),
+  ...[...aap2_project_by_laboratories_count].map((d) => d.count),
+)
+
+const max_socioeconomic_partners_count = Math.max(
+  ...[...aap1_project_by_socioeconomic_partners_count].map((d) => d.count),
+  ...[...aap2_project_by_socioeconomic_partners_count].map((d) => d.count),
+)
+```
+
+```js
+const aap1_project_universities_sort_input = overview.ySortSelect()
+const aap1_project_universities_sort = Generators.input(
+  aap1_project_universities_sort_input,
+)
+
+const aap1_project_laboratories_sort_input = overview.ySortSelect()
+const aap1_project_laboratories_sort = Generators.input(
+  aap1_project_laboratories_sort_input,
+)
+
+const aap1_project_partners_sort_input = overview.ySortSelect()
+const aap1_project_partners_sort = Generators.input(
+  aap1_project_partners_sort_input,
+)
 ```
 
 ```js
@@ -390,7 +430,7 @@ const aap2_project_partners_sort = Generators.input(
       {
         width,
         y_label: "Institution (label / SIRET)",
-        x_label: "N° Occurences",
+        x_label: "N° Institutions",
         sort_value: aap1_universities_sort,
       }
     ))}
@@ -407,7 +447,7 @@ const aap2_project_partners_sort = Generators.input(
         marginLeft: 150,
         lineWidth: 13,
         y_label: "Unité (Sigle / RNSR)",
-        x_label: "N° Occurences",
+        x_label: "N° Unités",
         sort_value: aap1_laboratories_sort,
         textOverflow: 'ellipsis',
       }
@@ -423,7 +463,7 @@ const aap2_project_partners_sort = Generators.input(
       {
         width,
         y_label: "Partnaire (label / SIRET)",
-        x_label: "N° Occurences",
+        x_label: "N° Partnaires",
         sort_value: aap1_partners_sort,
       }
     ))}
@@ -504,7 +544,7 @@ const aap1_partners_sort = Generators.input(aap1_partners_sort_input)
       {
         width,
         y_label: "Institution (label / SIRET)",
-        x_label: "N° Occurences",
+        x_label: "N° Institutions",
         sort_value: aap2_universities_sort,
       }
     ))}
@@ -520,7 +560,7 @@ const aap1_partners_sort = Generators.input(aap1_partners_sort_input)
         width,
         marginLeft: 100,
         y_label: "Unité (Sigle / RNSR)",
-        x_label: "N° Occurences",
+        x_label: "N° Unités",
         sort_value: aap2_laboratories_sort,
       }
     ))}
@@ -535,7 +575,7 @@ const aap1_partners_sort = Generators.input(aap1_partners_sort_input)
       {
         width,
         y_label: "Partnaire (label / SIRET)",
-        x_label: "N° Occurences",
+        x_label: "N° Partnaires",
         sort_value: aap2_partners_sort,
       }
     ))}
@@ -583,104 +623,227 @@ const aap2_partners_sort = Generators.input(aap2_partners_sort_input)
 
 <div class="grid grid-cols-3">
   <div class="card">
-    ${resize((width) => overview.challengeCountPlot(challenge_count, { width }))}
+    ${resize((width) => overview.totalChallengeCountPlot(
+      challenge_count,
+      { width })
+    )}
+    <!-- $ -->
+  </div>
+  <div class="card grid grid-colspan-2">
+    ${resize((width) => overview.challengeCountPlot(
+      challenge_count,
+      { width })
+    )}
     <!-- $ -->
   </div>
 </div>
 
 ```sql id=challenge_count
 select
+  challenge::VARCHAR as defi,
+  '1' as aap,
+  count(*) as count,
+from aap1_project_by_challenge
+group by challenge
+union
+select
   '1' as defi,
+  '2' as aap,
   count(*) as count
 from aap2_projects
 where defi_1_1 or defi_1_2
 union
 select
   '2' as defi,
+  '2' as aap,
   count(*) as count
 from aap2_projects
 where defi_2_1 or defi_2_2
 union
 select
   '3' as defi,
+  '2' as aap,
   count(*) as count
 from aap2_projects
 where defi_3_1 or defi_3_2
 union
 select
   '4' as defi,
+  '2' as aap,
   count(*) as count
 from aap2_projects
 where defi_4_1 or defi_4_2
 union
 select
   '5' as defi,
+  '2' as aap,
   count(*) as count
 from aap2_projects
 where defi_5_1 or defi_5_2
 union
 select
   '6' as defi,
+  '2' as aap,
   count(*) as count
 from aap2_projects
 where defi_6_1 or defi_6_2
+order by aap
 ```
 
-## Disciplines
+<!-- ## Disciplines
 
 ```sql
 select discipline, count(*) as count from aap2_project_by_discipline
 where discipline != ''
 group by discipline
 order by count desc
-```
+``` -->
 
 ## CNUs
 
-### Legend
+<div class="note">
 
-${disciplines.erc_legend}
+Les sections CNU considérées comme
 
-<!-- $ -->
+- Droit, économie et gestion
+- Pluridisciplinaire
+- Théologie
+
+par le Conseil National des Universités (CNU) sont considérées comme
+_SH - Sciences Humaines & Sociales_ dans ce page.
+
+Pour plus de détails sur les sections du CNU,
+[voir la page CNU](https://conseil-national-des-universites.fr).
+
+</div>
+
+<div class="card" style="width: 32em">
+  <h2>Légende des catégories CNU</h2>
+  ${disciplines.erc_legend()}
+  <!-- $ -->
+</div>
 
 <div class="grid grid-cols-2">
   <div class="card">
-    <h2>Distribution des CNUs par catégorie</h2>
+    <h2>Distribution des CNUs par catégorie de l'AAP 1</h2>
     <br/>
-    ${resize((width, height) => disciplines.erc_donut(
-      aap2_project_by_cnu_erc,
+    ${resize((width) => disciplines.erc_donut(
+      aap1_cnu_count_erc,
       width,
-      height - 50
     ))}
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Distribution des CNUs par catégorie</h2>
+    <h2>Distribution des CNUs par catégorie de l'AAP 2</h2>
     <br/>
-    ${resize((width, height) => disciplines.erc_donut(
-      aap2_project_by_cnu_erc,
+    ${resize((width) => disciplines.erc_donut(
+      aap2_cnu_count_erc,
       width,
-      height - 50
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card grid-rowspan-2">
-    <h2>Distribution des sections CNU</h2>
-    ${resize((width) => disciplines.cnu_plot_by_erc(
-      aap2_project_by_cnu,
-      {
-        width: width,
-        sort: 'y',
-        x_accessor: (d) => d.count,
-        y_accessor: (d) => cnu.cnu_section_label_map.get(Number(d.cnu)) || String(d.cnu),
-        marginTop: 0,
-      }
     ))}
     <!-- $ -->
   </div>
 </div>
 
-```sql id=aap2_project_by_cnu
+<div class="grid grid-cols-2">
+  <div class="card grid-rowspan-2">
+    <h2>Distribution des sections CNU de l'AAP 2</h2>
+    <h3>Distribution détaillée des sections de l'AAP 2 par catégorie</h3>
+    ${disciplines.erc_legend()}
+    <!-- $ -->
+    ${resize((width) => disciplines.cnu_plot_by_erc(
+      aap2_cnu_count,
+      {
+        width: width,
+        sort: 'y',
+        x_accessor: (d) => d.count,
+        y_accessor: (d) =>
+          cnu.cnu_section_label_map.get(Number(d.cnu)) || String(d.cnu),
+        marginTop: 20,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card grid-rowspan-2">
+    <h2>Distribution des sections CNU de l'AAP 1 et 2</h2>
+    <h3>Distribution détaillée des sections de l'AAP 1 et 2 par appel</h3>
+    ${resize((width) => disciplines.cnu_by_aap_plot_by_erc(
+      cnu_count,
+      {
+        width: width,
+        sort: 'y',
+        x_accessor: (d) => d.count,
+        y_accessor: (d) =>
+          cnu.cnu_section_label_map.get(Number(d.cnu)) || String(d.cnu),
+        fill_accessor: (d) => String(d.aap),
+        marginTop: 20,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <!-- <div class="card grid-rowspan-2">
+    <h2>Distribution des sections CNU</h2>
+    <h3>Distribution des sections de l'AAP 1 et 2</h3>
+    ${resize((width) => disciplines.cnu_by_aap_plot_by_erc_2(
+      cnu_count,
+      {
+        width: width,
+        sort: 'y',
+        x_accessor: (d) => d.count,
+        fy_accessor: (d) =>
+          cnu.cnu_section_label_map.get(Number(d.cnu)) || String(d.cnu),
+        y_accessor: (d) => String(d.aap),
+        fill_accessor: (d) => String(d.aap),
+        marginTop: 20,
+      }
+    ))}
+  </div> -->
+  <!-- $ -->
+</div>
+
+```sql id=cnu_count
+select * from (
+  select
+    cnu[:2] as cnu,
+    count(*) as count,
+    'AAP 1' as aap,
+  from aap1_researchers
+  group by cnu[:2]
+  union
+  select
+    cnu,
+    count(*) as count,
+    'AAP 2' as aap,
+  from aap2_project_by_cnu
+  where cnu is not null and cnu::VARCHAR != ''
+  group by cnu
+)
+where cnu[:2] similar to '[0-9]{2}'
+```
+
+```js
+const cnu_count_erc = d3.rollups(
+  cnu_count,
+  (v) => v.reduce((a, b) => a + b.count, 0),
+  (d) => cnu.getERCFromCNU(d.cnu) || 'Non renseigné',
+)
+```
+
+```sql id=aap1_cnu_count
+select cnu[:2] as cnu, count(*) as count
+from aap1_researchers
+group by cnu[:2]
+order by count desc
+```
+
+```js
+const aap1_cnu_count_erc = d3.rollups(
+  aap1_cnu_count,
+  (v) => v.reduce((a, b) => a + b.count, 0),
+  (d) => cnu.getERCFromCNU(d.cnu) || 'Non renseigné',
+)
+```
+
+```sql id=aap2_cnu_count
 select
   cnu,
   count(*) as count
@@ -691,15 +854,11 @@ order by count desc
 ```
 
 ```js
-const aap2_project_by_cnu_erc = d3.rollups(
-  aap2_project_by_cnu,
-  (v) => v.length,
-  (d) => cnu.getERCFromCNU(d.cnu),
+const aap2_cnu_count_erc = d3.rollups(
+  aap2_cnu_count,
+  (v) => v.reduce((a, b) => a + b.count, 0),
+  (d) => cnu.getERCFromCNU(d.cnu) || 'Non renseigné',
 )
-```
-
-```sql id=aap2_project_by_cnu_labels
-select * from aap2_project_by_cnu_labels
 ```
 
 ## Keywords
@@ -715,73 +874,96 @@ order by count desc
 
 TBD
 
-## Data quality
+## Qualité des données
 
-### AAP1
-
-TBD
-
-### AAP2
-
-<div class="grid grid-cols-3">
-  <div class="card">
-    <h3>Missing Institution SIRETs</h3>
-    ${missing_institution_siret.count} /
-    <!-- $ -->
-    ${[...await sql`
-      select count(*) as count from aap2_institutions
-    `][0].count.toLocaleString()}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h3>Missing Laboratories SIRETs</h3>
-    ${missing_laboratories_siret.count} /
-    <!-- $ -->
-    ${[...await sql`
-      select count(*) as count from aap2_laboratories
-    `][0].count.toLocaleString()}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h3>Missing Partner SIRETs</h3>
-    ${missing_partner_siret.count} /
-    <!-- $ -->
-    ${[...await sql`
-      select count(*) as count from aap2_socioeconomic_partners
-    `][0].count.toLocaleString()}
-    <!-- $ -->
-  </div>
-  <div class="card grid-rowspan-2">
-    <h3>Project type inconsistencies</h3>
-    ${Inputs.table(
-      await sql`
-        select acronyme, TYPDOC, type_projet
-        from aap2_projects
-        where (TYPDOC = 'PITT - Trio de Thèses' and type_projet != 'Choice1')
-        or (TYPDOC = 'PITT - Interdisciplinaire' and type_projet != 'Choice2')
-      `, {
-        rows: 3,
-      }
-    )}
-    <!-- $ -->
-  </div>
+<div class="note" label="Notice">
+  Ces indicateurs concernent uniquement l'AAP 2 (pour l'instant)
 </div>
 
-```js
-const project_type_inconsistencies = await sql`
-  select acronyme, TYPDOC, type_projet
-  from aap2_projects
-  where (TYPDOC = 'PITT - Trio de Thèses' and type_projet != 'Choice1')
-  or (TYPDOC = 'PITT - Interdisciplinaire' and type_projet != 'Choice2')
-`
+### Informations manquantes ou incorrectes
 
-// const project_type_inconsistencies_plot = Inputs.table(
-//   project_type_inconsistencies,
-// {
-//   maxWidth: width,
-//   maxHeight: height,
-// }
-// )
+<div class="grid grid-cols-4">
+  <div class="card">
+    <h2>SIRETs d'institutions</h2>
+    <span class="big">
+      ${missing_institution_siret.count} /
+      <!-- $ -->
+      ${[...await sql`
+        select count(*) as count from aap2_institutions
+      `][0].count.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>RNSRs des laboratoires</h2>
+    <span class="big">
+      ${missing_laboratories_siret.count} /
+      <!-- $ -->
+      ${[...await sql`
+        select count(*) as count from aap2_laboratories
+      `][0].count.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>SIRETs des partenaires</h2>
+    <span class="big">
+      ${missing_partner_siret.count} /
+      <!-- $ -->
+      ${[...await sql`
+        select count(*) as count from aap2_socioeconomic_partners
+      `][0].count.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>ORCIDs des chercheurs</h2>
+    <span class="big">
+      ${missing_researcher_orcid.count} /
+      <!-- $ -->
+      ${[...await sql`
+        select count(*) as count from aap2_researchers
+      `][0].count.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>IDREFs des chercheurs</h2>
+    <span class="big">
+      ${missing_researcher_idref.count} /
+      <!-- $ -->
+      ${[...await sql`
+        select count(*) as count from aap2_researchers
+      `][0].count.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>IDHALs des chercheurs</h2>
+    <span class="big">
+      ${missing_researcher_idhal.count} /
+      <!-- $ -->
+      ${[...await sql`
+        select count(*) as count from aap2_researchers
+      `][0].count.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
+</div>
+<div class="card grid-rowspan-2">
+  <h2>Incohérences types de projet</h2>
+  ${Inputs.table(project_type_inconsistencies, { rows: 3 })}
+  <!-- $ -->
+</div>
+
+```sql id=project_type_inconsistencies
+select
+  acronyme,
+  TYPDOC as 'type sur le site',
+  type_projet as 'type dans le template'
+from aap2_projects
+where (TYPDOC = 'PITT - Trio de Thèses' and type_projet != 'Choice1')
+or (TYPDOC = 'PITT - Interdisciplinaire' and type_projet != 'Choice2')
 ```
 
 ```sql id=[missing_institution_siret]
@@ -802,11 +984,25 @@ from aap2_socioeconomic_partners
 where siret is null or length(id) != 14
 ```
 
-<!-- data import -->
-
-```sql
-select * from aap2_projects
+```sql id=[missing_researcher_orcid]
+select count(*) as count
+from aap2_researchers
+where orcid is null or length(replace(orcid, '-', '')) != 16
 ```
+
+```sql id=[missing_researcher_idref]
+select count(*) as count
+from aap2_researchers
+where idref is null or length(idref) != 9
+```
+
+```sql id=[missing_researcher_idhal]
+select count(*) as count
+from aap2_researchers
+where idhal is null
+```
+
+<!-- DATA IMPORT -->
 
 ```sql id=projects
 (

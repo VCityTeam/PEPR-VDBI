@@ -76,6 +76,7 @@ export const projectCountPlot = (
     sort_value,
     x_accessor = 'count',
     y_accessor = 'project',
+    max_partner_count = 25,
   } = {},
 ) =>
   Plot.plot({
@@ -84,6 +85,8 @@ export const projectCountPlot = (
     x: {
       label: x_label,
       grid: true,
+      nice: true,
+      domain: [0, max_partner_count],
     },
     y: {
       label: y_label,
@@ -205,31 +208,77 @@ export const partnerCountPlot = (
     ],
   })
 
+export const totalChallengeCountPlot = (data, { width }) =>
+  Plot.plot({
+    width: width,
+    height: 400,
+    marginBottom: 70,
+    title: 'Totale défis',
+    subtitle: `Les défis indiqués dans les métadonnées et les templates des
+        soumissions sur le site du dépôt de l'AAP 1 et 2`,
+    grid: true,
+    x: { type: 'band' },
+    color: {
+      range: [
+        'var(--theme-foreground-focus-alt)',
+        'var(--theme-foreground-focus)',
+      ],
+      type: 'categorical',
+      legend: true,
+    },
+    marks: [
+      Plot.axisX({
+        label: 'Défis',
+        tickFormat: (d) => `${d}. ${challenge_description_map_aap2.get(d)}`,
+        lineWidth: 8,
+      }),
+      Plot.barY(data, {
+        x: 'defi',
+        y: 'count',
+        fill: (d) => `AAP ${d.aap}`,
+        tip: true,
+      }),
+    ],
+  })
+
 export const challengeCountPlot = (data, { width }) =>
   Plot.plot({
     width: width,
     height: 400,
     marginBottom: 70,
-    title: 'Défis',
+    title: 'Défis AAP 1 et 2',
     subtitle: `Les défis indiqués dans les métadonnées et les templates des
-      soumissions sur le site du dépôt`,
+        soumissions sur le site du dépôt de l'AAP 1 et 2`,
     grid: true,
-    color: {
-      domain: [...challenge_description_map_aap2.keys()],
-      scheme: 'observable10',
+    fx: {
+      type: 'band',
     },
-    x: { type: 'band' },
+    x: {
+      tickFormat: null,
+      tickSize: null,
+    },
+    color: {
+      range: [
+        'var(--theme-foreground-focus-alt)',
+        'var(--theme-foreground-focus)',
+      ],
+      type: 'categorical',
+      legend: true,
+    },
     marks: [
-      Plot.barY(data, {
-        x: 'defi',
-        y: 'count',
-        fill: 'defi',
-        tip: true,
-      }),
-      Plot.axisX({
+      Plot.axisFx({
         label: 'Défis',
         tickFormat: (d) => `${d}. ${challenge_description_map_aap2.get(d)}`,
         lineWidth: 8,
+        anchor: 'bottom',
+        tickSize: 5,
+      }),
+      Plot.barY(data, {
+        x: (d) => `AAP ${d.aap}`,
+        fx: 'defi',
+        y: 'count',
+        fill: (d) => `AAP ${d.aap}`,
+        tip: true,
       }),
     ],
   })

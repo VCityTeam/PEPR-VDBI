@@ -9,7 +9,7 @@ import {
 } from './data_utilities.js'
 import { v4 as uuidv4 } from 'uuid'
 import { queryAndFormatRE } from './siret_api.js'
-import { queryAndFormatESR } from './rnsr_api.js'
+// import { queryAndFormatESR } from './rnsr_api.js'
 
 /**
  * Extract data from the GÉNÉRALITÉ sheet
@@ -366,39 +366,37 @@ export function resolveResearcherByKeywords(researchers) {
  * @param {Object[]} sheet - Extracted sheet data
  * @returns {Object[]} Formatted sheet data
  */
-export async function resolveLabEntities(sheet) {
-  return Promise.all(
-    map(sheet, async (d) => {
-      const lab = {
-        id: d['Identifiant Laboratoire']
-          ? d['Identifiant Laboratoire'].split(' ')[0]
-          : null,
-        umr: d['Identifiant Laboratoire'].match(/UMR \d*/g)
-          ? d['Identifiant Laboratoire'].match(/UMR \d*/g)[0]
-          : null,
-        lab: cleanDatum(d['Identifiant Laboratoire']),
-        name: cleanDatum(d['Nom Laboratoire']),
-        institution: filterEmptyArray([
-          d['C'],
-          d['D'],
-          d['E'],
-          d['F'],
-          d['G'],
-          d['H'],
-          d['I'],
-          d['J'],
-          d['K'],
-        ]),
-        ...(d['Identifiant Laboratoire']
-          ? await queryAndFormatESR(
-              d['Identifiant Laboratoire'].split(' ')[0],
-              'aap1_export',
-            )
-          : {}),
-      }
-      return lab
-    }),
-  )
+export function resolveLabEntities(sheet) {
+  return map(sheet, (d) => {
+    const lab = {
+      id: d['Identifiant Laboratoire']
+        ? d['Identifiant Laboratoire'].split(' ')[0]
+        : null,
+      umr: d['Identifiant Laboratoire'].match(/UMR \d*/g)
+        ? d['Identifiant Laboratoire'].match(/UMR \d*/g)[0]
+        : null,
+      lab: cleanDatum(d['Identifiant Laboratoire']),
+      name: cleanDatum(d['Nom Laboratoire']),
+      institution: filterEmptyArray([
+        d['C'],
+        d['D'],
+        d['E'],
+        d['F'],
+        d['G'],
+        d['H'],
+        d['I'],
+        d['J'],
+        d['K'],
+      ]),
+      // ...(d['Identifiant Laboratoire']
+      //   ? await queryAndFormatESR(
+      //       d['Identifiant Laboratoire'].split(' ')[0],
+      //       'aap1_export',
+      //     )
+      //   : {}),
+    }
+    return lab
+  })
 }
 
 /**
@@ -407,14 +405,17 @@ export async function resolveLabEntities(sheet) {
  * @param {Object[]} sheet - Extracted sheet data
  * @returns {Object[]} Formatted sheet data
  */
-export async function resolveInstitutionEntities(sheet) {
-  return Promise.all(
-    map(sheet, async (d) => {
-      const name = cleanDatum(d['Nom des établissements'])
-      const response = await queryAndFormatRE(name, 'aap1_export')
-      return { name, ...response }
-    }),
-  )
+export function resolveInstitutionEntities(sheet) {
+  // return Promise.all(
+  // map(sheet, (d) => {
+  // const name = cleanDatum(d['Nom des établissements'])
+  // const response = await queryAndFormatRE(name, 'aap1_export')
+  // return { name, ...response }
+  // }),
+  // )
+  return map(sheet, (d) => ({
+    name: cleanDatum(d['Nom des établissements']),
+  }))
 }
 
 export async function enrichSocioeconomicPartnersEntities(partners) {
@@ -467,31 +468,25 @@ export function extractPhase1Workbook(
       )),
   )
 
-  const laboratories =
-    // (await resolveLabEntities(
-    getLabSheet(workbook)
-      // ))
-      .filter((lab) =>
-        onlyFinanced
-          ? projects.some(({ labs }) => labs.includes(lab.lab))
-          : true,
-      )
+  const laboratories = resolveLabEntities(getLabSheet(workbook)).filter(
+    (lab) =>
+      onlyFinanced ? projects.some(({ labs }) => labs.includes(lab.lab)) : true,
+  )
 
-  const universities = getInstitutionSheet(workbook)
-    // await resolveInstitutionEntities(getInstitutionSheet(workbook))
-    .filter((university) =>
-      onlyFinanced
-        ? projects.some(({ institutions }) =>
-            institutions.includes(university.name),
-          )
-        : true,
-    )
+  const universities = resolveInstitutionEntities(
+    getInstitutionSheet(workbook),
+  ).filter((university) =>
+    onlyFinanced
+      ? projects.some(({ institutions }) =>
+          institutions.includes(university.name),
+        )
+      : true,
+  )
 
   // Extract socioeconomic partners from projects
-  const socioeconomic_partners =
-    // await enrichSocioeconomicPartnersEntities(
-    [...new Set(projects.flatMap(({ partners }) => partners))]
-  // )
+  const socioeconomic_partners = [
+    ...new Set(projects.flatMap(({ partners }) => partners)),
+  ].map((d) => ({ partner: d }))
 
   let project_by_socioeconomic_partners = []
   projects.forEach((project) => {
@@ -523,10 +518,8 @@ export function extractPhase1Workbook(
       project.labs.map((lab) => ({
         project: project.acronyme,
         lab: lab,
-        // umr: lab.match(/UMR \d*/g),
       })),
     )
-    // delete project.labs
   })
 
   const laboratories_by_domains_erc = new Map()

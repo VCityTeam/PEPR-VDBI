@@ -10,6 +10,7 @@ import {
   cnu_category_section_map,
   getGroupFromCNU,
   getERCFromCNU,
+  cnu_section_label_map,
 } from '../../components/cnu.js'
 import {
   cnu_color_map,
@@ -34,13 +35,14 @@ export const cnu_legend = Plot.legend({
   },
 })
 
-export const erc_legend = Plot.legend({
-  color: {
-    domain: erc_color_scale.domain(),
-    range: erc_color_scale.range(),
-    type: 'ordinal',
-  },
-})
+export const erc_legend = () =>
+  Plot.legend({
+    color: {
+      domain: erc_color_scale.domain(),
+      range: erc_color_scale.range(),
+      type: 'ordinal',
+    },
+  })
 
 export const cnu_plot = (
   data,
@@ -69,11 +71,12 @@ export const cnu_plot = (
       label: 'Occurences',
     },
     color: {
-      legend: true,
-      type: 'band',
+      // legend: true,
+      type: 'categorical',
     },
     y: {
       type: 'band',
+      domain: cnu_section_label_map.values(),
     },
     marks: [
       Plot.axisY({
@@ -96,6 +99,144 @@ export const cnu_plot = (
         Plot.pointerY({
           y: y_accessor,
           x: x_accessor,
+          fill: 'white',
+          opacity: 0.5,
+        }),
+      ),
+    ],
+  })
+
+export const cnu_by_aap_plot = (
+  data,
+  {
+    width = 600,
+    marginTop = 50,
+    marginLeft = 18,
+    marginRight = 250,
+    sort = 'y',
+    x_accessor = (d) => d[1],
+    y_accessor = (d) => d[0],
+    fill_accessor = (d) => d[0],
+  } = {},
+) =>
+  Plot.plot({
+    width: width,
+    // height: 800,
+    marginTop: marginTop,
+    marginLeft: marginLeft,
+    marginRight: marginRight,
+    x: {
+      reverse: true,
+      grid: true,
+      axis: 'both',
+      label: 'Occurences',
+    },
+    color: {
+      legend: true,
+      domain: ['AAP 1', 'AAP 2'],
+      range: [
+        'var(--theme-foreground-focus)',
+        'var(--theme-foreground-focus-alt)',
+      ],
+      type: 'categorical',
+    },
+    y: {
+      type: 'band',
+      domain: cnu_section_label_map.values(),
+    },
+    marks: [
+      Plot.axisY({
+        label: 'CNU',
+        anchor: 'right',
+        lineWidth: 24,
+        textOverflow: 'ellipsis',
+      }),
+      Plot.barX(data, {
+        y: y_accessor,
+        x: x_accessor,
+        fill: fill_accessor,
+        stroke: 'black',
+        strokeOpacity: 0.1,
+        sort: { y: sort },
+        tip: true,
+      }),
+      Plot.barX(
+        data,
+        Plot.pointerY({
+          y: y_accessor,
+          x: x_accessor,
+          fill: 'white',
+          opacity: 0.5,
+        }),
+      ),
+    ],
+  })
+
+export const cnu_by_aap_plot_2 = (
+  data,
+  {
+    width = 600,
+    marginTop = 50,
+    marginLeft = 18,
+    marginRight = 250,
+    sort = 'y',
+    x_accessor = (d) => d[1],
+    y_accessor = (d) => d[0],
+    fy_accessor = (d) => d[0],
+    fill_accessor = (d) => d[0],
+  } = {},
+) =>
+  Plot.plot({
+    width: width,
+    // height: 800,
+    marginTop: marginTop,
+    marginLeft: marginLeft,
+    marginRight: marginRight,
+    x: {
+      reverse: true,
+      grid: true,
+      axis: 'both',
+      label: 'Occurences',
+    },
+    color: {
+      legend: true,
+      domain: ['AAP 1', 'AAP 2'],
+      range: [
+        'var(--theme-foreground-focus)',
+        'var(--theme-foreground-focus-alt)',
+      ],
+      type: 'categorical',
+    },
+    y: {
+      type: 'band',
+      tickFormat: null,
+      tickSize: null,
+    },
+    marks: [
+      Plot.axisFy({
+        label: 'CNU',
+        anchor: 'right',
+        lineWidth: 24,
+        textOverflow: 'ellipsis',
+        tickSize: 5,
+        domain: cnu_section_label_map.values(),
+      }),
+      Plot.barX(data, {
+        y: y_accessor,
+        x: x_accessor,
+        fy: fy_accessor,
+        fill: fill_accessor,
+        stroke: 'black',
+        strokeOpacity: 0.1,
+        sort: { y: sort },
+        tip: true,
+      }),
+      Plot.barX(
+        data,
+        Plot.pointerY({
+          y: y_accessor,
+          x: x_accessor,
+          fy: fy_accessor,
           fill: 'white',
           opacity: 0.5,
         }),
@@ -157,6 +298,56 @@ export const cnu_plot_by_erc = (
     sort: sort,
     x_accessor: x_accessor,
     y_accessor: y_accessor,
+    fill_accessor: fill_accessor,
+  })
+
+export const cnu_by_aap_plot_by_erc = (
+  data,
+  {
+    width = 600,
+    marginTop = 50,
+    marginLeft = 18,
+    marginRight = 250,
+    sort = 'y',
+    x_accessor = (d) => d[1],
+    y_accessor = (d) => d[0],
+    fill_accessor = (d) => erc_color_scale(getERCFromCNU(y_accessor(d))),
+  } = {},
+) =>
+  cnu_by_aap_plot(data, {
+    width: width,
+    marginTop: marginTop,
+    marginLeft: marginLeft,
+    marginRight: marginRight,
+    sort: sort,
+    x_accessor: x_accessor,
+    y_accessor: y_accessor,
+    fill_accessor: fill_accessor,
+  })
+
+export const cnu_by_aap_plot_by_erc_2 = (
+  data,
+  {
+    width = 600,
+    marginTop = 50,
+    marginLeft = 18,
+    marginRight = 250,
+    sort = 'y',
+    x_accessor = (d) => d[1],
+    y_accessor = (d) => d[0],
+    fy_accessor = (d) => d[2],
+    fill_accessor = (d) => erc_color_scale(getERCFromCNU(y_accessor(d))),
+  } = {},
+) =>
+  cnu_by_aap_plot_2(data, {
+    width: width,
+    marginTop: marginTop,
+    marginLeft: marginLeft,
+    marginRight: marginRight,
+    sort: sort,
+    x_accessor: x_accessor,
+    y_accessor: y_accessor,
+    fy_accessor: fy_accessor,
     fill_accessor: fill_accessor,
   })
 
