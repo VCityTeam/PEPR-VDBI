@@ -2,19 +2,17 @@ import { filter } from 'd3'
 import { nameByRace } from 'fantasy-name-generator'
 import pino from 'pino'
 
-export const default_log_options = (
-  name,
-  destination = './data_loaders.js.log',
-) => ({
+export const default_log_options = (name, destination = './data_loaders.js.log') => ({
   name: name,
   level: 'warn',
   sync: false,
-  timestamp: () => `,"time":"${new Date().toISOString()}"`,
+  timestamp: pino.stdTimeFunctions.isoTime,
   transport: {
     target: 'pino-pretty',
     options: {
       // colorize: true,
       destination: destination,
+      translateTime: 'yyyy-mm-dd HH:MM:ss.l',
     },
   },
 })
