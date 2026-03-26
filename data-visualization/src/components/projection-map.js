@@ -308,3 +308,64 @@ export function projectionMap(
 //     "- Project partners, France"
 
 //   )
+
+export const choropleth = (
+  width,
+  height,
+  fill,
+  projection,
+  features,
+  caption,
+) =>
+  Plot.plot({
+    width: width,
+    height: height - 60,
+    caption: caption,
+    color: color_config,
+    projection: projection,
+    marks: [
+      Plot.geo(features, {
+        channels: {
+          Department: ({ properties }) => properties.nom,
+          Code: ({ properties }) => properties.code,
+          Lat: (d) => d3.geoCentroid(d)[0],
+          Lon: (d) => d3.geoCentroid(d)[1],
+        },
+        tip: true,
+        fill: fill,
+        strokeOpacity: 0,
+      }),
+
+      [...mainland_france_choropleth_marks],
+    ],
+  })
+
+export const choroplethFrance = (width, height, fill) =>
+  choropleth(
+    width,
+    height,
+    fill,
+    france_projection,
+    mainland_france_departements_geojson,
+    '- Partenaires et parties prenantes des projets par département, France',
+  )
+
+export const choroplethIdf = (width, fill) =>
+  choropleth(
+    width,
+    width,
+    fill,
+    idf_projection,
+    idf_departements_geojson,
+    '- Partenaires et parties prenantes des projets par département, Île-de-France',
+  )
+
+export const choroplethItaly = (width, fill) =>
+  choropleth(
+    width,
+    width,
+    fill,
+    italy_projection,
+    italy_regions_geojson,
+    '- Partenaires et parties prenantes des projets par département, Italy',
+  )

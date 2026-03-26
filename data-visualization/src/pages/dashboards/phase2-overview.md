@@ -50,6 +50,7 @@ import * as color from '../../components/color.js'
 import { cropText } from '../../components/utilities.js'
 import { bubbleChartX } from '../../components/bubble-chart.js'
 import { donutChart } from '../../components/pie-chart.js'
+import { choroplethFrance } from '../../components/projection-map.js'
 ```
 
 <div class="warning" label="Avertissement sur la qualité des données">
@@ -926,8 +927,8 @@ group by aap2_laboratories.numero_national_de_structure,
 select
   first(aap2_socioeconomic_partners.nom_complet) as nom_complet,
   aap2_socioeconomic_partners.siret::VARCHAR as SIRET,
-  aap1_socioeconomic_partners.source as aap1_source,
-  aap2_socioeconomic_partners.source as aap2_source,
+  -- aap1_socioeconomic_partners.source as aap1_source,
+  -- aap2_socioeconomic_partners.source as aap2_source,
 from aap1_socioeconomic_partners
 right join aap2_socioeconomic_partners
   on aap1_socioeconomic_partners.siret::VARCHAR
@@ -946,11 +947,6 @@ group by aap2_socioeconomic_partners.siret,
 ### Les projets pas retenues
 
 Les partenaires des projets de l'AAP 2 qui ont été soumises à l'AAP 1 mais pas financées
-
-<div class="caution">
-  Trop d'information manquant de l'AAP 1 pour extraire les partenaires des projets
-  soumise mais non-finançés
-</div>
 
 <div class="grid grid-cols-3">
   <div class="card">
@@ -1030,60 +1026,52 @@ Les partenaires des projets de l'AAP 2 qui ont été soumises à l'AAP 1 mais pa
   </div>
 </div>
 
-```sql display=false
-select university, list(project) as projects, list(aap1_institutions.siret) as sirets
-from aap1_project_by_institutions
-join aap1_institutions
-  on aap1_project_by_institutions.university = aap1_institutions.label
-group by university
-having not (list(project) &&
-(
-  select list(acronyme)
-  from aap1_projects
-  where financed
-))
-```
-
 ```sql id=aap2_rejected_institutions
 select
-  first(aap2_institutions.nom_complet) as nom_complet,
-  aap2_institutions.siret::VARCHAR as SIRET,
-  -- aap1_institutions.source as aap1_source,
-  -- aap2_institutions.source as aap2_source,
-from aap1_institutions
-right join aap2_institutions
-  on aap1_institutions.siret::VARCHAR = aap2_institutions.siret::VARCHAR
-where aap2_institutions.siret::VARCHAR != ''
-  and aap1_institutions.label in (
-    select university
-    from aap1_project_by_institutions
-    group by university
-    having not (
-      list(project) &&
-      (
-        select list(acronyme)
-        from aap1_projects
-        where financed
+  first(nom_complet) as nom_complet,
+  siret::VARCHAR as SIRET,
+from (
+  select
+    siret,
+    nom_complet,
+  from aap1_institutions
+  where siret::VARCHAR != ''
+    and label in (
+      select university
+      from aap1_project_by_institutions
+      group by university
+      having not (
+        list(project) &&
+        (
+          select list(acronyme)
+          from aap1_projects
+          where financed
+        )
       )
     )
-  )
-group by aap2_institutions.siret,
-  aap1_institutions.source, aap2_institutions.source
+  union
+  select
+    siret,
+    nom_complet
+  from aap2_institutions
+  where siret::VARCHAR != ''
+)
+group by siret
 ```
 
 ```sql id=aap2_rejected_laboratories
 select
-  first(aap2_laboratories.libelle) as libelle,
-  first(aap2_laboratories.sigle) as sigle,
-  aap2_laboratories.numero_national_de_structure as RNSR,
-  -- aap1_laboratories.source as aap1_source,
-  -- aap2_laboratories.source as aap2_source,
-from aap1_laboratories
-right join aap2_laboratories
-  on aap1_laboratories.numero_national_de_structure::VARCHAR
-    = aap2_laboratories.numero_national_de_structure::VARCHAR
-where aap2_laboratories.numero_national_de_structure::VARCHAR != ''
-  and aap1_laboratories.label in (
+  first(libelle) as libelle,
+  first(sigle) as sigle,
+  numero_national_de_structure as RNSR,
+from (
+  select
+    numero_national_de_structure,
+    libelle,
+    sigle,
+  from aap1_laboratories
+  where numero_national_de_structure::VARCHAR != ''
+    and label in (
     select lab
     from aap1_project_by_laboratories
     group by lab
@@ -1096,52 +1084,90 @@ where aap2_laboratories.numero_national_de_structure::VARCHAR != ''
       )
     )
   )
-group by aap2_laboratories.numero_national_de_structure,
-  aap1_laboratories.source, aap2_laboratories.source
+  union
+  select
+    numero_national_de_structure,
+    libelle,
+    sigle,
+  from aap2_laboratories
+  where numero_national_de_structure::VARCHAR != ''
+)
+group by numero_national_de_structure
 ```
 
 ```sql id=aap2_rejected_socioeconomic_partners
 select
-  first(aap2_socioeconomic_partners.nom_complet) as nom_complet,
-  aap2_socioeconomic_partners.siret::VARCHAR as SIRET,
-  -- aap1_socioeconomic_partners.source as aap1_source,
-  -- aap2_socioeconomic_partners.source as aap2_source,
-from aap1_socioeconomic_partners
-right join aap2_socioeconomic_partners
-  on aap1_socioeconomic_partners.siret::VARCHAR
-    = aap2_socioeconomic_partners.siret::VARCHAR
-where aap2_socioeconomic_partners.siret::VARCHAR != ''
-  and aap1_socioeconomic_partners.label in (
-    select partner
-    from aap1_project_by_socioeconomic_partners
-    group by partner
-    having not (
-      list(project) &&
-      (
-        select list(acronyme)
-        from aap1_projects
-        where financed
+  first(nom_complet) as nom_complet,
+  siret::VARCHAR as SIRET,
+from (
+  select
+    siret,
+    nom_complet,
+  from aap1_socioeconomic_partners
+  where siret::VARCHAR != ''
+    and label in (
+      select partner
+      from aap1_project_by_socioeconomic_partners
+      group by partner
+      having not (
+        list(project) &&
+        (
+          select list(acronyme)
+          from aap1_projects
+          where financed
+        )
       )
     )
-  )
-group by aap2_socioeconomic_partners.siret,
-  aap1_socioeconomic_partners.source, aap2_socioeconomic_partners.source
+  union
+  select
+    siret,
+    nom_complet,
+  from aap2_socioeconomic_partners
+  where siret::VARCHAR != ''
+)
+group by siret
 ```
 
 ## Défis
 
 <div class="grid grid-cols-3">
   <div class="card">
-    ${resize((width) => overview.totalChallengeCountPlot(
-      challenge_count,
+    ${resize((width) => overview.stackedChallengeCountPlot(
+      challenge_count_by_aap,
       { width })
     )}
     <!-- $ -->
   </div>
   <div class="card grid grid-colspan-2">
     ${resize((width) => overview.challengeCountPlot(
-      challenge_count,
+      challenge_count_by_aap,
       { width })
+    )}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    ${resize((width) => overview.stackedChallengeCountPlot(
+      challenge_count_by_project_type,
+      {
+        width: width,
+        fill_accessor: 'project_type',
+        title: 'Défis par type de projet',
+        subtitle: `Les défis indiqués dans les métadonnées et les templates des
+          soumissions sur le site du dépôt de l'AAP 2`
+      })
+    )}
+    <!-- $ -->
+  </div>
+  <div class="card grid grid-colspan-2">
+    ${resize((width) => overview.challengeCountPlot(
+      challenge_count_by_project_type,
+      {
+        width: width,
+        x_accessor: 'project_type',
+        title: 'Défis par type de projet',
+        subtitle: `Les défis indiqués dans les métadonnées et les templates des
+          soumissions sur le site du dépôt de l'AAP 2`
+      })
     )}
     <!-- $ -->
   </div>
@@ -1152,7 +1178,7 @@ group by aap2_socioeconomic_partners.siret,
     <h2>Répartition des défis de l'AAP 1</h2>
     <br/>
     ${resize((width) => donutChart(
-      [...challenge_count].filter((d) => d.aap === 'AAP 1'),
+      [...challenge_count_by_aap].filter((d) => d.aap === 'AAP 1'),
       default_defi_aap_donut_config(width)
     ))}
     <!-- $ -->
@@ -1161,7 +1187,7 @@ group by aap2_socioeconomic_partners.siret,
     <h2>Répartition des défis de l'AAP 2</h2>
     <br/>
     ${resize((width) => donutChart(
-      [...challenge_count].filter((d) => d.aap === 'AAP 2'),
+      [...challenge_count_by_aap].filter((d) => d.aap === 'AAP 2'),
       default_defi_aap_donut_config(width)
     ))}
     <!-- $ -->
@@ -1170,7 +1196,7 @@ group by aap2_socioeconomic_partners.siret,
     <h2>Répartition du défi 1 par AAP</h2>
     <br/>
     ${resize((width) => donutChart(
-      [...challenge_count].filter((d) => d.defi === '1'),
+      [...challenge_count_by_aap].filter((d) => d.defi === '1'),
       default_defi_defi_donut_config(width)
     ))}
     <!-- $ -->
@@ -1179,7 +1205,7 @@ group by aap2_socioeconomic_partners.siret,
     <h2>Répartition du défi 2 par AAP</h2>
     <br/>
     ${resize((width) => donutChart(
-      [...challenge_count].filter((d) => d.defi === '2'),
+      [...challenge_count_by_aap].filter((d) => d.defi === '2'),
       default_defi_defi_donut_config(width)
     ))}
     <!-- $ -->
@@ -1188,7 +1214,7 @@ group by aap2_socioeconomic_partners.siret,
     <h2>Répartition du défi 3 par AAP</h2>
     <br/>
     ${resize((width) => donutChart(
-      [...challenge_count].filter((d) => d.defi === '3'),
+      [...challenge_count_by_aap].filter((d) => d.defi === '3'),
       default_defi_defi_donut_config(width)
     ))}
     <!-- $ -->
@@ -1197,7 +1223,7 @@ group by aap2_socioeconomic_partners.siret,
     <h2>Répartition du défi 4 par AAP</h2>
     <br/>
     ${resize((width) => donutChart(
-      [...challenge_count].filter((d) => d.defi === '4'),
+      [...challenge_count_by_aap].filter((d) => d.defi === '4'),
       default_defi_defi_donut_config(width)
     ))}
     <!-- $ -->
@@ -1206,7 +1232,7 @@ group by aap2_socioeconomic_partners.siret,
     <h2>Répartition du défi 5 par AAP</h2>
     <br/>
     ${resize((width) => donutChart(
-      [...challenge_count].filter((d) => d.defi === '5'),
+      [...challenge_count_by_aap].filter((d) => d.defi === '5'),
       default_defi_defi_donut_config(width)
     ))}
     <!-- $ -->
@@ -1215,7 +1241,7 @@ group by aap2_socioeconomic_partners.siret,
     <h2>Répartition du défi 6 par AAP</h2>
     <br/>
     ${resize((width) => donutChart(
-      [...challenge_count].filter((d) => d.defi === '6'),
+      [...challenge_count_by_aap].filter((d) => d.defi === '6'),
       default_defi_defi_donut_config(width)
     ))}
     <!-- $ -->
@@ -1247,56 +1273,111 @@ const default_defi_defi_donut_config = (width) => ({
 })
 ```
 
-```sql id=challenge_count
-select
-  challenge::VARCHAR as defi,
-  'AAP 1' as aap,
-  count(*) as count,
-from aap1_project_by_challenge
-group by challenge
-union
-select
-  '1' as defi,
-  'AAP 2' as aap,
-  count(*) as count
-from aap2_projects
-where defi_1_1 or defi_1_2
-union
-select
-  '2' as defi,
-  'AAP 2' as aap,
-  count(*) as count
-from aap2_projects
-where defi_2_1 or defi_2_2
-union
-select
-  '3' as defi,
-  'AAP 2' as aap,
-  count(*) as count
-from aap2_projects
-where defi_3_1 or defi_3_2
-union
-select
-  '4' as defi,
-  'AAP 2' as aap,
-  count(*) as count
-from aap2_projects
-where defi_4_1 or defi_4_2
-union
-select
-  '5' as defi,
-  'AAP 2' as aap,
-  count(*) as count
-from aap2_projects
-where defi_5_1 or defi_5_2
-union
-select
-  '6' as defi,
-  'AAP 2' as aap,
-  count(*) as count
-from aap2_projects
-where defi_6_1 or defi_6_2
+```sql id=challenge_count_by_aap
+(
+  select
+    challenge::VARCHAR as defi,
+    'AAP 1' as aap,
+    count(*) as count,
+  from aap1_project_by_challenge
+  group by challenge
+  union
+  select
+    '1' as defi,
+    'AAP 2' as aap,
+    count(*) as count
+  from aap2_projects
+  where defi_1_1 or defi_1_2
+  union
+  select
+    '2' as defi,
+    'AAP 2' as aap,
+    count(*) as count
+  from aap2_projects
+  where defi_2_1 or defi_2_2
+  union
+  select
+    '3' as defi,
+    'AAP 2' as aap,
+    count(*) as count
+  from aap2_projects
+  where defi_3_1 or defi_3_2
+  union
+  select
+    '4' as defi,
+    'AAP 2' as aap,
+    count(*) as count
+  from aap2_projects
+  where defi_4_1 or defi_4_2
+  union
+  select
+    '5' as defi,
+    'AAP 2' as aap,
+    count(*) as count
+  from aap2_projects
+  where defi_5_1 or defi_5_2
+  union
+  select
+    '6' as defi,
+    'AAP 2' as aap,
+    count(*) as count
+  from aap2_projects
+  where defi_6_1 or defi_6_2
+)
 order by defi, aap
+```
+
+```sql id=challenge_count_by_project_type
+(
+  select
+    '1' as defi,
+    TYPDOC as project_type,
+    count(*) as count
+  from aap2_projects
+  where defi_1_1 or defi_1_2
+  group by TYPDOC
+  union
+  select
+    '2' as defi,
+    TYPDOC as project_type,
+    count(*) as count
+  from aap2_projects
+  where defi_2_1 or defi_2_2
+  group by TYPDOC
+  union
+  select
+    '3' as defi,
+    TYPDOC as project_type,
+    count(*) as count
+  from aap2_projects
+  where defi_3_1 or defi_3_2
+  group by TYPDOC
+  union
+  select
+    '4' as defi,
+    TYPDOC as project_type,
+    count(*) as count
+  from aap2_projects
+  where defi_4_1 or defi_4_2
+  group by TYPDOC
+  union
+  select
+    '5' as defi,
+    TYPDOC as project_type,
+    count(*) as count
+  from aap2_projects
+  where defi_5_1 or defi_5_2
+  group by TYPDOC
+  union
+  select
+    '6' as defi,
+    TYPDOC as project_type,
+    count(*) as count
+  from aap2_projects
+  where defi_6_1 or defi_6_2
+  group by TYPDOC
+)
+order by defi, project_type
 ```
 
 <!-- ## Disciplines
@@ -1309,6 +1390,8 @@ order by count desc
 ``` -->
 
 ## Chercheurs
+
+<div class="note">⚠️ Projet par chercheurs à venir ⚠️</div>
 
 ### Les nouveaux chercheurs
 
@@ -1497,7 +1580,7 @@ with returning_researcher_names as (
 select
   lower(lastname || ' ' || firstname) as fullname,
   orcid,
-  idhal,
+  list_distinct(list(idhal))[1] as idhal,
   list_distinct(list(position)) as positions,
   [] as projects,
 from aap2_researchers
@@ -1508,7 +1591,7 @@ where
   or orcid in (select orcid from returning_orcids)
   or idhal in (select idhal from returning_idhals)
 group by
-  fullname, orcid, idhal
+  orcid, fullname
 ```
 
 ## CNUs
@@ -1690,7 +1773,9 @@ order by count desc
 
 ## Cartographies
 
-TBD
+```js
+
+```
 
 ## Qualité des données
 

@@ -269,14 +269,22 @@ export const partnerCountPlot = (
     ],
   })
 
-export const totalChallengeCountPlot = (data, { width }) =>
+export const stackedChallengeCountPlot = (
+  data,
+  {
+    width,
+    fill_accessor = 'aap',
+    title = 'Défis par AAP',
+    subtitle = `Les défis indiqués dans les métadonnées et les templates des
+    soumissions sur le site du dépôt de l'AAP 1 et 2`,
+  },
+) =>
   Plot.plot({
     width: width,
     height: 400,
     marginBottom: 70,
-    title: 'Total défis',
-    subtitle: `Les défis indiqués dans les métadonnées et les templates des
-        soumissions sur le site du dépôt de l'AAP 1 et 2`,
+    title: title,
+    subtitle: subtitle,
     grid: true,
     x: { type: 'band' },
     color: {
@@ -296,20 +304,28 @@ export const totalChallengeCountPlot = (data, { width }) =>
       Plot.barY(data, {
         x: 'defi',
         y: 'count',
-        fill: 'aap',
+        fill: fill_accessor,
         tip: true,
       }),
     ],
   })
 
-export const challengeCountPlot = (data, { width }) =>
+export const challengeCountPlot = (
+  data,
+  {
+    width,
+    x_accessor = 'aap',
+    title = 'Défis par AAP',
+    subtitle = `Les défis indiqués dans les métadonnées et les templates des
+  soumissions sur le site du dépôt de l'AAP 1 et 2`,
+  },
+) =>
   Plot.plot({
     width: width,
     height: 400,
     marginBottom: 70,
-    title: 'Défis AAP 1 et 2',
-    subtitle: `Les défis indiqués dans les métadonnées et les templates des
-        soumissions sur le site du dépôt de l'AAP 1 et 2`,
+    title: title,
+    subtitle: subtitle,
     grid: true,
     fx: {
       type: 'band',
@@ -336,11 +352,21 @@ export const challengeCountPlot = (data, { width }) =>
         tickSize: 5,
       }),
       Plot.barY(data, {
-        x: 'aap',
+        x: x_accessor,
         fx: 'defi',
         y: 'count',
-        fill: 'aap',
+        fill: x_accessor,
         tip: true,
       }),
     ],
   })
+
+// export const choroplethFrance = (width, height, fill) =>
+//   choropleth(
+//     width,
+//     height,
+//     fill,
+//     france_projection,
+//     mainland_france_departements_geojson,
+//     '- Partenaires et parties prenantes des projets par département, France',
+//   )
