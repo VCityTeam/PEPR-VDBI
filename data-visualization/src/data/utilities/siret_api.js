@@ -27,18 +27,25 @@ const defaultResponse = {
  * @returns {Promise<object[]>} A promise resolving to an object.
  */
 export async function queryAndFormatRE(query, source, useSiege = true) {
-  const response = await handleFetchJson(
-    `https://recherche-entreprises.api.gouv.fr/search` +
-      `?q=${encodeURIComponent(query)}&page=1&per_page=1`,
-    0.3,
-    logger,
-  )
-
   const formattedResponse = {
     ...defaultResponse,
     source_label: query,
     source: source,
   }
+
+  if (!query) {
+    logger.error(
+      `Error formatting response: No query received; query: ${query}`,
+    )
+    return formattedResponse
+  }
+
+  const response = await handleFetchJson(
+    `https://recherche-entreprises.api.gouv.fr/search` +
+      `?q=${encodeURIComponent(query)}&page=1&per_page=1`,
+    0.4,
+    logger,
+  )
 
   if (!response) {
     logger.error(

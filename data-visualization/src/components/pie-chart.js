@@ -42,7 +42,7 @@ export function donutChart(
     width = 600,
     height = width,
     innerRadiusRatio = 0.5,
-    outerRadiusRatio = 1,
+    outerRadiusRatio = 0.9,
     // minorArcLabelRadiusRatio = 0.1, // the ratio of the radius to place the minor arc label outside of the arc
     keyMap = (d) => d.entity,
     valueMap = (d) => d.count,

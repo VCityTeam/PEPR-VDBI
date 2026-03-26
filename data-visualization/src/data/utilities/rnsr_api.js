@@ -13,6 +13,18 @@ const logger = pino(default_log_options('rnsr api utility'))
  * @returns {Promise<object[]|null>} A promise resolving to an object.
  */
 export async function queryAndFormatESR(query, source) {
+  const formattedResponse = {
+    source_label: query,
+    source: source,
+  }
+
+  if (!query) {
+    logger.error(
+      `Error formatting response: No query received; query: ${query}`,
+    )
+    return formattedResponse
+  }
+
   const response = await handleFetchJson(
     'https://data.enseignementsup-recherche.gouv.fr' +
       '/api/explore/v2.1/catalog/datasets' +
@@ -21,11 +33,6 @@ export async function queryAndFormatESR(query, source) {
     0.5,
     logger,
   )
-
-  const formattedResponse = {
-    source_label: query,
-    source: source,
-  }
 
   if (!response) {
     logger.error(

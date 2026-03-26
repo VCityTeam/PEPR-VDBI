@@ -67,7 +67,7 @@ import { donutChart } from '../../components/pie-chart.js'
 
 <div class="grid grid-cols-4">
   <div class="card">
-    <h2>N° Projets AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
+    <h2>Nombre de projets AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
@@ -82,7 +82,7 @@ import { donutChart } from '../../components/pie-chart.js'
     </span>
   </div>
   <div class="card">
-    <h2>N° Intitutions AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
+    <h2>Nombre d'intitutions AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
@@ -107,7 +107,7 @@ import { donutChart } from '../../components/pie-chart.js'
     </span>
   </div>
   <div class="card">
-    <h2>N° Unités AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
+    <h2>Nombre d'unités AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
@@ -133,7 +133,7 @@ import { donutChart } from '../../components/pie-chart.js'
   </div>
   <div class="card">
     <h2>
-      N° Partenaires socioéconomiques AAP 1
+      Nombre de partenaires socioéconomiques AAP 1
       <br/><span class="muted">(Soumis / Lauréats)</span>
     </h2>
     <span class="big">
@@ -163,7 +163,7 @@ import { donutChart } from '../../components/pie-chart.js'
 
 <div class="grid grid-cols-4">
   <div class="card">
-    <h2>N° Projets AAP 2 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
+    <h2>Nombre de projets AAP 2 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
@@ -176,7 +176,7 @@ import { donutChart } from '../../components/pie-chart.js'
     </span>
   </div>
   <div class="card">
-    <h2>N° Intitutions AAP 2 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
+    <h2>Nombre d'intitutions AAP 2 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
@@ -189,7 +189,7 @@ import { donutChart } from '../../components/pie-chart.js'
     </span>
   </div>
   <div class="card">
-    <h2>N° Unités AAP 2 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
+    <h2>Nombre d'unités AAP 2 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
@@ -203,7 +203,7 @@ import { donutChart } from '../../components/pie-chart.js'
   </div>
   <div class="card">
     <h2>
-      N° Partenaires socioéconomiques AAP 2
+      Nombre de partenaires socioéconomiques AAP 2
       <br/><span class="muted">(Soumis / Lauréats)</span>
     </h2>
     <span class="big">
@@ -224,16 +224,16 @@ import { donutChart } from '../../components/pie-chart.js'
 <div class="grid grid-cols-3">
   <!-- AAP 1 -->
   <div class="card">
-    <h2>AAP 1 projets financées par n° d'institutions</h2>
+    <h2>AAP 1 projets financées par nombre d'institutions</h2>
     <br/>
     ${aap1_project_universities_sort_input}
     <!-- $ -->
-    ${resize((width) => overview.projectCountPlot(
+    ${resize((width) => overview.projectCountPlotAAP1(
       aap1_project_by_institutions_count,
       {
         width,
         y_label: "Projets",
-        x_label: "N° Institutions",
+        x_label: "Nombre d'institutions",
         sort_value: aap1_project_universities_sort,
         max_partner_count: max_institutions_count,
       }
@@ -241,16 +241,16 @@ import { donutChart } from '../../components/pie-chart.js'
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>AAP 1 projets financées par n° d'unités</h2>
+    <h2>AAP 1 projets financées par nombre d'unités</h2>
     <br/>
     ${aap1_project_laboratories_sort_input}
     <!-- $ -->
-    ${resize((width) => overview.projectCountPlot(
+    ${resize((width) => overview.projectCountPlotAAP1(
       aap1_project_by_laboratories_count,
       {
         width,
         y_label: "Projets",
-        x_label: "N° Unités",
+        x_label: "Nombre d'unités",
         sort_value: aap1_project_laboratories_sort,
         max_partner_count: max_laboratories_count,
       }
@@ -258,16 +258,16 @@ import { donutChart } from '../../components/pie-chart.js'
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>AAP 1 projets financées par n° de partenaires</h2>
+    <h2>AAP 1 projets financées par nombre de partenaires</h2>
     <br/>
     ${aap1_project_partners_sort_input}
     <!-- $ -->
-    ${resize((width) => overview.projectCountPlot(
+    ${resize((width) => overview.projectCountPlotAAP1(
       aap1_project_by_socioeconomic_partners_count,
       {
         width,
         y_label: "Projets",
-        x_label: "N° Partenaires",
+        x_label: "Nombre de partenaires",
         sort_value: aap1_project_partners_sort,
         max_partner_count: max_socioeconomic_partners_count,
       }
@@ -276,16 +276,16 @@ import { donutChart } from '../../components/pie-chart.js'
   </div>
   <!-- AAP 2 -->
   <div class="card">
-    <h2>Top 15 AAP 2 projets par n° d'institutions</h2>
+    <h2>Top 15 AAP 2 projets par nombre d'institutions</h2>
     <br/>
     ${aap2_project_universities_sort_input}
     <!-- $ -->
-    ${resize((width) => overview.projectCountPlot(
+    ${resize((width) => overview.projectCountPlotAAP2(
       aap2_project_by_institutions_count,
       {
         width,
         y_label: "Projets",
-        x_label: "N° Institutions",
+        x_label: "Nombre d'institutions",
         sort_value: aap2_project_universities_sort,
         max_partner_count: max_institutions_count,
       }
@@ -293,16 +293,16 @@ import { donutChart } from '../../components/pie-chart.js'
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 AAP 2 projets par n° d'unités</h2>
+    <h2>Top 15 AAP 2 projets par nombre d'unités</h2>
     <br/>
     ${aap2_project_laboratories_sort_input}
     <!-- $ -->
-    ${resize((width) => overview.projectCountPlot(
+    ${resize((width) => overview.projectCountPlotAAP2(
       aap2_project_by_laboratories_count,
       {
         width,
         y_label: "Projets",
-        x_label: "N° Unités",
+        x_label: "Nombre d'unités",
         sort_value: aap2_project_laboratories_sort,
         max_partner_count: max_laboratories_count,
       }
@@ -310,16 +310,16 @@ import { donutChart } from '../../components/pie-chart.js'
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 AAP 2 projets par n° de partenaires</h2>
+    <h2>Top 15 AAP 2 projets par nombre de partenaires</h2>
     <br/>
     ${aap2_project_partners_sort_input}
     <!-- $ -->
-    ${resize((width) => overview.projectCountPlot(
+    ${resize((width) => overview.projectCountPlotAAP2(
       aap2_project_by_socioeconomic_partners_count,
       {
         width,
         y_label: "Projets",
-        x_label: "N° Partenaires",
+        x_label: "Nombre de partenaires",
         sort_value: aap2_project_partners_sort,
         max_partner_count: max_socioeconomic_partners_count,
       }
@@ -329,41 +329,62 @@ import { donutChart } from '../../components/pie-chart.js'
 </div>
 
 ```sql id=aap1_project_by_institutions_count
-select count(*) as count, project
+select
+  count(*) as count,
+  project,
 from aap1_project_by_institutions
 where project in (select acronyme from aap1_projects where financed)
 group by project
 ```
 
 ```sql id=aap1_project_by_laboratories_count
-select count(*) as count, project
+select
+  count(*) as count,
+  project,
 from aap1_project_by_laboratories
 where project in (select acronyme from aap1_projects where financed)
 group by project
 ```
 
 ```sql id=aap1_project_by_socioeconomic_partners_count
-select count(*) as count, project
+select
+  count(*) as count,
+  project,
 from aap1_project_by_socioeconomic_partners
 where project in (select acronyme from aap1_projects where financed)
 group by project
 ```
 
 ```sql id=aap2_project_by_institutions_count
-select count(*) as count, project
+select
+  count(*) as count,
+  project,
+  first(TYPDOC) as type,
 from aap2_project_by_institutions
+join aap2_projects
+  on aap2_project_by_institutions.project = aap2_projects.acronyme
 group by project
 ```
 
 ```sql id=aap2_project_by_laboratories_count
-select count(*) as count, project
+select
+  count(*) as count,
+  project,
+  first(TYPDOC) as type,
 from aap2_project_by_laboratories
+join aap2_projects
+  on aap2_project_by_laboratories.project = aap2_projects.acronyme
 group by project
 ```
 
 ```sql id=aap2_project_by_socioeconomic_partners_count
-select count(*) as count, project
+select
+  count(*) as count,
+  project,
+  first(TYPDOC) as type,
 from aap2_project_by_socioeconomic_partners
+join aap2_projects
+  on aap2_project_by_socioeconomic_partners.project = aap2_projects.acronyme
 group by project
 ```
 
@@ -420,9 +441,22 @@ const aap2_project_partners_sort = Generators.input(
 
 ## Partenaires
 
+<div class="warning" label="Avertissement sur la qualité des données">
+
+Rappel : Les partenaires des AAPs ne sont donc pas prise en compte dans le cas où
+leurs informations sont mal renseignées ou manquantes. Voir la section
+[qualité des données](#qualité-des-données) pour plus de détails.
+
+</div>
+
 <div class="grid grid-cols-3">
+  <!-- AAP 1 -->
   <div class="card">
-    <h2>Top 15 AAP 1 institutions financées par n° d'occurences</h2>
+    <h2>Top 15 institutions financées de l'AAP 1</h2>
+    <h3>
+      Top 15 institutions partenaires des projets financées de l'AAP 1 par
+      nombre d'occurences
+    </h3>
     ${aap1_universities_sort_input}
     <!-- $ -->
     ${resize((width) => overview.partnerCountPlot(
@@ -430,14 +464,18 @@ const aap2_project_partners_sort = Generators.input(
       {
         width,
         y_label: "Institution (label / SIRET)",
-        x_label: "N° Institutions",
+        x_label: "Nombre d'institutions",
         sort_value: aap1_universities_sort,
       }
     ))}
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 AAP 1 unités de recherche financées par n° d'occurences</h2>
+    <h2>Top 15 unités de recherche financées de l'AAP 1</h2>
+    <h3>
+      Top 15 unités de recherche partenaires des projets financées de l'AAP 1 par
+      nombre d'occurences
+    </h3>
     ${aap1_laboratories_sort_input}
     <!-- $ -->
     ${resize((width) => overview.partnerCountPlot(
@@ -447,7 +485,7 @@ const aap2_project_partners_sort = Generators.input(
         marginLeft: 150,
         lineWidth: 13,
         y_label: "Unité (Sigle / RNSR)",
-        x_label: "N° Unités",
+        x_label: "Nombre d'unités",
         sort_value: aap1_laboratories_sort,
         textOverflow: 'ellipsis',
       }
@@ -455,7 +493,11 @@ const aap2_project_partners_sort = Generators.input(
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 AAP 1 partnaires financés par n° d'occurences</h2>
+    <h2>Top 15 partenaires socioéconomiques financés de l'AAP 1</h2>
+    <h3>
+      Top 15 partenaires socioéconomiques des projets financés de l'AAP 1 par
+      nombre d'occurences
+    </h3>
     ${aap1_partners_sort_input}
     <!-- $ -->
     ${resize((width) => overview.partnerCountPlot(
@@ -463,8 +505,55 @@ const aap2_project_partners_sort = Generators.input(
       {
         width,
         y_label: "Partnaire (label / SIRET)",
-        x_label: "N° Partnaires",
+        x_label: "Nombre de partenaires",
         sort_value: aap1_partners_sort,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <!-- AAP2 -->
+  <div class="card">
+    <h2>Top 15 AAP 2 institutions par nombre d'occurences</h2>
+    ${aap2_universities_sort_input}
+    <!-- $ -->
+    ${resize((width) => overview.partnerCountPlot(
+      aap2_institutions_count,
+      {
+        width,
+        y_label: "Institution (label / SIRET)",
+        x_label: "Nombre d'institutions",
+        sort_value: aap2_universities_sort,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Top 15 AAP 2 unités de recherche par nombre d'occurences</h2>
+    ${aap2_laboratories_sort_input}
+    <!-- $ -->
+    ${resize((width) => overview.partnerCountPlot(
+      aap2_laboratories_count,
+      {
+        width,
+        marginLeft: 100,
+        y_label: "Unité (Sigle / RNSR)",
+        x_label: "Nombre d'unités",
+        sort_value: aap2_laboratories_sort,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Top 15 AAP 2 partnaires par nombre d'occurences</h2>
+    ${aap2_partners_sort_input}
+    <!-- $ -->
+    ${resize((width) => overview.partnerCountPlot(
+      aap2_partners_count,
+      {
+        width,
+        y_label: "Partnaire (label / SIRET)",
+        x_label: "Nombre de partenaires",
+        sort_value: aap2_partners_sort,
       }
     ))}
     <!-- $ -->
@@ -523,66 +612,6 @@ where project in (select acronyme from aap1_projects where financed)
 group by siret, label
 ```
 
-```js
-const aap1_universities_sort_input = overview.ySortSelect()
-const aap1_universities_sort = Generators.input(aap1_universities_sort_input)
-
-const aap1_laboratories_sort_input = overview.ySortSelect()
-const aap1_laboratories_sort = Generators.input(aap1_laboratories_sort_input)
-
-const aap1_partners_sort_input = overview.ySortSelect()
-const aap1_partners_sort = Generators.input(aap1_partners_sort_input)
-```
-
-<div class="grid grid-cols-3">
-  <div class="card">
-    <h2>Top 15 AAP 2 institutions par n° d'occurences</h2>
-    ${aap2_universities_sort_input}
-    <!-- $ -->
-    ${resize((width) => overview.partnerCountPlot(
-      aap2_institutions_count,
-      {
-        width,
-        y_label: "Institution (label / SIRET)",
-        x_label: "N° Institutions",
-        sort_value: aap2_universities_sort,
-      }
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Top 15 AAP 2 unités de recherche par n° d'occurences</h2>
-    ${aap2_laboratories_sort_input}
-    <!-- $ -->
-    ${resize((width) => overview.partnerCountPlot(
-      aap2_laboratories_count,
-      {
-        width,
-        marginLeft: 100,
-        y_label: "Unité (Sigle / RNSR)",
-        x_label: "N° Unités",
-        sort_value: aap2_laboratories_sort,
-      }
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Top 15 AAP 2 partnaires par n° d'occurences</h2>
-    ${aap2_partners_sort_input}
-    <!-- $ -->
-    ${resize((width) => overview.partnerCountPlot(
-      aap2_partners_count,
-      {
-        width,
-        y_label: "Partnaire (label / SIRET)",
-        x_label: "N° Partnaires",
-        sort_value: aap2_partners_sort,
-      }
-    ))}
-    <!-- $ -->
-  </div>
-</div>
-
 ```sql id=aap2_institutions_count
 select
   id,
@@ -609,6 +638,17 @@ where id is not null and length(id) = 14
 ```
 
 ```js
+const aap1_universities_sort_input = overview.ySortSelect()
+const aap1_universities_sort = Generators.input(aap1_universities_sort_input)
+
+const aap1_laboratories_sort_input = overview.ySortSelect()
+const aap1_laboratories_sort = Generators.input(aap1_laboratories_sort_input)
+
+const aap1_partners_sort_input = overview.ySortSelect()
+const aap1_partners_sort = Generators.input(aap1_partners_sort_input)
+```
+
+```js
 const aap2_universities_sort_input = overview.ySortSelect()
 const aap2_universities_sort = Generators.input(aap2_universities_sort_input)
 
@@ -617,6 +657,475 @@ const aap2_laboratories_sort = Generators.input(aap2_laboratories_sort_input)
 
 const aap2_partners_sort_input = overview.ySortSelect()
 const aap2_partners_sort = Generators.input(aap2_partners_sort_input)
+```
+
+### Les nouveaux partenaires
+
+Les partenaires des projets de l'AAP 2 qui n'ont pas été soumises à l'AAP 1
+
+```js
+const partner_aap_comparison_table_config = {
+  width: {
+    SIRET: 120,
+    RNSR: 90,
+    sigle: 80,
+  },
+}
+```
+
+<div class="grid grid-cols-3">
+  <div class="card">
+    <h2>Nombre de nouveaux institutions</h2>
+    <h3>
+      Les institutions partenaires des projets de l'AAP 2 qui n'ont pas
+      été soumises à l'AAP 1
+    </h3>
+    <span class="big">
+      ${[...aap2_new_institutions].length}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>Nombre de nouveaux laboratoires</h2>
+    <h3>
+      Les laboratoires partenaires des projets de l'AAP 2 qui n'ont pas
+      été soumises à l'AAP 1
+    </h3>
+    <span class="big">
+      ${[...aap2_new_laboratories].length}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>Nombre de nouveaux partenaires socio-économiques</h2>
+    <h3>
+      Les partenaires socio-économiques des projets de l'AAP 2 qui n'ont pas
+      été soumises à l'AAP 1
+    </h3>
+    <span class="big">
+      ${[...aap2_new_socioeconomic_partners].length}
+      <!-- $ -->
+    </span>
+  </div>
+</div>
+
+<div class="grid grid-cols-3">
+  <div class="card">
+    <h2>Liste des nouveaux institutions</h2>
+    <h3>
+      Les institutions partenaires des projets de l'AAP 2 qui n'ont pas
+      été soumises à l'AAP 1
+    </h3>
+    <br/>
+    ${resize((width) => Inputs.table(
+      aap2_new_institutions,
+      partner_aap_comparison_table_config
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Liste des nouveaux institutions</h2>
+    <h3>
+      Les laboratoires partenaires des projets de l'AAP 2 qui n'ont pas
+      été soumises à l'AAP 1
+    </h3>
+    <br/>
+    ${resize((width) => Inputs.table(
+      aap2_new_laboratories,
+      partner_aap_comparison_table_config
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Liste des nouveaux partenaires socio-économiques</h2>
+    <h3>
+      Les partenaires socio-économiques des projets de l'AAP 2 qui n'ont pas
+      été soumises à l'AAP 1
+    </h3>
+    <br/>
+    ${resize((width) => Inputs.table(
+      aap2_new_socioeconomic_partners,
+      partner_aap_comparison_table_config
+    ))}
+    <!-- $ -->
+  </div>
+</div>
+
+```sql id=aap2_new_institutions
+select
+  first(aap2_institutions.nom_complet) as nom_complet,
+  aap2_institutions.siret::VARCHAR as SIRET,
+  -- aap1_institutions.source as aap1_source,
+  -- aap2_institutions.source as aap2_source,
+from aap1_institutions
+right join aap2_institutions
+  on aap1_institutions.siret::VARCHAR = aap2_institutions.siret::VARCHAR
+where aap1_institutions.source is null and aap2_institutions.siret::VARCHAR != ''
+group by aap2_institutions.siret,
+  aap1_institutions.source, aap2_institutions.source
+```
+
+```sql id=aap2_new_laboratories
+select
+  first(aap2_laboratories.libelle) as libelle,
+  first(aap2_laboratories.sigle) as sigle,
+  aap2_laboratories.numero_national_de_structure as RNSR,
+  -- aap1_laboratories.source as aap1_source,
+  -- aap2_laboratories.source as aap2_source,
+from aap1_laboratories
+right join aap2_laboratories
+  on aap1_laboratories.numero_national_de_structure::VARCHAR
+    = aap2_laboratories.numero_national_de_structure::VARCHAR
+where aap1_laboratories.source is null
+  and aap2_laboratories.numero_national_de_structure::VARCHAR != ''
+group by aap2_laboratories.numero_national_de_structure,
+  aap1_laboratories.source, aap2_laboratories.source
+```
+
+```sql id=aap2_new_socioeconomic_partners
+select
+  first(aap2_socioeconomic_partners.nom_complet) as nom_complet,
+  aap2_socioeconomic_partners.siret::VARCHAR as SIRET,
+  -- aap1_socioeconomic_partners.source as aap1_source,
+  -- aap2_socioeconomic_partners.source as aap2_source,
+from aap1_socioeconomic_partners
+right join aap2_socioeconomic_partners
+  on aap1_socioeconomic_partners.siret::VARCHAR
+    = aap2_socioeconomic_partners.siret::VARCHAR
+where aap1_socioeconomic_partners.source is null
+  and aap2_socioeconomic_partners.siret::VARCHAR != ''
+group by aap2_socioeconomic_partners.siret,
+  aap1_socioeconomic_partners.source, aap2_socioeconomic_partners.source
+```
+
+### Les projets familiers
+
+Les partenaires des projets de l'AAP 2 qui ont été financées dans l'AAP 1
+
+<div class="grid grid-cols-3">
+  <div class="card">
+    <h2>Nombre de nouveaux institutions</h2>
+    <h3>
+      Les institutions partenaires des projets de l'AAP 2 qui ont été financées
+      dans l'AAP 1
+    </h3>
+    <span class="big">
+      ${[...aap2_old_institutions].length}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>Nombre de nouveaux laboratoires</h2>
+    <h3>
+      Les laboratoires partenaires des projets de l'AAP 2 qui ont été financées
+      dans l'AAP 1
+    </h3>
+    <span class="big">
+      ${[...aap2_old_laboratories].length}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>Nombre de nouveaux partenaires socio-économiques</h2>
+    <h3>
+      Les partenaires socio-économiques des projets de l'AAP 2 qui ont été financées
+      dans l'AAP 1
+    </h3>
+    <span class="big">
+      ${[...aap2_old_socioeconomic_partners].length}
+      <!-- $ -->
+    </span>
+  </div>
+</div>
+
+<div class="grid grid-cols-3">
+  <div class="card">
+    <h2>Liste des nouveaux institutions</h2>
+    <h3>
+      Les institutions partenaires des projets de l'AAP 2 qui ont été financées
+      dans l'AAP 1
+    </h3>
+    <br/>
+    ${resize((width) => Inputs.table(
+      aap2_old_institutions,
+      partner_aap_comparison_table_config
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Liste des nouveaux institutions</h2>
+    <h3>
+      Les laboratoires partenaires des projets de l'AAP 2 qui ont été financées
+      dans l'AAP 1
+    </h3>
+    <br/>
+    ${resize((width) => Inputs.table(
+      aap2_old_laboratories,
+      partner_aap_comparison_table_config
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Liste des nouveaux partenaires socio-économiques</h2>
+    <h3>
+      Les partenaires socio-économiques des projets de l'AAP 2 qui ont été financées
+      dans l'AAP 1
+    </h3>
+    <br/>
+    ${resize((width) => Inputs.table(
+      aap2_old_socioeconomic_partners,
+      partner_aap_comparison_table_config
+    ))}
+    <!-- $ -->
+  </div>
+</div>
+
+```sql id=aap2_old_institutions
+select
+  first(aap2_institutions.nom_complet) as nom_complet,
+  aap2_institutions.siret::VARCHAR as SIRET,
+  -- aap1_institutions.source as aap1_source,
+  -- aap2_institutions.source as aap2_source,
+from aap1_institutions
+right join aap2_institutions
+  on aap1_institutions.siret::VARCHAR = aap2_institutions.siret::VARCHAR
+where aap2_institutions.siret::VARCHAR != ''
+  and aap1_institutions.label in (
+    select distinct university from aap1_project_by_institutions
+    where project in (
+      select acronyme from aap1_projects where financed
+    )
+  )
+group by aap2_institutions.siret,
+  aap1_institutions.source, aap2_institutions.source
+```
+
+```sql id=aap2_old_laboratories
+select
+  first(aap2_laboratories.libelle) as libelle,
+  first(aap2_laboratories.sigle) as sigle,
+  aap2_laboratories.numero_national_de_structure as RNSR,
+  -- aap1_laboratories.source as aap1_source,
+  -- aap2_laboratories.source as aap2_source,
+from aap1_laboratories
+right join aap2_laboratories
+  on aap1_laboratories.numero_national_de_structure::VARCHAR
+    = aap2_laboratories.numero_national_de_structure::VARCHAR
+where aap2_laboratories.numero_national_de_structure::VARCHAR != ''
+  and aap1_laboratories.label in (
+    select distinct lab from aap1_project_by_laboratories
+    where project in (
+      select acronyme from aap1_projects where financed
+    )
+  )
+group by aap2_laboratories.numero_national_de_structure,
+  aap1_laboratories.source, aap2_laboratories.source
+```
+
+```sql id=aap2_old_socioeconomic_partners
+select
+  first(aap2_socioeconomic_partners.nom_complet) as nom_complet,
+  aap2_socioeconomic_partners.siret::VARCHAR as SIRET,
+  aap1_socioeconomic_partners.source as aap1_source,
+  aap2_socioeconomic_partners.source as aap2_source,
+from aap1_socioeconomic_partners
+right join aap2_socioeconomic_partners
+  on aap1_socioeconomic_partners.siret::VARCHAR
+    = aap2_socioeconomic_partners.siret::VARCHAR
+where aap2_socioeconomic_partners.siret::VARCHAR != ''
+  and aap1_socioeconomic_partners.label in (
+    select distinct partner from aap1_project_by_socioeconomic_partners
+    where project in (
+      select acronyme from aap1_projects where financed
+    )
+  )
+group by aap2_socioeconomic_partners.siret,
+  aap1_socioeconomic_partners.source, aap2_socioeconomic_partners.source
+```
+
+### Les projets pas retenues
+
+Les partenaires des projets de l'AAP 2 qui ont été soumises à l'AAP 1 mais pas financées
+
+<div class="caution">
+  Trop d'information manquant de l'AAP 1 pour extraire les partenaires des projets
+  soumise mais non-finançés
+</div>
+
+<div class="grid grid-cols-3">
+  <div class="card">
+    <h2>Nombre de nouveaux institutions</h2>
+    <h3>
+      Les institutions partenaires des projets de l'AAP 2 qui ont été soumises
+      à l'AAP 1 mais pas financées
+    </h3>
+    <span class="big">
+      ${[...aap2_rejected_institutions].length}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>Nombre de nouveaux laboratoires</h2>
+    <h3>
+      Les laboratoires partenaires des projets de l'AAP 2 qui ont été soumises
+      à l'AAP 1 mais pas financées
+    </h3>
+    <span class="big">
+      ${[...aap2_rejected_laboratories].length}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>Nombre de nouveaux partenaires socio-économiques</h2>
+    <h3>
+      Les partenaires socio-économiques des projets de l'AAP 2 qui ont été soumises
+      à l'AAP 1 mais pas financées
+    </h3>
+    <span class="big">
+      ${[...aap2_rejected_socioeconomic_partners].length}
+      <!-- $ -->
+    </span>
+  </div>
+</div>
+
+<div class="grid grid-cols-3">
+  <div class="card">
+    <h2>Liste des nouveaux institutions</h2>
+    <h3>
+      Les institutions partenaires des projets de l'AAP 2 qui ont été soumises
+      à l'AAP 1 mais pas financées
+    </h3>
+    <br/>
+    ${resize((width) => Inputs.table(
+      aap2_rejected_institutions,
+      partner_aap_comparison_table_config
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Liste des nouveaux institutions</h2>
+    <h3>
+      Les laboratoires partenaires des projets de l'AAP 2 qui ont été soumises
+      à l'AAP 1 mais pas financées
+    </h3>
+    <br/>
+    ${resize((width) => Inputs.table(
+      aap2_rejected_laboratories,
+      partner_aap_comparison_table_config
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Liste des nouveaux partenaires socio-économiques</h2>
+    <h3>
+      Les partenaires socio-économiques des projets de l'AAP 2 qui ont été soumises
+      à l'AAP 1 mais pas financées
+    </h3>
+    <br/>
+    ${resize((width) => Inputs.table(
+      aap2_rejected_socioeconomic_partners,
+      partner_aap_comparison_table_config
+    ))}
+    <!-- $ -->
+  </div>
+</div>
+
+```sql display=false
+select university, list(project) as projects, list(aap1_institutions.siret) as sirets
+from aap1_project_by_institutions
+join aap1_institutions
+  on aap1_project_by_institutions.university = aap1_institutions.label
+group by university
+having not (list(project) &&
+(
+  select list(acronyme)
+  from aap1_projects
+  where financed
+))
+```
+
+```sql id=aap2_rejected_institutions
+select
+  first(aap2_institutions.nom_complet) as nom_complet,
+  aap2_institutions.siret::VARCHAR as SIRET,
+  -- aap1_institutions.source as aap1_source,
+  -- aap2_institutions.source as aap2_source,
+from aap1_institutions
+right join aap2_institutions
+  on aap1_institutions.siret::VARCHAR = aap2_institutions.siret::VARCHAR
+where aap2_institutions.siret::VARCHAR != ''
+  and aap1_institutions.label in (
+    select university
+    from aap1_project_by_institutions
+    group by university
+    having not (
+      list(project) &&
+      (
+        select list(acronyme)
+        from aap1_projects
+        where financed
+      )
+    )
+  )
+group by aap2_institutions.siret,
+  aap1_institutions.source, aap2_institutions.source
+```
+
+```sql id=aap2_rejected_laboratories
+select
+  first(aap2_laboratories.libelle) as libelle,
+  first(aap2_laboratories.sigle) as sigle,
+  aap2_laboratories.numero_national_de_structure as RNSR,
+  -- aap1_laboratories.source as aap1_source,
+  -- aap2_laboratories.source as aap2_source,
+from aap1_laboratories
+right join aap2_laboratories
+  on aap1_laboratories.numero_national_de_structure::VARCHAR
+    = aap2_laboratories.numero_national_de_structure::VARCHAR
+where aap2_laboratories.numero_national_de_structure::VARCHAR != ''
+  and aap1_laboratories.label in (
+    select lab
+    from aap1_project_by_laboratories
+    group by lab
+    having not (
+      list(project) &&
+      (
+        select list(acronyme)
+        from aap1_projects
+        where financed
+      )
+    )
+  )
+group by aap2_laboratories.numero_national_de_structure,
+  aap1_laboratories.source, aap2_laboratories.source
+```
+
+```sql id=aap2_rejected_socioeconomic_partners
+select
+  first(aap2_socioeconomic_partners.nom_complet) as nom_complet,
+  aap2_socioeconomic_partners.siret::VARCHAR as SIRET,
+  -- aap1_socioeconomic_partners.source as aap1_source,
+  -- aap2_socioeconomic_partners.source as aap2_source,
+from aap1_socioeconomic_partners
+right join aap2_socioeconomic_partners
+  on aap1_socioeconomic_partners.siret::VARCHAR
+    = aap2_socioeconomic_partners.siret::VARCHAR
+where aap2_socioeconomic_partners.siret::VARCHAR != ''
+  and aap1_socioeconomic_partners.label in (
+    select partner
+    from aap1_project_by_socioeconomic_partners
+    group by partner
+    having not (
+      list(project) &&
+      (
+        select list(acronyme)
+        from aap1_projects
+        where financed
+      )
+    )
+  )
+group by aap2_socioeconomic_partners.siret,
+  aap1_socioeconomic_partners.source, aap2_socioeconomic_partners.source
 ```
 
 ## Défis
@@ -638,56 +1147,156 @@ const aap2_partners_sort = Generators.input(aap2_partners_sort_input)
   </div>
 </div>
 
+<div class="grid grid-cols-4">
+  <div class="card">
+    <h2>Répartition des défis de l'AAP 1</h2>
+    <br/>
+    ${resize((width) => donutChart(
+      [...challenge_count].filter((d) => d.aap === 'AAP 1'),
+      default_defi_aap_donut_config(width)
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Répartition des défis de l'AAP 2</h2>
+    <br/>
+    ${resize((width) => donutChart(
+      [...challenge_count].filter((d) => d.aap === 'AAP 2'),
+      default_defi_aap_donut_config(width)
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Répartition du défi 1 par AAP</h2>
+    <br/>
+    ${resize((width) => donutChart(
+      [...challenge_count].filter((d) => d.defi === '1'),
+      default_defi_defi_donut_config(width)
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Répartition du défi 2 par AAP</h2>
+    <br/>
+    ${resize((width) => donutChart(
+      [...challenge_count].filter((d) => d.defi === '2'),
+      default_defi_defi_donut_config(width)
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Répartition du défi 3 par AAP</h2>
+    <br/>
+    ${resize((width) => donutChart(
+      [...challenge_count].filter((d) => d.defi === '3'),
+      default_defi_defi_donut_config(width)
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Répartition du défi 4 par AAP</h2>
+    <br/>
+    ${resize((width) => donutChart(
+      [...challenge_count].filter((d) => d.defi === '4'),
+      default_defi_defi_donut_config(width)
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Répartition du défi 5 par AAP</h2>
+    <br/>
+    ${resize((width) => donutChart(
+      [...challenge_count].filter((d) => d.defi === '5'),
+      default_defi_defi_donut_config(width)
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Répartition du défi 6 par AAP</h2>
+    <br/>
+    ${resize((width) => donutChart(
+      [...challenge_count].filter((d) => d.defi === '6'),
+      default_defi_defi_donut_config(width)
+    ))}
+    <!-- $ -->
+  </div>
+</div>
+
+```js
+const default_defi_aap_donut_config = (width) => ({
+  width: width - 100,
+  legendWidth: width - 100,
+  keyMap: (d) => `défi ${d.defi}`,
+  valueMap: (d) => d.count,
+  color: overview.defiColorScale.domain([
+    'défi 1',
+    'défi 2',
+    'défi 3',
+    'défi 4',
+    'défi 5',
+    'défi 6',
+  ]),
+})
+
+const default_defi_defi_donut_config = (width) => ({
+  width: width - 100,
+  legendWidth: width - 70,
+  keyMap: (d) => d.aap,
+  valueMap: (d) => d.count,
+  color: overview.aapColorScale,
+})
+```
+
 ```sql id=challenge_count
 select
   challenge::VARCHAR as defi,
-  '1' as aap,
+  'AAP 1' as aap,
   count(*) as count,
 from aap1_project_by_challenge
 group by challenge
 union
 select
   '1' as defi,
-  '2' as aap,
+  'AAP 2' as aap,
   count(*) as count
 from aap2_projects
 where defi_1_1 or defi_1_2
 union
 select
   '2' as defi,
-  '2' as aap,
+  'AAP 2' as aap,
   count(*) as count
 from aap2_projects
 where defi_2_1 or defi_2_2
 union
 select
   '3' as defi,
-  '2' as aap,
+  'AAP 2' as aap,
   count(*) as count
 from aap2_projects
 where defi_3_1 or defi_3_2
 union
 select
   '4' as defi,
-  '2' as aap,
+  'AAP 2' as aap,
   count(*) as count
 from aap2_projects
 where defi_4_1 or defi_4_2
 union
 select
   '5' as defi,
-  '2' as aap,
+  'AAP 2' as aap,
   count(*) as count
 from aap2_projects
 where defi_5_1 or defi_5_2
 union
 select
   '6' as defi,
-  '2' as aap,
+  'AAP 2' as aap,
   count(*) as count
 from aap2_projects
 where defi_6_1 or defi_6_2
-order by aap
+order by defi, aap
 ```
 
 <!-- ## Disciplines
@@ -699,21 +1308,230 @@ group by discipline
 order by count desc
 ``` -->
 
+## Chercheurs
+
+### Les nouveaux chercheurs
+
+Chercheurs de l'AAP 2 pas présents dans les projets financées de l'AAP 1
+
+<div class="grid grid-cols-4">
+  <div class="card">
+    <h2>
+      Nombre de chercheurs de l'AAP 2 pas présents dans les projets financées
+      de l'AAP 1
+    </h2>
+    <span class="big">
+      ${[...new_researchers].length}
+      <!-- $ -->
+    </span>
+  </div>
+  <div></div>
+  <div class="card">
+    <h2>
+      Nombre des encadrants de l'AAP 2 pas présents dans les projets
+      financées de l'AAP 1
+    </h2>
+    <span class="big">
+      ${[...new_researchers]
+        .filter((d) => [...d.positions].length > 0)
+        .length}
+      <!-- $ -->
+    </span>
+  </div>
+</div>
+
+<div class="grid grid-cols-2">
+  <div class="card">
+    <h2>Chercheurs de l'AAP 2 pas présents dans les projets financées de l'AAP 1</h2>
+    <br/>
+    ${Inputs.table([...new_researchers])}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>
+      Encadrants de projet de l'AAP 2 pas présents dans les projets financées
+      de l'AAP 1
+    </h2>
+    <br/>
+    ${Inputs.table(
+      [...new_researchers]
+        .filter((d) => [...d.positions].length > 0)
+    )}
+    <!-- $ -->
+  </div>
+</div>
+
+```sql id=new_researchers
+with new_researcher_names as (
+    select
+      lower(
+        aap2_researchers.lastname || ' ' || aap2_researchers.firstname
+      ) as fullname,
+      '2' as aap,
+    from aap2_researchers
+    except
+    select
+      lower(aap1_researchers.fullname) as fullname,
+      '1' as aap,
+    from aap1_researchers
+  ),
+  new_orcids as (
+    select
+      orcid,
+      '2' as aap,
+    from aap2_researchers
+    except
+    select
+      orcid,
+      '1' as aap,
+    from aap1_researchers
+  ),
+  new_idhals as (
+    select
+      idhal,
+      '2' as aap,
+    from aap2_researchers
+    except
+    select
+      idhal,
+      '1' as aap,
+    from aap1_researchers
+  )
+
+select
+  lower(lastname || ' ' || firstname) as fullname,
+  orcid,
+  idhal,
+  list_distinct(list(position)) as positions,
+  [] as projects,
+from aap2_researchers
+where
+  lower(lastname || ' ' || firstname) in (
+    select fullname from new_researcher_names
+  )
+  or orcid in (select orcid from new_orcids)
+  or idhal in (select idhal from new_idhals)
+group by
+  fullname, orcid, idhal
+```
+
+### Les chercheurs familiers
+
+Chercheurs présents dans les projets financées de l'AAP 1 et 2
+
+<div class="grid grid-cols-4">
+  <div class="card">
+    <h2>Nombre de chercheurs présents dans les projets financées de l'AAP 1 et 2</h2>
+    <span class="big">
+      ${[...returning_researchers].length}
+      <!-- $ -->
+    </span>
+  </div>
+  <div></div>
+  <div class="card">
+    <h2>
+      Nombre d'encadrants de projet de l'AAP 2 présents dans les projets financées
+      de l'AAP 1
+    </h2>
+    <span class="big">
+      ${[...returning_researchers]
+        .filter((d) => [...d.positions].length > 0)
+        .length}
+      <!-- $ -->
+    </span>
+  </div>
+</div>
+
+<div class="grid grid-cols-2">
+  <div class="card">
+    <h2>Chercheurs présents dans les projets financées de l'AAP 1 et 2</h2>
+    <br/>
+    ${Inputs.table(returning_researchers)}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>
+      Encadrants de projet de l'AAP 2 présents dans les projets financées
+      de l'AAP 1
+    </h2>
+    <br/>
+    ${Inputs.table(
+      [...returning_researchers]
+        .filter((d) => [...d.positions].length > 0)
+    )}
+    <!-- $ -->
+  </div>
+</div>
+
+```sql id=returning_researchers
+with returning_researcher_names as (
+    select
+      lower(aap1_researchers.fullname) as fullname,
+    from aap1_researchers
+    intersect
+    select
+      lower(
+        aap2_researchers.lastname || ' ' || aap2_researchers.firstname
+      ) as fullname,
+    from aap2_researchers
+  ),
+  returning_orcids as (
+    select
+      orcid
+    from aap1_researchers
+    intersect
+    select
+      orcid
+    from aap2_researchers
+  ),
+  returning_idhals as (
+    select
+      idhal
+    from aap1_researchers
+    intersect
+    select
+      idhal
+    from aap2_researchers
+  )
+
+select
+  lower(lastname || ' ' || firstname) as fullname,
+  orcid,
+  idhal,
+  list_distinct(list(position)) as positions,
+  [] as projects,
+from aap2_researchers
+where
+  lower(lastname || ' ' || firstname) in (
+    select fullname from returning_researcher_names
+  )
+  or orcid in (select orcid from returning_orcids)
+  or idhal in (select idhal from returning_idhals)
+group by
+  fullname, orcid, idhal
+```
+
 ## CNUs
 
-<div class="note">
+<div class="note" label="Notice">
 
 Les sections CNU considérées comme
 
-- Droit, économie et gestion
-- Pluridisciplinaire
-- Théologie
+- _Droit, économie et gestion_
+  (sections ${cnu.cnu_category_section_map.get('Droit, économie et gestion')
+  .join(', ')})
+- _Pluridisciplinaire_
+  (sections ${cnu.cnu_category_section_map.get('Pluridisciplinaire')
+  .join(', ')})
+- _Théologie_
+  (sections ${cnu.cnu_category_section_map.get('Théologie')
+  .join(', ')})
 
-par le Conseil National des Universités (CNU) sont considérées comme
+par le Conseil National des Universités (CNU) sont catégorisées comme
 _SH - Sciences Humaines & Sociales_ dans ce page.
 
-Pour plus de détails sur les sections du CNU,
-[voir la page CNU](https://conseil-national-des-universites.fr).
+Pour plus de détails sur les sections du CNU et la catégorisation officielle,
+[voir la page du CNU](https://conseil-national-des-universites.fr).
 
 </div>
 
@@ -956,7 +1774,34 @@ TBD
   <!-- $ -->
 </div>
 
-```sql id=project_type_inconsistencies
+<div class="note" label="Notice">
+
+Les indicateurs de qualité sont calculé a partir des appels à projets. Leurs
+informations sont soumise sous forme des fichiers excel ou csv puis intégrées
+dans ce page via des requêtes SQL dans un base de données éphémère avec `DuckDB`
+et le framework d'`Observable`.
+
+Pour l'AAP 2, deux sources d'informations sont utilisées: les informations soumise
+directement sur le site de dépôt des projets et les informations soumise dans le
+template PDF de dépot. Chaque source et joint pour compléter et extrait dans plusiers
+tableaux SQL (pour l'instant):
+
+- aap2_projects
+- aap2_researchers
+- aap2_researcher_by_cnu
+- aap2_institutions
+- aap2_laboratories
+- aap2_socioeconomic_partners
+- aap2_project_by_keyword
+- aap2_project_by_institutions
+- aap2_project_by_laboratories
+- aap2_project_by_discipline
+- aap2_project_by_cnu
+- aap2_project_by_socioeconomic_partners
+
+Puis les requêtes pour calculer les indicateurs sont les suivantes :
+
+```sql id=project_type_inconsistencies echo
 select
   acronyme,
   TYPDOC as 'type sur le site',
@@ -966,37 +1811,37 @@ where (TYPDOC = 'PITT - Trio de Thèses' and type_projet != 'Choice1')
 or (TYPDOC = 'PITT - Interdisciplinaire' and type_projet != 'Choice2')
 ```
 
-```sql id=[missing_institution_siret]
+```sql id=[missing_institution_siret] echo
 select count(*) as count
 from aap2_institutions
 where siret is null
 ```
 
-```sql id=[missing_laboratories_siret]
+```sql id=[missing_laboratories_siret] echo
 select count(*) as count
 from aap2_laboratories
 where numero_national_de_structure is null
 ```
 
-```sql id=[missing_partner_siret]
+```sql id=[missing_partner_siret] echo
 select count(*) as count
 from aap2_socioeconomic_partners
 where siret is null or length(id) != 14
 ```
 
-```sql id=[missing_researcher_orcid]
+```sql id=[missing_researcher_orcid] echo
 select count(*) as count
 from aap2_researchers
 where orcid is null or length(replace(orcid, '-', '')) != 16
 ```
 
-```sql id=[missing_researcher_idref]
+```sql id=[missing_researcher_idref] echo
 select count(*) as count
 from aap2_researchers
 where idref is null or length(idref) != 9
 ```
 
-```sql id=[missing_researcher_idhal]
+```sql id=[missing_researcher_idhal] echo
 select count(*) as count
 from aap2_researchers
 where idhal is null
@@ -1233,3 +2078,5 @@ select * from (
   from aap2_project_by_socioeconomic_partners
 )
 ```
+
+</div>

@@ -1,7 +1,6 @@
-import { line } from 'd3'
 import * as Inputs from 'npm:@observablehq/inputs'
 import * as Plot from 'npm:@observablehq/plot'
-// import * as d3 from 'npm:d3'
+import * as d3 from 'npm:d3'
 
 export const challenge_label_map = new Map([
   ['1', 'Défi 1'],
@@ -29,6 +28,17 @@ export const challenge_description_map_aap2 = new Map([
   ['5', 'La ville durable, santé et bien-être'],
   ['6', 'Les défis émergents, signaux faibles, nouvelles difficultés'],
 ])
+
+export const aapColorScale = d3
+  .scaleOrdinal(
+    ['AAP 1', 'AAP 2'],
+    ['var(--theme-foreground-focus-alt)', 'var(--theme-foreground-focus)'],
+  )
+  .unknown('grey')
+
+export const defiColorScale = d3
+  .scaleOrdinal(['1', '2', '3', '4', '5', '6'], d3.schemeObservable10)
+  .unknown('grey')
 
 export const laureateCheckbox = () =>
   Inputs.toggle({
@@ -64,7 +74,7 @@ export const ySortSelect = (label = 'Label') =>
     },
   )
 
-export const projectCountPlot = (
+export const projectCountPlotAAP1 = (
   data,
   {
     width,
@@ -109,14 +119,65 @@ export const projectCountPlot = (
     ],
   })
 
+export const projectCountPlotAAP2 = (
+  data,
+  {
+    width,
+    height = 400,
+    marginLeft = 140,
+    limit = 15,
+    x_label,
+    y_label,
+    sort_value,
+    x_accessor = 'count',
+    y_accessor = 'project',
+    fill_accessor = 'type',
+    max_partner_count = 25,
+  } = {},
+) =>
+  Plot.plot({
+    width: width,
+    height: height,
+    x: {
+      label: x_label,
+      grid: true,
+      nice: true,
+      domain: [0, max_partner_count],
+    },
+    y: {
+      label: y_label,
+      nice: true,
+      type: 'band',
+    },
+    marginLeft: marginLeft,
+    color: {
+      legend: true,
+      type: 'categorical',
+      // domain: [''],
+      range: [
+        'var(--theme-foreground-focus-alt)',
+        'var(--theme-foreground-focus)',
+      ],
+    },
+    marks: [
+      Plot.barX(data, {
+        x: x_accessor,
+        y: y_accessor,
+        fill: fill_accessor,
+        sort: { y: sort_value, limit: limit },
+        tip: true,
+      }),
+    ],
+  })
+
 export const partnerCountPlot = (
   data,
   {
     width,
     height = 400,
-    marginLeft = 200,
+    marginLeft = 300,
     limit = 15,
-    lineWidth = 18,
+    lineWidth = 30,
     x_label,
     y_label,
     sort_value,
@@ -213,7 +274,7 @@ export const totalChallengeCountPlot = (data, { width }) =>
     width: width,
     height: 400,
     marginBottom: 70,
-    title: 'Totale défis',
+    title: 'Total défis',
     subtitle: `Les défis indiqués dans les métadonnées et les templates des
         soumissions sur le site du dépôt de l'AAP 1 et 2`,
     grid: true,
@@ -235,7 +296,7 @@ export const totalChallengeCountPlot = (data, { width }) =>
       Plot.barY(data, {
         x: 'defi',
         y: 'count',
-        fill: (d) => `AAP ${d.aap}`,
+        fill: 'aap',
         tip: true,
       }),
     ],
@@ -254,6 +315,7 @@ export const challengeCountPlot = (data, { width }) =>
       type: 'band',
     },
     x: {
+      label: null,
       tickFormat: null,
       tickSize: null,
     },
@@ -274,10 +336,10 @@ export const challengeCountPlot = (data, { width }) =>
         tickSize: 5,
       }),
       Plot.barY(data, {
-        x: (d) => `AAP ${d.aap}`,
+        x: 'aap',
         fx: 'defi',
         y: 'count',
-        fill: (d) => `AAP ${d.aap}`,
+        fill: 'aap',
         tip: true,
       }),
     ],
