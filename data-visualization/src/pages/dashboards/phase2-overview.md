@@ -50,7 +50,10 @@ import * as color from '../../components/color.js'
 import { cropText } from '../../components/utilities.js'
 import { bubbleChartX } from '../../components/bubble-chart.js'
 import { donutChart } from '../../components/pie-chart.js'
-import { choroplethFrance } from '../../components/projection-map.js'
+import {
+  choroplethFrance,
+  mainland_france_departements_geojson,
+} from '../../components/projection-map.js'
 ```
 
 <div class="warning" label="Avertissement sur la qualité des données">
@@ -1773,8 +1776,69 @@ order by count desc
 
 ## Cartographies
 
-```js
+<div class="grid grid-cols-2">
+  <div class="card">
+    ${resize((width) => choroplethFrance(
+      width,
+      width,
+      "- Institutions de l'AAP 2 par département, France",
+      ({ properties }) => [...institution_count_by_postal_code].find(
+          (d) => d.code_postal === properties.code
+        )?.count,
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    ${resize((width) => choroplethFrance(
+      width,
+      width,
+      "- Institutions de l'AAP 2 par département, France",
+      ({ properties }) => [...institution_count_by_postal_code].find(
+          (d) => d.code_postal === properties.code
+        )?.count,
+      [
+        Plot.tip(
+          mainland_france_departements_geojson,
+          Plot.geoCentroid({
+            title: ({properties}) => [...institutions_by_postal_code].filter(
+              (d) => d.code_postal === properties.code
+            ).length > 0 ? [...institutions_by_postal_code].filter(
+              (d) => d.code_postal === properties.code
+            ).map((d) => '• ' + d.nom_complet).join('\n') : null,
+            ...default_choropleth_tip_config,
+          }),
+        ),
+      ],
+    ))}
+    <!-- $ -->
+  </div>
+</div>
 
+```js
+const default_choropleth_tip_config = {
+  anchor: 'left',
+  textPadding: 3,
+  lineWidth: 50,
+  textOverflow: 'ellipsis',
+}
+```
+
+```sql id=institution_count_by_postal_code
+select
+  code_postal[:2] as code_postal,
+  sum(count)::INT as count,
+from aap2_institutions
+where code_postal is not null
+group by code_postal
+```
+
+```sql id=institutions_by_postal_code
+select
+  first(nom_complet) as nom_complet,
+  first(code_postal[:2]) as code_postal,
+from aap2_institutions
+where code_postal is not null
+group by siret
 ```
 
 ## Qualité des données

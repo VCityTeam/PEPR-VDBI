@@ -309,19 +309,34 @@ export function projectionMap(
 
 //   )
 
+const choropleth_color_config = {
+  scheme: 'Blues',
+  label: `N° de partenaires et parties prenantes estimé`,
+  // label: "N° of Partners",
+  // domain: [0, 6],
+  legend: true,
+  marginLeft: 10,
+  marginRight: 10,
+  // type: "log",
+  zero: true,
+  nice: true,
+  // ticks: 2,
+}
+
 export const choropleth = (
   width,
   height,
+  caption,
   fill,
   projection,
   features,
-  caption,
+  marks = [],
 ) =>
   Plot.plot({
     width: width,
     height: height - 60,
     caption: caption,
-    color: color_config,
+    color: choropleth_color_config,
     projection: projection,
     marks: [
       Plot.geo(features, {
@@ -330,42 +345,45 @@ export const choropleth = (
           Code: ({ properties }) => properties.code,
           Lat: (d) => d3.geoCentroid(d)[0],
           Lon: (d) => d3.geoCentroid(d)[1],
+          Count: fill,
         },
         tip: true,
         fill: fill,
         strokeOpacity: 0,
       }),
-
-      [...mainland_france_choropleth_marks],
+      ...marks,
     ],
   })
 
-export const choroplethFrance = (width, height, fill) =>
+export const choroplethFrance = (width, height, caption, fill, marks = []) =>
   choropleth(
     width,
     height,
+    caption,
     fill,
     france_projection,
     mainland_france_departements_geojson,
-    '- Partenaires et parties prenantes des projets par département, France',
+    [...mainland_france_choropleth_marks, ...marks],
   )
 
-export const choroplethIdf = (width, fill) =>
+export const choroplethIdf = (width, caption, fill, marks = []) =>
   choropleth(
     width,
     width,
+    caption,
     fill,
     idf_projection,
     idf_departements_geojson,
-    '- Partenaires et parties prenantes des projets par département, Île-de-France',
+    [...idf_choropleth_marks, ...marks],
   )
 
-export const choroplethItaly = (width, fill) =>
+export const choroplethItaly = (width, caption, fill, marks = []) =>
   choropleth(
     width,
     width,
+    caption,
     fill,
     italy_projection,
     italy_regions_geojson,
-    '- Partenaires et parties prenantes des projets par département, Italy',
+    [...italy_choropleth_marks, ...marks],
   )
