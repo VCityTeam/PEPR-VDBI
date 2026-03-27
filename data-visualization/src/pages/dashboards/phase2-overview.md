@@ -468,7 +468,6 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
       {
         width,
         y_label: "Institution (label / SIRET)",
-        x_label: "Nombre d'institutions",
         sort_value: aap1_universities_sort,
       }
     ))}
@@ -489,7 +488,6 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
         marginLeft: 170,
         lineWidth: 15,
         y_label: "Unité (Sigle / RNSR)",
-        x_label: "Nombre d'unités",
         sort_value: aap1_laboratories_sort,
         textOverflow: 'ellipsis',
       }
@@ -509,7 +507,6 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
       {
         width,
         y_label: "Partnaire (label / SIRET)",
-        x_label: "Nombre de partenaires",
         sort_value: aap1_partners_sort,
       }
     ))}
@@ -525,7 +522,6 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
       {
         width,
         y_label: "Institution (label / SIRET)",
-        x_label: "Nombre d'institutions",
         sort_value: aap2_universities_sort,
       }
     ))}
@@ -542,7 +538,6 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
         marginLeft: 170,
         lineWidth: 15,
         y_label: "Unité (Sigle / RNSR)",
-        x_label: "Nombre d'unités",
         sort_value: aap2_laboratories_sort,
       }
     ))}
@@ -557,7 +552,6 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
       {
         width,
         y_label: "Partnaire (label / SIRET)",
-        x_label: "Nombre de partenaires",
         sort_value: aap2_partners_sort,
       }
     ))}
@@ -573,7 +567,6 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
       {
         width,
         y_label: "Institution (label / SIRET)",
-        x_label: "Nombre d'institutions",
         sort_value: aap2_selected_universities_sort,
       }
     ))}
@@ -590,7 +583,6 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
         marginLeft: 170,
         lineWidth: 15,
         y_label: "Unité (Sigle / RNSR)",
-        x_label: "Nombre d'unités",
         sort_value: aap2_selected_laboratories_sort,
       }
     ))}
@@ -605,7 +597,6 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
       {
         width,
         y_label: "Partnaire (label / SIRET)",
-        x_label: "Nombre de partenaires",
         sort_value: aap2_selected_partners_sort,
       }
     ))}
@@ -1283,6 +1274,7 @@ group by siret
 ## Défis
 
 <div class="grid grid-cols-3">
+  <!-- AAP 1 + 2 -->
   <div class="card">
     ${resize((width) => overview.stackedChallengeCountPlot(
       challenge_count_by_aap,
@@ -1297,12 +1289,14 @@ group by siret
     )}
     <!-- $ -->
   </div>
+  <!-- AAP 2 by project type -->
   <div class="card">
     ${resize((width) => overview.stackedChallengeCountPlot(
-      challenge_count_by_project_type,
+      aap2_challenge_count,
       {
         width: width,
         fill_accessor: 'project_type',
+        color_range: overview.projectTypeColorScale.range(),
         title: 'Défis par type de projet',
         subtitle: `Les défis indiqués dans les métadonnées et les templates des
           soumissions sur le site du dépôt de l'AAP 2`
@@ -1312,10 +1306,11 @@ group by siret
   </div>
   <div class="card grid grid-colspan-2">
     ${resize((width) => overview.challengeCountPlot(
-      challenge_count_by_project_type,
+      aap2_challenge_count,
       {
         width: width,
         x_accessor: 'project_type',
+        color_range: overview.projectTypeColorScale.range(),
         title: 'Défis par type de projet',
         subtitle: `Les défis indiqués dans les métadonnées et les templates des
           soumissions sur le site du dépôt de l'AAP 2`
@@ -1330,7 +1325,37 @@ group by siret
     <h2>Répartition des défis de l'AAP 1</h2>
     <br/>
     ${resize((width) => donutChart(
-      [...challenge_count_by_aap].filter((d) => d.aap === 'AAP 1'),
+      [
+        ...d3.group(
+          [...challenge_count_by_aap],
+          (d) => d.aap,
+          (d) => d.financed
+        )
+        .get('AAP 1')
+        .get(true),
+        ...d3.group(
+          [...challenge_count_by_aap],
+          (d) => d.aap,
+          (d) => d.financed
+        )
+        .get('AAP 1')
+        .get(false)
+      ],
+      default_defi_aap_donut_config(width)
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Répartition des défis financés de l'AAP 1</h2>
+    <br/>
+    ${resize((width) => donutChart(
+      d3.group(
+          [...challenge_count_by_aap],
+          (d) => d.aap,
+          (d) => d.financed
+        )
+        .get('AAP 1')
+        .get(true),
       default_defi_aap_donut_config(width)
     ))}
     <!-- $ -->
@@ -1339,62 +1364,38 @@ group by siret
     <h2>Répartition des défis de l'AAP 2</h2>
     <br/>
     ${resize((width) => donutChart(
-      [...challenge_count_by_aap].filter((d) => d.aap === 'AAP 2'),
+      [
+        ...d3.group(
+          [...challenge_count_by_aap],
+          (d) => d.aap,
+          (d) => d.selected
+        )
+        .get('AAP 2')
+        .get(true),
+        ...d3.group(
+          [...challenge_count_by_aap],
+          (d) => d.aap,
+          (d) => d.selected
+        )
+        .get('AAP 2')
+        .get(false)
+      ],
       default_defi_aap_donut_config(width)
     ))}
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Répartition du défi 1 par AAP</h2>
+    <h2>Répartition des défis sélectionnés de l'AAP 2</h2>
     <br/>
     ${resize((width) => donutChart(
-      [...challenge_count_by_aap].filter((d) => d.defi === '1'),
-      default_defi_defi_donut_config(width)
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Répartition du défi 2 par AAP</h2>
-    <br/>
-    ${resize((width) => donutChart(
-      [...challenge_count_by_aap].filter((d) => d.defi === '2'),
-      default_defi_defi_donut_config(width)
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Répartition du défi 3 par AAP</h2>
-    <br/>
-    ${resize((width) => donutChart(
-      [...challenge_count_by_aap].filter((d) => d.defi === '3'),
-      default_defi_defi_donut_config(width)
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Répartition du défi 4 par AAP</h2>
-    <br/>
-    ${resize((width) => donutChart(
-      [...challenge_count_by_aap].filter((d) => d.defi === '4'),
-      default_defi_defi_donut_config(width)
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Répartition du défi 5 par AAP</h2>
-    <br/>
-    ${resize((width) => donutChart(
-      [...challenge_count_by_aap].filter((d) => d.defi === '5'),
-      default_defi_defi_donut_config(width)
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Répartition du défi 6 par AAP</h2>
-    <br/>
-    ${resize((width) => donutChart(
-      [...challenge_count_by_aap].filter((d) => d.defi === '6'),
-      default_defi_defi_donut_config(width)
+      d3.group(
+          [...challenge_count_by_aap],
+          (d) => d.aap,
+          (d) => d.selected
+        )
+        .get('AAP 2')
+        .get(true),
+      default_defi_aap_donut_config(width)
     ))}
     <!-- $ -->
   </div>
@@ -1426,110 +1427,151 @@ const default_defi_defi_donut_config = (width) => ({
 ```
 
 ```sql id=challenge_count_by_aap
-(
+select
+  defi,
+  aap,
+  financed,
+  selected,
+  sum(count)::INT as count,
+from (
   select
-    challenge::VARCHAR as defi,
+    aap1_project_by_challenge.challenge::VARCHAR as defi,
     'AAP 1' as aap,
+    financed,
+    null as selected,
     count(*) as count,
   from aap1_project_by_challenge
-  group by challenge
+  join aap1_projects
+    on aap1_project_by_challenge.acronyme = aap1_projects.acronyme
+  group by aap1_project_by_challenge.challenge, financed, selected
   union
   select
     '1' as defi,
     'AAP 2' as aap,
+    null as financed,
+    selected,
     count(*) as count
   from aap2_projects
   where defi_1_1 or defi_1_2
+  group by financed, selected,
   union
   select
     '2' as defi,
     'AAP 2' as aap,
+    null as financed,
+    selected,
     count(*) as count
   from aap2_projects
   where defi_2_1 or defi_2_2
+  group by financed, selected,
   union
   select
     '3' as defi,
     'AAP 2' as aap,
+    null as financed,
+    selected,
     count(*) as count
   from aap2_projects
   where defi_3_1 or defi_3_2
+  group by financed, selected,
   union
   select
     '4' as defi,
     'AAP 2' as aap,
+    null as financed,
+    selected,
     count(*) as count
   from aap2_projects
   where defi_4_1 or defi_4_2
+  group by financed, selected,
   union
   select
     '5' as defi,
     'AAP 2' as aap,
+    null as financed,
+    selected,
     count(*) as count
   from aap2_projects
   where defi_5_1 or defi_5_2
+  group by financed, selected,
   union
   select
     '6' as defi,
     'AAP 2' as aap,
+    null as financed,
+    selected,
     count(*) as count
   from aap2_projects
   where defi_6_1 or defi_6_2
+  group by financed, selected,
 )
-order by defi, aap
+group by defi, aap, financed, selected
+order by defi, aap, financed, selected
 ```
 
-```sql id=challenge_count_by_project_type
-(
+```sql id=aap2_challenge_count display
+select
+  defi,
+  project_type,
+  selected,
+  sum(count)::INT as count
+from (
   select
     '1' as defi,
     TYPDOC as project_type,
+    selected,
     count(*) as count
   from aap2_projects
   where defi_1_1 or defi_1_2
-  group by TYPDOC
+  group by selected, TYPDOC
   union
   select
     '2' as defi,
     TYPDOC as project_type,
+    selected,
     count(*) as count
   from aap2_projects
   where defi_2_1 or defi_2_2
-  group by TYPDOC
+  group by selected, TYPDOC
   union
   select
     '3' as defi,
     TYPDOC as project_type,
+    selected,
     count(*) as count
   from aap2_projects
   where defi_3_1 or defi_3_2
-  group by TYPDOC
+  group by selected, TYPDOC
   union
   select
     '4' as defi,
     TYPDOC as project_type,
+    selected,
     count(*) as count
   from aap2_projects
   where defi_4_1 or defi_4_2
-  group by TYPDOC
+  group by selected, TYPDOC
   union
   select
     '5' as defi,
     TYPDOC as project_type,
+    selected,
     count(*) as count
   from aap2_projects
   where defi_5_1 or defi_5_2
-  group by TYPDOC
+  group by selected, TYPDOC
   union
   select
     '6' as defi,
     TYPDOC as project_type,
+    selected,
     count(*) as count
   from aap2_projects
   where defi_6_1 or defi_6_2
-  group by TYPDOC
+  group by selected, TYPDOC
 )
-order by defi, project_type
+group by defi, project_type, selected
+order by defi, project_type, selected
 ```
 
 <!-- ## Disciplines
@@ -1812,6 +1854,7 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
         y_accessor: (d) =>
           cnu.cnu_section_label_map.get(Number(d.cnu)) || String(d.cnu),
         marginTop: 20,
+        marginRight: 180,
       }
     ))}
     <!-- $ -->
@@ -1829,6 +1872,7 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
           cnu.cnu_section_label_map.get(Number(d.cnu)) || String(d.cnu),
         fill_accessor: (d) => String(d.aap),
         marginTop: 20,
+        marginRight: 180,
       }
     ))}
     <!-- $ -->
@@ -1929,10 +1973,9 @@ order by count desc
   <div class="card">
     ${resize((width) => choroplethFrance(
       width,
-      width,
-      "- Institutions de l'AAP 2 par département, France",
+      "Nombre d'institutions de l'AAP 2 par département, France",
       ({ properties }) => [...institution_count_by_postal_code].find(
-          (d) => d.code_postal === properties.code
+          (d) => d.departement_code === properties.code
         )?.count,
     ))}
     <!-- $ -->
@@ -1940,22 +1983,99 @@ order by count desc
   <div class="card">
     ${resize((width) => choroplethFrance(
       width,
-      width,
-      "- Institutions de l'AAP 2 par département, France",
+      "Nombre d'institutions de l'AAP 2 par département, France",
       ({ properties }) => [...institution_count_by_postal_code].find(
-          (d) => d.code_postal === properties.code
+          (d) => d.departement_code === properties.code
         )?.count,
       [
-        Plot.tip(
-          mainland_france_departements_geojson,
-          Plot.geoCentroid({
-            title: ({properties}) => [...institutions_by_postal_code].filter(
-              (d) => d.code_postal === properties.code
-            ).length > 3 ? properties.nom + ' :\n' + [...institutions_by_postal_code].filter(
-              (d) => d.code_postal === properties.code
-            ).map((d) => '• ' + d.nom_complet).join('\n') : null,
-            ...default_choropleth_tip_config,
-          }),
+        get_choropleth_tip(
+          institutions_by_postal_code,
+          {
+            min_threshold: 3,
+            anchor: 'top-left',
+          }
+        ),
+      ],
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    ${resize((width) => choroplethFrance(
+      width,
+      "Nombre de laboratoires de l'AAP 2 par département, France",
+      ({ properties }) => [...laboratory_count_by_postal_code].find(
+          (d) => d.departement_code === properties.code
+        )?.count,
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    ${resize((width) => choroplethFrance(
+      width,
+      "Nombre de laboratoires de l'AAP 2 par département, France",
+      ({ properties }) => [...laboratory_count_by_postal_code].find(
+          (d) => d.departement_code === properties.code
+        )?.count,
+      [
+        get_choropleth_tip(
+          laboratories_by_postal_code,
+          {
+            min_threshold: 5,
+            max_threshold: 10,
+            anchor: 'top-right',
+          }
+        ),
+        get_choropleth_tip(
+          laboratories_by_postal_code,
+          {
+            min_threshold: 10,
+            anchor: 'bottom',
+          }
+        ),
+      ],
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    ${resize((width) => choroplethFrance(
+      width,
+      "Nombre de partenaires socio-économiques de l'AAP 2 par département, France",
+      ({ properties }) => [...socioeconomic_partner_count_by_postal_code].find(
+          (d) => d.departement_code === properties.code
+        )?.count,
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    ${resize((width) => choroplethFrance(
+      width,
+      "Nombre de partenaires socio-économiques de l'AAP 2 par département, France",
+      ({ properties }) => [...socioeconomic_partner_count_by_postal_code].find(
+          (d) => d.departement_code === properties.code
+        )?.count,
+      [
+        get_choropleth_tip(
+          socioeconomic_partners_by_postal_code,
+          {
+            min_threshold: 12,
+            max_threshold: 15,
+            anchor: 'top-right',
+          }
+        ),
+        get_choropleth_tip(
+          socioeconomic_partners_by_postal_code,
+          {
+            min_threshold: 15,
+            max_threshold: 18,
+            anchor: 'right',
+          }
+        ),
+        get_choropleth_tip(
+          socioeconomic_partners_by_postal_code,
+          {
+            min_threshold: 18,
+            anchor: 'bottom-left',
+          }
         ),
       ],
     ))}
@@ -1965,29 +2085,93 @@ order by count desc
 
 ```js
 const default_choropleth_tip_config = {
-  anchor: 'left',
   textPadding: 3,
   lineWidth: 25,
   textOverflow: 'ellipsis-middle',
 }
+
+const get_choropleth_tip = (
+  data,
+  {
+    min_threshold = 0,
+    max_threshold = [...data].length,
+    anchor = 'top-left',
+  } = {},
+) =>
+  Plot.tip(
+    mainland_france_departements_geojson,
+    Plot.geoCentroid({
+      title: ({ properties }) =>
+        min_threshold <
+          [...data].filter((d) => d.departement_code === properties.code)
+            .length &&
+        [...data].filter((d) => d.departement_code === properties.code)
+          .length <= max_threshold
+          ? properties.nom +
+            ' :\n' +
+            [...data]
+              .filter((d) => d.departement_code === properties.code)
+              .map((d) => '• ' + d.nom_complet)
+              .join('\n')
+          : null,
+      ...default_choropleth_tip_config,
+      anchor,
+    }),
+  )
 ```
 
 ```sql id=institution_count_by_postal_code
 select
-  code_postal[:2] as code_postal,
+  code_postal[:2] as departement_code,
   sum(count)::INT as count,
 from aap2_institutions
 where code_postal is not null
-group by code_postal
+group by departement_code
 ```
 
 ```sql id=institutions_by_postal_code
 select
   first(nom_complet) as nom_complet,
-  first(code_postal[:2]) as code_postal,
+  first(code_postal[:2]) as departement_code,
 from aap2_institutions
 where code_postal is not null
-group by siret
+group by siren
+```
+
+```sql id=laboratory_count_by_postal_code
+select
+  (code_postal::VARCHAR)[:2] as departement_code,
+  sum(count)::INT as count,
+from aap2_laboratories
+where code_postal is not null
+group by departement_code
+```
+
+```sql id=laboratories_by_postal_code
+select
+  first(libelle) as nom_complet,
+  first((code_postal::VARCHAR)[:2]) as departement_code,
+from aap2_laboratories
+where code_postal is not null
+group by numero_national_de_structure
+```
+
+```sql id=socioeconomic_partner_count_by_postal_code
+select
+  code_postal[:2] as departement_code,
+  sum(count)::INT as count,
+from aap2_socioeconomic_partners
+where code_postal is not null
+group by departement_code
+```
+
+```sql id=socioeconomic_partners_by_postal_code
+select
+  first(nom_complet) as nom_complet,
+  first(code_postal[:2]) as departement_code,
+from aap2_socioeconomic_partners
+where code_postal is not null
+group by siren
 ```
 
 ## Qualité des données

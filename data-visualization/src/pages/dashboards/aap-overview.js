@@ -36,6 +36,13 @@ export const aapColorScale = d3
   )
   .unknown('grey')
 
+export const projectTypeColorScale = d3
+  .scaleOrdinal(
+    ['PITT - Trio de Thèses', 'PITT - Interdisciplinaire'],
+    [d3.schemeObservable10[1], d3.schemeObservable10[0]],
+  )
+  .unknown('grey')
+
 export const defiColorScale = d3
   .scaleOrdinal(['1', '2', '3', '4', '5', '6'], d3.schemeObservable10)
   .unknown('grey')
@@ -154,10 +161,7 @@ export const projectCountPlotAAP2 = (
       legend: true,
       type: 'categorical',
       // domain: [''],
-      range: [
-        'var(--theme-foreground-focus-alt)',
-        'var(--theme-foreground-focus)',
-      ],
+      range: projectTypeColorScale.range(),
     },
     marks: [
       Plot.barX(data, {
@@ -178,7 +182,7 @@ export const partnerCountPlot = (
     marginLeft = 300,
     limit = 15,
     lineWidth = 30,
-    x_label,
+    x_label = "Nombre d'occurences",
     y_label,
     sort_value,
     x_accessor = (d) => d.count,
@@ -210,7 +214,6 @@ export const partnerCountPlot = (
       Plot.barX(data, {
         x: x_accessor,
         y: y_accessor,
-        // fill: 'var(--theme-foreground-focus-alt)',
         fill: x_accessor,
         sort: { y: sort_value, limit: limit },
         tip: true,
@@ -272,6 +275,7 @@ export const stackedChallengeCountPlot = (
   {
     width,
     fill_accessor = 'aap',
+    color_range = aapColorScale.range(),
     title = 'Défis par AAP',
     subtitle = `Les défis indiqués dans les métadonnées et les templates des
     soumissions sur le site du dépôt de l'AAP 1 et 2`,
@@ -286,10 +290,7 @@ export const stackedChallengeCountPlot = (
     grid: true,
     x: { type: 'band' },
     color: {
-      range: [
-        'var(--theme-foreground-focus-alt)',
-        'var(--theme-foreground-focus)',
-      ],
+      range: color_range,
       type: 'categorical',
       legend: true,
     },
@@ -303,6 +304,7 @@ export const stackedChallengeCountPlot = (
         x: 'defi',
         y: 'count',
         fill: fill_accessor,
+        fillOpacity: (d) => (d.financed || d.selected ? 1 : 0.7),
         tip: true,
       }),
     ],
@@ -313,6 +315,7 @@ export const challengeCountPlot = (
   {
     width,
     x_accessor = 'aap',
+    color_range = aapColorScale.range(),
     title = 'Défis par AAP',
     subtitle = `Les défis indiqués dans les métadonnées et les templates des
   soumissions sur le site du dépôt de l'AAP 1 et 2`,
@@ -334,10 +337,7 @@ export const challengeCountPlot = (
       tickSize: null,
     },
     color: {
-      range: [
-        'var(--theme-foreground-focus-alt)',
-        'var(--theme-foreground-focus)',
-      ],
+      range: color_range,
       type: 'categorical',
       legend: true,
     },
@@ -354,6 +354,7 @@ export const challengeCountPlot = (
         fx: 'defi',
         y: 'count',
         fill: x_accessor,
+        fillOpacity: (d) => (d.financed || d.selected ? 1 : 0.7),
         tip: true,
       }),
     ],

@@ -84,6 +84,7 @@ export const cnu_plot = (
         anchor: 'right',
         lineWidth: 24,
         textOverflow: 'ellipsis',
+        tickRotate: -45,
       }),
       Plot.barX(data, {
         y: y_accessor,
@@ -143,6 +144,7 @@ export const cnu_by_aap_plot = (
     y: {
       type: 'band',
       domain: cnu_section_label_map.values(),
+      tickRotate: 45,
     },
     marks: [
       Plot.axisY({
@@ -150,6 +152,7 @@ export const cnu_by_aap_plot = (
         anchor: 'right',
         lineWidth: 24,
         textOverflow: 'ellipsis',
+        tickRotate: -45,
       }),
       Plot.barX(data, {
         y: y_accessor,

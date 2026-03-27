@@ -69,14 +69,19 @@ export const italy_regions_geojson = FileAttachment(
   '/data/italy_regions.json',
 ).json()
 
+
+
 // default map options
 
 export const france_projection = {
   type: 'equal-earth',
   domain: d3
     .geoCircle()
-    .center(d3.geoCentroid(mainland_france_regions_geojson))
-    .radius(5)(),
+    .center([
+      d3.geoCentroid(mainland_france_regions_geojson)[0] - 0.8,
+      d3.geoCentroid(mainland_france_regions_geojson)[1] + 0.1,
+    ])
+    .radius(4.45)(),
 }
 
 export const paris_projection = {
@@ -309,9 +314,11 @@ export function projectionMap(
 
 //   )
 
-const choropleth_color_config = {
+const choropleth_color_config = (
+  label = 'N° de partenaires et parties prenantes estimé',
+) => ({
   scheme: 'Blues',
-  label: `N° de partenaires et parties prenantes estimé`,
+  label: label,
   // label: "N° of Partners",
   // domain: [0, 6],
   legend: true,
@@ -321,7 +328,7 @@ const choropleth_color_config = {
   zero: true,
   nice: true,
   // ticks: 2,
-}
+})
 
 export const choropleth = (
   width,
@@ -335,8 +342,8 @@ export const choropleth = (
   Plot.plot({
     width: width,
     height: height - 60,
-    caption: caption,
-    color: choropleth_color_config,
+    // caption: caption,
+    color: choropleth_color_config(caption),
     projection: projection,
     marks: [
       Plot.geo(features, {
@@ -355,10 +362,10 @@ export const choropleth = (
     ],
   })
 
-export const choroplethFrance = (width, height, caption, fill, marks = []) =>
+export const choroplethFrance = (width, caption, fill, marks = []) =>
   choropleth(
     width,
-    height,
+    width * 0.92,
     caption,
     fill,
     france_projection,
