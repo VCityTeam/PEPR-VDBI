@@ -237,8 +237,7 @@ export const partnerCountPlot = (
       Plot.text(data, {
         x: x_accessor,
         y: y_accessor,
-        text: (d) =>
-          x_accessor(d) > midpoint ? y_accessor(d).split(';')[0] : '',
+        text: (d) => (x_accessor(d) > midpoint ? d.communes.slice(1, -1) : ''),
         channels: {
           id: y_accessor,
           label: 'label',
@@ -253,8 +252,7 @@ export const partnerCountPlot = (
       Plot.text(data, {
         x: x_accessor,
         y: y_accessor,
-        text: (d) =>
-          x_accessor(d) > midpoint ? '' : y_accessor(d).split(';')[0],
+        text: (d) => (x_accessor(d) > midpoint ? '' : d.communes.slice(1, -1)),
         channels: {
           id: y_accessor,
           label: 'label',

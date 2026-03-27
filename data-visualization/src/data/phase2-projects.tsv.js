@@ -7,7 +7,14 @@ const projects_query = `
     STATUT,
     TYPDOC,
     type_projet,
-    "Titre court" as acronyme,
+    AAP2_submission_metadata."Titre court" as acronyme,
+    case 
+      when "Sélectionné (O/N)" = 'O'
+      then true
+      when "Sélectionné (O/N)" = 'N'
+      then false
+      else null
+    end as selected,
     TITLE as name_fr,
     case
       when length(split(TOPIC, ',')) = 1
@@ -132,7 +139,9 @@ const projects_query = `
     'aap2_export' as source,
   from 'src/data/private/AAP2_submission_metadata.tsv'
   left join 'src/data/private/AAP2_template_export.tsv'
-  on AAP2_template_export.filename ^@ AAP2_submission_metadata.DOCID::VARCHAR
+    on AAP2_template_export.filename ^@ AAP2_submission_metadata.DOCID::VARCHAR
+  left join 'src/data/private/PITT_Evaluations_25032026_evaluations.tsv'
+    on PITT_Evaluations_25032026_evaluations."Titre court" = AAP2_submission_metadata."Titre court"
 `
 
 const instance = await DuckDBInstance.create()

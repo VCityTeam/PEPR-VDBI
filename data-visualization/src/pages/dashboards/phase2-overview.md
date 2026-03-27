@@ -262,7 +262,7 @@ import {
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>AAP 1 projets financées par nombre de partenaires</h2>
+    <h2>AAP 1 projets financées par nombre de partenaires socioeconomiques</h2>
     <br/>
     ${aap1_project_partners_sort_input}
     <!-- $ -->
@@ -314,7 +314,7 @@ import {
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 AAP 2 projets par nombre de partenaires</h2>
+    <h2>Top 15 AAP 2 projets par nombre de partenaires socioeconomiques</h2>
     <br/>
     ${aap2_project_partners_sort_input}
     <!-- $ -->
@@ -486,8 +486,8 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
       aap1_laboratories_count,
       {
         width,
-        marginLeft: 150,
-        lineWidth: 13,
+        marginLeft: 170,
+        lineWidth: 15,
         y_label: "Unité (Sigle / RNSR)",
         x_label: "Nombre d'unités",
         sort_value: aap1_laboratories_sort,
@@ -539,7 +539,8 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
       aap2_laboratories_count,
       {
         width,
-        marginLeft: 100,
+        marginLeft: 170,
+        lineWidth: 15,
         y_label: "Unité (Sigle / RNSR)",
         x_label: "Nombre d'unités",
         sort_value: aap2_laboratories_sort,
@@ -562,83 +563,214 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     ))}
     <!-- $ -->
   </div>
+  <!-- AAP2 proposals -->
+  <div class="card">
+    <h2>Top 15 AAP 2 institutions preselectionnées par nombre d'occurences</h2>
+    ${aap2_selected_universities_sort_input}
+    <!-- $ -->
+    ${resize((width) => overview.partnerCountPlot(
+      aap2_selected_institutions_count,
+      {
+        width,
+        y_label: "Institution (label / SIRET)",
+        x_label: "Nombre d'institutions",
+        sort_value: aap2_selected_universities_sort,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Top 15 AAP 2 unités de recherche preselectionnées par nombre d'occurences</h2>
+    ${aap2_selected_laboratories_sort_input}
+    <!-- $ -->
+    ${resize((width) => overview.partnerCountPlot(
+      aap2_selected_laboratories_count,
+      {
+        width,
+        marginLeft: 170,
+        lineWidth: 15,
+        y_label: "Unité (Sigle / RNSR)",
+        x_label: "Nombre d'unités",
+        sort_value: aap2_selected_laboratories_sort,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Top 15 AAP 2 partnaires preselectionnées par nombre d'occurences</h2>
+    ${aap2_selected_partners_sort_input}
+    <!-- $ -->
+    ${resize((width) => overview.partnerCountPlot(
+      aap2_selected_partners_count,
+      {
+        width,
+        y_label: "Partnaire (label / SIRET)",
+        x_label: "Nombre de partenaires",
+        sort_value: aap2_selected_partners_sort,
+      }
+    ))}
+    <!-- $ -->
+  </div>
 </div>
 
 ```sql id=aap1_institutions_count
 select
-  if(siret is null, '', siret::VARCHAR) as id,
-  if(nom_complet is null, university, nom_complet) as label,
+  siren::VARCHAR as id,
+  first(nom_complet) as label,
+  list_distinct(list(libelle_commune))::VARCHAR as communes,
   count(*) as count
 from aap1_project_by_institutions
   left join aap1_institutions
   on aap1_project_by_institutions.university = aap1_institutions.label
 where project in (select acronyme from aap1_projects where financed)
-  and university is not null
-group by siret, nom_complet, university
+  and siren is not null
+group by siren
 ```
 
 ```sql id=aap1_laboratories_count
 select
+  numero_national_de_structure::VARCHAR as id,
   if(
-    numero_national_de_structure is null,
-    '',
-    numero_national_de_structure::VARCHAR
-  ) as id,
-  if(
-    libelle is null,
-    label[12:],
-    if(
-      first(sigle) is not null,
-      first(sigle),
-      libelle
-    )
+    length(list_distinct(list(sigle))) > 0,
+    list_distinct(list(sigle))[1],
+    first(libelle)
   ) as label,
+  list_distinct(list(commune))::VARCHAR as communes,
   count(*) as count
 from aap1_project_by_laboratories
   left join aap1_laboratories
   on aap1_project_by_laboratories.lab = aap1_laboratories.label
 where project in (select acronyme from aap1_projects where financed)
-  and label is not null
-group by numero_national_de_structure, libelle, label
+  and numero_national_de_structure is not null
+group by numero_national_de_structure
 ```
 
 ```sql id=aap1_partners_count
 select
   -- *
-  if(siret is null, '', siret::VARCHAR) as id,
+  if(siren is null, '', siren::VARCHAR) as id,
   label,
-  count(*) as count
+  list_distinct(list(libelle_commune))::VARCHAR as communes,
+  count(*) as count,
 from aap1_project_by_socioeconomic_partners
   left join aap1_socioeconomic_partners
   on aap1_project_by_socioeconomic_partners.partner = aap1_socioeconomic_partners.label
 where project in (select acronyme from aap1_projects where financed)
   and label is not null
-group by siret, label
+group by siren, label
 ```
 
 ```sql id=aap2_institutions_count
 select
-  id,
-  if(nom_complet is null, split(labels, ',')[1], nom_complet) as label,
-  count
+  siren::VARCHAR as id,
+  first(nom_complet) as label,
+  list_distinct(list(libelle_commune))::VARCHAR as communes,
+  sum(count) as count,
 from aap2_institutions
+where siren is not null
+group by siren
 ```
 
 ```sql id=aap2_laboratories_count
 select
-  id,
-  if(sigle is null, split(labels, ',')[1], sigle) as label,
-  count
+  numero_national_de_structure::VARCHAR as id,
+  if(
+    length(list_distinct(list(sigle))) > 0,
+    list_distinct(list(sigle))[1],
+    first(libelle)
+  ) as label,
+  list_distinct(list(commune))::VARCHAR as communes,
+  sum(count) as count,
 from aap2_laboratories
+where numero_national_de_structure is not null
+group by numero_national_de_structure
 ```
 
 ```sql id=aap2_partners_count
 select
-  id,
-  if(nom_complet is null, split(labels, ',')[1], nom_complet) as label,
-  count
+  siren::VARCHAR as id,
+  first(nom_complet) as label,
+  list_distinct(list(libelle_commune))::VARCHAR as communes,
+  sum(count)::INT as count,
 from aap2_socioeconomic_partners
-where id is not null and length(id) = 14
+where siren is not null
+group by siren
+```
+
+```sql id=aap2_selected_institutions_count
+with selected_institutions as (
+  select
+    institution_id,
+    count(*) as count,
+  from aap2_project_by_institutions
+  where project in (
+    select acronyme from aap2_projects where selected
+  )
+  group by institution_id
+)
+
+select
+  siren::VARCHAR as id,
+  first(nom_complet) as label,
+  list_distinct(list(libelle_commune))::VARCHAR as communes,
+  sum(selected_institutions.count) as count,
+from aap2_institutions
+join selected_institutions
+  on aap2_institutions.id = selected_institutions.institution_id
+where siren is not null
+group by siren
+```
+
+```sql id=aap2_selected_laboratories_count
+with selected_labs as (
+  select
+    unit_id,
+    count(*) as count,
+  from aap2_project_by_laboratories
+  where project in (
+    select acronyme from aap2_projects where selected
+  )
+  group by unit_id
+)
+
+select
+  numero_national_de_structure::VARCHAR as id,
+  if(
+    length(list_distinct(list(sigle))) > 0,
+    list_distinct(list(sigle))[1],
+    first(libelle)
+  ) as label,
+  list_distinct(list(commune))::VARCHAR as communes,
+  sum(selected_labs.count)::INT as count,
+from aap2_laboratories
+join selected_labs
+  on aap2_laboratories.id = selected_labs.unit_id
+where numero_national_de_structure is not null
+group by numero_national_de_structure
+```
+
+```sql id=aap2_selected_partners_count
+with selected_partners as (
+  select
+    partner_id,
+    count(*) as count,
+  from aap2_project_by_socioeconomic_partners
+  where project in (
+    select acronyme from aap2_projects where selected
+  )
+  group by partner_id
+)
+
+select
+  siren::VARCHAR as id,
+  first(nom_complet) as label,
+  list_distinct(list(libelle_commune))::VARCHAR as communes,
+  sum(selected_partners.count)::INT as count,
+from aap2_socioeconomic_partners
+join selected_partners
+  on aap2_socioeconomic_partners.id = selected_partners.partner_id
+where siren is not null
+group by siren
 ```
 
 ```js
@@ -661,6 +793,23 @@ const aap2_laboratories_sort = Generators.input(aap2_laboratories_sort_input)
 
 const aap2_partners_sort_input = overview.ySortSelect()
 const aap2_partners_sort = Generators.input(aap2_partners_sort_input)
+```
+
+```js
+const aap2_selected_universities_sort_input = overview.ySortSelect()
+const aap2_selected_universities_sort = Generators.input(
+  aap2_selected_universities_sort_input,
+)
+
+const aap2_selected_laboratories_sort_input = overview.ySortSelect()
+const aap2_selected_laboratories_sort = Generators.input(
+  aap2_selected_laboratories_sort_input,
+)
+
+const aap2_selected_partners_sort_input = overview.ySortSelect()
+const aap2_selected_partners_sort = Generators.input(
+  aap2_selected_partners_sort_input,
+)
 ```
 
 ### Les nouveaux partenaires
@@ -1503,11 +1652,11 @@ group by
 
 ### Les chercheurs familiers
 
-Chercheurs présents dans les projets financées de l'AAP 1 et 2
+Chercheurs présents dans les projets de l'AAP 1 et 2
 
 <div class="grid grid-cols-4">
   <div class="card">
-    <h2>Nombre de chercheurs présents dans les projets financées de l'AAP 1 et 2</h2>
+    <h2>Nombre de chercheurs présents dans les projets de l'AAP 1 et 2</h2>
     <span class="big">
       ${[...returning_researchers].length}
       <!-- $ -->
@@ -1516,7 +1665,7 @@ Chercheurs présents dans les projets financées de l'AAP 1 et 2
   <div></div>
   <div class="card">
     <h2>
-      Nombre d'encadrants de projet de l'AAP 2 présents dans les projets financées
+      Nombre d'encadrants de projet de l'AAP 2 présents dans les projets
       de l'AAP 1
     </h2>
     <span class="big">
@@ -1530,14 +1679,14 @@ Chercheurs présents dans les projets financées de l'AAP 1 et 2
 
 <div class="grid grid-cols-2">
   <div class="card">
-    <h2>Chercheurs présents dans les projets financées de l'AAP 1 et 2</h2>
+    <h2>Chercheurs présents dans les projets de l'AAP 1 et 2</h2>
     <br/>
     ${Inputs.table(returning_researchers)}
     <!-- $ -->
   </div>
   <div class="card">
     <h2>
-      Encadrants de projet de l'AAP 2 présents dans les projets financées
+      Encadrants de projet de l'AAP 2 présents dans les projets
       de l'AAP 1
     </h2>
     <br/>
