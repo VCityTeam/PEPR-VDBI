@@ -1802,7 +1802,7 @@ order by count desc
           Plot.geoCentroid({
             title: ({properties}) => [...institutions_by_postal_code].filter(
               (d) => d.code_postal === properties.code
-            ).length > 0 ? [...institutions_by_postal_code].filter(
+            ).length > 3 ? properties.nom + ' :\n' + [...institutions_by_postal_code].filter(
               (d) => d.code_postal === properties.code
             ).map((d) => '• ' + d.nom_complet).join('\n') : null,
             ...default_choropleth_tip_config,
@@ -1818,8 +1818,8 @@ order by count desc
 const default_choropleth_tip_config = {
   anchor: 'left',
   textPadding: 3,
-  lineWidth: 50,
-  textOverflow: 'ellipsis',
+  lineWidth: 25,
+  textOverflow: 'ellipsis-middle',
 }
 ```
 
