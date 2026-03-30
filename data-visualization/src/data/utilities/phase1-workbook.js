@@ -468,6 +468,10 @@ export function extractPhase1Workbook(
       )),
   )
 
+  const project_by_researchers = researchers.flatMap((d) =>
+    d.project.map((project) => ({ researcher: d.id, project })),
+  )
+
   const laboratories = resolveLabEntities(getLabSheet(workbook)).filter(
     (lab) =>
       onlyFinanced ? projects.some(({ labs }) => labs.includes(lab.lab)) : true,
@@ -610,6 +614,7 @@ export function extractPhase1Workbook(
     project_by_universities,
     socioeconomic_partners,
     project_by_socioeconomic_partners,
+    project_by_researchers,
   }
 }
 

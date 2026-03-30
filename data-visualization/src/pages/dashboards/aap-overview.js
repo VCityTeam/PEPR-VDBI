@@ -63,7 +63,7 @@ export const xSortSelect = (label = 'Label') =>
     ]),
     {
       value: '-y',
-      label: 'Sort by',
+      label: 'Trier par',
     },
   )
 
@@ -77,7 +77,7 @@ export const ySortSelect = (label = 'Label') =>
     ]),
     {
       value: '-x',
-      label: 'Sort by',
+      label: 'Trier par',
     },
   )
 

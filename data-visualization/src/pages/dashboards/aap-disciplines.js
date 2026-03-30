@@ -48,7 +48,7 @@ export const cnu_plot = (
   data,
   {
     width = 600,
-    marginTop = 50,
+    marginTop = 20,
     marginLeft = 18,
     marginRight = 250,
     sort = 'y',
@@ -56,6 +56,7 @@ export const cnu_plot = (
     y_accessor = (d) => d[0],
     fill_accessor = (d) =>
       cnu_dark_color_map.get(getGroupFromCNU(y_accessor(d))),
+    opacity_accessor = () => 1,
   } = {},
 ) =>
   Plot.plot({
@@ -84,12 +85,12 @@ export const cnu_plot = (
         anchor: 'right',
         lineWidth: 24,
         textOverflow: 'ellipsis',
-        tickRotate: -45,
       }),
       Plot.barX(data, {
         y: y_accessor,
         x: x_accessor,
         fill: fill_accessor,
+        fillOpacity: opacity_accessor,
         stroke: 'black',
         strokeOpacity: 0.1,
         sort: { y: sort },
@@ -118,6 +119,7 @@ export const cnu_by_aap_plot = (
     x_accessor = (d) => d[1],
     y_accessor = (d) => d[0],
     fill_accessor = (d) => d[0],
+    opacity_accessor = () => 1,
   } = {},
 ) =>
   Plot.plot({
@@ -152,12 +154,12 @@ export const cnu_by_aap_plot = (
         anchor: 'right',
         lineWidth: 24,
         textOverflow: 'ellipsis',
-        tickRotate: -45,
       }),
       Plot.barX(data, {
         y: y_accessor,
         x: x_accessor,
         fill: fill_accessor,
+        fillOpacity: opacity_accessor,
         stroke: 'black',
         strokeOpacity: 0.1,
         sort: { y: sort },
@@ -175,31 +177,106 @@ export const cnu_by_aap_plot = (
     ],
   })
 
-export const cnu_by_aap_plot_2 = (
+export const cnu_plot_y = (
   data,
   {
     width = 600,
+    height = 800,
     marginTop = 50,
-    marginLeft = 18,
-    marginRight = 250,
+    marginLeft = 50,
+    marginRight = 50,
+    marginBottom = 100,
     sort = 'y',
     x_accessor = (d) => d[1],
     y_accessor = (d) => d[0],
-    fy_accessor = (d) => d[0],
-    fill_accessor = (d) => d[0],
+    fill_accessor = (d) =>
+      cnu_dark_color_map.get(getGroupFromCNU(y_accessor(d))),
+    opacity_accessor = () => 1,
   } = {},
 ) =>
   Plot.plot({
     width: width,
-    // height: 800,
+    height: height,
     marginTop: marginTop,
     marginLeft: marginLeft,
     marginRight: marginRight,
-    x: {
-      reverse: true,
+    marginBottom: marginBottom,
+    y: {
       grid: true,
       axis: 'both',
       label: 'Occurences',
+    },
+    x: {
+      type: 'band',
+      domain: cnu_section_label_map.values(),
+    },
+    color: {
+      // legend: true,
+      type: 'categorical',
+    },
+    marks: [
+      Plot.axisX({
+        label: 'CNU',
+        anchor: 'bottom',
+        lineWidth: 24,
+        textOverflow: 'ellipsis',
+        tickRotate: 40,
+        fontSize: 11,
+        dx: -5,
+      }),
+      Plot.barY(data, {
+        y: x_accessor,
+        x: y_accessor,
+        fill: fill_accessor,
+        fillOpacity: opacity_accessor,
+        stroke: 'black',
+        strokeOpacity: 0.1,
+        sort: { x: sort },
+        tip: true,
+      }),
+      Plot.barY(
+        data,
+        Plot.pointerX({
+          x: y_accessor,
+          y: x_accessor,
+          fill: 'white',
+          opacity: 0.5,
+        }),
+      ),
+    ],
+  })
+
+export const cnu_by_aap_plot_y = (
+  data,
+  {
+    width = 600,
+    height = 800,
+    marginTop = 50,
+    marginLeft = 50,
+    marginRight = 50,
+    marginBottom = 100,
+    sort = 'y',
+    x_accessor = (d) => d[1],
+    y_accessor = (d) => d[0],
+    fill_accessor = (d) => d[0],
+    opacity_accessor = () => 1,
+  } = {},
+) =>
+  Plot.plot({
+    width: width,
+    height: height,
+    marginTop: marginTop,
+    marginLeft: marginLeft,
+    marginRight: marginRight,
+    marginBottom: marginBottom,
+    y: {
+      grid: true,
+      axis: 'both',
+      label: 'Occurences',
+    },
+    x: {
+      type: 'band',
+      domain: cnu_section_label_map.values(),
     },
     color: {
       legend: true,
@@ -210,36 +287,30 @@ export const cnu_by_aap_plot_2 = (
       ],
       type: 'categorical',
     },
-    y: {
-      type: 'band',
-      tickFormat: null,
-      tickSize: null,
-    },
     marks: [
-      Plot.axisFy({
+      Plot.axisX({
         label: 'CNU',
-        anchor: 'right',
+        anchor: 'bottom',
         lineWidth: 24,
         textOverflow: 'ellipsis',
-        tickSize: 5,
-        domain: cnu_section_label_map.values(),
+        tickRotate: 40,
+        fontSize: 11,
       }),
-      Plot.barX(data, {
-        y: y_accessor,
-        x: x_accessor,
-        fy: fy_accessor,
+      Plot.barY(data, {
+        x: y_accessor,
+        y: x_accessor,
         fill: fill_accessor,
+        fillOpacity: opacity_accessor,
         stroke: 'black',
         strokeOpacity: 0.1,
         sort: { y: sort },
         tip: true,
       }),
-      Plot.barX(
+      Plot.barY(
         data,
-        Plot.pointerY({
-          y: y_accessor,
-          x: x_accessor,
-          fy: fy_accessor,
+        Plot.pointerX({
+          x: y_accessor,
+          y: x_accessor,
           fill: 'white',
           opacity: 0.5,
         }),
@@ -284,13 +355,14 @@ export const cnu_plot_by_erc = (
   data,
   {
     width = 600,
-    marginTop = 50,
+    marginTop = 20,
     marginLeft = 18,
     marginRight = 250,
     sort = 'y',
     x_accessor = (d) => d[1],
     y_accessor = (d) => d[0],
     fill_accessor = (d) => erc_color_scale(getERCFromCNU(y_accessor(d))),
+    opacity_accessor = () => 1,
   } = {},
 ) =>
   cnu_plot(data, {
@@ -302,19 +374,21 @@ export const cnu_plot_by_erc = (
     x_accessor: x_accessor,
     y_accessor: y_accessor,
     fill_accessor: fill_accessor,
+    opacity_accessor: opacity_accessor,
   })
 
 export const cnu_by_aap_plot_by_erc = (
   data,
   {
     width = 600,
-    marginTop = 50,
+    marginTop = 20,
     marginLeft = 18,
     marginRight = 250,
     sort = 'y',
     x_accessor = (d) => d[1],
     y_accessor = (d) => d[0],
     fill_accessor = (d) => erc_color_scale(getERCFromCNU(y_accessor(d))),
+    opacity_accessor = () => 1,
   } = {},
 ) =>
   cnu_by_aap_plot(data, {
@@ -326,40 +400,77 @@ export const cnu_by_aap_plot_by_erc = (
     x_accessor: x_accessor,
     y_accessor: y_accessor,
     fill_accessor: fill_accessor,
+    opacity_accessor: opacity_accessor,
   })
 
-export const cnu_by_aap_plot_by_erc_2 = (
+export const cnu_plot_y_by_erc = (
   data,
   {
     width = 600,
-    marginTop = 50,
-    marginLeft = 18,
-    marginRight = 250,
+    height = 800,
+    marginTop = 20,
+    marginLeft = 20,
+    marginRight = 180,
+    marginBottom = 180,
     sort = 'y',
     x_accessor = (d) => d[1],
     y_accessor = (d) => d[0],
-    fy_accessor = (d) => d[2],
     fill_accessor = (d) => erc_color_scale(getERCFromCNU(y_accessor(d))),
+    opacity_accessor = () => 1,
   } = {},
 ) =>
-  cnu_by_aap_plot_2(data, {
+  cnu_plot_y(data, {
     width: width,
+    height: height,
     marginTop: marginTop,
     marginLeft: marginLeft,
     marginRight: marginRight,
+    marginBottom: marginBottom,
     sort: sort,
     x_accessor: x_accessor,
     y_accessor: y_accessor,
-    fy_accessor: fy_accessor,
     fill_accessor: fill_accessor,
+    opacity_accessor: opacity_accessor,
   })
 
-export const erc_donut = (data, width, height) =>
+export const cnu_by_aap_plot_y_by_erc = (
+  data,
+  {
+    width = 600,
+    height = 800,
+    marginTop = 20,
+    marginLeft = 20,
+    marginRight = 180,
+    marginBottom = 180,
+    sort = 'y',
+    x_accessor = (d) => d[1],
+    y_accessor = (d) => d[0],
+    fill_accessor = (d) => erc_color_scale(getERCFromCNU(y_accessor(d))),
+    opacity_accessor = () => 1,
+  } = {},
+) =>
+  cnu_by_aap_plot_y(data, {
+    width: width,
+    height: height,
+    marginTop: marginTop,
+    marginLeft: marginLeft,
+    marginRight: marginRight,
+    marginBottom: marginBottom,
+    sort: sort,
+    x_accessor: x_accessor,
+    y_accessor: y_accessor,
+    fill_accessor: fill_accessor,
+    opacity_accessor: opacity_accessor,
+  })
+
+export const erc_donut = (data, width, height, options = {}) =>
   donutChart(data, {
     ...default_donut_config,
+    ...options,
     width: width * 0.6,
     height: height,
     legendWidth: width * 0.6,
+    legendTextLength: 28,
     color: erc_color_scale,
   })
 

@@ -11,6 +11,7 @@ sql:
   # aap1_project_by_cnu_labels: /data/phase1-project_by_cnu_labels.tsv
   aap1_project_by_institutions: /data/phase1-project_by_institutions.tsv
   aap1_project_by_laboratories: /data/phase1-project_by_laboratories.tsv
+  aap1_project_by_researchers: /data/phase1-project_by_researchers.tsv
   aap1_laboratories_by_domains_erc: /data/phase1-laboratories_by_domains_erc.tsv
   aap1_laboratories_by_disciplines_erc: /data/phase1-laboratories_by_disciplines_erc.tsv
   aap1_laboratories_by_domains_hceres: /data/phase1-laboratories_by_domains_hceres.tsv
@@ -1323,27 +1324,86 @@ group by siret
 <div class="grid grid-cols-4">
   <div class="card">
     <h2>Répartition des défis de l'AAP 1</h2>
-    <br/>
-    ${resize((width) => donutChart(
-      [
-        ...d3.group(
-          [...challenge_count_by_aap],
-          (d) => d.aap,
-          (d) => d.financed
-        )
-        .get('AAP 1')
-        .get(true),
-        ...d3.group(
-          [...challenge_count_by_aap],
-          (d) => d.aap,
-          (d) => d.financed
-        )
-        .get('AAP 1')
-        .get(false)
-      ],
-      default_defi_aap_donut_config(width)
-    ))}
-    <!-- $ -->
+    <h3>Les sections plus grandes représentent les défis financés</h3>
+    <div class="grid grid-cols-3">
+      <div class="grid-colspan-2 grid-rowspan-2">
+        ${resize((width, height) => donutChart(
+          d3.group(
+              [...challenge_count_by_aap],
+              (d) => d.aap,
+            )
+            .get('AAP 1').sort((a, b) => a.defi - b.defi),
+          {
+            ...default_defi_aap_donut_config(width),
+            width: width,
+            sort: (a, b) => a.defi - b.defi,
+            legend: false,
+            outerRadiusRatio: (d) => d.data.financed
+              ? width * 0.5
+              : width * 0.48,
+          }
+        ))}
+        <!-- $ -->
+      </div>
+      ${resize((width) => donutChart(
+        d3.rollups(
+          [...challenge_count_by_aap].filter((d) => d.aap === 'AAP 1'),
+          (v) => v.map((d) => d.count).reduce((a, b) => a + b),
+          (d) => d.defi,
+        ),
+        {
+          ...default_defi_aap_donut_config(),
+          width: 1,
+          legendWidth: 1,
+          keyMap: (d) => 'défi ' + d[0],
+          valueMap: (d) => d[1],
+          sort: (a, b) => a.defi - b.defi,
+          innerRadiusRatio: 0,
+          outerRadiusRatio: 0,
+        }
+      ))}
+      <!-- $ -->
+    </div>
+  </div>
+  <div class="card">
+    <h2>Répartition des défis de l'AAP 2</h2>
+    <h3>Les sections plus grandes représentent les défis préselectionnés</h3>
+    <div class="grid grid-cols-3">
+      <div class="grid-colspan-2 grid-rowspan-2">
+        ${resize((width) => donutChart(
+          [...challenge_count_by_aap]
+            .filter((d) => d.aap === 'AAP 2'),
+          {
+            ...default_defi_aap_donut_config(width),
+            width: width,
+            sort: (a, b) => a.defi - b.defi,
+            legend: false,
+            outerRadiusRatio: (d) => d.data.selected
+              ? width * 0.5
+              : width * 0.48,
+          },
+        ))}
+        <!-- $ -->
+      </div>
+      ${resize((width) => donutChart(
+        d3.rollups(
+          [...challenge_count_by_aap].filter((d) => d.aap === 'AAP 2'),
+          (v) => v.map((d) => d.count).reduce((a, b) => a + b),
+          (d) => d.defi,
+        ),
+        {
+          ...default_defi_aap_donut_config(),
+          width: 1,
+          legendWidth: 1,
+          keyMap: (d) => 'défi ' + d[0],
+          valueMap: (d) => d[1],
+          sort: (a, b) => a.defi - b.defi,
+          innerRadiusRatio: 0,
+          outerRadiusRatio: 0,
+        },
+      ))}
+      <!-- $ -->
+    </div>
   </div>
   <div class="card">
     <h2>Répartition des défis financés de l'AAP 1</h2>
@@ -1356,30 +1416,6 @@ group by siret
         )
         .get('AAP 1')
         .get(true),
-      default_defi_aap_donut_config(width)
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Répartition des défis de l'AAP 2</h2>
-    <br/>
-    ${resize((width) => donutChart(
-      [
-        ...d3.group(
-          [...challenge_count_by_aap],
-          (d) => d.aap,
-          (d) => d.selected
-        )
-        .get('AAP 2')
-        .get(true),
-        ...d3.group(
-          [...challenge_count_by_aap],
-          (d) => d.aap,
-          (d) => d.selected
-        )
-        .get('AAP 2')
-        .get(false)
-      ],
       default_defi_aap_donut_config(width)
     ))}
     <!-- $ -->
@@ -1403,8 +1439,8 @@ group by siret
 
 ```js
 const default_defi_aap_donut_config = (width) => ({
-  width: width - 100,
-  legendWidth: width - 100,
+  width: width - 150,
+  legendWidth: width - 150,
   keyMap: (d) => `défi ${d.defi}`,
   valueMap: (d) => d.count,
   color: overview.defiColorScale.domain([
@@ -1509,7 +1545,7 @@ group by defi, aap, financed, selected
 order by defi, aap, financed, selected
 ```
 
-```sql id=aap2_challenge_count display
+```sql id=aap2_challenge_count
 select
   defi,
   project_type,
@@ -1812,16 +1848,11 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
 
 </div>
 
-<div class="card" style="width: 32em">
-  <h2>Légende des catégories CNU</h2>
-  ${disciplines.erc_legend()}
-  <!-- $ -->
-</div>
-
-<div class="grid grid-cols-2">
+<div class="grid grid-cols-3">
   <div class="card">
-    <h2>Distribution des CNUs par catégorie de l'AAP 1</h2>
-    <br/>
+    <h2>Distribution des CNUs financées par catégorie de l'AAP 1</h2>
+    ${disciplines.erc_legend()}
+    <!-- $ -->
     ${resize((width) => disciplines.erc_donut(
       aap1_cnu_count_erc,
       width,
@@ -1830,7 +1861,8 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
   </div>
   <div class="card">
     <h2>Distribution des CNUs par catégorie de l'AAP 2</h2>
-    <br/>
+    ${disciplines.erc_legend()}
+    <!-- $ -->
     ${resize((width) => disciplines.erc_donut(
       aap2_cnu_count_erc,
       width,
@@ -1839,61 +1871,66 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
   </div>
 </div>
 
-<div class="grid grid-cols-2">
-  <div class="card grid-rowspan-2">
-    <h2>Distribution des sections CNU de l'AAP 2</h2>
-    <h3>Distribution détaillée des sections de l'AAP 2 par catégorie</h3>
-    ${disciplines.erc_legend()}
+<div class="card">
+  <h2>Distribution des sections CNU de l'AAP 2</h2>
+  <h3>
+    Distribution détaillée des sections de l'AAP 2 par catégorie.
+    Les sections préselectionnées sont plus foncées.
+  </h3>
+  ${disciplines.erc_legend()}
+  <!-- $ -->
+  ${resize((width) => disciplines.cnu_plot_y_by_erc(
+    aap2_cnu_count,
+    {
+      width: width,
+      height: 600,
+      x_accessor: (d) => d.count,
+      y_accessor: (d) =>
+        cnu.cnu_section_label_map.get(Number(d.cnu)) || String(d.cnu),
+      opacity_accessor: (d) => d.selected || d.financed ? 1 : 0.7,
+    }
+  ))}
+  <!-- $ -->
+</div>
+
+<div class="card">
+
+```js
+const show_non_financed = view(
+  Inputs.toggle({
+    label: "Afficher les sections CNU non-financées de l'AAP",
+  }),
+)
+```
+
+  <h2>
+    Distribution des sections CNU de l'AAP 1
+    ${show_non_financed ? '' : '(financé)'} et 2
     <!-- $ -->
-    ${resize((width) => disciplines.cnu_plot_by_erc(
-      aap2_cnu_count,
-      {
-        width: width,
-        sort: 'y',
-        x_accessor: (d) => d.count,
-        y_accessor: (d) =>
-          cnu.cnu_section_label_map.get(Number(d.cnu)) || String(d.cnu),
-        marginTop: 20,
-        marginRight: 180,
-      }
-    ))}
+  </h2>
+  <h3>
+    Distribution détaillée des sections de l'AAP 1 et 2 par appel. Les sections
+    ${show_non_financed ? "financées de l'AAP 1 et les sections" : ''}
     <!-- $ -->
-  </div>
-  <div class="card grid-rowspan-2">
-    <h2>Distribution des sections CNU de l'AAP 1 et 2</h2>
-    <h3>Distribution détaillée des sections de l'AAP 1 et 2 par appel</h3>
-    ${resize((width) => disciplines.cnu_by_aap_plot_by_erc(
-      cnu_count,
-      {
-        width: width,
-        sort: 'y',
-        x_accessor: (d) => d.count,
-        y_accessor: (d) =>
-          cnu.cnu_section_label_map.get(Number(d.cnu)) || String(d.cnu),
-        fill_accessor: (d) => String(d.aap),
-        marginTop: 20,
-        marginRight: 180,
-      }
-    ))}
-    <!-- $ -->
-  </div>
-  <!-- <div class="card grid-rowspan-2">
-    <h2>Distribution des sections CNU</h2>
-    <h3>Distribution des sections de l'AAP 1 et 2</h3>
-    ${resize((width) => disciplines.cnu_by_aap_plot_by_erc_2(
-      cnu_count,
-      {
-        width: width,
-        sort: 'y',
-        x_accessor: (d) => d.count,
-        fy_accessor: (d) =>
-          cnu.cnu_section_label_map.get(Number(d.cnu)) || String(d.cnu),
-        y_accessor: (d) => String(d.aap),
-        fill_accessor: (d) => String(d.aap),
-        marginTop: 20,
-      }
-    ))}
-  </div> -->
+    preselectionnées de l'AAP 2 sont plus foncées.
+  </h3>
+  ${resize((width) => disciplines.cnu_by_aap_plot_y_by_erc(
+    [...cnu_count]
+      .filter((d) => show_non_financed
+        || d.aap === 'AAP 2'
+        || d.aap === 'AAP 1' && d.financed
+      ),
+    {
+      width: width,
+      height: 600,
+      sort: 'y',
+      x_accessor: (d) => d.count,
+      y_accessor: (d) =>
+        cnu.cnu_section_label_map.get(Number(d.cnu)) || String(d.cnu),
+      fill_accessor: (d) => String(d.aap),
+      opacity_accessor: (d) => d.selected || d.financed ? 1 : 0.7,
+    }
+  ))}
   <!-- $ -->
 </div>
 
@@ -1901,20 +1938,31 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
 select * from (
   select
     cnu[:2] as cnu,
+    financed,
+    null as selected,
     count(*) as count,
     'AAP 1' as aap,
   from aap1_researchers
-  group by cnu[:2]
+  join aap1_project_by_researchers
+    on aap1_researchers.id = aap1_project_by_researchers.researcher
+  join aap1_projects
+    on aap1_project_by_researchers.project = aap1_projects.acronyme
+  group by cnu[:2], financed
   union
   select
     cnu,
+    null as financed,
+    selected,
     count(*) as count,
     'AAP 2' as aap,
   from aap2_project_by_cnu
+  join aap2_projects
+    on aap2_projects.acronyme = aap2_project_by_cnu.acronyme
   where cnu is not null and cnu::VARCHAR != ''
-  group by cnu
+  group by cnu, selected
 )
 where cnu[:2] similar to '[0-9]{2}'
+order by cnu, selected, financed
 ```
 
 ```js
@@ -1928,6 +1976,12 @@ const cnu_count_erc = d3.rollups(
 ```sql id=aap1_cnu_count
 select cnu[:2] as cnu, count(*) as count
 from aap1_researchers
+where id in (
+  select researcher from aap1_project_by_researchers
+  where project in (
+    select acronyme from aap1_projects where financed
+  )
+)
 group by cnu[:2]
 order by count desc
 ```
@@ -1943,11 +1997,14 @@ const aap1_cnu_count_erc = d3.rollups(
 ```sql id=aap2_cnu_count
 select
   cnu,
+  selected,
   count(*) as count
 from aap2_project_by_cnu
+join aap2_projects
+  on aap2_projects.acronyme = aap2_project_by_cnu.acronyme
 where cnu is not null and cnu::VARCHAR != ''
-group by cnu
-order by count desc
+group by cnu, selected
+order by cnu, selected
 ```
 
 ```js
@@ -1956,8 +2013,24 @@ const aap2_cnu_count_erc = d3.rollups(
   (v) => v.reduce((a, b) => a + b.count, 0),
   (d) => cnu.getERCFromCNU(d.cnu) || 'Non renseigné',
 )
+
+const aap2_cnu_count_erc_2 = d3
+  .rollups(
+    aap2_cnu_count,
+    (v) => v.reduce((a, b) => a + b.count, 0),
+    (d) => cnu.getERCFromCNU(d.cnu) || 'Non renseigné',
+    (d) => d.selected,
+  )
+  .flatMap(([category, selected_counts]) =>
+    selected_counts.map(([selected, count]) => ({
+      erc: category,
+      selected,
+      count,
+    })),
+  )
 ```
 
+<!--
 ## Keywords
 
 ```sql
@@ -1966,15 +2039,79 @@ where keyword != ''
 group by keyword
 order by count desc
 ```
+-->
 
 ## Cartographies
+
+```js
+const map_filter = view(
+  Inputs.select(
+    new Map([
+      ['Institutions', institution_count_by_postal_code],
+      ['Laboratoires', laboratory_count_by_postal_code],
+      [
+        'Partenaires socio-économiques',
+        socioeconomic_partner_count_by_postal_code,
+      ],
+    ]),
+    {
+      label: 'Filtrer les entités de la carte par ',
+    },
+  ),
+)
+
+const map_tip_map = new Map([
+  [
+    institution_count_by_postal_code,
+    [
+      get_choropleth_tip(institutions_by_postal_code, {
+        min_threshold: 3,
+        anchor: 'top-left',
+      }),
+    ],
+  ],
+  [
+    laboratory_count_by_postal_code,
+    [
+      get_choropleth_tip(laboratories_by_postal_code, {
+        min_threshold: 5,
+        max_threshold: 10,
+        anchor: 'top-right',
+      }),
+      get_choropleth_tip(laboratories_by_postal_code, {
+        min_threshold: 10,
+        anchor: 'bottom',
+      }),
+    ],
+  ],
+  [
+    socioeconomic_partner_count_by_postal_code,
+    [
+      get_choropleth_tip(socioeconomic_partners_by_postal_code, {
+        min_threshold: 12,
+        max_threshold: 15,
+        anchor: 'top-right',
+      }),
+      get_choropleth_tip(socioeconomic_partners_by_postal_code, {
+        min_threshold: 15,
+        max_threshold: 18,
+        anchor: 'right',
+      }),
+      get_choropleth_tip(socioeconomic_partners_by_postal_code, {
+        min_threshold: 18,
+        anchor: 'bottom-left',
+      }),
+    ],
+  ],
+])
+```
 
 <div class="grid grid-cols-2">
   <div class="card">
     ${resize((width) => choroplethFrance(
       width,
       "Nombre d'institutions de l'AAP 2 par département, France",
-      ({ properties }) => [...institution_count_by_postal_code].find(
+      ({ properties }) => [...map_filter].find(
           (d) => d.departement_code === properties.code
         )?.count,
     ))}
@@ -1984,102 +2121,13 @@ order by count desc
     ${resize((width) => choroplethFrance(
       width,
       "Nombre d'institutions de l'AAP 2 par département, France",
-      ({ properties }) => [...institution_count_by_postal_code].find(
+      ({ properties }) => [...map_filter].find(
           (d) => d.departement_code === properties.code
         )?.count,
-      [
-        get_choropleth_tip(
-          institutions_by_postal_code,
-          {
-            min_threshold: 3,
-            anchor: 'top-left',
-          }
-        ),
-      ],
+      map_tip_map.get(map_filter),
     ))}
     <!-- $ -->
-  </div>
-  <div class="card">
-    ${resize((width) => choroplethFrance(
-      width,
-      "Nombre de laboratoires de l'AAP 2 par département, France",
-      ({ properties }) => [...laboratory_count_by_postal_code].find(
-          (d) => d.departement_code === properties.code
-        )?.count,
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    ${resize((width) => choroplethFrance(
-      width,
-      "Nombre de laboratoires de l'AAP 2 par département, France",
-      ({ properties }) => [...laboratory_count_by_postal_code].find(
-          (d) => d.departement_code === properties.code
-        )?.count,
-      [
-        get_choropleth_tip(
-          laboratories_by_postal_code,
-          {
-            min_threshold: 5,
-            max_threshold: 10,
-            anchor: 'top-right',
-          }
-        ),
-        get_choropleth_tip(
-          laboratories_by_postal_code,
-          {
-            min_threshold: 10,
-            anchor: 'bottom',
-          }
-        ),
-      ],
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    ${resize((width) => choroplethFrance(
-      width,
-      "Nombre de partenaires socio-économiques de l'AAP 2 par département, France",
-      ({ properties }) => [...socioeconomic_partner_count_by_postal_code].find(
-          (d) => d.departement_code === properties.code
-        )?.count,
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    ${resize((width) => choroplethFrance(
-      width,
-      "Nombre de partenaires socio-économiques de l'AAP 2 par département, France",
-      ({ properties }) => [...socioeconomic_partner_count_by_postal_code].find(
-          (d) => d.departement_code === properties.code
-        )?.count,
-      [
-        get_choropleth_tip(
-          socioeconomic_partners_by_postal_code,
-          {
-            min_threshold: 12,
-            max_threshold: 15,
-            anchor: 'top-right',
-          }
-        ),
-        get_choropleth_tip(
-          socioeconomic_partners_by_postal_code,
-          {
-            min_threshold: 15,
-            max_threshold: 18,
-            anchor: 'right',
-          }
-        ),
-        get_choropleth_tip(
-          socioeconomic_partners_by_postal_code,
-          {
-            min_threshold: 18,
-            anchor: 'bottom-left',
-          }
-        ),
-      ],
-    ))}
-    <!-- $ -->
+
   </div>
 </div>
 
@@ -2249,6 +2297,17 @@ group by siren
       <!-- $ -->
     </span>
   </div>
+  <div class="card">
+    <h2>CNUs des chercheurs</h2>
+    <span class="big">
+      ${missing_researcher_cnu.length} /
+      <!-- $ -->
+      ${[...await sql`
+        select count(*) as count from aap2_researcher_by_cnu
+      `][0].count.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
 </div>
 <div class="card grid-rowspan-2">
   <h2>Incohérences types de projet</h2>
@@ -2327,6 +2386,17 @@ where idref is null or length(idref) != 9
 select count(*) as count
 from aap2_researchers
 where idhal is null
+```
+
+```js echo
+const missing_researcher_cnu = [
+  ...(await sql`select * from aap2_researcher_by_cnu`),
+].filter(
+  (d) =>
+    d.cnu === null ||
+    d.cnu === '' ||
+    ![...cnu.cnu_category_section_map.values()].flat().includes(Number(d.cnu)),
+)
 ```
 
 <!-- DATA IMPORT -->

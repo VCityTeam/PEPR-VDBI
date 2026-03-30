@@ -47,7 +47,8 @@ export function donutChart(
     keyMap = (d) => d.entity,
     valueMap = (d) => d.count,
     colorMap = keyMap,
-    // sort = (a, b) => d3.descending(a.count, b.count),
+    sort = (a, b) => valueMap(b) - valueMap(a),
+    // sort = (a, b) => keyMap(a) - keyMap(b),
     fontSize = 16,
     fontFamily = 'sans-serif',
     sliceStrokeColor = 'black',
@@ -75,9 +76,10 @@ export function donutChart(
     legendWidth = 80,
     legendTextLength = 30,
     legendText = (d) =>
-      `${((valueMap(d) / d3.sum(data.map(valueMap))) * 100).toFixed(
-        1,
-      )}% ${cropText(keyMap(d), legendTextLength)}`,
+      `${valueMap(d) / d3.sum(data.map(valueMap)) < 0.1 ? '0' : ''}${(
+        (valueMap(d) / d3.sum(data.map(valueMap))) *
+        100
+      ).toFixed(1)}% ${cropText(keyMap(d), legendTextLength)}`,
     legendFontSize = 16,
     legendLineSeparation = 25,
     legend = circleLegend(data, {
@@ -96,8 +98,16 @@ export function donutChart(
   const radius = Math.min(width + legendWidth, height) / 2
   const arc = d3
     .arc()
-    .innerRadius(radius * innerRadiusRatio)
-    .outerRadius(radius * outerRadiusRatio)
+    .innerRadius(
+      typeof innerRadiusRatio === 'function'
+        ? innerRadiusRatio
+        : radius * innerRadiusRatio,
+    )
+    .outerRadius(
+      typeof outerRadiusRatio === 'function'
+        ? outerRadiusRatio
+        : radius * outerRadiusRatio,
+    )
 
   // const minorLabelArc = d3
   //   .arc()
@@ -116,6 +126,7 @@ export function donutChart(
     .pie()
     .padAngle(1 / radius)
     .value(valueMap)
+    .sort(sort)
   const pieData = pie(data)
   // console.debug(pieData);
 
@@ -228,8 +239,8 @@ export function donutChart(
     .attr('fill-opacity', fillOpacity)
     .selectAll()
     .data(pieData)
-    .join('text')
-    .attr('transform', (d) => `translate(${arc.centroid(d)})`)
+  // .join('text')
+  // .attr('transform', (d) => `translate(${arc.centroid(d)})`)
   // // add major label for major arcs
   // .call((text) =>
   //   text
