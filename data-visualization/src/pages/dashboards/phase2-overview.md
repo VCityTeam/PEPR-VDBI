@@ -545,7 +545,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 AAP 2 partnaires par nombre d'occurences</h2>
+    <h2>Top 15 AAP 2 partnaires socio-économiques par nombre d'occurences</h2>
     ${aap2_partners_sort_input}
     <!-- $ -->
     ${resize((width) => overview.partnerCountPlot(
@@ -590,7 +590,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 AAP 2 partnaires preselectionnées par nombre d'occurences</h2>
+    <h2>Top 15 AAP 2 partnaires socio-économiques preselectionnées par nombre d'occurences</h2>
     ${aap2_selected_partners_sort_input}
     <!-- $ -->
     ${resize((width) => overview.partnerCountPlot(
@@ -655,9 +655,14 @@ group by siren, label
 select
   siren::VARCHAR as id,
   first(nom_complet) as label,
+  -- list_distinct(list(institution_id))::VARCHAR as labels,
+  list_distinct(list(project))::VARCHAR as projects,
   list_distinct(list(libelle_commune))::VARCHAR as communes,
-  sum(count) as count,
-from aap2_institutions
+  count(*) as count,
+from aap2_project_by_institutions
+left join aap2_institutions
+  on aap2_project_by_institutions.institution_id::VARCHAR =
+     aap2_institutions.id::VARCHAR
 where siren is not null
 group by siren
 ```
@@ -671,8 +676,11 @@ select
     first(libelle)
   ) as label,
   list_distinct(list(commune))::VARCHAR as communes,
-  sum(count) as count,
-from aap2_laboratories
+  count(*) as count,
+from aap2_project_by_laboratories
+  left join aap2_laboratories
+  on aap2_project_by_laboratories.unit_id::VARCHAR =
+     aap2_laboratories.id::VARCHAR
 where numero_national_de_structure is not null
 group by numero_national_de_structure
 ```
@@ -682,8 +690,11 @@ select
   siren::VARCHAR as id,
   first(nom_complet) as label,
   list_distinct(list(libelle_commune))::VARCHAR as communes,
-  sum(count)::INT as count,
-from aap2_socioeconomic_partners
+  count(*) as count,
+from aap2_project_by_socioeconomic_partners
+  left join aap2_socioeconomic_partners
+  on aap2_project_by_socioeconomic_partners.partner_id::VARCHAR =
+     aap2_socioeconomic_partners.id::VARCHAR
 where siren is not null
 group by siren
 ```
@@ -2073,7 +2084,7 @@ const map_tip_map = new Map([
     laboratory_count_by_postal_code,
     [
       get_choropleth_tip(laboratories_by_postal_code, {
-        min_threshold: 5,
+        min_threshold: 6,
         max_threshold: 10,
         anchor: 'top-right',
       }),
