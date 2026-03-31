@@ -639,7 +639,6 @@ group by numero_national_de_structure
 
 ```sql id=aap1_partners_count
 select
-  -- *
   if(siren is null, '', siren::VARCHAR) as id,
   label,
   list_distinct(list(libelle_commune))::VARCHAR as communes,
@@ -708,7 +707,7 @@ select
   sum(selected_institutions.count) as count,
 from aap2_institutions
 join selected_institutions
-  on aap2_institutions.id = selected_institutions.institution_id
+  on aap2_institutions.id::VARCHAR = selected_institutions.institution_id::VARCHAR
 where siren is not null
 group by siren
 ```
@@ -2245,7 +2244,7 @@ group by siren
   <div class="card">
     <h2>RNSRs des laboratoires</h2>
     <span class="big">
-      ${missing_laboratories_siret.count} /
+      ${missing_laboratories_rnsr.count} /
       <!-- $ -->
       ${[...await sql`
         select count(*) as count from aap2_laboratories
@@ -2315,6 +2314,18 @@ group by siren
   <!-- $ -->
 </div>
 
+```sql
+select
+  source_label,
+  labels,
+  list(project) as projects
+from aap2_institutions
+join aap2_project_by_institutions
+  on aap2_institutions.id = aap2_project_by_institutions.institution_id
+where siret is null
+group by source_label, labels
+```
+
 <div class="note" label="Notice">
 
 Les indicateurs de qualité sont calculé a partir des appels à projets. Leurs
@@ -2358,16 +2369,37 @@ from aap2_institutions
 where siret is null
 ```
 
-```sql id=[missing_laboratories_siret] echo
+```sql display=false
+select id, count(*) as count
+from aap2_institutions
+where siret is null
+group by id
+```
+
+```sql id=[missing_laboratories_rnsr] echo
 select count(*) as count
 from aap2_laboratories
 where numero_national_de_structure is null
 ```
 
+```sql display=false
+select id, count(*) as count
+from aap2_laboratories
+where numero_national_de_structure is null
+group by id
+```
+
 ```sql id=[missing_partner_siret] echo
 select count(*) as count
 from aap2_socioeconomic_partners
-where siret is null or length(id) != 14
+where siret is null
+```
+
+```sql display=false
+select id, count(*) as count
+from aap2_socioeconomic_partners
+where siret is null
+group by id
 ```
 
 ```sql id=[missing_researcher_orcid] echo

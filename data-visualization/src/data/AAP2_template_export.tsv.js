@@ -8,4 +8,17 @@ const file = await readFile('src/data/private/AAP2_template_export.csv')
 const parser = dsvFormat(';')
 const data = parser.parse(file.toString())
 
+data.forEach((row) => {
+  Object.entries(row).forEach(([key, value]) => {
+    if (typeof value !== 'string') {
+      return
+    } else {
+      const clean_value = richTextFields.includes(key)
+        ? value.trim()
+        : value.replace(/\n/g, ' ').trim()
+      row[key] = clean_value
+    }
+  })
+})
+
 process.stdout.write(tsvFormat(data))

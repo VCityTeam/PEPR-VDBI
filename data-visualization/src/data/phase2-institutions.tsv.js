@@ -83,9 +83,18 @@ const connection = await instance.connect()
 const reader = await connection.runAndReadAll(all_institutions_query)
 const rows = reader.getRowObjectsJson()
 
+const response_cache = new Map()
+
 for (let index = 0; index < rows.length; index++) {
   const row = rows[index]
-  const response = await queryAndFormatRE(row.id, 'aap2_export')
+  if (response_cache.has(row.id)) {
+    rows[index] = { ...row, ...response_cache.get(row.id) }
+    continue
+  }
+  const response = await queryAndFormatRE(row.id, 'aap2_export', false)
+  if (response.siret) {
+    response_cache.set(row.id, response)
+  }
   rows[index] = { ...row, ...response }
 }
 

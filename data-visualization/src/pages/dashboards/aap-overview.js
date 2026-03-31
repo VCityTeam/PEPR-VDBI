@@ -179,9 +179,9 @@ export const partnerCountPlot = (
   {
     width,
     height = 400,
-    marginLeft = 300,
+    marginLeft = 230,
     limit = 15,
-    lineWidth = 30,
+    lineWidth = 23,
     x_label = "Nombre d'occurences",
     y_label,
     sort_value,

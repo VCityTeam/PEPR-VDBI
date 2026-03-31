@@ -2,9 +2,13 @@ import { filter } from 'd3'
 import { nameByRace } from 'fantasy-name-generator'
 import pino from 'pino'
 
-export const default_log_options = (name, destination = './data_loaders.js.log') => ({
+export const default_log_options = (
+  name,
+  destination = './data_loaders.js.log',
+  level = 'warn',
+) => ({
   name: name,
-  level: 'warn',
+  level: level,
   sync: false,
   timestamp: pino.stdTimeFunctions.isoTime,
   transport: {
@@ -57,9 +61,9 @@ export async function handleFetchJson(
       return data
     } catch (err) {
       if (err.message && err.message.startsWith('HTTP error')) {
-        logger.error(`HTTP error occurred: ${err}`)
+        logger.error(`HTTP error occurred: ${err}; cause: ${err.cause}`)
       } else {
-        logger.error(`Other error occurred: ${err}; cause: ${err.cause}`)
+        logger.error(`Unknown error occurred: ${err}; cause: ${err.cause}`)
       }
       return null
     }
