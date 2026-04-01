@@ -545,7 +545,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 AAP 2 partnaires socio-économiques par nombre d'occurences</h2>
+    <h2>Top 15 AAP 2 partnaires socioéconomiques par nombre d'occurences</h2>
     ${aap2_partners_sort_input}
     <!-- $ -->
     ${resize((width) => overview.partnerCountPlot(
@@ -590,7 +590,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 AAP 2 partnaires socio-économiques preselectionnées par nombre d'occurences</h2>
+    <h2>Top 15 AAP 2 partnaires socioéconomiques preselectionnées par nombre d'occurences</h2>
     ${aap2_selected_partners_sort_input}
     <!-- $ -->
     ${resize((width) => overview.partnerCountPlot(
@@ -651,11 +651,12 @@ where project in (select acronyme from aap1_projects where financed)
 group by siren, label
 ```
 
-```sql id=aap2_institutions_count
+### aap2_institutions_count
+
+```sql id=aap2_institutions_count display
 select
   siren::VARCHAR as id,
   first(nom_complet) as label,
-  -- list_distinct(list(institution_id))::VARCHAR as labels,
   list_distinct(list(project))::VARCHAR as projects,
   list_distinct(list(libelle_commune))::VARCHAR as communes,
   count(*) as count,
@@ -667,7 +668,9 @@ where siren is not null
 group by siren
 ```
 
-```sql id=aap2_laboratories_count
+### aap2_laboratories_count
+
+```sql id=aap2_laboratories_count display
 select
   numero_national_de_structure::VARCHAR as id,
   if(
@@ -675,6 +678,7 @@ select
     list_distinct(list(sigle))[1],
     first(libelle)
   ) as label,
+  list_distinct(list(project))::VARCHAR as projects,
   list_distinct(list(commune))::VARCHAR as communes,
   count(*) as count,
 from aap2_project_by_laboratories
@@ -685,10 +689,13 @@ where numero_national_de_structure is not null
 group by numero_national_de_structure
 ```
 
-```sql id=aap2_partners_count
+### aap2_partners_count
+
+```sql id=aap2_partners_count display
 select
   siren::VARCHAR as id,
   first(nom_complet) as label,
+  list_distinct(list(project))::VARCHAR as projects,
   list_distinct(list(libelle_commune))::VARCHAR as communes,
   count(*) as count,
 from aap2_project_by_socioeconomic_partners
@@ -699,10 +706,13 @@ where siren is not null
 group by siren
 ```
 
-```sql id=aap2_selected_institutions_count
+### aap2_selected_institutions_count
+
+```sql id=aap2_selected_institutions_count display
 with selected_institutions as (
   select
     institution_id,
+    list_distinct(list(project))::VARCHAR as projects,
     count(*) as count,
   from aap2_project_by_institutions
   where project in (
@@ -714,8 +724,9 @@ with selected_institutions as (
 select
   siren::VARCHAR as id,
   first(nom_complet) as label,
+  list_distinct(list(projects))::VARCHAR as projects,
   list_distinct(list(libelle_commune))::VARCHAR as communes,
-  sum(selected_institutions.count) as count,
+  sum(selected_institutions.count)::INT as count,
 from aap2_institutions
 join selected_institutions
   on aap2_institutions.id::VARCHAR = selected_institutions.institution_id::VARCHAR
@@ -723,10 +734,13 @@ where siren is not null
 group by siren
 ```
 
-```sql id=aap2_selected_laboratories_count
+### aap2_selected_laboratories_count
+
+```sql id=aap2_selected_laboratories_count display
 with selected_labs as (
   select
     unit_id,
+    list_distinct(list(project))::VARCHAR as projects,
     count(*) as count,
   from aap2_project_by_laboratories
   where project in (
@@ -742,6 +756,7 @@ select
     list_distinct(list(sigle))[1],
     first(libelle)
   ) as label,
+  list_distinct(list(projects))::VARCHAR as projects,
   list_distinct(list(commune))::VARCHAR as communes,
   sum(selected_labs.count)::INT as count,
 from aap2_laboratories
@@ -751,10 +766,13 @@ where numero_national_de_structure is not null
 group by numero_national_de_structure
 ```
 
-```sql id=aap2_selected_partners_count
+### aap2_selected_partners_count
+
+```sql id=aap2_selected_partners_count display
 with selected_partners as (
   select
     partner_id,
+    list_distinct(list(project))::VARCHAR as projects,
     count(*) as count,
   from aap2_project_by_socioeconomic_partners
   where project in (
@@ -766,6 +784,7 @@ with selected_partners as (
 select
   siren::VARCHAR as id,
   first(nom_complet) as label,
+  list_distinct(list(projects))::VARCHAR as projects,
   list_distinct(list(libelle_commune))::VARCHAR as communes,
   sum(selected_partners.count)::INT as count,
 from aap2_socioeconomic_partners
