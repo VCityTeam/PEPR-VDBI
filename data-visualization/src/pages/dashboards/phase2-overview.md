@@ -44,6 +44,8 @@ sql:
 ## Appels de la phase 1 et 2
 
 ```js
+import * as image from 'html-to-image'
+import download from 'downloadjs'
 import * as overview from './aap-overview.js'
 import * as disciplines from './aap-disciplines.js'
 import * as cnu from '../../components/cnu.js'
@@ -70,7 +72,7 @@ import {
 
 ## Chiffres clés
 
-<div class="grid grid-cols-4">
+<div class="grid grid-cols-4" id="aap-key-numbers">
   <div class="card">
     <h2>Nombre de projets AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
     <span class="big">
@@ -164,9 +166,6 @@ import {
       <!-- $ -->
     </span>
   </div>
-</div>
-
-<div class="grid grid-cols-4">
   <div class="card">
     <h2>Nombre de projets AAP 2 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
     <span class="big">
@@ -224,9 +223,20 @@ import {
   </div>
 </div>
 
+```js
+const aap_key_number_buttons = view(
+  Inputs.button('Download key number cards', {
+    reduce: () =>
+      image
+        .toPng(document.getElementById('aap-key-numbers'))
+        .then((dataUrl) => download(dataUrl, 'aap-key-numbers.png')),
+  }),
+)
+```
+
 ## Projets par partenaires
 
-<div class="grid grid-cols-3">
+<div class="grid grid-cols-3" id="aap-projects-by-partners">
   <!-- AAP 1 -->
   <div class="card">
     <h2>AAP 1 projets financées par nombre d'institutions</h2>
@@ -332,6 +342,16 @@ import {
     <!-- $ -->
   </div>
 </div>
+
+```js
+const aap_project_by_institutions_buttons = view(
+  Inputs.button('Download AAP key number cards', () =>
+    image
+      .toPng(document.getElementById('aap-projects-by-partners'))
+      .then((dataUrl) => download(dataUrl, 'aap-projects-by-partners.png')),
+  ),
+)
+```
 
 ```sql id=aap1_project_by_institutions_count
 select
@@ -454,7 +474,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
 
 </div>
 
-<div class="grid grid-cols-3">
+<div class="grid grid-cols-3" id="aap1-partner-plots">
   <!-- AAP 1 -->
   <div class="card">
     <h2>Top 15 institutions financées de l'AAP 1</h2>
@@ -605,6 +625,17 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
   </div>
 </div>
 
+```js
+const aap_partner_buttons = view(
+  Inputs.button('Download AAP1 partner plots', {
+    reduce: () =>
+      image
+        .toPng(document.getElementById('aap1-partner-plots'))
+        .then((dataUrl) => download(dataUrl, 'aap1-partner-plots.png')),
+  }),
+)
+```
+
 ```sql id=aap1_institutions_count
 select
   siren::VARCHAR as id,
@@ -651,9 +682,9 @@ where project in (select acronyme from aap1_projects where financed)
 group by siren, label
 ```
 
-### aap2_institutions_count
+<!-- ### aap2_institutions_count -->
 
-```sql id=aap2_institutions_count display
+```sql id=aap2_institutions_count
 select
   siren::VARCHAR as id,
   first(nom_complet) as label,
@@ -668,9 +699,9 @@ where siren is not null
 group by siren
 ```
 
-### aap2_laboratories_count
+<!-- ### aap2_laboratories_count -->
 
-```sql id=aap2_laboratories_count display
+```sql id=aap2_laboratories_count
 select
   numero_national_de_structure::VARCHAR as id,
   if(
@@ -689,9 +720,9 @@ where numero_national_de_structure is not null
 group by numero_national_de_structure
 ```
 
-### aap2_partners_count
+<!-- ### aap2_partners_count -->
 
-```sql id=aap2_partners_count display
+```sql id=aap2_partners_count
 select
   siren::VARCHAR as id,
   first(nom_complet) as label,
@@ -706,9 +737,9 @@ where siren is not null
 group by siren
 ```
 
-### aap2_selected_institutions_count
+<!-- ### aap2_selected_institutions_count -->
 
-```sql id=aap2_selected_institutions_count display
+```sql id=aap2_selected_institutions_count
 with selected_institutions as (
   select
     institution_id,
@@ -734,9 +765,9 @@ where siren is not null
 group by siren
 ```
 
-### aap2_selected_laboratories_count
+<!-- ### aap2_selected_laboratories_count -->
 
-```sql id=aap2_selected_laboratories_count display
+```sql id=aap2_selected_laboratories_count
 with selected_labs as (
   select
     unit_id,
@@ -766,9 +797,9 @@ where numero_national_de_structure is not null
 group by numero_national_de_structure
 ```
 
-### aap2_selected_partners_count
+<!-- ### aap2_selected_partners_count -->
 
-```sql id=aap2_selected_partners_count display
+```sql id=aap2_selected_partners_count
 with selected_partners as (
   select
     partner_id,
@@ -1303,7 +1334,7 @@ group by siret
 
 ## Défis
 
-<div class="grid grid-cols-3">
+<div class="grid grid-cols-3" id="challenge-plots">
   <!-- AAP 1 + 2 -->
   <div class="card">
     ${resize((width) => overview.stackedChallengeCountPlot(
@@ -1329,7 +1360,8 @@ group by siret
         color_range: overview.projectTypeColorScale.range(),
         title: 'Défis par type de projet',
         subtitle: `Les défis indiqués dans les métadonnées et les templates des
-          soumissions sur le site du dépôt de l'AAP 2`
+          soumissions sur le site du dépôt de l'AAP 2.
+          Les sections préselectionnées sont plus foncées.`
       })
     )}
     <!-- $ -->
@@ -1343,14 +1375,15 @@ group by siret
         color_range: overview.projectTypeColorScale.range(),
         title: 'Défis par type de projet',
         subtitle: `Les défis indiqués dans les métadonnées et les templates des
-          soumissions sur le site du dépôt de l'AAP 2`
+          soumissions sur le site du dépôt de l'AAP 2.
+          Les sections préselectionnées sont plus foncées.`
       })
     )}
     <!-- $ -->
   </div>
 </div>
 
-<div class="grid grid-cols-4">
+<div class="grid grid-cols-4" id="challenge-donuts">
   <div class="card">
     <h2>Répartition des défis de l'AAP 1</h2>
     <h3>Les sections plus grandes représentent les défis financés</h3>
@@ -1465,6 +1498,25 @@ group by siret
     <!-- $ -->
   </div>
 </div>
+
+```js
+const challenge_plots_download_button = view(
+  Inputs.button('Download challenge plots', {
+    reduce: () =>
+      image
+        .toPng(document.getElementById('challenge-plots'))
+        .then((dataUrl) => download(dataUrl, 'challenge-plots.png')),
+  }),
+)
+const challenge_donuts_download_button = view(
+  Inputs.button('Download challenge donuts', {
+    reduce: () =>
+      image
+        .toPng(document.getElementById('challenge-donuts'))
+        .then((dataUrl) => download(dataUrl, 'challenge-donuts.png')),
+  }),
+)
+```
 
 ```js
 const default_defi_aap_donut_config = (width) => ({
@@ -1877,7 +1929,7 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
 
 </div>
 
-<div class="grid grid-cols-3">
+<div class="grid grid-cols-3" id="cnu-donuts">
   <div class="card">
     <h2>Distribution des CNUs financées par catégorie de l'AAP 1</h2>
     ${disciplines.erc_legend()}
@@ -1900,7 +1952,7 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
   </div>
 </div>
 
-<div class="card">
+<div class="card" id="aap2-cnu-plot">
   <h2>Distribution des sections CNU de l'AAP 2</h2>
   <h3>
     Distribution détaillée des sections de l'AAP 2 par catégorie.
@@ -1922,7 +1974,7 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
   <!-- $ -->
 </div>
 
-<div class="card">
+<div class="card" id="aap12-cnu-plot">
 
 ```js
 const show_non_financed = view(
@@ -1962,6 +2014,35 @@ const show_non_financed = view(
   ))}
   <!-- $ -->
 </div>
+
+```js
+const cnu_donuts_download_button = view(
+  Inputs.button('Download CNU donuts', {
+    reduce: () =>
+      image
+        .toPng(document.getElementById('cnu-donuts'))
+        .then((dataUrl) => download(dataUrl, 'cnu-donuts.png')),
+  }),
+)
+
+const aap2_cnu_plot_download_button = view(
+  Inputs.button('Download AAP2 CNU plot', {
+    reduce: () =>
+      image
+        .toPng(document.getElementById('aap2-cnu-plot'))
+        .then((dataUrl) => download(dataUrl, 'aap2-cnu-plot.png')),
+  }),
+)
+
+const aap12_cnu_plot_download_button = view(
+  Inputs.button('Download AAP12 CNU plot', {
+    reduce: () =>
+      image
+        .toPng(document.getElementById('aap12-cnu-plot'))
+        .then((dataUrl) => download(dataUrl, 'aap12-cnu-plot.png')),
+  }),
+)
+```
 
 ```sql id=cnu_count
 select * from (
@@ -2088,6 +2169,94 @@ const map_filter = view(
     },
   ),
 )
+```
+
+<div class="grid grid-cols-2" id="choropleths">
+  <div class="card">
+    ${resize((width) => choroplethFrance(
+      width,
+      label_map.get(map_filter),
+      ({ properties }) => [...map_filter].find(
+          (d) => d.departement_code === properties.code
+        )?.count,
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    ${resize((width) => choroplethFrance(
+      width,
+      label_map.get(map_filter),
+      ({ properties }) => [...map_filter].find(
+          (d) => d.departement_code === properties.code
+        )?.count,
+      map_tip_map.get(map_filter),
+    ))}
+    <!-- $ -->
+
+  </div>
+</div>
+
+```js
+const choropleths_download_button = view(
+  Inputs.button('Download choropleths', {
+    reduce: () =>
+      image
+        .toPng(document.getElementById('choropleths'))
+        .then((dataUrl) => download(dataUrl, 'choropleths.png')),
+  }),
+)
+```
+
+```js
+const default_choropleth_tip_config = {
+  textPadding: 3,
+  lineWidth: 25,
+  textOverflow: 'ellipsis-middle',
+}
+
+const get_choropleth_tip = (
+  data,
+  {
+    min_threshold = 0,
+    max_threshold = [...data].length,
+    anchor = 'top-left',
+  } = {},
+) =>
+  Plot.tip(
+    mainland_france_departements_geojson,
+    Plot.geoCentroid({
+      title: ({ properties }) =>
+        min_threshold <
+          [...data].filter((d) => d.departement_code === properties.code)
+            .length &&
+        [...data].filter((d) => d.departement_code === properties.code)
+          .length <= max_threshold
+          ? properties.nom +
+            ' :\n' +
+            [...data]
+              .filter((d) => d.departement_code === properties.code)
+              .map((d) => '• ' + d.nom_complet)
+              .join('\n')
+          : null,
+      ...default_choropleth_tip_config,
+      anchor,
+    }),
+  )
+
+const label_map = new Map([
+  [
+    institution_count_by_postal_code,
+    "Nombre d'institutions de l'AAP 2 par département, France",
+  ],
+  [
+    laboratory_count_by_postal_code,
+    "Nombre de laboratoires de l'AAP 2 par département, France",
+  ],
+  [
+    socioeconomic_partner_count_by_postal_code,
+    "Nombre de partenaires socio-économiques de l'AAP 2 par département, France",
+  ],
+])
 
 const map_tip_map = new Map([
   [
@@ -2133,68 +2302,6 @@ const map_tip_map = new Map([
     ],
   ],
 ])
-```
-
-<div class="grid grid-cols-2">
-  <div class="card">
-    ${resize((width) => choroplethFrance(
-      width,
-      "Nombre d'institutions de l'AAP 2 par département, France",
-      ({ properties }) => [...map_filter].find(
-          (d) => d.departement_code === properties.code
-        )?.count,
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    ${resize((width) => choroplethFrance(
-      width,
-      "Nombre d'institutions de l'AAP 2 par département, France",
-      ({ properties }) => [...map_filter].find(
-          (d) => d.departement_code === properties.code
-        )?.count,
-      map_tip_map.get(map_filter),
-    ))}
-    <!-- $ -->
-
-  </div>
-</div>
-
-```js
-const default_choropleth_tip_config = {
-  textPadding: 3,
-  lineWidth: 25,
-  textOverflow: 'ellipsis-middle',
-}
-
-const get_choropleth_tip = (
-  data,
-  {
-    min_threshold = 0,
-    max_threshold = [...data].length,
-    anchor = 'top-left',
-  } = {},
-) =>
-  Plot.tip(
-    mainland_france_departements_geojson,
-    Plot.geoCentroid({
-      title: ({ properties }) =>
-        min_threshold <
-          [...data].filter((d) => d.departement_code === properties.code)
-            .length &&
-        [...data].filter((d) => d.departement_code === properties.code)
-          .length <= max_threshold
-          ? properties.nom +
-            ' :\n' +
-            [...data]
-              .filter((d) => d.departement_code === properties.code)
-              .map((d) => '• ' + d.nom_complet)
-              .join('\n')
-          : null,
-      ...default_choropleth_tip_config,
-      anchor,
-    }),
-  )
 ```
 
 ```sql id=institution_count_by_postal_code
