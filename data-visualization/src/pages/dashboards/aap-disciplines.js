@@ -466,12 +466,12 @@ export const cnu_by_aap_plot_y_by_erc = (
 export const erc_donut = (data, width, height, options = {}) =>
   donutChart(data, {
     ...default_donut_config,
-    ...options,
     width: width * 0.6,
     height: height,
     legendWidth: width * 0.6,
     legendTextLength: 28,
     color: erc_color_scale,
+    ...options,
   })
 
 // Get relevant data by project,

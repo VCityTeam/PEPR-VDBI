@@ -1386,7 +1386,7 @@ group by siret
 <div class="grid grid-cols-4" id="challenge-donuts">
   <div class="card">
     <h2>Répartition des défis de l'AAP 1</h2>
-    <h3>Les sections plus grandes représentent les défis financés</h3>
+    <h3>Les sections plus épaisses représentent les défis financés</h3>
     <div class="grid grid-cols-3">
       <div class="grid-colspan-2 grid-rowspan-2">
         ${resize((width, height) => donutChart(
@@ -1429,7 +1429,7 @@ group by siret
   </div>
   <div class="card">
     <h2>Répartition des défis de l'AAP 2</h2>
-    <h3>Les sections plus grandes représentent les défis préselectionnés</h3>
+    <h3>Les sections plus épaisses représentent les défis préselectionnés</h3>
     <div class="grid grid-cols-3">
       <div class="grid-colspan-2 grid-rowspan-2">
         ${resize((width) => donutChart(
@@ -1936,7 +1936,11 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
     <!-- $ -->
     ${resize((width) => disciplines.erc_donut(
       aap1_cnu_count_erc,
-      width,
+      width - 70,
+      undefined,
+      {
+        legendTextLength: 40,
+      }
     ))}
     <!-- $ -->
   </div>
@@ -1944,11 +1948,38 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
     <h2>Distribution des CNUs par catégorie de l'AAP 2</h2>
     ${disciplines.erc_legend()}
     <!-- $ -->
-    ${resize((width) => disciplines.erc_donut(
-      aap2_cnu_count_erc,
-      width,
-    ))}
-    <!-- $ -->
+    <div class="grid grid-cols-2">
+      <div class="grid-rowspan-2">
+        ${resize((width) => donutChart(
+          aap2_cnu_count_erc,
+          {
+            ...default_cnu_aap_donut_config(width),
+            width: width,
+            legend: false,
+          },
+        ))}
+        <!-- $ -->
+      </div>
+      ${resize((width) => donutChart(
+        d3.rollups(aap2_cnu_count_erc,
+          (v) => v.reduce((a, b) => a + b.count, 0),
+          (d) => d.group,
+        ).flatMap(([group, count]) => ({
+          group,
+          count,
+        })),
+        {
+          ...default_cnu_aap_donut_config(),
+          width: 1,
+          legendWidth: 1,
+          legendTextLength: 40,
+          innerRadiusRatio: 0,
+          outerRadiusRatio: 0,
+        },
+      ))}
+      <!-- $ -->
+    </div>
+    <figcaption>Les sections plus épaisses représentent les CNUs préselectionnées</figcaption>
   </div>
 </div>
 
@@ -2118,22 +2149,27 @@ order by cnu, selected
 ```
 
 ```js
-const aap2_cnu_count_erc = d3.rollups(
-  aap2_cnu_count,
-  (v) => v.reduce((a, b) => a + b.count, 0),
-  (d) => cnu.getERCFromCNU(d.cnu) || 'Non renseigné',
-)
+const default_cnu_aap_donut_config = (width) => ({
+  keyMap: (d) => d.group,
+  valueMap: (d) => d.count,
+  color: d3.scaleOrdinal(
+    color.erc_category_colors.keys(),
+    color.erc_category_colors.values(),
+  ).unknown('gray'),
+  sort: (a, b) => a.group - b.group,
+  outerRadiusRatio: (d) => (d.data.selected ? width * 0.5 : width * 0.49),
+})
 
-const aap2_cnu_count_erc_2 = d3
+const aap2_cnu_count_erc = d3
   .rollups(
     aap2_cnu_count,
     (v) => v.reduce((a, b) => a + b.count, 0),
     (d) => cnu.getERCFromCNU(d.cnu) || 'Non renseigné',
     (d) => d.selected,
   )
-  .flatMap(([category, selected_counts]) =>
-    selected_counts.map(([selected, count]) => ({
-      erc: category,
+  .flatMap(([group, selected_map]) =>
+    selected_map.map(([selected, count]) => ({
+      group,
       selected,
       count,
     })),

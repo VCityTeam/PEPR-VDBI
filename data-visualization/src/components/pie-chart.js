@@ -76,7 +76,7 @@ export function donutChart(
     legendWidth = 80,
     legendTextLength = 30,
     legendText = (d) =>
-      `${valueMap(d) / d3.sum(data.map(valueMap)) < 0.1 ? '0' : ''}${(
+      `${valueMap(d) / d3.sum(data.map(valueMap)) < 0.1 ? '\u2002' : ''}${(
         (valueMap(d) / d3.sum(data.map(valueMap))) *
         100
       ).toFixed(1)}% ${cropText(keyMap(d), legendTextLength)}`,
