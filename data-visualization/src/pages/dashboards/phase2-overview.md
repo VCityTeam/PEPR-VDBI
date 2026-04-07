@@ -2152,10 +2152,12 @@ order by cnu, selected
 const default_cnu_aap_donut_config = (width) => ({
   keyMap: (d) => d.group,
   valueMap: (d) => d.count,
-  color: d3.scaleOrdinal(
-    color.erc_category_colors.keys(),
-    color.erc_category_colors.values(),
-  ).unknown('gray'),
+  color: d3
+    .scaleOrdinal(
+      color.erc_category_colors.keys(),
+      color.erc_category_colors.values(),
+    )
+    .unknown('gray'),
   sort: (a, b) => a.group - b.group,
   outerRadiusRatio: (d) => (d.data.selected ? width * 0.5 : width * 0.49),
 })
@@ -2190,20 +2192,25 @@ order by count desc
 ## Cartographies
 
 ```js
-const map_filter = view(
-  Inputs.select(
-    new Map([
-      ['Institutions', institution_count_by_postal_code],
-      ['Laboratoires', laboratory_count_by_postal_code],
-      [
-        'Partenaires socio-économiques',
-        socioeconomic_partner_count_by_postal_code,
-      ],
-    ]),
-    {
-      label: 'Filtrer les entités de la carte par ',
-    },
-  ),
+const carto_options = view(
+  Inputs.form({
+    show_labels: Inputs.toggle({
+      label: 'Afficher les labels',
+    }),
+    map_filter: Inputs.select(
+      new Map([
+        ['Institutions', institution_count_by_postal_code],
+        ['Laboratoires', laboratory_count_by_postal_code],
+        [
+          'Partenaires socio-économiques',
+          socioeconomic_partner_count_by_postal_code,
+        ],
+      ]),
+      {
+        label: 'Filtrer les entités de la carte par ',
+      },
+    ),
+  }),
 )
 ```
 
@@ -2211,24 +2218,13 @@ const map_filter = view(
   <div class="card">
     ${resize((width) => choroplethFrance(
       width,
-      label_map.get(map_filter),
-      ({ properties }) => [...map_filter].find(
+      label_map.get(carto_options.map_filter),
+      ({ properties }) => [...carto_options.map_filter].find(
           (d) => d.departement_code === properties.code
         )?.count,
+      carto_options.show_labels ? map_tip_map.get(carto_options.map_filter) : [],
     ))}
     <!-- $ -->
-  </div>
-  <div class="card">
-    ${resize((width) => choroplethFrance(
-      width,
-      label_map.get(map_filter),
-      ({ properties }) => [...map_filter].find(
-          (d) => d.departement_code === properties.code
-        )?.count,
-      map_tip_map.get(map_filter),
-    ))}
-    <!-- $ -->
-
   </div>
 </div>
 
