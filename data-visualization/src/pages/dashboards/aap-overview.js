@@ -279,7 +279,7 @@ export const stackedChallengeCountPlot = (
     title = 'Défis par AAP',
     subtitle = `Les défis indiqués dans les métadonnées et les templates des
       soumissions sur le site du dépôt de l'AAP 1 et 2. 
-      Les sections financées oupréselectionnées sont plus foncées.`,
+      Les sections financées ou proposées sont plus foncées.`,
   },
 ) =>
   Plot.plot({
@@ -320,7 +320,7 @@ export const challengeCountPlot = (
     title = 'Défis par AAP',
     subtitle = `Les défis indiqués dans les métadonnées et les templates des
       soumissions sur le site du dépôt de l'AAP 1 et 2.
-      Les sections financées ou préselectionnées sont plus foncées.`,
+      Les sections financées ou proposées sont plus foncées.`,
   },
 ) =>
   Plot.plot({

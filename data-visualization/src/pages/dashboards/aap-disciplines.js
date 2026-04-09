@@ -222,7 +222,6 @@ export const cnu_plot_y = (
         textOverflow: 'ellipsis',
         tickRotate: 40,
         fontSize: 11,
-        dx: -5,
       }),
       Plot.barY(data, {
         y: x_accessor,

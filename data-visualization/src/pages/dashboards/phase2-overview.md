@@ -580,7 +580,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
   </div>
   <!-- AAP2 proposals -->
   <div class="card">
-    <h2>Top 15 AAP 2 institutions preselectionnées par nombre d'occurences</h2>
+    <h2>Top 15 AAP 2 institutions proposés par nombre d'occurences</h2>
     ${aap2_selected_universities_sort_input}
     <!-- $ -->
     ${resize((width) => overview.partnerCountPlot(
@@ -594,7 +594,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 AAP 2 unités de recherche preselectionnées par nombre d'occurences</h2>
+    <h2>Top 15 AAP 2 unités de recherche proposés par nombre d'occurences</h2>
     ${aap2_selected_laboratories_sort_input}
     <!-- $ -->
     ${resize((width) => overview.partnerCountPlot(
@@ -610,7 +610,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 AAP 2 partnaires socioéconomiques preselectionnées par nombre d'occurences</h2>
+    <h2>Top 15 AAP 2 partnaires socioéconomiques proposés par nombre d'occurences</h2>
     ${aap2_selected_partners_sort_input}
     <!-- $ -->
     ${resize((width) => overview.partnerCountPlot(
@@ -1350,6 +1350,31 @@ group by siret
     )}
     <!-- $ -->
   </div>
+  <!-- AAP 1 financé + AAP 2 proposé -->
+  <div class="card">
+    ${resize((width) => overview.stackedChallengeCountPlot(
+      [...challenge_count_by_aap].filter((d) => d.financed || d.selected),
+      {
+        width,
+        subtitle: `Les défis indiqués dans les métadonnées et les templates des
+          soumissions sur le site du dépôt des projets financés ou proposés de
+          l'AAP 1 et 2.`,
+      })
+    )}
+    <!-- $ -->
+  </div>
+  <div class="card grid grid-colspan-2">
+    ${resize((width) => overview.challengeCountPlot(
+      [...challenge_count_by_aap].filter((d) => d.financed || d.selected),
+      {
+        width,
+        subtitle: `Les défis indiqués dans les métadonnées et les templates des
+          soumissions sur le site du dépôt des projets financés ou proposés de
+          l'AAP 1 et 2.`,
+      })
+    )}
+    <!-- $ -->
+  </div>
   <!-- AAP 2 by project type -->
   <div class="card">
     ${resize((width) => overview.stackedChallengeCountPlot(
@@ -1361,7 +1386,7 @@ group by siret
         title: 'Défis par type de projet',
         subtitle: `Les défis indiqués dans les métadonnées et les templates des
           soumissions sur le site du dépôt de l'AAP 2.
-          Les sections préselectionnées sont plus foncées.`
+          Les sections proposés sont plus foncées.`
       })
     )}
     <!-- $ -->
@@ -1376,7 +1401,7 @@ group by siret
         title: 'Défis par type de projet',
         subtitle: `Les défis indiqués dans les métadonnées et les templates des
           soumissions sur le site du dépôt de l'AAP 2.
-          Les sections préselectionnées sont plus foncées.`
+          Les sections proposés sont plus foncées.`
       })
     )}
     <!-- $ -->
@@ -1932,6 +1957,7 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
 <div class="grid grid-cols-3" id="cnu-donuts">
   <div class="card">
     <h2>Distribution des CNUs financées par catégorie de l'AAP 1</h2>
+    <h3>Les sections CNU identifiés dans les projets financés de l'AAP 1.</h3>
     ${disciplines.erc_legend()}
     <!-- $ -->
     ${resize((width) => disciplines.erc_donut(
@@ -1945,7 +1971,48 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
     <!-- $ -->
   </div>
   <div class="card">
+    <h2>Distribution des CNUs proposés par catégorie de l'AAP 2</h2>
+    <h3>Les sections CNU identifiés dans les projets proposés de l'AAP 2.</h3>
+    ${disciplines.erc_legend()}
+    <!-- $ -->
+    <div class="grid grid-cols-2">
+      <div class="grid-rowspan-2">
+        ${resize((width) => donutChart(
+          aap2_cnu_count_erc.filter((d) => d.selected),
+          {
+            ...default_cnu_aap_donut_config(width),
+            width: width,
+            legend: false,
+          },
+        ))}
+        <!-- $ -->
+      </div>
+      ${resize((width) => donutChart(
+        d3.rollups(aap2_cnu_count_erc.filter((d) => d.selected),
+          (v) => v.reduce((a, b) => a + b.count, 0),
+          (d) => d.group,
+        ).flatMap(([group, count]) => ({
+          group,
+          count,
+        })),
+        {
+          ...default_cnu_aap_donut_config(),
+          width: 1,
+          legendWidth: 1,
+          legendTextLength: 40,
+          innerRadiusRatio: 0,
+          outerRadiusRatio: 0,
+        },
+      ))}
+      <!-- $ -->
+    </div>
+  </div>
+  <div class="card">
     <h2>Distribution des CNUs par catégorie de l'AAP 2</h2>
+    <h3>
+      Les sections CNU identifiés dans les projets de l'AAP 2. Les sections plus
+      épaisses représentent les CNUs dans les projets proposés.
+    </h3>
     ${disciplines.erc_legend()}
     <!-- $ -->
     <div class="grid grid-cols-2">
@@ -1979,20 +2046,35 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
       ))}
       <!-- $ -->
     </div>
-    <figcaption>Les sections plus épaisses représentent les CNUs préselectionnées</figcaption>
   </div>
 </div>
 
 <div class="card" id="aap2-cnu-plot">
-  <h2>Distribution des sections CNU de l'AAP 2</h2>
+
+```js
+const show_non_selected_aap2 = view(
+  Inputs.toggle({
+    label: "Afficher les sections CNU non-sélectionnées de l'AAP 2",
+  }),
+)
+```
+
+  <h2>
+    Distribution des sections
+    ${show_non_selected_aap2 ? "proposées" : ""}
+    <!-- $ -->
+    CNU de l'AAP 2
+  </h2>
   <h3>
-    Distribution détaillée des sections de l'AAP 2 par catégorie.
-    Les sections préselectionnées sont plus foncées.
+    Distribution détaillée des sections
+    ${show_non_selected_aap2 ? "proposées" : ""}
+    <!-- $ -->
+    de l'AAP 2 par catégorie.
   </h3>
   ${disciplines.erc_legend()}
   <!-- $ -->
   ${resize((width) => disciplines.cnu_plot_y_by_erc(
-    aap2_cnu_count,
+    [...aap2_cnu_count].filter((d) => show_non_selected_aap2 || d.selected),
     {
       width: width,
       height: 600,
@@ -2008,29 +2090,43 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
 <div class="card" id="aap12-cnu-plot">
 
 ```js
-const show_non_financed = view(
+const show_non_financed_aap12 = view(
   Inputs.toggle({
-    label: "Afficher les sections CNU non-financées de l'AAP",
+    label: "Afficher les sections CNU non-financées de l'AAP 1",
+  }),
+)
+const show_non_selected_aap12 = view(
+  Inputs.toggle({
+    label: "Afficher les sections CNU non-sélectionnées de l'AAP 2",
   }),
 )
 ```
 
   <h2>
-    Distribution des sections CNU de l'AAP 1
-    ${show_non_financed ? '' : '(financé)'} et 2
+    Distribution des sections CNU
+    ${show_non_financed_aap12 ? '' : 'financés'}
     <!-- $ -->
+    de l'AAP 1 et
+    ${show_non_selected_aap12 ? '' : 'sélectionnés'}
+    <!-- $ -->
+    de l'AAP 2
   </h2>
   <h3>
-    Distribution détaillée des sections de l'AAP 1 et 2 par appel. Les sections
-    ${show_non_financed ? "financées de l'AAP 1 et les sections" : ''}
-    <!-- $ -->
-    preselectionnées de l'AAP 2 sont plus foncées.
+    Distribution détaillée des sections de l'AAP 1 et 2 par appel.
+    ${show_non_financed_aap12 ? "Les sections financées de l'AAP 1" : ''}
+    ${show_non_financed_aap12 && show_non_selected_aap12 ? "et" : ''}
+    ${show_non_selected_aap12 ? "les sections proposées de l'AAP 2" : ''}
+    ${show_non_financed_aap12 || show_non_selected_aap12 ? "sont plus foncées." : ''}
   </h3>
   ${resize((width) => disciplines.cnu_by_aap_plot_y_by_erc(
     [...cnu_count]
-      .filter((d) => show_non_financed
+      .filter((d) => show_non_financed_aap12
         || d.aap === 'AAP 2'
         || d.aap === 'AAP 1' && d.financed
+      )
+      .filter((d) => show_non_selected_aap12
+        || d.aap === 'AAP 1'
+        || d.aap === 'AAP 2' && d.selected
       ),
     {
       width: width,
@@ -2159,7 +2255,7 @@ const default_cnu_aap_donut_config = (width) => ({
     )
     .unknown('gray'),
   sort: (a, b) => a.group - b.group,
-  outerRadiusRatio: (d) => (d.data.selected ? width * 0.5 : width * 0.49),
+  outerRadiusRatio: (d) => (d.data.selected ? width * 0.5 : width * 0.48),
 })
 
 const aap2_cnu_count_erc = d3
