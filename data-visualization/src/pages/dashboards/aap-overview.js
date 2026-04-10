@@ -62,7 +62,7 @@ export const xSortSelect = (label = 'Label') =>
       [`Occurrences ⇩`, '-y'],
     ]),
     {
-      value: '-y',
+      value: '-x',
       label: 'Trier par',
     },
   )
@@ -174,7 +174,7 @@ export const projectCountPlotAAP2 = (
     ],
   })
 
-export const partnerCountPlot = (
+export const partnerCountPlotY = (
   data,
   {
     width,
@@ -198,6 +198,8 @@ export const partnerCountPlot = (
     x: {
       label: x_label,
       grid: true,
+      // nice: true,
+      ticks: 4,
     },
     y: {
       label: y_label,
@@ -225,7 +227,8 @@ export const partnerCountPlot = (
       Plot.text(data, {
         x: 0,
         y: y_accessor,
-        text: 'label',
+        // text: 'label',
+        text: (d) => d.label.match(/(?<=\().+?(?=\))/)?.[0] || d.label,
         channels: {
           id: y_accessor,
           label: 'label',
@@ -266,6 +269,110 @@ export const partnerCountPlot = (
         textOverflow: textOverflow,
         dx: 5,
         sort: { y: sort_value, limit: limit },
+      }),
+    ],
+  })
+
+export const partnerCountPlotX = (
+  data,
+  {
+    width,
+    height = 600,
+    marginBottom = 150,
+    marginRight = 100,
+    lineWidth = 27,
+    x_label,
+    y_label = "Nombre d'occurences",
+    sort_value,
+    x_accessor = (d) => `${d.id};${d.label}`,
+    y_accessor = (d) => d.count,
+    midpoint = Math.max(...[...data].map(y_accessor)) / 2,
+    textOverflow = 'ellipsis-middle',
+  } = {},
+) =>
+  Plot.plot({
+    width: width,
+    height: height,
+    x: {
+      label: x_label,
+      nice: true,
+      type: 'band',
+    },
+    y: {
+      label: y_label,
+      grid: true,
+      axis: 'both',
+      // nice: true,
+      ticks: 4,
+    },
+    marginBottom: marginBottom,
+    marginRight: marginRight,
+    color: {
+      scheme: 'Blues',
+      zero: true,
+    },
+    marks: [
+      // bars
+      Plot.barY(data, {
+        x: x_accessor,
+        y: y_accessor,
+        fill: y_accessor,
+        sort: { x: sort_value },
+        tip: true,
+      }),
+      // axis labels
+      Plot.axisX({
+        tickFormat: null,
+      }),
+      Plot.text(data, {
+        x: x_accessor,
+        y: 0,
+        text: (d) => d.label.match(/(?<=\().+?(?=\))/)?.[0] || d.label,
+        channels: {
+          id: x_accessor,
+          label: 'label',
+        },
+        textAnchor: 'start',
+        textOverflow: textOverflow,
+        lineWidth: lineWidth,
+        dy: 15,
+        rotate: 30,
+        sort: { x: sort_value },
+      }),
+      // id labels
+      Plot.text(data, {
+        x: x_accessor,
+        y: y_accessor,
+        text: (d) => (y_accessor(d) > midpoint ? d.communes.slice(1, -1) : ''),
+        channels: {
+          id: x_accessor,
+          label: 'label',
+        },
+        fill: 'white',
+        // textAnchor: 'start',
+        textAnchor: 'end',
+        lineWidth: lineWidth,
+        textOverflow: textOverflow,
+        dy: 6,
+        rotate: -90,
+        sort: { y: sort_value },
+      }),
+      Plot.text(data, {
+        x: x_accessor,
+        y: y_accessor,
+        text: (d) => (y_accessor(d) > midpoint ? '' : d.communes.slice(1, -1)),
+        channels: {
+          id: x_accessor,
+          label: 'label',
+        },
+        // fill: 'white',
+        textAnchor: 'start',
+        // textAnchor: 'end',
+        lineWidth: lineWidth,
+        textOverflow: textOverflow,
+        dy: -6,
+        rotate: -90,
+        sort: { y: sort_value },
       }),
     ],
   })
@@ -337,6 +444,9 @@ export const challengeCountPlot = (
       label: null,
       tickFormat: null,
       tickSize: null,
+    },
+    y: {
+      axis: 'both',
     },
     color: {
       range: color_range,

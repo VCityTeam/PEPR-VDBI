@@ -474,7 +474,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
 
 </div>
 
-<div class="grid grid-cols-3" id="aap1-partner-plots">
+<div class="grid grid-cols-3" id="aap-partner-plots">
   <!-- AAP 1 -->
   <div class="card">
     <h2>Top 15 institutions financées de l'AAP 1</h2>
@@ -484,7 +484,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     </h3>
     ${aap1_universities_sort_input}
     <!-- $ -->
-    ${resize((width) => overview.partnerCountPlot(
+    ${resize((width) => overview.partnerCountPlotY(
       aap1_institutions_count,
       {
         width,
@@ -502,7 +502,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     </h3>
     ${aap1_laboratories_sort_input}
     <!-- $ -->
-    ${resize((width) => overview.partnerCountPlot(
+    ${resize((width) => overview.partnerCountPlotY(
       aap1_laboratories_count,
       {
         width,
@@ -523,7 +523,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     </h3>
     ${aap1_partners_sort_input}
     <!-- $ -->
-    ${resize((width) => overview.partnerCountPlot(
+    ${resize((width) => overview.partnerCountPlotY(
       aap1_partners_count,
       {
         width,
@@ -538,7 +538,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <h2>Top 15 AAP 2 institutions par nombre d'occurences</h2>
     ${aap2_universities_sort_input}
     <!-- $ -->
-    ${resize((width) => overview.partnerCountPlot(
+    ${resize((width) => overview.partnerCountPlotY(
       aap2_institutions_count,
       {
         width,
@@ -552,7 +552,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <h2>Top 15 AAP 2 unités de recherche par nombre d'occurences</h2>
     ${aap2_laboratories_sort_input}
     <!-- $ -->
-    ${resize((width) => overview.partnerCountPlot(
+    ${resize((width) => overview.partnerCountPlotY(
       aap2_laboratories_count,
       {
         width,
@@ -568,7 +568,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <h2>Top 15 AAP 2 partnaires socioéconomiques par nombre d'occurences</h2>
     ${aap2_partners_sort_input}
     <!-- $ -->
-    ${resize((width) => overview.partnerCountPlot(
+    ${resize((width) => overview.partnerCountPlotY(
       aap2_partners_count,
       {
         width,
@@ -583,7 +583,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <h2>Top 15 AAP 2 institutions proposés par nombre d'occurences</h2>
     ${aap2_selected_universities_sort_input}
     <!-- $ -->
-    ${resize((width) => overview.partnerCountPlot(
+    ${resize((width) => overview.partnerCountPlotY(
       aap2_selected_institutions_count,
       {
         width,
@@ -597,7 +597,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <h2>Top 15 AAP 2 unités de recherche proposés par nombre d'occurences</h2>
     ${aap2_selected_laboratories_sort_input}
     <!-- $ -->
-    ${resize((width) => overview.partnerCountPlot(
+    ${resize((width) => overview.partnerCountPlotY(
       aap2_selected_laboratories_count,
       {
         width,
@@ -613,7 +613,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <h2>Top 15 AAP 2 partnaires socioéconomiques proposés par nombre d'occurences</h2>
     ${aap2_selected_partners_sort_input}
     <!-- $ -->
-    ${resize((width) => overview.partnerCountPlot(
+    ${resize((width) => overview.partnerCountPlotY(
       aap2_selected_partners_count,
       {
         width,
@@ -626,13 +626,84 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
 </div>
 
 ```js
-const aap_partner_buttons = view(
-  Inputs.button('Download AAP1 partner plots', {
+const aap_partner_button = view(
+  Inputs.button('Download partner plots', {
     reduce: () =>
       image
-        .toPng(document.getElementById('aap1-partner-plots'))
-        .then((dataUrl) => download(dataUrl, 'aap1-partner-plots.png')),
+        .toPng(document.getElementById('aap-partner-plots'))
+        .then((dataUrl) => download(dataUrl, 'aap-partner-plots.png')),
   }),
+)
+```
+
+<!-- AAP2 all proposals -->
+<div class="card" id="aap2-wide-institutions-plot">
+  <h2>AAP 2 institutions proposés par nombre d'occurences</h2>
+  ${aap2_selected_universities_x_sort_input}
+  <!-- $ -->
+  ${resize((width) => overview.partnerCountPlotX(
+    aap2_selected_institutions_count,
+    {
+      width,
+      x_label: "Institution (label / SIRET)",
+      sort_value: aap2_selected_universities_x_sort,
+    }
+  ))}
+  <!-- $ -->
+</div>
+<div class="card" id="aap2-wide-laboratories-plot">
+  <h2>AAP 2 unités de recherche proposés par nombre d'occurences</h2>
+  ${aap2_selected_laboratories_x_sort_input}
+  <!-- $ -->
+  ${resize((width) => overview.partnerCountPlotX(
+    aap2_selected_laboratories_count,
+    {
+      width,
+      marginBottom: 100,
+      lineWidth: 15,
+      x_label: "Unité (Sigle / RNSR)",
+      sort_value: aap2_selected_laboratories_x_sort,
+    }
+  ))}
+  <!-- $ -->
+</div>
+<div class="card" id="aap2-wide-partners-plot">
+  <h2>AAP 2 partnaires socioéconomiques proposés par nombre d'occurences</h2>
+  ${aap2_selected_partners_x_sort_input}
+  <!-- $ -->
+  ${resize((width) => overview.partnerCountPlotX(
+    aap2_selected_partners_count,
+    {
+      width,
+      x_label: "Partnaire (label / SIRET)",
+      sort_value: aap2_selected_partners_x_sort,
+    }
+  ))}
+  <!-- $ -->
+</div>
+
+```js
+const aap2_wide_partner_buttons = view(
+  Inputs.form([
+    Inputs.button('Download proposed AAP2 wide institution plot', {
+      reduce: () =>
+        image
+          .toPng(document.getElementById('aap2-wide-institutions-plot'))
+          .then((dataUrl) => download(dataUrl, 'aap2-wide-institutions-plot.png')),
+    }),
+    Inputs.button('Download proposed AAP2 wide laboratory plot', {
+      reduce: () =>
+        image
+          .toPng(document.getElementById('aap2-wide-laboratories-plot'))
+          .then((dataUrl) => download(dataUrl, 'aap2-wide-laboratories-plot.png')),
+    }),
+    Inputs.button('Download proposed AAP2 wide socioeconomic partner plot', {
+      reduce: () =>
+        image
+          .toPng(document.getElementById('aap2-wide-partners-plot'))
+          .then((dataUrl) => download(dataUrl, 'aap2-wide-partners-plot.png')),
+    }),
+  ]),
 )
 ```
 
@@ -861,6 +932,23 @@ const aap2_selected_laboratories_sort = Generators.input(
 const aap2_selected_partners_sort_input = overview.ySortSelect()
 const aap2_selected_partners_sort = Generators.input(
   aap2_selected_partners_sort_input,
+)
+```
+
+```js
+const aap2_selected_universities_x_sort_input = overview.xSortSelect()
+const aap2_selected_universities_x_sort = Generators.input(
+  aap2_selected_universities_x_sort_input,
+)
+
+const aap2_selected_laboratories_x_sort_input = overview.xSortSelect()
+const aap2_selected_laboratories_x_sort = Generators.input(
+  aap2_selected_laboratories_x_sort_input,
+)
+
+const aap2_selected_partners_x_sort_input = overview.xSortSelect()
+const aap2_selected_partners_x_sort = Generators.input(
+  aap2_selected_partners_x_sort_input,
 )
 ```
 
@@ -2114,9 +2202,15 @@ const show_non_selected_aap12 = view(
   <h3>
     Distribution détaillée des sections de l'AAP 1 et 2 par appel.
     ${show_non_financed_aap12 ? "Les sections financées de l'AAP 1" : ''}
+    <!-- $ -->
     ${show_non_financed_aap12 && show_non_selected_aap12 ? "et" : ''}
+    <!-- $ -->
     ${show_non_selected_aap12 ? "les sections proposées de l'AAP 2" : ''}
-    ${show_non_financed_aap12 || show_non_selected_aap12 ? "sont plus foncées." : ''}
+    <!-- $ -->
+    ${show_non_financed_aap12 || show_non_selected_aap12
+      ? "sont plus foncées."
+      : ''}
+    <!-- $ -->
   </h3>
   ${resize((width) => disciplines.cnu_by_aap_plot_y_by_erc(
     [...cnu_count]
