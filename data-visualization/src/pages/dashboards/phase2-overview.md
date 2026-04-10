@@ -624,15 +624,15 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <!-- $ -->
   </div>
   <!-- AAP2 all proposals -->
-  <div class="card grid-rowspan-2">
+  <div class="card grid-rowspan-3">
     ${aap2_selected_universities_sort_input}
     <!-- $ -->
     <h2>AAP 2 institutions proposés par nombre d'occurences</h2>
-    ${resize((width) => overview.partnerCountPlotY(
+    ${resize((width, height) => overview.partnerCountPlotY(
       aap2_selected_institutions_count,
       {
         width,
-        height: width * 2 - 50,
+        height: height - 50,
         limit: 100,
         y_label: "Institution (label / SIRET)",
         sort_value: aap2_selected_universities_sort,
@@ -640,15 +640,15 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     ))}
     <!-- $ -->
   </div>
-  <div class="card grid-rowspan-2">
+  <div class="card grid-rowspan-3">
     ${aap2_selected_laboratories_sort_input}
     <!-- $ -->
     <h2>AAP 2 unités de recherche proposés par nombre d'occurences</h2>
-    ${resize((width) => overview.partnerCountPlotY(
+    ${resize((width, height) => overview.partnerCountPlotY(
       aap2_selected_laboratories_count,
       {
         width,
-        height: width * 2 - 50,
+        height: height - 50,
         limit: 100,
         marginLeft: 170,
         lineWidth: 15,
@@ -658,15 +658,15 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     ))}
     <!-- $ -->
   </div>
-  <div class="card grid-rowspan-2">
+  <div class="card grid-rowspan-3">
     ${aap2_selected_partners_sort_input}
     <!-- $ -->
     <h2>AAP 2 partnaires socioéconomiques proposés par nombre d'occurences</h2>
-    ${resize((width) => overview.partnerCountPlotY(
+    ${resize((width, height) => overview.partnerCountPlotY(
       aap2_selected_partners_count,
       {
         width,
-        height: width * 2 - 50,
+        height: height - 50,
         limit: 100,
         y_label: "Partnaire (label / SIRET)",
         sort_value: aap2_selected_partners_sort,
