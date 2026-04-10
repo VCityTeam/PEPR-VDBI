@@ -299,11 +299,11 @@ WER=\frac{S+D+I}{N}=\frac{S+D+I}{S+D+C}
 
 Où
 
-- ${tex`S`} est le nombre des substitutions,
-- ${tex`D`} est le nombre des délétions,
-- ${tex`I`} est le nombre des insertions,
-- ${tex`N`} est le nombre des mots dans la référence ${tex`(N=S+D+C)`},
-- ${tex`C`} est le nombre des mots corrects
+- ${tex`S`} est le nombre de substitutions,
+- ${tex`D`} est le nombre de délétions,
+- ${tex`I`} est le nombre d'insertions,
+- ${tex`N`} est le nombre de mots dans la référence ${tex`(N=S+D+C)`},
+- ${tex`C`} est le nombre de mots corrects
 
 Pour cette étude, les mots sont séparés par des espaces (i.e., '_c'est_' est considéré
 comme un seul mot).
