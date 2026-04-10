@@ -488,7 +488,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
       aap1_institutions_count,
       {
         width,
-        y_label: "Institution (label / SIRET)",
+        y_label: "Institution (libelle / commune(s))",
         sort_value: aap1_universities_sort,
       }
     ))}
@@ -508,7 +508,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
         width,
         marginLeft: 170,
         lineWidth: 15,
-        y_label: "Unité (Sigle / RNSR)",
+        y_label: "Unité (libelle / commune(s))",
         sort_value: aap1_laboratories_sort,
         textOverflow: 'ellipsis',
       }
@@ -527,7 +527,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
       aap1_partners_count,
       {
         width,
-        y_label: "Partnaire (label / SIRET)",
+        y_label: "Partnaire (libelle / commune(s))",
         sort_value: aap1_partners_sort,
       }
     ))}
@@ -542,7 +542,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
       aap2_institutions_count,
       {
         width,
-        y_label: "Institution (label / SIRET)",
+        y_label: "Institution (libelle / commune(s))",
         sort_value: aap2_universities_sort,
       }
     ))}
@@ -558,7 +558,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
         width,
         marginLeft: 170,
         lineWidth: 15,
-        y_label: "Unité (Sigle / RNSR)",
+        y_label: "Unité (libelle / commune(s))",
         sort_value: aap2_laboratories_sort,
       }
     ))}
@@ -572,7 +572,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
       aap2_partners_count,
       {
         width,
-        y_label: "Partnaire (label / SIRET)",
+        y_label: "Partnaire (libelle / commune(s))",
         sort_value: aap2_partners_sort,
       }
     ))}
@@ -587,7 +587,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
       aap2_selected_institutions_count,
       {
         width,
-        y_label: "Institution (label / SIRET)",
+        y_label: "Institution (libelle / commune(s))",
         sort_value: aap2_selected_universities_sort,
       }
     ))}
@@ -603,7 +603,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
         width,
         marginLeft: 170,
         lineWidth: 15,
-        y_label: "Unité (Sigle / RNSR)",
+        y_label: "Unité (libelle / commune(s))",
         sort_value: aap2_selected_laboratories_sort,
       }
     ))}
@@ -617,7 +617,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
       aap2_selected_partners_count,
       {
         width,
-        y_label: "Partnaire (label / SIRET)",
+        y_label: "Partnaire (libelle / commune(s))",
         sort_value: aap2_selected_partners_sort,
       }
     ))}
@@ -634,7 +634,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
         width,
         height: height - 50,
         limit: 100,
-        y_label: "Institution (label / SIRET)",
+        y_label: "Institution (libelle / commune(s))",
         sort_value: aap2_selected_universities_sort,
       }
     ))}
@@ -652,7 +652,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
         limit: 100,
         marginLeft: 170,
         lineWidth: 15,
-        y_label: "Unité (Sigle / RNSR)",
+        y_label: "Unité (libelle / commune(s))",
         sort_value: aap2_selected_laboratories_sort,
       }
     ))}
@@ -668,7 +668,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
         width,
         height: height - 50,
         limit: 100,
-        y_label: "Partnaire (label / SIRET)",
+        y_label: "Partnaire (libelle / commune(s))",
         sort_value: aap2_selected_partners_sort,
       }
     ))}
@@ -696,7 +696,7 @@ const aap_partner_button = view(
     aap2_selected_institutions_count,
     {
       width,
-      x_label: "Institution (label / SIRET)",
+      x_label: "Institution (libelle / commune(s))",
       sort_value: aap2_selected_universities_x_sort,
     }
   ))}
@@ -712,7 +712,7 @@ const aap_partner_button = view(
       width,
       marginBottom: 100,
       lineWidth: 15,
-      x_label: "Unité (Sigle / RNSR)",
+      x_label: "Unité (libelle / commune(s))",
       sort_value: aap2_selected_laboratories_x_sort,
     }
   ))}
@@ -726,7 +726,7 @@ const aap_partner_button = view(
     aap2_selected_partners_count,
     {
       width,
-      x_label: "Partnaire (label / SIRET)",
+      x_label: "Partnaire (libelle / commune(s))",
       sort_value: aap2_selected_partners_x_sort,
     }
   ))}
