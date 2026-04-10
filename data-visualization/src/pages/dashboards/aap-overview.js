@@ -277,7 +277,7 @@ export const partnerCountPlotX = (
   data,
   {
     width,
-    height = 600,
+    height = 350,
     marginBottom = 150,
     marginRight = 100,
     lineWidth = 27,

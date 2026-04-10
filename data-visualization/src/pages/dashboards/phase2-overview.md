@@ -477,13 +477,13 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
 <div class="grid grid-cols-3" id="aap-partner-plots">
   <!-- AAP 1 -->
   <div class="card">
+    ${aap1_universities_sort_input}
+    <!-- $ -->
     <h2>Top 15 institutions financées de l'AAP 1</h2>
     <h3>
       Top 15 institutions partenaires des projets financées de l'AAP 1 par
-      nombre d'occurences
     </h3>
-    ${aap1_universities_sort_input}
-    <!-- $ -->
+      nombre d'occurences
     ${resize((width) => overview.partnerCountPlotY(
       aap1_institutions_count,
       {
@@ -495,13 +495,13 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <!-- $ -->
   </div>
   <div class="card">
+    ${aap1_laboratories_sort_input}
+    <!-- $ -->
     <h2>Top 15 unités de recherche financées de l'AAP 1</h2>
     <h3>
       Top 15 unités de recherche partenaires des projets financées de l'AAP 1 par
-      nombre d'occurences
     </h3>
-    ${aap1_laboratories_sort_input}
-    <!-- $ -->
+      nombre d'occurences
     ${resize((width) => overview.partnerCountPlotY(
       aap1_laboratories_count,
       {
@@ -516,13 +516,13 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <!-- $ -->
   </div>
   <div class="card">
+    ${aap1_partners_sort_input}
+    <!-- $ -->
     <h2>Top 15 partenaires socioéconomiques financés de l'AAP 1</h2>
     <h3>
       Top 15 partenaires socioéconomiques des projets financés de l'AAP 1 par
-      nombre d'occurences
     </h3>
-    ${aap1_partners_sort_input}
-    <!-- $ -->
+      nombre d'occurences
     ${resize((width) => overview.partnerCountPlotY(
       aap1_partners_count,
       {
@@ -535,9 +535,9 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
   </div>
   <!-- AAP2 -->
   <div class="card">
-    <h2>Top 15 AAP 2 institutions par nombre d'occurences</h2>
     ${aap2_universities_sort_input}
     <!-- $ -->
+    <h2>Top 15 AAP 2 institutions par nombre d'occurences</h2>
     ${resize((width) => overview.partnerCountPlotY(
       aap2_institutions_count,
       {
@@ -549,9 +549,9 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 AAP 2 unités de recherche par nombre d'occurences</h2>
     ${aap2_laboratories_sort_input}
     <!-- $ -->
+    <h2>Top 15 AAP 2 unités de recherche par nombre d'occurences</h2>
     ${resize((width) => overview.partnerCountPlotY(
       aap2_laboratories_count,
       {
@@ -565,9 +565,9 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 AAP 2 partnaires socioéconomiques par nombre d'occurences</h2>
     ${aap2_partners_sort_input}
     <!-- $ -->
+    <h2>Top 15 AAP 2 partnaires socioéconomiques par nombre d'occurences</h2>
     ${resize((width) => overview.partnerCountPlotY(
       aap2_partners_count,
       {
@@ -580,9 +580,9 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
   </div>
   <!-- AAP2 proposals -->
   <div class="card">
-    <h2>Top 15 AAP 2 institutions proposés par nombre d'occurences</h2>
     ${aap2_selected_universities_sort_input}
     <!-- $ -->
+    <h2>Top 15 AAP 2 institutions proposés par nombre d'occurences</h2>
     ${resize((width) => overview.partnerCountPlotY(
       aap2_selected_institutions_count,
       {
@@ -594,9 +594,9 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 AAP 2 unités de recherche proposés par nombre d'occurences</h2>
     ${aap2_selected_laboratories_sort_input}
     <!-- $ -->
+    <h2>Top 15 AAP 2 unités de recherche proposés par nombre d'occurences</h2>
     ${resize((width) => overview.partnerCountPlotY(
       aap2_selected_laboratories_count,
       {
@@ -610,13 +610,64 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Top 15 AAP 2 partnaires socioéconomiques proposés par nombre d'occurences</h2>
     ${aap2_selected_partners_sort_input}
     <!-- $ -->
+    <h2>Top 15 AAP 2 partnaires socioéconomiques proposés par nombre d'occurences</h2>
     ${resize((width) => overview.partnerCountPlotY(
       aap2_selected_partners_count,
       {
         width,
+        y_label: "Partnaire (label / SIRET)",
+        sort_value: aap2_selected_partners_sort,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <!-- AAP2 all proposals -->
+  <div class="card grid-rowspan-2">
+    ${aap2_selected_universities_sort_input}
+    <!-- $ -->
+    <h2>AAP 2 institutions proposés par nombre d'occurences</h2>
+    ${resize((width) => overview.partnerCountPlotY(
+      aap2_selected_institutions_count,
+      {
+        width,
+        height: width * 2 - 50,
+        limit: 100,
+        y_label: "Institution (label / SIRET)",
+        sort_value: aap2_selected_universities_sort,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card grid-rowspan-2">
+    ${aap2_selected_laboratories_sort_input}
+    <!-- $ -->
+    <h2>AAP 2 unités de recherche proposés par nombre d'occurences</h2>
+    ${resize((width) => overview.partnerCountPlotY(
+      aap2_selected_laboratories_count,
+      {
+        width,
+        height: width * 2 - 50,
+        limit: 100,
+        marginLeft: 170,
+        lineWidth: 15,
+        y_label: "Unité (Sigle / RNSR)",
+        sort_value: aap2_selected_laboratories_sort,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card grid-rowspan-2">
+    ${aap2_selected_partners_sort_input}
+    <!-- $ -->
+    <h2>AAP 2 partnaires socioéconomiques proposés par nombre d'occurences</h2>
+    ${resize((width) => overview.partnerCountPlotY(
+      aap2_selected_partners_count,
+      {
+        width,
+        height: width * 2 - 50,
+        limit: 100,
         y_label: "Partnaire (label / SIRET)",
         sort_value: aap2_selected_partners_sort,
       }
@@ -637,10 +688,10 @@ const aap_partner_button = view(
 ```
 
 <!-- AAP2 all proposals -->
-<div class="card" id="aap2-wide-institutions-plot">
-  <h2>AAP 2 institutions proposés par nombre d'occurences</h2>
+<div class="card" style="margin: 10px;" id="aap2-wide-institutions-plot">
   ${aap2_selected_universities_x_sort_input}
   <!-- $ -->
+  <h2>AAP 2 institutions proposés par nombre d'occurences</h2>
   ${resize((width) => overview.partnerCountPlotX(
     aap2_selected_institutions_count,
     {
@@ -651,10 +702,10 @@ const aap_partner_button = view(
   ))}
   <!-- $ -->
 </div>
-<div class="card" id="aap2-wide-laboratories-plot">
-  <h2>AAP 2 unités de recherche proposés par nombre d'occurences</h2>
+<div class="card" style="margin: 10px;" id="aap2-wide-laboratories-plot">
   ${aap2_selected_laboratories_x_sort_input}
   <!-- $ -->
+  <h2>AAP 2 unités de recherche proposés par nombre d'occurences</h2>
   ${resize((width) => overview.partnerCountPlotX(
     aap2_selected_laboratories_count,
     {
@@ -667,10 +718,10 @@ const aap_partner_button = view(
   ))}
   <!-- $ -->
 </div>
-<div class="card" id="aap2-wide-partners-plot">
-  <h2>AAP 2 partnaires socioéconomiques proposés par nombre d'occurences</h2>
+<div class="card" style="margin: 10px;" id="aap2-wide-partners-plot">
   ${aap2_selected_partners_x_sort_input}
   <!-- $ -->
+  <h2>AAP 2 partnaires socioéconomiques proposés par nombre d'occurences</h2>
   ${resize((width) => overview.partnerCountPlotX(
     aap2_selected_partners_count,
     {
