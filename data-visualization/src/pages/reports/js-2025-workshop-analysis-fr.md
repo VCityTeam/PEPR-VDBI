@@ -131,31 +131,26 @@ termes par statistiques de groupe.
 </div>
 
 ```mermaid
----
-config:
-  theme: neutral
----
-
 stateDiagram-v2
 
   %%direction LR
 
-  video     : Workshop video recording
-  audio     : Workshop audio
-  corpus    : Cortext corpus
-  entities  : Named entities
+  video     : Vidéo de l'atelier
+  audio     : Son de l'atelier
+  corpus    : Corpus Cortext
+  entities  : Entités nommées
   %sim       : Term/Entity similarity
 
   [*] --> video
   [*] --> audio
-  video --> audio       : Extract audio
-  audio --> Transcript  : Transcribe with Whisper
-  Transcript --> corpus         : Import into Cortext
+  video --> audio       : Extraire l'audio
+  audio --> Transcript  : Transcrire avec Whisper
+  Transcript --> corpus         : Importer dans Cortext
 
   state fork2 <<fork>>
     corpus --> fork2
-    fork2 --> entities    : Named Entity Recognition
-    fork2 --> Multiterms  : Extract multiterms
+    fork2 --> entities    : Reconnaissance d'entités nommées
+    fork2 --> Multiterms  : Extraction de multitermes
 
   %state join <<join>>
   %  Multiterms --> join
