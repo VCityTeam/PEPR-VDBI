@@ -73,6 +73,7 @@ import {
 ## Chiffres clés
 
 <div class="grid grid-cols-4" id="aap-key-numbers">
+  <!-- AAP1 -->
   <div class="card">
     <h2>Nombre de projets AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
     <span class="big">
@@ -166,49 +167,54 @@ import {
       <!-- $ -->
     </span>
   </div>
+  <!-- AAP2 -->
   <div class="card">
-    <h2>Nombre de projets AAP 2 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
+    <h2>Nombre de projets AAP 2 <br/><span class="muted">(Soumis / Proposés)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
           select count(*) as count from aap2_projects
         `][0].count.toLocaleString()}
         <!-- $ -->
-      </span> / 0
-      <!-- ${financed_project_count.c.toLocaleString()} -->
+      </span> /
+      ${[...await sql`
+          select count(*) as count
+          from aap2_projects
+          where selected
+        `][0].count.toLocaleString()}
       <!-- $ -->
     </span>
   </div>
   <div class="card">
-    <h2>Nombre d'intitutions AAP 2 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
+    <h2>Nombre d'intitutions AAP 2 <br/><span class="muted">(Soumis / Proposés)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
           select count(*) as count from aap2_institutions
         `][0].count.toLocaleString()}
         <!-- $ -->
-      </span> / 0
-      <!-- ${financed_university_data.size.toLocaleString()} -->
+      </span> /
+      ${[...aap2_selected_institutions_count].length.toLocaleString()}
       <!-- $ -->
     </span>
   </div>
   <div class="card">
-    <h2>Nombre d'unités AAP 2 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
+    <h2>Nombre d'unités AAP 2 <br/><span class="muted">(Soumis / Proposés)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
           select count(*) as count from aap2_laboratories
         `][0].count.toLocaleString()}
         <!-- $ -->
-      </span> / 0
-      <!-- ${financed_laboratory_data.size.toLocaleString()} -->
+      </span> /
+      ${[...aap2_selected_laboratories_count].length.toLocaleString()}
       <!-- $ -->
     </span>
   </div>
   <div class="card">
     <h2>
       Nombre de partenaires socioéconomiques AAP 2
-      <br/><span class="muted">(Soumis / Lauréats)</span>
+      <br/><span class="muted">(Soumis / Proposés)</span>
     </h2>
     <span class="big">
       <span class="muted">
@@ -216,22 +222,31 @@ import {
           select count(*) as count from aap2_socioeconomic_partners
         `][0].count.toLocaleString()}
         <!-- $ -->
-      </span> / 0
-      <!-- ${financed_partner_data.size.toLocaleString()} -->
+      </span> /
+      ${[...aap2_selected_partners_count].length.toLocaleString()}
       <!-- $ -->
     </span>
   </div>
 </div>
 
 ```js
-const aap_key_number_buttons = view(
-  Inputs.button('Download key number cards', {
-    reduce: () =>
-      image
-        .toPng(document.getElementById('aap-key-numbers'))
-        .then((dataUrl) => download(dataUrl, 'aap-key-numbers.png')),
-  }),
-)
+const downloadSVGButton = (selector, filename = null) =>
+  view(
+    Inputs.button('Download key number cards', {
+      reduce: async () => {
+        debugger
+        const element = document.getElementById(selector)
+        const margin = element.style.margin
+        element.style.margin = '0px'
+        await image
+          .toPng(element)
+          .then((dataUrl) => download(dataUrl, `${filename || selector}.png`))
+        element.style.margin = margin
+      },
+    }),
+  )
+
+const aap_key_number_buttons = downloadSVGButton('aap-key-numbers')
 ```
 
 ## Projets par partenaires
@@ -740,13 +755,17 @@ const aap2_wide_partner_buttons = view(
       reduce: () =>
         image
           .toPng(document.getElementById('aap2-wide-institutions-plot'))
-          .then((dataUrl) => download(dataUrl, 'aap2-wide-institutions-plot.png')),
+          .then((dataUrl) =>
+            download(dataUrl, 'aap2-wide-institutions-plot.png'),
+          ),
     }),
     Inputs.button('Download proposed AAP2 wide laboratory plot', {
       reduce: () =>
         image
           .toPng(document.getElementById('aap2-wide-laboratories-plot'))
-          .then((dataUrl) => download(dataUrl, 'aap2-wide-laboratories-plot.png')),
+          .then((dataUrl) =>
+            download(dataUrl, 'aap2-wide-laboratories-plot.png'),
+          ),
     }),
     Inputs.button('Download proposed AAP2 wide socioeconomic partner plot', {
       reduce: () =>
@@ -2193,7 +2212,7 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
 ```js
 const show_non_selected_aap2 = view(
   Inputs.toggle({
-    label: "Afficher les sections CNU non-sélectionnées de l'AAP 2",
+    label: "Afficher les sections CNU non-proposées de l'AAP 2",
   }),
 )
 ```
@@ -2236,7 +2255,7 @@ const show_non_financed_aap12 = view(
 )
 const show_non_selected_aap12 = view(
   Inputs.toggle({
-    label: "Afficher les sections CNU non-sélectionnées de l'AAP 2",
+    label: "Afficher les sections CNU non-proposées de l'AAP 2",
   }),
 )
 ```
@@ -2246,7 +2265,7 @@ const show_non_selected_aap12 = view(
     ${show_non_financed_aap12 ? '' : 'financés'}
     <!-- $ -->
     de l'AAP 1 et
-    ${show_non_selected_aap12 ? '' : 'sélectionnés'}
+    ${show_non_selected_aap12 ? '' : 'proposées'}
     <!-- $ -->
     de l'AAP 2
   </h2>
@@ -2380,13 +2399,26 @@ const aap1_cnu_count_erc = d3.rollups(
 select
   cnu,
   selected,
-  count(*) as count
+  count(*) as count,
 from aap2_project_by_cnu
 join aap2_projects
   on aap2_projects.acronyme = aap2_project_by_cnu.acronyme
 where cnu is not null and cnu::VARCHAR != ''
 group by cnu, selected
 order by cnu, selected
+```
+
+```sql
+select
+  cnu,
+  -- selected,
+  aap2_project_by_cnu.acronyme as project,
+  count(*) as count,
+from aap2_project_by_cnu
+join aap2_projects
+  on aap2_projects.acronyme = aap2_project_by_cnu.acronyme
+where cnu is not null and cnu::VARCHAR != '' and selected
+group by cnu, aap2_project_by_cnu.acronyme
 ```
 
 ```js
