@@ -1,10 +1,6 @@
 ---
 sql:
   aap1_projects: /data/phase1-projects.tsv
-  aap1_researchers: /data/phase1-researchers.tsv
-  aap1_researcher_by_keywords: /data/phase1-researcher_by_keywords.tsv
-  aap1_laboratories: /data/phase1-laboratories.tsv
-  aap1_socioeconomic_partners: /data/phase1-socioeconomic_partners.tsv
   aap1_project_by_keyword: /data/phase1-project_by_keyword.tsv
   aap1_project_by_challenge: /data/phase1-project_by_challenge.tsv
   # aap1_project_by_cnu: /data/phase1-project_by_cnu.tsv
@@ -12,12 +8,16 @@ sql:
   aap1_project_by_institutions: /data/phase1-project_by_institutions.tsv
   aap1_project_by_laboratories: /data/phase1-project_by_laboratories.tsv
   aap1_project_by_researchers: /data/phase1-project_by_researchers.tsv
+  aap1_project_by_socioeconomic_partners: /data/phase1-project_by_socioeconomic_partners.tsv
+  aap1_researchers: /data/phase1-researchers.tsv
+  aap1_researcher_by_keywords: /data/phase1-researcher_by_keywords.tsv
+  aap1_laboratories: /data/phase1-laboratories.tsv
   aap1_laboratories_by_domains_erc: /data/phase1-laboratories_by_domains_erc.tsv
   aap1_laboratories_by_disciplines_erc: /data/phase1-laboratories_by_disciplines_erc.tsv
   aap1_laboratories_by_domains_hceres: /data/phase1-laboratories_by_domains_hceres.tsv
   aap1_laboratories_by_disciplines_hceres: /data/phase1-laboratories_by_disciplines_hceres.tsv
+  aap1_socioeconomic_partners: /data/phase1-socioeconomic_partners.tsv
   aap1_institutions: /data/phase1-institutions.tsv
-  aap1_project_by_socioeconomic_partners: /data/phase1-project_by_socioeconomic_partners.tsv
   aap2_projects: /data/phase2-projects.tsv
   aap2_researchers: /data/phase2-researchers.tsv
   # aap2_researcher_by_keywords: /data/phase2-researcher_by_keywords.tsv

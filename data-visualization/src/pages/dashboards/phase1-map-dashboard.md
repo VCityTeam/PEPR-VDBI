@@ -2,9 +2,9 @@
 sql:
   annex_partners: /data/partners_by_project_annex.csv
   general_partners: /data/partners_general.csv
-  socioeco_partners: /data/socioeco_partners.csv
-  etablissement_partners: /data/etablissement_partners.csv
-  labs: /data/labs.csv
+  socioeco_partners: /data/phase1-socioeconomic_partners.tsv
+  etablissement_partners: /data/phase1-institutions.tsv
+  laboratory_partners: /data/phase1-laboratories.tsv
   projects_by_partner: /data/projects_by_partner.csv
   aap_partners: /data/private/partenaires_aap2023.csv
   terrain_locations: /data/project_summary_terrain_locations.csv
@@ -273,14 +273,14 @@ const terrain_legend_type = view(
     ))}
     <!-- $ -->
   </div>
-  <!--
+  
   <div id="terrain-choropleth-container-italy" class="card" style="padding: 12px;">
     ${resize((width) => choroplethItaly(
       width,
       ({ properties }) => true
     ))}
   </div>
-  -->
+
 </div>
 
 <!-- <div class="card">
@@ -575,7 +575,7 @@ console.debug('lab_disciplines_by_code', lab_disciplines_by_code)
 WITH user_partner_data AS (
   SELECT
     label,
-    "ID primaire",
+    siret as "ID primaire",
     "type",
     nom_complet,
     code_postal,
@@ -583,15 +583,15 @@ WITH user_partner_data AS (
   UNION
   SELECT
     label,
-    "ID primaire",
+    numero_national_de_structure as "ID primaire",
     'LABORATOIRE' AS "type",
     libelle AS nom_complet,
     code_postal,
-  FROM labs
+  FROM laboratory_partners
   UNION
   SELECT
     label,
-    "ID primaire",
+    siret as "ID primaire",
     "type",
     nom_complet,
     code_postal,
@@ -837,13 +837,13 @@ group by all
 
 ```sql id=labs
 select
-  "ID primaire",
+  numero_national_de_structure as "ID primaire",
   projet,
   "code_postal"[0:2] as code_postal,
   code_panel_erc,
-from labs
+from laboratory_partners
 join projects_by_partner
-on label = source_label
+on laboratory_partners.label = projects_by_partner.source_label
 ```
 
 <!-- saving this for later when we figure out financial annex integration -->
@@ -852,7 +852,7 @@ on label = source_label
 WITH user_partner_data AS (
   SELECT
     label,
-    "ID primaire",
+    siret as "ID primaire",
     "type",
     nom_complet,
     code_postal,
@@ -860,11 +860,11 @@ WITH user_partner_data AS (
   UNION
   SELECT
     label,
-    "ID primaire",
+    numero_national_de_structure as "ID primaire",
     'LABORATOIRE' AS "type",
     libelle AS nom_complet,
     code_postal,
-  FROM labs
+  FROM laboratory_partners
 ),
 user_partner_project_data as (
   SELECT DISTINCT
@@ -1162,6 +1162,11 @@ const defaultProjectionItaly = (width, marks, caption = '') =>
     [
       Plot.geo(italy_regions_geojson, {
         ...default_projection_style,
+        // stroke: vdbi_color_scheme.blue,
+        // fill: 'white',
+        // strokeWidth: 1.5,
+        // strokeOpacity: 0.7,
+        // fillOpacity: 0.4,
       }),
       Plot.frame(),
       marks,
