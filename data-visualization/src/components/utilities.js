@@ -1,6 +1,7 @@
+import * as image from 'html-to-image'
+import download from 'downloadjs'
 import { rollups, filter, selectAll, create } from 'd3'
 import { button } from '@observablehq/inputs'
-import { nameByRace } from 'fantasy-name-generator'
 import { html } from 'npm:htl'
 
 /**
@@ -480,6 +481,40 @@ export function downloadSVGButton(
       source = '<?xml version="1.0" standalone="no"?>\r\n' + source
 
       writeToFile(source, filename, 'image/svg+xml')
+    },
+  })
+}
+
+export function downloadPNGButton(selector, label = 'Download (.png)') {
+  return button(label, {
+    reduce: async () => {
+      const element = document.getElementById(selector)
+      const margin = element.style.margin
+      element.style.margin = '0px'
+      if (element.classList.contains('card')) {
+        element.classList.add('card-no-border')
+      }
+      if (element.classList.contains('grid')) {
+        for (const child of element.children) {
+          if (child.classList.contains('card')) {
+            child.classList.add('card-no-border')
+          }
+        }
+      }
+      await image
+        .toPng(element)
+        .then((dataUrl) => download(dataUrl, `${selector}.png`))
+      element.style.margin = margin
+      if (element.classList.contains('card-no-border')) {
+        element.classList.remove('card-no-border')
+      }
+      if (element.classList.contains('grid')) {
+        for (const child of element.children) {
+          if (child.classList.contains('card-no-border')) {
+            child.classList.remove('card-no-border')
+          }
+        }
+      }
     },
   })
 }

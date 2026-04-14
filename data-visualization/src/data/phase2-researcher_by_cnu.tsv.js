@@ -78,7 +78,7 @@ with researcher_cnus as (
 
 select
   id,
-  unnest(apply(cnus, x -> if(x::INT1 < 10, '0' || x::INT1, x)))::VARCHAR as cnu,
+  unnest(apply(cnus, x -> if(x::INT < 10, '0' || x::INT, x)))::VARCHAR as cnu,
 from researcher_cnus
 `
 

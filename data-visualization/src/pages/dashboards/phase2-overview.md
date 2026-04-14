@@ -44,8 +44,7 @@ sql:
 ## Appels de la phase 1 et 2
 
 ```js
-import * as image from 'html-to-image'
-import download from 'downloadjs'
+import { downloadPNGButton } from '../../components/utilities.js'
 import * as overview from './aap-overview.js'
 import * as disciplines from './aap-disciplines.js'
 import * as cnu from '../../components/cnu.js'
@@ -230,23 +229,9 @@ import {
 </div>
 
 ```js
-const downloadSVGButton = (selector, filename = null) =>
-  view(
-    Inputs.button('Download key number cards', {
-      reduce: async () => {
-        debugger
-        const element = document.getElementById(selector)
-        const margin = element.style.margin
-        element.style.margin = '0px'
-        await image
-          .toPng(element)
-          .then((dataUrl) => download(dataUrl, `${filename || selector}.png`))
-        element.style.margin = margin
-      },
-    }),
-  )
-
-const aap_key_number_buttons = downloadSVGButton('aap-key-numbers')
+const aap_key_number_buttons = view(
+  downloadPNGButton('aap-key-numbers', 'Download key number cards'),
+)
 ```
 
 ## Projets par partenaires
@@ -360,10 +345,9 @@ const aap_key_number_buttons = downloadSVGButton('aap-key-numbers')
 
 ```js
 const aap_project_by_institutions_buttons = view(
-  Inputs.button('Download AAP key number cards', () =>
-    image
-      .toPng(document.getElementById('aap-projects-by-partners'))
-      .then((dataUrl) => download(dataUrl, 'aap-projects-by-partners.png')),
+  downloadPNGButton(
+    'aap-projects-by-partners',
+    'Download AAP key number cards',
   ),
 )
 ```
@@ -693,12 +677,7 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
 
 ```js
 const aap_partner_button = view(
-  Inputs.button('Download partner plots', {
-    reduce: () =>
-      image
-        .toPng(document.getElementById('aap-partner-plots'))
-        .then((dataUrl) => download(dataUrl, 'aap-partner-plots.png')),
-  }),
+  downloadPNGButton('aap-partner-plots', 'Download partner plots'),
 )
 ```
 
@@ -751,28 +730,18 @@ const aap_partner_button = view(
 ```js
 const aap2_wide_partner_buttons = view(
   Inputs.form([
-    Inputs.button('Download proposed AAP2 wide institution plot', {
-      reduce: () =>
-        image
-          .toPng(document.getElementById('aap2-wide-institutions-plot'))
-          .then((dataUrl) =>
-            download(dataUrl, 'aap2-wide-institutions-plot.png'),
-          ),
-    }),
-    Inputs.button('Download proposed AAP2 wide laboratory plot', {
-      reduce: () =>
-        image
-          .toPng(document.getElementById('aap2-wide-laboratories-plot'))
-          .then((dataUrl) =>
-            download(dataUrl, 'aap2-wide-laboratories-plot.png'),
-          ),
-    }),
-    Inputs.button('Download proposed AAP2 wide socioeconomic partner plot', {
-      reduce: () =>
-        image
-          .toPng(document.getElementById('aap2-wide-partners-plot'))
-          .then((dataUrl) => download(dataUrl, 'aap2-wide-partners-plot.png')),
-    }),
+    downloadPNGButton(
+      'aap2-wide-institutions-plot',
+      'Download proposed AAP2 wide institution plot',
+    ),
+    downloadPNGButton(
+      'aap2-wide-laboratories-plot',
+      'Download proposed AAP2 wide laboratory plot',
+    ),
+    downloadPNGButton(
+      'aap2-wide-partners-plot',
+      'Download proposed AAP2 wide socioeconomic partner plot',
+    ),
   ]),
 )
 ```
@@ -1684,20 +1653,10 @@ group by siret
 
 ```js
 const challenge_plots_download_button = view(
-  Inputs.button('Download challenge plots', {
-    reduce: () =>
-      image
-        .toPng(document.getElementById('challenge-plots'))
-        .then((dataUrl) => download(dataUrl, 'challenge-plots.png')),
-  }),
+  downloadPNGButton('challenge-plots', 'Download challenge plots'),
 )
 const challenge_donuts_download_button = view(
-  Inputs.button('Download challenge donuts', {
-    reduce: () =>
-      image
-        .toPng(document.getElementById('challenge-donuts'))
-        .then((dataUrl) => download(dataUrl, 'challenge-donuts.png')),
-  }),
+  downloadPNGButton('challenge-donuts', 'Download challenge donuts'),
 )
 ```
 
@@ -2219,15 +2178,17 @@ const show_non_selected_aap2 = view(
 
   <h2>
     Distribution des sections
-    ${show_non_selected_aap2 ? "proposées" : ""}
+    ${show_non_selected_aap2 ? "" : "proposées"}
     <!-- $ -->
     CNU de l'AAP 2
   </h2>
   <h3>
     Distribution détaillée des sections
-    ${show_non_selected_aap2 ? "proposées" : ""}
+    ${show_non_selected_aap2 ? "" : "proposées"}
     <!-- $ -->
     de l'AAP 2 par catégorie.
+    ${show_non_selected_aap2 ? "Les sections proposées sont plus foncées." : ""}
+    <!-- $ -->
   </h3>
   ${disciplines.erc_legend()}
   <!-- $ -->
@@ -2308,30 +2269,15 @@ const show_non_selected_aap12 = view(
 
 ```js
 const cnu_donuts_download_button = view(
-  Inputs.button('Download CNU donuts', {
-    reduce: () =>
-      image
-        .toPng(document.getElementById('cnu-donuts'))
-        .then((dataUrl) => download(dataUrl, 'cnu-donuts.png')),
-  }),
+  downloadPNGButton('cnu-donuts', 'Download CNU donuts'),
 )
 
 const aap2_cnu_plot_download_button = view(
-  Inputs.button('Download AAP2 CNU plot', {
-    reduce: () =>
-      image
-        .toPng(document.getElementById('aap2-cnu-plot'))
-        .then((dataUrl) => download(dataUrl, 'aap2-cnu-plot.png')),
-  }),
+  downloadPNGButton('aap2-cnu-plot', 'Download AAP2 CNU plot'),
 )
 
 const aap12_cnu_plot_download_button = view(
-  Inputs.button('Download AAP12 CNU plot', {
-    reduce: () =>
-      image
-        .toPng(document.getElementById('aap12-cnu-plot'))
-        .then((dataUrl) => download(dataUrl, 'aap12-cnu-plot.png')),
-  }),
+  downloadPNGButton('aap12-cnu-plot', 'Download AAP12 CNU plot'),
 )
 ```
 
@@ -2406,19 +2352,6 @@ join aap2_projects
 where cnu is not null and cnu::VARCHAR != ''
 group by cnu, selected
 order by cnu, selected
-```
-
-```sql
-select
-  cnu,
-  -- selected,
-  aap2_project_by_cnu.acronyme as project,
-  count(*) as count,
-from aap2_project_by_cnu
-join aap2_projects
-  on aap2_projects.acronyme = aap2_project_by_cnu.acronyme
-where cnu is not null and cnu::VARCHAR != '' and selected
-group by cnu, aap2_project_by_cnu.acronyme
 ```
 
 ```js
@@ -2503,12 +2436,7 @@ const carto_options = view(
 
 ```js
 const choropleths_download_button = view(
-  Inputs.button('Download choropleths', {
-    reduce: () =>
-      image
-        .toPng(document.getElementById('choropleths'))
-        .then((dataUrl) => download(dataUrl, 'choropleths.png')),
-  }),
+  downloadPNGButton('choropleths', 'Download choropleth'),
 )
 ```
 
