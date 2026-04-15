@@ -2310,8 +2310,6 @@ where not contains(id, '@') and selected
   </div>
 </div>
 
-<div class="card" id="aap2-cnu-plot">
-
 ```js
 const show_non_selected_aap2 = view(
   Inputs.toggle({
@@ -2320,6 +2318,7 @@ const show_non_selected_aap2 = view(
 )
 ```
 
+<div class="card" id="aap2-cnu-plot">
   <h2>
     Distribution des sections
     ${show_non_selected_aap2 ? "" : "proposées"}
@@ -2350,12 +2349,6 @@ const show_non_selected_aap2 = view(
   <!-- $ -->
 </div>
 
-${Inputs.table([...aap2_cnu_count].filter((d) => show_non_selected_aap2 || d.selected))}
-
-<!-- $ -->
-
-<div class="card" id="aap12-cnu-plot">
-
 ```js
 const show_non_financed_aap12 = view(
   Inputs.toggle({
@@ -2369,6 +2362,7 @@ const show_non_selected_aap12 = view(
 )
 ```
 
+<div class="card" id="aap12-cnu-plot">
   <h2>
     Distribution des sections CNU
     ${show_non_financed_aap12 ? '' : 'financés'}
@@ -2429,7 +2423,7 @@ const aap12_cnu_plot_download_button = view(
 )
 ```
 
-```sql id=cnu_count
+```sql
 select * from (
   select
     cnu[:2] as cnu,
@@ -2453,6 +2447,39 @@ select * from (
   from aap2_project_by_cnu
   join aap2_projects
     on aap2_projects.acronyme = aap2_project_by_cnu.acronyme
+  where cnu is not null and cnu::VARCHAR != ''
+  group by cnu, selected
+)
+where cnu[:2] similar to '[0-9]{2}'
+order by cnu, selected, financed
+```
+
+```sql id=cnu_count display
+select * from (
+  select
+    cnu[:2] as cnu,
+    financed,
+    null as selected,
+    count(*) as count,
+    'AAP 1' as aap,
+  from aap1_researchers
+  join aap1_project_by_researchers
+    on aap1_researchers.id = aap1_project_by_researchers.researcher
+  join aap1_projects
+    on aap1_project_by_researchers.project = aap1_projects.acronyme
+  group by cnu[:2], financed
+  union
+  select
+    cnu,
+    null as financed,
+    selected,
+    count(*) as count,
+    'AAP 2' as aap,
+  from aap2_project_by_researchers
+  join aap2_projects
+    on aap2_projects.acronyme = aap2_project_by_researchers.project_id
+  join aap2_researcher_by_cnu
+    on aap2_researcher_by_cnu.id = aap2_project_by_researchers.researcher_id
   where cnu is not null and cnu::VARCHAR != ''
   group by cnu, selected
 )
