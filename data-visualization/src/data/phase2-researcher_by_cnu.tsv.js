@@ -1,7 +1,7 @@
 import { DuckDBInstance } from '@duckdb/node-api'
 import { tsvFormat } from 'd3-dsv'
 
-const cnu_query = `
+const query = `
 with researcher_cnus as (
   select
     unnest(
@@ -31,10 +31,10 @@ with researcher_cnus as (
         "Email2.12"::VARCHAR,
         "Email2.13"::VARCHAR,
         "Email2.14"::VARCHAR,
-        uuid()::VARCHAR,
-        uuid()::VARCHAR,
-        uuid()::VARCHAR,
-        uuid()::VARCHAR,
+        "Titre court" || '_' || 'phd_0'::VARCHAR,
+        "Titre court" || '_' || 'phd_1'::VARCHAR,
+        "Titre court" || '_' || 'phd_2'::VARCHAR,
+        "Titre court" || '_' || 'phd_3'::VARCHAR,
       ]
     ) as id,
     unnest(
@@ -74,10 +74,12 @@ with researcher_cnus as (
       )
     ) as cnus,
   from 'src/data/private/AAP2_template_export.tsv'
+  left join 'src/data/private/AAP2_submission_metadata.tsv'
+    on AAP2_template_export.filename ^@ AAP2_submission_metadata.DOCID::VARCHAR
 )
 
 select
-  id,
+  lower(id) as id,
   unnest(apply(cnus, x -> if(x::INT < 10, '0' || x::INT, x)))::VARCHAR as cnu,
 from researcher_cnus
 `
@@ -85,7 +87,7 @@ from researcher_cnus
 const instance = await DuckDBInstance.create()
 const connection = await instance.connect()
 
-const reader = await connection.runAndReadAll(cnu_query)
+const reader = await connection.runAndReadAll(query)
 const rows = reader.getRowObjectsJson()
 
 process.stdout.write(tsvFormat(rows))

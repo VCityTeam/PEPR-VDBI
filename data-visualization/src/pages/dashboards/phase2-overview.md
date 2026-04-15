@@ -26,6 +26,7 @@ sql:
   aap2_laboratories: /data/phase2-laboratories.tsv
   aap2_socioeconomic_partners: /data/phase2-socioeconomic_partners.tsv
   aap2_project_by_keyword: /data/phase2-project_by_keyword.tsv
+  aap2_project_by_researchers: /data/phase2-project_by_researchers.tsv
   # aap2_project_by_challenge: /data/phase2-project_by_challenge.tsv
   aap2_project_by_institutions: /data/phase2-project_by_institutions.tsv
   aap2_project_by_laboratories: /data/phase2-project_by_laboratories.tsv
@@ -44,7 +45,10 @@ sql:
 ## Appels de la phase 1 et 2
 
 ```js
-import { downloadPNGButton } from '../../components/utilities.js'
+import {
+  downloadPNGButton,
+  downloadTableButton,
+} from '../../components/utilities.js'
 import * as overview from './aap-overview.js'
 import * as disciplines from './aap-disciplines.js'
 import * as cnu from '../../components/cnu.js'
@@ -1844,7 +1848,95 @@ order by count desc
 
 ## Chercheurs
 
-<div class="note">⚠️ Projet par chercheurs à venir ⚠️</div>
+<div class="grid grid-cols-2">
+  <div class="card">
+    <h2>Tous les chercheurs</h2>
+    <br/>
+    ${researcher_search_input}
+    <!-- $ -->
+    <br/>
+    ${resize((width) => Inputs.table(
+      researcher_search,
+      {
+        width: width,
+        layout: 'auto',
+      }
+    ))}
+    <!-- $ -->
+    <br/>
+    ${downloadTableButton(() => researcher_search)}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Tous les chercheurs des projets proposées</h2>
+    <br/>
+    ${resize((width) => Inputs.table(
+      sql`
+        select
+          email,
+          list(distinct firstname) as firstnames,
+          list(distinct lastname) as lastnames,
+          list(distinct orcid) as orcids,
+          list(distinct idhal) as idhals,
+          list(distinct idref) as idrefs,
+          list(distinct project_id) as projects,
+        from aap2_researchers
+        join aap2_project_by_researchers on aap2_researchers.email
+          = aap2_project_by_researchers.researcher_id
+        join aap2_projects on aap2_project_by_researchers.project_id = aap2_projects.acronyme
+        where selected
+        group by all`,
+      {
+        width: width,
+        layout: 'auto',
+        rows: 15,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+</div>
+
+```js
+const researcher_search_input = Inputs.search([
+  ...(await sql`
+    select
+      email,
+      list(distinct project_id) as projects,
+    from aap2_researchers
+    join aap2_project_by_researchers on aap2_researchers.email
+      = aap2_project_by_researchers.researcher_id
+    group by all
+  `),
+])
+
+const researcher_search = Generators.input(researcher_search_input)
+```
+
+### Chercheurs par projet
+
+<div class="card">
+  ${researcher_by_project_search_input}
+  <!-- $ -->
+  <br/>
+  ${resize((width) => Inputs.table(
+    researcher_by_project_search,
+    {
+      layout: "auto",
+      width: width,
+    }
+  ))}
+  <!-- $ -->
+</div>
+
+```js
+const researcher_by_project_search_input = Inputs.search([
+  ...(await sql`select * from aap2_project_by_researchers`),
+])
+
+const researcher_by_project_search = Generators.input(
+  researcher_by_project_search_input,
+)
+```
 
 ### Les nouveaux chercheurs
 
@@ -2071,6 +2163,58 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
 
 </div>
 
+<div class="grid grid-cols-2">
+  <div class="card">
+    <h2>CNUs des chercheurs des projets proposées dans l'AAP 2</h2>
+    ${aap2_cnus_search_input_researchers}
+    <!-- $ -->
+    <br/>
+    ${resize((width) =>
+      Inputs.table(aap2_cnus_search_researchers)
+    )}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>CNUs des thésards des projets proposées dans l'AAP 2</h2>
+    ${aap2_cnus_search_input_phds}
+    <!-- $ -->
+    <br/>
+    ${resize((width) =>
+      Inputs.table(aap2_cnus_search_phds)
+    )}
+    <!-- $ -->
+  </div>
+</div>
+
+```js
+const aap2_cnus_search_input_researchers = Inputs.search(aap2_cnus_researchers)
+const aap2_cnus_search_researchers = Generators.input(
+  aap2_cnus_search_input_researchers,
+)
+const aap2_cnus_search_input_phds = Inputs.search(aap2_cnus_phds)
+const aap2_cnus_search_phds = Generators.input(aap2_cnus_search_input_phds)
+```
+
+```sql id=aap2_cnus_researchers
+select distinct id, cnu, project_id
+from aap2_researcher_by_cnu
+left join aap2_project_by_researchers
+  on aap2_researcher_by_cnu.id = aap2_project_by_researchers.researcher_id
+left join aap2_projects
+  on aap2_project_by_researchers.project_id = aap2_projects.acronyme
+where contains(id, '@') and selected
+```
+
+```sql id=aap2_cnus_phds
+select distinct id, cnu, project_id
+from aap2_researcher_by_cnu
+left join aap2_project_by_researchers
+  on aap2_researcher_by_cnu.id = aap2_project_by_researchers.researcher_id
+left join aap2_projects
+  on aap2_project_by_researchers.project_id = aap2_projects.acronyme
+where not contains(id, '@') and selected
+```
+
 <div class="grid grid-cols-3" id="cnu-donuts">
   <div class="card">
     <h2>Distribution des CNUs financées par catégorie de l'AAP 1</h2>
@@ -2205,6 +2349,10 @@ const show_non_selected_aap2 = view(
   ))}
   <!-- $ -->
 </div>
+
+${Inputs.table([...aap2_cnu_count].filter((d) => show_non_selected_aap2 || d.selected))}
+
+<!-- $ -->
 
 <div class="card" id="aap12-cnu-plot">
 
@@ -2678,22 +2826,78 @@ group by siren
     </span>
   </div>
 </div>
-<div class="card grid-rowspan-2">
-  <h2>Incohérences types de projet</h2>
-  ${Inputs.table(project_type_inconsistencies, { rows: 3 })}
-  <!-- $ -->
+<div class="grid grid-cols-2">
+  <div class="card">
+    <h2>Incohérences types de projet</h2>
+    ${Inputs.table(project_type_inconsistencies, { layout: "auto" })}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Labels CNU bruts</h2>
+    ${cnu_label_search_input}
+    <!-- $ -->
+    ${resize((width) => Inputs.table(cnu_label_search, { layout: "auto" }))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Duplicates researcher identifiers</h2>
+    <br/>
+    ${resize((width) => Inputs.table(
+      sql`
+        select
+          email,
+          list_distinct(list(firstname)) as firstnames,
+          list_distinct(list(lastname)) as lastnames,
+          list_distinct(list(orcid)) as orcids,
+          list_distinct(list(idhal)) as idhals,
+          list_distinct(list(idref)) as idrefs,
+          list_distinct(list(project_id)) as projects,
+        from aap2_researchers
+        join aap2_project_by_researchers on aap2_researchers.email
+          = aap2_project_by_researchers.researcher_id
+        group by all
+        having length(list_distinct(list(firstname))) > 1
+          or length(list_distinct(list(lastname))) > 1
+          or length(list_distinct(list(orcid))) > 1
+          or length(list_distinct(list(idhal))) > 1
+          or length(list_distinct(list(idref))) > 1
+      `,
+      {
+        width: width,
+        layout: 'auto',
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Missing institution SIRETs</h2>
+    <br/>
+    ${resize((width) => Inputs.table(
+      sql`
+        select
+          source_label,
+          labels,
+          list(project) as projects
+        from aap2_institutions
+        join aap2_project_by_institutions
+          on aap2_institutions.id = aap2_project_by_institutions.institution_id
+        where siret is null
+        group by source_label, labels
+      `,
+      {
+        width: width,
+        layout: 'auto',
+      }
+    ))}
+    <!-- $ -->
+  </div>
 </div>
 
-```sql
-select
-  source_label,
-  labels,
-  list(project) as projects
-from aap2_institutions
-join aap2_project_by_institutions
-  on aap2_institutions.id = aap2_project_by_institutions.institution_id
-where siret is null
-group by source_label, labels
+```js
+const cnu_label_search_input = Inputs.search(
+  await sql`select * from aap2_project_by_cnu_labels`,
+)
+const cnu_label_search = Generators.input(cnu_label_search_input)
 ```
 
 <div class="note" label="Notice">

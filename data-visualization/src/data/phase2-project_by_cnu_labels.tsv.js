@@ -1,7 +1,7 @@
 import { DuckDBInstance } from '@duckdb/node-api'
 import { tsvFormat } from 'd3-dsv'
 
-const cnu_query = `
+const query = `
 with project_cnus as (
   select
     "Titre court" as acronyme,
@@ -50,7 +50,7 @@ from project_cnus
 const instance = await DuckDBInstance.create()
 const connection = await instance.connect()
 
-const reader = await connection.runAndReadAll(cnu_query)
+const reader = await connection.runAndReadAll(query)
 const rows = reader.getRowObjectsJson()
 
 // for (let index = 0; index < rows.length; index++) {
