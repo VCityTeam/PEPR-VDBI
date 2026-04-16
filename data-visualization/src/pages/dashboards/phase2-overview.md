@@ -12,10 +12,10 @@ sql:
   aap1_researchers: /data/phase1-researchers.tsv
   aap1_researcher_by_keywords: /data/phase1-researcher_by_keywords.tsv
   aap1_laboratories: /data/phase1-laboratories.tsv
-  aap1_laboratories_by_domains_erc: /data/phase1-laboratories_by_domains_erc.tsv
-  aap1_laboratories_by_disciplines_erc: /data/phase1-laboratories_by_disciplines_erc.tsv
-  aap1_laboratories_by_domains_hceres: /data/phase1-laboratories_by_domains_hceres.tsv
-  aap1_laboratories_by_disciplines_hceres: /data/phase1-laboratories_by_disciplines_hceres.tsv
+  # aap1_laboratories_by_domains_erc: /data/phase1-laboratories_by_domains_erc.tsv
+  # aap1_laboratories_by_disciplines_erc: /data/phase1-laboratories_by_disciplines_erc.tsv
+  # aap1_laboratories_by_domains_hceres: /data/phase1-laboratories_by_domains_hceres.tsv
+  # aap1_laboratories_by_disciplines_hceres: /data/phase1-laboratories_by_disciplines_hceres.tsv
   aap1_socioeconomic_partners: /data/phase1-socioeconomic_partners.tsv
   aap1_institutions: /data/phase1-institutions.tsv
   aap2_projects: /data/phase2-projects.tsv
@@ -386,34 +386,34 @@ group by project
 ```sql id=aap2_project_by_institutions_count
 select
   count(*) as count,
-  project,
+  aap2_projects.project_id as project_id,
   first(TYPDOC) as type,
 from aap2_project_by_institutions
 join aap2_projects
-  on aap2_project_by_institutions.project = aap2_projects.acronyme
-group by project
+  on aap2_project_by_institutions.project_id = aap2_projects.project_id
+group by aap2_projects.project_id
 ```
 
 ```sql id=aap2_project_by_laboratories_count
 select
   count(*) as count,
-  project,
+  aap2_projects.project_id as project_id,
   first(TYPDOC) as type,
 from aap2_project_by_laboratories
 join aap2_projects
-  on aap2_project_by_laboratories.project = aap2_projects.acronyme
-group by project
+  on aap2_project_by_laboratories.project_id = aap2_projects.project_id
+group by aap2_projects.project_id
 ```
 
 ```sql id=aap2_project_by_socioeconomic_partners_count
 select
   count(*) as count,
-  project,
+  aap2_projects.project_id as project_id,
   first(TYPDOC) as type,
 from aap2_project_by_socioeconomic_partners
 join aap2_projects
-  on aap2_project_by_socioeconomic_partners.project = aap2_projects.acronyme
-group by project
+  on aap2_project_by_socioeconomic_partners.project_id = aap2_projects.project_id
+group by aap2_projects.project_id
 ```
 
 ```js
@@ -802,13 +802,13 @@ group by siren, label
 select
   siren::VARCHAR as id,
   first(nom_complet) as label,
-  list_distinct(list(project))::VARCHAR as projects,
+  list_distinct(list(project_id))::VARCHAR as projects,
   list_distinct(list(libelle_commune))::VARCHAR as communes,
   count(*) as count,
 from aap2_project_by_institutions
 left join aap2_institutions
   on aap2_project_by_institutions.institution_id::VARCHAR =
-     aap2_institutions.id::VARCHAR
+     aap2_institutions.institution_id::VARCHAR
 where siren is not null
 group by siren
 ```
@@ -823,13 +823,13 @@ select
     list_distinct(list(sigle))[1],
     first(libelle)
   ) as label,
-  list_distinct(list(project))::VARCHAR as projects,
+  list_distinct(list(project_id))::VARCHAR as projects,
   list_distinct(list(commune))::VARCHAR as communes,
   count(*) as count,
 from aap2_project_by_laboratories
   left join aap2_laboratories
   on aap2_project_by_laboratories.unit_id::VARCHAR =
-     aap2_laboratories.id::VARCHAR
+     aap2_laboratories.unit_id::VARCHAR
 where numero_national_de_structure is not null
 group by numero_national_de_structure
 ```
@@ -840,13 +840,13 @@ group by numero_national_de_structure
 select
   siren::VARCHAR as id,
   first(nom_complet) as label,
-  list_distinct(list(project))::VARCHAR as projects,
+  list_distinct(list(project_id))::VARCHAR as projects,
   list_distinct(list(libelle_commune))::VARCHAR as communes,
   count(*) as count,
 from aap2_project_by_socioeconomic_partners
   left join aap2_socioeconomic_partners
   on aap2_project_by_socioeconomic_partners.partner_id::VARCHAR =
-     aap2_socioeconomic_partners.id::VARCHAR
+     aap2_socioeconomic_partners.partner_id::VARCHAR
 where siren is not null
 group by siren
 ```
@@ -857,11 +857,11 @@ group by siren
 with selected_institutions as (
   select
     institution_id,
-    list_distinct(list(project))::VARCHAR as projects,
+    list_distinct(list(project_id))::VARCHAR as projects,
     count(*) as count,
   from aap2_project_by_institutions
-  where project in (
-    select acronyme from aap2_projects where selected
+  where project_id in (
+    select project_id from aap2_projects where selected
   )
   group by institution_id
 )
@@ -874,7 +874,7 @@ select
   sum(selected_institutions.count)::INT as count,
 from aap2_institutions
 join selected_institutions
-  on aap2_institutions.id::VARCHAR = selected_institutions.institution_id::VARCHAR
+  on aap2_institutions.institution_id::VARCHAR = selected_institutions.institution_id::VARCHAR
 where siren is not null
 group by siren
 ```
@@ -885,11 +885,11 @@ group by siren
 with selected_labs as (
   select
     unit_id,
-    list_distinct(list(project))::VARCHAR as projects,
+    list_distinct(list(project_id))::VARCHAR as projects,
     count(*) as count,
   from aap2_project_by_laboratories
-  where project in (
-    select acronyme from aap2_projects where selected
+  where project_id in (
+    select project_id from aap2_projects where selected
   )
   group by unit_id
 )
@@ -906,7 +906,7 @@ select
   sum(selected_labs.count)::INT as count,
 from aap2_laboratories
 join selected_labs
-  on aap2_laboratories.id = selected_labs.unit_id
+  on aap2_laboratories.unit_id = selected_labs.unit_id
 where numero_national_de_structure is not null
 group by numero_national_de_structure
 ```
@@ -917,11 +917,11 @@ group by numero_national_de_structure
 with selected_partners as (
   select
     partner_id,
-    list_distinct(list(project))::VARCHAR as projects,
+    list_distinct(list(project_id))::VARCHAR as projects,
     count(*) as count,
   from aap2_project_by_socioeconomic_partners
-  where project in (
-    select acronyme from aap2_projects where selected
+  where project_id in (
+    select project_id from aap2_projects where selected
   )
   group by partner_id
 )
@@ -934,7 +934,7 @@ select
   sum(selected_partners.count)::INT as count,
 from aap2_socioeconomic_partners
 join selected_partners
-  on aap2_socioeconomic_partners.id = selected_partners.partner_id
+  on aap2_socioeconomic_partners.partner_id = selected_partners.partner_id
 where siren is not null
 group by siren
 ```
@@ -1879,11 +1879,11 @@ order by count desc
           list(distinct orcid) as orcids,
           list(distinct idhal) as idhals,
           list(distinct idref) as idrefs,
-          list(distinct project_id) as projects,
+          list(distinct aap2_projects.project_id) as projects,
         from aap2_researchers
         join aap2_project_by_researchers on aap2_researchers.email
           = aap2_project_by_researchers.researcher_id
-        join aap2_projects on aap2_project_by_researchers.project_id = aap2_projects.acronyme
+        join aap2_projects on aap2_project_by_researchers.project_id = aap2_projects.project_id
         where selected
         group by all`,
       {
@@ -1939,6 +1939,8 @@ const researcher_by_project_search = Generators.input(
 ```
 
 ### Les nouveaux chercheurs
+
+<div class="caution">Unverified</div>
 
 Chercheurs de l'AAP 2 pas présents dans les projets financées de l'AAP 1
 
@@ -2033,6 +2035,8 @@ select
   list_distinct(list(position)) as positions,
   [] as projects,
 from aap2_researchers
+join aap2_project_by_researchers 
+  on aap2_researchers.email = aap2_project_by_researchers.researcher_id
 where
   lower(lastname || ' ' || firstname) in (
     select fullname from new_researcher_names
@@ -2044,6 +2048,8 @@ group by
 ```
 
 ### Les chercheurs familiers
+
+<div class="caution">Unverified</div>
 
 Chercheurs présents dans les projets de l'AAP 1 et 2
 
@@ -2129,6 +2135,8 @@ select
   list_distinct(list(position)) as positions,
   [] as projects,
 from aap2_researchers
+join aap2_project_by_researchers 
+  on aap2_researchers.email = aap2_project_by_researchers.researcher_id
 where
   lower(lastname || ' ' || firstname) in (
     select fullname from returning_researcher_names
@@ -2169,9 +2177,7 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
     ${aap2_cnus_search_input_researchers}
     <!-- $ -->
     <br/>
-    ${resize((width) =>
-      Inputs.table(aap2_cnus_search_researchers)
-    )}
+    ${resize((width) => Inputs.table(aap2_cnus_search_researchers))}
     <!-- $ -->
   </div>
   <div class="card">
@@ -2179,9 +2185,7 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
     ${aap2_cnus_search_input_phds}
     <!-- $ -->
     <br/>
-    ${resize((width) =>
-      Inputs.table(aap2_cnus_search_phds)
-    )}
+    ${resize((width) => Inputs.table(aap2_cnus_search_phds))}
     <!-- $ -->
   </div>
 </div>
@@ -2196,23 +2200,31 @@ const aap2_cnus_search_phds = Generators.input(aap2_cnus_search_input_phds)
 ```
 
 ```sql id=aap2_cnus_researchers
-select distinct id, cnu, project_id
+select distinct
+  aap2_researcher_by_cnu.researcher_id as researcher_id,
+  cnu,
+  list_distinct(list(aap2_projects.project_id)) as projects
 from aap2_researcher_by_cnu
 left join aap2_project_by_researchers
-  on aap2_researcher_by_cnu.id = aap2_project_by_researchers.researcher_id
+  on aap2_researcher_by_cnu.researcher_id = aap2_project_by_researchers.researcher_id
 left join aap2_projects
-  on aap2_project_by_researchers.project_id = aap2_projects.acronyme
-where contains(id, '@') and selected
+  on aap2_project_by_researchers.project_id = aap2_projects.project_id
+where contains(aap2_researcher_by_cnu.researcher_id, '@') and selected
+group by all
 ```
 
 ```sql id=aap2_cnus_phds
-select distinct id, cnu, project_id
+select distinct
+  aap2_researcher_by_cnu.researcher_id as researcher_id,
+  cnu,
+  list_distinct(list(aap2_projects.project_id)) as projects
 from aap2_researcher_by_cnu
 left join aap2_project_by_researchers
-  on aap2_researcher_by_cnu.id = aap2_project_by_researchers.researcher_id
+  on aap2_researcher_by_cnu.researcher_id = aap2_project_by_researchers.researcher_id
 left join aap2_projects
-  on aap2_project_by_researchers.project_id = aap2_projects.acronyme
-where not contains(id, '@') and selected
+  on aap2_project_by_researchers.project_id = aap2_projects.project_id
+where not contains(aap2_researcher_by_cnu.researcher_id, '@') and selected
+group by all
 ```
 
 <div class="grid grid-cols-3" id="cnu-donuts">
@@ -2423,13 +2435,13 @@ const aap12_cnu_plot_download_button = view(
 )
 ```
 
-```sql
+```sql id=cnu_count
 select * from (
   select
     cnu[:2] as cnu,
     financed,
     null as selected,
-    count(*) as count,
+    count(distinct id) as count,
     'AAP 1' as aap,
   from aap1_researchers
   join aap1_project_by_researchers
@@ -2442,46 +2454,15 @@ select * from (
     cnu,
     null as financed,
     selected,
-    count(*) as count,
+    count(distinct aap2_researcher_by_cnu.researcher_id) as count,
     'AAP 2' as aap,
-  from aap2_project_by_cnu
-  join aap2_projects
-    on aap2_projects.acronyme = aap2_project_by_cnu.acronyme
+  from aap2_researcher_by_cnu
+  left join aap2_project_by_researchers
+    on aap2_researcher_by_cnu.researcher_id = aap2_project_by_researchers.researcher_id
+  left join aap2_projects
+    on aap2_project_by_researchers.project_id = aap2_projects.project_id
   where cnu is not null and cnu::VARCHAR != ''
-  group by cnu, selected
-)
-where cnu[:2] similar to '[0-9]{2}'
-order by cnu, selected, financed
-```
-
-```sql id=cnu_count display
-select * from (
-  select
-    cnu[:2] as cnu,
-    financed,
-    null as selected,
-    count(*) as count,
-    'AAP 1' as aap,
-  from aap1_researchers
-  join aap1_project_by_researchers
-    on aap1_researchers.id = aap1_project_by_researchers.researcher
-  join aap1_projects
-    on aap1_project_by_researchers.project = aap1_projects.acronyme
-  group by cnu[:2], financed
-  union
-  select
-    cnu,
-    null as financed,
-    selected,
-    count(*) as count,
-    'AAP 2' as aap,
-  from aap2_project_by_researchers
-  join aap2_projects
-    on aap2_projects.acronyme = aap2_project_by_researchers.project_id
-  join aap2_researcher_by_cnu
-    on aap2_researcher_by_cnu.id = aap2_project_by_researchers.researcher_id
-  where cnu is not null and cnu::VARCHAR != ''
-  group by cnu, selected
+  group by all
 )
 where cnu[:2] similar to '[0-9]{2}'
 order by cnu, selected, financed
@@ -2523,7 +2504,7 @@ select
   count(*) as count,
 from aap2_project_by_cnu
 join aap2_projects
-  on aap2_projects.acronyme = aap2_project_by_cnu.acronyme
+  on aap2_projects.project_id = aap2_project_by_cnu.project_id
 where cnu is not null and cnu::VARCHAR != ''
 group by cnu, selected
 order by cnu, selected
@@ -2904,12 +2885,13 @@ group by siren
         select
           source_label,
           labels,
-          list(project) as projects
+          list_distinct(list(project_id)) as projects
         from aap2_institutions
-        join aap2_project_by_institutions
-          on aap2_institutions.id = aap2_project_by_institutions.institution_id
+        left join aap2_project_by_institutions
+          on aap2_institutions.institution_id
+            = aap2_project_by_institutions.institution_id
         where siret is null
-        group by source_label, labels
+        group by all
       `,
       {
         width: width,
@@ -2956,7 +2938,7 @@ Puis les requêtes pour calculer les indicateurs sont les suivantes :
 
 ```sql id=project_type_inconsistencies echo
 select
-  acronyme,
+  project_id,
   TYPDOC as 'type sur le site',
   type_projet as 'type dans le template'
 from aap2_projects
@@ -2971,10 +2953,10 @@ where siret is null
 ```
 
 ```sql display=false
-select id, count(*) as count
+select institution_id, count(*) as count
 from aap2_institutions
 where siret is null
-group by id
+group by institution_id
 ```
 
 ```sql id=[missing_laboratories_rnsr] echo
@@ -2984,10 +2966,10 @@ where numero_national_de_structure is null
 ```
 
 ```sql display=false
-select id, count(*) as count
+select unit_id, count(*) as count
 from aap2_laboratories
 where numero_national_de_structure is null
-group by id
+group by unit_id
 ```
 
 ```sql id=[missing_partner_siret] echo
@@ -2997,10 +2979,10 @@ where siret is null
 ```
 
 ```sql display=false
-select id, count(*) as count
+select partner_id, count(*) as count
 from aap2_socioeconomic_partners
 where siret is null
-group by id
+group by partner_id
 ```
 
 ```sql id=[missing_researcher_orcid] echo
@@ -3037,7 +3019,7 @@ const missing_researcher_cnu = [
 ```sql id=projects
 (
   select
-    acronyme,
+    acronyme as project_id,
     present,
     auditioned,
     financed,
@@ -3051,7 +3033,7 @@ const missing_researcher_cnu = [
   from aap1_projects
 ) union (
   select
-    acronyme,
+    project_id,
     true as present,
     null as auditioned,
     null as financed,
@@ -3185,14 +3167,14 @@ select * from (
 ```sql id=socioeconomic_partners
 (
   select
-    null as id,
+    null as partner_id,
     label as labels,
     null as activities,
     1 as aap,
   from aap1_socioeconomic_partners
 ) union (
   select
-    id,
+    partner_id,
     labels,
     activities,
     2 as aap,
@@ -3203,13 +3185,13 @@ select * from (
 ```sql id=project_by_keyword
 (
   select
-    acronyme,
+    acronyme as project_id,
     keyword,
     1 as aap,
   from aap1_project_by_keyword
 ) union (
   select
-    acronyme,
+    project_id,
     keyword,
     2 as aap,
   from aap2_project_by_keyword
@@ -3219,13 +3201,13 @@ select * from (
 ```sql id=project_institutions
 (
   select
-    project,
+    project as project_id,
     university as institution,
     1 as aap,
   from aap1_project_by_institutions
 ) union (
   select
-    project,
+    project_id,
     institution_id as institution,
     2 as aap,
   from aap2_project_by_institutions
@@ -3235,13 +3217,13 @@ select * from (
 ```sql id=project_laboratories
 (
   select
-    project,
+    project as project_id,
     lab,
     1 as aap,
   from aap1_project_by_laboratories
 ) union (
   select
-    project,
+    project_id,
     unit_id as lab,
     2 as aap,
   from aap2_project_by_laboratories
@@ -3251,13 +3233,13 @@ select * from (
 ```sql id=project_socioeconomic_partners
 (
   select
-    project,
+    project as project_id,
     partner,
     1 as aap,
   from aap1_project_by_socioeconomic_partners
 ) union (
   select
-    project,
+    project_id,
     partner_id as partner,
     2 as aap,
   from aap2_project_by_socioeconomic_partners

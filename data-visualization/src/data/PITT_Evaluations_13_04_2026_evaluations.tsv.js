@@ -4,8 +4,11 @@ import {
   mapRowToColumnKeys,
   rowsToObjectArray,
 } from './utilities/data_utilities.js'
+
 const workbook = new ExcelJS.Workbook()
-await workbook.xlsx.readFile('src/data/private/PITT_Evaluations_25032026.xlsx')
+await workbook.xlsx.readFile(
+  'src/data/private/PITT_Evaluations_13_04_2026.xlsx',
+)
 
 mapRowToColumnKeys(workbook, 0)
 

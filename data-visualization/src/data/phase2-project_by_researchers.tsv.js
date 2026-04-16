@@ -12,7 +12,7 @@ select distinct
   site,
 from (
   select
-    "Titre court" as project_id,
+    "TITRE_COURT" as project_id,
     unnest(
       [
         "email-0"::VARCHAR,
@@ -40,10 +40,10 @@ from (
         "Email2.12"::VARCHAR,
         "Email2.13"::VARCHAR,
         "Email2.14"::VARCHAR,
-        if("cnu-6-0" is not null, "Titre court" || '_' || 'phd_0'::VARCHAR, null),
-        if("cnu-6-1" is not null, "Titre court" || '_' || 'phd_1'::VARCHAR, null),
-        if("cnu-6-2" is not null, "Titre court" || '_' || 'phd_2'::VARCHAR, null),
-        if("cnu-6-3" is not null, "Titre court" || '_' || 'phd_3'::VARCHAR, null),
+        if("cnu-6-0" is not null, "TITRE_COURT" || '_' || 'phd_0'::VARCHAR, null),
+        if("cnu-6-1" is not null, "TITRE_COURT" || '_' || 'phd_1'::VARCHAR, null),
+        if("cnu-6-2" is not null, "TITRE_COURT" || '_' || 'phd_2'::VARCHAR, null),
+        if("cnu-6-3" is not null, "TITRE_COURT" || '_' || 'phd_3'::VARCHAR, null),
       ]
     ) as email,
     unnest(

@@ -2,8 +2,12 @@ import { DuckDBInstance } from '@duckdb/node-api'
 import { tsvFormat } from 'd3-dsv'
 
 const query = `
-with researcher_cnus as (
+select distinct
+  lower(id) as researcher_id,
+  unnest(apply(cnus, x -> if(x::INT < 10, '0' || x::INT, x)))::VARCHAR as cnu,
+from (
   select
+    -- "TITRE_COURT" as project_id,
     unnest(
       [
         "email-0"::VARCHAR,
@@ -31,10 +35,10 @@ with researcher_cnus as (
         "Email2.12"::VARCHAR,
         "Email2.13"::VARCHAR,
         "Email2.14"::VARCHAR,
-        "Titre court" || '_' || 'phd_0'::VARCHAR,
-        "Titre court" || '_' || 'phd_1'::VARCHAR,
-        "Titre court" || '_' || 'phd_2'::VARCHAR,
-        "Titre court" || '_' || 'phd_3'::VARCHAR,
+        "TITRE_COURT" || '_' || 'phd_0'::VARCHAR,
+        "TITRE_COURT" || '_' || 'phd_1'::VARCHAR,
+        "TITRE_COURT" || '_' || 'phd_2'::VARCHAR,
+        "TITRE_COURT" || '_' || 'phd_3'::VARCHAR,
       ]
     ) as id,
     unnest(
@@ -77,11 +81,7 @@ with researcher_cnus as (
   left join 'src/data/private/AAP2_submission_metadata.tsv'
     on AAP2_template_export.filename ^@ AAP2_submission_metadata.DOCID::VARCHAR
 )
-
-select
-  lower(id) as id,
-  unnest(apply(cnus, x -> if(x::INT < 10, '0' || x::INT, x)))::VARCHAR as cnu,
-from researcher_cnus
+where id != ''
 `
 
 const instance = await DuckDBInstance.create()

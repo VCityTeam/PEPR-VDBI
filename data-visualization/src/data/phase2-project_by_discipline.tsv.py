@@ -22,7 +22,7 @@ def main():
     project_ids = {}
     with open(file_path) as f:
         for row in csv.DictReader(f, delimiter="\t"):
-            project_ids[row["DOCID"]] = row["Titre court"]
+            project_ids[row["DOCID"]] = row["TITRE_COURT"]
 
     logging.debug(f"Project ids: {project_ids}")
 
@@ -46,7 +46,7 @@ def main():
                 return 1
             project_disciplines.append(
                 {
-                    "acronyme": project_ids[docid],
+                    "project_id": project_ids[docid],
                     "disciplines": row["disciplines"].replace(",", ";"),
                 }
             )
@@ -80,11 +80,11 @@ def main():
     logging.debug(f"Cleaned lemmatized data: {project_disciplines}")
 
     logging.info("Writing data to stdout")
-    csv.writer(sys.stdout, delimiter="\t").writerow(["acronyme", "discipline"])
+    csv.writer(sys.stdout, delimiter="\t").writerow(["project_id", "discipline"])
     for project_discipline in project_disciplines:
         for discipline in project_discipline["disciplines"]:
             csv.writer(sys.stdout, delimiter="\t").writerow(
-                [project_discipline["acronyme"], discipline]
+                [project_discipline["project_id"], discipline]
             )
 
 

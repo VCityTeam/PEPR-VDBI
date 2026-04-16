@@ -2,10 +2,13 @@ import { DuckDBInstance } from '@duckdb/node-api'
 import { tsvFormat } from 'd3-dsv'
 import { toLowerPreservingAcronyms } from './utilities/data_utilities.js'
 
-const projects_query = `
-with project_keywords as (
+const query = `
+select distinct
+  project_id,
+  unnest(keywords) as keyword,
+from (
   select
-    "Titre court" as acronyme,
+    "TITRE_COURT" as project_id,
     list_transform(
       string_split_regex(MOTCLE, '[;,]'), x -> trim(regexp_replace(x, '[\n\r]', ' ', 'g'))
     ) || list_transform(
@@ -16,17 +19,12 @@ with project_keywords as (
   left join 'src/data/private/AAP2_template_export.tsv'
   on AAP2_template_export.filename ^@ AAP2_submission_metadata.DOCID::VARCHAR
 )
-
-select distinct
-  acronyme,
-  unnest(keywords) as keyword,
-from project_keywords
 `
 
 const instance = await DuckDBInstance.create()
 const connection = await instance.connect()
 
-const reader = await connection.runAndReadAll(projects_query)
+const reader = await connection.runAndReadAll(query)
 const rows = reader.getRowObjectsJson()
 
 for (let index = 0; index < rows.length; index++) {

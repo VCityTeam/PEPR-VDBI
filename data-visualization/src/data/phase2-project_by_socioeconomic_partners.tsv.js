@@ -1,10 +1,10 @@
 import { DuckDBInstance } from '@duckdb/node-api'
 import { tsvFormat } from 'd3-dsv'
 
-export const all_partners_by_project_query = `
-  select distinct project, partner_id from (
+export const query = `
+  select distinct project_id, partner_id from (
     select
-    "Titre court" as project,
+    "TITRE_COURT" as project_id,
       unnest(
         apply([
           "SIRET le cas échéant 1"::VARCHAR,
@@ -80,7 +80,7 @@ export const all_partners_by_project_query = `
 const instance = await DuckDBInstance.create()
 const connection = await instance.connect()
 
-const reader = await connection.runAndReadAll(all_partners_by_project_query)
+const reader = await connection.runAndReadAll(query)
 const rows = reader.getRowObjectsJson()
 
 process.stdout.write(tsvFormat(rows))

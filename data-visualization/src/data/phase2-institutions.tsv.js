@@ -3,10 +3,9 @@ import { tsvFormat } from 'd3-dsv'
 import { queryAndFormatRE } from './utilities/siret_api.js'
 
 const all_institutions_query = `
-  select
-    id,
+  select distinct
+    institution_id,
     list_distinct(list(label)) as labels,
-    count(*) as count,
   from (
     select distinct
       unnest(
@@ -39,7 +38,7 @@ const all_institutions_query = `
             "SIRET2.14"::VARCHAR,
           ],
           x -> regexp_replace(x, '[\s ]', '', 'g'))
-      ) as id,
+      ) as institution_id,
       unnest(
         apply(
           [
@@ -73,8 +72,8 @@ const all_institutions_query = `
         )
       ) as label,
     from 'src/data/private/AAP2_template_export.tsv'
-  ) where id is not null and label is not null
-  group by id
+  ) where institution_id is not null and label is not null
+  group by all
 `
 
 const instance = await DuckDBInstance.create()

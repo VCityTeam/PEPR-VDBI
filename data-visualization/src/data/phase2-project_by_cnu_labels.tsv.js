@@ -2,9 +2,12 @@ import { DuckDBInstance } from '@duckdb/node-api'
 import { tsvFormat } from 'd3-dsv'
 
 const query = `
-with project_cnus as (
+select
+  project_id,
+  filter(cnu_labels, x -> x is not null) as cnu_labels
+from (
   select
-    "Titre court" as acronyme,
+    "TITRE_COURT" as project_id,
     [
       "cnu-0"::VARCHAR,
       "cnu-1"::VARCHAR,
@@ -40,11 +43,6 @@ with project_cnus as (
   left join 'src/data/private/AAP2_template_export.tsv'
   on AAP2_template_export.filename ^@ AAP2_submission_metadata.DOCID::VARCHAR
 )
-
-select
-  acronyme,
-  filter(cnu_labels, x -> x is not null) as cnu_labels,
-from project_cnus
 `
 
 const instance = await DuckDBInstance.create()

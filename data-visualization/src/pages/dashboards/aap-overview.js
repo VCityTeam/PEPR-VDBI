@@ -137,7 +137,7 @@ export const projectCountPlotAAP2 = (
     y_label,
     sort_value,
     x_accessor = 'count',
-    y_accessor = 'project',
+    y_accessor = 'project_id',
     fill_accessor = 'type',
     max_partner_count = 25,
   } = {},

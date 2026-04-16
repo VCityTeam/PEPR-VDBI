@@ -3,10 +3,9 @@ import { tsvFormat } from 'd3-dsv'
 import { queryAndFormatESR } from './utilities/rnsr_api.js'
 
 const all_units_query = `
-  select
-    id,
+  select distinct
+    unit_id,
     list_distinct(list(label)) as labels,
-    count(*) as count,
   from (
     select distinct
       unnest(
@@ -38,7 +37,7 @@ const all_units_query = `
           "RNSR2.14"::VARCHAR,
         ],
         x -> regexp_replace(x, '[\s ]', '', 'g'))
-      ) as id,
+      ) as unit_id,
       unnest(
         apply(
           [
@@ -71,8 +70,8 @@ const all_units_query = `
           x -> trim(regexp_replace(x, '[\n\r]', ' ', 'g')))
       ) as label,
     from 'src/data/private/AAP2_template_export.tsv'
-  ) where id is not null and label is not null
-  group by id
+  ) where unit_id is not null and label is not null
+  group by all
 `
 
 const instance = await DuckDBInstance.create()

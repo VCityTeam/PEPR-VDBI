@@ -1,13 +1,13 @@
 import { DuckDBInstance } from '@duckdb/node-api'
 import { tsvFormat } from 'd3-dsv'
 
-const projects_query = `
+const query = `
   select
     DOCID,
     STATUT,
     TYPDOC,
     type_projet,
-    AAP2_submission_metadata."Titre court" as acronyme,
+    AAP2_submission_metadata."TITRE_COURT" as project_id,
     case 
       when "Sélectionné (O/N)" = 'O'
       then true
@@ -140,14 +140,14 @@ const projects_query = `
   from 'src/data/private/AAP2_submission_metadata.tsv'
   left join 'src/data/private/AAP2_template_export.tsv'
     on AAP2_template_export.filename ^@ AAP2_submission_metadata.DOCID::VARCHAR
-  left join 'src/data/private/PITT_Evaluations_25032026_evaluations.tsv'
-    on PITT_Evaluations_25032026_evaluations."Titre court" = AAP2_submission_metadata."Titre court"
+  left join 'src/data/private/PITT_Evaluations_13_04_2026_evaluations.tsv'
+    on PITT_Evaluations_13_04_2026_evaluations."Titre court" = AAP2_submission_metadata."TITRE_COURT"
 `
 
 const instance = await DuckDBInstance.create()
 const connection = await instance.connect()
 
-const reader = await connection.runAndReadAll(projects_query)
+const reader = await connection.runAndReadAll(query)
 const rows = reader.getRowObjectsJson()
 
 process.stdout.write(tsvFormat(rows))

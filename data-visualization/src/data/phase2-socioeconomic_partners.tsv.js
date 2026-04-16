@@ -3,11 +3,10 @@ import { tsvFormat } from 'd3-dsv'
 import { queryAndFormatRE } from './utilities/siret_api.js'
 
 export const all_partners_query = `
-  select
-    id,
+  select distinct
+    partner_id,
     list_distinct(list(label)) as labels,
     list_distinct(list(activity)) as activities,
-    count(*) as count,
   from (
     select distinct
       unnest(
@@ -31,7 +30,7 @@ export const all_partners_query = `
           "SIRET le cas échéant 8_2"::VARCHAR,
         ],
         x -> regexp_replace(x, '[\s ]', '', 'g'))
-      ) as id,
+      ) as partner_id,
       unnest(
         apply(
           [
@@ -79,8 +78,8 @@ export const all_partners_query = `
           x -> trim(regexp_replace(x, '[\n\r]', ' ', 'g')))
       ) as activity,
     from 'src/data/private/AAP2_template_export.tsv'
-  ) where id is not null and label is not null
-  group by id
+  ) where partner_id is not null and label is not null
+  group by all
 `
 
 const instance = await DuckDBInstance.create()
