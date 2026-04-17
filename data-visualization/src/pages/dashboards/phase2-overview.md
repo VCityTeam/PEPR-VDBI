@@ -22,9 +22,12 @@ sql:
   aap2_researchers: /data/phase2-researchers.tsv
   # aap2_researcher_by_keywords: /data/phase2-researcher_by_keywords.tsv
   aap2_researcher_by_cnu: /data/phase2-researcher_by_cnu.tsv
-  aap2_institutions: /data/phase2-institutions.tsv
-  aap2_laboratories: /data/phase2-laboratories.tsv
-  aap2_socioeconomic_partners: /data/phase2-socioeconomic_partners.tsv
+  aap2_institutions: /data/private/phase2-institutions.tsv
+  # aap2_institutions: /data/phase2-institutions.tsv
+  aap2_laboratories: /data/private/phase2-laboratories.tsv
+  # aap2_laboratories: /data/phase2-laboratories.tsv
+  aap2_socioeconomic_partners: /data/private/phase2-socioeconomic_partners.tsv
+  # aap2_socioeconomic_partners: /data/phase2-socioeconomic_partners.tsv
   aap2_project_by_keyword: /data/phase2-project_by_keyword.tsv
   aap2_project_by_researchers: /data/phase2-project_by_researchers.tsv
   # aap2_project_by_challenge: /data/phase2-project_by_challenge.tsv
@@ -227,6 +230,32 @@ import {
         <!-- $ -->
       </span> /
       ${[...aap2_selected_partners_count].length.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>
+      Nombre de chercheurs AAP 2
+      <br/><span class="muted">(Soumis / Proposés)</span>
+    </h2>
+    <span class="big">
+      <span class="muted">
+        ${[...await sql`
+          select count(distinct email) as count from aap2_researchers
+        `][0].count.toLocaleString()}
+        <!-- $ -->
+      </span> /
+      ${[...await sql`
+        select count(distinct researcher_id) as count
+        from aap2_project_by_researchers
+        where project_id in (
+            select project_id
+            from aap2_projects
+            where selected
+          )
+          and position is null or position != 'thésard'
+        group by all
+        `][0].count.toLocaleString()}
       <!-- $ -->
     </span>
   </div>
@@ -853,7 +882,7 @@ group by siren
 
 <!-- ### aap2_selected_institutions_count -->
 
-```sql id=aap2_selected_institutions_count
+```sql id=aap2_selected_institutions_count display
 with selected_institutions as (
   select
     institution_id,

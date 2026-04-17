@@ -7,7 +7,6 @@ select distinct
   unnest(apply(cnus, x -> if(x::INT < 10, '0' || x::INT, x)))::VARCHAR as cnu,
 from (
   select
-    -- "TITRE_COURT" as project_id,
     unnest(
       [
         "email-0"::VARCHAR,
