@@ -3,77 +3,43 @@ import logging
 from enum import StrEnum, auto
 from stanza import DownloadMethod
 import stanza
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import wordnet
-from nltk import download, word_tokenize, pos_tag
 
 
-def get_wordnet_pos(tag):
-    if tag.startswith("J"):
-        return wordnet.ADJ
-    elif tag.startswith("V"):
-        return wordnet.VERB
-    elif tag.startswith("N"):
-        return wordnet.NOUN
-    elif tag.startswith("R"):
-        return wordnet.ADV
-    else:
-        return wordnet.NOUN
+def lemmatize_text(text: str, language: str = "eng") -> list[str]:
+    """Tokenize and lemmatize a text"""
+    logging.info("Using Stanza for lemmatization.")
+    nlp = stanza.Pipeline(
+        lang=language,
+        processors="tokenize,mwt,pos,lemma",
+        logging_level="WARN",
+        download_method=DownloadMethod.REUSE_RESOURCES,
+    )
+    doc = nlp(text)
+    return [
+        word.lemma
+        for t in doc.iter_tokens()  # type: ignore
+        for word in t.words
+        if word.upos != "PUNCT"
+    ]
 
 
 def lemmatize_words(words: list[str], language: str = "eng") -> list[str]:
     """Lemmatize a list of words"""
-    if language not in ["eng", "rus"]:
-        logging.info("Using Stanza for lemmatization.")
-        nlp = stanza.Pipeline(
-            lang=language,
-            processors="tokenize,pos,lemma",
-            tokenize_pretokenized=True,
-            logging_level="WARN",
-            download_method=DownloadMethod.REUSE_RESOURCES,
-        )
-        doc = nlp([[word] for word in words])
-        return [
-            word.lemma
-            for t in doc.iter_tokens()  # type: ignore
-            for word in t.words
-            if word.upos != "PUNCT"
-        ]
-    else:
-        pos_tags = []
-
-        try:
-            pos_tags = pos_tag(words, lang=language)
-        except LookupError:
-            download("averaged_perceptron_tagger_eng")
-            pos_tags = pos_tag(words, lang=language)
-        # logging.debug(f"pos_tags: {pos_tags}")
-        lemmatizer = WordNetLemmatizer()
-
-        try:
-            return [
-                lemmatizer.lemmatize(word, get_wordnet_pos(tag))
-                for word, tag in pos_tags
-            ]
-        except LookupError:
-            download("wordnet")
-            return [
-                lemmatizer.lemmatize(word, get_wordnet_pos(tag))
-                for word, tag in pos_tags
-            ]
-
-
-def tokenize_text(
-    text: str,
-) -> list[str]:
-    """Parse and tokenize a text file"""
-    tokens = []
-    try:
-        tokens = word_tokenize(text)
-    except LookupError:
-        download("punkt_tab")
-        tokens = word_tokenize(text)
-    return [token for token in tokens]
+    logging.info("Using Stanza for lemmatization.")
+    nlp = stanza.Pipeline(
+        lang=language,
+        processors="tokenize,mwt,pos,lemma",
+        tokenize_pretokenized=True,
+        logging_level="WARN",
+        download_method=DownloadMethod.REUSE_RESOURCES,
+    )
+    doc = nlp([[word] for word in words])
+    return [
+        word.lemma
+        for t in doc.iter_tokens()  # type: ignore
+        for word in t.words
+        if word.upos != "PUNCT"
+    ]
 
 
 def clean_and_count_words(
@@ -83,7 +49,7 @@ def clean_and_count_words(
     delimiter: str = ",",
 ) -> dict[str, int]:
     """Clean wordcount data by:
-    1. Lemmatizing words using nltk.stem.WordNetLemmatizer
+    1. Tokenization and lemmatization of words using Stanza
     2. Mapping words to lower case
     3. removing digits
     4. removing all non-alphabetic characters
