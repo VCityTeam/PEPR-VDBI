@@ -2,7 +2,7 @@ import MarkdownItFootnote from 'markdown-it-footnote'
 
 // See https://observablehq.com/framework/config for documentation.
 export default {
-  markdownIt: (md) => md.use(MarkdownItFootnote),
+  markdownIt: (md: any) => md.use(MarkdownItFootnote),
   // The project’s title; used in the sidebar and webpage titles.
   title: 'VDBI Dashboards',
   // theme: ['light', 'dashboard'],
@@ -55,6 +55,10 @@ export default {
         {
           name: 'Chord diagram generator',
           path: 'pages/tools/chord-diagram',
+        },
+        {
+          name: 'Gantt chart generator',
+          path: 'pages/tools/gantt',
         },
         {
           name: 'Plot generator',
