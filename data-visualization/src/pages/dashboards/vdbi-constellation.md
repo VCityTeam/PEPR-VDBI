@@ -1,20 +1,10 @@
----
-style: /css/vdbi-page.css
----
+# Constellation PEPR VDBI
 
 ```js
 import { Graph } from '/components/graph.js'
-```
-
-```js
 import { circleLegend } from '/components/legend.js'
-```
-
-```js
 import { downloadSVGButton, downloadJSONButton } from '/components/utilities.js'
 ```
-
-# Constellation PEPR VDBI
 
 ```js
 const color_filter = view(
@@ -44,13 +34,14 @@ const search_links = view(
         width: width,
         height: width,
         color: color_scale,
-        fontSize: 3,
-        r: 5,
-        nodeLabelOffset: -1,
-        legend: circleLegend([...mural_color_scale.values()], {
+        fontSize: () => 3,
+        r: () => 5,
+        nodeLabelOffset: () => -1,
+        legend: () => circleLegend([...mural_color_scale.values()], {
           keyMap: (d) => d,
           valueMap: (d) => d,
           text: (d) => d,
+          radius: 7,
           color: color_scale,
           backgroundColor: "black",
           backgroundStroke: "black",

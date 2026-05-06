@@ -602,6 +602,7 @@ export class Graph {
   createSimulation = () =>
     d3
       .forceSimulation(this.nodes)
+      .force('charge', d3.forceManyBody().strength(this.chargeStrength))
       .force('link', d3.forceLink(this.links).id(this.keyMap))
       .force(
         'collide',
