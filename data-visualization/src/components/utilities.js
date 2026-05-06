@@ -409,7 +409,7 @@ export function downloadTableButton(
  */
 export function downloadJSONButton(
   callback,
-  { label = 'Download', filename = 'download.json' } = {},
+  { label = 'Download (.json)', filename = 'download.json' } = {},
 ) {
   return button(label, {
     value: null,
