@@ -358,6 +358,40 @@ import { downloadTableButton } from '/components/utilities.js'
 </div>
 
 <div class="card">
+  <h2>Researcher genders</h2>
+  ${Plot.plot({
+    x: { label: "# de chercheurs" },
+    y: { label: "Genre" },
+    color: { legend: true },
+    marks: [
+      Plot.barX(
+        researchers_by_gender,
+        Plot.stackX({ x: "count", fill: "gender", tip: true }),
+      ),
+      Plot.textX(
+        researchers_by_gender,
+        Plot.stackX({
+          x: "count",
+          text: "count",
+        }),
+      ),
+    ],
+  })}
+  <!-- $ -->
+</div>
+
+```sql id=researchers_by_gender display
+select
+  gender,
+  count(distinct id) as count
+from aap1_researchers
+left join aap1_projects
+  on aap1_projects.acronyme in aap1_researchers.project
+where financed
+group by gender
+```
+
+<div class="card">
   <h2>Researchers by keyword</h2>
   </br>
   ${aap1_researcher_by_keywords_search_input}

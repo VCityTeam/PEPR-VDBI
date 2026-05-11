@@ -1030,6 +1030,10 @@ const lab_by_aap_status = page.lab_by_aap_status(phase_1_data)
 ```
 
 ```js
+display(lab_by_aap_status)
+```
+
+```js
 const erc_by_aap_status = page.erc_by_aap_status(lab_by_aap_status)
 
 const erc_aap_dynamics = page.erc_by_aap_status_graph(erc_by_aap_status)

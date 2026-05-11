@@ -62,7 +62,7 @@ ${Inputs.table(selected_dataset)}
 
 ```js
 const phase_1_data = await FileAttachment('/data/phase1-workbook.json').json()
-
+phase_1_data.projects = phase_1_data.projects.filter((d) => d.financed)
 const projects = phase_1_data.projects.map((d) => d.acronyme)
 ```
 

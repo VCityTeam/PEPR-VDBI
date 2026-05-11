@@ -35,15 +35,11 @@ import {
 </div>
 
 ```js
-const workbook = FileAttachment(
-  '/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
-).xlsx()
-```
-
-```js
-const phase_1_data = FileAttachment(
+const workbook = await FileAttachment(
   '/data/phase1-workbook.json',
-).projects.filter((d) => d.financed)
+).json()
+
+const phase_1_data = workbook.projects.filter((d) => d.financed)
 
 let phase_1_partner_links = [
   // {

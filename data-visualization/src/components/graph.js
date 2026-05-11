@@ -290,7 +290,6 @@ export class Graph {
    *  }
    * @param {object} options - configuration options for the graph
    * @param {string} options.id - the id of the graph SVG element
-   * @param {boolean} options.performanceMode - whether to use performance mode for large datasets
    * @param {number} options.width - canvas width
    * @param {number} options.height - canvas height
    * @param {number[]} options.viewBox - viewBox for the SVG canvas
@@ -327,7 +326,6 @@ export class Graph {
     { nodes = [], links = [] },
     {
       id = 'd3_graph_' + Math.random().toString(36).substring(7),
-      performanceMode = false,
       width = 500,
       height = 500,
       viewBox = [-width / 2, -height / 2, width, height],
@@ -358,7 +356,7 @@ export class Graph {
       nodeLabelOpacity = 0.1,
       linkLabelOpacity = 0.1,
       highlightOpacity = 0.7,
-      nodeLabelXOffset = (d) => r(d) + 1.5,
+      nodeLabelXOffset = (d) => r(d) * 1.5,
       legend = () =>
         circleLegend(
           [
@@ -387,7 +385,6 @@ export class Graph {
     this.nodes = [...nodes].map((d) => ({ ...d }))
     this.links = [...links].map((d) => ({ ...d }))
     this.id = id
-    this.performanceMode = performanceMode
     this.width = width
     this.height = height
     this.viewBox = viewBox
@@ -743,28 +740,28 @@ export class Graph {
       )
       connectedLinks.classed('highlight', true)
       this.getLinkLabelGroup().style('opacity', 0.5)
-      if (!this.performanceMode) {
-        this.getLinkLabels().classed(
-          'secondary',
-          ({ source, target }) => datum === target || datum === source,
-        )
-        this.getLinkLabels().text((d) => this.relationMap(d))
-      }
+      // if (!this.performanceMode) {
+      this.getLinkLabels().classed(
+        'secondary',
+        ({ source, target }) => datum === target || datum === source,
+      )
+      this.getLinkLabels().text((d) => this.relationMap(d))
+      // }
 
       this.getNodeLabelGroup().style('opacity', 1)
       connectedLinks.each((link) => {
-        if (!this.performanceMode) {
-          this.getNodes()
-            .filter((d) => d === link.source || d === link.target)
-            .classed('highlight', true)
-          this.getNodeLabels()
-            .filter((d) => d === link.source || d === link.target)
-            .classed('secondary', true)
-        } else {
-          this.getNodes()
-            .find((d) => d === link.source)
-            .classed('highlight', true)
-        }
+        // if (!this.performanceMode) {
+        this.getNodes()
+          .filter((d) => d === link.source || d === link.target)
+          .classed('highlight', true)
+        this.getNodeLabels()
+          .filter((d) => d === link.source || d === link.target)
+          .classed('secondary', true)
+        // } else {
+        //   this.getNodes()
+        //     .find((d) => d === link.source)
+        //     .classed('highlight', true)
+        // }
       })
 
       if (this.color.domain) {

@@ -1,6 +1,7 @@
 import logging
 import sys
 import csv
+from time import sleep
 from utilities.io_utils import initDefaultLogger
 from geopy.geocoders import Nominatim
 
@@ -24,7 +25,7 @@ def main():
     # query Nominatim api using partner names and aggregate data
     geolocator = Nominatim(
         user_agent="https://github.com/VCityTeam/PEPR-VDBI",
-        timeout=10,  # type: ignore
+        timeout=30,  # type: ignore
     )
     for row in phase1_partner_data[1:]:
         project_name = row[0].strip()
@@ -39,7 +40,7 @@ def main():
             continue
 
         # sleep to avoid rate limiting
-        sleep(0.5)
+        sleep(2)
 
         terrain_geodata = geolocator.geocode(terrain)
         logging.debug(f"terrain_geodata from nominatim: {terrain_geodata}")

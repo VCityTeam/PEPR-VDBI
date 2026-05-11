@@ -655,57 +655,6 @@ leurs informations sont mal renseignées ou manquantes. Voir la section
     ))}
     <!-- $ -->
   </div>
-  <!-- AAP2 all proposals -->
-  <div class="card grid-rowspan-3">
-    ${aap2_selected_universities_sort_input}
-    <!-- $ -->
-    <h2>AAP 2 institutions proposés par nombre d'occurences</h2>
-    ${resize((width, height) => overview.partnerCountPlotY(
-      aap2_selected_institutions_count,
-      {
-        width,
-        height: height - 50,
-        limit: 100,
-        y_label: "Institution (libelle / commune(s))",
-        sort_value: aap2_selected_universities_sort,
-      }
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card grid-rowspan-3">
-    ${aap2_selected_laboratories_sort_input}
-    <!-- $ -->
-    <h2>AAP 2 unités de recherche proposés par nombre d'occurences</h2>
-    ${resize((width, height) => overview.partnerCountPlotY(
-      aap2_selected_laboratories_count,
-      {
-        width,
-        height: height - 50,
-        limit: 100,
-        marginLeft: 170,
-        lineWidth: 15,
-        y_label: "Unité (libelle / commune(s))",
-        sort_value: aap2_selected_laboratories_sort,
-      }
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card grid-rowspan-3">
-    ${aap2_selected_partners_sort_input}
-    <!-- $ -->
-    <h2>AAP 2 partnaires socioéconomiques proposés par nombre d'occurences</h2>
-    ${resize((width, height) => overview.partnerCountPlotY(
-      aap2_selected_partners_count,
-      {
-        width,
-        height: height - 50,
-        limit: 100,
-        y_label: "Partnaire (libelle / commune(s))",
-        sort_value: aap2_selected_partners_sort,
-      }
-    ))}
-    <!-- $ -->
-  </div>
 </div>
 
 ```js

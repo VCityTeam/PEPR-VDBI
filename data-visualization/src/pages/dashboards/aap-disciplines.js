@@ -691,7 +691,6 @@ export const keyword_plot = (
   })
 
 export function formatDomainPercents(label, data) {
-  // debugger;
   const getFromMapOrZero = (map, value) => (map.has(value) ? map.get(value) : 0)
 
   const discipline_erc_count_map = new Map(data.discipline_erc_count)
