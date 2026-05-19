@@ -64,10 +64,10 @@ import { downloadTableButton } from '/components/utilities.js'
   from aap1_projects
 ) union (
   select
-    acronyme,
+    project_id as acronyme,
     true as present,
     null as auditioned,
-    null as financed,
+    selected as financed,
     budget,
     supplementary_budget,
     null as grade,
@@ -83,9 +83,13 @@ import { downloadTableButton } from '/components/utilities.js'
 ```sql
 (
   select
-    id,
+    numero_national_de_structure as id,
+    source_label,
     -- umr,
-    lab as labels,
+    label as labels,
+    libelle,
+    sigle,
+    type_de_structure,
     -- name,
     -- institution,
     -- domain_erc,
@@ -93,9 +97,13 @@ import { downloadTableButton } from '/components/utilities.js'
   from aap1_laboratories
 ) union (
   select
-    id,
+    numero_national_de_structure as id,
+    source_label,
     -- null as umr,
     labels,
+    libelle,
+    sigle,
+    type_de_structure,
     -- null as name,
   from aap2_laboratories
 )
@@ -130,13 +138,15 @@ import { downloadTableButton } from '/components/utilities.js'
 ```sql
 (
   select
-    null as id,
-    name as labels,
+    siret as id,
+    label as labels,
+    nature_juridique,
   from aap1_institutions
 ) union (
   select
-    id,
+    institution_id as id,
     labels,
+    nature_juridique,
   from aap2_institutions
 )
 ```
@@ -146,15 +156,17 @@ import { downloadTableButton } from '/components/utilities.js'
 ```sql
 (
   select
-    null as id,
+    siret as id,
     label as labels,
     null as activities,
+    nature_juridique,
   from aap1_socioeconomic_partners
 ) union (
   select
-    id,
+    partner_id as id,
     labels,
     activities,
+    nature_juridique,
   from aap2_socioeconomic_partners
 )
 ```
@@ -181,7 +193,7 @@ import { downloadTableButton } from '/components/utilities.js'
   from aap1_project_by_keyword
 ) union (
   select
-    acronyme,
+    project_id as acronyme,
     keyword,
   from aap2_project_by_keyword
 )
@@ -197,7 +209,7 @@ import { downloadTableButton } from '/components/utilities.js'
   from aap1_project_by_institutions
 ) union (
   select
-    project,
+    project_id as project,
     institution_id as institution
   from aap2_project_by_institutions
 )
@@ -213,7 +225,7 @@ import { downloadTableButton } from '/components/utilities.js'
   from aap1_project_by_laboratories
 ) union (
   select
-    project,
+    project_id as project,
     unit_id as lab
   from aap2_project_by_laboratories
 )
@@ -229,7 +241,7 @@ import { downloadTableButton } from '/components/utilities.js'
   from aap1_project_by_socioeconomic_partners
 ) union (
   select
-    project,
+    project_id as project,
     partner_id as partner
   from aap2_project_by_socioeconomic_partners
 )

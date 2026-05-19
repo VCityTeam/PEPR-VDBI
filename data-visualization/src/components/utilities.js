@@ -612,3 +612,19 @@ export function writeToFile(
   a.remove()
   window.URL.revokeObjectURL(url)
 }
+
+export const formTemplate = (inputs, columns = 2) =>
+  html`<div class="styled">${Object.values(inputs)}</div>
+    <style>
+      div.styled {
+        text-align: left;
+        column-count: ${columns};
+      }
+      div.styled label {
+        font-weight: bold;
+        line-height: 200%;
+      }
+      div.styled label:not(div > label):after {
+        content: ':';
+      }
+    </style>`

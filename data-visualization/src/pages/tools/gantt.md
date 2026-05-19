@@ -6,7 +6,11 @@ https://observablehq.com/@observablehq/build-your-own-gantt-chart
 -->
 
 ```js
-import { downloadPNGButton, downloadJSONButton } from '/components/utilities.js'
+import {
+  downloadPNGButton,
+  downloadJSONButton,
+  formTemplate,
+} from '/components/utilities.js'
 ```
 
 To get started, upload a JSON file containing the gantt tasks and color settings
@@ -96,7 +100,7 @@ const settings = view(
         value: 'hide',
       }),
     },
-    { template: form_template },
+    { template: formTemplate },
   ),
 )
 ```
@@ -149,7 +153,7 @@ const new_task = view(
       }),
       description: Inputs.text({ value: undefined, label: 'Description' }),
     },
-    { template: form_template },
+    { template: formTemplate },
   ),
 )
 ```
@@ -173,7 +177,7 @@ const new_group = view(
       }),
       color: Inputs.color({ value: undefined, label: 'Group color' }),
     },
-    { template: form_template },
+    { template: formTemplate },
   ),
 )
 ```
@@ -217,22 +221,6 @@ const color_list = domainByGroup.map((d) => colorMap.get(d))
 const titleFormat = (d) =>
   `Team: ${d.group}\nTask: ${d.task}\nDescription: ${d.description}\n` +
   `Start: ${d.startDate}\nEnd: ${d.endDate}`
-
-const form_template = (inputs) =>
-  html`<div class="styled">${Object.values(inputs)}</div>
-    <style>
-      div.styled {
-        text-align: left;
-        column-count: 2;
-      }
-      div.styled label {
-        font-weight: bold;
-        line-height: 200%;
-      }
-      div.styled label:not(div > label):after {
-        content: ':';
-      }
-    </style>`
 ```
 
 ```js
