@@ -51,6 +51,7 @@ sql:
 import {
   downloadPNGButton,
   downloadTableButton,
+  formTemplate,
 } from '../../components/utilities.js'
 import * as overview from './aap-overview.js'
 import * as disciplines from './aap-disciplines.js'
@@ -96,7 +97,7 @@ import {
     </span>
   </div>
   <div class="card">
-    <h2>Nombre d'intitutions AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
+    <h2>Nombre d'institutions AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
@@ -192,7 +193,7 @@ import {
     </span>
   </div>
   <div class="card">
-    <h2>Nombre d'intitutions AAP 2 <br/><span class="muted">(Soumis / Proposés)</span></h2>
+    <h2>Nombre d'institutions AAP 2 <br/><span class="muted">(Soumis / Proposés)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
@@ -1826,18 +1827,80 @@ order by count desc
 
 ## Chercheurs
 
-<div class="grid grid-cols-2">
+```sql
+select
+  count(distinct researcher_id) as count
+from aap2_project_by_researchers
+where project_id in (
+    select project_id
+    from aap2_projects
+    where selected
+  )
+  and position is null or position != 'thésard'
+group by all
+```
+
+```sql
+select
+  count(distinct researcher_id) as count
+from aap2_researchers
+left join aap2_project_by_researchers
+  on aap2_researchers.email = aap2_project_by_researchers.researcher_id
+left join aap2_projects
+  on aap2_project_by_researchers.project_id = aap2_projects.project_id
+where selected and (position is null or position != 'thésard')
+group by all
+```
+
+```sql
+select project_id
+from aap2_projects
+where selected
+```
+
+```sql
+select
+  researcher_id,
+  list_distinct(list(project_id)) as projects
+from aap2_project_by_researchers
+where project_id in (
+    select project_id
+    from aap2_projects
+    where selected
+  )
+  and position is null or position != 'thésard'
+group by all
+```
+
+```sql
+select
+  researcher_id,
+  list_distinct(list(aap2_projects.project_id)) as projects
+from aap2_researchers
+left join aap2_project_by_researchers
+  on aap2_researchers.email = aap2_project_by_researchers.researcher_id
+left join aap2_projects
+  on aap2_project_by_researchers.project_id = aap2_projects.project_id
+where selected
+group by all
+```
+
+<div class="grid">
   <div class="card">
     <h2>Tous les chercheurs</h2>
+    <br/>
+    ${researcher_search_filter_input}
+    <!-- $ -->
     <br/>
     ${researcher_search_input}
     <!-- $ -->
     <br/>
     ${resize((width) => Inputs.table(
-      researcher_search,
+      [...researcher_search],
       {
         width: width,
         layout: 'auto',
+        rows: 40,
       }
     ))}
     <!-- $ -->
@@ -1845,75 +1908,45 @@ order by count desc
     ${downloadTableButton(() => researcher_search)}
     <!-- $ -->
   </div>
-  <div class="card">
-    <h2>Tous les chercheurs des projets proposées</h2>
-    <br/>
-    ${resize((width) => Inputs.table(
-      sql`
-        select
-          email,
-          list(distinct firstname) as firstnames,
-          list(distinct lastname) as lastnames,
-          list(distinct orcid) as orcids,
-          list(distinct idhal) as idhals,
-          list(distinct idref) as idrefs,
-          list(distinct aap2_projects.project_id) as projects,
-        from aap2_researchers
-        join aap2_project_by_researchers on aap2_researchers.email
-          = aap2_project_by_researchers.researcher_id
-        join aap2_projects on aap2_project_by_researchers.project_id = aap2_projects.project_id
-        where selected
-        group by all`,
-      {
-        width: width,
-        layout: 'auto',
-        rows: 15,
-      }
-    ))}
-    <!-- $ -->
-  </div>
 </div>
 
 ```js
-const researcher_search_input = Inputs.search([
-  ...(await sql`
-    select
-      email,
-      list(distinct project_id) as projects,
-    from aap2_researchers
-    join aap2_project_by_researchers on aap2_researchers.email
-      = aap2_project_by_researchers.researcher_id
-    group by all
-  `),
-])
-
+display(researcher_search_filter)
+const researcher_search_input = Inputs.search(
+  [...aap2_researchers_by_project].filter((d) =>
+    researcher_search_filter.includes('only_selected_projects')
+      ? d.selected.includes(true)
+      : true,
+  ),
+)
 const researcher_search = Generators.input(researcher_search_input)
 ```
 
-### Chercheurs par projet
-
-<div class="card">
-  ${researcher_by_project_search_input}
-  <!-- $ -->
-  <br/>
-  ${resize((width) => Inputs.table(
-    researcher_by_project_search,
-    {
-      layout: "auto",
-      width: width,
-    }
-  ))}
-  <!-- $ -->
-</div>
-
 ```js
-const researcher_by_project_search_input = Inputs.search([
-  ...(await sql`select * from aap2_project_by_researchers`),
+const researcher_search_filter_input = Inputs.checkbox([
+  'only_selected_projects',
 ])
-
-const researcher_by_project_search = Generators.input(
-  researcher_by_project_search_input,
+const researcher_search_filter = Generators.input(
+  researcher_search_filter_input,
 )
+```
+
+```sql id=aap2_researchers_by_project
+select
+    email,
+    list_distinct(list(firstname)) as firstnames,
+    list_distinct(list(lastname)) as lastnames,
+    list_distinct(list(aap2_projects.project_id)) as projects,
+    list_distinct(list(aap2_projects.selected)) as selected,
+    list_distinct(list(orcid)) as orcids,
+    list_distinct(list(idhal)) as idhals,
+    list_distinct(list(idref)) as idrefs,
+  from aap2_researchers
+  left join aap2_project_by_researchers
+    on aap2_researchers.email = aap2_project_by_researchers.researcher_id
+  left join aap2_projects
+    on aap2_project_by_researchers.project_id = aap2_projects.project_id
+  group by all
 ```
 
 ### Les nouveaux chercheurs
@@ -2013,7 +2046,7 @@ select
   list_distinct(list(position)) as positions,
   [] as projects,
 from aap2_researchers
-join aap2_project_by_researchers 
+join aap2_project_by_researchers
   on aap2_researchers.email = aap2_project_by_researchers.researcher_id
 where
   lower(lastname || ' ' || firstname) in (
@@ -2113,7 +2146,7 @@ select
   list_distinct(list(position)) as positions,
   [] as projects,
 from aap2_researchers
-join aap2_project_by_researchers 
+join aap2_project_by_researchers
   on aap2_researchers.email = aap2_project_by_researchers.researcher_id
 where
   lower(lastname || ' ' || firstname) in (

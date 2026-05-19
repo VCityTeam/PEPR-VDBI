@@ -2,12 +2,11 @@ import { DuckDBInstance } from '@duckdb/node-api'
 import { tsvFormat } from 'd3-dsv'
 
 export const query = `
-  select distinct project_id, partner_id from (
+  select distinct project_id, partner_id, prospective from (
     select
     "TITRE_COURT" as project_id,
       unnest(
         apply([
-          "SIRET le cas échéant 1"::VARCHAR,
           "SIRET le cas échéant 1"::VARCHAR,
           "SIRET le cas échéant 2"::VARCHAR,
           "SIRET le cas échéant 3"::VARCHAR,
@@ -30,7 +29,6 @@ export const query = `
       unnest(
         apply([
           "Nom 1"::VARCHAR,
-          "Nom 1"::VARCHAR,
           "Nom 2"::VARCHAR,
           "Nom 3"::VARCHAR,
           "Nom 4"::VARCHAR,
@@ -52,7 +50,6 @@ export const query = `
       unnest(
         apply([
           "Activité  secteurs dactivité 1"::VARCHAR,
-          "Activité  secteurs dactivité 1"::VARCHAR,
           "Activité  secteurs dactivité 2"::VARCHAR,
           "Activité  secteurs dactivité 3"::VARCHAR,
           "Activité  secteurs dactivité 4"::VARCHAR,
@@ -71,6 +68,26 @@ export const query = `
         ],
         x -> trim(regexp_replace(x, '[\n\r]', ' ', 'g')))
       ) as activity,
+      unnest(
+        [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+        ]
+      ) as prospective,
     from 'src/data/private/AAP2_template_export.tsv'
     left join 'src/data/private/AAP2_submission_metadata.tsv'
     on AAP2_template_export.filename ^@ AAP2_submission_metadata.DOCID::VARCHAR

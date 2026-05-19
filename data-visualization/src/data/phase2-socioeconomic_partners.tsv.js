@@ -12,7 +12,6 @@ export const all_partners_query = `
       unnest(
         apply([
           "SIRET le cas échéant 1"::VARCHAR,
-          "SIRET le cas échéant 1"::VARCHAR,
           "SIRET le cas échéant 2"::VARCHAR,
           "SIRET le cas échéant 3"::VARCHAR,
           "SIRET le cas échéant 4"::VARCHAR,
@@ -35,7 +34,6 @@ export const all_partners_query = `
         apply(
           [
             "Nom 1"::VARCHAR,
-            "Nom 1"::VARCHAR,
             "Nom 2"::VARCHAR,
             "Nom 3"::VARCHAR,
             "Nom 4"::VARCHAR,
@@ -57,7 +55,6 @@ export const all_partners_query = `
       unnest(
         apply(
           [
-            "Activité  secteurs dactivité 1"::VARCHAR,
             "Activité  secteurs dactivité 1"::VARCHAR,
             "Activité  secteurs dactivité 2"::VARCHAR,
             "Activité  secteurs dactivité 3"::VARCHAR,

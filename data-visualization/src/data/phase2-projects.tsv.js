@@ -6,7 +6,7 @@ const query = `
     DOCID,
     STATUT,
     TYPDOC,
-    type_projet,
+    -- type_projet,
     AAP2_submission_metadata."TITRE_COURT" as project_id,
     case 
       when "Sélectionné (O/N)" = 'O'
