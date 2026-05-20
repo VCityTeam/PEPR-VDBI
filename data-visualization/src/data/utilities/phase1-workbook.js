@@ -47,6 +47,23 @@ export function getResearcherSheet(workbook) {
 }
 
 /**
+ * Extract data from the adresses mail sheet
+ *
+ * @param {Workbook} workbook - The workbook to extract
+ * @returns {Object[]} A dictionary of the extracted sheet, each column header is used a key.
+ *    Columns headers with identical information are grouped into the same key (e.g., "lab1" and "lab2" are grouped into "lab").
+ */
+export function getMailSheet(workbook) {
+  mapRowToColumnKeys(workbook, 3)
+  return rowsToObjectArray(workbook.worksheets[3].getRows(2, 1086))
+  // return workbook.sheet(workbook.worksheets[1], {
+  //   // range: 'A1:AA298',
+  //   range: 'A1:AE1087',
+  //   headers: true,
+  // })
+}
+
+/**
  * Extract data from the liste des labo sheet
  *
  * @param {Workbook} workbook - The workbook to extract
@@ -239,21 +256,23 @@ export function resolveGeneralEntities(
 }
 
 /**
- * Format known entities from the Liste chercheurs sheet
+ * Format known entities from the Liste chercheurs and adresses mail sheet
  *
- * @param {Object[]} sheet - Extracted sheet data
+ * @param {Object[]} researcher_sheet - Extracted researcher sheet data
+ * @param {Object[]} mail_sheet - Extracted mail sheet data
  * @param {boolean} pseudoanonymize - Anonymize data or not
- * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
+ * @param {Map} pseudoanonymousDict - A preset dictionary of anomymized entry mappings
  * @returns {Object[]} Formatted sheet data
  */
 export function resolveResearcherEntities(
-  sheet,
+  researcher_sheet,
+  mail_sheet,
   anonymize = true,
   pseudoanonymousDict = new Map(),
 ) {
   return map(
     rollup(
-      sheet,
+      researcher_sheet,
       (D) => {
         const researcher = {
           id:
@@ -263,6 +282,15 @@ export function resolveResearcherEntities(
           fullname: cleanDatum(D[0]['NOM et Prénom']),
           lastname: cleanDatum(D[0]['NOM']),
           firstname: cleanDatum(D[0]['Prénom']),
+          email: cleanDatum(
+            mail_sheet.find(
+              (email) =>
+                `${cleanDatum(email['NOM'])} ${cleanDatum(email['Prénom'])}` ===
+                  cleanDatum(D[0]['NOM et Prénom']) ||
+                (cleanDatum(email['NOM']) === cleanDatum(D[0]['NOM']) &&
+                  cleanDatum(email['Prénom']) === cleanDatum(D[0]['Prénom'])),
+            )?.['adresse mail'],
+          ),
           gender: cleanDatum(D[0]['sexe']),
           keywords: D[0]['objets, thèmes, intérêts de recherche']
             ? D[0]['objets, thèmes, intérêts de recherche']
@@ -452,6 +480,7 @@ export function extractPhase1Workbook(
 
   const researchers = resolveResearcherEntities(
     getResearcherSheet(workbook),
+    getMailSheet(workbook),
     pseudoanonymize,
     pseudoanonymousDict,
   ).filter((researcher) =>

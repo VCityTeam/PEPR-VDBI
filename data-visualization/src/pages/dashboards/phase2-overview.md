@@ -10,6 +10,9 @@ sql:
   aap1_project_by_researchers: /data/phase1-project_by_researchers.tsv
   aap1_project_by_socioeconomic_partners: /data/phase1-project_by_socioeconomic_partners.tsv
   aap1_researchers: /data/phase1-researchers.tsv
+  aap1_all_partners: /data/private/partenaires_aap2023-partenaires.csv
+  aap1_all_projects_by_partners: /data/private/partenaires_aap2023-projet_par_partenaire.csv
+  co_researchers: /data/private/co-researchers.tsv
   aap1_researcher_by_keywords: /data/phase1-researcher_by_keywords.tsv
   aap1_laboratories: /data/phase1-laboratories.tsv
   # aap1_laboratories_by_domains_erc: /data/phase1-laboratories_by_domains_erc.tsv
@@ -79,7 +82,243 @@ import {
 
 ## Chiffres clés
 
+### All institutions
+
+Count: ${[...aap_all_institutions].length}
+
+```sql id=aap_all_institutions display
+with selected_institutions as (
+  select
+    institution_id,
+    list_distinct(list(project_id)) as projects,
+    count(*) as count,
+  from aap2_project_by_institutions
+  where project_id in (
+    select project_id from aap2_projects where selected
+  )
+  group by institution_id
+)
+
+select
+  id::VARCHAR as id,
+  first(label) as label,
+  list_distinct(flatten(list(projets))) as projets,
+  list(phase) as phase,
+from (
+  select
+    distinct "ID primaire".replace(',', '')[:10]::INT as id,
+    first(label) as label,
+    list_distinct(list(projet)) as projets,
+    '1' as phase,
+  from aap1_all_partners
+  left join aap1_all_projects_by_partners
+    on aap1_all_partners."label" = aap1_all_projects_by_partners."source_label"
+  where aap1_all_partners.type = 'ETABLISSEMENT'
+  group by all
+  union
+    select
+      siren::INT as id,
+      first(nom_complet) as label,
+      flatten(list(projects))::VARCHAR as projects,
+      '2' as phase,
+    from aap2_institutions
+    join selected_institutions
+      on aap2_institutions.institution_id::VARCHAR = selected_institutions.institution_id::VARCHAR
+    where siren is not null
+    group by siren
+)
+group by id
+```
+
+### All labs
+
+Count: ${[...aap_all_labs].length}
+
+```sql id=aap_all_labs display
+with selected_labs as (
+  select
+    unit_id,
+    list_distinct(list(project_id)) as projects,
+    count(*) as count,
+  from aap2_project_by_laboratories
+  where project_id in (
+    select project_id from aap2_projects where selected
+  )
+  group by unit_id
+)
+
+select
+  id,
+  first(label) as label,
+  list_distinct(flatten(list(projets))) as projets,
+  list(phase) as phase
+from (
+  select
+    distinct "ID primaire" as id,
+    first(label) as label,
+    list_distinct(list(projet)) as projets,
+    '1' as phase,
+  from aap1_all_partners
+  left join aap1_all_projects_by_partners
+    on aap1_all_partners."label" = aap1_all_projects_by_partners."source_label"
+  where aap1_all_partners.type = 'LABORATOIRE'
+  group by all
+  union
+    select
+      numero_national_de_structure::VARCHAR as id,
+      if(
+        length(list_distinct(list(sigle))) > 0,
+        list_distinct(list(sigle))[1],
+        first(libelle)
+      ) as label,
+      flatten(list(projects)) as projects,
+      '2' as phase,
+    from aap2_laboratories
+    join selected_labs
+      on aap2_laboratories.unit_id = selected_labs.unit_id
+    where numero_national_de_structure is not null
+    group by numero_national_de_structure
+)
+group by id
+```
+
+### All socioeconomic partners
+
+Count: ${[...aap_all_socioeconomic_partners].length}
+
+```sql id=aap_all_socioeconomic_partners display
+with selected_partners as (
+  select
+    partner_id,
+    list_distinct(list(project_id)) as projects,
+    count(*) as count,
+  from aap2_project_by_socioeconomic_partners
+  where project_id in (
+    select project_id from aap2_projects where selected
+  )
+  group by partner_id
+)
+
+select
+  id::VARCHAR as id,
+  first(label) as label,
+  list_distinct(flatten(list(projets))) as projets,
+  list(phase) as phase
+from (
+  select
+    distinct "ID primaire".replace(',', '')[:10]::INT as id,
+    list_distinct(list(label)) as label,
+    list_distinct(list(projet)) as projets,
+    '1' as phase,
+  from aap1_all_partners
+  left join aap1_all_projects_by_partners
+    on aap1_all_partners."label" = aap1_all_projects_by_partners."source_label"
+  where aap1_all_partners.type = 'SOCIOECONOMIQUE'
+  group by all
+  union
+    select
+      siren::INT as id,
+      list(nom_complet)[0] as label,
+      flatten(list(projects)) as projects,
+      '2' as phase,
+    from aap2_socioeconomic_partners
+    join selected_partners
+      on aap2_socioeconomic_partners.partner_id = selected_partners.partner_id
+    where siren is not null
+    group by siren
+)
+group by id
+```
+
+```sql
+
+
+
+```
+
 <div class="grid grid-cols-4" id="aap-key-numbers">
+  <!-- ALL projects -->
+  <div class="card">
+    <h2>Nombre de projets totales<br/><span class="muted">(Soumis / Proposés)</span></h2>
+    <span class="big">
+      <span class="muted">80</span> / ${14 + 8} </span>
+  </div>
+  <div class="card">
+    <h2>Nombre d'institutions totales<br/><span class="muted">(Soumis / Proposés)</span></h2>
+    <span class="big">
+      <span class="muted">
+        ${[...await sql`
+          select count(distinct siren) as count from (
+            select siren from aap1_institutions
+            union
+            select siren from aap2_institutions
+          )
+        `][0].count.toLocaleString()}
+        <!-- $ -->
+      </span> /
+      ${new Set([
+        ...aap1_selected_institutions_count,
+        ...aap2_selected_institutions_count,
+      ].map((d) => d.id))
+        .size.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>Nombre d'unités totales<br/><span class="muted">(Soumis / Proposés)</span></h2>
+    <span class="big">
+      <span class="muted">
+        ${[...await sql`
+          select count(*) as count from aap2_laboratories
+        `][0].count.toLocaleString()}
+        <!-- $ -->
+      </span> /
+      ${[...aap2_selected_laboratories_count].length.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>
+      Nombre de partenaires socioéconomiques totales
+      <br/><span class="muted">(Soumis / Proposés)</span>
+    </h2>
+    <span class="big">
+      <span class="muted">
+        ${[...await sql`
+          select count(*) as count from aap2_socioeconomic_partners
+        `][0].count.toLocaleString()}
+        <!-- $ -->
+      </span> /
+      ${[...aap2_selected_partners_count].length.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
+  <div class="card">
+    <h2>
+      Nombre de chercheurs totales
+      <br/><span class="muted">(Soumis / Proposés)</span>
+    </h2>
+    <span class="big">
+      <span class="muted">
+        ${[...await sql`
+          select count(distinct email) as count from aap2_researchers
+        `][0].count.toLocaleString()}
+        <!-- $ -->
+      </span> /
+      ${[...await sql`
+        select count(distinct researcher_id) as count
+        from aap2_project_by_researchers
+        where project_id in (
+            select project_id
+            from aap2_projects
+            where selected
+          )
+          and (position is null or position != 'thésard')
+        group by all
+        `][0].count.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
   <!-- AAP1 -->
   <div class="card">
     <h2>Nombre de projets AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
@@ -174,6 +413,22 @@ import {
       <!-- $ -->
     </span>
   </div>
+  <div class="card">
+    <h2>
+      Nombre de chercheurs AAP 1
+      <br/><span class="muted">(Soumis / Lauréats)</span>
+    </h2>
+    <span class="big">
+      <span class="muted">
+        XXX
+        <!-- $ -->
+      </span> /
+      ${[...all_researchers_by_project]
+        .filter((d) => d.phase.includes('1'))
+        .length.toLocaleString()}
+      <!-- $ -->
+    </span>
+  </div>
   <!-- AAP2 -->
   <div class="card">
     <h2>Nombre de projets AAP 2 <br/><span class="muted">(Soumis / Proposés)</span></h2>
@@ -254,7 +509,7 @@ import {
             from aap2_projects
             where selected
           )
-          and position is null or position != 'thésard'
+          and (position is null or position != 'thésard')
         group by all
         `][0].count.toLocaleString()}
       <!-- $ -->
@@ -832,7 +1087,7 @@ group by siren
 
 <!-- ### aap2_selected_institutions_count -->
 
-```sql id=aap2_selected_institutions_count display
+```sql id=aap2_selected_institutions_count
 with selected_institutions as (
   select
     institution_id,
@@ -972,474 +1227,6 @@ const aap2_selected_partners_x_sort_input = overview.xSortSelect()
 const aap2_selected_partners_x_sort = Generators.input(
   aap2_selected_partners_x_sort_input,
 )
-```
-
-### Les nouveaux partenaires
-
-Les partenaires des projets de l'AAP 2 qui n'ont pas été soumises à l'AAP 1
-
-```js
-const partner_aap_comparison_table_config = {
-  width: {
-    SIRET: 120,
-    RNSR: 90,
-    sigle: 80,
-  },
-}
-```
-
-<div class="grid grid-cols-3">
-  <div class="card">
-    <h2>Nombre de nouveaux institutions</h2>
-    <h3>
-      Les institutions partenaires des projets de l'AAP 2 qui n'ont pas
-      été soumises à l'AAP 1
-    </h3>
-    <span class="big">
-      ${[...aap2_new_institutions].length}
-      <!-- $ -->
-    </span>
-  </div>
-  <div class="card">
-    <h2>Nombre de nouveaux laboratoires</h2>
-    <h3>
-      Les laboratoires partenaires des projets de l'AAP 2 qui n'ont pas
-      été soumises à l'AAP 1
-    </h3>
-    <span class="big">
-      ${[...aap2_new_laboratories].length}
-      <!-- $ -->
-    </span>
-  </div>
-  <div class="card">
-    <h2>Nombre de nouveaux partenaires socio-économiques</h2>
-    <h3>
-      Les partenaires socio-économiques des projets de l'AAP 2 qui n'ont pas
-      été soumises à l'AAP 1
-    </h3>
-    <span class="big">
-      ${[...aap2_new_socioeconomic_partners].length}
-      <!-- $ -->
-    </span>
-  </div>
-</div>
-
-<div class="grid grid-cols-3">
-  <div class="card">
-    <h2>Liste des nouveaux institutions</h2>
-    <h3>
-      Les institutions partenaires des projets de l'AAP 2 qui n'ont pas
-      été soumises à l'AAP 1
-    </h3>
-    <br/>
-    ${resize((width) => Inputs.table(
-      aap2_new_institutions,
-      partner_aap_comparison_table_config
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Liste des nouveaux institutions</h2>
-    <h3>
-      Les laboratoires partenaires des projets de l'AAP 2 qui n'ont pas
-      été soumises à l'AAP 1
-    </h3>
-    <br/>
-    ${resize((width) => Inputs.table(
-      aap2_new_laboratories,
-      partner_aap_comparison_table_config
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Liste des nouveaux partenaires socio-économiques</h2>
-    <h3>
-      Les partenaires socio-économiques des projets de l'AAP 2 qui n'ont pas
-      été soumises à l'AAP 1
-    </h3>
-    <br/>
-    ${resize((width) => Inputs.table(
-      aap2_new_socioeconomic_partners,
-      partner_aap_comparison_table_config
-    ))}
-    <!-- $ -->
-  </div>
-</div>
-
-```sql id=aap2_new_institutions
-select
-  first(aap2_institutions.nom_complet) as nom_complet,
-  aap2_institutions.siret::VARCHAR as SIRET,
-  -- aap1_institutions.source as aap1_source,
-  -- aap2_institutions.source as aap2_source,
-from aap1_institutions
-right join aap2_institutions
-  on aap1_institutions.siret::VARCHAR = aap2_institutions.siret::VARCHAR
-where aap1_institutions.source is null and aap2_institutions.siret::VARCHAR != ''
-group by aap2_institutions.siret,
-  aap1_institutions.source, aap2_institutions.source
-```
-
-```sql id=aap2_new_laboratories
-select
-  first(aap2_laboratories.libelle) as libelle,
-  first(aap2_laboratories.sigle) as sigle,
-  aap2_laboratories.numero_national_de_structure as RNSR,
-  -- aap1_laboratories.source as aap1_source,
-  -- aap2_laboratories.source as aap2_source,
-from aap1_laboratories
-right join aap2_laboratories
-  on aap1_laboratories.numero_national_de_structure::VARCHAR
-    = aap2_laboratories.numero_national_de_structure::VARCHAR
-where aap1_laboratories.source is null
-  and aap2_laboratories.numero_national_de_structure::VARCHAR != ''
-group by aap2_laboratories.numero_national_de_structure,
-  aap1_laboratories.source, aap2_laboratories.source
-```
-
-```sql id=aap2_new_socioeconomic_partners
-select
-  first(aap2_socioeconomic_partners.nom_complet) as nom_complet,
-  aap2_socioeconomic_partners.siret::VARCHAR as SIRET,
-  -- aap1_socioeconomic_partners.source as aap1_source,
-  -- aap2_socioeconomic_partners.source as aap2_source,
-from aap1_socioeconomic_partners
-right join aap2_socioeconomic_partners
-  on aap1_socioeconomic_partners.siret::VARCHAR
-    = aap2_socioeconomic_partners.siret::VARCHAR
-where aap1_socioeconomic_partners.source is null
-  and aap2_socioeconomic_partners.siret::VARCHAR != ''
-group by aap2_socioeconomic_partners.siret,
-  aap1_socioeconomic_partners.source, aap2_socioeconomic_partners.source
-```
-
-### Les projets familiers
-
-Les partenaires des projets de l'AAP 2 qui ont été financées dans l'AAP 1
-
-<div class="grid grid-cols-3">
-  <div class="card">
-    <h2>Nombre de nouveaux institutions</h2>
-    <h3>
-      Les institutions partenaires des projets de l'AAP 2 qui ont été financées
-      dans l'AAP 1
-    </h3>
-    <span class="big">
-      ${[...aap2_old_institutions].length}
-      <!-- $ -->
-    </span>
-  </div>
-  <div class="card">
-    <h2>Nombre de nouveaux laboratoires</h2>
-    <h3>
-      Les laboratoires partenaires des projets de l'AAP 2 qui ont été financées
-      dans l'AAP 1
-    </h3>
-    <span class="big">
-      ${[...aap2_old_laboratories].length}
-      <!-- $ -->
-    </span>
-  </div>
-  <div class="card">
-    <h2>Nombre de nouveaux partenaires socio-économiques</h2>
-    <h3>
-      Les partenaires socio-économiques des projets de l'AAP 2 qui ont été financées
-      dans l'AAP 1
-    </h3>
-    <span class="big">
-      ${[...aap2_old_socioeconomic_partners].length}
-      <!-- $ -->
-    </span>
-  </div>
-</div>
-
-<div class="grid grid-cols-3">
-  <div class="card">
-    <h2>Liste des nouveaux institutions</h2>
-    <h3>
-      Les institutions partenaires des projets de l'AAP 2 qui ont été financées
-      dans l'AAP 1
-    </h3>
-    <br/>
-    ${resize((width) => Inputs.table(
-      aap2_old_institutions,
-      partner_aap_comparison_table_config
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Liste des nouveaux institutions</h2>
-    <h3>
-      Les laboratoires partenaires des projets de l'AAP 2 qui ont été financées
-      dans l'AAP 1
-    </h3>
-    <br/>
-    ${resize((width) => Inputs.table(
-      aap2_old_laboratories,
-      partner_aap_comparison_table_config
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Liste des nouveaux partenaires socio-économiques</h2>
-    <h3>
-      Les partenaires socio-économiques des projets de l'AAP 2 qui ont été financées
-      dans l'AAP 1
-    </h3>
-    <br/>
-    ${resize((width) => Inputs.table(
-      aap2_old_socioeconomic_partners,
-      partner_aap_comparison_table_config
-    ))}
-    <!-- $ -->
-  </div>
-</div>
-
-```sql id=aap2_old_institutions
-select
-  first(aap2_institutions.nom_complet) as nom_complet,
-  aap2_institutions.siret::VARCHAR as SIRET,
-  -- aap1_institutions.source as aap1_source,
-  -- aap2_institutions.source as aap2_source,
-from aap1_institutions
-right join aap2_institutions
-  on aap1_institutions.siret::VARCHAR = aap2_institutions.siret::VARCHAR
-where aap2_institutions.siret::VARCHAR != ''
-  and aap1_institutions.label in (
-    select distinct university from aap1_project_by_institutions
-    where project in (
-      select acronyme from aap1_projects where financed
-    )
-  )
-group by aap2_institutions.siret,
-  aap1_institutions.source, aap2_institutions.source
-```
-
-```sql id=aap2_old_laboratories
-select
-  first(aap2_laboratories.libelle) as libelle,
-  first(aap2_laboratories.sigle) as sigle,
-  aap2_laboratories.numero_national_de_structure as RNSR,
-  -- aap1_laboratories.source as aap1_source,
-  -- aap2_laboratories.source as aap2_source,
-from aap1_laboratories
-right join aap2_laboratories
-  on aap1_laboratories.numero_national_de_structure::VARCHAR
-    = aap2_laboratories.numero_national_de_structure::VARCHAR
-where aap2_laboratories.numero_national_de_structure::VARCHAR != ''
-  and aap1_laboratories.label in (
-    select distinct lab from aap1_project_by_laboratories
-    where project in (
-      select acronyme from aap1_projects where financed
-    )
-  )
-group by aap2_laboratories.numero_national_de_structure,
-  aap1_laboratories.source, aap2_laboratories.source
-```
-
-```sql id=aap2_old_socioeconomic_partners
-select
-  first(aap2_socioeconomic_partners.nom_complet) as nom_complet,
-  aap2_socioeconomic_partners.siret::VARCHAR as SIRET,
-  -- aap1_socioeconomic_partners.source as aap1_source,
-  -- aap2_socioeconomic_partners.source as aap2_source,
-from aap1_socioeconomic_partners
-right join aap2_socioeconomic_partners
-  on aap1_socioeconomic_partners.siret::VARCHAR
-    = aap2_socioeconomic_partners.siret::VARCHAR
-where aap2_socioeconomic_partners.siret::VARCHAR != ''
-  and aap1_socioeconomic_partners.label in (
-    select distinct partner from aap1_project_by_socioeconomic_partners
-    where project in (
-      select acronyme from aap1_projects where financed
-    )
-  )
-group by aap2_socioeconomic_partners.siret,
-  aap1_socioeconomic_partners.source, aap2_socioeconomic_partners.source
-```
-
-### Les projets pas retenues
-
-Les partenaires des projets de l'AAP 2 qui ont été soumises à l'AAP 1 mais pas financées
-
-<div class="grid grid-cols-3">
-  <div class="card">
-    <h2>Nombre de nouveaux institutions</h2>
-    <h3>
-      Les institutions partenaires des projets de l'AAP 2 qui ont été soumises
-      à l'AAP 1 mais pas financées
-    </h3>
-    <span class="big">
-      ${[...aap2_rejected_institutions].length}
-      <!-- $ -->
-    </span>
-  </div>
-  <div class="card">
-    <h2>Nombre de nouveaux laboratoires</h2>
-    <h3>
-      Les laboratoires partenaires des projets de l'AAP 2 qui ont été soumises
-      à l'AAP 1 mais pas financées
-    </h3>
-    <span class="big">
-      ${[...aap2_rejected_laboratories].length}
-      <!-- $ -->
-    </span>
-  </div>
-  <div class="card">
-    <h2>Nombre de nouveaux partenaires socio-économiques</h2>
-    <h3>
-      Les partenaires socio-économiques des projets de l'AAP 2 qui ont été soumises
-      à l'AAP 1 mais pas financées
-    </h3>
-    <span class="big">
-      ${[...aap2_rejected_socioeconomic_partners].length}
-      <!-- $ -->
-    </span>
-  </div>
-</div>
-
-<div class="grid grid-cols-3">
-  <div class="card">
-    <h2>Liste des nouveaux institutions</h2>
-    <h3>
-      Les institutions partenaires des projets de l'AAP 2 qui ont été soumises
-      à l'AAP 1 mais pas financées
-    </h3>
-    <br/>
-    ${resize((width) => Inputs.table(
-      aap2_rejected_institutions,
-      partner_aap_comparison_table_config
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Liste des nouveaux institutions</h2>
-    <h3>
-      Les laboratoires partenaires des projets de l'AAP 2 qui ont été soumises
-      à l'AAP 1 mais pas financées
-    </h3>
-    <br/>
-    ${resize((width) => Inputs.table(
-      aap2_rejected_laboratories,
-      partner_aap_comparison_table_config
-    ))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Liste des nouveaux partenaires socio-économiques</h2>
-    <h3>
-      Les partenaires socio-économiques des projets de l'AAP 2 qui ont été soumises
-      à l'AAP 1 mais pas financées
-    </h3>
-    <br/>
-    ${resize((width) => Inputs.table(
-      aap2_rejected_socioeconomic_partners,
-      partner_aap_comparison_table_config
-    ))}
-    <!-- $ -->
-  </div>
-</div>
-
-```sql id=aap2_rejected_institutions
-select
-  first(nom_complet) as nom_complet,
-  siret::VARCHAR as SIRET,
-from (
-  select
-    siret,
-    nom_complet,
-  from aap1_institutions
-  where siret::VARCHAR != ''
-    and label in (
-      select university
-      from aap1_project_by_institutions
-      group by university
-      having not (
-        list(project) &&
-        (
-          select list(acronyme)
-          from aap1_projects
-          where financed
-        )
-      )
-    )
-  union
-  select
-    siret,
-    nom_complet
-  from aap2_institutions
-  where siret::VARCHAR != ''
-)
-group by siret
-```
-
-```sql id=aap2_rejected_laboratories
-select
-  first(libelle) as libelle,
-  first(sigle) as sigle,
-  numero_national_de_structure as RNSR,
-from (
-  select
-    numero_national_de_structure,
-    libelle,
-    sigle,
-  from aap1_laboratories
-  where numero_national_de_structure::VARCHAR != ''
-    and label in (
-    select lab
-    from aap1_project_by_laboratories
-    group by lab
-    having not (
-      list(project) &&
-      (
-        select list(acronyme)
-        from aap1_projects
-        where financed
-      )
-    )
-  )
-  union
-  select
-    numero_national_de_structure,
-    libelle,
-    sigle,
-  from aap2_laboratories
-  where numero_national_de_structure::VARCHAR != ''
-)
-group by numero_national_de_structure
-```
-
-```sql id=aap2_rejected_socioeconomic_partners
-select
-  first(nom_complet) as nom_complet,
-  siret::VARCHAR as SIRET,
-from (
-  select
-    siret,
-    nom_complet,
-  from aap1_socioeconomic_partners
-  where siret::VARCHAR != ''
-    and label in (
-      select partner
-      from aap1_project_by_socioeconomic_partners
-      group by partner
-      having not (
-        list(project) &&
-        (
-          select list(acronyme)
-          from aap1_projects
-          where financed
-        )
-      )
-    )
-  union
-  select
-    siret,
-    nom_complet,
-  from aap2_socioeconomic_partners
-  where siret::VARCHAR != ''
-)
-group by siret
 ```
 
 ## Défis
@@ -1827,64 +1614,6 @@ order by count desc
 
 ## Chercheurs
 
-```sql
-select
-  count(distinct researcher_id) as count
-from aap2_project_by_researchers
-where project_id in (
-    select project_id
-    from aap2_projects
-    where selected
-  )
-  and position is null or position != 'thésard'
-group by all
-```
-
-```sql
-select
-  count(distinct researcher_id) as count
-from aap2_researchers
-left join aap2_project_by_researchers
-  on aap2_researchers.email = aap2_project_by_researchers.researcher_id
-left join aap2_projects
-  on aap2_project_by_researchers.project_id = aap2_projects.project_id
-where selected and (position is null or position != 'thésard')
-group by all
-```
-
-```sql
-select project_id
-from aap2_projects
-where selected
-```
-
-```sql
-select
-  researcher_id,
-  list_distinct(list(project_id)) as projects
-from aap2_project_by_researchers
-where project_id in (
-    select project_id
-    from aap2_projects
-    where selected
-  )
-  and position is null or position != 'thésard'
-group by all
-```
-
-```sql
-select
-  researcher_id,
-  list_distinct(list(aap2_projects.project_id)) as projects
-from aap2_researchers
-left join aap2_project_by_researchers
-  on aap2_researchers.email = aap2_project_by_researchers.researcher_id
-left join aap2_projects
-  on aap2_project_by_researchers.project_id = aap2_projects.project_id
-where selected
-group by all
-```
-
 <div class="grid">
   <div class="card">
     <h2>Tous les chercheurs</h2>
@@ -1911,251 +1640,124 @@ group by all
 </div>
 
 ```js
-display(researcher_search_filter)
 const researcher_search_input = Inputs.search(
-  [...aap2_researchers_by_project].filter((d) =>
-    researcher_search_filter.includes('only_selected_projects')
-      ? d.selected.includes(true)
-      : true,
+  [...all_researchers_by_project].filter(
+    (d) =>
+      // (researcher_search_filter.includes('financed_projects')
+      //   ? d.financed.includes(true)
+      //   : true) &&
+      (researcher_search_filter.includes('CO-PILOT')
+        ? d.phase.includes('0')
+        : true) &&
+      (researcher_search_filter.includes('AAP 1')
+        ? d.phase.includes('1')
+        : true) &&
+      (researcher_search_filter.includes('AAP 2')
+        ? d.phase.includes('2')
+        : true),
   ),
 )
 const researcher_search = Generators.input(researcher_search_input)
 ```
 
 ```js
-const researcher_search_filter_input = Inputs.checkbox([
-  'only_selected_projects',
-])
+const researcher_search_filter_input = Inputs.checkbox(
+  [
+    // 'financed_projects',
+    'CO-PILOT',
+    'AAP 1',
+    'AAP 2',
+  ],
+  {
+    value: [
+      // 'financed_projects',
+      'CO-PILOT',
+      'AAP 1',
+      'AAP 2',
+    ],
+  },
+)
 const researcher_search_filter = Generators.input(
   researcher_search_filter_input,
 )
 ```
 
-```sql id=aap2_researchers_by_project
+```sql id=all_researchers_by_project
 select
-    email,
+  id,
+  list_distinct(flatten(list(firstnames))) as firstnames,
+  list_distinct(flatten(list(lastnames))) as lastnames,
+  list_distinct(flatten(list(projects))) as projects,
+  list_distinct(flatten(list(financed))) as financed,
+  list_distinct(flatten(list(positions))) as positions,
+  list_distinct(list(phase)) as phase,
+  list_distinct(flatten(list(institutions))) as institutions,
+  list_distinct(flatten(list(units))) as units,
+  list_distinct(flatten(list(orcids))) as orcids,
+  list_distinct(flatten(list(idhals))) as idhals,
+  list_distinct(flatten(list(idrefs))) as idrefs,
+  list_distinct(flatten(list(sites))) as sites,
+from (
+  select
+    email as id,
     list_distinct(list(firstname)) as firstnames,
     list_distinct(list(lastname)) as lastnames,
     list_distinct(list(aap2_projects.project_id)) as projects,
-    list_distinct(list(aap2_projects.selected)) as selected,
+    list(selected) as financed,
+    list(position) as positions,
+    '2' as phase,
+    list_distinct(list(institution_id)) as institutions,
+    list_distinct(list(unite_id)) as units,
     list_distinct(list(orcid)) as orcids,
     list_distinct(list(idhal)) as idhals,
     list_distinct(list(idref)) as idrefs,
+    list_distinct(list(site)) as sites,
   from aap2_researchers
   left join aap2_project_by_researchers
     on aap2_researchers.email = aap2_project_by_researchers.researcher_id
   left join aap2_projects
     on aap2_project_by_researchers.project_id = aap2_projects.project_id
+  where selected
   group by all
-```
-
-### Les nouveaux chercheurs
-
-<div class="caution">Unverified</div>
-
-Chercheurs de l'AAP 2 pas présents dans les projets financées de l'AAP 1
-
-<div class="grid grid-cols-4">
-  <div class="card">
-    <h2>
-      Nombre de chercheurs de l'AAP 2 pas présents dans les projets financées
-      de l'AAP 1
-    </h2>
-    <span class="big">
-      ${[...new_researchers].length}
-      <!-- $ -->
-    </span>
-  </div>
-  <div></div>
-  <div class="card">
-    <h2>
-      Nombre des encadrants de l'AAP 2 pas présents dans les projets
-      financées de l'AAP 1
-    </h2>
-    <span class="big">
-      ${[...new_researchers]
-        .filter((d) => [...d.positions].length > 0)
-        .length}
-      <!-- $ -->
-    </span>
-  </div>
-</div>
-
-<div class="grid grid-cols-2">
-  <div class="card">
-    <h2>Chercheurs de l'AAP 2 pas présents dans les projets financées de l'AAP 1</h2>
-    <br/>
-    ${Inputs.table([...new_researchers])}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>
-      Encadrants de projet de l'AAP 2 pas présents dans les projets financées
-      de l'AAP 1
-    </h2>
-    <br/>
-    ${Inputs.table(
-      [...new_researchers]
-        .filter((d) => [...d.positions].length > 0)
-    )}
-    <!-- $ -->
-  </div>
-</div>
-
-```sql id=new_researchers
-with new_researcher_names as (
+  union
     select
-      lower(
-        aap2_researchers.lastname || ' ' || aap2_researchers.firstname
-      ) as fullname,
-      '2' as aap,
-    from aap2_researchers
-    except
-    select
-      lower(aap1_researchers.fullname) as fullname,
-      '1' as aap,
+      if(email = '' or email is null, fullname, email) as id,
+      list_distinct(list(firstname)) as firstnames,
+      list_distinct(list(lastname)) as lastnames,
+      list_distinct(list(acronyme)) as projects,
+      list(financed) as financed,
+      list(position) as positions,
+      '1' as phase,
+      [] as institutions,
+      list_distinct(list(lab)) as units,
+      list_distinct(list(orcid)) as orcids,
+      list_distinct(list(idhal)) as idhals,
+      [] as idrefs,
+      list_distinct(list(site)) as sites,
     from aap1_researchers
-  ),
-  new_orcids as (
-    select
-      orcid,
-      '2' as aap,
-    from aap2_researchers
-    except
-    select
-      orcid,
-      '1' as aap,
-    from aap1_researchers
-  ),
-  new_idhals as (
-    select
-      idhal,
-      '2' as aap,
-    from aap2_researchers
-    except
-    select
-      idhal,
-      '1' as aap,
-    from aap1_researchers
-  )
-
-select
-  lower(lastname || ' ' || firstname) as fullname,
-  orcid,
-  idhal,
-  list_distinct(list(position)) as positions,
-  [] as projects,
-from aap2_researchers
-join aap2_project_by_researchers
-  on aap2_researchers.email = aap2_project_by_researchers.researcher_id
-where
-  lower(lastname || ' ' || firstname) in (
-    select fullname from new_researcher_names
-  )
-  or orcid in (select orcid from new_orcids)
-  or idhal in (select idhal from new_idhals)
-group by
-  fullname, orcid, idhal
-```
-
-### Les chercheurs familiers
-
-<div class="caution">Unverified</div>
-
-Chercheurs présents dans les projets de l'AAP 1 et 2
-
-<div class="grid grid-cols-4">
-  <div class="card">
-    <h2>Nombre de chercheurs présents dans les projets de l'AAP 1 et 2</h2>
-    <span class="big">
-      ${[...returning_researchers].length}
-      <!-- $ -->
-    </span>
-  </div>
-  <div></div>
-  <div class="card">
-    <h2>
-      Nombre d'encadrants de projet de l'AAP 2 présents dans les projets
-      de l'AAP 1
-    </h2>
-    <span class="big">
-      ${[...returning_researchers]
-        .filter((d) => [...d.positions].length > 0)
-        .length}
-      <!-- $ -->
-    </span>
-  </div>
-</div>
-
-<div class="grid grid-cols-2">
-  <div class="card">
-    <h2>Chercheurs présents dans les projets de l'AAP 1 et 2</h2>
-    <br/>
-    ${Inputs.table(returning_researchers)}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>
-      Encadrants de projet de l'AAP 2 présents dans les projets
-      de l'AAP 1
-    </h2>
-    <br/>
-    ${Inputs.table(
-      [...returning_researchers]
-        .filter((d) => [...d.positions].length > 0)
-    )}
-    <!-- $ -->
-  </div>
-</div>
-
-```sql id=returning_researchers
-with returning_researcher_names as (
-    select
-      lower(aap1_researchers.fullname) as fullname,
-    from aap1_researchers
-    intersect
-    select
-      lower(
-        aap2_researchers.lastname || ' ' || aap2_researchers.firstname
-      ) as fullname,
-    from aap2_researchers
-  ),
-  returning_orcids as (
-    select
-      orcid
-    from aap1_researchers
-    intersect
-    select
-      orcid
-    from aap2_researchers
-  ),
-  returning_idhals as (
-    select
-      idhal
-    from aap1_researchers
-    intersect
-    select
-      idhal
-    from aap2_researchers
-  )
-
-select
-  lower(lastname || ' ' || firstname) as fullname,
-  orcid,
-  list_distinct(list(idhal))[1] as idhal,
-  list_distinct(list(position)) as positions,
-  [] as projects,
-from aap2_researchers
-join aap2_project_by_researchers
-  on aap2_researchers.email = aap2_project_by_researchers.researcher_id
-where
-  lower(lastname || ' ' || firstname) in (
-    select fullname from returning_researcher_names
-  )
-  or orcid in (select orcid from returning_orcids)
-  or idhal in (select idhal from returning_idhals)
-group by
-  orcid, fullname
+    left join aap1_projects
+      on acronyme in aap1_researchers.project
+    where financed
+    group by all
+    union
+      select
+        id,
+        list_distinct(list(firstname)) as firstnames,
+        list_distinct(list(lastname)) as lastnames,
+        list_distinct(list(project)) as projects,
+        [true] as financed,
+        list(position) as positions,
+        '0' as phase,
+        [] as institutions,
+        list_distinct(list(lab)) as units,
+        list_distinct(list(orcid)) as orcids,
+        list_distinct(list(idhal)) as idhals,
+        [] as idrefs,
+        list_distinct(list(site)) as sites,
+      from co_researchers
+      group by all
+)
+group by id
 ```
 
 ## CNUs
@@ -2455,10 +2057,8 @@ select * from (
     count(distinct id) as count,
     'AAP 1' as aap,
   from aap1_researchers
-  join aap1_project_by_researchers
-    on aap1_researchers.id = aap1_project_by_researchers.researcher
   join aap1_projects
-    on aap1_project_by_researchers.project = aap1_projects.acronyme
+    on aap1_projects.acronyme in aap1_researchers.project
   group by cnu[:2], financed
   union
   select
@@ -2477,6 +2077,36 @@ select * from (
 )
 where cnu[:2] similar to '[0-9]{2}'
 order by cnu, selected, financed
+```
+
+```sql
+select * from (
+  select
+    cnu[:2] as cnu,
+    financed,
+    count(distinct id) as count,
+    'AAP 1' as aap,
+  from aap1_researchers
+  join aap1_projects
+    on aap1_projects.acronyme in aap1_researchers.project
+  group by cnu[:2], financed
+  union
+  select
+    cnu,
+    selected as financed,
+    count(distinct aap2_researcher_by_cnu.researcher_id) as count,
+    'AAP 2' as aap,
+  from aap2_researcher_by_cnu
+  left join aap2_project_by_researchers
+    on aap2_researcher_by_cnu.researcher_id = aap2_project_by_researchers.researcher_id
+  left join aap2_projects
+    on aap2_project_by_researchers.project_id = aap2_projects.project_id
+  where cnu is not null and cnu::VARCHAR != ''
+  group by all
+)
+where cnu[:2] similar to '[0-9]{2}'
+  and financed
+order by cnu, financed
 ```
 
 ```js
