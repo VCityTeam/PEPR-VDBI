@@ -85,7 +85,7 @@ flowchart TD
 
 ```js
 import { resolveProjectFinancingEntities } from '/components/financing.js'
-import { sparkbar, countEntities, cropText } from '/components/utilities.js'
+import { sparkbar, countEntities, cropText, downloadTableButton } from '/components/utilities.js'
 import { donutChart } from '/components/pie-chart.js'
 ```
 
@@ -265,10 +265,10 @@ function default_employer_plot_options(data, width, height = 500) {
   }
 }
 
-function default_pie_options(width, left_margin = 110) {
+function default_pie_options(width, left_margin = 120) {
   return {
     width: width - left_margin,
-    height: 500,
+    height: width * 0.6,
     keyMap: (d) => d[0],
     valueMap: (d) => d[1],
     colorMap: (d) => d[0],
@@ -277,7 +277,7 @@ function default_pie_options(width, left_margin = 110) {
       .domain(category_color_map.keys())
       .range(category_color_map.values())
       .unknown('grey'),
-    legendWidth: left_margin,
+    legendWidth: width,
   }
 }
 ```
@@ -375,8 +375,9 @@ if (debug) {
         resize((width) => donutChart(
           all_type_post_count,
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card">
@@ -386,10 +387,13 @@ if (debug) {
         resize((width) => donutChart(
           [...all_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
+</div>
+<div class="grid grid-cols-2">
   <div class="card grid-colspan-2">
   <h2>Proposed posts by employer</h2>
     <div>
@@ -441,8 +445,9 @@ if (debug) {
               ),
             ],
           }
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card grid-colspan-2">
@@ -565,69 +570,70 @@ if (debug) {
               ),
             ],
           }
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>
-<div class="grid">
-  <!-- <div class="card">
-    <h2></h2>
-    <span class="big">${financed_project_count.toLocaleString("en-US")}</span>
-  </div> -->
-  <div class="card grid-rowspan-2">
-    <h2>Identified project personnel</h2>
-    <div>
-      ${
-        resize((width) => Inputs.table(
-          all_data.personnel,
-          {
-            ...default_personnel_table_config(all_data.personnel, width),
-            ...{
-              columns: [
-                "project",
-                "description",
-                "type_contract",
-                "type_post",
-                "employer",
-                "months",
-                "cost",
-                "assistance",
-                "support",
-                "total_cost",
-              ],
-            },
-          }
-        ))//$
-      }
-    </div>
-  </div>
-  <div class="card">
-    <h2>Identified project partners</h2>
-    <div>
-      ${
-        resize((width) => Inputs.table(
-          all_data.partners,
-          {
-            columns: [
-              "complete_name",
-              "name",
-              "type",
-              "siret",
-              "project",
-            ],
-            header: {
-              "complete_name": "Complete name",
-              "name": "Name",
-              "type": "Type",
-              "siret": "SIRET",
-              "project": "Project",
-            },
-          },
-        ))//$
-      }
-    </div>
-  </div>
+<div class="card">
+<!-- <div class="card">
+  <h2></h2>
+  <span class="big">${financed_project_count.toLocaleString("en-US")}</span>
+</div> -->
+  <h2>Identified project personnel</h2>
+  </br>
+  ${resize((width) => Inputs.table(
+    all_data.personnel,
+    {
+      ...default_personnel_table_config(all_data.personnel, width),
+      ...{
+        columns: [
+          "project",
+          "description",
+          "type_contract",
+          "type_post",
+          "employer",
+          "months",
+          "cost",
+          "assistance",
+          "support",
+          "total_cost",
+        ],
+      },
+    }
+  ))}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => all_data.personnel)}
+  <!-- $ -->
+</div>
+<div class="card">
+  <h2>Identified project partners</h2>
+  </br>
+  ${resize((width) => Inputs.table(
+    all_data.partners,
+    {
+      columns: [
+        "complete_name",
+        "name",
+        "type",
+        "siret",
+        "project",
+      ],
+      header: {
+        "complete_name": "Complete name",
+        "name": "Name",
+        "type": "Type",
+        "siret": "SIRET",
+        "project": "Project",
+      },
+    },
+  ))}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => all_data.partners)}
+  <!-- $ -->
 </div>
 
 ## inteGREEN
@@ -674,8 +680,9 @@ if (debug) {
         resize((width) => donutChart(
           inteGREEN_type_post_count,
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card">
@@ -685,8 +692,9 @@ if (debug) {
         resize((width) => donutChart(
           [...inteGREEN_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 <div class="card grid-colspan-1">
@@ -695,8 +703,9 @@ if (debug) {
       ${
         resize((width) => Plot.plot(
           default_employer_plot_options(inteGREEN_employer_count, width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>
@@ -712,8 +721,9 @@ if (debug) {
         resize((width) => Inputs.table(
           inteGREEN_data.personnel,
           default_personnel_table_config(inteGREEN_data.personnel, width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card grid-colspan-2">
@@ -728,8 +738,9 @@ if (debug) {
               width: width,
             }
           }
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>
@@ -778,8 +789,9 @@ if (debug) {
         resize((width) => donutChart(
           VILLEGARDEN_type_post_count,
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card">
@@ -789,8 +801,9 @@ if (debug) {
         resize((width) => donutChart(
           [...VILLEGARDEN_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 <div class="card grid-colspan-1">
@@ -799,8 +812,9 @@ if (debug) {
       ${
         resize((width) => Plot.plot(
           default_employer_plot_options(VILLEGARDEN_employer_count, width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>
@@ -816,8 +830,9 @@ if (debug) {
         resize((width) => Inputs.table(
           VILLEGARDEN_data.personnel,
           default_personnel_table_config(VILLEGARDEN_data.personnel, width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card grid-colspan-2">
@@ -832,8 +847,9 @@ if (debug) {
               width: width,
             }
           }
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>
@@ -879,8 +895,9 @@ if (debug) {
         resize((width) => donutChart(
           NEO_type_post_count,
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card">
@@ -890,8 +907,9 @@ if (debug) {
         resize((width) => donutChart(
           [...NEO_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 <div class="card grid-colspan-1">
@@ -900,8 +918,9 @@ if (debug) {
       ${
         resize((width) => Plot.plot(
           default_employer_plot_options(NEO_employer_count, width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>
@@ -917,8 +936,9 @@ if (debug) {
         resize((width) => Inputs.table(
           NEO_data.personnel,
           default_personnel_table_config(NEO_data.personnel, width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card grid-colspan-2">
@@ -933,8 +953,9 @@ if (debug) {
               width: width,
             }
           }
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>
@@ -983,8 +1004,9 @@ if (debug) {
         resize((width) => donutChart(
           RESILIENCE_type_post_count,
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card">
@@ -994,8 +1016,9 @@ if (debug) {
         resize((width) => donutChart(
           [...RESILIENCE_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 <div class="card grid-colspan-1">
@@ -1004,8 +1027,9 @@ if (debug) {
       ${
         resize((width) => Plot.plot(
           default_employer_plot_options(RESILIENCE_employer_count, width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>
@@ -1021,8 +1045,9 @@ if (debug) {
         resize((width) => Inputs.table(
           RESILIENCE_data.personnel,
           default_personnel_table_config(RESILIENCE_data.personnel, width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card grid-colspan-2">
@@ -1037,8 +1062,9 @@ if (debug) {
               width: width,
             }
           }
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>
@@ -1084,8 +1110,9 @@ if (debug) {
         resize((width) => donutChart(
           TRACES_type_post_count,
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card">
@@ -1095,8 +1122,9 @@ if (debug) {
         resize((width) => donutChart(
           [...TRACES_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 <div class="card grid-colspan-1">
@@ -1105,8 +1133,9 @@ if (debug) {
       ${
         resize((width) => Plot.plot(
           default_employer_plot_options(TRACES_employer_count, width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>
@@ -1122,8 +1151,9 @@ if (debug) {
         resize((width) => Inputs.table(
           TRACES_data.personnel,
           default_personnel_table_config(TRACES_data.personnel, width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card grid-colspan-2">
@@ -1138,8 +1168,9 @@ if (debug) {
               width: width,
             }
           }
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>
@@ -1188,8 +1219,9 @@ if (debug) {
         resize((width) => donutChart(
           URBHEALTH_type_post_count,
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card">
@@ -1199,8 +1231,9 @@ if (debug) {
         resize((width) => donutChart(
           [...URBHEALTH_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 <div class="card grid-colspan-1">
@@ -1209,8 +1242,9 @@ if (debug) {
       ${
         resize((width) => Plot.plot(
           default_employer_plot_options(URBHEALTH_employer_count, width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>
@@ -1226,8 +1260,9 @@ if (debug) {
         resize((width) => Inputs.table(
           URBHEALTH_data.personnel,
           default_personnel_table_config(URBHEALTH_data.personnel, width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card grid-colspan-2">
@@ -1242,8 +1277,9 @@ if (debug) {
               width: width,
             }
           }
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>
@@ -1289,8 +1325,9 @@ if (debug) {
         resize((width) => donutChart(
           VFpp_type_post_count,
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card">
@@ -1300,8 +1337,9 @@ if (debug) {
         resize((width) => donutChart(
           [...VFpp_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 <div class="card grid-colspan-1">
@@ -1310,8 +1348,9 @@ if (debug) {
       ${
         resize((width) => Plot.plot(
           default_employer_plot_options(VFpp_employer_count, width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>
@@ -1327,8 +1366,9 @@ if (debug) {
         resize((width) => Inputs.table(
           VFpp_data.personnel,
           default_personnel_table_config(VFpp_data.personnel, width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card grid-colspan-2">
@@ -1343,8 +1383,9 @@ if (debug) {
               width: width,
             }
           }
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>
@@ -1390,8 +1431,9 @@ if (debug) {
         resize((width) => donutChart(
           WHAOU_type_post_count,
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card">
@@ -1401,8 +1443,9 @@ if (debug) {
         resize((width) => donutChart(
           [...WHAOU_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 <div class="card grid-colspan-1">
@@ -1411,8 +1454,9 @@ if (debug) {
       ${
         resize((width) => Plot.plot(
           default_employer_plot_options(WHAOU_employer_count, width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>
@@ -1428,8 +1472,9 @@ if (debug) {
         resize((width) => Inputs.table(
           WHAOU_data.personnel,
           default_personnel_table_config(WHAOU_data.personnel, width)
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
   <div class="card grid-colspan-2">
@@ -1444,8 +1489,9 @@ if (debug) {
               width: width,
             }
           }
-        ))//$
+        ))
       }
+      <!-- $ -->
     </div>
   </div>
 </div>

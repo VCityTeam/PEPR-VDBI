@@ -73,7 +73,7 @@ export function donutChart(
       .scaleOrdinal(d3.schemeObservable10)
       .domain(new Set(data.map(keyMap)))
       .unknown('grey'),
-    legendWidth = 80,
+    legendWidth = 80, // TODO: fix margin behavior
     legendTextLength = 30,
     legendText = (d) =>
       `${valueMap(d) / d3.sum(data.map(valueMap)) < 0.1 ? '\u2002' : ''}${(
