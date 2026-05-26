@@ -1,5 +1,9 @@
 ---
 sql:
+  phase1_projects: /data/phase1-projects.tsv
+  phase1_laboratories: /data/phase1-laboratories.tsv
+  phase1_researchers: /data/phase1-researchers.tsv
+  phase1_institutions: /data/phase1-institutions.tsv
   general_partners: /data/partners_general.csv
   aap_partners: /data/private/partenaires_aap2023.csv
   terrains: /data/project_terrains.csv
@@ -303,19 +307,10 @@ const departements = FileAttachment('/data/france_departements.json').json()
 ```
 
 ```js
-const project_data = (
-  await FileAttachment('/data/phase1-projects.tsv').tsv({
-    typed: true,
-  })
-).map((d) => (
-  // TODO replace this with the new data loaders 
-  {
-  ...d,
-  institutions: String(d.institutions).split(','),
-  partners: String(d.partners).split(','),
-  labs: String(d.labs).split(','),
-}))
-const financed_project_data = project_data.filter((d) => d.financed)
+const project_data = [...(await sql`select * from phase1_projects`)]
+const financed_project_data = [
+  ...(await sql`select * from phase1_projects where financed`),
+]
 ```
 
 ```js
@@ -326,20 +321,13 @@ const financed_researcher_data = researcher_data.filter((d) => d.financed)
 ```
 
 ```js
-const laboratory_data = new Set(
-  d3.merge(project_data.map((d) => d.labs)).sort(),
-)
-const auditioned_laboratory_data = new Set(
-  d3.merge(project_data.filter((d) => d.auditioned).map((d) => d.labs)).sort(),
-)
-const financed_laboratory_data = new Set(
-  d3.merge(financed_project_data.map((d) => d.labs)).sort(),
-)
-// const laboratory_data = resolveLabEntities(
-//   getLabSheet(workbook1),
-//   anonymize,
-//   anonymizeDict
-// );
+const laboratory_data = [...(await sql`select * from phase1_laboratories`)]
+const auditioned_laboratory_data = [
+  ...(await sql`select * from phase1_laboratories where auditioned`),
+]
+const financed_laboratory_data = [
+  ...(await sql`select * from phase1_laboratories where financed`)
+)]
 ```
 
 ```js

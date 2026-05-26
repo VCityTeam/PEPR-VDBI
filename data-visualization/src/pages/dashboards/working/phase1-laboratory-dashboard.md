@@ -133,7 +133,7 @@ function legendRadius(
   const s =
     scale.type === 'pow'
       ? d3.scalePow(scale.domain, scale.range).exponent(scale.exponent)
-      : d3.scaleLinear(scale.domain, scale.range) // TODO add more types as needed
+      : d3.scaleLinear(scale.domain, scale.range)
 
   const r0 = scale.range[1]
   const shiftY = label ? 10 : 0

@@ -16,19 +16,19 @@ export default {
       name: 'Dashboards',
       pages: [
         {
-          name: 'Phase 1 Overview',
-          path: 'pages/dashboards/phase1-overview-dashboard',
+          name: 'Projects Overview',
+          path: 'pages/dashboards/aap-overview',
         },
         {
-          name: 'Phase 1 Cartography',
+          name: 'Projects Cartography',
           path: 'pages/dashboards/phase1-map-dashboard',
         },
         {
-          name: 'Phase 1 Scientific disciplines',
+          name: 'Projects Scientific disciplines',
           path: 'pages/dashboards/phase1-disciplines',
         },
         {
-          name: 'Phase 1 Financing',
+          name: 'Projects Financing',
           path: 'pages/dashboards/phase1-financing-dashboard',
         },
         {
@@ -86,10 +86,6 @@ export default {
     {
       name: 'Under Construction',
       pages: [
-        {
-          name: 'Phase 2 Overview',
-          path: 'pages/dashboards/phase2-overview',
-        },
         {
           name: 'Phase 1 socio-economic partners',
           path: 'pages/dashboards/working/phase1-partner-dashboard',

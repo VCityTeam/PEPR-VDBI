@@ -48,8 +48,6 @@ sql:
 
 # Résumé des projets PEPR VDBI
 
-## Appels de la phase 1 et 2
-
 ```js
 import {
   downloadPNGButton,
@@ -79,6 +77,15 @@ import {
   Les chiffres des partenaires socio-économiques comptent également les parties
   prenantes dans ce page.
 </div>
+
+```js
+const dashboard_filter = view(
+  Inputs.checkbox(
+    ['AAP 1', 'AAP 2', 'Centres Opérationnels', 'Animation et Gouvernance'],
+    { label: 'Include' },
+  ),
+)
+```
 
 ## Chiffres clés
 
