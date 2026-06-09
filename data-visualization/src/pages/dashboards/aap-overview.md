@@ -1767,6 +1767,92 @@ from (
 group by id
 ```
 
+${downloadTableButton(() => [...output])}
+<!-- $ -->
+
+```sql id=output display
+select
+  -- lower(id) as id,
+  -- list_distinct(flatten(list(firstnames)))[1] as firstname,
+  -- list_distinct(flatten(list(lastnames)))[1] as lastname,
+
+  -- list_distinct(flatten(list(projects))) as projects,
+  -- list_distinct(flatten(list(financed))) as financed,
+  -- list_distinct(flatten(list(positions))) as positions,
+  -- list_distinct(list(phase)) as phase,
+  -- list_distinct(flatten(list(institutions))) as institutions,
+  -- list_distinct(flatten(list(units))) as units,
+
+  -- list_distinct(flatten(list(orcids)))[1] as orcid,
+  -- list_distinct(flatten(list(idhals)))[1] as idhal,
+  -- list_distinct(flatten(list(idrefs)))[1] as idref,
+  -- list_distinct(flatten(list(sites)))[1] as site1,
+  list_distinct(flatten(list(sites)))[2] as site2,
+  -- list_distinct(flatten(list(sites)))[3] as site3,
+  length(list_distinct(flatten(list(sites)))) as sites_count,
+from (
+  select
+    email as id,
+    list_distinct(list(firstname)) as firstnames,
+    list_distinct(list(lastname)) as lastnames,
+    list_distinct(list(aap2_projects.project_id)) as projects,
+    list(selected) as financed,
+    list(position) as positions,
+    '2' as phase,
+    list_distinct(list(institution_id)) as institutions,
+    list_distinct(list(unite_id)) as units,
+    list_distinct(list(orcid)) as orcids,
+    list_distinct(list(idhal)) as idhals,
+    list_distinct(list(idref)) as idrefs,
+    list_distinct(list(site)) as sites,
+  from aap2_researchers
+  left join aap2_project_by_researchers
+    on aap2_researchers.email = aap2_project_by_researchers.researcher_id
+  left join aap2_projects
+    on aap2_project_by_researchers.project_id = aap2_projects.project_id
+  where selected
+  group by all
+  union
+    select
+      if(email = '' or email is null, fullname, email) as id,
+      list_distinct(list(firstname)) as firstnames,
+      list_distinct(list(lastname)) as lastnames,
+      list_distinct(list(acronyme)) as projects,
+      list(financed) as financed,
+      list(position) as positions,
+      '1' as phase,
+      [] as institutions,
+      list_distinct(list(lab)) as units,
+      list_distinct(list(orcid)) as orcids,
+      list_distinct(list(idhal)) as idhals,
+      [] as idrefs,
+      list_distinct(list(site)) as sites,
+    from aap1_researchers
+    left join aap1_projects
+      on acronyme in aap1_researchers.project
+    where financed
+    group by all
+    union
+      select
+        id,
+        list_distinct(list(firstname)) as firstnames,
+        list_distinct(list(lastname)) as lastnames,
+        list_distinct(list(project)) as projects,
+        [true] as financed,
+        list(position) as positions,
+        '0' as phase,
+        [] as institutions,
+        list_distinct(list(lab)) as units,
+        list_distinct(list(orcid)) as orcids,
+        list_distinct(list(idhal)) as idhals,
+        [] as idrefs,
+        list_distinct(list(site)) as sites,
+      from co_researchers
+      group by all
+)
+group by lower(id)
+```
+
 ## CNUs
 
 <div class="note" label="Notice">
