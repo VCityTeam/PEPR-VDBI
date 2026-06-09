@@ -2344,7 +2344,7 @@ const map_tip_map = new Map([
 ```sql id=institution_count_by_postal_code
 select
   code_postal[:2] as departement_code,
-  sum(count)::INT as count,
+  count(*) as count,
 from aap2_institutions
 where code_postal is not null
 group by departement_code
@@ -2362,7 +2362,7 @@ group by siren
 ```sql id=laboratory_count_by_postal_code
 select
   (code_postal::VARCHAR)[:2] as departement_code,
-  sum(count)::INT as count,
+  count(*) as count,
 from aap2_laboratories
 where code_postal is not null
 group by departement_code
@@ -2380,7 +2380,7 @@ group by numero_national_de_structure
 ```sql id=socioeconomic_partner_count_by_postal_code
 select
   code_postal[:2] as departement_code,
-  sum(count)::INT as count,
+  count(*) as count,
 from aap2_socioeconomic_partners
 where code_postal is not null
 group by departement_code
@@ -2484,11 +2484,6 @@ group by siren
 </div>
 <div class="grid grid-cols-2">
   <div class="card">
-    <h2>Incohérences types de projet</h2>
-    ${Inputs.table(project_type_inconsistencies, { layout: "auto" })}
-    <!-- $ -->
-  </div>
-  <div class="card">
     <h2>Labels CNU bruts</h2>
     ${cnu_label_search_input}
     <!-- $ -->
@@ -2583,16 +2578,6 @@ tableaux SQL (pour l'instant):
 - aap2_project_by_socioeconomic_partners
 
 Puis les requêtes pour calculer les indicateurs sont les suivantes :
-
-```sql id=project_type_inconsistencies echo
-select
-  project_id,
-  TYPDOC as 'type sur le site',
-  type_projet as 'type dans le template'
-from aap2_projects
-where (TYPDOC = 'PITT - Trio de Thèses' and type_projet != 'Choice1')
-or (TYPDOC = 'PITT - Interdisciplinaire' and type_projet != 'Choice2')
-```
 
 ```sql id=[missing_institution_siret] echo
 select count(*) as count
