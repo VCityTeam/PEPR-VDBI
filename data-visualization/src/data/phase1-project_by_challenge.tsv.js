@@ -14,7 +14,7 @@ import {
 
 const workbook_1 = new ExcelJS.Workbook()
 await workbook_1.xlsx.readFile(
-  'src/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
+  'src/data/private/260609 VDBI Base Connaissance vdef.xlsx',
 )
 
 const data_1 = resolveGeneralEntities(getGeneralSheet(workbook_1)).map(

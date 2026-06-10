@@ -14,7 +14,7 @@ const partners = group(getPartnersSheet(workbook), (d) => d.type).get(
 
 const workbook_2 = new ExcelJS.Workbook()
 await workbook_2.xlsx.readFile(
-  'src/data/private/251127 VDBI Base Connaissance vdef jyt.xlsx',
+  'src/data/private/260609 VDBI Base Connaissance vdef.xlsx',
 )
 
 const partner_labels = new Set(partners.map((d) => d.label))
