@@ -93,6 +93,43 @@ const dashboard_filter = view(
 
 Count: ${[...aap_all_institutions].length}
 
+```sql
+    select *
+    from aap1_all_partners
+      where aap1_all_partners.type = 'ETABLISSEMENT'
+```
+
+```sql
+-- select
+--   id::VARCHAR as id,
+--   first(label) as label,
+--   list_distinct(flatten(list(projets))) as projets,
+--   list(phase) as phase,
+-- from (
+  select distinct
+    "ID primaire".replace(',', '')::BIGINT as siren,
+    "ID secondaire".replace(',', '')::BIGINT as siret,
+    first(label) as label,
+    '1' as phase,
+  from aap1_all_partners
+  left join aap1_all_projects_by_partners
+    on aap1_all_partners."label" = aap1_all_projects_by_partners."source_label"
+  where aap1_all_partners.type = 'ETABLISSEMENT'
+  group by all
+  -- union
+  --   select
+  --     siren::INT as id,
+  --     first(nom_complet) as label,
+  --     '2' as phase,
+  --   from aap2_institutions
+  --   group by all
+-- )
+-- group by id
+```
+
+${downloadTableButton(() => [...aap_all_institutions])}
+<!-- $ -->
+
 ```sql id=aap_all_institutions display
 with selected_institutions as (
   select
@@ -141,7 +178,49 @@ group by id
 
 Count: ${[...aap_all_labs].length}
 
-```sql id=aap_all_labs display
+${downloadTableButton(() => [...out])}
+<!-- $ -->
+
+```sql id=out display
+select
+  numero_national_de_structure,
+  list_distinct(flatten(list(labels))) as labels,
+  list_distinct(flatten(list(projets))) as projets,
+  -- list_distinct(list(selected)) as financed,
+  list_distinct(list(financed) || list(selected)) as financed,
+  list_distinct(flatten(list(label_numeros))) as label_numeros,
+  list_distinct(list(phase)) as phases,
+from (
+  select
+    numero_national_de_structure,
+    list_distinct(list(label)) as labels,
+    list_distinct(list(project)) as projets,
+    list_distinct(flatten(list(split(label_numero, ',')))) as label_numeros,
+    1 as phase,
+  from aap1_project_by_laboratories
+  join aap1_laboratories
+    on aap1_project_by_laboratories.lab = aap1_laboratories.label
+  group by numero_national_de_structure
+  union
+  select
+    numero_national_de_structure,
+    list_distinct(list(labels)) as labels,
+    list_distinct(list(project_id)) as projets,
+    list_distinct(flatten(list(split(label_numero, ',')))) as label_numeros,
+    2 as phase,
+  from aap2_project_by_laboratories
+  join aap2_laboratories
+    on aap2_project_by_laboratories.unit_id = aap2_laboratories.unit_id
+  group by numero_national_de_structure
+)
+left join aap1_projects
+  on aap1_projects.acronyme in projets
+left join aap2_projects
+  on aap2_projects.project_id in projets
+group by numero_national_de_structure
+```
+
+```sql id=aap_all_labs
 with selected_labs as (
   select
     unit_id,
@@ -156,7 +235,7 @@ with selected_labs as (
 
 select
   id,
-  first(label) as label,
+  list_distinct(list(label))[1] as label,
   list_distinct(flatten(list(projets))) as projets,
   list(phase) as phase
 from (
@@ -1766,120 +1845,6 @@ from (
 )
 group by id
 ```
-<!-- 
-${downloadTableButton(() => [...output])}
-
-```sql id=output display
-select distinct
-  lower(id) as id,
-  list_distinct(flatten(list(firstnames)))[1] as firstname,
-  list_distinct(flatten(list(lastnames)))[1] as lastname,
-
-  -- unnest(list_distinct(flatten(list(projects)))) as projects,
-  -- project,
-  -- list_distinct(flatten(list(financed))) as financed,
-  -- position,
-  -- list_distinct(list(phase)) as phase,
-  -- list_distinct(flatten(list(institutions))) as institutions,
-  -- list_distinct(flatten(list(units))) as units,
-
-  list_distinct(flatten(list(orcids)))[1] as orcid,
-  -- list_distinct(flatten(list(orcids)))[2] as orcid2,
-  -- list_distinct(flatten(list(orcids))) as orcids,
-  -- length(list_distinct(flatten(list(orcids)))) as orcid_count,
-  list_distinct(flatten(list(idhals)))[1] as idhal,
-  -- list_distinct(flatten(list(idhals))) as idhals,
-  -- length(list_distinct(flatten(list(idhals)))) as idhal_count,
-  list_distinct(flatten(list(idrefs)))[1] as idref,
-  -- list_distinct(flatten(list(sites))) as sites,
-  if(
-    length(list_distinct(list(site2))) > 0,
-    list_distinct(list(site2))[1],
-    list_distinct(list(site1))[1]
-  ) as site,
-  -- list_distinct(flatten(list(sites)))[1] as site1,
-  -- list_distinct(flatten(list(sites)))[2] as site2,
-  -- list_distinct(flatten(list(sites)))[3] as site3,
-  -- length(list_distinct(flatten(list(sites)))) as sites_count,
-from (
-  select distinct
-    email as id,
-    list_distinct(list(firstname)) as firstnames,
-    list_distinct(list(lastname)) as lastnames,
-    -- list_distinct(list(aap2_projects.project_id)) as projects,
-    -- aap2_projects.project_id as project,
-    -- list(selected) as financed,
-    -- list(position) as positions,
-    -- position,
-    -- '2' as phase,
-    -- list_distinct(list(institution_id)) as institutions,
-    -- institution_id as institution,
-    -- list_distinct(list(unite_id)) as units,
-    -- unite_id as units,
-    list_distinct(list(orcid)) as orcids,
-    list_distinct(list(idhal)) as idhals,
-    list_distinct(list(idref)) as idrefs,
-    -- list_distinct(list(site)) as sites,
-    null as site1,
-    site as site2,
-  from aap2_researchers
-  left join aap2_project_by_researchers
-    on aap2_researchers.email = aap2_project_by_researchers.researcher_id
-  left join aap2_projects
-    on aap2_project_by_researchers.project_id = aap2_projects.project_id
-  -- where selected
-  group by all
-  union
-    select distinct
-      if(email = '' or email is null, fullname, email) as id,
-      list_distinct(list(firstname)) as firstnames,
-      list_distinct(list(lastname)) as lastnames,
-      -- list_distinct(list(acronyme)) as projects,
-      -- acronyme as project,
-      -- list(financed) as financed,
-      -- financed,
-      -- list(position) as positions,
-      -- position,
-      -- '1' as phase,
-      -- [] as institutions,
-      -- list_distinct(list(lab)) as units,
-      list_distinct(list(orcid)) as orcids,
-      list_distinct(list(idhal)) as idhals,
-      [] as idrefs,
-      -- list_distinct(list(site)) as sites,
-      site as site1,
-      null as site2,
-    from aap1_researchers
-    left join aap1_projects
-      on acronyme in aap1_researchers.project
-    -- where financed
-    group by all
-    union
-      select
-        id,
-        list_distinct(list(firstname)) as firstnames,
-        list_distinct(list(lastname)) as lastnames,
-        -- list_distinct(list(project)) as projects,
-        -- project,
-        -- [true] as financed,
-        -- list(position) as positions,
-        -- position,
-        -- '0' as phase,
-        -- [] as institutions,
-        -- list_distinct(list(lab)) as units,
-        list_distinct(list(orcid)) as orcids,
-        list_distinct(list(idhal)) as idhals,
-        [] as idrefs,
-        -- list_distinct(list(site)) as sites,
-        -- site,
-        site as site1,
-        null as site2,
-      from co_researchers
-      group by all
-)
--- group by all
-group by lower(id)
-``` -->
 
 ## CNUs
 

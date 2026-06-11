@@ -140,8 +140,8 @@ const query = `
   from 'src/data/private/AAP2_submission_metadata.tsv'
   left join 'src/data/private/AAP2_template_export.tsv'
     on AAP2_template_export.filename ^@ AAP2_submission_metadata.DOCID::VARCHAR
-  left join 'src/data/private/PITT_Evaluations_13_04_2026.tsv'
-    on PITT_Evaluations_13_04_2026."Titre court" = AAP2_submission_metadata."TITRE_COURT"
+  left join 'src/data/private/PITT_Evaluations_13_04_2026_evaluations.tsv'
+    on PITT_Evaluations_13_04_2026_evaluations."Titre court" = AAP2_submission_metadata."TITRE_COURT"
 `
 
 const instance = await DuckDBInstance.create()
