@@ -93,38 +93,21 @@ const dashboard_filter = view(
 
 Count: ${[...aap_all_institutions].length}
 
-```sql
-    select *
-    from aap1_all_partners
-      where aap1_all_partners.type = 'ETABLISSEMENT'
-```
+${downloadTableButton(() => [...out])}
+<!-- $ -->
 
-```sql
--- select
---   id::VARCHAR as id,
---   first(label) as label,
---   list_distinct(flatten(list(projets))) as projets,
---   list(phase) as phase,
--- from (
-  select distinct
-    "ID primaire".replace(',', '')::BIGINT as siren,
-    "ID secondaire".replace(',', '')::BIGINT as siret,
-    first(label) as label,
-    '1' as phase,
-  from aap1_all_partners
-  left join aap1_all_projects_by_partners
-    on aap1_all_partners."label" = aap1_all_projects_by_partners."source_label"
-  where aap1_all_partners.type = 'ETABLISSEMENT'
-  group by all
-  -- union
-  --   select
-  --     siren::INT as id,
-  --     first(nom_complet) as label,
-  --     '2' as phase,
-  --   from aap2_institutions
-  --   group by all
--- )
--- group by id
+```sql id=out display
+select
+  *
+  -- numero_national_de_structure,
+  -- list_distinct(list(label)) as labels,
+  -- -- list_distinct(flatten(list(split(label_numero, ',')))) as label_numeros,
+  -- 1 as phase,
+-- from aap1_laboratories
+from aap1_institutions
+-- left join aap1_laboratories
+--   on aap1_project_by_laboratories.lab = aap1_laboratories.label
+-- group by numero_national_de_structure
 ```
 
 ${downloadTableButton(() => [...aap_all_institutions])}
@@ -177,48 +160,6 @@ group by id
 ### All labs
 
 Count: ${[...aap_all_labs].length}
-
-${downloadTableButton(() => [...out])}
-<!-- $ -->
-
-```sql id=out display
-select
-  numero_national_de_structure,
-  list_distinct(flatten(list(labels))) as labels,
-  list_distinct(flatten(list(projets))) as projets,
-  -- list_distinct(list(selected)) as financed,
-  list_distinct(list(financed) || list(selected)) as financed,
-  list_distinct(flatten(list(label_numeros))) as label_numeros,
-  list_distinct(list(phase)) as phases,
-from (
-  select
-    numero_national_de_structure,
-    list_distinct(list(label)) as labels,
-    list_distinct(list(project)) as projets,
-    list_distinct(flatten(list(split(label_numero, ',')))) as label_numeros,
-    1 as phase,
-  from aap1_project_by_laboratories
-  join aap1_laboratories
-    on aap1_project_by_laboratories.lab = aap1_laboratories.label
-  group by numero_national_de_structure
-  union
-  select
-    numero_national_de_structure,
-    list_distinct(list(labels)) as labels,
-    list_distinct(list(project_id)) as projets,
-    list_distinct(flatten(list(split(label_numero, ',')))) as label_numeros,
-    2 as phase,
-  from aap2_project_by_laboratories
-  join aap2_laboratories
-    on aap2_project_by_laboratories.unit_id = aap2_laboratories.unit_id
-  group by numero_national_de_structure
-)
-left join aap1_projects
-  on aap1_projects.acronyme in projets
-left join aap2_projects
-  on aap2_projects.project_id in projets
-group by numero_national_de_structure
-```
 
 ```sql id=aap_all_labs
 with selected_labs as (
