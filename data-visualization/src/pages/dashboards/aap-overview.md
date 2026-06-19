@@ -93,23 +93,6 @@ const dashboard_filter = view(
 
 Count: ${[...aap_all_institutions].length}
 
-${downloadTableButton(() => [...out])}
-<!-- $ -->
-
-```sql id=out display
-select
-  *
-  -- numero_national_de_structure,
-  -- list_distinct(list(label)) as labels,
-  -- -- list_distinct(flatten(list(split(label_numero, ',')))) as label_numeros,
-  -- 1 as phase,
--- from aap1_laboratories
-from aap1_institutions
--- left join aap1_laboratories
---   on aap1_project_by_laboratories.lab = aap1_laboratories.label
--- group by numero_national_de_structure
-```
-
 ${downloadTableButton(() => [...aap_all_institutions])}
 <!-- $ -->
 
@@ -211,6 +194,62 @@ group by id
 
 ### All socioeconomic partners
 
+Count: ${[...out].length}
+<!-- $ -->
+
+${downloadTableButton(() => [...out])}
+<!-- $ -->
+
+```sql id=out display
+select distinct
+  -- *
+  "ID primaire" as ID_PARTENAIRE,
+  list_distinct(list(aap1_all_partners.label) ||
+    list(aap1_socioeconomic_partners.label)) as labels,
+  siret::VARCHAR as siret,
+  siren::VARCHAR as siren,
+  nom_complet,
+  nature_juridique,
+  latitude,
+  longitude,
+  libelle_commune,
+  code_postal,
+  region,
+from aap1_all_partners
+left join aap1_socioeconomic_partners
+  on aap1_all_partners."ID primaire"::BIGINT = aap1_socioeconomic_partners.siret::BIGINT
+where aap1_all_partners.type = 'SOCIOECONOMIQUE'
+group by all
+```
+
+Count: ${[...out2].length}
+<!-- $ -->
+
+${downloadTableButton(() => [...out2])}
+<!-- $ -->
+
+```sql id=out2 display
+select distinct
+  -- *
+  projet,
+  "ID primaire" as institution_id,
+from aap1_all_projects_by_partners
+left join aap1_all_partners
+  on aap1_all_projects_by_partners.source_label = aap1_all_partners.label
+where aap1_all_partners.type = 'ETABLISSEMENT'
+```
+
+```sql
+select *
+from aap1_institutions
+```
+
+```sql
+select *
+from aap1_all_partners
+where aap1_all_partners.type = 'ETABLISSEMENT'
+```
+
 Count: ${[...aap_all_socioeconomic_partners].length}
 
 ```sql id=aap_all_socioeconomic_partners display
@@ -255,12 +294,6 @@ from (
     group by siren
 )
 group by id
-```
-
-```sql
-
-
-
 ```
 
 <div class="grid grid-cols-4" id="aap-key-numbers">
