@@ -5,7 +5,7 @@ import * as Plot from '@observablehq/plot';
  * labels) from an array of dated events
  *
  * @param {Object[]} events - events to plot, each with `year`, `y`, and `name` fields
- * @param {Object} [options]
+ * @param {Object} [options={}]
  * @param {number} [options.width] - chart width
  * @param {number} [options.height] - chart height
  * @returns {SVGElement} the rendered timeline

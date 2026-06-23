@@ -53,7 +53,7 @@ export const erc_legend = () =>
  * Horizontal bar plot of CNU section occurrence counts
  *
  * @param {Array} data - count data, rows of `[cnu_label, count]`
- * @param {Object} [options]
+ * @param {Object} [options={}]
  * @param {number} [options.width=600] - chart width
  * @param {number} [options.marginTop=20] - chart top margin
  * @param {number} [options.marginLeft=18] - chart left margin
@@ -134,7 +134,7 @@ export const cnu_plot = (
  * legended by AAP round
  *
  * @param {Array} data - count data, rows of `[cnu_label, count]`
- * @param {Object} [options]
+ * @param {Object} [options={}]
  * @param {number} [options.width=600] - chart width
  * @param {number} [options.marginTop=50] - chart top margin
  * @param {number} [options.marginLeft=18] - chart left margin
@@ -219,7 +219,7 @@ export const cnu_by_aap_plot = (
  * Vertical (y-axis bar) variant of cnu_plot
  *
  * @param {Array} data - count data, rows of `[cnu_label, count]`
- * @param {Object} [options]
+ * @param {Object} [options={}]
  * @param {number} [options.width=600] - chart width
  * @param {number} [options.height=800] - chart height
  * @param {number} [options.marginTop=50] - chart top margin
@@ -305,7 +305,7 @@ export const cnu_plot_y = (
  * Vertical variant of cnu_by_aap_plot
  *
  * @param {Array} data - count data, rows of `[cnu_label, count]`
- * @param {Object} [options]
+ * @param {Object} [options={}]
  * @param {number} [options.width=600] - chart width
  * @param {number} [options.height=800] - chart height
  * @param {number} [options.marginTop=50] - chart top margin
@@ -444,7 +444,7 @@ export const custom_cnu_group_donut = (data, width) =>
  * section
  *
  * @param {Array} data - count data, rows of `[cnu_label, count]`
- * @param {Object} [options] - same as cnu_plot, with fill_accessor defaulting to an ERC-domain color
+ * @param {Object} [options={}] - same as cnu_plot, with fill_accessor defaulting to an ERC-domain color
  * @returns {SVGElement} the rendered bar plot
  */
 export const cnu_plot_by_erc = (
@@ -478,7 +478,7 @@ export const cnu_plot_by_erc = (
  * CNU section
  *
  * @param {Array} data - count data, rows of `[cnu_label, count]`
- * @param {Object} [options] - same as cnu_by_aap_plot, with fill_accessor defaulting to an ERC-domain color
+ * @param {Object} [options={}] - same as cnu_by_aap_plot, with fill_accessor defaulting to an ERC-domain color
  * @returns {SVGElement} the rendered bar plot
  */
 export const cnu_by_aap_plot_by_erc = (
@@ -512,7 +512,7 @@ export const cnu_by_aap_plot_by_erc = (
  * section
  *
  * @param {Array} data - count data, rows of `[cnu_label, count]`
- * @param {Object} [options] - same as cnu_plot_y, with fill_accessor defaulting to an ERC-domain color
+ * @param {Object} [options={}] - same as cnu_plot_y, with fill_accessor defaulting to an ERC-domain color
  * @returns {SVGElement} the rendered bar plot
  */
 export const cnu_plot_y_by_erc = (
@@ -550,7 +550,7 @@ export const cnu_plot_y_by_erc = (
  * CNU section
  *
  * @param {Array} data - count data, rows of `[cnu_label, count]`
- * @param {Object} [options] - same as cnu_by_aap_plot_y, with fill_accessor defaulting to an ERC-domain color
+ * @param {Object} [options={}] - same as cnu_by_aap_plot_y, with fill_accessor defaulting to an ERC-domain color
  * @returns {SVGElement} the rendered bar plot
  */
 export const cnu_by_aap_plot_y_by_erc = (
@@ -589,7 +589,7 @@ export const cnu_by_aap_plot_y_by_erc = (
  * @param {Array} data - count data, rows of `[erc_domain, count]`
  * @param {number} width - chart width
  * @param {number} height - chart height
- * @param {Object} [options] - additional donutChart options, merged over the defaults
+ * @param {Object} [options={}] - additional donutChart options, merged over the defaults
  * @returns {SVGElement} the rendered donut chart
  */
 export const erc_donut = (data, width, height, options = {}) =>

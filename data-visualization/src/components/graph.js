@@ -1034,7 +1034,7 @@ export class WordBubbles extends Graph {
    * wrapped text labels and no links between them.
    *
    * @param {object[]} nodes - an array of node objects (see `Graph`)
-   * @param {object} [options] - Same as `Graph` options, with the following defaults overridden:
+   * @param {object} [options={}] - Same as `Graph` options, with the following defaults overridden:
    * @param {number} [options.textLength=60] - label cutoff length
    * @param {number} [options.nodeLabelOpacity=1] - default node label opacity
    * @param {string} [options.textColor='white'] - label color
@@ -1138,7 +1138,7 @@ export class WordBubbles extends Graph {
  *
  * @param {object} graph - a graph with `nodes` and `links` arrays
  * @param {Function} filterFunction - predicate called with each link, returning true to keep it
- * @param {Function} [keyMap] - accessor for a node's unique identifier
+ * @param {Function} [keyMap=(d) => d.id] - accessor for a node's unique identifier
  * @returns {object} a new `{nodes, links}` graph containing only the filtered links and their nodes
  */
 export function filterLinks(graph, filterFunction, keyMap = (d) => d.id) {

@@ -37,10 +37,10 @@ export function generateIntersectionMatrix(set_map) {
  * - https://www.visualcinnamon.com/2014/12/using-data-storytelling-with-chord.html
  * - https://www.visualcinnamon.com/2016/06/orientation-gradient-d3-chord-diagram/
  *
- * @param {Array<Array>} data - a matrix containing the numeric values of the chord
+ * @param {Array<Array>} [data=[]] - a matrix containing the numeric values of the chord
  * ribbons. Percentage values are used by default
- * @param {Array<Number>} names - labels for each row
- * @param {Array} colors - a list of colors for each row
+ * @param {Array<Number>} [names=[]] - labels for each row
+ * @param {Array} [colors=[]] - a list of colors for each row
  * @returns {node} A D3 selection containing the SVG node that makes up the chord diagram.
  */
 export function chordDiagram(

@@ -30,7 +30,7 @@ export const column_label_map = new Map([
  * them for word-cloud sizing
  *
  * @param {Object[]} data - extracted term rows, each with `Main form` and `C-value`
- * @param {Object} [options]
+ * @param {Object} [options={}]
  * @param {number} [options.limit=15] - maximum number of terms to keep
  * @param {number} [options.rFactor=6] - multiplier applied to C-value to compute the word-cloud radius
  * @returns {Object[]} an array of `{id, label, r}` word-cloud data
@@ -50,7 +50,7 @@ export const freq_words = (data, { limit = 15, rFactor = 6 } = {}) =>
  * them for word-cloud sizing
  *
  * @param {Object[]} data - extracted term rows, each with `Main form` and `Gfidf`
- * @param {Object} [options]
+ * @param {Object} [options={}]
  * @param {number} [options.limit=15] - maximum number of terms to keep
  * @param {number} [options.rFactor=6] - multiplier applied to Gfidf to compute the word-cloud radius
  * @returns {Object[]} an array of `{id, label, r}` word-cloud data
@@ -118,7 +118,7 @@ export const generateRoundTableEntitiesPlot = (data, width) =>
  * container width
  *
  * @param {Object[]} data - extracted term rows, each with `Main form` and the column named by `x_column`
- * @param {Object} [options]
+ * @param {Object} [options={}]
  * @param {string} [options.x_column] - the numeric column to rank/plot terms by
  * @param {number} [options.limit] - maximum number of terms to display
  * @param {number} [options.marginLeft] - chart left margin
@@ -164,7 +164,7 @@ const generateExtractedTermsPlot = (
  * column_title_map (C-value, Gfidf)
  *
  * @param {Object[]} data - extracted term rows
- * @param {Object} [options]
+ * @param {Object} [options={}]
  * @param {number} [options.marginLeft=180] - chart left margin for each plot
  * @param {number} [options.limit=30] - maximum number of terms per plot
  * @returns {Element} an HTML grid containing one term plot per column

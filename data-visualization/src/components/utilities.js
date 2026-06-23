@@ -164,7 +164,7 @@ export function joinOnKeys(
  * @param {Object[]} target_data - dataset to join against and back-populate
  * @param {string} target_foreign_key - the field name suffix used for the `owner_`/`partner_` fields set on each target datum
  * @param {string} target_primary_key - the primary key field name on target_data
- * @param {Function} [target_foreign_key_filter] - if provided, called with each target datum instead of the default owner/partner partitioning
+ * @param {Function} [target_foreign_key_filter=null] - if provided, called with each target datum instead of the default owner/partner partitioning
  * @returns {void}
  */
 export function joinOnOwnerPartnerKeys(
@@ -291,7 +291,7 @@ export const exclude = (d) =>
  * (proportional-width div) scaled against max
  *
  * @param {number} max - the value representing a full-width (100%) bar
- * @param {Object} [options]
+ * @param {Object} [options={}]
  * @param {string} [options.background='var(--theme-foreground-focus)'] - bar background color
  * @param {string} [options.color='black'] - bar text color
  * @param {string} [options.float='right'] - bar float/alignment direction
@@ -402,14 +402,14 @@ export function copyTableToClipboardButton(
  * A button for copying an SVG element to the clipboard.
  *
  * @param {Element} element - the element to be copied. Ignored if callback is set
- * @param {string} label - button label
- * @param {Function} callback - an optional callback function to dynamically return the SVG
+ * @param {string} [label='Copy to clipboard'] - button label
+ * @param {Function} [callback=null] - an optional callback function to dynamically return the SVG
  * @returns {button} - a button element that copies the element html to the clipboard
  */
 export function copySVGToClipboardButton(
   element,
   label = 'Copy to clipboard',
-  callback = undefined,
+  callback = null,
 ) {
   if (!element && !callback) {
     console.warn('copySVGToClipboardButton: element and callback are empty')
@@ -508,8 +508,8 @@ export function downloadJSONButton(
  * A button for downloading one or many an SVG elements with a d3 selector.
  *
  * @param {string} selector - a d3 selector string for returning the svg elements to be downloaded.
- * @param {string} label - button label
- * @param {string} filename - downloaded file name
+ * @param {string} [label='Download (.svg)'] - button label
+ * @param {string} [filename='download.svg'] - downloaded file name
  * @returns {button} - a button element that copies the element html to the clipboard
  */
 export function downloadSVGButton(
@@ -608,7 +608,7 @@ export function downloadPNGButton(selector, label = 'Download (.png)') {
  * @param {string} method The HTTP method. Accepted methods include `GET`,
  * `DELETE`, `POST` and `PUT`.
  * @param {string} url The requested URL.
- * @param {object} [options] A dictionary of optional parameters. These
+ * @param {object} [options={}] A dictionary of optional parameters. These
  * options include the following :
  * @param {FormData|string} [options.body] The request body
  * @param {string} [options.responseType] The expected
@@ -657,7 +657,8 @@ export function request(method, url, options = {}) {
  * Used Github Copilot to improve BOM handling for UTF-8 text files.
  *
  * @param {any} content - content to write
- * @param {string} content_type - file content mime type
+ * @param {string} [filename='download.txt'] - downloaded file name
+ * @param {string} [content_type='text/plain;charset=utf-8'] - file content mime type
  *
  * @returns {button}
  */

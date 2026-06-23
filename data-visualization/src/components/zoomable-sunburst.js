@@ -1,17 +1,17 @@
-import * as d3 from 'd3';
-import { cropText } from './utilities.js';
+import * as d3 from 'd3'
+import { cropText } from './utilities.js'
 
 /**
  * Build an interactive zoomable sunburst chart (click an arc or the center
  * circle to zoom in/out) from a d3 hierarchy
  *
- * @param {Object} hierarchy - a d3 hierarchy root node (with `id`, `height`, `depth`, `value`, `children`)
- * @param {Object} [options]
+ * @param {Object} [hierarchy=[]] - a d3 hierarchy root node (with `id`, `height`, `depth`, `value`, `children`)
+ * @param {Object} [options={}]
  * @param {number} [options.width=500] - chart width (and height, as the chart is square)
  * @param {number} [options.fontSize=8] - label font size, in pixels
  * @param {string} [options.fontFamily='sans-serif'] - label font family
- * @param {Function} [options.keyMap] - accessor for a node's identifier
- * @param {Function} [options.valueMap] - accessor for a node's value
+ * @param {Function} [options.keyMap=(d) => d.id] - accessor for a node's identifier
+ * @param {Function} [options.valueMap=(d) => d.value] - accessor for a node's value
  * @param {Function} [options.labelMap] - accessor for a node's rendered label text
  * @returns {SVGElement} the rendered zoomable sunburst chart
  */
@@ -31,7 +31,7 @@ export function zoomableSunburst(
     keyMap = (d) => d.id,
     valueMap = (d) => d.value,
     labelMap = (d) => cropText(`(${keyMap(d)}) ${valueMap(d)}`),
-  },
+  } = {},
 ) {
   // Specify the chart’s dimensions.
   const height = width

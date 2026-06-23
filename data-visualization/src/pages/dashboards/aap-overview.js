@@ -104,7 +104,7 @@ export const ySortSelect = (label = 'Label') =>
  * Horizontal bar plot of AAP1 project counts
  *
  * @param {Object[]} data - count data to plot
- * @param {Object} [options]
+ * @param {Object} [options={}]
  * @param {number} [options.width] - chart width
  * @param {number} [options.height=400] - chart height
  * @param {number} [options.marginLeft=140] - chart left margin
@@ -166,7 +166,7 @@ export const projectCountPlotAAP1 = (
  * Horizontal bar plot of AAP2 project counts, colored by project type
  *
  * @param {Object[]} data - count data to plot
- * @param {Object} [options]
+ * @param {Object} [options={}]
  * @param {number} [options.width] - chart width
  * @param {number} [options.height=400] - chart height
  * @param {number} [options.marginLeft=140] - chart left margin
@@ -233,7 +233,7 @@ export const projectCountPlotAAP2 = (
  * into or alongside each bar depending on bar length
  *
  * @param {Object[]} data - partner count data, each with `id`, `label`, `count`, `communes`
- * @param {Object} [options]
+ * @param {Object} [options={}]
  * @param {number} [options.width] - chart width
  * @param {number} [options.height=400] - chart height
  * @param {number} [options.marginLeft=230] - chart left margin
@@ -352,7 +352,7 @@ export const partnerCountPlotY = (
  * labels overflowing into or alongside each bar depending on bar length
  *
  * @param {Object[]} data - partner count data, each with `id`, `label`, `count`, `communes`
- * @param {Object} [options]
+ * @param {Object} [options={}]
  * @param {number} [options.width] - chart width
  * @param {number} [options.height=350] - chart height
  * @param {number} [options.marginBottom=150] - chart bottom margin

@@ -5,6 +5,7 @@ import { formatIfString } from './utilities.js'
  * Format known project entities from the Financing sheet
  *
  * @param {Object[]} workbook - The workbook to extract
+ * @param {string} [project=null] - the project name to attach to each entity
  * @returns {Object[]} Formatted sheet data
  */
 export function resolveProjectFinancingEntities(workbook, project = null) {
@@ -172,7 +173,9 @@ export function resolveProjectFinancingEntities(workbook, project = null) {
  *
  * @param {Object[]} data - A table
  * @param {Boolean} civil_servants - Are we dealing with a civil servants?
- * @param {string} project - Optional project name
+ * @param {string} [project=null] - Optional project name
+ * @param {string} [default_employer=null] - Optional fallback employer name
+ * @param {string} [default_employer_id=null] - Optional fallback employer id
  * @returns {Object[]} Formatted personnel data
  */
 function mapPersonnelFinancingEntities(

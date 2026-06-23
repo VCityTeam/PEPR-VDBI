@@ -8,7 +8,7 @@ import * as d3 from 'npm:d3'
  * color channels derived from raw data
  *
  * @param {Object[]} data - dataset to plot
- * @param {Object} [options] - chart configuration
+ * @param {Object} [options={}] - chart configuration
  * @param {number} [options.width] - chart width
  * @param {number} [options.height] - chart height
  * @param {string} [options.x_label] - x axis label
@@ -76,7 +76,7 @@ export const bubbleChartXY = (
  * positioned along the x axis only
  *
  * @param {Object[]} data - dataset to plot
- * @param {Object} [options] - chart configuration
+ * @param {Object} [options={}] - chart configuration
  * @param {number} [options.width=600] - chart width
  * @param {number} [options.height=300] - chart height
  * @param {number} [options.marginBottom=40] - chart bottom margin

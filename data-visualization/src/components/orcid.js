@@ -3,7 +3,7 @@
  *
  * @param {string} query - the ORCID search query string
  * @param {string} token - an ORCID API access token (currently unused, see source)
- * @param {string[]} [fields] - the ORCID profile fields to request (currently unused, see source)
+ * @param {string[]} [fields=['orcid', 'email', 'given-names', 'family-name', 'given-and-family-names', 'credit-name', 'other-name', 'current-institution-affiliation-name', 'past-institution-affiliation-name']] - the ORCID profile fields to request (currently unused, see source)
  * @returns {Promise<Object>} a promise resolving to the parsed JSON response
  */
 export async function searchOrcid(

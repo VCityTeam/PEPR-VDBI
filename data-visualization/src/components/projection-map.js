@@ -318,7 +318,7 @@ export function projectionMap(
  * Default Observable Plot color-scale config (Blues scheme, legend, margins)
  * for choropleth maps
  *
- * @param {string} [label] - the color legend label
+ * @param {string} [label='N° de partenaires et parties prenantes estimé'] - the color legend label
  * @returns {Object} a Plot `color` scale configuration object
  */
 const choropleth_color_config = (

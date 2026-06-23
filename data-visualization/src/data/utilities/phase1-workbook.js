@@ -116,8 +116,8 @@ export function getInstitutionSheet(workbook) {
  *  }
  *
  * @param {Row[]} sheet - Extracted sheet data
- * @param {boolean} pseudoanonymize - Pseudoanonymize data or not
- * @param {Map} pseudoacronymousDict - A preset dictionary of pseudoanomymized entry mappings
+ * @param {boolean} [pseudoanonymize=false] - Pseudoanonymize data or not
+ * @param {Map} [pseudoacronymousDict=new Map()] - A preset dictionary of pseudoanomymized entry mappings
  * @returns {Object[]} Formatted sheet data
  */
 export function resolveGeneralEntities(
@@ -260,8 +260,8 @@ export function resolveGeneralEntities(
  *
  * @param {Object[]} researcher_sheet - Extracted researcher sheet data
  * @param {Object[]} mail_sheet - Extracted mail sheet data
- * @param {boolean} pseudoanonymize - Anonymize data or not
- * @param {Map} pseudoanonymousDict - A preset dictionary of anomymized entry mappings
+ * @param {boolean} [pseudoanonymize=true] - Anonymize data or not
+ * @param {Map} [pseudoanonymousDict=new Map()] - A preset dictionary of anomymized entry mappings
  * @returns {Object[]} Formatted sheet data
  */
 export function resolveResearcherEntities(

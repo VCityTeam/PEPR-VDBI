@@ -27,9 +27,8 @@ let globalFetchQueue = Promise.resolve()
  * Send an HTTP request to a URL API with some basic error handling and logging.
  *
  * @param {string} url - The endpoint url.
- * @param {number} [sleep=0.2] - The number of seconds to sleep before sending the request to avoid rate limiting.
- * @param {string} accept - The mimetype accept header.
- * @param {pino.Logger} logger - A pino logger instance.
+ * @param {number} [sleep=0] - The number of seconds to sleep before sending the request to avoid rate limiting.
+ * @param {pino.Logger} [logger=pino(default_log_options('fetch url utility'))] - A pino logger instance.
  * @returns {Promise<Object|null>} A promise resolving to a dictionary (object) of the request response if successful, or null.
  */
 export async function handleFetchJson(
@@ -110,7 +109,7 @@ export function anonymizeEntry() {
  *
  * @param {string} entry - a text entry
  * @param {Map} dictionary - a mapping of entries to anonymized entries
- * @param {string} type - the type of name to generate; based on high fantasy races
+ * @param {string} [type='human'] - the type of name to generate; based on high fantasy races
  * @returns {string} anonymized entry
  */
 export function pseudoanonymizeEntry(entry, dictionary, type = 'human') {
