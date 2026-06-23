@@ -18,5 +18,6 @@
   "first-line-h1": false,
   "line-length": {
     "tables": false
-  }
+  },
+  "line_length": false
 }
