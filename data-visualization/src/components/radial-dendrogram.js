@@ -10,6 +10,13 @@ import {
   linkRadial,
 } from 'd3';
 
+/**
+ * Convert a flat list of project objects into a d3-hierarchy-compatible
+ * nested tree, rooted at 'PEPR VDBI' -> projects -> properties -> values
+ *
+ * @param {Object[]} projects - project entities to convert (each with an `acronyme` field)
+ * @returns {Object} a nested `{name, children}` tree
+ */
 export function mapEntitesToProjectTree(projects) {
   // map graph to d3 hierarchy format
   const projectTree = {
@@ -53,6 +60,14 @@ export function mapEntitesToProjectTree(projects) {
 }
 
 // col I : produit (ou resultats) de la recherche (primaire) -> J : secondaire -> H : Quelles actions pour quelles solutions -> A : acronyme
+/**
+ * Group projects by primary/secondary product and action, then nest each
+ * project's full subtree (from mapEntitesToProjectTree) underneath, for a
+ * product-oriented dendrogram
+ *
+ * @param {Object[]} projects - project entities, each with `produit` (array) and `action` fields
+ * @returns {Object} a nested `{name, children}` tree rooted at 'PEPR VDBI'
+ */
 export function mapEntitesToProductToProjectTree(projects) {
   // Group projects by primary, secondary products/results, then actions
   const projectByProduct = group(
@@ -114,6 +129,44 @@ export function mapEntitesToProductToProjectTree(projects) {
   return projectToProductTree;
 }
 
+/**
+ * Build an interactive, collapsible radial dendrogram (click a node to
+ * expand/collapse its children) from tabular or hierarchical data.
+ * Adapted from the Observable "Collapsible tree" / "Radial tree" examples.
+ *
+ * @param {Object[]|Object} data - tabular data (array of objects) or a nested hierarchy object
+ * @param {Object} [options]
+ * @param {Function} [options.path] - alternative to id/parentId; returns an array identifier, imputing internal nodes
+ * @param {Function} [options.id] - for tabular data, given a datum returns its unique identifier (string)
+ * @param {Function} [options.parentId] - for tabular data, given a datum returns its parent's identifier
+ * @param {Function} [options.children] - for hierarchical data, given a datum returns its children
+ * @param {Function} [options.separation] - node separation function for the tree layout
+ * @param {Function} [options.sort] - comparator used to sort nodes prior to layout
+ * @param {number} [options.duration=500] - transition duration in ms
+ * @param {number} [options.depth=100] - fixed depth setting
+ * @param {number} [options.width=640] - outer width, in pixels
+ * @param {number} [options.height=640] - outer height, in pixels
+ * @param {number} [options.margin=60] - shorthand for all margins
+ * @param {number} [options.marginTop] - top margin, in pixels
+ * @param {number} [options.marginRight] - right margin, in pixels
+ * @param {number} [options.marginBottom] - bottom margin, in pixels
+ * @param {number} [options.marginLeft] - left margin, in pixels
+ * @param {number} [options.textLength=15] - label cutoff length
+ * @param {number} [options.radius] - outer radius
+ * @param {number} [options.r=3] - radius of nodes
+ * @param {string} [options.fill='#999'] - fill for nodes
+ * @param {number} [options.fillOpacity] - fill opacity for nodes
+ * @param {number} [options.fontsize=10] - font size for labels
+ * @param {string} [options.stroke='#555'] - stroke for links
+ * @param {number} [options.strokeWidth=1.5] - stroke width for links
+ * @param {number} [options.strokeOpacity=0.4] - stroke opacity for links
+ * @param {string} [options.strokeLinejoin] - stroke line join for links
+ * @param {string} [options.strokeLinecap] - stroke line cap for links
+ * @param {string} [options.halo='#fff'] - color of the label halo
+ * @param {number} [options.haloWidth=3] - padding around the labels
+ * @param {boolean} [options.dynamicPositioning=true] - recalculate node positions according to radius on every update
+ * @returns {SVGElement} the rendered radial dendrogram
+ */
 export function collapsableRadialDendrogram(
   data,
   {
@@ -208,6 +261,13 @@ export function collapsableRadialDendrogram(
   update(root);
   return svg.node();
 
+  /**
+   * Re-render and transition the dendrogram's nodes and links from a given
+   * source node's previous position (used on init and on click-toggle)
+   *
+   * @param {Object} source - the d3 hierarchy node to transition from
+   * @returns {void}
+   */
   function update(source) {
     const nodes = root.descendants();
     const links = root.links();
@@ -360,7 +420,13 @@ export function collapsableRadialDendrogram(
     });
   }
 
-  // Toggle children on click.
+  /**
+   * Toggle a node's children/`_children` to expand or collapse it, then
+   * re-render the dendrogram from that node
+   *
+   * @param {Object} d - the clicked d3 hierarchy node
+   * @returns {void}
+   */
   function click(d) {
     if (d.children) {
       d._children = d.children;

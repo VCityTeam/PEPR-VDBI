@@ -375,6 +375,12 @@ export function resolveResearcherEntities(
   )
 }
 
+/**
+ * Flatten each researcher's keywords into a list of researcher/keyword pairs
+ *
+ * @param {Object[]} researchers - researcher entities, each with a `keywords` array
+ * @returns {Object[]} an array of `{researcher, keyword}` rows
+ */
 export function resolveResearcherByKeywords(researchers) {
   let researcher_by_keywords = []
   researchers.forEach((researcher) => {
@@ -446,6 +452,13 @@ export function resolveInstitutionEntities(sheet) {
   }))
 }
 
+/**
+ * Enrich a list of socioeconomic partner labels with SIRET/recherche-entreprises
+ * API data
+ *
+ * @param {string[]} partners - partner labels to query
+ * @returns {Promise<Object[]>} a promise resolving to an array of `{label, ...response}` objects
+ */
 export async function enrichSocioeconomicPartnersEntities(partners) {
   return Promise.all(
     map(partners, async (d) => {
@@ -657,6 +670,12 @@ function cleanUpProjectLabel(label) {
   return label.toUpperCase().replace(/É/g, 'E')
 }
 
+/**
+ * Trim a string value, or normalize a falsy value to null
+ *
+ * @param {*} d - the value to clean
+ * @returns {string|*|null} the trimmed string, the original value, or null
+ */
 function cleanDatum(d) {
   if (!d) return null
   if (typeof d === 'string') return d.trim()

@@ -179,7 +179,18 @@ console.debug('lab_disciplines_by_code', lab_disciplines_by_code)
 
 // Project terrain map
 
-// point in bbox?
+/**
+ * Check whether a longitude/latitude point falls within a bounding box
+ *
+ * @param {number} longitude - the point's longitude
+ * @param {number} latitude - the point's latitude
+ * @param {Object} bbox - the bounding box
+ * @param {number} [bbox.min_x=-180] - minimum longitude
+ * @param {number} [bbox.max_x=180] - maximum longitude
+ * @param {number} [bbox.min_y=-180] - minimum latitude
+ * @param {number} [bbox.max_y=180] - maximum latitude
+ * @returns {boolean} true if the point is within the bounding box
+ */
 export const inBBox = (
   longitude,
   latitude,
@@ -329,6 +340,14 @@ export const terrain_anchor_map = new Map([
   // ["Acquasanta Terme", "top-left"],
 ])
 
+/**
+ * Build a Plot.tip configuration object for a terrain label
+ *
+ * @param {Object} datum - a terrain datum with `longitude`/`latitude`
+ * @param {string} tip_anchor - the tip anchor position (e.g. 'top-left')
+ * @param {boolean} big_labels - whether to use larger label styling
+ * @returns {Object} a Plot.tip options object
+ */
 export const tip_config = (datum, tip_anchor, big_labels) => ({
   x: datum.longitude,
   y: datum.latitude,
@@ -341,6 +360,14 @@ export const tip_config = (datum, tip_anchor, big_labels) => ({
   anchor: tip_anchor,
 })
 
+/**
+ * Generate Plot.tip marks for terrain data points, anchoring each tip
+ * according to terrain_anchor_map (falling back to 'top-left')
+ *
+ * @param {Object[]} data - terrain data points, each with a `terrain_label`
+ * @param {boolean} big_labels - whether to use larger label styling
+ * @returns {Object[]} an array of Plot.tip marks
+ */
 export const terrain_tips = (data, big_labels) =>
   data.map((d) => {
     let tip_anchor = 'top-left'
@@ -360,6 +387,15 @@ export const terrain_tip_dots_float_left = [
   'Arquata del Tronto',
 ]
 
+/**
+ * Compute offset dot positions and label coordinates for each project at a
+ * terrain location, spreading overlapping project markers apart by delta
+ *
+ * @param {Object[]} data - terrain data points, each with `projects`, `longitude`, `latitude`, `terrain_label`
+ * @param {Array} legend - the legend rows (`[project, color, label_x, label_y]`) to look up label positions from
+ * @param {number} delta - horizontal offset applied between stacked project markers
+ * @returns {Object[]} an array of per-project datum objects with `x`, `y`, `label_x`, `label_y`, `project_index`
+ */
 export const terrain_tip_dots = (data, legend, delta) =>
   data
     .flatMap((d) => {
@@ -396,6 +432,16 @@ export const labeled_france_projection = {
   domain: d3.geoCircle().center([1.7, 47.1]).radius(4.7)(),
 }
 
+/**
+ * Wrap Plot.plot with a given geo projection and marks
+ *
+ * @param {number} width - chart width
+ * @param {number} height - chart height
+ * @param {Object} projection - a d3/Plot geo projection specification
+ * @param {Array} marks - the Plot marks to render
+ * @param {string} [caption=''] - the chart caption
+ * @returns {SVGElement} the rendered map
+ */
 export const defaultProjection = (
   width,
   height,
@@ -411,6 +457,16 @@ export const defaultProjection = (
     marks: [...marks],
   })
 
+/**
+ * Convenience wrapper for France-projected maps, including the default
+ * mainland France marks
+ *
+ * @param {number} width - chart width
+ * @param {number} height - chart height
+ * @param {Array} marks - additional Plot marks to layer on top
+ * @param {string} [caption=''] - the chart caption
+ * @returns {SVGElement} the rendered map
+ */
 export const defaultProjectionFrance = (width, height, marks, caption = '') =>
   defaultProjection(
     width,
@@ -420,6 +476,15 @@ export const defaultProjectionFrance = (width, height, marks, caption = '') =>
     caption,
   )
 
+/**
+ * Convenience wrapper for Paris-projected maps, including a France
+ * departments base layer
+ *
+ * @param {number} width - chart width (used for both width and height)
+ * @param {Array} marks - additional Plot marks to layer on top
+ * @param {string} [caption=''] - the chart caption
+ * @returns {SVGElement} the rendered map
+ */
 export const defaultProjectionParis = (width, marks, caption = '') =>
   defaultProjection(
     width,
@@ -435,6 +500,15 @@ export const defaultProjectionParis = (width, marks, caption = '') =>
     caption,
   )
 
+/**
+ * Convenience wrapper for Italy-projected maps, including an Italian
+ * regions base layer
+ *
+ * @param {number} width - chart width (used for both width and height)
+ * @param {Array} marks - additional Plot marks to layer on top
+ * @param {string} [caption=''] - the chart caption
+ * @returns {SVGElement} the rendered map
+ */
 export const defaultProjectionItaly = (width, marks, caption = '') =>
   defaultProjection(
     width,
@@ -452,9 +526,23 @@ export const defaultProjectionItaly = (width, marks, caption = '') =>
 
 // generate plot marks for each visualisation method
 
+/**
+ * Check whether a project is in the currently selected terrain project list
+ *
+ * @param {string} project - the project acronym to check
+ * @returns {boolean} true if the project is currently selected
+ */
 export const isProjectSelected = (project) =>
   selected_terrain_project.includes(project)
 
+/**
+ * Build Plot.dot legend markers for the terrain legend, dimming unselected
+ * projects
+ *
+ * @param {Array} terrain_legend - legend rows (`[project, color, x, y]`)
+ * @param {boolean} big_labels - whether to use larger marker styling
+ * @returns {Object} a Plot.dot mark
+ */
 export const map_legend_dots = (terrain_legend, big_labels) =>
   Plot.dot(terrain_legend, {
     x: (d) => d[2],
@@ -464,6 +552,14 @@ export const map_legend_dots = (terrain_legend, big_labels) =>
     fillOpacity: (d) => (isProjectSelected(d[0]) ? 1 : 0.2),
   })
 
+/**
+ * Build Plot.text legend labels for the terrain legend, dimming unselected
+ * projects
+ *
+ * @param {Array} terrain_legend - legend rows (`[project, color, x, y]`)
+ * @param {boolean} big_labels - whether to use larger label styling
+ * @returns {Object} a Plot.text mark
+ */
 export const map_legend_text = (terrain_legend, big_labels) =>
   Plot.text(terrain_legend, {
     x: (d) => d[2],
@@ -478,6 +574,15 @@ export const map_legend_text = (terrain_legend, big_labels) =>
     opacity: (d) => (isProjectSelected(d[0]) ? 1 : 0.2),
   })
 
+/**
+ * Build link, dot, and legend marks for the "line" style terrain map
+ * (project markers connected to legend entries by curved links)
+ *
+ * @param {Object[]} terrain_data - terrain data points
+ * @param {Array} terrain_legend - legend rows (`[project, color, x, y]`)
+ * @param {boolean} big_labels - whether to use larger marker/line styling
+ * @returns {Array} an array of Plot marks
+ */
 function generateLineMapMarks(terrain_data, terrain_legend, big_labels) {
   const strokeWidth = big_labels ? 2 : 1
 
@@ -550,6 +655,16 @@ function generateLineMapMarks(terrain_data, terrain_legend, big_labels) {
   ]
 }
 
+/**
+ * Build dot, tip, and legend marks for the "dot" style terrain map
+ * (terrain location dots plus offset per-project tip dots)
+ *
+ * @param {Object[]} terrain_data - terrain data points
+ * @param {Array} terrain_legend - legend rows (`[project, color, x, y]`)
+ * @param {number} tip_dot_delta - horizontal offset between stacked per-project tip dots
+ * @param {boolean} big_labels - whether to use larger marker styling
+ * @returns {Array} an array of Plot marks
+ */
 function generateDotMapMarks(
   terrain_data,
   terrain_legend,
@@ -652,6 +767,18 @@ export const color_config = {
 
 if (flatten_choropleth) color_config.domain = [0, 2.7]
 
+/**
+ * Build a choropleth Plot.plot for given geojson features and a fill
+ * accessor
+ *
+ * @param {number} width - chart width
+ * @param {number} height - chart height
+ * @param {Function|string} fill - accessor or field name for the fill/color channel
+ * @param {Object} projection - a d3/Plot geo projection specification
+ * @param {Object} features - a GeoJSON FeatureCollection to render
+ * @param {string} caption - color legend label/caption
+ * @returns {SVGElement} the rendered choropleth map
+ */
 export const choropleth = (
   width,
   height,
@@ -711,6 +838,14 @@ console.debug(
   mainland_france_regions_geojson,
 )
 
+/**
+ * Choropleth wrapper specialized for mainland France departments
+ *
+ * @param {number} width - chart width
+ * @param {number} height - chart height
+ * @param {Function|string} fill - accessor or field name for the fill/color channel
+ * @returns {SVGElement} the rendered choropleth map
+ */
 export const choroplethFrance = (width, height, fill) =>
   choropleth(
     width,
@@ -721,6 +856,13 @@ export const choroplethFrance = (width, height, fill) =>
     '- Partenaires et parties prenantes des projets par département, France',
   )
 
+/**
+ * Choropleth wrapper specialized for Île-de-France departments
+ *
+ * @param {number} width - chart width (used for both width and height)
+ * @param {Function|string} fill - accessor or field name for the fill/color channel
+ * @returns {SVGElement} the rendered choropleth map
+ */
 export const choroplethIdf = (width, fill) =>
   choropleth(
     width,
@@ -731,6 +873,13 @@ export const choroplethIdf = (width, fill) =>
     '- Partenaires et parties prenantes des projets par département, Île-de-France',
   )
 
+/**
+ * Choropleth wrapper specialized for Italy regions
+ *
+ * @param {number} width - chart width (used for both width and height)
+ * @param {Function|string} fill - accessor or field name for the fill/color channel
+ * @returns {SVGElement} the rendered choropleth map
+ */
 export const choroplethItaly = (width, fill) =>
   choropleth(
     width,

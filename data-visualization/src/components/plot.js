@@ -37,6 +37,28 @@ export function getColumnOptions(data, key) {
   return options
 }
 
+/**
+ * Build a faceted (by `fy`), sortable horizontal bar plot for 3-dimensional
+ * count data
+ *
+ * @param {Object[]} data - the dataset to plot
+ * @param {string} [x='count'] - the data key for the bar length (count) channel
+ * @param {string} [y='type'] - the data key for the y (color/group) channel
+ * @param {string} [fy='entity'] - the data key for the facet channel
+ * @param {number} [width=1500] - chart width
+ * @param {number} [row_height=17] - height allotted per row, used to size the chart
+ * @param {number} [margin_left=60] - chart left margin
+ * @param {number} [margin_right=140] - chart right margin
+ * @param {string} [color_scheme='Plasma'] - the Plot color scheme name
+ * @param {string} [x_label='Occurrences'] - x axis label
+ * @param {number} [domain_min=0] - minimum value of the x axis domain
+ * @param {number} [domain_max=1] - added to the max data value to define the x axis domain max
+ * @param {number} [fy_tick_format_cuttoff=25] - cut off facet tick labels after this many characters
+ * @param {string} [fy_label='Entity'] - facet axis label
+ * @param {string} [sort_criteria='-x'] - the Plot sort specification applied to facets
+ * @param {boolean} [tip=true] - whether to show tooltips on hover
+ * @returns {SVGElement} the rendered bar plot
+ */
 export function getSortable3DCountPlot(
   data,
   x = 'count',
@@ -88,6 +110,29 @@ export function getSortable3DCountPlot(
   })
 }
 
+/**
+ * Build a sortable horizontal bar plot for 2-mark count data. Note: the
+ * x1/y1 bar mark is currently commented out in the implementation, so only
+ * the x2/y2 mark renders.
+ *
+ * @param {Object[]} data - the dataset to plot
+ * @param {string} [x1='count'] - data key for the (currently unused) first mark's bar length channel
+ * @param {string} [x2='count'] - data key for the rendered mark's bar length channel
+ * @param {string} [y2='type'] - data key for the rendered mark's y channel
+ * @param {number} [width=1500] - chart width
+ * @param {number} [row_height=17] - height allotted per row, used to size the chart
+ * @param {number} [margin_left=60] - chart left margin
+ * @param {number} [margin_right=140] - chart right margin
+ * @param {string} [color_scheme='Plasma'] - the Plot color scheme name
+ * @param {string} [x_label='Occurrences'] - x axis label
+ * @param {number} [domain_min=0] - minimum value of the x axis domain
+ * @param {number} [domain_max=1] - added to the max data value to define the x axis domain max
+ * @param {number} [y_tick_format_cuttoff=25] - cut off y tick labels after this many characters
+ * @param {string} [y_label='Entity'] - y axis label
+ * @param {string} [sort_criteria='-x'] - the Plot sort specification applied to the y mark
+ * @param {boolean} [tip=true] - whether to show tooltips on hover
+ * @returns {SVGElement} the rendered bar plot
+ */
 export function getSortable2MarkCountPlot(
   data,
   x1 = 'count',

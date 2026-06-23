@@ -1,6 +1,20 @@
 import * as d3 from 'd3';
 import { cropText } from './utilities.js';
 
+/**
+ * Build an interactive zoomable sunburst chart (click an arc or the center
+ * circle to zoom in/out) from a d3 hierarchy
+ *
+ * @param {Object} hierarchy - a d3 hierarchy root node (with `id`, `height`, `depth`, `value`, `children`)
+ * @param {Object} [options]
+ * @param {number} [options.width=500] - chart width (and height, as the chart is square)
+ * @param {number} [options.fontSize=8] - label font size, in pixels
+ * @param {string} [options.fontFamily='sans-serif'] - label font family
+ * @param {Function} [options.keyMap] - accessor for a node's identifier
+ * @param {Function} [options.valueMap] - accessor for a node's value
+ * @param {Function} [options.labelMap] - accessor for a node's rendered label text
+ * @returns {SVGElement} the rendered zoomable sunburst chart
+ */
 export function zoomableSunburst(
   // interface Hierarchy {
   //   id: string;
@@ -115,7 +129,14 @@ export function zoomableSunburst(
     .attr('pointer-events', 'all')
     .on('click', clicked)
 
-  // Handle zoom on click.
+  /**
+   * Zoom the sunburst in/out, recentering on the clicked node and
+   * transitioning all arcs/labels to their new positions
+   *
+   * @param {PointerEvent} event - the click event (Alt-click uses a slower transition)
+   * @param {Object} p - the clicked d3 partition node to zoom to
+   * @returns {void}
+   */
   function clicked(event, p) {
     parent.datum(p.parent || root)
 
@@ -165,14 +186,35 @@ export function zoomableSunburst(
       .attrTween('transform', (d) => () => labelTransform(d.current))
   }
 
+  /**
+   * Determine whether an arc should be visible given its current
+   * radial/angular extent
+   *
+   * @param {Object} d - a partition node's `current`/`target` position
+   * @returns {boolean} true if the arc is within the visible radius and has nonzero angular extent
+   */
   function arcVisible(d) {
     return d.y1 <= 3 && d.y0 >= 1 && d.x1 > d.x0
   }
 
+  /**
+   * Determine whether a label should be visible given its current arc's
+   * size (hidden for arcs too small to fit text)
+   *
+   * @param {Object} d - a partition node's `current`/`target` position
+   * @returns {boolean} true if the corresponding arc is large enough to show a label
+   */
   function labelVisible(d) {
     return d.y1 <= 3 && d.y0 >= 1 && (d.y1 - d.y0) * (d.x1 - d.x0) > 0.03
   }
 
+  /**
+   * Compute the SVG transform for positioning a label at the midpoint of
+   * its arc
+   *
+   * @param {Object} d - a partition node's `current`/`target` position
+   * @returns {string} an SVG `transform` attribute value
+   */
   function labelTransform(d) {
     const x = (((d.x0 + d.x1) / 2) * 180) / Math.PI
     const y = ((d.y0 + d.y1) / 2) * radius

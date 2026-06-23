@@ -184,7 +184,7 @@ export const cnu_section_label_map = new Map([
  * Based on https://conseil-national-des-universites.fr/
  *
  * @param {string} cnu - CNU full name to categorize
- * @returns {number} The CNU category number
+ * @returns {number|null} The CNU category number
  */
 export function getGroupFromCNU(cnu) {
   if (!cnu) {
@@ -205,6 +205,12 @@ export function getGroupFromCNU(cnu) {
   return category ? category[0] : null
 }
 
+/**
+ * Look up the ERC category corresponding to a CNU code's group/section
+ *
+ * @param {string} cnu - CNU full name to categorize
+ * @returns {string} the corresponding ERC category
+ */
 export function getERCFromCNU(cnu) {
   return erc_category_by_cnu_section_map.get(getGroupFromCNU(cnu))
 }

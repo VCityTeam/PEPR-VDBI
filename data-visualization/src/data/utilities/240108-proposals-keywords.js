@@ -1,6 +1,12 @@
 import { map, filter } from 'd3'
 import { anonymizeEntry } from './data_utilities.js'
 
+/**
+ * Extract the "produits" sheet (proposal product/keyword data) from a workbook
+ *
+ * @param {Object} workbook - a parsed workbook (xlsx-populate-style)
+ * @returns {Object[]} the sheet range A1:AG78 of the second sheet, with headers
+ */
 export function getProductSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[1], {
     range: 'A1:AG78',
@@ -23,6 +29,16 @@ export const projectColorMap = {
   defi: 11,
 }
 
+/**
+ * Map raw proposal-sheet rows into structured project objects (acronym,
+ * names, action, products, objects/devices involved, keywords, challenges),
+ * optionally anonymizing the acronym and name fields.
+ *
+ * @param {Object[]} sheet - rows from getProductSheet
+ * @param {boolean} [anonymize=false] - whether to anonymize acronyme/nom fields
+ * @param {Map} [acronymousDict=new Map()] - mapping of entries to anonymized entries, shared across calls
+ * @returns {Object[]} an array of structured project objects
+ */
 export function resolveProjectEntities(
   sheet,
   anonymize = false,

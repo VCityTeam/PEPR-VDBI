@@ -93,7 +93,12 @@ export function chordDiagram(
 
   // Create the gradient fills
 
-  // Function to create the unique id for each chord gradient
+  /**
+   * Build the unique gradient id used for a chord's source/target pairing
+   *
+   * @param {Object} d - a chord datum with `source.index`/`target.index`
+   * @returns {string} the gradient element id
+   */
   function getGradID(d) {
     return `${diagram_id}-linkGrad-${d.source.index}-${d.target.index}`
   }
@@ -250,7 +255,13 @@ export function chordDiagram(
         }`,
     )
 
-  // an event handler for fading a given chord group.
+  /**
+   * Fade all ribbons not connected to the given group datum (used on hover/click)
+   *
+   * @param {number} opacity - opacity to transition unrelated ribbons to
+   * @param {Object} datum - the group datum whose connected ribbons stay unaffected
+   * @returns {void}
+   */
   function fade(opacity, datum) {
     svg
       .selectAll('path.ribbon')
@@ -264,6 +275,14 @@ export function chordDiagram(
   return svg.node()
 }
 
+/**
+ * Compute tick angle/value pairs along a chord group's arc, for rendering
+ * axis ticks
+ *
+ * @param {Object} d - a chord group datum with `startAngle`/`endAngle`/`value`
+ * @param {number} step - the value interval between ticks
+ * @returns {Object[]} an array of `{value, angle}` tick descriptors
+ */
 function groupTicks(d, step) {
   const k = (d.endAngle - d.startAngle) / d.value
   return d3.range(0, d.value, step).map((value) => {

@@ -314,6 +314,13 @@ export function projectionMap(
 
 //   )
 
+/**
+ * Default Observable Plot color-scale config (Blues scheme, legend, margins)
+ * for choropleth maps
+ *
+ * @param {string} [label] - the color legend label
+ * @returns {Object} a Plot `color` scale configuration object
+ */
 const choropleth_color_config = (
   label = 'N° de partenaires et parties prenantes estimé',
 ) => ({
@@ -330,6 +337,19 @@ const choropleth_color_config = (
   // ticks: 2,
 })
 
+/**
+ * Build a generic Observable Plot choropleth map from geojson features and
+ * a fill accessor
+ *
+ * @param {number} width - chart width
+ * @param {number} height - chart height
+ * @param {string} caption - color legend label/caption
+ * @param {Function|string} fill - accessor or field name for the fill/color channel
+ * @param {Function} projection - a d3/Plot geo projection
+ * @param {Object} features - a GeoJSON FeatureCollection to render
+ * @param {Array} [marks=[]] - additional Plot marks to layer on top of the geo mark
+ * @returns {SVGElement} the rendered choropleth map
+ */
 export const choropleth = (
   width,
   height,
@@ -362,6 +382,15 @@ export const choropleth = (
     ],
   })
 
+/**
+ * Choropleth map preconfigured for mainland France departments
+ *
+ * @param {number} width - chart width
+ * @param {string} caption - color legend label/caption
+ * @param {Function|string} fill - accessor or field name for the fill/color channel
+ * @param {Array} [marks=[]] - additional Plot marks to layer on top
+ * @returns {SVGElement} the rendered choropleth map
+ */
 export const choroplethFrance = (width, caption, fill, marks = []) =>
   choropleth(
     width,
@@ -373,6 +402,15 @@ export const choroplethFrance = (width, caption, fill, marks = []) =>
     [...mainland_france_choropleth_marks, ...marks],
   )
 
+/**
+ * Choropleth map preconfigured for Île-de-France departments
+ *
+ * @param {number} width - chart width
+ * @param {string} caption - color legend label/caption
+ * @param {Function|string} fill - accessor or field name for the fill/color channel
+ * @param {Array} [marks=[]] - additional Plot marks to layer on top
+ * @returns {SVGElement} the rendered choropleth map
+ */
 export const choroplethIdf = (width, caption, fill, marks = []) =>
   choropleth(
     width,
@@ -384,6 +422,15 @@ export const choroplethIdf = (width, caption, fill, marks = []) =>
     [...idf_choropleth_marks, ...marks],
   )
 
+/**
+ * Choropleth map preconfigured for Italian regions
+ *
+ * @param {number} width - chart width
+ * @param {string} caption - color legend label/caption
+ * @param {Function|string} fill - accessor or field name for the fill/color channel
+ * @param {Array} [marks=[]] - additional Plot marks to layer on top
+ * @returns {SVGElement} the rendered choropleth map
+ */
 export const choroplethItaly = (width, caption, fill, marks = []) =>
   choropleth(
     width,

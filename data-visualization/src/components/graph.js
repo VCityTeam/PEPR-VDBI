@@ -874,6 +874,14 @@ export class StaticGraph extends Graph {
 }
 
 export class ForceLayoutStaticGraph extends StaticGraph {
+  /**
+   * Create a static graph variant that shows a "Loading..." overlay while
+   * node positions are computed asynchronously by a force-layout web
+   * worker (see force-layout-simulation-worker.js).
+   *
+   * @param {object} data - Same as `Graph`, with properties `nodes` and `links`.
+   * @param {object} options - Same as `StaticGraph` constructor.
+   */
   constructor(data, options) {
     super(data, options)
     // this.simulation.stop()
@@ -892,6 +900,13 @@ export class ForceLayoutStaticGraph extends StaticGraph {
       .attr('fill', 'black')
   }
 
+  /**
+   * Spin up a force-layout web worker, send it the current nodes/links, and
+   * wire its progress/result messages to update the loading overlay and
+   * finalize node positions
+   *
+   * @returns {void}
+   */
   createSimulation() {
     const worker = new Worker('./force-layout-simulation-worker.js')
 
@@ -1014,6 +1029,22 @@ export class MuralGraph extends StaticGraph {
 }
 
 export class WordBubbles extends Graph {
+  /**
+   * Create a force-directed "word bubble" layout: single-node circles with
+   * wrapped text labels and no links between them.
+   *
+   * @param {object[]} nodes - an array of node objects (see `Graph`)
+   * @param {object} [options] - Same as `Graph` options, with the following defaults overridden:
+   * @param {number} [options.textLength=60] - label cutoff length
+   * @param {number} [options.nodeLabelOpacity=1] - default node label opacity
+   * @param {string} [options.textColor='white'] - label color
+   * @param {Function} [options.color] - node fill color
+   * @param {Function} [options.r] - node radius accessor
+   * @param {Function} [options.fontSize] - label font size accessor
+   * @param {Function} [options.labelMap] - node label text accessor (wraps/crops the node's `label`)
+   * @param {Function} [options.nodeLabelXOffset] - horizontal label offset, based on number of wrapped lines
+   * @param {element} [options.legend=null] - legend for the graph
+   */
   constructor(
     nodes,
     {
@@ -1049,11 +1080,22 @@ export class WordBubbles extends Graph {
     this.simulation.restart()
   }
 
+  /**
+   * Render nodes/links/labels, then preserve label line breaks
+   *
+   * @returns {void}
+   */
   update() {
     super.update()
     this.getNodeLabels().style('white-space', 'break-spaces')
   }
 
+  /**
+   * Build a force simulation for word bubbles: charge (with a max distance),
+   * collision, and x/y centering forces, with no link force
+   *
+   * @returns {d3.Simulation} the configured force simulation
+   */
   createSimulation = () =>
     d3
       .forceSimulation(this.nodes)
@@ -1075,11 +1117,30 @@ export class WordBubbles extends Graph {
       .force('y', d3.forceY())
       .on('tick', this.handleTick())
 
+  /**
+   * No-op override that disables the base class's hover-highlight behavior
+   *
+   * @returns {void}
+   */
   handleNodePointerEnter() {}
 
+  /**
+   * No-op override that disables the base class's hover-out behavior
+   *
+   * @returns {void}
+   */
   handleNodePointerout() {}
 }
 
+/**
+ * Filter a graph's links by a predicate, returning a new graph containing
+ * only the links (and their connected nodes) that pass the filter
+ *
+ * @param {object} graph - a graph with `nodes` and `links` arrays
+ * @param {Function} filterFunction - predicate called with each link, returning true to keep it
+ * @param {Function} [keyMap] - accessor for a node's unique identifier
+ * @returns {object} a new `{nodes, links}` graph containing only the filtered links and their nodes
+ */
 export function filterLinks(graph, filterFunction, keyMap = (d) => d.id) {
   const filteredGraph = {
     links: d3.filter(graph.links, filterFunction),
@@ -1193,6 +1254,13 @@ export function arcDiagramVertical(
   // the group; otherwise null. Used to color the links.
   const groups = new Map(nodes.map((d) => [keyMap(d), valueMap(d)]))
 
+  /**
+   * Return the shared group of a link's source/target if both nodes belong
+   * to the same group, otherwise null. Used to color the arcs.
+   *
+   * @param {object} link - a link with `source`/`target` node keys
+   * @returns {*} the shared group value, or null if source and target differ
+   */
   function sameGroup({ source, target }) {
     return groups.get(source) === groups.get(target) ? groups.get(source) : null
   }
@@ -1212,6 +1280,13 @@ export function arcDiagramVertical(
 
   // Add an arc for each link.
   // can this be done more simply with d3.arc ?
+  /**
+   * Compute the SVG path `d` attribute for a link's arc, based on the
+   * current y positions of its source/target nodes
+   *
+   * @param {object} d - a link with `source`/`target` node keys
+   * @returns {string} an SVG path `d` attribute value
+   */
   function arc(d) {
     const y1 = y_positions.get(d.source)
     const y2 = y_positions.get(d.target)
@@ -1357,8 +1432,14 @@ export function arcDiagramVertical(
     .hover .legend text.primary { opacity: 1; }
   `)
 
-  // A function that updates the positions of the labels and recomputes the arcs
-  // when passed a new order.
+  /**
+   * Re-order node y-positions per a new sort order, transitioning/animating
+   * both labels and arcs to their new positions. Exposed on the diagram's
+   * SVG node as `update`.
+   *
+   * @param {Array} order - the new node key order to lay out
+   * @returns {void}
+   */
   function update(order) {
     yDistribution.domain(order)
 

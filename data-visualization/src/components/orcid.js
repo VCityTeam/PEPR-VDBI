@@ -1,3 +1,11 @@
+/**
+ * Query the public ORCID search API and return the parsed JSON results
+ *
+ * @param {string} query - the ORCID search query string
+ * @param {string} token - an ORCID API access token (currently unused, see source)
+ * @param {string[]} [fields] - the ORCID profile fields to request (currently unused, see source)
+ * @returns {Promise<Object>} a promise resolving to the parsed JSON response
+ */
 export async function searchOrcid(
   query,
   token,

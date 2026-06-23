@@ -21,6 +21,8 @@ export const default_log_options = (
   },
 })
 
+let globalFetchQueue = Promise.resolve()
+
 /**
  * Send an HTTP request to a URL API with some basic error handling and logging.
  *
@@ -30,8 +32,6 @@ export const default_log_options = (
  * @param {pino.Logger} logger - A pino logger instance.
  * @returns {Promise<Object|null>} A promise resolving to a dictionary (object) of the request response if successful, or null.
  */
-let globalFetchQueue = Promise.resolve()
-
 export async function handleFetchJson(
   url,
   sleep = 0,
@@ -74,6 +74,29 @@ export async function handleFetchJson(
 }
 
 /**
+ * Fetch a URL and return its parsed JSON response
+ *
+ * @param {string} url - the URL to fetch
+ * @returns {Promise<Object>} a promise resolving to the parsed JSON response
+ */
+export async function fetchJson(url) {
+  const response = await fetch(url)
+  if (!response.ok) throw new Error(`fetch failed: ${response.status}`)
+  return await response.json()
+}
+
+/**
+ * Fetch a URL and return its raw response text (CSV body)
+ *
+ * @param {string} url - the URL to fetch
+ * @returns {Promise<string>} a promise resolving to the response body text
+ */
+export async function fetchCsv(url) {
+  const response = await fetch(url)
+  if (!response.ok) throw new Error(`fetch failed: ${response.status}`)
+  return await response.text()
+}
+/**
  * Anonymize a text entry
  *
  * @returns {string} anonymized entry
@@ -103,6 +126,12 @@ export function pseudoanonymizeEntry(entry, dictionary, type = 'human') {
   return dictionary.get(entry)
 }
 
+/**
+ * Filter out empty/undefined/zero values from an array
+ *
+ * @param {Array} data - the array (or array-like range) to filter
+ * @returns {Array} the filtered array
+ */
 export function filterEmptyArray(data) {
   return filter(
     // use array substring for (headerless) ranges?
@@ -130,11 +159,27 @@ export function toLowerPreservingAcronyms(str) {
   })
 }
 
+/**
+ * Set each cell's column key to the text value found in a given header row,
+ * mutating the worksheet in place.
+ *
+ * @param {ExcelJS.Workbook} workbook - the workbook containing the worksheet
+ * @param {number} sheetNumber - the index of the worksheet to use
+ * @param {number} [rowNumber=0] - the index of the row containing the column headers
+ * @returns {void}
+ */
 export const mapRowToColumnKeys = (workbook, sheetNumber, rowNumber = 0) =>
   workbook.worksheets[sheetNumber]._rows[rowNumber].eachCell((cell) => {
     cell._column.key = cell.text
   })
 
+/**
+ * Convert an array of ExcelJS row objects into plain JS objects keyed by
+ * each cell's column key (see mapRowToColumnKeys)
+ *
+ * @param {ExcelJS.Row[]} rows - the rows to convert
+ * @returns {Object[]} an array of plain objects, one per row
+ */
 export const rowsToObjectArray = (rows) =>
   rows
     .map((row) =>

@@ -5,6 +5,15 @@ importScripts("https://d3js.org/d3-quadtree.v1.min.js")
 importScripts("https://d3js.org/d3-timer.v1.min.js")
 importScripts("https://d3js.org/d3-force.v1.min.js")
 
+/**
+ * Run a d3-force simulation synchronously to completion off the main
+ * thread, posting `tick` progress messages and a final `end` message with
+ * the resolved node/link positions back to the caller.
+ *
+ * @param {MessageEvent} event - message event with `data.nodes`, `data.links`,
+ *    `data.keyMap`, `data.chargeStrength`, and `data.r`
+ * @returns {void}
+ */
 onmessage = function (event) {
   const nodes = event.data.nodes,
     links = event.data.links,

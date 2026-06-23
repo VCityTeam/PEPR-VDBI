@@ -35,6 +35,11 @@ export const cnu_legend = Plot.legend({
   },
 })
 
+/**
+ * Build an ordinal Plot.legend for ERC domain colors
+ *
+ * @returns {Element} the rendered legend
+ */
 export const erc_legend = () =>
   Plot.legend({
     color: {
@@ -44,6 +49,22 @@ export const erc_legend = () =>
     },
   })
 
+/**
+ * Horizontal bar plot of CNU section occurrence counts
+ *
+ * @param {Array} data - count data, rows of `[cnu_label, count]`
+ * @param {Object} [options]
+ * @param {number} [options.width=600] - chart width
+ * @param {number} [options.marginTop=20] - chart top margin
+ * @param {number} [options.marginLeft=18] - chart left margin
+ * @param {number} [options.marginRight=250] - chart right margin
+ * @param {string} [options.sort='y'] - Plot sort specification applied to the y axis
+ * @param {Function} [options.x_accessor] - accessor for the bar length (count)
+ * @param {Function} [options.y_accessor] - accessor for the CNU label
+ * @param {Function} [options.fill_accessor] - accessor for the bar fill color
+ * @param {Function} [options.opacity_accessor] - accessor for the bar fill opacity
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const cnu_plot = (
   data,
   {
@@ -108,6 +129,23 @@ export const cnu_plot = (
     ],
   })
 
+/**
+ * Horizontal bar plot of CNU section occurrence counts, colored and
+ * legended by AAP round
+ *
+ * @param {Array} data - count data, rows of `[cnu_label, count]`
+ * @param {Object} [options]
+ * @param {number} [options.width=600] - chart width
+ * @param {number} [options.marginTop=50] - chart top margin
+ * @param {number} [options.marginLeft=18] - chart left margin
+ * @param {number} [options.marginRight=250] - chart right margin
+ * @param {string} [options.sort='y'] - Plot sort specification applied to the y axis
+ * @param {Function} [options.x_accessor] - accessor for the bar length (count)
+ * @param {Function} [options.y_accessor] - accessor for the CNU label
+ * @param {Function} [options.fill_accessor] - accessor for the bar fill (AAP round) color
+ * @param {Function} [options.opacity_accessor] - accessor for the bar fill opacity
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const cnu_by_aap_plot = (
   data,
   {
@@ -177,6 +215,24 @@ export const cnu_by_aap_plot = (
     ],
   })
 
+/**
+ * Vertical (y-axis bar) variant of cnu_plot
+ *
+ * @param {Array} data - count data, rows of `[cnu_label, count]`
+ * @param {Object} [options]
+ * @param {number} [options.width=600] - chart width
+ * @param {number} [options.height=800] - chart height
+ * @param {number} [options.marginTop=50] - chart top margin
+ * @param {number} [options.marginLeft=50] - chart left margin
+ * @param {number} [options.marginRight=50] - chart right margin
+ * @param {number} [options.marginBottom=100] - chart bottom margin
+ * @param {string} [options.sort='y'] - Plot sort specification applied to the x axis
+ * @param {Function} [options.x_accessor] - accessor for the bar length (count)
+ * @param {Function} [options.y_accessor] - accessor for the CNU label
+ * @param {Function} [options.fill_accessor] - accessor for the bar fill color
+ * @param {Function} [options.opacity_accessor] - accessor for the bar fill opacity
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const cnu_plot_y = (
   data,
   {
@@ -245,6 +301,24 @@ export const cnu_plot_y = (
     ],
   })
 
+/**
+ * Vertical variant of cnu_by_aap_plot
+ *
+ * @param {Array} data - count data, rows of `[cnu_label, count]`
+ * @param {Object} [options]
+ * @param {number} [options.width=600] - chart width
+ * @param {number} [options.height=800] - chart height
+ * @param {number} [options.marginTop=50] - chart top margin
+ * @param {number} [options.marginLeft=50] - chart left margin
+ * @param {number} [options.marginRight=50] - chart right margin
+ * @param {number} [options.marginBottom=100] - chart bottom margin
+ * @param {string} [options.sort='y'] - Plot sort specification applied to the x axis
+ * @param {Function} [options.x_accessor] - accessor for the bar length (count)
+ * @param {Function} [options.y_accessor] - accessor for the CNU label
+ * @param {Function} [options.fill_accessor] - accessor for the bar fill (AAP round) color
+ * @param {Function} [options.opacity_accessor] - accessor for the bar fill opacity
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const cnu_by_aap_plot_y = (
   data,
   {
@@ -326,6 +400,13 @@ const default_donut_config = {
   minorLabelText: () => '',
 }
 
+/**
+ * Donut chart of CNU counts grouped by category
+ *
+ * @param {Object} data - an object with a `cnu_count_by_category` field (rows of `[category, count]`)
+ * @param {number} width - chart width
+ * @returns {SVGElement} the rendered donut chart
+ */
 export const cnu_group_donut = (data, width) =>
   donutChart(data.cnu_count_by_category, {
     ...default_donut_config,
@@ -338,6 +419,14 @@ export const cnu_group_donut = (data, width) =>
       .unknown('grey'),
   })
 
+/**
+ * Donut chart variant of cnu_group_donut, taking pre-shaped count data
+ * directly (rows of `[category, count]`) instead of a wrapping object
+ *
+ * @param {Array} data - count data, rows of `[category, count]`
+ * @param {number} width - chart width
+ * @returns {SVGElement} the rendered donut chart
+ */
 export const custom_cnu_group_donut = (data, width) =>
   donutChart(data, {
     ...default_donut_config,
@@ -350,6 +439,14 @@ export const custom_cnu_group_donut = (data, width) =>
       .unknown('grey'),
   })
 
+/**
+ * cnu_plot wrapper colored by the ERC domain corresponding to each CNU
+ * section
+ *
+ * @param {Array} data - count data, rows of `[cnu_label, count]`
+ * @param {Object} [options] - same as cnu_plot, with fill_accessor defaulting to an ERC-domain color
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const cnu_plot_by_erc = (
   data,
   {
@@ -376,6 +473,14 @@ export const cnu_plot_by_erc = (
     opacity_accessor: opacity_accessor,
   })
 
+/**
+ * cnu_by_aap_plot wrapper colored by the ERC domain corresponding to each
+ * CNU section
+ *
+ * @param {Array} data - count data, rows of `[cnu_label, count]`
+ * @param {Object} [options] - same as cnu_by_aap_plot, with fill_accessor defaulting to an ERC-domain color
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const cnu_by_aap_plot_by_erc = (
   data,
   {
@@ -402,6 +507,14 @@ export const cnu_by_aap_plot_by_erc = (
     opacity_accessor: opacity_accessor,
   })
 
+/**
+ * cnu_plot_y wrapper colored by the ERC domain corresponding to each CNU
+ * section
+ *
+ * @param {Array} data - count data, rows of `[cnu_label, count]`
+ * @param {Object} [options] - same as cnu_plot_y, with fill_accessor defaulting to an ERC-domain color
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const cnu_plot_y_by_erc = (
   data,
   {
@@ -432,6 +545,14 @@ export const cnu_plot_y_by_erc = (
     opacity_accessor: opacity_accessor,
   })
 
+/**
+ * cnu_by_aap_plot_y wrapper colored by the ERC domain corresponding to each
+ * CNU section
+ *
+ * @param {Array} data - count data, rows of `[cnu_label, count]`
+ * @param {Object} [options] - same as cnu_by_aap_plot_y, with fill_accessor defaulting to an ERC-domain color
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const cnu_by_aap_plot_y_by_erc = (
   data,
   {
@@ -462,6 +583,15 @@ export const cnu_by_aap_plot_y_by_erc = (
     opacity_accessor: opacity_accessor,
   })
 
+/**
+ * Donut chart of ERC domain counts
+ *
+ * @param {Array} data - count data, rows of `[erc_domain, count]`
+ * @param {number} width - chart width
+ * @param {number} height - chart height
+ * @param {Object} [options] - additional donutChart options, merged over the defaults
+ * @returns {SVGElement} the rendered donut chart
+ */
 export const erc_donut = (data, width, height, options = {}) =>
   donutChart(data, {
     ...default_donut_config,
@@ -473,9 +603,22 @@ export const erc_donut = (data, width, height, options = {}) =>
     ...options,
   })
 
-// Get relevant data by project,
-// set auditioned flag to true if filtering out non-auditioned project data
-// set financed flag to true if filtering out non-financed project data
+/**
+ * Filter researchers by project/audition/financing status and compute CNU,
+ * ERC discipline, and keyword count breakdowns, plus keyword/CNU
+ * intersection matrices for chord/sankey charts
+ *
+ * @param {Object} phase_1_data - phase 1 dataset with a `researchers` array (each with `project`, `discipline_erc`, `cnu`, `keywords`)
+ * @param {string[]} auditioned_projects - acronyms of auditioned projects
+ * @param {string[]} financed_projects - acronyms of financed projects
+ * @param {string} [project] - if provided, restrict to researchers on this project
+ * @param {boolean} [auditioned=false] - if true, restrict to researchers with at least one auditioned project
+ * @param {boolean} [financed=false] - if true, restrict to researchers with at least one financed project
+ * @returns {Object} an object with `discipline_erc_count`, `cnu_count`, `cnu_count_by_category`,
+ *   `cnu_count_by_custom_category`, `keyword_count`, `keyword_project_matrix`, `keyword_projects`,
+ *   `keywords_by_cnu`, `unique_keywords_by_cnu`, `cnu_project_matrix`, `cnu_projects`,
+ *   `cnu_group_keyword_matrix`, `cnu_group_keywords`, `cnu_keyword_matrix`, `cnu_keywords`
+ */
 export function formatResearcherDataByProject(
   phase_1_data,
   auditioned_projects,
@@ -646,6 +789,15 @@ export function formatResearcherDataByProject(
   }
 }
 
+/**
+ * Horizontal bar plot of researcher keyword occurrences by CNU
+ *
+ * @param {Object[]} data - keyword rows, each with `cnu` and `keyword` fields
+ * @param {number} width - chart width
+ * @param {string} keyword_plot_sort - Plot sort specification applied to the y axis
+ * @param {Function} keyword_color_scale - color scale mapping a keyword to a fill color
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const keyword_plot = (
   data,
   width,
@@ -690,6 +842,14 @@ export const keyword_plot = (
     ],
   })
 
+/**
+ * Compute ERC and CNU domain percentage ratios for a labeled dataset, used
+ * in the overview summary tables
+ *
+ * @param {string} label - the row label (e.g. project name)
+ * @param {Object} data - output of formatResearcherDataByProject, with `discipline_erc_count` and `cnu_count_by_category`
+ * @returns {Object} an object with `label` and ERC/CNU domain ratio fields (`erc_sh_ratio`, `erc_pe_ratio`, `erc_ls_ratio`, `cnu_droit_ratio`, `cnu_shs_ratio`, `cnu_science_ratio`, `cnu_pluri_ratio`, `cnu_sante_ratio`)
+ */
 export function formatDomainPercents(label, data) {
   const getFromMapOrZero = (map, value) => (map.has(value) ? map.get(value) : 0)
 
@@ -837,6 +997,13 @@ export const overview_table_cnu_config = {
   },
 }
 
+/**
+ * Check whether any project in a list is in the financed-projects list
+ *
+ * @param {string[]} projects - project acronyms to check
+ * @param {string[]} financed_projects - acronyms of financed projects
+ * @returns {boolean} true if at least one project is financed
+ */
 export function isFinanced(projects, financed_projects) {
   for (let index = 0; index < projects.length; index++) {
     if (financed_projects.includes(projects[index])) return true
@@ -844,6 +1011,13 @@ export function isFinanced(projects, financed_projects) {
   return false
 }
 
+/**
+ * Generate a configuration for a parallel-set (sankey) graph
+ *
+ * @param {Object} data - parallel-set graph ({nodes, links})
+ * @param {number} width - chart width
+ * @returns {Object} configuration for parallel-set graphs
+ */
 export const sankey_config = (data, width) => ({
   width: width,
   height: data.nodes.length * 40,
@@ -851,6 +1025,12 @@ export const sankey_config = (data, width) => ({
   linkFillOpacity: 0.3,
 })
 
+/**
+ * Map projects to a submitted/auditioned/financed parallel-sets graph
+ *
+ * @param {Object[]} projects - project entities, each with `auditioned`/`financed` booleans
+ * @returns {Object} a parallel-sets graph ({nodes, links})
+ */
 export const projects_by_aap_status_graph = (projects) =>
   parallelSetToGraph(
     projects.map((d) => ({
@@ -863,6 +1043,14 @@ export const projects_by_aap_status_graph = (projects) =>
 
 // researcher
 
+/**
+ * Annotate researchers with auditioned/financed status derived from their
+ * projects
+ *
+ * @param {Object[]} researchers - researcher entities, each with `project` (array of acronyms) and `cnu`/`keywords` fields
+ * @param {Object[]} projects - project entities, each with `acronyme`, `auditioned`, `financed` fields
+ * @returns {Object[]} an array of `{cnu, cnu_category, keywords, auditioned, financed}` rows
+ */
 export const researcher_by_aap_status = (researchers, projects) =>
   researchers.map((d) => {
     const researcher_projects = d.project.map((project_name) =>
@@ -883,19 +1071,47 @@ export const researcher_by_aap_status = (researchers, projects) =>
 
 // CNUs
 
+/**
+ * Sort researcher-by-status records by CNU code (ascending)
+ *
+ * @param {Object[]} researcher_by_aap_status - output of researcher_by_aap_status
+ * @returns {Object[]} the same array, sorted in place by CNU code
+ */
 export const cnu_by_aap_status = (researcher_by_aap_status) =>
   researcher_by_aap_status.sort(
     (a, b) => Number(a.cnu.slice(0, 2)) - Number(b.cnu.slice(0, 2)),
   )
 
+/**
+ * Convert CNU/status records into a CNU/auditioned/financed parallel-sets
+ * graph
+ *
+ * @param {Object[]} cnu_by_aap_status - output of cnu_by_aap_status
+ * @returns {Object} a parallel-sets graph ({nodes, links})
+ */
 export const cnu_by_aap_status_graph = (cnu_by_aap_status) =>
   parallelSetToGraph(cnu_by_aap_status, ['cnu', 'auditioned', 'financed'])
 
+/**
+ * Filter CNU/status records by CNU category, then build a parallel-sets
+ * graph
+ *
+ * @param {Object[]} cnu_by_aap_status - output of cnu_by_aap_status
+ * @param {string} category - the CNU category to filter to
+ * @returns {Object} a parallel-sets graph ({nodes, links})
+ */
 export const cnu_category_by_aap_status_graph = (cnu_by_aap_status, category) =>
   cnu_by_aap_status_graph(
     cnu_by_aap_status.filter((d) => d.cnu_category === category),
   )
 
+/**
+ * Filter CNU/status records to CNRS SHS-equivalent categories, then build a
+ * parallel-sets graph
+ *
+ * @param {Object[]} cnu_by_aap_status - output of cnu_by_aap_status
+ * @returns {Object} a parallel-sets graph ({nodes, links})
+ */
 export const cnu_CNRS_SHS_category_by_aap_status_graph = (cnu_by_aap_status) =>
   cnu_by_aap_status_graph(
     cnu_by_aap_status.filter((d) =>
@@ -907,6 +1123,12 @@ export const cnu_CNRS_SHS_category_by_aap_status_graph = (cnu_by_aap_status) =>
     ),
   )
 
+/**
+ * Build a CNU category/auditioned/financed parallel-sets graph
+ *
+ * @param {Object[]} cnu_by_aap_status - output of cnu_by_aap_status
+ * @returns {Object} a parallel-sets graph ({nodes, links})
+ */
 export const cnu_categories_by_aap_status_graph = (cnu_by_aap_status) =>
   parallelSetToGraph(cnu_by_aap_status, [
     'cnu_category',
@@ -943,6 +1165,13 @@ const cnu_erc_map = new Map([
   ['Pluridisciplinaire', 'SH - Sciences Humaines & Sociales'],
 ])
 
+/**
+ * Map each CNU category to its ERC-equivalent discipline, then build a
+ * parallel-sets graph
+ *
+ * @param {Object[]} cnu_by_aap_status - output of cnu_by_aap_status
+ * @returns {Object} a parallel-sets graph ({nodes, links})
+ */
 export const custom_discipline_by_aap_status_graph = (cnu_by_aap_status) =>
   parallelSetToGraph(
     cnu_by_aap_status.map((d) => ({
@@ -952,21 +1181,47 @@ export const custom_discipline_by_aap_status_graph = (cnu_by_aap_status) =>
     ['erc_discipline', 'auditioned', 'financed'],
   )
 
+/**
+ * Sort researcher-by-status records by CNU code (CNRS section variant,
+ * identical to cnu_by_aap_status)
+ *
+ * @param {Object[]} researcher_by_aap_status - output of researcher_by_aap_status
+ * @returns {Object[]} the same array, sorted in place by CNU code
+ */
 export const cnrs_section_by_aap_status = (researcher_by_aap_status) =>
   researcher_by_aap_status.sort(
     (a, b) => Number(a.cnu.slice(0, 2)) - Number(b.cnu.slice(0, 2)),
   )
 
+/**
+ * Generate a configuration for a parallel-set (sankey) graph for CNRS sections by status
+ *
+ * @param {Object} data - parallel-set graph ({nodes, links})
+ * @param {number} width - chart width
+ * @returns {Object} configuration for parallel-set graphs
+ */
 export const cnrs_sankey_config = (data, width) => ({
   ...sankey_config(data, width),
   linkStroke: (d) => quantized_cnrs_color(d.path[0], data.nodes.length - 4),
 })
 
+/**
+ * Get the color scale for CNRS categories
+ *
+ * @param {Object} d - link data
+ * @returns {string} color for the link
+ */
 export const cnrs_category_link_color_scale = (d) =>
   cnrs_color_map.get(d.path[0])
 
 // keywords
 
+/**
+ * Expand researcher-by-status records into one row per keyword
+ *
+ * @param {Object[]} researcher_by_aap_status - output of researcher_by_aap_status
+ * @returns {Object[]} keyword rows, each with a `keyword` and `submitted: 'submitted'` field, sorted by keyword
+ */
 export const keyword_by_aap_status = (researcher_by_aap_status) =>
   d3.sort(
     researcher_by_aap_status
@@ -981,6 +1236,13 @@ export const keyword_by_aap_status = (researcher_by_aap_status) =>
     (d) => d.keyword,
   )
 
+/**
+ * Build a submitted/auditioned/financed parallel-sets graph for keywords by
+ * status
+ *
+ * @param {Object[]} keyword_by_aap_status - output of keyword_by_aap_status
+ * @returns {Object} a parallel-sets graph ({nodes, links})
+ */
 export const keyword_by_aap_status_graph = (keyword_by_aap_status) =>
   parallelSetToGraph(keyword_by_aap_status, [
     'submitted',
@@ -988,6 +1250,13 @@ export const keyword_by_aap_status_graph = (keyword_by_aap_status) =>
     'financed',
   ])
 
+/**
+ * Generate a configuration for a parallel-set (sankey) graph for keywords by status
+ *
+ * @param {Object} data - parallel-set graph ({nodes, links})
+ * @param {number} width - chart width
+ * @returns {Object} configuration for parallel-set graphs
+ */
 export const keyword_sankey_config = (data, width) => ({
   ...sankey_config(data, width),
   linkStroke: (d) => aap_state_color_scale(d.path.slice(-2).join('-')),
@@ -995,6 +1264,14 @@ export const keyword_sankey_config = (data, width) => ({
 
 // labs
 
+/**
+ * Join project laboratories to their ERC/HCERES discipline data and
+ * audition/financing status
+ *
+ * @param {Object} aap_data - AAP dataset with `projects`, `laboratories`, `laboratories_by_domains_erc`,
+ *   `laboratories_by_disciplines_erc`, `laboratories_by_domains_hceres`, `laboratories_by_disciplines_hceres`
+ * @returns {Object[]} lab rows, each with `lab`, `erc`, `erc_disciplines`, `hceres`, `hceres_disciplines`, `auditioned`, `financed`
+ */
 export const lab_by_aap_status = (aap_data) =>
   aap_data.projects.flatMap((project) => {
     const project_labs = project.labs.map((lab_name) =>
@@ -1023,6 +1300,13 @@ export const lab_by_aap_status = (aap_data) =>
 
 // ERC
 
+/**
+ * Expand lab-by-status records into one row per ERC domain, excluding
+ * empty/unspecified domains
+ *
+ * @param {Object[]} lab_by_aap_status - output of lab_by_aap_status
+ * @returns {Object[]} ERC domain rows, sorted by domain
+ */
 export const erc_by_aap_status = (lab_by_aap_status) =>
   d3.sort(
     lab_by_aap_status
@@ -1035,9 +1319,21 @@ export const erc_by_aap_status = (lab_by_aap_status) =>
     (d) => d.erc,
   )
 
+/**
+ * Build an ERC domain/auditioned/financed parallel-sets graph
+ *
+ * @param {Object[]} erc_by_aap_status - output of erc_by_aap_status
+ * @returns {Object} a parallel-sets graph ({nodes, links})
+ */
 export const erc_by_aap_status_graph = (erc_by_aap_status) =>
   parallelSetToGraph(erc_by_aap_status, ['erc', 'auditioned', 'financed'])
 
+/**
+ * Expand lab-by-status records into one row per ERC discipline
+ *
+ * @param {Object[]} lab_by_aap_status - output of lab_by_aap_status
+ * @returns {Object[]} ERC discipline rows, sorted numerically by discipline code
+ */
 export const erc_disciplines_by_aap_status = (lab_by_aap_status) =>
   d3.sort(
     lab_by_aap_status.flatMap((d) =>
@@ -1049,6 +1345,12 @@ export const erc_disciplines_by_aap_status = (lab_by_aap_status) =>
     (d) => Number(d.erc_discipline.substring(2, 4)),
   )
 
+/**
+ * Build an ERC discipline/auditioned/financed parallel-sets graph
+ *
+ * @param {Object[]} erc_disciplines_by_aap_status - output of erc_disciplines_by_aap_status
+ * @returns {Object} a parallel-sets graph ({nodes, links})
+ */
 export const erc_disciplines_by_aap_status_graph = (
   erc_disciplines_by_aap_status,
 ) =>
@@ -1058,6 +1360,14 @@ export const erc_disciplines_by_aap_status_graph = (
     'financed',
   ])
 
+/**
+ * Filter ERC discipline rows by category prefix, then build a parallel-sets
+ * graph
+ *
+ * @param {Object[]} erc_disciplines_by_aap_status - output of erc_disciplines_by_aap_status
+ * @param {string} category - the 2-character ERC category prefix to filter to
+ * @returns {Object} a parallel-sets graph ({nodes, links})
+ */
 export const erc_discipline_category_by_aap_status_graph = (
   erc_disciplines_by_aap_status,
   category,
@@ -1068,12 +1378,26 @@ export const erc_discipline_category_by_aap_status_graph = (
     ),
   )
 
+/**
+ * Generate a configuration for a parallel-set (sankey) graph for ERC categories by status
+ *
+ * @param {Object} data - parallel-set graph ({nodes, links})
+ * @param {number} width - chart width
+ * @returns {Object} configuration for parallel-set graphs
+ */
 export const erc_sankey_config = (data, width) => ({
   ...sankey_config(data, width),
   linkStroke: (d) => erc_color_scale(d.path[0]),
   linkFillOpacity: 0.4,
 })
 
+/**
+ * Generate a configuration for a parallel-set (sankey) graph for ERC disciplines by status
+ *
+ * @param {Object} data - parallel-set graph ({nodes, links})
+ * @param {number} width - chart width
+ * @returns {Object} configuration for parallel-set graphs
+ */
 export const erc_disciplines_sankey_config = (data, width) => ({
   ...sankey_config(data, width),
   linkStroke: (d) => interpolated_erc_color(d.path[0]),
@@ -1082,6 +1406,13 @@ export const erc_disciplines_sankey_config = (data, width) => ({
 
 // HCERES
 
+/**
+ * Expand lab-by-status records into one row per HCERES domain, excluding
+ * unspecified domains
+ *
+ * @param {Object[]} lab_by_aap_status - output of lab_by_aap_status
+ * @returns {Object[]} HCERES domain rows, sorted by domain
+ */
 export const hceres_by_aap_status = (lab_by_aap_status) =>
   d3.sort(
     lab_by_aap_status
@@ -1090,9 +1421,21 @@ export const hceres_by_aap_status = (lab_by_aap_status) =>
     (d) => d.hceres,
   )
 
+/**
+ * Build an HCERES domain/auditioned/financed parallel-sets graph
+ *
+ * @param {Object[]} hceres_by_aap_status - output of hceres_by_aap_status
+ * @returns {Object} a parallel-sets graph ({nodes, links})
+ */
 export const hceres_by_aap_status_graph = (hceres_by_aap_status) =>
   parallelSetToGraph(hceres_by_aap_status, ['hceres', 'auditioned', 'financed'])
 
+/**
+ * Expand lab-by-status records into one row per HCERES discipline
+ *
+ * @param {Object[]} lab_by_aap_status - output of lab_by_aap_status
+ * @returns {Object[]} HCERES discipline rows, sorted by discipline
+ */
 export const hceres_disciplines_by_aap_status = (lab_by_aap_status) =>
   d3.sort(
     lab_by_aap_status.flatMap((d) =>
@@ -1104,6 +1447,12 @@ export const hceres_disciplines_by_aap_status = (lab_by_aap_status) =>
     (d) => d.hceres_discipline,
   )
 
+/**
+ * Build an HCERES discipline/auditioned/financed parallel-sets graph
+ *
+ * @param {Object[]} hceres_disciplines_by_aap_status - output of hceres_disciplines_by_aap_status
+ * @returns {Object} a parallel-sets graph ({nodes, links})
+ */
 export const hceres_disciplines_by_aap_status_graph = (
   hceres_disciplines_by_aap_status,
 ) =>
@@ -1113,6 +1462,14 @@ export const hceres_disciplines_by_aap_status_graph = (
     'financed',
   ])
 
+/**
+ * Filter HCERES discipline rows by category prefix, then build a
+ * parallel-sets graph
+ *
+ * @param {Object[]} hceres_disciplines_by_aap_status - output of hceres_disciplines_by_aap_status
+ * @param {string} category - the HCERES category prefix to filter to
+ * @returns {Object} a parallel-sets graph ({nodes, links})
+ */
 export const hceres_discipline_category_by_aap_status_graph = (
   hceres_disciplines_by_aap_status,
   category,
@@ -1123,12 +1480,27 @@ export const hceres_discipline_category_by_aap_status_graph = (
     ),
   )
 
+/**
+ * Generate a configuration for a parallel-set (sankey) graph for HCERES
+ * categories by status
+ *
+ * @param {Object} data - parallel-set graph ({nodes, links})
+ * @param {number} width - chart width
+ * @returns {Object} configuration for parallel-set graphs
+ */
 export const hceres_sankey_config = (data, width) => ({
   ...sankey_config(data, width),
   linkStroke: (d) => hceres_color_scale(d.path[0]),
   linkFillOpacity: 0.4,
 })
 
+/**
+ * Generate a configuration for a parallel-set (sankey) graph for HCERES disciplines by status
+ *
+ * @param {Object} data - parallel-set graph ({nodes, links})
+ * @param {number} width - chart width
+ * @returns {Object} configuration for parallel-set graphs
+ */
 export const hceres_disciplines_sankey_config = (data, width) => ({
   ...sankey_config(data, width),
   linkStroke: (d) =>

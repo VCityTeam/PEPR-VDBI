@@ -98,6 +98,18 @@ export function addEntityProjectOwnerAndPartnerCounts(
   })
 }
 
+/**
+ * Join a single foreign-key field on source_data to a matching record in
+ * target_data
+ *
+ * Note: only resolves the source -> target direction (see inline TODO).
+ *
+ * @param {Object} source_data - the datum to mutate with the joined record
+ * @param {Object[]} target_data - the dataset to join against
+ * @param {string} foreign_key - the foreign key field name on source_data, and also its value to match against
+ * @param {string} primary_key - the primary key field name on target_data
+ * @returns {void}
+ */
 export function joinOnKey(source_data, target_data, foreign_key, primary_key) {
   source_data[foreign_key] = target_data.find(
     (d) => d[primary_key] === foreign_key,
@@ -105,6 +117,19 @@ export function joinOnKey(source_data, target_data, foreign_key, primary_key) {
   // TODO add join from target to source
 }
 
+/**
+ * Resolve an array of foreign keys on each source datum to matching target
+ * objects (mutating source_data in place), then back-populate a foreign-key
+ * array on each target datum with the matching source data (mutating
+ * target_data in place)
+ *
+ * @param {Object[]} source_data - dataset whose foreign key array fields will be resolved to target objects
+ * @param {string} source_foreign_keys - the field name on each source datum holding an array of foreign keys
+ * @param {Object[]} target_data - dataset to join against and back-populate
+ * @param {string} target_primary_key - the primary key field name on target_data
+ * @param {string} target_foreign_key - the field name to set on each target datum with matching source data
+ * @returns {void}
+ */
 export function joinOnKeys(
   source_data,
   source_foreign_keys,
@@ -128,6 +153,20 @@ export function joinOnKeys(
   })
 }
 
+/**
+ * Resolve an array of foreign keys on each source datum to matching target
+ * objects (mutating source_data in place), then partition/back-populate
+ * "owner" (first key) vs "partner" (remaining keys) relations on each
+ * target datum (mutating target_data in place)
+ *
+ * @param {Object[]} source_data - dataset whose foreign key array fields will be resolved to target objects
+ * @param {string} source_foreign_keys - the field name on each source datum holding an array of foreign keys
+ * @param {Object[]} target_data - dataset to join against and back-populate
+ * @param {string} target_foreign_key - the field name suffix used for the `owner_`/`partner_` fields set on each target datum
+ * @param {string} target_primary_key - the primary key field name on target_data
+ * @param {Function} [target_foreign_key_filter] - if provided, called with each target datum instead of the default owner/partner partitioning
+ * @returns {void}
+ */
 export function joinOnOwnerPartnerKeys(
   source_data,
   source_foreign_keys,
@@ -166,6 +205,11 @@ export function joinOnOwnerPartnerKeys(
   }
 }
 
+/**
+ * Create a positioned tooltip card DOM element
+ *
+ * @returns {HTMLDivElement} a `div.tooltip.card` element with absolute positioning
+ */
 export function createTooltip() {
   const tooltip = document.createElement('div')
   tooltip.classList.add('tooltip')
@@ -174,6 +218,13 @@ export function createTooltip() {
   return tooltip
 }
 
+/**
+ * Truncate a string to maxLength, appending '...' if it was shortened
+ *
+ * @param {string} text - the text to crop
+ * @param {number} [maxLength=20] - the maximum length of the returned string
+ * @returns {string} the cropped text, or an empty string if text is falsy
+ */
 export function cropText(text, maxLength = 20) {
   if (!text) return ''
 
@@ -182,6 +233,16 @@ export function cropText(text, maxLength = 20) {
     : text
 }
 
+/**
+ * Word-wrap a string into multiple lines joined by a newline character,
+ * keeping each line within maxWidth
+ *
+ * @param {string} text - the text to wrap
+ * @param {number} [maxWidth=20] - the maximum line width (in characters)
+ * @param {string} [newlineCharter='\n'] - the character(s) used to join wrapped lines
+ * @param {RegExp} [delimeter=/\s+|-|\//] - the pattern used to split text into words
+ * @returns {string} the wrapped text
+ */
 export function wrapText(
   text,
   maxWidth = 20,
@@ -225,6 +286,18 @@ export const exclude = (d) =>
     'Non Renseigné',
   ].includes(d)
 
+/**
+ * Build a table-cell formatter that renders an inline HTML sparkbar
+ * (proportional-width div) scaled against max
+ *
+ * @param {number} max - the value representing a full-width (100%) bar
+ * @param {Object} [options]
+ * @param {string} [options.background='var(--theme-foreground-focus)'] - bar background color
+ * @param {string} [options.color='black'] - bar text color
+ * @param {string} [options.float='right'] - bar float/alignment direction
+ * @param {Function} [options.format] - function to format the displayed value
+ * @returns {Function} a function `(x) => html` for use as an Observable table cell formatter
+ */
 export function sparkbar(
   max,
   {
@@ -485,6 +558,14 @@ export function downloadSVGButton(
   })
 }
 
+/**
+ * Build a button that exports a DOM element (by id) as a PNG download,
+ * temporarily removing card/grid borders for the export
+ *
+ * @param {string} selector - the id of the element to export
+ * @param {string} [label='Download (.png)'] - the button label
+ * @returns {button} a button element that triggers the PNG download when clicked
+ */
 export function downloadPNGButton(selector, label = 'Download (.png)') {
   return button(label, {
     reduce: async () => {

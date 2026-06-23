@@ -3,6 +3,25 @@ import * as d3 from 'npm:d3'
 
 // adapted from https://github.com/observablehq/framework/blob/main/examples/us-dams/src/index.md
 
+/**
+ * Build a 2-D Observable Plot bubble chart, with x/y position, radius, and
+ * color channels derived from raw data
+ *
+ * @param {Object[]} data - dataset to plot
+ * @param {Object} [options] - chart configuration
+ * @param {number} [options.width] - chart width
+ * @param {number} [options.height] - chart height
+ * @param {string} [options.x_label] - x axis label
+ * @param {Array} [options.x_domain] - x axis domain
+ * @param {Function} [options.x_accessor] - accessor for the x value of each datum
+ * @param {string} [options.y_label] - y axis label
+ * @param {Array} [options.y_domain] - y axis domain
+ * @param {Function} [options.y_accessor] - accessor for the y value of each datum
+ * @param {string} [options.r_label] - radius legend label
+ * @param {Function} [options.r_accessor] - accessor for the radius value of each datum
+ * @param {Array} [options.color_range] - color scale range
+ * @returns {SVGElement} the rendered bubble chart
+ */
 export const bubbleChartXY = (
   data,
   {
@@ -52,6 +71,27 @@ export const bubbleChartXY = (
     ],
   })
 
+/**
+ * Build a 1-D Observable Plot bubble chart, with dots sized by radius and
+ * positioned along the x axis only
+ *
+ * @param {Object[]} data - dataset to plot
+ * @param {Object} [options] - chart configuration
+ * @param {number} [options.width=600] - chart width
+ * @param {number} [options.height=300] - chart height
+ * @param {number} [options.marginBottom=40] - chart bottom margin
+ * @param {string} [options.title] - chart title
+ * @param {string} [options.subtitle] - chart subtitle
+ * @param {string} [options.caption] - chart caption
+ * @param {string} [options.x_label=''] - x axis label
+ * @param {Function} [options.x_accessor] - accessor for the x value of each datum
+ * @param {Array} [options.x_domain] - x axis domain
+ * @param {string} [options.r_label=''] - radius legend label
+ * @param {Function} [options.r_accessor] - accessor for the radius value of each datum
+ * @param {number} [options.r_max] - maximum dot radius
+ * @param {Array} [options.color_range=d3.schemeTableau10] - color scale range
+ * @returns {SVGElement} the rendered bubble chart
+ */
 export const bubbleChartX = (
   data,
   {

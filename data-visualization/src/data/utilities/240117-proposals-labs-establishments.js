@@ -1,6 +1,12 @@
 import { map, filter } from 'd3'
 import { anonymizeEntry } from './data_utilities.js'
 
+/**
+ * Extract the phase 1 projects sheet from a workbook
+ *
+ * @param {Object} workbook - a parsed workbook (xlsx-populate-style)
+ * @returns {Object[]} the sheet range A1:DR78 of the first sheet, with headers
+ */
 export function getPhase1Sheet(workbook) {
   return workbook.sheet(workbook.sheetNames[0], {
     range: 'A1:DR78',
@@ -8,6 +14,12 @@ export function getPhase1Sheet(workbook) {
   })
 }
 
+/**
+ * Extract the "villes" (sites/cities) sheet from a workbook
+ *
+ * @param {Object} workbook - a parsed workbook (xlsx-populate-style)
+ * @returns {Object[]} the sheet range A1:E69 of the second sheet, with headers
+ */
 export function getVillesSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[1], {
     range: 'A1:E69',
@@ -15,6 +27,12 @@ export function getVillesSheet(workbook) {
   })
 }
 
+/**
+ * Extract the laboratories sheet from a workbook
+ *
+ * @param {Object} workbook - a parsed workbook (xlsx-populate-style)
+ * @returns {Object[]} the sheet range A1:AK252 of the fifth sheet, with headers
+ */
 export function getLabSheet(workbook) {
   return workbook.sheet(workbook.sheetNames[4], {
     range: 'A1:AK252',
@@ -22,6 +40,17 @@ export function getLabSheet(workbook) {
   })
 }
 
+/**
+ * Map raw phase 1 sheet rows into structured project objects (names,
+ * establishments, labs, partners, disciplines, sites, keywords, challenges),
+ * optionally anonymizing the acronym, names, establishments, labs, partners,
+ * and sites fields.
+ *
+ * @param {Object[]} sheet - rows from getPhase1Sheet
+ * @param {boolean} [anonymize=false] - whether to anonymize identifying fields
+ * @param {Map} [acronymousDict=new Map()] - mapping of entries to anonymized entries, shared across calls
+ * @returns {Object[]} an array of structured project objects
+ */
 export function resolvePhase1Entities(
   sheet,
   anonymize = false,
@@ -229,6 +258,14 @@ export function resolvePhase1Entities(
   })
 }
 
+/**
+ * Map raw lab-sheet rows into structured laboratory objects (label, type,
+ * name, numero, national identifier, ERC classification, scientific domain,
+ * establishments)
+ *
+ * @param {Object[]} sheet - rows from getLabSheet
+ * @returns {Object[]} an array of structured laboratory objects
+ */
 export function resolveLaboEntities(sheet) {
   // Map raw project data to a simple array of strings and objects
   const labMap = map(sheet, (d) => {

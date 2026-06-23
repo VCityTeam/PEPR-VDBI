@@ -25,6 +25,16 @@ export const column_label_map = new Map([
   // ["Cooccurrences", "Group co-occurrences"],
 ])
 
+/**
+ * Sort terms by C-value descending, limit to the top entries, and reshape
+ * them for word-cloud sizing
+ *
+ * @param {Object[]} data - extracted term rows, each with `Main form` and `C-value`
+ * @param {Object} [options]
+ * @param {number} [options.limit=15] - maximum number of terms to keep
+ * @param {number} [options.rFactor=6] - multiplier applied to C-value to compute the word-cloud radius
+ * @returns {Object[]} an array of `{id, label, r}` word-cloud data
+ */
 export const freq_words = (data, { limit = 15, rFactor = 6 } = {}) =>
   data
     .sort((a, b) => b['C-value'] - a['C-value'])
@@ -35,6 +45,16 @@ export const freq_words = (data, { limit = 15, rFactor = 6 } = {}) =>
       r: d['C-value'] * rFactor,
     }))
 
+/**
+ * Sort terms by Gfidf descending, limit to the top entries, and reshape
+ * them for word-cloud sizing
+ *
+ * @param {Object[]} data - extracted term rows, each with `Main form` and `Gfidf`
+ * @param {Object} [options]
+ * @param {number} [options.limit=15] - maximum number of terms to keep
+ * @param {number} [options.rFactor=6] - multiplier applied to Gfidf to compute the word-cloud radius
+ * @returns {Object[]} an array of `{id, label, r}` word-cloud data
+ */
 export const group_freq_words = (data, { limit = 15, rFactor = 6 } = {}) =>
   data
     .sort((a, b) => b['Gfidf'] - a['Gfidf'])
@@ -45,6 +65,14 @@ export const group_freq_words = (data, { limit = 15, rFactor = 6 } = {}) =>
       r: d['Gfidf'] * rFactor,
     }))
 
+/**
+ * Auto bar plot of extracted entity frequencies, faceted by group and
+ * colored by entity type
+ *
+ * @param {Object[]} data - entity rows, each with `frequency`, `entity`, `group`, `type`
+ * @param {number} width - chart width
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const generateWorkshopEntitiesPlot = (data, width) =>
   Plot.auto(data, {
     x: (d) => Number(d.frequency),
@@ -62,6 +90,14 @@ export const generateWorkshopEntitiesPlot = (data, width) =>
     caption: 'Fig 4. Extracted entities by group',
   })
 
+/**
+ * Auto bar plot of extracted entity frequencies, colored by entity type
+ * (round-table variant, no group facet)
+ *
+ * @param {Object[]} data - entity rows, each with `frequency`, `entity`, `type`
+ * @param {number} width - chart width
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const generateRoundTableEntitiesPlot = (data, width) =>
   Plot.auto(data, {
     x: (d) => Number(d.frequency),
@@ -77,6 +113,18 @@ export const generateRoundTableEntitiesPlot = (data, width) =>
     caption: 'Fig 4. Top 20 most frequent extracted entities',
   })
 
+/**
+ * Bar plot of the top terms by a chosen numeric column, resized to its
+ * container width
+ *
+ * @param {Object[]} data - extracted term rows, each with `Main form` and the column named by `x_column`
+ * @param {Object} [options]
+ * @param {string} [options.x_column] - the numeric column to rank/plot terms by
+ * @param {number} [options.limit] - maximum number of terms to display
+ * @param {number} [options.marginLeft] - chart left margin
+ * @param {string} [options.caption] - chart caption
+ * @returns {Element} the rendered, auto-resizing bar plot
+ */
 const generateExtractedTermsPlot = (
   data,
   { x_column, limit, marginLeft, caption } = {},
@@ -111,6 +159,16 @@ const generateExtractedTermsPlot = (
     }),
   )
 
+/**
+ * Build a 2-column HTML grid of term frequency plots, one per column in
+ * column_title_map (C-value, Gfidf)
+ *
+ * @param {Object[]} data - extracted term rows
+ * @param {Object} [options]
+ * @param {number} [options.marginLeft=180] - chart left margin for each plot
+ * @param {number} [options.limit=30] - maximum number of terms per plot
+ * @returns {Element} an HTML grid containing one term plot per column
+ */
 export const extractedTermsHtmlTemplate = (
   data,
   { marginLeft = 180, limit = 30 } = {},
@@ -130,6 +188,13 @@ export const extractedTermsHtmlTemplate = (
   </div>`
 // ${downloadSVGButton(`#all-terms-${column}-plot svg`)}
 
+/**
+ * Build a C-value term-frequency bar plot faceted by group, resized to its
+ * container width
+ *
+ * @param {Object[]} data - extracted term rows, each with `Main form`, `C-value`, `group`
+ * @returns {Element} the rendered, auto-resizing faceted bar plot
+ */
 export const extractedTermsByGroupHtmlTemplate = (data) =>
   html`${resize((width) =>
     Plot.plot({

@@ -125,6 +125,15 @@ export const cnu_string_color_range_map = new Map([
 //   return d3.interpolateGreys(color_value)
 // }
 
+/**
+ * Return a quantized color for a CNU code based on its category's color
+ * interpolator
+ *
+ * @param {string} cnu - CNU full name/number to color
+ * @param {number} [num_colors=10] - number of quantized color steps
+ *  (defaults to the number of CNU section groups)
+ * @returns {string} a color value
+ */
 export function quantized_cnu_color(cnu, num_colors = 10) {
   const cnu_category = getGroupFromCNU(cnu)
   const cnu_category_values = cnu_category_section_map.has(cnu_category)
@@ -162,6 +171,15 @@ export const cnrs_color_range_map = new Map([
   ['Pluridisciplinaire', d3.interpolateViridis],
 ])
 
+/**
+ * Return a quantized color for a CNU code based on its category's CNRS
+ * color interpolator
+ *
+ * @param {string} cnu - CNU full name/number to color
+ * @param {number} [num_colors=6] - number of quantized color steps
+ *  (defaults to the number of CNRS color groups)
+ * @returns {string} a color value
+ */
 export function quantized_cnrs_color(cnu, num_colors = 6) {
   const cnu_category = getGroupFromCNU(cnu)
   const cnu_category_values = cnu_category_section_map.get(cnu_category)
@@ -192,6 +210,13 @@ export const erc_color_scale = d3
   .scaleOrdinal(erc_category_colors.keys(), erc_category_colors.values())
   .unknown('grey')
 
+/**
+ * Find the ERC category matching the first 2 characters of an ERC
+ * discipline string
+ *
+ * @param {string} erc_discipline - the ERC discipline code (e.g. 'PE1')
+ * @returns {string|undefined} the matching ERC category key, if found
+ */
 export function getCategoryFromErcDiscipline(erc_discipline) {
   if (!erc_discipline) {
     console.warn(`empty erc discipline: ${erc_discipline}`)
@@ -202,6 +227,13 @@ export function getCategoryFromErcDiscipline(erc_discipline) {
     .find((d) => d.startsWith(erc_discipline.substring(0, 2)))
 }
 
+/**
+ * Return an interpolated color for an ERC discipline using a sequential
+ * scale over its category's color interpolator
+ *
+ * @param {string} erc_discipline - the ERC discipline code (e.g. 'PE1')
+ * @returns {string} a color value
+ */
 export function interpolated_erc_color(erc_discipline) {
   const erc_category = getCategoryFromErcDiscipline(erc_discipline)
   const color_scale = d3
@@ -228,6 +260,13 @@ export const hceres_color_scale = d3
   .scaleOrdinal(hceres_category_colors.keys(), hceres_category_colors.values())
   .unknown('grey')
 
+/**
+ * Find the HCERES category matching the first 2 characters of an HCERES
+ * discipline string
+ *
+ * @param {string} hceres_discipline - the HCERES discipline code
+ * @returns {string|undefined} the matching HCERES category key, if found
+ */
 export function getCategoryFromHceresDiscipline(hceres_discipline) {
   if (!hceres_discipline) {
     console.warn(`empty hceres discipline: ${hceres_discipline}`)
@@ -238,6 +277,14 @@ export function getCategoryFromHceresDiscipline(hceres_discipline) {
     .find((d) => d.startsWith(hceres_discipline.substring(0, 2)))
 }
 
+/**
+ * Return an ordinal-quantized color for an HCERES discipline within the
+ * supplied domain, using its category's color interpolator
+ *
+ * @param {string} hceres_discipline - the HCERES discipline code
+ * @param {Array} [domain=[1, 12]] - the ordinal domain to scale over
+ * @returns {string} a color value
+ */
 export function interpolated_hceres_color(hceres_discipline, domain = [1, 12]) {
   const hceres_category = getCategoryFromHceresDiscipline(hceres_discipline)
   const color_scale = d3
@@ -267,6 +314,14 @@ export const legal_nature_colors = d3
   .scaleOrdinal([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], d3.schemeSet3)
   .unknown('grey')
 
+/**
+ * Return a quantized color interpolated between a legal-nature base color
+ * and white
+ *
+ * @param {number} code - the legal nature code
+ * @param {number[]} [domain=[0,1,2,3,4,5,6,7,8,9]] - the ordinal domain to scale over
+ * @returns {Function} an ordinal d3 color scale, callable with a domain value
+ */
 export const interpolated_legal_nature_color = (
   code,
   domain = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -283,6 +338,13 @@ export const interpolated_legal_nature_color = (
 
 // keyword colors //
 
+/**
+ * Build an ordinal color scale over a list of keywords using a sinebow
+ * interpolator
+ *
+ * @param {string[]} keywords - the keywords to assign colors to
+ * @returns {Function} an ordinal d3 color scale, callable with a keyword
+ */
 export const keyword_color_scale = (keywords) =>
   d3
     .scaleOrdinal(

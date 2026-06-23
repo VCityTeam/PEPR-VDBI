@@ -1,5 +1,15 @@
 import * as Plot from '@observablehq/plot';
 
+/**
+ * Build an Observable Plot timeline (rule marks with dot markers and
+ * labels) from an array of dated events
+ *
+ * @param {Object[]} events - events to plot, each with `year`, `y`, and `name` fields
+ * @param {Object} [options]
+ * @param {number} [options.width] - chart width
+ * @param {number} [options.height] - chart height
+ * @returns {SVGElement} the rendered timeline
+ */
 export function timeline(events, { width, height } = {}) {
   return Plot.plot({
     width,

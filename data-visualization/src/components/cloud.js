@@ -80,6 +80,13 @@ export function wordCloud(
       `translate(${cloud.size()[0] / 2},${cloud.size()[1] / 2})`,
     )
 
+  /**
+   * Render the laid-out word elements (text, font, color, position) into
+   * the SVG, called once d3-cloud layout finishes
+   *
+   * @param {Object[]} data - laid-out word data from d3-cloud
+   * @returns {SVGSVGElement|null}
+   */
   function draw(data) {
     console.debug('wordcloud data', data)
     words

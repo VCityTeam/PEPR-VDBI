@@ -47,12 +47,24 @@ export const defiColorScale = d3
   .scaleOrdinal(['1', '2', '3', '4', '5', '6'], d3.schemeObservable10)
   .unknown('grey')
 
+/**
+ * Build an Inputs.toggle for filtering to laureates only
+ *
+ * @returns {Element} the rendered toggle input
+ */
 export const laureateCheckbox = () =>
   Inputs.toggle({
     value: false,
     label: 'Laureates only?',
   })
 
+/**
+ * Build an Inputs.select for choosing the x-axis sort order (by label or
+ * by occurrence count, ascending or descending)
+ *
+ * @param {string} [label='Label'] - the label option text
+ * @returns {Element} the rendered select input, with selected value a Plot sort specification
+ */
 export const xSortSelect = (label = 'Label') =>
   Inputs.select(
     new Map([
@@ -67,6 +79,13 @@ export const xSortSelect = (label = 'Label') =>
     },
   )
 
+/**
+ * Build an Inputs.select for choosing the y-axis sort order (by label or
+ * by occurrence count, ascending or descending)
+ *
+ * @param {string} [label='Label'] - the label option text
+ * @returns {Element} the rendered select input, with selected value a Plot sort specification
+ */
 export const ySortSelect = (label = 'Label') =>
   Inputs.select(
     new Map([
@@ -81,6 +100,23 @@ export const ySortSelect = (label = 'Label') =>
     },
   )
 
+/**
+ * Horizontal bar plot of AAP1 project counts
+ *
+ * @param {Object[]} data - count data to plot
+ * @param {Object} [options]
+ * @param {number} [options.width] - chart width
+ * @param {number} [options.height=400] - chart height
+ * @param {number} [options.marginLeft=140] - chart left margin
+ * @param {number} [options.limit=15] - maximum number of bars to display
+ * @param {string} [options.x_label] - x axis label
+ * @param {string} [options.y_label] - y axis label
+ * @param {string} [options.sort_value] - Plot sort specification applied to the y axis
+ * @param {string} [options.x_accessor='count'] - data key for the bar length channel
+ * @param {string} [options.y_accessor='project'] - data key for the y channel
+ * @param {number} [options.max_partner_count=25] - maximum value of the x axis domain
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const projectCountPlotAAP1 = (
   data,
   {
@@ -126,6 +162,24 @@ export const projectCountPlotAAP1 = (
     ],
   })
 
+/**
+ * Horizontal bar plot of AAP2 project counts, colored by project type
+ *
+ * @param {Object[]} data - count data to plot
+ * @param {Object} [options]
+ * @param {number} [options.width] - chart width
+ * @param {number} [options.height=400] - chart height
+ * @param {number} [options.marginLeft=140] - chart left margin
+ * @param {number} [options.limit=15] - maximum number of bars to display
+ * @param {string} [options.x_label] - x axis label
+ * @param {string} [options.y_label] - y axis label
+ * @param {string} [options.sort_value] - Plot sort specification applied to the y axis
+ * @param {string} [options.x_accessor='count'] - data key for the bar length channel
+ * @param {string} [options.y_accessor='project_id'] - data key for the y channel
+ * @param {string} [options.fill_accessor='type'] - data key for the fill/color channel
+ * @param {number} [options.max_partner_count=25] - maximum value of the x axis domain
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const projectCountPlotAAP2 = (
   data,
   {
@@ -174,6 +228,26 @@ export const projectCountPlotAAP2 = (
     ],
   })
 
+/**
+ * Horizontal bar plot of partner counts, with commune labels overflowing
+ * into or alongside each bar depending on bar length
+ *
+ * @param {Object[]} data - partner count data, each with `id`, `label`, `count`, `communes`
+ * @param {Object} [options]
+ * @param {number} [options.width] - chart width
+ * @param {number} [options.height=400] - chart height
+ * @param {number} [options.marginLeft=230] - chart left margin
+ * @param {number} [options.limit=15] - maximum number of bars to display
+ * @param {number} [options.lineWidth=23] - text label line wrap width
+ * @param {string} [options.x_label="Nombre d'occurences"] - x axis label
+ * @param {string} [options.y_label] - y axis label
+ * @param {string} [options.sort_value] - Plot sort specification applied to the y axis
+ * @param {Function} [options.x_accessor] - accessor for the bar length (count)
+ * @param {Function} [options.y_accessor] - accessor for the y (partner id;label) channel
+ * @param {number} [options.midpoint] - bar length threshold above which the commune label is drawn inside the bar (in white)
+ * @param {string} [options.textOverflow='ellipsis-middle'] - Plot text overflow strategy
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const partnerCountPlotY = (
   data,
   {
@@ -273,6 +347,26 @@ export const partnerCountPlotY = (
     ],
   })
 
+/**
+ * Vertical bar plot variant of partnerCountPlotY, with rotated commune
+ * labels overflowing into or alongside each bar depending on bar length
+ *
+ * @param {Object[]} data - partner count data, each with `id`, `label`, `count`, `communes`
+ * @param {Object} [options]
+ * @param {number} [options.width] - chart width
+ * @param {number} [options.height=350] - chart height
+ * @param {number} [options.marginBottom=150] - chart bottom margin
+ * @param {number} [options.marginRight=100] - chart right margin
+ * @param {number} [options.lineWidth=27] - text label line wrap width
+ * @param {string} [options.x_label] - x axis label
+ * @param {string} [options.y_label="Nombre d'occurences"] - y axis label
+ * @param {string} [options.sort_value] - Plot sort specification applied to the x axis
+ * @param {Function} [options.x_accessor] - accessor for the x (partner id;label) channel
+ * @param {Function} [options.y_accessor] - accessor for the bar length (count)
+ * @param {number} [options.midpoint] - bar length threshold above which the commune label is drawn inside the bar (in white)
+ * @param {string} [options.textOverflow='ellipsis-middle'] - Plot text overflow strategy
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const partnerCountPlotX = (
   data,
   {
@@ -377,6 +471,18 @@ export const partnerCountPlotX = (
     ],
   })
 
+/**
+ * Stacked bar plot of challenge counts, stacked/colored by AAP round
+ *
+ * @param {Object[]} data - challenge count data, each with `defi`, `count`, `aap`, `financed`/`selected`
+ * @param {Object} [options]
+ * @param {number} [options.width] - chart width
+ * @param {string} [options.fill_accessor='aap'] - data key for the fill/color channel
+ * @param {Array} [options.color_range] - color scale range
+ * @param {string} [options.title='Défis par AAP'] - chart title
+ * @param {string} [options.subtitle] - chart subtitle
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const stackedChallengeCountPlot = (
   data,
   {
@@ -385,7 +491,7 @@ export const stackedChallengeCountPlot = (
     color_range = aapColorScale.range(),
     title = 'Défis par AAP',
     subtitle = `Les défis indiqués dans les métadonnées et les templates des
-      soumissions sur le site du dépôt de l'AAP 1 et 2. 
+      soumissions sur le site du dépôt de l'AAP 1 et 2.
       Les sections financées ou proposées sont plus foncées.`,
   },
 ) =>
@@ -418,6 +524,18 @@ export const stackedChallengeCountPlot = (
     ],
   })
 
+/**
+ * Faceted (by challenge) bar plot of challenge counts by AAP round
+ *
+ * @param {Object[]} data - challenge count data, each with `defi`, `count`, `aap`, `financed`/`selected`
+ * @param {Object} [options]
+ * @param {number} [options.width] - chart width
+ * @param {string} [options.x_accessor='aap'] - data key for the bar x position/fill channel
+ * @param {Array} [options.color_range] - color scale range
+ * @param {string} [options.title='Défis par AAP'] - chart title
+ * @param {string} [options.subtitle] - chart subtitle
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const challengeCountPlot = (
   data,
   {
