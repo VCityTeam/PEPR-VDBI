@@ -104,7 +104,7 @@ function bilevelEdgeBundling(data) {
 ```
 
 ```js echo
-const graph = await FileAttachment('/data/miserables.json').json()
+const graph = miserables
 display(graph)
 ```
 

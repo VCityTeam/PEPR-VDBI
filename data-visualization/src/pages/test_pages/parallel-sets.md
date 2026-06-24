@@ -28,7 +28,7 @@ Data: [Robert J. MacG. Dawson](http://jse.amstat.org/v3n3/datasets.dawson.html)
 ### Input data
 
 ```js
-const data = await FileAttachment("/data/titanic.csv").csv({ typed: true })
+const data = titanic
 display(Inputs.table(data))
 ```
 

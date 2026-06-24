@@ -1,3 +1,5 @@
+// Export the AAP2 submission metadata as a TSV file with a UTF-8 encoding //
+
 import ExcelJS from 'exceljs'
 import { tsvFormat } from 'd3-dsv'
 import {
@@ -7,7 +9,7 @@ import {
   // toLowerPreservingAcronyms,
   mapRowToColumnKeys,
   rowsToObjectArray,
-} from './utilities/data_utilities.js'
+} from './data_utilities.js'
 
 const workbook = new ExcelJS.Workbook()
 await workbook.xlsx.readFile(

@@ -1,3 +1,5 @@
+// Export the AAP2 template export as a TSV file with a UTF-8 encoding //
+
 import { dsvFormat, tsvFormat } from 'd3-dsv'
 import { readFile } from 'node:fs/promises'
 

@@ -1,14 +1,16 @@
 This directory contains input data or scripts for integrating data sources
-([data loaders](https://observablehq.com/framework/data-loaders)) to be visualized using
-observable. Refer to the respective [observable dashboard or markdown documentation](../)
+([data loaders](https://observablehq.com/framework/data-loaders)) to be visualized
+using observable. Refer to the respective [observable dashboard or markdown documentation](../)
 for specific data loader documentation.
 
 ### Running dataloaders manually
-To install Python dataloader dependencies, run:
+
+To install Python dataloader dependencies, [install uv](https://docs.astral.sh/uv/getting-started/installation/)
+
+Once installed, sync installed libraires:
+
 ```bash
-pip install requests
-pip install pandas
-pip install openpyxl
+uv sync
 ```
 
 Some dataloaders require your terminal be in the `../` directory
@@ -21,22 +23,9 @@ Some dataloaders require your terminal be in the `../` directory
 > [!WARNING] ORCiD API access
 > Data loaders that require and ORCiD API key (denoted by :asterisk:) require you have a
 > file named `.env` in this directory with the following contents:
+>
 > ```bash
 > # ORCiD API secrets
 > CLIENT_ID="MY_APP_ID"
 > CLIENT_SECRET="MY_APP_SECRET"
 > ```
-
-| Filename                                                   | Provided           | Description                                                              | Source                                      |
-| ---------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------ | ------------------------------------------- |
-| fetch-orcid-access-token.json.sh                           | :asterisk:         | Data loader for creating ORCiD access token (used to retrive ORCiD data) |                                             |
-| fr-esr-structures-recherche-publiques-actives.csv.js       | :white_check_mark: | Site, university, and/or laboratory information                          | data.enseignementsup-recherche.gouv.fr      |
-| fr-esr-structures-recherche-publiques-actives.geocoded.csv | :white_check_mark: | Site, university, and/or laboratory information                          | data.enseignementsup-recherche.gouv.fr      |
-| fr-esr-structures-recherche-publiques-actives.json.js      | :white_check_mark: | Site, university, and/or laboratory information                          | data.enseignementsup-recherche.gouv.fr      |
-| cj_septembre_2022_nX                                       | :white_check_mark: | INSEE catégories juridiques by level                                     | https://www.insee.fr/fr/information/2028129 |
-| orcids.csv.py                                              | :asterisk:         | Fetch researcher ORCiD information by first and last name                | https://orcid.org/                          |
-| orcids.xlsx.py                                             | :asterisk:         | Fetch researcher ORCiD information by first and last name                | https://orcid.org/                          |
-| world.json.js                                              | :white_check_mark: | Low LOD world country geometry GeoJSON                                   | https://static.observableusercontent.com/ * |
-| europe.geo.json                                            | :white_check_mark: | Medium LOD european country geometry GeoJSON                             | https://geojson-maps.kyd.au/                |
-
-\*Full URL: https://static.observableusercontent.com/files/26fc08875c617b59939afa42f6f1e1bf5e75f11dcc2e482d963b6e4128f0250d708f983050a43862ae73d016bc328d1f3f40bc0df709d5dd310f789f334c0ee8?response-content-disposition=attachment%3Bfilename*%3DUTF-8%27%27countries-110m.json

@@ -1,13 +1,13 @@
 import json
 import pandas as pd
-from utilities.orcid_api import (
+from .orcid_api import (
     getORCiDSecrets,
     getAccessToken,
     queryOrcid,
     getFirstname,
     getLastname,
 )
-from utilities.io_utils import initDefaultLogger
+from .io_utils import initDefaultLogger
 
 
 def main():
