@@ -1,5 +1,7 @@
 # RAGFlow tests <!-- omit in toc -->
 
+Tests discontinued as RAGFlow issue documentation is often in chinese. Reverting to Ollama+Langchain for RAG testing.
+
 - [1. Dependencies](#1-dependencies)
 
 ## 1. Dependencies

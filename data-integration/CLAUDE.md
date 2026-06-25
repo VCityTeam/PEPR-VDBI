@@ -15,13 +15,11 @@ uv sync
 source ./venv/bin/activate
 ```
 
-The `langchain-manager.py` script has separate dependencies that are not yet integrated into the uv lock file and must be installed manually:
+The `langchain-manager.py` script has additional dependencies in the `langchain` dependency group:
 
 ```bash
-pip install -r src/langchain-requirements.txt
+uv sync --group langchain
 ```
-
-Langchain also requires `sqlite3 >= 3.35.0` for the Chroma vector store dependency.
 
 ## Running scripts
 
@@ -51,13 +49,23 @@ python src/workflow.py -h  # see all options
 # Logs written to workflow-test.log by default
 ```
 
-**Langchain RAG (interactive REPL):**
+**Langchain RAG (document ingestion and query):**
 
 ```bash
-ollama serve &
-python src/langchain-manager.py -i <input.pdf>
-# Type "exit" to quit
+# Start services
+docker compose -f src/docker-compose.yml up -d vector_store
+docker compose -f src/docker-compose.yml up -d ollama
+
+# Ingest a PDF (requires PGVECTOR_CONNECTION_STRING in .env or env)
+python src/langchain-manager.py ingest -i <input.pdf>
+python src/langchain-manager.py ingest -h  # see all chunking options
+
+# Query the vector store
+python src/langchain-manager.py query -q "What is this document about?"
+python src/langchain-manager.py query -h  # see all options
 ```
+
+See `langchain-tests.md` for full setup instructions, design decisions, and architecture.
 
 ## Architecture
 
@@ -68,7 +76,7 @@ The codebase is a collection of standalone experiment scripts in `src/`, each te
 - `pypdf_pipeline.py` — converts PDFs to plain text page-by-page using pypdf
 - `ollama_pipeline.py` — sends a single prompt+text to a local (or remote) Ollama instance; auto-pulls or creates models on `404` errors; supports custom Ollama modelfiles
 - `workflow.py` — orchestrates multi-step pipelines: reads a JSON or CSV config, converts PDFs to JSON via `pypdf_pipeline`, then sends each configured prompt via `ollama_pipeline` or queries an R2R RAG system; tracks CO₂ emissions with codecarbon
-- `langchain-manager.py` — RAG using Langchain + Chroma vector store + GPT4All embeddings + Ollama LLM; interactive REPL for querying ingested PDFs
+- `langchain-manager.py` — multimodal document ingestion service and RAG query interface; uses pgvector as a persistent vector store, OllamaEmbeddings for dense vectors, and a vision LLM (llava) to describe images/diagrams extracted from PDFs; see `langchain-tests.md` for architecture and setup
 - `r2r_pipeline.py` — thin wrapper around the R2R client for document ingestion (R2R is now deprecated in favor of RAGFlow)
 - `litellm_pipeline.py` — minimal LiteLLM smoke test
 - `whisper_pipeline.py` — batch audio transcription helper for use inside the `openai-whisper-docker` repository

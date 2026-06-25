@@ -14,7 +14,8 @@ These tests attempt to identify efficient, open-source, and secure methods for e
     - [2.1.1. Test: simple keyword extraction in french](#211-test-simple-keyword-extraction-in-french)
     - [2.1.2. Test: simple keyword extraction in english](#212-test-simple-keyword-extraction-in-english)
     - [2.1.3. Test: Ollama server+python](#213-test-ollama-serverpython)
-    - [2.1.4. 2.1.4 Test: Pagoda LIRIS Ollama Service](#214-214-test-pagoda-liris-ollama-service)
+    - [2.1.4. Test: Pagoda LIRIS Ollama Service](#214-test-pagoda-liris-ollama-service)
+    - [2.1.5. Test: Langchain multimodel document ingestion service](#215-test-langchain-multimodel-document-ingestion-service)
   - [2.2. Workflow](#22-workflow)
     - [2.2.1. Test: Initial Python data workflow](#221-test-initial-python-data-workflow)
     - [2.2.2. Test: Structured Python data workflow](#222-test-structured-python-data-workflow)
@@ -321,7 +322,7 @@ python src/ollama_pipeline.py \
 > - The test script can be customized. Use `python src/ollama.py -h` to see the documentation.
 > - Also, you can use just `ollama serve` (without the `&`) in another terminal session to be able to view ollama API calls in real time
 
-#### 2.1.4. 2.1.4 Test: Pagoda LIRIS Ollama Service
+#### 2.1.4. Test: Pagoda LIRIS Ollama Service
 
 This test will examine the functionality of the [Ollama service hosted with on the Pagoda3](https://ollama-ui.pagoda.liris.cnrs.fr/).
 As instructed by [Olivier MBAREK](mailto:olivier.mbarek@univ-lyon1.fr), the http interface is accesible with the Ollama Python library (see test [2.1.3](#213-test-ollama-serverpython)).
@@ -365,6 +366,10 @@ python src/ollama_pipeline.py \
 Results:
 The ollama service works web but the response MUST be streamed.
 Thus the `-s` flag was added to the test script.
+
+#### 2.1.5. Test: Langchain multimodel document ingestion service
+
+Langchain tests are documented in [langchain-tests.md](./langchain-tests.md).
 
 ### 2.2. Workflow
 
@@ -485,15 +490,15 @@ TODO:
 
 **Tentative candidates:**
 
-| Tool/library                                                                                            | Comment                   |
-| ------------------------------------------------------------------------------------------------------- | ------------------------- |
-| [Langchain+Ollama](https://github.com/ollama/ollama/tree/v0.5.5/examples/langchain-python-rag-document) |                           |
-| [RAGFlow](https://github.com/infiniflow/ragflow)                                                        |                           |
-| ~~[R2R](https://github.com/SciPhi-AI/R2R)~~                                                             | Seems no longer supported |
-| ~~[CRAG-Ollama-Chat](https://github.com/Nagi-ovo/CRAG-Ollama-Chat)~~                                    | Seems no longer supported |
-| [Sparrow](https://github.com/katanaml/sparrow)                                                          |                           |
-| [chat-ollama](https://github.com/sugarforever/chat-ollama)                                              |                           |
-| [rag-chatbot](https://github.com/datvodinh/rag-chatbot)                                                 |                           |
+| Tool/library                                                                                            | Comment                                               |
+| ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| [Langchain+Ollama](https://github.com/ollama/ollama/tree/v0.5.5/examples/langchain-python-rag-document) |                                                       |
+| ~~[RAGFlow](https://github.com/infiniflow/ragflow)~~                                                    | Lots of issue documentation and support is in chinese |
+| ~~[R2R](https://github.com/SciPhi-AI/R2R)~~                                                             | Seems no longer supported                             |
+| ~~[CRAG-Ollama-Chat](https://github.com/Nagi-ovo/CRAG-Ollama-Chat)~~                                    | Seems no longer supported                             |
+| [Sparrow](https://github.com/katanaml/sparrow)                                                          |                                                       |
+| [chat-ollama](https://github.com/sugarforever/chat-ollama)                                              |                                                       |
+| [rag-chatbot](https://github.com/datvodinh/rag-chatbot)                                                 |                                                       |
 
 > [!TIP]
 > See [the references](./references.md#retrieval) for more information about RAG
