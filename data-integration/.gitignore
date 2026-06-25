@@ -1,6 +1,4 @@
 __pycache__
-venv
 .venv
 .env
 emissions.csv
-openai-whisper-docker

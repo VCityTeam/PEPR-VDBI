@@ -1,3 +1,4 @@
 _*
 workflow-test/*
 private/*
+!private/.gitkeep
