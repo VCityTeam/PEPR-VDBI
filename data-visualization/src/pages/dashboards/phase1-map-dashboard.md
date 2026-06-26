@@ -1,18 +1,21 @@
 ---
 sql:
   annex_partners: /data/partners_by_project_annex.csv
-  general_partners: /data/partners_general.csv
+  # general_partners: /data/partners_general.csv
   socioeco_partners: /data/phase1-socioeconomic_partners.tsv
   etablissement_partners: /data/phase1-institutions.tsv
   laboratory_partners: /data/phase1-laboratories.tsv
-  projects_by_partner: /data/projects_by_partner.csv
-  aap_partners: /data/private/partenaires_aap2023.csv
+  projects_by_partner: /data/partners_by_project.csv
+  # aap_partners: /data/private/partenaires_aap2023.csv
   terrain_locations: /data/project_summary_terrain_locations.csv
   project_summaries: /data/private/project_summary.csv
   project_terrains_by_scale: /data/private/project_summary_terrains.csv
 ---
 
 # Phase 1 Cartography
+
+> [!CAUTION]
+> Some partner data sources are currently deprecated.
 
 <div class="warning" label="Data visualization notice">
   Data visualizations are unverified and errors may exist.

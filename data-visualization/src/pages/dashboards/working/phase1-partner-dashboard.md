@@ -2,14 +2,17 @@
 toc: true
 sql:
   annex_partners: /data/partners_by_project_annex.csv
-  general_partners: /data/partners_general.csv
-  aap_partners: /data/partners_aap2023.csv
+  # general_partners: /data/partners_general.csv
+  # aap_partners: /data/partners_aap2023.csv
   cjn1: /data/cj_septembre_2022_n1.csv
   cjn2: /data/cj_septembre_2022_n2.csv
   cjn3: /data/cj_septembre_2022_n3.csv
 ---
 
 # Phase 1 Partners
+
+> [!CAUTION]
+> Partner data sources are currently deprecated.
 
 ```js
 import {

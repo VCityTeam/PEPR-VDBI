@@ -1,11 +1,13 @@
 ---
 sql:
   partners: /data/partners.csv
-  labs: /data/labs.csv
-  projects_by_partner: /data/projects_by_partner.csv
-  lab_disciplines_ERC: /data/lab_disciplines_ERC.csv
-  lab_disciplines_HCERES: /data/lab_disciplines_HCERES.csv
+  projects_by_partner: /data/partners_by_project.csv
+  # lab_disciplines_ERC: /data/lab_disciplines_ERC.csv
+  # lab_disciplines_HCERES: /data/lab_disciplines_HCERES.csv
 ---
+
+> [!CAUTION]
+> lab discipline sources are deprecated.
 
 # PEPR VDBI laboratories
 
@@ -29,8 +31,6 @@ const debug = false
 if (debug) {
   display('partners')
   display(Inputs.table(sql`select * from partners`))
-  display('labs')
-  display(Inputs.table(sql`select * from labs`))
   display('projects_by_partner')
   display(Inputs.table(sql`select * from projects_by_partner`))
   display('lab_disciplines_ERC')

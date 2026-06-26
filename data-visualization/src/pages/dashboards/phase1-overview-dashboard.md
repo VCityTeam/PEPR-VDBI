@@ -4,13 +4,16 @@ sql:
   phase1_laboratories: /data/phase1-laboratories.tsv
   phase1_researchers: /data/phase1-researchers.tsv
   phase1_institutions: /data/phase1-institutions.tsv
-  general_partners: /data/partners_general.csv
-  aap_partners: /data/private/partenaires_aap2023.csv
+  # general_partners: /data/partners_general.csv
+  # aap_partners: /data/private/partenaires_aap2023.csv
   terrains: /data/project_terrains.csv
   project_summary: /data/private/project_summary.csv
 ---
 
 # Phase 1 Overview
+
+> [!CAUTION]
+> Some partner data sources are currently deprecated.
 
 <div class="warning" label="Data visualization notice">
   Data visualizations are unverified and errors may exist. Regard these data

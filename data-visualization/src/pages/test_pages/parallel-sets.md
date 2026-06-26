@@ -2,12 +2,15 @@
 style: /css/vdbi-page.css
 sql:
   annex_partners: /data/partners_by_project_annex.csv
-  general_partners: /data/partners_general.csv
-  aap_partners: /data/partners_aap2023.csv
-  cjn1: data/cj_septembre_2022_n1.csv
-  cjn2: data/cj_septembre_2022_n2.csv
-  cjn3: data/cj_septembre_2022_n3.csv
+  # general_partners: /data/partners_general.csv
+  # aap_partners: /data/partners_aap2023.csv
+  cjn1: /data/cj_septembre_2022_n1.csv
+  cjn2: /data/cj_septembre_2022_n2.csv
+  cjn3: /data/cj_septembre_2022_n3.csv
 ---
+
+> [!CAUTION]
+> Partner data sources are currently deprecated.
 
 <div style="color: grey; font: 13px/25.5px var(--sans-serif); text-transform: uppercase;"><h1 style="display: none;">Parallel sets</h1><a href="https://d3js.org/">D3</a> › <a href="/@d3/gallery">Gallery</a></div>
 

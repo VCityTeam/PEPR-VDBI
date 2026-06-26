@@ -3,8 +3,6 @@ style: /css/vdbi-page.css
 sql:
   link_store: /data/private/mural_links.csv
   mural_store: /data/private/mural_export.csv
-  link_store2: /data/private/mural_links2.csv
-  mural_store2: /data/private/mural_export2.csv
 ---
 
 ```js

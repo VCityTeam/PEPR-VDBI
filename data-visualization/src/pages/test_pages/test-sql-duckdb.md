@@ -3,8 +3,8 @@ title: Researcher Dashboard
 style: /css/vdbi-page.css
 sql:
   ann: /data/partners_by_project_annex.csv
-  aap: /data/partners_aap2023.csv
-  gen: /data/partners_general.csv
+#   aap: /data/partners_aap2023.csv
+#   gen: /data/partners_general.csv
 ---
 
 # Phase 1 Actors
@@ -14,6 +14,9 @@ manipulating data using the Observable Framework and DuckDB:
 
 - [SQL code block documentation](https://observablehq.com/framework/sql)
 - [Observable DuckDB documentation](https://observablehq.com/framework/lib/duckdb)
+
+> [!CAUTION]
+> Some of these data sources are currently deprecated.
 
 The test will load and merge 3 different CSVs concerning project and partner information:
 

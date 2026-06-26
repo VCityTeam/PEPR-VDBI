@@ -1,5 +1,117 @@
 import MarkdownItFootnote from 'markdown-it-footnote'
 
+const PRODUCTION = process.env.BUILD_ENV === 'production'
+
+const devOnlyPages = [
+  {
+    name: 'Under Construction',
+    pages: [
+      {
+        name: 'Phase 1 socio-economic partners',
+        path: 'pages/dashboards/working/phase1-partner-dashboard',
+      },
+      // {
+      //   name: 'Phase 1 Researchers',
+      //   path: 'pages/dashboards/working/phase1-researcher-dashboard',
+      // },
+      {
+        name: 'Phase 1 Laboratories',
+        path: 'pages/dashboards/working/phase1-laboratory-dashboard',
+      },
+      {
+        name: 'Demonstrateurs de la Ville Durable',
+        path: 'pages/dashboards/working/dvd-dashboard',
+      },
+      // {
+      //   name: 'Phase 1 Institutions',
+      //   path: 'pages/dashboards/working/phase1-university-dashboard',
+      // },
+      {
+        name: 'Mural Data',
+        path: 'pages/test_pages/test-mural-data',
+      },
+      {
+        name: 'Raw Data Export',
+        path: 'pages/test_pages/aap-data-dashboard',
+      },
+    ],
+  },
+  {
+    name: 'Reports',
+    pages: [
+      {
+        name: 'Lexicometric analysis - JS 2025: Round Tables (EN)',
+        path: 'pages/reports/js-2025-round-table-analysis-en',
+      },
+      {
+        name: 'Lexicometric analysis - JS 2025: NEO/SoLocale Workshop (FR)',
+        path: 'pages/reports/js-2025-workshop-analysis-fr',
+      },
+      {
+        name: 'Lexicometric analysis - JS 2025: NEO/SoLocale Workshop (EN)',
+        path: 'pages/reports/js-2025-workshop-analysis-en',
+      },
+    ],
+  },
+  {
+    name: 'D3/Plot/Framework Tests',
+    pages: [
+      {
+        name: 'Plot',
+        path: 'pages/test_pages/test-plot',
+      },
+      {
+        name: 'Tree',
+        path: 'pages/test_pages/test-tree',
+      },
+      {
+        name: 'Zoomable Sunburst',
+        path: 'pages/test_pages/zoomable-sunburst',
+      },
+      {
+        name: 'Parallel Sets',
+        path: 'pages/test_pages/parallel-sets',
+      },
+      {
+        name: 'Chord diagram',
+        path: 'pages/test_pages/chord-diagram',
+      },
+      {
+        name: 'Bilevel edge bundling',
+        path: 'pages/test_pages/bilevel-edge-bundling',
+      },
+      {
+        name: 'Word Clouds',
+        path: 'pages/test_pages/word-cloud',
+      },
+      {
+        name: 'Force Diagram, Triple Graph',
+        path: 'pages/test_pages/test-graph',
+      },
+      {
+        name: 'Arc Diagram, Property Graph',
+        path: 'pages/test_pages/test-arc',
+      },
+      {
+        name: 'Import dataESR+Geospatial',
+        path: 'pages/test_pages/test-esr-import',
+      },
+      {
+        name: 'Import Excel',
+        path: 'pages/test_pages/test-excel-import',
+      },
+      {
+        name: 'SQL and DuckDB',
+        path: 'pages/test_pages/test-sql-duckdb',
+      },
+      {
+        name: 'Import ORCID',
+        path: 'pages/test_pages/test-orcid-import',
+      },
+    ],
+  },
+]
+
 // See https://observablehq.com/framework/config for documentation.
 export default {
   markdownIt: (md: any) => md.use(MarkdownItFootnote),
@@ -66,113 +178,7 @@ export default {
         },
       ],
     },
-    {
-      name: 'Reports',
-      pages: [
-        {
-          name: 'Lexicometric analysis - JS 2025: Round Tables (EN)',
-          path: 'pages/reports/js-2025-round-table-analysis-en',
-        },
-        {
-          name: 'Lexicometric analysis - JS 2025: NEO/SoLocale Workshop (FR)',
-          path: 'pages/reports/js-2025-workshop-analysis-fr',
-        },
-        {
-          name: 'Lexicometric analysis - JS 2025: NEO/SoLocale Workshop (EN)',
-          path: 'pages/reports/js-2025-workshop-analysis-en',
-        },
-      ],
-    },
-    {
-      name: 'Under Construction',
-      pages: [
-        {
-          name: 'Phase 1 socio-economic partners',
-          path: 'pages/dashboards/working/phase1-partner-dashboard',
-        },
-        // {
-        //   name: 'Phase 1 Researchers',
-        //   path: 'pages/dashboards/working/phase1-researcher-dashboard',
-        // },
-        {
-          name: 'Phase 1 Laboratories',
-          path: 'pages/dashboards/working/phase1-laboratory-dashboard',
-        },
-        {
-          name: 'Demonstrateurs de la Ville Durable',
-          path: 'pages/dashboards/working/dvd-dashboard',
-        },
-        // {
-        //   name: 'Phase 1 Institutions',
-        //   path: 'pages/dashboards/working/phase1-university-dashboard',
-        // },
-        {
-          name: 'Mural Data',
-          path: 'pages/test_pages/test-mural-data',
-        },
-        {
-          name: 'Raw Data Export',
-          path: 'pages/test_pages/aap-data-dashboard',
-        },
-      ],
-    },
-    {
-      name: 'D3/Plot/Framework Tests',
-      pages: [
-        {
-          name: 'Plot',
-          path: 'pages/test_pages/test-plot',
-        },
-        {
-          name: 'Tree',
-          path: 'pages/test_pages/test-tree',
-        },
-        {
-          name: 'Zoomable Sunburst',
-          path: 'pages/test_pages/zoomable-sunburst',
-        },
-        {
-          name: 'Parallel Sets',
-          path: 'pages/test_pages/parallel-sets',
-        },
-        {
-          name: 'Chord diagram',
-          path: 'pages/test_pages/chord-diagram',
-        },
-        {
-          name: 'Bilevel edge bundling',
-          path: 'pages/test_pages/bilevel-edge-bundling',
-        },
-        {
-          name: 'Word Clouds',
-          path: 'pages/test_pages/word-cloud',
-        },
-        {
-          name: 'Force Diagram, Triple Graph',
-          path: 'pages/test_pages/test-graph',
-        },
-        {
-          name: 'Arc Diagram, Property Graph',
-          path: 'pages/test_pages/test-arc',
-        },
-        {
-          name: 'Import dataESR+Geospatial',
-          path: 'pages/test_pages/test-esr-import',
-        },
-        {
-          name: 'Import Excel',
-          path: 'pages/test_pages/test-excel-import',
-        },
-        {
-          name: 'SQL and DuckDB',
-          path: 'pages/test_pages/test-sql-duckdb',
-        },
-        {
-          name: 'Import ORCID',
-          path: 'pages/test_pages/test-orcid-import',
-        },
-      ],
-    },
+    ...(PRODUCTION ? [] : devOnlyPages),
   ],
   // The pages and sections in the sidebar. If you don’t specify this option,
   // all pages will be listed in alphabetical order. Listing pages explicitly
