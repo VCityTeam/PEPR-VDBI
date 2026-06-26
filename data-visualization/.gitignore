@@ -5,5 +5,4 @@ node_modules/
 yarn-error.log
 jsdoc
 .venv
-*.local.md
-.claude/
+*.local.*
