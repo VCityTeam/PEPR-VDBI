@@ -1,5 +1,24 @@
 """Langchain document ingestion and query service backed by Qdrant."""
 
+# Suppress onnxruntime's DRM GPU-discovery warning at import time for WSL2
+# as the GPU is still available via NVML/CUDA.
+# TODO: remove when passing into production
+import os as _os
+
+_devnull = _os.open(_os.devnull, _os.O_WRONLY)
+_old_fd2 = _os.dup(2)
+_os.dup2(_devnull, 2)
+_os.close(_devnull)
+try:
+    import onnxruntime as _ort
+
+    _ort.set_default_logger_severity(3)  # ERROR; suppress future ORT warnings too
+    del _ort
+finally:
+    _os.dup2(_old_fd2, 2)
+    _os.close(_old_fd2)
+del _os, _old_fd2
+
 import argparse
 import base64
 import logging
@@ -30,7 +49,7 @@ load_dotenv()
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
     filename="langchain.log",
-    level=logging.INFO,
+    level=logging.DEBUG,
 )
 log = logging.getLogger(__name__)
 
@@ -246,23 +265,25 @@ def main() -> None:
 
     sub = parser.add_subparsers(dest="command", required=True)
 
-    p_ingest = sub.add_parser("ingest", help="Ingest a PDF into the vector store")
-    p_ingest.add_argument("-i", "--input", required=True, metavar="FILE")
-    p_ingest.add_argument(
+    ingest_parser = sub.add_parser("ingest", help="Ingest a PDF into the vector store")
+    ingest_parser.add_argument("-i", "--input", required=True, metavar="FILE")
+    ingest_parser.add_argument(
         "--strategy", choices=["recursive", "character", "token"], default="recursive"
     )
-    p_ingest.add_argument("--chunk-size", type=int, default=500)
-    p_ingest.add_argument("--chunk-overlap", type=int, default=50)
-    p_ingest.add_argument("--embedding-model", default="nomic-embed-text")
-    p_ingest.add_argument(
-        "--vision-model", default="llava", help="Ollama vision model for image descriptions"
+    ingest_parser.add_argument("--chunk-size", type=int, default=500)
+    ingest_parser.add_argument("--chunk-overlap", type=int, default=50)
+    ingest_parser.add_argument("--embedding-model", default="nomic-embed-text")
+    ingest_parser.add_argument(
+        "--vision-model",
+        default="llava",
+        help="Ollama vision model for image descriptions",
     )
 
-    p_query = sub.add_parser("query", help="Query the vector store")
-    p_query.add_argument("-q", "--question", required=True)
-    p_query.add_argument("-m", "--model", default="llama3:8b")
-    p_query.add_argument("-t", "--template", help="Custom PromptTemplate string")
-    p_query.add_argument("--embedding-model", default="nomic-embed-text")
+    query_parser = sub.add_parser("query", help="Query the vector store")
+    query_parser.add_argument("-q", "--question", required=True)
+    query_parser.add_argument("-m", "--model", default="llama3:8b")
+    query_parser.add_argument("-t", "--template", help="Custom PromptTemplate string")
+    query_parser.add_argument("--embedding-model", default="nomic-embed-text")
 
     args = parser.parse_args()
 
