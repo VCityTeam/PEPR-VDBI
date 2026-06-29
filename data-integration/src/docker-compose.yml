@@ -1,14 +1,11 @@
 services:
   vector_store:
-    image: pgvector/pgvector:pg17
-    environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=vector_store
+    image: qdrant/qdrant
     ports:
-      - "5432:5432"
+      - "6333:6333"
+      - "6334:6334"
     volumes:
-      - pgvector-data:/var/lib/postgresql/data
+      - qdrant-data:/qdrant/storage
   ollama:
     image: ollama/ollama:latest
     ports:
@@ -25,4 +22,4 @@ services:
 
 volumes:
   ollama:
-  pgvector-data:
+  qdrant-data:

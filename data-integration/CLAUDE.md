@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Research experiments for AI-based automated data integration: extracting structured data from unstructured documents (PDFs, audio) using local LLMs. All test data used is GDPR-sensitive and not provided in the repository.
 
+**All technology choices must be FOSS** (Free and Open Source Software with an OSI-approved license). Do not propose or introduce libraries, tools, services, or models that carry proprietary, source-available-only, or non-OSI-approved licenses (e.g. BSL, SSPL, proprietary SaaS APIs).
+
 ## Setup
 
 Python project managed with [uv](https://docs.astral.sh/uv/). To install dependencies and activate the virtual environment:
@@ -56,7 +58,7 @@ python src/workflow.py -h  # see all options
 docker compose -f src/docker-compose.yml up -d vector_store
 docker compose -f src/docker-compose.yml up -d ollama
 
-# Ingest a PDF (requires PGVECTOR_CONNECTION_STRING in .env or env)
+# Ingest a PDF (QDRANT_URL defaults to http://localhost:6333 if not set)
 python src/langchain-manager.py ingest -i <input.pdf>
 python src/langchain-manager.py ingest -h  # see all chunking options
 
@@ -76,7 +78,7 @@ The codebase is a collection of standalone experiment scripts in `src/`, each te
 - `pypdf_pipeline.py` — converts PDFs to plain text page-by-page using pypdf
 - `ollama_pipeline.py` — sends a single prompt+text to a local (or remote) Ollama instance; auto-pulls or creates models on `404` errors; supports custom Ollama modelfiles
 - `workflow.py` — orchestrates multi-step pipelines: reads a JSON or CSV config, converts PDFs to JSON via `pypdf_pipeline`, then sends each configured prompt via `ollama_pipeline` or queries an R2R RAG system; tracks CO₂ emissions with codecarbon
-- `langchain-manager.py` — multimodal document ingestion service and RAG query interface; uses pgvector as a persistent vector store, OllamaEmbeddings for dense vectors, and a vision LLM (llava) to describe images/diagrams extracted from PDFs; see `langchain-tests.md` for architecture and setup
+- `langchain-manager.py` — multimodal document ingestion service and RAG query interface; uses Qdrant as a persistent vector store, OllamaEmbeddings for dense vectors, and a vision LLM (llava) to describe images/diagrams extracted from PDFs; see `langchain-tests.md` for architecture and setup
 - `r2r_pipeline.py` — thin wrapper around the R2R client for document ingestion (R2R is now deprecated in favor of RAGFlow)
 - `litellm_pipeline.py` — minimal LiteLLM smoke test
 - `whisper_pipeline.py` — batch audio transcription helper for use inside the `openai-whisper-docker` repository

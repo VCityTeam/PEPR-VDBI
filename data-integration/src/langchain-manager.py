@@ -1,4 +1,4 @@
-"""Langchain document ingestion and query service backed by pgvector."""
+"""Langchain document ingestion and query service backed by Qdrant."""
 
 import argparse
 import base64
@@ -18,7 +18,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_ollama import ChatOllama, OllamaEmbeddings
-from langchain_postgres import PGVector
+from langchain_qdrant import QdrantVectorStore
 from langchain_text_splitters import (
     CharacterTextSplitter,
     RecursiveCharacterTextSplitter,
@@ -56,19 +56,14 @@ class ChunkingConfig:
 class DocumentIngestionService:
     def __init__(
         self,
-        connection_string: str,
+        qdrant_url: str,
         collection_name: str = "langchain_documents",
         embedding_model: str = "nomic-embed-text",
         vision_model: str = "llava",
     ) -> None:
         self._embeddings = OllamaEmbeddings(model=embedding_model)
         self._vision_llm = ChatOllama(model=vision_model)
-        self._vectorstore = PGVector(
-            embeddings=self._embeddings,
-            collection_name=collection_name,
-            connection=connection_string,
-            use_jsonb=True,
-        )
+        self._qdrant_url = qdrant_url
         self._collection_name = collection_name
         log.info("DocumentIngestionService ready (collection=%s)", collection_name)
 
@@ -175,7 +170,13 @@ class DocumentIngestionService:
         log.info("Ingesting %s (strategy=%s)", file_path, config.strategy)
         elements = self._extract_elements(file_path)
         chunks = self._chunk_and_enrich(elements, config, file_path)
-        self._vectorstore.add_documents(chunks)
+        QdrantVectorStore.from_documents(
+            documents=chunks,
+            embedding=self._embeddings,
+            url=self._qdrant_url,
+            collection_name=self._collection_name,
+            force_recreate=False,
+        )
 
         by_type: dict[str, int] = {}
         for chunk in chunks:
@@ -196,15 +197,16 @@ class DocumentIngestionService:
 class QueryService:
     def __init__(
         self,
-        connection_string: str,
+        qdrant_url: str,
         collection_name: str = "langchain_documents",
         embedding_model: str = "nomic-embed-text",
     ) -> None:
-        self._vectorstore = PGVector(
-            embeddings=OllamaEmbeddings(model=embedding_model),
+        from qdrant_client import QdrantClient
+
+        self._vectorstore = QdrantVectorStore(
+            client=QdrantClient(url=qdrant_url),
             collection_name=collection_name,
-            connection=connection_string,
-            use_jsonb=True,
+            embedding=OllamaEmbeddings(model=embedding_model),
         )
 
     def query(
@@ -236,9 +238,9 @@ def main() -> None:
         description="Langchain document ingestion and RAG query service"
     )
     parser.add_argument(
-        "--connection-string",
-        default=os.getenv("PGVECTOR_CONNECTION_STRING"),
-        help="pgvector connection string (or set PGVECTOR_CONNECTION_STRING env var)",
+        "--qdrant-url",
+        default=os.getenv("QDRANT_URL", "http://localhost:6333"),
+        help="Qdrant service URL (or set QDRANT_URL env var; default: http://localhost:6333)",
     )
     parser.add_argument("--collection", default="langchain_documents")
 
@@ -264,12 +266,9 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    if not args.connection_string:
-        parser.error("Provide --connection-string or set PGVECTOR_CONNECTION_STRING env var")
-
     if args.command == "ingest":
         service = DocumentIngestionService(
-            connection_string=args.connection_string,
+            qdrant_url=args.qdrant_url,
             collection_name=args.collection,
             embedding_model=args.embedding_model,
             vision_model=args.vision_model,
@@ -289,7 +288,7 @@ def main() -> None:
 
     elif args.command == "query":
         service = QueryService(
-            connection_string=args.connection_string,
+            qdrant_url=args.qdrant_url,
             collection_name=args.collection,
             embedding_model=args.embedding_model,
         )
