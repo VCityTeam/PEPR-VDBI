@@ -1,24 +1,5 @@
 """Langchain document ingestion and query service backed by Qdrant."""
 
-# Suppress onnxruntime's DRM GPU-discovery warning at import time for WSL2
-# as the GPU is still available via NVML/CUDA.
-# TODO: remove when passing into production
-import os as _os
-
-_devnull = _os.open(_os.devnull, _os.O_WRONLY)
-_old_fd2 = _os.dup(2)
-_os.dup2(_devnull, 2)
-_os.close(_devnull)
-try:
-    import onnxruntime as _ort
-
-    _ort.set_default_logger_severity(3)  # ERROR; suppress future ORT warnings too
-    del _ort
-finally:
-    _os.dup2(_old_fd2, 2)
-    _os.close(_old_fd2)
-del _os, _old_fd2
-
 import argparse
 import base64
 import logging
@@ -43,6 +24,7 @@ from langchain_text_splitters import (
     RecursiveCharacterTextSplitter,
     TokenTextSplitter,
 )
+from qdrant_client import QdrantClient
 
 load_dotenv()
 
@@ -80,14 +62,24 @@ class DocumentIngestionService:
         embedding_model: str = "nomic-embed-text",
         vision_model: str = "llava",
     ) -> None:
-        self._embeddings = OllamaEmbeddings(model=embedding_model)
-        self._vision_llm = ChatOllama(model=vision_model)
+        self._qdrant_client = QdrantClient(
+            url=qdrant_url, prefer_grpc=True, trust_env=False
+        )
+        self._embeddings = OllamaEmbeddings(
+            model=embedding_model, client_kwargs={"trust_env": False}
+        )
+        self._vision_llm = ChatOllama(
+            model=vision_model, client_kwargs={"trust_env": False}
+        )
         self._qdrant_url = qdrant_url
         self._collection_name = collection_name
         log.info("DocumentIngestionService ready (collection=%s)", collection_name)
 
     def _get_splitter(self, config: ChunkingConfig):
-        kwargs: dict = {"chunk_size": config.chunk_size, "chunk_overlap": config.chunk_overlap}
+        kwargs: dict = {
+            "chunk_size": config.chunk_size,
+            "chunk_overlap": config.chunk_overlap,
+        }
         if config.strategy == "recursive":
             if config.separators:
                 kwargs["separators"] = config.separators
@@ -132,24 +124,25 @@ class DocumentIngestionService:
                     )
                 )
 
-        # Images described by the vision model
-        pdf = fitz.open(file_path)
-        for page_num, page in enumerate(pdf):
-            for img_info in page.get_images(full=True):
-                xref = img_info[0]
-                try:
-                    base_image = pdf.extract_image(xref)
-                    description = self._describe_image(base_image["image"])
-                    if description:
-                        documents.append(
-                            Document(
-                                page_content=description,
-                                metadata={"page": page_num, "element_type": "image_description"},
-                            )
-                        )
-                except Exception:
-                    log.exception("Skipping image xref=%d on page %d", xref, page_num)
-        pdf.close()
+        # TODO: Test image description
+        # # Images described by the vision model
+        # pdf = fitz.open(file_path)
+        # for page_num, page in enumerate(pdf):
+        #     for img_info in page.get_images(full=True):
+        #         xref = img_info[0]
+        #         try:
+        #             base_image = pdf.extract_image(xref)
+        #             description = self._describe_image(base_image["image"])
+        #             if description:
+        #                 documents.append(
+        #                     Document(
+        #                         page_content=description,
+        #                         metadata={"page": page_num, "element_type": "image_description"},
+        #                     )
+        #                 )
+        #         except Exception:
+        #             log.exception("Skipping image xref=%d on page %d", xref, page_num)
+        # pdf.close()
 
         log.info("Extracted %d elements from %s", len(documents), file_path)
         return documents
@@ -180,6 +173,7 @@ class DocumentIngestionService:
                     "ingested_at": ingested_at,
                 }
             )
+        log.info("%d chunks created", len(chunks))
         return chunks
 
     def ingest(self, file_path: str, config: ChunkingConfig | None = None) -> dict:
@@ -189,10 +183,11 @@ class DocumentIngestionService:
         log.info("Ingesting %s (strategy=%s)", file_path, config.strategy)
         elements = self._extract_elements(file_path)
         chunks = self._chunk_and_enrich(elements, config, file_path)
+
         QdrantVectorStore.from_documents(
             documents=chunks,
             embedding=self._embeddings,
-            url=self._qdrant_url,
+            client=self._qdrant_client,
             collection_name=self._collection_name,
             force_recreate=False,
         )
@@ -214,18 +209,20 @@ class DocumentIngestionService:
 
 
 class QueryService:
+
     def __init__(
         self,
         qdrant_url: str,
         collection_name: str = "langchain_documents",
         embedding_model: str = "nomic-embed-text",
     ) -> None:
-        from qdrant_client import QdrantClient
 
         self._vectorstore = QdrantVectorStore(
-            client=QdrantClient(url=qdrant_url),
+            client=QdrantClient(url=qdrant_url, trust_env=False),
             collection_name=collection_name,
-            embedding=OllamaEmbeddings(model=embedding_model),
+            embedding=OllamaEmbeddings(
+                model=embedding_model, client_kwargs={"trust_env": False}
+            ),
         )
 
     def query(
@@ -237,7 +234,7 @@ class QueryService:
         if not question.strip():
             return ""
 
-        llm = ChatOllama(model=model)
+        llm = ChatOllama(model=model, client_kwargs={"trust_env": False})
         retriever = self._vectorstore.as_retriever()
 
         def _format_docs(docs: list[Document]) -> str:
@@ -253,6 +250,17 @@ class QueryService:
 
 
 def main() -> None:
+
+    log.info(
+        r"""
+         ______     ______   ______     ______     ______  
+        /\  ___\   /\__  _\ /\  __ \   /\  == \   /\__  _\ 
+        \ \___  \  \/_/\ \/ \ \  __ \  \ \  __<   \/_/\ \/ 
+         \/\_____\    \ \_\  \ \_\ \_\  \ \_\ \_\    \ \_\ 
+          \/_____/     \/_/   \/_/\/_/   \/_/ /_/     \/_/                                                    
+        """
+    )
+
     parser = argparse.ArgumentParser(
         description="Langchain document ingestion and RAG query service"
     )
