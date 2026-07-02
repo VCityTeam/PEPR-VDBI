@@ -59,7 +59,7 @@ class DocumentIngestionService:
         self,
         qdrant_url: str,
         collection_name: str = "langchain_documents",
-        embedding_model: str = "nomic-embed-text",
+        embedding_model: str = "qwen3-embedding:0.6b",
         vision_model: str = "llava",
     ) -> None:
         self._qdrant_client = QdrantClient(
@@ -214,7 +214,7 @@ class QueryService:
         self,
         qdrant_url: str,
         collection_name: str = "langchain_documents",
-        embedding_model: str = "nomic-embed-text",
+        embedding_model: str = "qwen3-embedding:0.6b",
     ) -> None:
 
         self._vectorstore = QdrantVectorStore(
@@ -228,7 +228,7 @@ class QueryService:
     def query(
         self,
         question: str,
-        model: str = "llama3:8b",
+        model: str = "qwen3.5:0.8b",
         template: str = _DEFAULT_TEMPLATE,
     ) -> str:
         if not question.strip():
@@ -280,7 +280,7 @@ def main() -> None:
     )
     ingest_parser.add_argument("--chunk-size", type=int, default=500)
     ingest_parser.add_argument("--chunk-overlap", type=int, default=50)
-    ingest_parser.add_argument("--embedding-model", default="nomic-embed-text")
+    ingest_parser.add_argument("--embedding-model", default="qwen3-embedding:0.6b")
     ingest_parser.add_argument(
         "--vision-model",
         default="llava",
@@ -289,9 +289,9 @@ def main() -> None:
 
     query_parser = sub.add_parser("query", help="Query the vector store")
     query_parser.add_argument("-q", "--question", required=True)
-    query_parser.add_argument("-m", "--model", default="llama3:8b")
+    query_parser.add_argument("-m", "--model", default="qwen3.5:0.8b")
     query_parser.add_argument("-t", "--template", help="Custom PromptTemplate string")
-    query_parser.add_argument("--embedding-model", default="nomic-embed-text")
+    query_parser.add_argument("--embedding-model", default="qwen3-embedding:0.6b")
 
     args = parser.parse_args()
 
