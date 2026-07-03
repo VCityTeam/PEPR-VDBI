@@ -16,7 +16,6 @@ from langchain_core.documents import Document
 from langchain_core.messages import HumanMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
-from langchain_core.runnables import RunnablePassthrough
 from langchain_ollama import ChatOllama, OllamaEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from langchain_text_splitters import (
@@ -54,26 +53,40 @@ class ChunkingConfig:
     separators: list[str] | None = None
 
 
-class DocumentIngestionService:
+class LangchainRagService:
+
     def __init__(
         self,
         qdrant_url: str,
+        ollama_url: str,
         collection_name: str = "langchain_documents",
         embedding_model: str = "qwen3-embedding:0.6b",
         vision_model: str = "llava",
     ) -> None:
-        self._qdrant_client = QdrantClient(
-            url=qdrant_url, prefer_grpc=True, trust_env=False
-        )
         self._embeddings = OllamaEmbeddings(
-            model=embedding_model, client_kwargs={"trust_env": False}
+            model=embedding_model,
+            base_url=ollama_url,
+            client_kwargs={"trust_env": False},
         )
+
         self._vision_llm = ChatOllama(
-            model=vision_model, client_kwargs={"trust_env": False}
+            model=vision_model,
+            base_url=ollama_url,
+            client_kwargs={"trust_env": False},
         )
-        self._qdrant_url = qdrant_url
+
+        self._vectorstore = QdrantVectorStore.construct_instance(
+            embedding=self._embeddings,
+            force_recreate=False,
+            client_options={
+                "url": qdrant_url,
+                "trust_env": False,
+            },
+        )
+
         self._collection_name = collection_name
-        log.info("DocumentIngestionService ready (collection=%s)", collection_name)
+
+        log.info("LangchainRagService ready (collection=%s)", collection_name)
 
     def _get_splitter(self, config: ChunkingConfig):
         kwargs: dict = {
@@ -184,12 +197,12 @@ class DocumentIngestionService:
         elements = self._extract_elements(file_path)
         chunks = self._chunk_and_enrich(elements, config, file_path)
 
-        QdrantVectorStore.from_documents(
+        self._vectorstore.from_documents(
             documents=chunks,
-            embedding=self._embeddings,
-            client=self._qdrant_client,
             collection_name=self._collection_name,
-            force_recreate=False,
+            embedding=self._embeddings,
+            force_recreate=True,
+            trust_env=False,
         )
 
         by_type: dict[str, int] = {}
@@ -207,24 +220,6 @@ class DocumentIngestionService:
         log.info("Ingestion complete: %s", result)
         return result
 
-
-class QueryService:
-
-    def __init__(
-        self,
-        qdrant_url: str,
-        collection_name: str = "langchain_documents",
-        embedding_model: str = "qwen3-embedding:0.6b",
-    ) -> None:
-
-        self._vectorstore = QdrantVectorStore(
-            client=QdrantClient(url=qdrant_url, trust_env=False),
-            collection_name=collection_name,
-            embedding=OllamaEmbeddings(
-                model=embedding_model, client_kwargs={"trust_env": False}
-            ),
-        )
-
     def query(
         self,
         question: str,
@@ -240,13 +235,26 @@ class QueryService:
         def _format_docs(docs: list[Document]) -> str:
             return "\n\n".join(d.page_content for d in docs)
 
-        chain = (
-            {"context": retriever | _format_docs, "question": RunnablePassthrough()}
-            | PromptTemplate(input_variables=["context", "question"], template=template)
-            | llm
-            | StrOutputParser()
-        )
-        return chain.invoke(question)
+        docs = retriever.invoke(question)
+        log.debug("Retrieved %d documents: %s", len(docs), docs)
+
+        return docs
+
+        # context = _format_docs(docs)
+        # log.debug("Formatted context:\n%s", context)
+
+        # prompt = PromptTemplate(
+        #     input_variables=["context", "question"], template=template
+        # ).invoke({"context": context, "question": question})
+        # log.debug("Rendered prompt:\n%s", prompt.text)
+
+        # message = llm.invoke(prompt)
+        # log.debug("LLM response: %s", message)
+
+        # answer = StrOutputParser().invoke(message)
+        # log.debug("Parsed answer: %s", answer)
+
+        # return answer
 
 
 def main() -> None:
@@ -268,6 +276,11 @@ def main() -> None:
         "--qdrant-url",
         default=os.getenv("QDRANT_URL", "http://localhost:6333"),
         help="Qdrant service URL (or set QDRANT_URL env var; default: http://localhost:6333)",
+    )
+    parser.add_argument(
+        "--ollama-url",
+        default=os.getenv("OLLAMA_URL", "http://localhost:11434"),
+        help="Ollama service URL (or set OLLAMA_URL env var; default: http://localhost:11434)",
     )
     parser.add_argument("--collection", default="langchain_documents")
 
@@ -296,8 +309,9 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.command == "ingest":
-        service = DocumentIngestionService(
+        service = LangchainRagService(
             qdrant_url=args.qdrant_url,
+            ollama_url=args.ollama_url,
             collection_name=args.collection,
             embedding_model=args.embedding_model,
             vision_model=args.vision_model,
@@ -316,8 +330,9 @@ def main() -> None:
         print(f"  By type    : {result['by_type']}")
 
     elif args.command == "query":
-        service = QueryService(
+        service = LangchainRagService(
             qdrant_url=args.qdrant_url,
+            ollama_url=args.ollama_url,
             collection_name=args.collection,
             embedding_model=args.embedding_model,
         )
