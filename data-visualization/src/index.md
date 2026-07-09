@@ -63,34 +63,76 @@ Here is an overview of what data is visualized and the mechanisms for used for d
 
 ```mermaid
 ---
-title: Current data integration workflow
+title: Veille data integration and analysis workflow
 config:
   theme: default
 ---
-flowchart LR
-  Start(( )) -.-> ZZ(Phase 1 start)
-  ZZ -.-> Call(Call for projects)
-  F[(Open data sources)] -->|Data fusion| DB
-  DA -->|Anonymization and editorialization| AC(Analysis Communication)
-  Call -.-> DA(Data analysis)
-  DA -.-> AC
-  AC -.-> End((( )))
-  AC -.-> P(Phase n start)
-  P -.-> Call
-  Call -->|Store responses| DC
-  DC -->|Data extraction| DB
-  DB -->|Data cleaning| DB
-  DB --> DA
-  DA --> DB
-  DC --> DA
+stateDiagram-v2
 
-  subgraph PEPR VDBI Nextcloud storage
-    DC@{ shape: docs, label: "Document Corpus"}
-    DB@{ shape: doc, label: "Spreadsheet"}
-  end
+  direction LR
 
-  subgraph Legend
-    a(( )) -.->|activity flow| b(( ))
-    a(( )) -->|data flow| b(( ))
+  [*] --> ZZ
+  ZZ --> Call
+  Call --> DI
+  DI --> DA
+  DA --> AA
+  AA --> AC
+  AC --> [*]
+  AC --> P
+  P --> Call
+
+  ZZ : Phase 1 start
+  Call : Call for projects
+  DI : Data integration
+  DA : Data analysis
+  AA : Analysis Anonymisation
+  AC : Analysis Communication
+  P : Phase n+1 start
+```
+
+```mermaid
+---
+title: Veille data integration sequence
+config:
+  theme: default
+---
+sequenceDiagram
+
+  %% call->>PDFs: Store responses
+  %% PDFs->>sheets: Data extraction
+  %% sheets->>app: Data import
+  %% app->>app: Data cleaning
+  %% app->>open: API call
+  %% open->>app: Data fusion
+  %% app->>sheets: Data update
+
+  %% participant call as Calls for project
+  %% participant app as Observable App
+  %% participant open@{ "type": "database"} as Open Data Sources
+
+  %% box Nextcloud Document Corpus
+  %%   participant PDFs@{ "type": "collections"}
+  %%   participant sheets@{ "type": "collections"} as Spreadsheets
+  %% end
+
+  call->>PDFs: Store responses
+  PDFs->>sh: Data extraction
+  sh->>gr: Data import
+  gr->>gr: Data cleaning
+  gr->>open: API call
+  open->>gr: Data fusion
+  gr->>sh: Data update
+  app->>gr: API call
+  gr->>app: Data import
+  app->>app: (Visualisation-specific) Data treatment
+
+  participant call as Calls for project
+  participant app as Observable App
+  participant open as Open Data Sources
+  participant gr as Grist
+
+  box Nextcloud Document Corpus
+    participant PDFs
+    participant sh as Spreadsheets
   end
 ```
