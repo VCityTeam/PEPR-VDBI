@@ -59,6 +59,7 @@ class LangchainRagService:
         self,
         qdrant_url: str,
         ollama_url: str,
+        ollama_token: str,
         collection_name: str = "langchain_documents",
         embedding_model: str = "qwen3-embedding:0.6b",
         vision_model: str = "llava",
@@ -66,7 +67,10 @@ class LangchainRagService:
         self._embeddings = OllamaEmbeddings(
             model=embedding_model,
             base_url=ollama_url,
-            client_kwargs={"trust_env": False},
+            client_kwargs={
+                "trust_env": False,
+                "headers": {"Authorization": f"Bearer {ollama_token}"},
+            },
         )
 
         self._vision_llm = ChatOllama(
@@ -238,23 +242,23 @@ class LangchainRagService:
         docs = retriever.invoke(question)
         log.debug("Retrieved %d documents: %s", len(docs), docs)
 
-        return docs
+        # return docs
 
-        # context = _format_docs(docs)
-        # log.debug("Formatted context:\n%s", context)
+        context = _format_docs(docs)
+        log.debug("Formatted context:\n%s", context)
 
-        # prompt = PromptTemplate(
-        #     input_variables=["context", "question"], template=template
-        # ).invoke({"context": context, "question": question})
-        # log.debug("Rendered prompt:\n%s", prompt.text)
+        prompt = PromptTemplate(
+            input_variables=["context", "question"], template=template
+        ).invoke({"context": context, "question": question})
+        log.debug("Rendered prompt:\n%s", prompt.text)
 
-        # message = llm.invoke(prompt)
-        # log.debug("LLM response: %s", message)
+        message = llm.invoke(prompt)
+        log.debug("LLM response: %s", message)
 
-        # answer = StrOutputParser().invoke(message)
-        # log.debug("Parsed answer: %s", answer)
+        answer = StrOutputParser().invoke(message)
+        log.debug("Parsed answer: %s", answer)
 
-        # return answer
+        return answer
 
 
 def main() -> None:
@@ -281,6 +285,11 @@ def main() -> None:
         "--ollama-url",
         default=os.getenv("OLLAMA_URL", "http://localhost:11434"),
         help="Ollama service URL (or set OLLAMA_URL env var; default: http://localhost:11434)",
+    )
+    parser.add_argument(
+        "--ollama-token",
+        default=os.getenv("OLLAMA_TOKEN", ""),
+        help="Ollama service token (or set OLLAMA_TOKEN env var)",
     )
     parser.add_argument("--collection", default="langchain_documents")
 
@@ -312,6 +321,7 @@ def main() -> None:
         service = LangchainRagService(
             qdrant_url=args.qdrant_url,
             ollama_url=args.ollama_url,
+            ollama_token=args.ollama_token,
             collection_name=args.collection,
             embedding_model=args.embedding_model,
             vision_model=args.vision_model,
