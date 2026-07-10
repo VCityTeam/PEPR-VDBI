@@ -343,6 +343,7 @@ def main() -> None:
         service = LangchainRagService(
             qdrant_url=args.qdrant_url,
             ollama_url=args.ollama_url,
+            ollama_token=args.ollama_token,
             collection_name=args.collection,
             embedding_model=args.embedding_model,
         )
