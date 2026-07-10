@@ -64,19 +64,21 @@ class LangchainRagService:
         embedding_model: str = "qwen3-embedding:0.6b",
         vision_model: str = "llava",
     ) -> None:
+        self._client_kwargs = {
+            "trust_env": False,
+            "headers": {"Authorization": f"Bearer {ollama_token}"},
+        }
+
         self._embeddings = OllamaEmbeddings(
             model=embedding_model,
             base_url=ollama_url,
-            client_kwargs={
-                "trust_env": False,
-                "headers": {"Authorization": f"Bearer {ollama_token}"},
-            },
+            client_kwargs=self._client_kwargs,
         )
 
         self._vision_llm = ChatOllama(
             model=vision_model,
             base_url=ollama_url,
-            client_kwargs={"trust_env": False},
+            client_kwargs=self._client_kwargs,
         )
 
         self._vectorstore = QdrantVectorStore.construct_instance(
@@ -233,7 +235,7 @@ class LangchainRagService:
         if not question.strip():
             return ""
 
-        llm = ChatOllama(model=model, client_kwargs={"trust_env": False})
+        llm = ChatOllama(model=model, client_kwargs=self._client_kwargs)
         retriever = self._vectorstore.as_retriever()
 
         def _format_docs(docs: list[Document]) -> str:
