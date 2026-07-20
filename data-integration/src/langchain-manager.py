@@ -354,6 +354,15 @@ def main() -> None:
             kwargs["template"] = args.template
         print(service.query(**kwargs))
 
+        # if args.template:
+        #     print(
+        #         service.query(
+        #             question=args.question, model=args.model, template=args.template
+        #         )
+        #     )
+        # else:
+        #     print(service.query(question=args.question, model=args.model))
+
 
 if __name__ == "__main__":
     main()
