@@ -1,22 +1,23 @@
 # GGE IA tests
 
 Questions:
-- [Question 1](#question-1) Donner le liste des projets décrits
-- [Question 2](#question-2) Donner 4 mots clés par projet
-- [Question 3](#question-3) faire une fusion de l’ensemble de ces mots clés dans une seule liste.
-- [Question 4](#question-4) Quels sont les mots le plus employé dans cette liste de mots clés
-- [Question 5](#question-5) Quels sont les mots les plus employés dans l'ensemble des textes
-- [Question 6](#question-6) Pour chaque projet, donner l'action de recherche proposée
-- [Question 7](#question-7) Comment est mise en œuvre cette action de recherche pour chaque projet
-- [Question 8](#question-8) Pour chacun des projets, décrire comment est mise en oeuvre les actions de recherche
-- [Question 9](#question-9) comment ces projets peuvent-ils être évalués pour mesurer leur succès
 
+- [Q1](#q1) Donner le liste des projets décrits
+- [Q2](#q2) Donner 4 mots clés par projet
+- [Q3](#q3) faire une fusion de l’ensemble de ces mots clés dans une seule liste.
+- [Q4](#q4) Quels sont les mots le plus employé dans cette liste de mots clés
+- [Q5](#q5) Quels sont les mots les plus employés dans l'ensemble des textes
+- [Q6](#q6) Pour chaque projet, donner l'action de recherche proposée
+- [Q7](#q7) Comment est mise en œuvre cette action de recherche pour chaque projet
+- [Q8](#q8) Pour chacun des projets, décrire comment est mise en oeuvre les actions de recherche
+- [Q9](#q9) comment ces projets peuvent-ils être évalués pour mesurer leur succès
 
 A partir des lettres d’intention, voici ce qu’il a été permis d’extraire de façon automatique :
 
-## Question 1
+## Q1
 
 Question : Donner le liste des projets décrits
+
 1. ALTERMOB - Évaluation Environnementale des Politiques publiques territoriales de mobilité durable et coûts d'évitement associés[1]
 2. AnthroPolUrb - Origine et devenir de l'anthropocène urbain dans le continuum Homme-Terre-Mer du Rhône et de la Medjerda[1]
 3. ATTERRIR - Anthropocène, Transitions urbaines et TERRe crue. Analyse de la mise en œuvre des villes durables à partir de la terre crue dans la construction[1]
@@ -30,7 +31,7 @@ Question : Donner le liste des projets décrits
 11. CEA-List - Technologies au service de la ville durable et des bâtiments innovants[1]
 12. CITIFLEX - City Digital Transformation: Fostering Inclusion through Spatial and Temporal Flexibility - Transformation Numérique des Villes : l'Inclusion par la Flexibilité Spatiale et Temporelle ?[1]
 13. CITYVERSE -Jumeaux Numériques Immersifs pour Territoires Intelligents Résilients et Durables[1]
-14. CŒUR-3R - L'économie circulaire au cœur de la planification écologique des territoires : Circularité Optimale (Réemploi, Réutilisation, Recyclage)[1]
+14. CŒUR-3R - L'économie circulaire au cœur de la planification écologique des territoires : Circularité Optimale [Réemploi, Réutilisation, Recyclage](1)
 15. COMODEV - La coexistence des modèles d'économie circulaire : quelles trajectoires de transition dans les villes ?[1]
 16. ECOFLUX - Flux écologiques - Des pratiques d'usagers à la conception informationnelle. Une immersion architecturale et urbaine générée pendant la transition éco[1]
 17. ELDUC - Espaces Logistiques pour la Distribution Urbaine de Colis au Service de la Ville Durable[1]
@@ -70,7 +71,7 @@ Question : Donner le liste des projets décrits
 51. SYMBIOTIC - Contribution à l'estimation des impacts de l'implémentation d'une SYMBIOse urbaine et indusTrielle (SUI) sur des territoires FranCais de typologie (Urbaines & Industrielles) différentes[1]
 52. TECTOO - La transition écologique dans les territoires : prospective et aide à la décision par une approche systémique et multiscalaire[1]
 53. TEHEDI - Transition Énergétique, Habitat, Enjeux de Développement et Inégalités[1]
-54. THERMOS - Comportement THERMique urbain Optimisé par Simulation (vers le jumeau numérique énergétique urbain)[1]
+54. THERMOS - Comportement THERMique urbain Optimisé par Simulation [vers le jumeau numérique énergétique urbain](1)
 55. TRIPODE - Énergétique par l'éolien pour des bâtiments à impact positif[1]
 56. TwinCityZen - Jumeau numérique intelligent au service de la qualité de l'environnement urbain en contexte indoor et outdoor[1]
 57. ULL – Montpellier - Urban Living Labs Université (Campus Triolet) et Hôpital (Lapeyronie) de Montpellier Rapports environnementaux et sociaux avec leurs hydro-systèmes[1]
@@ -89,12 +90,13 @@ Question : Donner le liste des projets décrits
 70. VIREV - Vivre les interactions de la rue en environnement virtuel pour mieux anticiper[1]
 
 Citations:
-[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf
+[1] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
 
-## Question 2
+## Q2
 
 Question : Donner 4 mots clés par projet
 Voici 4 mots clés pour chacun des 70 projets décrits :
+
 1. ALTERMOB : mobilité durable, évaluation environnementale, coûts d'évitement, politiques publiques
 2. AnthroPolUrb : anthropocène, continuum Homme-Terre-Mer, Rhône, Medjerda
 3. ATTERRIR : anthropocène, transitions urbaines, terre crue, villes durables
@@ -167,14 +169,15 @@ Voici 4 mots clés pour chacun des 70 projets décrits :
 70. VIREV : interactions de rue, environnement virtuel, anticipation
 
 Citations:
-[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf
+[1] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
 
-## Question 3
+## Q3
 
 Question : faire une fusion de l’ensemble de ces mots clés dans une seule liste.
 Voici une fusion de l'ensemble des mots clés en une seule liste :
+
 1. mobilité durable
-2. évaluation environnementale 
+2. évaluation environnementale
 3. coûts d'évitement
 4. politiques publiques
 5. anthropocène
@@ -386,11 +389,13 @@ Voici une fusion de l'ensemble des mots clés en une seule liste :
 211. environnement virtuel
 212. anticipation
 
-## Question 4
+## Q4
+
 Question : Quels sont les mots le plus employé dans cette liste de mots clés
 Les mots les plus employés dans cette liste de mots clés sont :
+
 1. ville (mentionné 24 fois)
-2. durable (mentionné 13 fois) 
+2. durable (mentionné 13 fois)
 3. bâtiment (mentionné 12 fois)
 4. urbain (mentionné 11 fois)
 5. mobilité (mentionné 8 fois)
@@ -403,9 +408,9 @@ Les mots les plus employés dans cette liste de mots clés sont :
 Ces mots reflètent les thématiques principales abordées dans les projets décrits, à savoir la ville durable, le bâtiment innovant, la mobilité, l'évaluation environnementale, les transitions urbaines, la résilience et l'économie circulaire.
 
 Citations:
-[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf
+[1] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
 
-## Question 5
+## Q5
 
 Question : Quels sont les mots les plus employés dans l'ensemble des textes
 Après avoir analysé attentivement les résumés des lettres d'intention, les mots les plus employés sont :
@@ -413,7 +418,7 @@ Après avoir analysé attentivement les résumés des lettres d'intention, les m
 1. ville (mentionné 32 fois)
 2. transport (mentionné 16 fois)
 3. mobilité (mentionné 15 fois)
-4. émissions (mentionné 13 fois) 
+4. émissions (mentionné 13 fois)
 5. évaluation (mentionné 12 fois)
 6. environnementale (mentionné 11 fois)
 7. durable (mentionné 10 fois)
@@ -423,7 +428,7 @@ Après avoir analysé attentivement les résumés des lettres d'intention, les m
 
 Ces mots clés reflètent les principales thématiques abordées dans les projets, à savoir l'évaluation environnementale des politiques de mobilité durable dans les villes, l'analyse des émissions des transports et des véhicules, ainsi que l'estimation des coûts associés.
 
-## Question 6
+## Q6
 
 Question : Pour chaque projet, donner l'action de recherche proposée
 Voici les principales actions de recherche proposées pour chaque projet :
@@ -566,7 +571,7 @@ Voici les principales actions de recherche proposées pour chaque projet :
 
 69. VIREV : Étudier les interactions de rue en environnement virtuel pour mieux les anticiper.
 
-## Question 7
+## Q7
 
 Question : Comment est mise en œuvre cette action de recherche pour chaque projet
 Voici un résumé des principales actions de recherche proposées pour chaque projet :
@@ -594,9 +599,9 @@ Voici un résumé des principales actions de recherche proposées pour chaque pr
 Les autres projets mettent en œuvre des actions de recherche similaires, comme le développement de technologies pour la ville durable, l'étude des interactions entre les usages, les pratiques et les innovations, l'analyse de la résilience et de la transition écologique des territoires, etc. L'objectif commun est de produire des connaissances et des solutions innovantes pour construire des villes plus durables, résilientes et inclusives.
 
 Citations:
-[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf
+[1] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
 
-## Question 8
+## Q8
 
 Question : Pour chacun des projets, décrire comment est mise en oeuvre les actions de recherche
 Voici un résumé de la mise en œuvre des principales actions de recherche pour chaque projet :
@@ -620,9 +625,9 @@ Voici un résumé de la mise en œuvre des principales actions de recherche pour
 Les autres projets mettent en œuvre des actions de recherche similaires, comme le développement de technologies innovantes, l'étude des interactions entre usages et pratiques, l'analyse de la résilience et de la transition écologique des territoires, etc. L'objectif commun est de produire des connaissances et des solutions pour construire des villes plus durables, résilientes et inclusives.
 
 Citations:
-[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf
+[1] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
 
-## Question 9
+## Q9
 
 Question : comment ces projets peuvent-ils être évalués pour mesurer leur succès
 Pour évaluer le succès de ces projets, plusieurs critères et méthodologies peuvent être envisagés, en se basant sur les objectifs et les domaines d'application spécifiques de chaque projet. Voici quelques approches générales d'évaluation :
@@ -645,23 +650,23 @@ Pour évaluer le succès de ces projets, plusieurs critères et méthodologies p
 Chaque projet nécessite une approche d'évaluation personnalisée, adaptée à ses objectifs spécifiques, ses domaines d'application, et ses parties prenantes. Les méthodes d'évaluation pourraient inclure des analyses quantitatives (comme les ACV et les analyses coût-bénéfice), des enquêtes qualitatives (comme les interviews et les groupes de discussion), et des études de cas pour mesurer l'impact réel sur le terrain.
 
 Citations:
-[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/d1f1ab8b-4e56-4b57-a556-fc669c82f1fe/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf
-[2] http://www.cec.org/files/documents/publications/11661-improving-green-building-construction-in-north-america-guide-integrated-design-fr.pdf
-[3] https://hal.univ-lorraine.fr/tel-01750348v1/document
-[4] https://www.cerema.fr/system/files/documents/2017/11/vademecum-annexe-2-evaluation-interactif-30-01-15-final_cle23616c-1.pdf
-[5] https://rejeangoyette.com/maisons-ecologiques-quels-sont-les-criteres-qui-les-definissent/
-[6] https://www.urbanimmo.org/comment-les-promoteurs-immobiliers-d-entreprise-integrent-ils-les-criteres-de-durabilite-dans-leurs-projets/
-[7] https://urbanisme.umontreal.ca/fileadmin/amenagement/URB/Realisations-etudiantes/Travaux-recents/TD-MURB/TD_MelissaNahory_2012.pdf
-[8] https://vivreenville.org/media/285937/-chap-13_final.pdf
-[9] https://www.voirvert.ca/savoir-entreprise/les-sept-cles-du-succes-la-construction-mode-rpi
-[10] https://journals.openedition.org/cybergeo/25600
-[11] https://anr.fr/fileadmin/aap/2023/France2030-aap-pepr-vdbi-2023-texte-appel.pdf
-[12] https://fr.linkedin.com/pulse/la-gestion-de-projet-%C3%A9cologique-des-pratiques-durables-pour-un
-[13] https://www.ecologie.gouv.fr/sites/default/files/Dossier%20de%20presse%20-%20Relancer%20la%20construction%20durable%20de%20logements%20dans%20les%20territoires%20%281%29%20%281%29.pdf
-[14] https://www.fao.org/3/T1765F/t1765f0c.htm
-[15] https://papyrus.bib.umontreal.ca/xmlui/bitstream/handle/1866/5138/Dubiela_Valter_T_2011_these.pdf?isAllowed=y&sequence=5
-[16] https://www.capdigital.com/ville-numerique-et-durable-nos-actions-et-nos-succes/
-[17] https://www.cerema.fr/system/files/documents/2017/11/vademecum-principal-interactif-30-01-15-final_3__cle5e8a41-1.pdf
-[18] https://www.constructing-sustainable-future.com/interviews/le-modele-qui-a-propulse-vancouver/
-[19] https://francevilledurable.fr/la-boite-a-outils/
-[20] https://www.construction21.org/france/articles/h/efficacity-livre-un-outil-de-reference-pour-evaluer-les-projets-urbains-innovants.html
+[1] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/d1f1ab8b-4e56-4b57-a556-fc669c82f1fe/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
+[2] <http://www.cec.org/files/documents/publications/11661-improving-green-building-construction-in-north-america-guide-integrated-design-fr.pdf>
+[3] <https://hal.univ-lorraine.fr/tel-01750348v1/document>
+[4] <https://www.cerema.fr/system/files/documents/2017/11/vademecum-annexe-2-evaluation-interactif-30-01-15-final_cle23616c-1.pdf>
+[5] <https://rejeangoyette.com/maisons-ecologiques-quels-sont-les-criteres-qui-les-definissent/>
+[6] <https://www.urbanimmo.org/comment-les-promoteurs-immobiliers-d-entreprise-integrent-ils-les-criteres-de-durabilite-dans-leurs-projets/>
+[7] <https://urbanisme.umontreal.ca/fileadmin/amenagement/URB/Realisations-etudiantes/Travaux-recents/TD-MURB/TD_MelissaNahory_2012.pdf>
+[8] <https://vivreenville.org/media/285937/-chap-13_final.pdf>
+[9] <https://www.voirvert.ca/savoir-entreprise/les-sept-cles-du-succes-la-construction-mode-rpi>
+[10] <https://journals.openedition.org/cybergeo/25600>
+[11] <https://anr.fr/fileadmin/aap/2023/France2030-aap-pepr-vdbi-2023-texte-appel.pdf>
+[12] <https://fr.linkedin.com/pulse/la-gestion-de-projet-%C3%A9cologique-des-pratiques-durables-pour-un>
+[13] <https://www.ecologie.gouv.fr/sites/default/files/Dossier%20de%20presse%20-%20Relancer%20la%20construction%20durable%20de%20logements%20dans%20les%20territoires%20%281%29%20%281%29.pdf>
+[14] <https://www.fao.org/3/T1765F/t1765f0c.htm>
+[15] <https://papyrus.bib.umontreal.ca/xmlui/bitstream/handle/1866/5138/Dubiela_Valter_T_2011_these.pdf?isAllowed=y&sequence=5>
+[16] <https://www.capdigital.com/ville-numerique-et-durable-nos-actions-et-nos-succes/>
+[17] <https://www.cerema.fr/system/files/documents/2017/11/vademecum-principal-interactif-30-01-15-final_3__cle5e8a41-1.pdf>
+[18] <https://www.constructing-sustainable-future.com/interviews/le-modele-qui-a-propulse-vancouver/>
+[19] <https://francevilledurable.fr/la-boite-a-outils/>
+[20] <https://www.construction21.org/france/articles/h/efficacity-livre-un-outil-de-reference-pour-evaluer-les-projets-urbains-innovants.html>

@@ -6,28 +6,30 @@ These tests attempt to identify efficient, open-source, and secure methods for e
 
 - [1. PDF to unstructured text](#1-pdf-to-unstructured-text)
   - [1.1. pypdf tests](#11-pypdf-tests)
-    - [1.1.1. Test: simple pdf to text conversion](#111-test-simple-pdf-to-text-conversion)
-    - [1.1.2. Test: pdf with table to text conversion](#112-test-pdf-with-table-to-text-conversion)
-    - [1.1.3. Test: Convert PEPR Résumés des lettres d’intention](#113-test-convert-pepr-résumés-des-lettres-dintention)
+    - [1.1.1. simple pdf to text conversion](#111-simple-pdf-to-text-conversion)
+    - [1.1.2. pdf with table to text conversion](#112-pdf-with-table-to-text-conversion)
+    - [1.1.3. Convert PEPR Résumés des lettres d’intention](#113-convert-pepr-résumés-des-lettres-dintention)
 - [2. Unstructured text to structured text via GPT](#2-unstructured-text-to-structured-text-via-gpt)
   - [2.1. Ollama](#21-ollama)
-    - [2.1.1. Test: simple keyword extraction in french](#211-test-simple-keyword-extraction-in-french)
-    - [2.1.2. Test: simple keyword extraction in english](#212-test-simple-keyword-extraction-in-english)
-    - [2.1.3. Test: Ollama server+python](#213-test-ollama-serverpython)
-    - [2.1.4. Test: Pagoda LIRIS Ollama Service](#214-test-pagoda-liris-ollama-service)
-    - [2.1.5. Test: Langchain multimodel document ingestion service](#215-test-langchain-multimodel-document-ingestion-service)
-  - [2.2. Workflow](#22-workflow)
-    - [2.2.1. Test: Initial Python data workflow](#221-test-initial-python-data-workflow)
-    - [2.2.2. Test: Structured Python data workflow](#222-test-structured-python-data-workflow)
-    - [2.2.3. Test: Initial prompt optimization test](#223-test-initial-prompt-optimization-test)
-    - [2.2.4. Test: Page range test](#224-test-page-range-test)
-    - [2.2.5. Test: Add csv config to workflow](#225-test-add-csv-config-to-workflow)
-    - [2.2.6. Test: Modelfile test](#226-test-modelfile-test)
-    - [2.2.7. Test: TEMPERATURE and top parameters test](#227-test-temperature-and-top-parameters-test)
-  - [2.3. RAG tests](#23-rag-tests)
-    - [2.3.1. Test: Langchain with single document and semi-structured data](#231-test-langchain-with-single-document-and-semi-structured-data)
-    - [2.3.2. Test: R2R](#232-test-r2r)
-    - [2.3.3. Test: RAGFlow](#233-test-ragflow)
+    - [2.1.1. simple keyword extraction in french](#211-simple-keyword-extraction-in-french)
+    - [2.1.2. simple keyword extraction in english](#212-simple-keyword-extraction-in-english)
+    - [2.1.3. Ollama server+python](#213-ollama-serverpython)
+    - [2.1.4. Pagoda LIRIS Ollama Service](#214-pagoda-liris-ollama-service)
+    - [2.1.5. Langchain multimodel document ingestion service with Ollama](#215-langchain-multimodel-document-ingestion-service-with-ollama)
+  - [2.2. Prompt engineering](#22-prompt-engineering)
+    - [2.2.1. Prompt categories and patterns](#221-prompt-categories-and-patterns)
+  - [2.3. Workflow](#23-workflow)
+    - [2.3.1. Initial Python data workflow](#231-initial-python-data-workflow)
+    - [2.3.2. Structured Python data workflow](#232-structured-python-data-workflow)
+    - [2.3.3. Initial prompt optimization test](#233-initial-prompt-optimization-test)
+    - [2.3.4. Page range test](#234-page-range-test)
+    - [2.3.5. Add csv config to workflow](#235-add-csv-config-to-workflow)
+    - [2.3.6. Modelfile test](#236-modelfile-test)
+    - [2.3.7. TEMPERATURE and top parameters test](#237-temperature-and-top-parameters-test)
+  - [2.4. RAG tests](#24-rag-tests)
+    - [2.4.1. Langchain with single document and semi-structured data](#241-langchain-with-single-document-and-semi-structured-data)
+    - [2.4.2. R2R](#242-r2r)
+    - [2.4.3. RAGFlow](#243-ragflow)
 - [3. Unstructured audio to unstructured text](#3-unstructured-audio-to-unstructured-text)
   - [3.1. Whisper](#31-whisper)
     - [3.1.1. Installation](#311-installation)
@@ -162,7 +164,7 @@ Dependency:
 
 - [pypdf](https://github.com/py-pdf/pypdf)
 
-#### 1.1.1. Test: simple pdf to text conversion
+#### 1.1.1. simple pdf to text conversion
 
 ```bash
 python src/pypdf_pipeline.py test-data/résumé-thèse-fr.pdf test-data/pypdf_test.txt
@@ -177,7 +179,7 @@ Notes:
 - no formatting is retained (i.e., headers, bold, color, etc.)
 - perhaps markdown would be better if possible to retain some semi-structured text?
 
-#### 1.1.2. Test: pdf with table to text conversion
+#### 1.1.2. pdf with table to text conversion
 
 ```bash
 python src/pypdf_pipeline.py test-data/résumé-thèse-tableau-fr.pdf test-data/pypdf_table_test.txt
@@ -191,7 +193,7 @@ Notes:
 - this causes structure of table to be lost
 - again perhaps markdown is better?
 
-#### 1.1.3. Test: Convert PEPR Résumés des lettres d’intention
+#### 1.1.3. Convert PEPR Résumés des lettres d’intention
 
 Download and transform the PDF of project motivation letters.
 
@@ -233,7 +235,7 @@ ollama run mistral
 >>> /set nohistory
 ```
 
-#### 2.1.1. Test: simple keyword extraction in french
+#### 2.1.1. simple keyword extraction in french
 
 Note that [deepl.com](https://www.deepl.com/) translates the keywords listed in the top of the documents as :
 
@@ -266,7 +268,7 @@ Notes:
   - in french
   - without the explanation, just the keywords
 
-#### 2.1.2. Test: simple keyword extraction in english
+#### 2.1.2. simple keyword extraction in english
 
 For this prompt replace the occurrence of `[text]` with the contents of [pypdf_test.txt](./test-data/pypdf_test.txt)
 
@@ -301,7 +303,7 @@ Notes:
   - with this size of Mistral, do english prompts work better than french ones?
   - how do other models like `llama2` or models with larger parameters like `mixtral:8x22b` perform?
 
-#### 2.1.3. Test: Ollama server+python
+#### 2.1.3. Ollama server+python
 
 This test will examine how we can call prompts and extract their output programatically with python.
 This requires launching Ollama on a local server.
@@ -322,10 +324,10 @@ python src/ollama_pipeline.py \
 > - The test script can be customized. Use `python src/ollama.py -h` to see the documentation.
 > - Also, you can use just `ollama serve` (without the `&`) in another terminal session to be able to view ollama API calls in real time
 
-#### 2.1.4. Test: Pagoda LIRIS Ollama Service
+#### 2.1.4. Pagoda LIRIS Ollama Service
 
 This test will examine the functionality of the [Ollama service hosted with on the Pagoda3](https://ollama-ui.pagoda.liris.cnrs.fr/).
-As instructed by [Olivier MBAREK](mailto:olivier.mbarek@univ-lyon1.fr), the http interface is accesible with the Ollama Python library (see test [2.1.3](#213-test-ollama-serverpython)).
+As instructed by [Olivier MBAREK](mailto:olivier.mbarek@univ-lyon1.fr), the http interface is accesible with the Ollama Python library (see test [2.1.3](#213-ollama-serverpython)).
 
 > The interface [Ollama-UI] is that of the OpenWebui project in its latest version (0.5.4), but it is evolving rapidly.
 > This interface also allows you to use the ollama APIs via a token key.
@@ -367,13 +369,42 @@ Results:
 The ollama service works web but the response MUST be streamed.
 Thus the `-s` flag was added to the test script.
 
-#### 2.1.5. Test: Langchain multimodel document ingestion service
+#### 2.1.5. Langchain multimodel document ingestion service with Ollama
 
 Langchain tests are documented in [langchain-tests.md](./langchain-tests.md).
 
-### 2.2. Workflow
+### 2.2. Prompt engineering
 
-#### 2.2.1. Test: Initial Python data workflow
+To refine query response generation quality, before more resource intensive approaches such as fine-tuning or RAG, prompt engineering is used.
+
+#### 2.2.1. Prompt categories and patterns
+
+This test analyses the prompt categories and patterns proposed in White et al. (2023) [^1] with respect to the [predefined competency questions](./proposed_ai_tests.md).
+
+**Prompt categories and patterns from White et al. (2023)[^1] and their applications to answering PEPR VDBI competency questions**
+
+| Pattern Category     | Prompt Pattern          | Question Answering Applications  |
+| -------------------- | ----------------------- | -------------------------------- |
+| Input Semantics      | Meta Language Creation  |                                  |
+| Output Customization | Output Automater        | Generation of lists (Q1-Q8)      |
+| Output Customization | Output Automater        | Generation of tables (Q2, Q4-Q7) |
+|                      | Persona                 |                                  |
+|                      | Visualization Generator |                                  |
+|                      | Recipe                  |                                  |
+|                      | Template                |                                  |
+| Error Identification | Fact Check List         |                                  |
+|                      | Reflection              |                                  |
+| Prompt Improvement   | Question Refinement     |                                  |
+|                      | Alternative Approaches  |                                  |
+|                      | Cognitive Verifier      |                                  |
+|                      | Refusal Breaker         |                                  |
+| Interaction          | Flipped Interaction     |                                  |
+|                      | Game Play               |                                  |
+| Context Control      | Context Manager         |                                  |
+
+### 2.3. Workflow
+
+#### 2.3.1. Initial Python data workflow
 
 This test will examine how we can set up initial data workflows (or data pipelines) for extracting knowledge from multiple pdfs using python.
 
@@ -403,7 +434,7 @@ This test uses the configuration file [test-data/configs/workflow_0_config.json]
 
 The configuration will output to the `test-data/workflow-test/VILLEGARDEN` folder
 
-#### 2.2.2. Test: Structured Python data workflow
+#### 2.3.2. Structured Python data workflow
 
 Same test as above but using the configuration file [test-data/configs/workflow_1_config.json](test-data/configs/workflow_1_config.json) which proposes structuring prompt outputs as JSON.
 
@@ -411,7 +442,7 @@ Same test as above but using the configuration file [test-data/configs/workflow_
 python src/workflow.py test-data/configs/workflow_1_config.json
 ```
 
-#### 2.2.3. Test: Initial prompt optimization test
+#### 2.3.3. Initial prompt optimization test
 
 Same test as above but using the configuration file [test-data/configs/workflow_2_config.json](test-data/configs/workflow_2_config.json) which proposes a more developed prompt featuring:
 
@@ -423,7 +454,7 @@ Same test as above but using the configuration file [test-data/configs/workflow_
 python src/workflow.py test-data/configs/workflow_2_config.json
 ```
 
-#### 2.2.4. Test: Page range test
+#### 2.3.4. Page range test
 
 Same test as above but using the configuration file [test-data/configs/workflow_3_config.json](test-data/configs/workflow_3_config.json) which defines a page range to be searched in:
 Page ranges should be a comma separated string e.g., `1, 2, 5-7` (spaces are allowed)
@@ -432,7 +463,7 @@ Page ranges should be a comma separated string e.g., `1, 2, 5-7` (spaces are all
 python src/workflow.py test-data/configs/workflow_3_config.json
 ```
 
-#### 2.2.5. Test: Add csv config to workflow
+#### 2.3.5. Add csv config to workflow
 
 Use a csv file to configure workflow instead of a json file.
 
@@ -440,7 +471,7 @@ Use a csv file to configure workflow instead of a json file.
 python src/workflow.py test-data/configs/workflow_0_config.csv
 ```
 
-#### 2.2.6. Test: Modelfile test
+#### 2.3.6. Modelfile test
 
 Added modelfile functionality to ollama and workflow test scripts.
 
@@ -448,7 +479,7 @@ Added modelfile functionality to ollama and workflow test scripts.
 python src/workflow.py test-data/configs/workflow_4_config.json
 ```
 
-#### 2.2.7. Test: TEMPERATURE and top parameters test
+#### 2.3.7. TEMPERATURE and top parameters test
 
 Test ORCID and IdHAL extraction of the following modelfiles:
 
@@ -486,7 +517,7 @@ TODO:
   - model parameters
   - templates
 
-### 2.3. RAG tests
+### 2.4. RAG tests
 
 **Tentative candidates:**
 
@@ -503,7 +534,7 @@ TODO:
 > [!TIP]
 > See [the references](./references.md#retrieval) for more information about RAG
 
-#### 2.3.1. Test: Langchain with single document and semi-structured data
+#### 2.4.1. Langchain with single document and semi-structured data
 
 Code adapted from the ollama [langchain-python-rag-document](https://github.com/ollama/ollama/tree/v0.5.5/examples/langchain-python-rag-document) example.
 Test Langchain for RAG ollama queries with workspace configuration.
@@ -1025,17 +1056,19 @@ Result 6.1
 - TODO: Once templates/queries are stable test with larger contexts (larger pdfs, the online example is able to query a document of 100+ pages)
 - TODO: Once templates/queries are stable test with different models (e.g. Llama3.1 and Mistral). It is not clear which model works best for our use case.
 
-#### 2.3.2. [Test: R2R](./r2r-tests.md)
+#### 2.4.2. [R2R](./r2r-tests.md)
 
 > [!CAUTION]
 > R2R seems to be longer supported so testing has stopped.
-> The current candidate is [RAGFlow](#233-test-ragflow)
+> The current candidate is [RAGFlow](#243-ragflow)
 
 Tests moved to [r2r-tests.md](./r2r-tests.md) to better accomodate their level of detail
 
-#### 2.3.3. [Test: RAGFlow](./ragflow-tests.md)
+#### 2.4.3. [RAGFlow](./ragflow-tests.md)
 
 ## 3. Unstructured audio to unstructured text
+
+**RQ3:** What is the best open source tool or library for transcribing audio files to text?
 
 ### 3.1. Whisper
 
@@ -1091,3 +1124,5 @@ The following observation was made:
   Possible issues include:
   - Multiple speakers talking at the same time
   - Poor enunciation
+
+[^1]: [White, J., et al. (2023). _Prompt Engineering for Large Language Models_.](https://arxiv.org/pdf/2302.11382)
