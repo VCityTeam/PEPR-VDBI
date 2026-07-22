@@ -1,37 +1,38 @@
 ---
 toc: true
 sql:
-  # aap1_projects: /data/phase1-projects.tsv
+  aap1_projects: /data/phase1-projects.tsv
   aap1_researchers: /data/phase1-researchers.tsv
-  # aap1_researcher_by_keywords: /data/phase1-researcher_by_keywords.tsv
+  aap1_researcher_by_keywords: /data/phase1-researcher_by_keywords.tsv
   aap1_project_by_researchers: /data/phase1-project_by_researchers.tsv
-  # aap1_laboratories: /data/phase1-laboratories.tsv
-  # aap1_socioeconomic_partners: /data/phase1-socioeconomic_partners.tsv
-  # aap1_project_by_keyword: /data/phase1-project_by_keyword.tsv
-  # aap1_project_by_institutions: /data/phase1-project_by_institutions.tsv
-  # aap1_project_by_laboratories: /data/phase1-project_by_laboratories.tsv
-  # aap1_laboratories_by_domains_erc: /data/phase1-laboratories_by_domains_erc.tsv
-  # aap1_laboratories_by_disciplines_erc: /data/phase1-laboratories_by_disciplines_erc.tsv
-  # aap1_laboratories_by_domains_hceres: /data/phase1-laboratories_by_domains_hceres.tsv
-  # aap1_laboratories_by_disciplines_hceres: /data/phase1-laboratories_by_disciplines_hceres.tsv
-  # aap1_institutions: /data/phase1-institutions.tsv
-  # aap1_project_by_socioeconomic_partners: /data/phase1-project_by_socioeconomic_partners.tsv
-  # aap2_projects: /data/phase2-projects.tsv
-  # # aap2_researchers: /data/phase2-researchers.tsv
-  # # aap2_researcher_by_keywords: /data/phase2-researcher_by_keywords.tsv
-  # aap2_laboratories: /data/phase2-laboratories.tsv
-  # aap2_socioeconomic_partners: /data/phase2-socioeconomic_partners.tsv
-  # aap2_project_by_keyword: /data/phase2-project_by_keyword.tsv
-  # aap2_project_by_discipline: /data/phase2-project_by_discipline.tsv
-  # aap2_project_by_cnu: /data/phase2-project_by_cnu.tsv
-  # aap2_project_by_institutions: /data/phase2-project_by_institutions.tsv
-  # aap2_project_by_laboratories: /data/phase2-project_by_laboratories.tsv
-  # aap2_project_by_socioeconomic_partners: /data/phase2-project_by_socioeconomic_partners.tsv
-  # # aap2_laboratories_by_domains_erc: /data/phase2-laboratories_by_domains_erc.tsv
-  # # aap2_laboratories_by_disciplines_erc: /data/phase2-laboratories_by_disciplines_erc.tsv
-  # # aap2_laboratories_by_domains_hceres: /data/phase2-laboratories_by_domains_hceres.tsv
-  # # aap2_laboratories_by_disciplines_hceres: /data/phase2-laboratories_by_disciplines_hceres.tsv
-  # aap2_institutions: /data/phase2-institutions.tsv
+  aap1_laboratories: /data/phase1-laboratories.tsv
+  aap1_socioeconomic_partners: /data/phase1-socioeconomic_partners.tsv
+  aap1_project_by_keyword: /data/phase1-project_by_keyword.tsv
+  aap1_project_by_institutions: /data/phase1-project_by_institutions.tsv
+  aap1_project_by_laboratories: /data/phase1-project_by_laboratories.tsv
+  aap1_laboratories_by_domains_erc: /data/phase1-laboratories_by_domains_erc.tsv
+  aap1_laboratories_by_disciplines_erc: /data/phase1-laboratories_by_disciplines_erc.tsv
+  aap1_laboratories_by_domains_hceres: /data/phase1-laboratories_by_domains_hceres.tsv
+  aap1_laboratories_by_disciplines_hceres: /data/phase1-laboratories_by_disciplines_hceres.tsv
+  aap1_institutions: /data/phase1-institutions.tsv
+  aap1_project_by_socioeconomic_partners: /data/phase1-project_by_socioeconomic_partners.tsv
+  aap2_projects: /data/phase2-projects.tsv
+  # aap2_researchers: /data/phase2-researchers.tsv
+  # aap2_researcher_by_keywords: /data/phase2-researcher_by_keywords.tsv
+  aap2_researcher_by_cnu: /data/phase2-researcher_by_cnu.tsv
+  aap2_laboratories: /data/phase2-laboratories.tsv
+  aap2_socioeconomic_partners: /data/phase2-socioeconomic_partners.tsv
+  aap2_project_by_keyword: /data/phase2-project_by_keyword.tsv
+  aap2_project_by_discipline: /data/phase2-project_by_discipline.tsv
+  aap2_project_by_cnu: /data/phase2-project_by_cnu.tsv
+  aap2_project_by_institutions: /data/phase2-project_by_institutions.tsv
+  aap2_project_by_laboratories: /data/phase2-project_by_laboratories.tsv
+  aap2_project_by_socioeconomic_partners: /data/phase2-project_by_socioeconomic_partners.tsv
+  # aap2_laboratories_by_domains_erc: /data/phase2-laboratories_by_domains_erc.tsv
+  # aap2_laboratories_by_disciplines_erc: /data/phase2-laboratories_by_disciplines_erc.tsv
+  # aap2_laboratories_by_domains_hceres: /data/phase2-laboratories_by_domains_hceres.tsv
+  # aap2_laboratories_by_disciplines_hceres: /data/phase2-laboratories_by_disciplines_hceres.tsv
+  aap2_institutions: /data/phase2-institutions.tsv
 ---
 
 # AAP Data
@@ -818,6 +819,21 @@ const aap1_project_by_socioeconomic_partners_search = Generators.input(
 </div>
 
 <div class="card">
+  <h2>Researchers by CNU</h2>
+  </br>
+  ${aap2_researcher_by_cnu_search_input}
+  <!-- $ -->
+  </br>
+  ${Inputs.table(aap2_researcher_by_cnu_search, {
+    layout: "auto",
+  })}
+  <!-- $ -->
+  </br>
+  ${downloadTableButton(() => aap2_researcher_by_cnu_search)}
+  <!-- $ -->
+</div>
+
+<div class="card">
   <h2>Project institutions</h2>
   </br>
   ${aap2_project_by_institutions_search_input}
@@ -1038,6 +1054,18 @@ const aap2_researcher_by_keywords_search_input = Inputs.search(
 )
 const aap2_researcher_by_keywords_search = Generators.input(
   aap2_researcher_by_keywords_search_input,
+)
+```
+
+```js
+const aap2_researcher_by_cnu_search_input = Inputs.search(
+  await sql`select * from aap2_researcher_by_cnu`,
+  {
+    placeholder: 'Search researcher_by_cnu',
+  },
+)
+const aap2_researcher_by_cnu_search = Generators.input(
+  aap2_researcher_by_cnu_search_input,
 )
 ```
 
