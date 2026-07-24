@@ -11,7 +11,6 @@ sql:
   aap1_project_by_socioeconomic_partners: /data/phase1-project_by_socioeconomic_partners.tsv
   aap1_researchers: /data/phase1-researchers.tsv
   aap1_all_partners: /data/partners.csv
-  aap1_all_projects_by_partners: /data/partners_by_project.csv
   co_researchers: /data/private/co-researchers.tsv
   aap1_researcher_by_keywords: /data/phase1-researcher_by_keywords.tsv
   aap1_laboratories: /data/phase1-laboratories.tsv

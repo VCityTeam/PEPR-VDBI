@@ -18,6 +18,7 @@ sql:
   aap1_project_by_socioeconomic_partners: /data/phase1-project_by_socioeconomic_partners.tsv
   aap2_projects: /data/phase2-projects.tsv
   # aap2_researchers: /data/phase2-researchers.tsv
+  aap2_project_by_researchers: /data/phase2-project_by_researchers.tsv
   # aap2_researcher_by_keywords: /data/phase2-researcher_by_keywords.tsv
   aap2_researcher_by_cnu: /data/phase2-researcher_by_cnu.tsv
   aap2_laboratories: /data/phase2-laboratories.tsv
@@ -33,6 +34,7 @@ sql:
   # aap2_laboratories_by_domains_hceres: /data/phase2-laboratories_by_domains_hceres.tsv
   # aap2_laboratories_by_disciplines_hceres: /data/phase2-laboratories_by_disciplines_hceres.tsv
   aap2_institutions: /data/phase2-institutions.tsv
+  aap2_project_by_section: /data/phase2-project_by_section.tsv
 ---
 
 # AAP Data
@@ -182,6 +184,7 @@ select * from aap1_researchers
 ### Researchers by project
 
 ${downloadTableButton(() => [...out])}
+
 <!-- $ -->
 
 ```sql id=out display
@@ -206,7 +209,11 @@ group by id, project
 
 ### Project by keyword
 
-```sql
+${downloadTableButton(() => [...aap_project_by_keyword])}
+
+<!-- $ -->
+
+```sql id=aap_project_by_keyword display
 (
   select
     acronyme,
@@ -788,6 +795,17 @@ const aap1_project_by_socioeconomic_partners_search = Generators.input(
   <!-- $ -->
 </div>
 
+### AAP 2 Project by Researchers
+
+${downloadTableButton(() => [...aap2_project_by_researchers])}
+
+<!-- $ -->
+
+```sql id=aap2_project_by_researchers display
+select *
+from aap2_project_by_researchers
+```
+
 <div class="card">
   <h2>Researchers</h2>
   </br>
@@ -892,6 +910,32 @@ const aap1_project_by_socioeconomic_partners_search = Generators.input(
   ${downloadTableButton(() => aap2_project_by_socioeconomic_partners_search)}
   <!-- $ -->
 </div>
+
+### Sections
+
+```js
+const selected_section = view(
+  Inputs.select(
+    aap2_project_section.schema.fields.map((d) => d.name),
+    { label: 'Select a section', value: 'ABSTRACT' },
+  ),
+)
+
+const getSections = (data, section) =>
+  [...data].map((d) => ({
+    project: d.project_id,
+    section: d[section],
+  }))
+```
+
+${downloadTableButton(() => getSections(aap2_project_section, selected_section), {filename: `${selected_section}.tsv`})}
+
+<!-- $ -->
+
+```sql id=aap2_project_section display
+select *
+from aap2_project_by_section
+```
 
 ```js
 const aap2_projects_search_input = Inputs.search(
