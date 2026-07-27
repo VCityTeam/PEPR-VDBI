@@ -2,9 +2,9 @@
 
 This page was converted, adapted, and extended from [this notebook](https://observablehq.com/@d3/bilevel-edge-bundling?collection=@d3/d3-hierarchy).
 
-This variation of [hierarchical edge bundling](/@d3/hierarchical-edge-bundling)
+This variation of [hierarchical edge bundling](https://observablehq.com/@d3/hierarchical-edge-bundling)
 constructs a simple two-level hierarchy using numbered groups.
-See this same dataset as a [force-directed graph](/@d3/d3-force-directed-graph).
+See this same dataset as a [force-directed graph](https://observablehq.com/@d3/d3-force-directed-graph).
 
 ${bilevelEdgeBundling(data)}<!-- $ -->
 

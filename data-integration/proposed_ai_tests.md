@@ -18,79 +18,79 @@ A partir des lettres d’intention, voici ce qu’il a été permis d’extraire
 
 Question : Donner le liste des projets décrits
 
-1. ALTERMOB - Évaluation Environnementale des Politiques publiques territoriales de mobilité durable et coûts d'évitement associés[1]
-2. AnthroPolUrb - Origine et devenir de l'anthropocène urbain dans le continuum Homme-Terre-Mer du Rhône et de la Medjerda[1]
-3. ATTERRIR - Anthropocène, Transitions urbaines et TERRe crue. Analyse de la mise en œuvre des villes durables à partir de la terre crue dans la construction[1]
-4. BaaS - « Building as a Service » : évaluation socioéconomique et environnementale des actions de transformation fonctionnelle du bâtiment dans la perspective de mise en œuvre de nouveaux services pour une ville durable[1]
-5. BASE - Bâtiment Apprenant à être Sain et Éco-responsable[1]
-6. BATMAT - Métabolisme et circularité des matières pour pérenniser les bâtiments urbains[1]
-7. BIOSE/DD - Bâtiment Innovant au centre de l'Oléoarboretum et Services Écosystémiques pour un Développement Durable[1]
-8. BLUERIVER2050 - La Baignade en eau vive urbaine : Levier ou Frein pour une ville habitable pour les humains et la biodiversité en 2050 ?[1]
-9. CAUSAL - Capteurs de gAz bio-soUrcéS et durAbLes "Bio-sourced and Sustainable Gas Sensors"[1]
-10. CAVEAU - Caractériser les Vulnérabilités par les EAux Usées brutes[1]
-11. CEA-List - Technologies au service de la ville durable et des bâtiments innovants[1]
-12. CITIFLEX - City Digital Transformation: Fostering Inclusion through Spatial and Temporal Flexibility - Transformation Numérique des Villes : l'Inclusion par la Flexibilité Spatiale et Temporelle ?[1]
-13. CITYVERSE -Jumeaux Numériques Immersifs pour Territoires Intelligents Résilients et Durables[1]
+1. ALTERMOB - Évaluation Environnementale des Politiques publiques territoriales de mobilité durable et coûts d'évitement associés[^1]
+2. AnthroPolUrb - Origine et devenir de l'anthropocène urbain dans le continuum Homme-Terre-Mer du Rhône et de la Medjerda[^1]
+3. ATTERRIR - Anthropocène, Transitions urbaines et TERRe crue. Analyse de la mise en œuvre des villes durables à partir de la terre crue dans la construction[^1]
+4. BaaS - « Building as a Service » : évaluation socioéconomique et environnementale des actions de transformation fonctionnelle du bâtiment dans la perspective de mise en œuvre de nouveaux services pour une ville durable[^1]
+5. BASE - Bâtiment Apprenant à être Sain et Éco-responsable[^1]
+6. BATMAT - Métabolisme et circularité des matières pour pérenniser les bâtiments urbains[^1]
+7. BIOSE/DD - Bâtiment Innovant au centre de l'Oléoarboretum et Services Écosystémiques pour un Développement Durable[^1]
+8. BLUERIVER2050 - La Baignade en eau vive urbaine : Levier ou Frein pour une ville habitable pour les humains et la biodiversité en 2050 ?[^1]
+9. CAUSAL - Capteurs de gAz bio-soUrcéS et durAbLes "Bio-sourced and Sustainable Gas Sensors"[^1]
+10. CAVEAU - Caractériser les Vulnérabilités par les EAux Usées brutes[^1]
+11. CEA-List - Technologies au service de la ville durable et des bâtiments innovants[^1]
+12. CITIFLEX - City Digital Transformation: Fostering Inclusion through Spatial and Temporal Flexibility - Transformation Numérique des Villes : l'Inclusion par la Flexibilité Spatiale et Temporelle ?[^1]
+13. CITYVERSE -Jumeaux Numériques Immersifs pour Territoires Intelligents Résilients et Durables[^1]
 14. CŒUR-3R - L'économie circulaire au cœur de la planification écologique des territoires : Circularité Optimale [Réemploi, Réutilisation, Recyclage](1)
-15. COMODEV - La coexistence des modèles d'économie circulaire : quelles trajectoires de transition dans les villes ?[1]
-16. ECOFLUX - Flux écologiques - Des pratiques d'usagers à la conception informationnelle. Une immersion architecturale et urbaine générée pendant la transition éco[1]
-17. ELDUC - Espaces Logistiques pour la Distribution Urbaine de Colis au Service de la Ville Durable[1]
-18. EnergiEx - Modélisation unifiée de la dynamique de consommation énergétique de bâtiments en contexte de changement climatique incluant des épisodes extrêmes[1]
-19. FaRe - La Fabrique des Villes Résilientes[1]
-20. Flex-Sens - Capteurs de gaz flexibles à base des matériaux 2D fonctionnalisés pour la détection de polluants en milieu urbain (H2, COx, NOx) : étude théorique et expérimentale.[1]
-21. FUTURA - Formes Urbaines par Télédétection en Guyane et Risques d'exposition aux Arboviroses[1]
-22. GAIA-C - Intelligence artificielle multimodale générative pour ré-inventer la ville[1]
-23. Grid4Mobility - Optimisation de l'énergie dans les réseaux intelligents incluant l'électromobilité, les bâtiments et les énergies renouvelables[1]
-24. HeCtor - Chauffer et rafraichir la ville durable grâce aux fondations géothermiques[1]
-25. HUT - Habitat Urbain en Transition-HUT: Vers une exploration approfondie de l'utilisation des environnements connectés pour le bien-être et la ville durable[1]
-26. Hybrid-Lab - Laboratoire hybride des sciences urbaines[1]
-27. IDEA - Quartiers innovants et actions environnementales[1]
-28. inteGREEN - Services urbains intégrés à partir de stratégies de végétalisation pour améliorer la résilience des villes[1]
-29. Isomat - Matériaux biosourcés hybrides et composites pour l'isolation et la super-isolation thermique[1]
-30. LAVEC - LA Ville En Chemins[1]
-31. MIRAGES - Mesurer l'Innovation environnementale des projets uRbains, une Approche par les usaGES[1]
-32. NEO - Nouvel observatoire intégré de l'environnement pour la transition urbaine[1]
-33. OASIS - Ombrage Artificiel Située et Irradiation Solaire[1]
-34. ODISSe - Optimisation et Inovation des systèmes de fondations pour une ville durable[1]
-35. OPTIMA - Pollutions primaires et secondaires du trafic routier et leur impact sur la santé[1]
-36. PEREN-FLORE - De la végétation pour une ville résiliente[1]
-37. Prospect-Villes - Prospective sur la place des bioressources dans les villes à l'horizon 2050[1]
-38. RaaS_FPA - Cooperation des transports de marchandises et de passagers pour offrir la résilience en tant que Service[1]
-39. REGENERATIV - Villes régénératrices face aux évolutions climatiques et à la dépendance énergétique[1]
-40. REHABILITER -REcherche sur l'Hétérogénéité de l'Adaptation des Bâtiments : Indicateurs, LImites et Impacts dans les TERritoires[1]
-41. RENO-ICU - La rénovation de bâtiments collectifs comme levier de réduction des îlots de chaleur urbain[1]
-42. REQUAL - Réqualifier la ville. L'habitat et le patrimoine au prisme de leur réqualification[1]
-43. RESILIENCE - Robuste Evaluation de Solutions pour limiter les Impacts LIés aux Évolutions du Climat sur les Écocités[1]
-44. ResIsTer - Territoires, villes et habitats insulaires résilients dans un contexte de changement climatique et de risques naturels[1]
-45. S2C2T - Sustainable Smart and Circular City Twin[1]
-46. SAGA-Cité - Simulateur Atmosphérique des Grandes Agglomérations...[1]
-47. SENSU - Surveillance des ENjeux de Santé Urbaine - Impact des Facteurs Sociaux et Environnementaux sur la Santé Urbaine[1]
-48. SOLAR - La place et l'usage des sols dans l'aménagement urbain pour une ville plus durable et résiliente[1]
-49. SPACE2050 - Pour une approche Systémique de la Planification bAs Carbone des TErritoires : scénarios, actions et évaluations[1]
-50. SUBI - Sonore Urbain et Biodiversité Innovante[1]
-51. SYMBIOTIC - Contribution à l'estimation des impacts de l'implémentation d'une SYMBIOse urbaine et indusTrielle (SUI) sur des territoires FranCais de typologie (Urbaines & Industrielles) différentes[1]
-52. TECTOO - La transition écologique dans les territoires : prospective et aide à la décision par une approche systémique et multiscalaire[1]
-53. TEHEDI - Transition Énergétique, Habitat, Enjeux de Développement et Inégalités[1]
+15. COMODEV - La coexistence des modèles d'économie circulaire : quelles trajectoires de transition dans les villes ?[^1]
+16. ECOFLUX - Flux écologiques - Des pratiques d'usagers à la conception informationnelle. Une immersion architecturale et urbaine générée pendant la transition éco[^1]
+17. ELDUC - Espaces Logistiques pour la Distribution Urbaine de Colis au Service de la Ville Durable[^1]
+18. EnergiEx - Modélisation unifiée de la dynamique de consommation énergétique de bâtiments en contexte de changement climatique incluant des épisodes extrêmes[^1]
+19. FaRe - La Fabrique des Villes Résilientes[^1]
+20. Flex-Sens - Capteurs de gaz flexibles à base des matériaux 2D fonctionnalisés pour la détection de polluants en milieu urbain (H2, COx, NOx) : étude théorique et expérimentale.[^1]
+21. FUTURA - Formes Urbaines par Télédétection en Guyane et Risques d'exposition aux Arboviroses[^1]
+22. GAIA-C - Intelligence artificielle multimodale générative pour ré-inventer la ville[^1]
+23. Grid4Mobility - Optimisation de l'énergie dans les réseaux intelligents incluant l'électromobilité, les bâtiments et les énergies renouvelables[^1]
+24. HeCtor - Chauffer et rafraichir la ville durable grâce aux fondations géothermiques[^1]
+25. HUT - Habitat Urbain en Transition-HUT: Vers une exploration approfondie de l'utilisation des environnements connectés pour le bien-être et la ville durable[^1]
+26. Hybrid-Lab - Laboratoire hybride des sciences urbaines[^1]
+27. IDEA - Quartiers innovants et actions environnementales[^1]
+28. inteGREEN - Services urbains intégrés à partir de stratégies de végétalisation pour améliorer la résilience des villes[^1]
+29. Isomat - Matériaux biosourcés hybrides et composites pour l'isolation et la super-isolation thermique[^1]
+30. LAVEC - LA Ville En Chemins[^1]
+31. MIRAGES - Mesurer l'Innovation environnementale des projets uRbains, une Approche par les usaGES[^1]
+32. NEO - Nouvel observatoire intégré de l'environnement pour la transition urbaine[^1]
+33. OASIS - Ombrage Artificiel Située et Irradiation Solaire[^1]
+34. ODISSe - Optimisation et Inovation des systèmes de fondations pour une ville durable[^1]
+35. OPTIMA - Pollutions primaires et secondaires du trafic routier et leur impact sur la santé[^1]
+36. PEREN-FLORE - De la végétation pour une ville résiliente[^1]
+37. Prospect-Villes - Prospective sur la place des bioressources dans les villes à l'horizon 2050[^1]
+38. RaaS_FPA - Cooperation des transports de marchandises et de passagers pour offrir la résilience en tant que Service[^1]
+39. REGENERATIV - Villes régénératrices face aux évolutions climatiques et à la dépendance énergétique[^1]
+40. REHABILITER -REcherche sur l'Hétérogénéité de l'Adaptation des Bâtiments : Indicateurs, LImites et Impacts dans les TERritoires[^1]
+41. RENO-ICU - La rénovation de bâtiments collectifs comme levier de réduction des îlots de chaleur urbain[^1]
+42. REQUAL - Réqualifier la ville. L'habitat et le patrimoine au prisme de leur réqualification[^1]
+43. RESILIENCE - Robuste Evaluation de Solutions pour limiter les Impacts LIés aux Évolutions du Climat sur les Écocités[^1]
+44. ResIsTer - Territoires, villes et habitats insulaires résilients dans un contexte de changement climatique et de risques naturels[^1]
+45. S2C2T - Sustainable Smart and Circular City Twin[^1]
+46. SAGA-Cité - Simulateur Atmosphérique des Grandes Agglomérations...[^1]
+47. SENSU - Surveillance des ENjeux de Santé Urbaine - Impact des Facteurs Sociaux et Environnementaux sur la Santé Urbaine[^1]
+48. SOLAR - La place et l'usage des sols dans l'aménagement urbain pour une ville plus durable et résiliente[^1]
+49. SPACE2050 - Pour une approche Systémique de la Planification bAs Carbone des TErritoires : scénarios, actions et évaluations[^1]
+50. SUBI - Sonore Urbain et Biodiversité Innovante[^1]
+51. SYMBIOTIC - Contribution à l'estimation des impacts de l'implémentation d'une SYMBIOse urbaine et indusTrielle (SUI) sur des territoires FranCais de typologie (Urbaines & Industrielles) différentes[^1]
+52. TECTOO - La transition écologique dans les territoires : prospective et aide à la décision par une approche systémique et multiscalaire[^1]
+53. TEHEDI - Transition Énergétique, Habitat, Enjeux de Développement et Inégalités[^1]
 54. THERMOS - Comportement THERMique urbain Optimisé par Simulation [vers le jumeau numérique énergétique urbain](1)
-55. TRIPODE - Énergétique par l'éolien pour des bâtiments à impact positif[1]
-56. TwinCityZen - Jumeau numérique intelligent au service de la qualité de l'environnement urbain en contexte indoor et outdoor[1]
-57. ULL – Montpellier - Urban Living Labs Université (Campus Triolet) et Hôpital (Lapeyronie) de Montpellier Rapports environnementaux et sociaux avec leurs hydro-systèmes[1]
-58. Umrestte[1]
-59. UNIR - Résilience Intégrée des Réseaux Urbains[1]
-60. UrbaRisqBio - Les liaisons dangereuses entre activités humaines, systèmes techniques et dangers biologiques[1]
-61. URBHEALTH - Territoires URBanisés: influence des Hétérogénéités spatiales et des sources de pollution Atmosphérique sur la santé[1]
-62. UrBioLLabs - Laboratoires Vivants Bioclimatiques Urbains[1]
-63. VEPAC - Vulnérabilité des populations urbaines à la pollution de l'air et aux vagues de chaleur : diagnostic, atténuation et adaptation[1]
-64. VESTA - Vivre En Secteurs paTrimoniAux : potentialités, opportunités, ... vulnérabilités[1]
-65. VF++ - Des Villes Fraiches Pour et Par Leurs USagers: associer des solutions douces, vertes et grises pour favoriser la bonne santé des habitants[1]
-66. ViBaT - Ville et bâtiment en terre crue : étude multi échelle des solutions de construction bio et géo sourcées[1]
-67. Villénature - Conception durable: de la nature à la ville[1]
-68. VILLE-VIVANTE - Ville durable, ville vivante : de la recherche à l'action[1]
-69. VIMAP - Villes Inclusives pour la Mobilité Aînée Piétonne - Observation et Rendu de la Marchabilité pour une Mobilité Piétonne des Seniors[1]
-70. VIREV - Vivre les interactions de la rue en environnement virtuel pour mieux anticiper[1]
+55. TRIPODE - Énergétique par l'éolien pour des bâtiments à impact positif[^1]
+56. TwinCityZen - Jumeau numérique intelligent au service de la qualité de l'environnement urbain en contexte indoor et outdoor[^1]
+57. ULL – Montpellier - Urban Living Labs Université (Campus Triolet) et Hôpital (Lapeyronie) de Montpellier Rapports environnementaux et sociaux avec leurs hydro-systèmes[^1]
+58. Umrestte[^1]
+59. UNIR - Résilience Intégrée des Réseaux Urbains[^1]
+60. UrbaRisqBio - Les liaisons dangereuses entre activités humaines, systèmes techniques et dangers biologiques[^1]
+61. URBHEALTH - Territoires URBanisés: influence des Hétérogénéités spatiales et des sources de pollution Atmosphérique sur la santé[^1]
+62. UrBioLLabs - Laboratoires Vivants Bioclimatiques Urbains[^1]
+63. VEPAC - Vulnérabilité des populations urbaines à la pollution de l'air et aux vagues de chaleur : diagnostic, atténuation et adaptation[^1]
+64. VESTA - Vivre En Secteurs paTrimoniAux : potentialités, opportunités, ... vulnérabilités[^1]
+65. VF++ - Des Villes Fraiches Pour et Par Leurs USagers: associer des solutions douces, vertes et grises pour favoriser la bonne santé des habitants[^1]
+66. ViBaT - Ville et bâtiment en terre crue : étude multi échelle des solutions de construction bio et géo sourcées[^1]
+67. Villénature - Conception durable: de la nature à la ville[^1]
+68. VILLE-VIVANTE - Ville durable, ville vivante : de la recherche à l'action[^1]
+69. VIMAP - Villes Inclusives pour la Mobilité Aînée Piétonne - Observation et Rendu de la Marchabilité pour une Mobilité Piétonne des Seniors[^1]
+70. VIREV - Vivre les interactions de la rue en environnement virtuel pour mieux anticiper[^1]
 
 Citations:
-[1] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
+[^1]: <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
 
 ## Q2
 
@@ -169,7 +169,7 @@ Voici 4 mots clés pour chacun des 70 projets décrits :
 70. VIREV : interactions de rue, environnement virtuel, anticipation
 
 Citations:
-[1] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
+[2] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
 
 ## Q3
 
@@ -408,7 +408,7 @@ Les mots les plus employés dans cette liste de mots clés sont :
 Ces mots reflètent les thématiques principales abordées dans les projets décrits, à savoir la ville durable, le bâtiment innovant, la mobilité, l'évaluation environnementale, les transitions urbaines, la résilience et l'économie circulaire.
 
 Citations:
-[1] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
+[3] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
 
 ## Q5
 
@@ -599,7 +599,7 @@ Voici un résumé des principales actions de recherche proposées pour chaque pr
 Les autres projets mettent en œuvre des actions de recherche similaires, comme le développement de technologies pour la ville durable, l'étude des interactions entre les usages, les pratiques et les innovations, l'analyse de la résilience et de la transition écologique des territoires, etc. L'objectif commun est de produire des connaissances et des solutions innovantes pour construire des villes plus durables, résilientes et inclusives.
 
 Citations:
-[1] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
+[4] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
 
 ## Q8
 
@@ -625,7 +625,7 @@ Voici un résumé de la mise en œuvre des principales actions de recherche pour
 Les autres projets mettent en œuvre des actions de recherche similaires, comme le développement de technologies innovantes, l'étude des interactions entre usages et pratiques, l'analyse de la résilience et de la transition écologique des territoires, etc. L'objectif commun est de produire des connaissances et des solutions pour construire des villes plus durables, résilientes et inclusives.
 
 Citations:
-[1] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
+[5] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/f1fe93e0-1c4b-499d-a5bf-d56d4996231b/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
 
 ## Q9
 
@@ -650,23 +650,23 @@ Pour évaluer le succès de ces projets, plusieurs critères et méthodologies p
 Chaque projet nécessite une approche d'évaluation personnalisée, adaptée à ses objectifs spécifiques, ses domaines d'application, et ses parties prenantes. Les méthodes d'évaluation pourraient inclure des analyses quantitatives (comme les ACV et les analyses coût-bénéfice), des enquêtes qualitatives (comme les interviews et les groupes de discussion), et des études de cas pour mesurer l'impact réel sur le terrain.
 
 Citations:
-[1] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/d1f1ab8b-4e56-4b57-a556-fc669c82f1fe/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
-[2] <http://www.cec.org/files/documents/publications/11661-improving-green-building-construction-in-north-america-guide-integrated-design-fr.pdf>
-[3] <https://hal.univ-lorraine.fr/tel-01750348v1/document>
-[4] <https://www.cerema.fr/system/files/documents/2017/11/vademecum-annexe-2-evaluation-interactif-30-01-15-final_cle23616c-1.pdf>
-[5] <https://rejeangoyette.com/maisons-ecologiques-quels-sont-les-criteres-qui-les-definissent/>
-[6] <https://www.urbanimmo.org/comment-les-promoteurs-immobiliers-d-entreprise-integrent-ils-les-criteres-de-durabilite-dans-leurs-projets/>
-[7] <https://urbanisme.umontreal.ca/fileadmin/amenagement/URB/Realisations-etudiantes/Travaux-recents/TD-MURB/TD_MelissaNahory_2012.pdf>
-[8] <https://vivreenville.org/media/285937/-chap-13_final.pdf>
-[9] <https://www.voirvert.ca/savoir-entreprise/les-sept-cles-du-succes-la-construction-mode-rpi>
-[10] <https://journals.openedition.org/cybergeo/25600>
-[11] <https://anr.fr/fileadmin/aap/2023/France2030-aap-pepr-vdbi-2023-texte-appel.pdf>
-[12] <https://fr.linkedin.com/pulse/la-gestion-de-projet-%C3%A9cologique-des-pratiques-durables-pour-un>
-[13] <https://www.ecologie.gouv.fr/sites/default/files/Dossier%20de%20presse%20-%20Relancer%20la%20construction%20durable%20de%20logements%20dans%20les%20territoires%20%281%29%20%281%29.pdf>
-[14] <https://www.fao.org/3/T1765F/t1765f0c.htm>
-[15] <https://papyrus.bib.umontreal.ca/xmlui/bitstream/handle/1866/5138/Dubiela_Valter_T_2011_these.pdf?isAllowed=y&sequence=5>
-[16] <https://www.capdigital.com/ville-numerique-et-durable-nos-actions-et-nos-succes/>
-[17] <https://www.cerema.fr/system/files/documents/2017/11/vademecum-principal-interactif-30-01-15-final_3__cle5e8a41-1.pdf>
-[18] <https://www.constructing-sustainable-future.com/interviews/le-modele-qui-a-propulse-vancouver/>
-[19] <https://francevilledurable.fr/la-boite-a-outils/>
-[20] <https://www.construction21.org/france/articles/h/efficacity-livre-un-outil-de-reference-pour-evaluer-les-projets-urbains-innovants.html>
+[6] <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/13937225/d1f1ab8b-4e56-4b57-a556-fc669c82f1fe/231006b_Carnet_VDBI_resumes_des_intention_diffusion-autorisee_V3_biffe.pdf>
+[7] <http://www.cec.org/files/documents/publications/11661-improving-green-building-construction-in-north-america-guide-integrated-design-fr.pdf>
+[8] <https://hal.univ-lorraine.fr/tel-01750348v1/document>
+[9] <https://www.cerema.fr/system/files/documents/2017/11/vademecum-annexe-2-evaluation-interactif-30-01-15-final_cle23616c-1.pdf>
+[10] <https://rejeangoyette.com/maisons-ecologiques-quels-sont-les-criteres-qui-les-definissent/>
+[11] <https://www.urbanimmo.org/comment-les-promoteurs-immobiliers-d-entreprise-integrent-ils-les-criteres-de-durabilite-dans-leurs-projets/>
+[12] <https://urbanisme.umontreal.ca/fileadmin/amenagement/URB/Realisations-etudiantes/Travaux-recents/TD-MURB/TD_MelissaNahory_2012.pdf>
+[13] <https://vivreenville.org/media/285937/-chap-13_final.pdf>
+[14] <https://www.voirvert.ca/savoir-entreprise/les-sept-cles-du-succes-la-construction-mode-rpi>
+[15] <https://journals.openedition.org/cybergeo/25600>
+[16] <https://anr.fr/fileadmin/aap/2023/France2030-aap-pepr-vdbi-2023-texte-appel.pdf>
+[17] <https://fr.linkedin.com/pulse/la-gestion-de-projet-%C3%A9cologique-des-pratiques-durables-pour-un>
+[18] <https://www.ecologie.gouv.fr/sites/default/files/Dossier%20de%20presse%20-%20Relancer%20la%20construction%20durable%20de%20logements%20dans%20les%20territoires%20%281%29%20%281%29.pdf>
+[19] <https://www.fao.org/3/T1765F/t1765f0c.htm>
+[20] <https://papyrus.bib.umontreal.ca/xmlui/bitstream/handle/1866/5138/Dubiela_Valter_T_2011_these.pdf?isAllowed=y&sequence=5>
+[21] <https://www.capdigital.com/ville-numerique-et-durable-nos-actions-et-nos-succes/>
+[22] <https://www.cerema.fr/system/files/documents/2017/11/vademecum-principal-interactif-30-01-15-final_3__cle5e8a41-1.pdf>
+[23] <https://www.constructing-sustainable-future.com/interviews/le-modele-qui-a-propulse-vancouver/>
+[24] <https://francevilledurable.fr/la-boite-a-outils/>
+[25] <https://www.construction21.org/france/articles/h/efficacity-livre-un-outil-de-reference-pour-evaluer-les-projets-urbains-innovants.html>

@@ -41,7 +41,7 @@ The report is structured as follows:
 
 <div class="tip">
 
-A critique of the proposed methodology is provided in [this report](./js-2025-workshop-analysis-en).
+A critique of the proposed methodology is provided in [this report](./js-2025-workshop-analysis-en.md).
 
 </div>
 

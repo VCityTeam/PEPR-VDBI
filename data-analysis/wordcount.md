@@ -27,6 +27,7 @@ plain text files.
     - [3.4.1. Data quality observations](#341-data-quality-observations)
     - [3.4.2. Data collection](#342-data-collection)
     - [3.4.3. Keyword extraction](#343-keyword-extraction)
+      - [Notes](#notes)
 
 ## 1. Method
 
@@ -216,7 +217,7 @@ The initial texts from each PEPR were extracted as follows:
       - Tasks (en)
       - Consortium (en)
    2. Projects still under construction phases such as 'Soon to come' were removed.
-   3. Final texts are available in [data-analysis/test-data/input/pepr_recyclage](data-analysis/test-data/input/pepr_recyclage)
+   3. Final texts are available in [data-analysis/test-data/input/pepr_recyclage](data-analysis/test-data/input/pepr_recyclage/)
 
 #### 3.2.2. Word count generation
 
@@ -261,7 +262,7 @@ Data sources:
     vocabulary regarding the scientific themes, project needs, and proposed
     actions of the OA.
   - They are extracted and converted to text using Adobe Acrobat.
-  - Final texts are available in [data-analysis/test-data/input/insu_ocean_atmosphere](data-analysis/test-data/input/insu_ocean_atmosphere)
+  - Final texts are available in [data-analysis/test-data/input/insu_ocean_atmosphere](data-analysis/test-data/input/insu_ocean_atmosphere/)
 
 #### 3.3.2. Word count generation
 
