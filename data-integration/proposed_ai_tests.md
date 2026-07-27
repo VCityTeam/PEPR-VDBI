@@ -31,7 +31,7 @@ Question : Donner le liste des projets décrits
 11. CEA-List - Technologies au service de la ville durable et des bâtiments innovants[^1]
 12. CITIFLEX - City Digital Transformation: Fostering Inclusion through Spatial and Temporal Flexibility - Transformation Numérique des Villes : l'Inclusion par la Flexibilité Spatiale et Temporelle ?[^1]
 13. CITYVERSE -Jumeaux Numériques Immersifs pour Territoires Intelligents Résilients et Durables[^1]
-14. CŒUR-3R - L'économie circulaire au cœur de la planification écologique des territoires : Circularité Optimale [Réemploi, Réutilisation, Recyclage](1)
+14. CŒUR-3R - L'économie circulaire au cœur de la planification écologique des territoires : Circularité Optimale [Réemploi, Réutilisation, Recyclage]
 15. COMODEV - La coexistence des modèles d'économie circulaire : quelles trajectoires de transition dans les villes ?[^1]
 16. ECOFLUX - Flux écologiques - Des pratiques d'usagers à la conception informationnelle. Une immersion architecturale et urbaine générée pendant la transition éco[^1]
 17. ELDUC - Espaces Logistiques pour la Distribution Urbaine de Colis au Service de la Ville Durable[^1]
@@ -71,7 +71,7 @@ Question : Donner le liste des projets décrits
 51. SYMBIOTIC - Contribution à l'estimation des impacts de l'implémentation d'une SYMBIOse urbaine et indusTrielle (SUI) sur des territoires FranCais de typologie (Urbaines & Industrielles) différentes[^1]
 52. TECTOO - La transition écologique dans les territoires : prospective et aide à la décision par une approche systémique et multiscalaire[^1]
 53. TEHEDI - Transition Énergétique, Habitat, Enjeux de Développement et Inégalités[^1]
-54. THERMOS - Comportement THERMique urbain Optimisé par Simulation [vers le jumeau numérique énergétique urbain](1)
+54. THERMOS - Comportement THERMique urbain Optimisé par Simulation [vers le jumeau numérique énergétique urbain]
 55. TRIPODE - Énergétique par l'éolien pour des bâtiments à impact positif[^1]
 56. TwinCityZen - Jumeau numérique intelligent au service de la qualité de l'environnement urbain en contexte indoor et outdoor[^1]
 57. ULL – Montpellier - Urban Living Labs Université (Campus Triolet) et Hôpital (Lapeyronie) de Montpellier Rapports environnementaux et sociaux avec leurs hydro-systèmes[^1]
