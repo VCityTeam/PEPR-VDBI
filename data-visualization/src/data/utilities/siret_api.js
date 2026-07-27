@@ -44,6 +44,7 @@ export async function queryAndFormatRE(query, source, useSiege = true) {
     `https://recherche-entreprises.api.gouv.fr/search` +
       `?q=${encodeURIComponent(query)}&page=1&per_page=1`,
     1,
+    null,
     logger,
   )
 

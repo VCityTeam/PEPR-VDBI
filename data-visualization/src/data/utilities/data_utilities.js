@@ -29,12 +29,14 @@ let globalFetchQueue = Promise.resolve()
  *
  * @param {string} url - The endpoint url.
  * @param {number} [sleep=0] - The number of seconds to sleep before sending the request to avoid rate limiting.
+ * @param {Object} [header={}] - An object containing additional headers to include in the request.
  * @param {pino.Logger} [logger=pino(default_log_options('fetch url utility'))] - A pino logger instance.
  * @returns {Promise<Object|null>} A promise resolving to a dictionary (object) of the request response if successful, or null.
  */
 export async function handleFetchJson(
   url,
   sleep = 0,
+  header,
   logger = pino(default_log_options('fetch url utility')),
 ) {
   logger.info(`HTTP request with: ${url}`)
@@ -48,6 +50,7 @@ export async function handleFetchJson(
       const response = await fetch(url, {
         headers: {
           Accept: 'application/json',
+          ...header,
         },
       })
 

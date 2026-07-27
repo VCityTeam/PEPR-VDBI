@@ -31,6 +31,7 @@ export async function queryAndFormatESR(query, source) {
       '/fr-esr-structures-recherche-publiques-actives/records' +
       `?where=numero_national_de_structure="${encodeURIComponent(query)}"`,
     0.5,
+    null,
     logger,
   )
 
