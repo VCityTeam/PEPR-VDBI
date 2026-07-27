@@ -396,6 +396,7 @@ const default_donut_config = {
   valueMap: (d) => d[1],
   colorMap: (d) => d[0],
   legendTextLength: 35,
+  legendWidth: 300,
   majorLabelText: () => '',
   minorLabelText: () => '',
 }
@@ -410,8 +411,7 @@ const default_donut_config = {
 export const cnu_group_donut = (data, width) =>
   donutChart(data.cnu_count_by_category, {
     ...default_donut_config,
-    width: width * 0.6,
-    legendWidth: width * 0.5,
+    width: width,
     color: d3
       .scaleOrdinal(d3.schemeSet1.slice(1))
       // .scaleOrdinal(d3.schemeCategory10)
@@ -430,8 +430,7 @@ export const cnu_group_donut = (data, width) =>
 export const custom_cnu_group_donut = (data, width) =>
   donutChart(data, {
     ...default_donut_config,
-    width: width * 0.6,
-    legendWidth: width * 0.5,
+    width: width,
     color: d3
       .scaleOrdinal(d3.schemeSet1.slice(1))
       // .scaleOrdinal(d3.schemeCategory10)
@@ -588,16 +587,13 @@ export const cnu_by_aap_plot_y_by_erc = (
  *
  * @param {Array} data - count data, rows of `[erc_domain, count]`
  * @param {number} width - chart width
- * @param {number} height - chart height
  * @param {Object} [options={}] - additional donutChart options, merged over the defaults
  * @returns {SVGElement} the rendered donut chart
  */
-export const erc_donut = (data, width, height, options = {}) =>
+export const erc_donut = (data, width, options = {}) =>
   donutChart(data, {
     ...default_donut_config,
-    width: width * 0.6,
-    height: height,
-    legendWidth: width * 0.6,
+    width: width,
     legendTextLength: 28,
     color: erc_color_scale,
     ...options,

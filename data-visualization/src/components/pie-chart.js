@@ -40,7 +40,8 @@ export function donutChart(
   data,
   {
     width = 600,
-    height = width,
+    legendWidth = width * 0.4,
+    height = width - legendWidth,
     innerRadiusRatio = 0.5,
     outerRadiusRatio = 0.9,
     // minorArcLabelRadiusRatio = 0.1, // the ratio of the radius to place the minor arc label outside of the arc
@@ -73,7 +74,6 @@ export function donutChart(
       .scaleOrdinal(d3.schemeObservable10)
       .domain(new Set(data.map(keyMap)))
       .unknown('grey'),
-    legendWidth = 80, // TODO: fix margin behavior
     legendTextLength = 30,
     legendText = (d) =>
       `${valueMap(d) / d3.sum(data.map(valueMap)) < 0.1 ? '\u2002' : ''}${(
@@ -95,7 +95,7 @@ export function donutChart(
     }),
   } = {},
 ) {
-  const radius = Math.min(width + legendWidth, height) / 2
+  const radius = Math.min(width - legendWidth, height) / 2
   const arc = d3
     .arc()
     .innerRadius(
@@ -264,10 +264,11 @@ export function donutChart(
 
   // Create legend
   if (legend) {
+    svg.selectAll('g').attr('transform', `translate(${-radius / 2} 0)`)
     svg
-      .append('g')
-      .attr('transform', `translate(${width - legendWidth} ${-height / 2})`)
-      .append(() => legend)
+    .append('g')
+    .attr('transform', `translate(${radius / 2} ${-radius * 0.9})`)
+    .append(() => legend)
   }
 
   return svg.node()

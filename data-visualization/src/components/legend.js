@@ -42,7 +42,7 @@ export function circleLegend(
     .classed('legend', true)
     .attr('height', height)
     .attr('width', width)
-    .attr('viewBox', [-width / 2, -height / 2, width, height])
+    .attr('viewBox', [0, 0, width, height])
 
   svg
     .append('g')

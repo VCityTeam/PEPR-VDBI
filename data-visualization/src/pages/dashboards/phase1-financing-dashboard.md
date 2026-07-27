@@ -265,10 +265,10 @@ function default_employer_plot_options(data, width, height = 500) {
   }
 }
 
-function default_pie_options(width, left_margin = 120) {
+function default_pie_options(width, left_margin = 200) {
   return {
-    width: width - left_margin,
-    height: width * 0.6,
+    width: width,
+    height: width * 0.5,
     keyMap: (d) => d[0],
     valueMap: (d) => d[1],
     colorMap: (d) => d[0],
@@ -277,7 +277,7 @@ function default_pie_options(width, left_margin = 120) {
       .domain(category_color_map.keys())
       .range(category_color_map.values())
       .unknown('grey'),
-    legendWidth: width,
+    legendWidth: left_margin,
   }
 }
 ```

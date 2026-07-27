@@ -1187,7 +1187,7 @@ const aap2_selected_partners_x_sort = Generators.input(
             .get('AAP 1').sort((a, b) => a.defi - b.defi),
           {
             ...default_defi_aap_donut_config(width),
-            width: width,
+            height: width,
             sort: (a, b) => a.defi - b.defi,
             legend: false,
             outerRadiusRatio: (d) => d.data.financed
@@ -1206,7 +1206,8 @@ const aap2_selected_partners_x_sort = Generators.input(
         {
           ...default_defi_aap_donut_config(),
           width: 1,
-          legendWidth: 1,
+          height: 1,
+          legendWidth: 2,
           keyMap: (d) => 'défi ' + d[0],
           valueMap: (d) => d[1],
           sort: (a, b) => a.defi - b.defi,
@@ -1227,7 +1228,7 @@ const aap2_selected_partners_x_sort = Generators.input(
             .filter((d) => d.aap === 'AAP 2'),
           {
             ...default_defi_aap_donut_config(width),
-            width: width,
+            height: width,
             sort: (a, b) => a.defi - b.defi,
             legend: false,
             outerRadiusRatio: (d) => d.data.selected
@@ -1246,7 +1247,8 @@ const aap2_selected_partners_x_sort = Generators.input(
         {
           ...default_defi_aap_donut_config(),
           width: 1,
-          legendWidth: 1,
+          height: 1,
+          legendWidth: 2,
           keyMap: (d) => 'défi ' + d[0],
           valueMap: (d) => d[1],
           sort: (a, b) => a.defi - b.defi,
@@ -1300,8 +1302,8 @@ const challenge_donuts_download_button = view(
 
 ```js
 const default_defi_aap_donut_config = (width) => ({
-  width: width - 150,
-  legendWidth: width - 150,
+  width: width,
+  legendWidth: 80,
   keyMap: (d) => `défi ${d.defi}`,
   valueMap: (d) => d.count,
   color: overview.defiColorScale.domain([
@@ -1312,14 +1314,6 @@ const default_defi_aap_donut_config = (width) => ({
     'défi 5',
     'défi 6',
   ]),
-})
-
-const default_defi_defi_donut_config = (width) => ({
-  width: width - 100,
-  legendWidth: width - 70,
-  keyMap: (d) => d.aap,
-  valueMap: (d) => d.count,
-  color: overview.aapColorScale,
 })
 ```
 
@@ -1716,8 +1710,7 @@ group by all
     <!-- $ -->
     ${resize((width) => disciplines.erc_donut(
       aap1_cnu_count_erc,
-      width - 70,
-      undefined,
+      width,
       {
         legendTextLength: 40,
       }
@@ -1729,37 +1722,15 @@ group by all
     <h3>Les sections CNU identifiés dans les projets proposés de l'AAP 2.</h3>
     ${disciplines.erc_legend()}
     <!-- $ -->
-    <div class="grid grid-cols-2">
-      <div class="grid-rowspan-2">
-        ${resize((width) => donutChart(
-          aap2_cnu_count_erc.filter((d) => d.selected),
-          {
-            ...default_cnu_aap_donut_config(width),
-            width: width,
-            legend: false,
-          },
-        ))}
-        <!-- $ -->
-      </div>
-      ${resize((width) => donutChart(
-        d3.rollups(aap2_cnu_count_erc.filter((d) => d.selected),
-          (v) => v.reduce((a, b) => a + b.count, 0),
-          (d) => d.group,
-        ).flatMap(([group, count]) => ({
-          group,
-          count,
-        })),
-        {
-          ...default_cnu_aap_donut_config(),
-          width: 1,
-          legendWidth: 1,
-          legendTextLength: 40,
-          innerRadiusRatio: 0,
-          outerRadiusRatio: 0,
-        },
-      ))}
-      <!-- $ -->
-    </div>
+    ${resize((width) => donutChart(
+      aap2_cnu_count_erc.filter((d) => d.selected),
+      {
+        ...default_cnu_aap_donut_config(width),
+        legendWidth: 300,
+        legendTextLength: 40,
+      },
+    ))}
+    <!-- $ -->
   </div>
   <div class="card">
     <h2>Distribution des CNUs par catégorie de l'AAP 2</h2>
@@ -1769,36 +1740,38 @@ group by all
     </h3>
     ${disciplines.erc_legend()}
     <!-- $ -->
-    <div class="grid grid-cols-2">
-      <div class="grid-rowspan-2">
+    <div class="grid grid-cols-3">
+      ${resize((width) => donutChart(
+        aap2_cnu_count_erc,
+        {
+          ...default_cnu_aap_donut_config(width),
+          width: width,
+          legendWidth: 0,
+          legend: false,
+          outerRadiusRatio: (d) => (d.data.selected ? width * 0.5 : width * 0.48),
+        },
+      ))}
+      <!-- $ -->
+      <div class="grid-colspan-2">
         ${resize((width) => donutChart(
-          aap2_cnu_count_erc,
+          d3.rollups(aap2_cnu_count_erc,
+            (v) => v.reduce((a, b) => a + b.count, 0),
+            (d) => d.group,
+          ).flatMap(([group, count]) => ({
+            group,
+            count,
+          })),
           {
-            ...default_cnu_aap_donut_config(width),
-            width: width,
-            legend: false,
+            ...default_cnu_aap_donut_config(),
+            width: 1,
+            legendWidth: 2,
+            legendTextLength: 40,
+            innerRadiusRatio: 0,
+            outerRadiusRatio: 0,
           },
         ))}
         <!-- $ -->
       </div>
-      ${resize((width) => donutChart(
-        d3.rollups(aap2_cnu_count_erc,
-          (v) => v.reduce((a, b) => a + b.count, 0),
-          (d) => d.group,
-        ).flatMap(([group, count]) => ({
-          group,
-          count,
-        })),
-        {
-          ...default_cnu_aap_donut_config(),
-          width: 1,
-          legendWidth: 1,
-          legendTextLength: 40,
-          innerRadiusRatio: 0,
-          outerRadiusRatio: 0,
-        },
-      ))}
-      <!-- $ -->
     </div>
   </div>
 </div>
@@ -2021,6 +1994,7 @@ order by cnu, selected
 
 ```js
 const default_cnu_aap_donut_config = (width) => ({
+  width: width,
   keyMap: (d) => d.group,
   valueMap: (d) => d.count,
   color: d3
@@ -2030,7 +2004,6 @@ const default_cnu_aap_donut_config = (width) => ({
     )
     .unknown('gray'),
   sort: (a, b) => a.group - b.group,
-  outerRadiusRatio: (d) => (d.data.selected ? width * 0.5 : width * 0.48),
 })
 
 const aap2_cnu_count_erc = d3
@@ -2047,6 +2020,7 @@ const aap2_cnu_count_erc = d3
       count,
     })),
   )
+console.log('aap2_cnu_count_erc', aap2_cnu_count_erc)
 ```
 
 <!--

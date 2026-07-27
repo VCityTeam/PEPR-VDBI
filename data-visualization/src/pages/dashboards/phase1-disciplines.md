@@ -472,6 +472,8 @@ const selected_project = view(
       </div>`
     )}
   </div>
+</div>
+<div class="grid grid-cols-2">
   <div id="cnu-group-container" class="card">
     <h2>Researcher CNU groups</h2>
     <!-- <h2>Chercheurs PEPR VDBI par groupe CNU</h2> -->

@@ -289,7 +289,6 @@ const pie_config = view(
           (d) => d[pie_config.x]),
         {
           width: width,
-          height: width,
           keyMap: (d) => d[0],
           valueMap: (d) => d[1],
           colorMap: (d) => d[0],
