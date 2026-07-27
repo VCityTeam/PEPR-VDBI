@@ -1,6 +1,7 @@
 import { filter } from 'd3'
 import { nameByRace } from 'fantasy-name-generator'
 import pino from 'pino'
+import { randomBytes } from 'crypto'
 
 export const default_log_options = (
   name,
@@ -101,7 +102,9 @@ export async function fetchCsv(url) {
  * @returns {string} anonymized entry
  */
 export function anonymizeEntry() {
-  return Math.random().toString(36).substring(2, 15)
+  // return Math.random().toString(36).substring(2, 15)
+
+  return randomBytes(16).toString('hex')
 }
 
 /**

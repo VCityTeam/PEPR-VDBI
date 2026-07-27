@@ -352,6 +352,7 @@ export function resolveResearcherEntities(
           researcher.firstname = anonymizeEntry()
           researcher.lastname = anonymizeEntry()
           researcher.gender = anonymizeEntry()
+          researcher.email = anonymizeEntry()
           researcher.orcid = anonymizeEntry()
           researcher.idhal = anonymizeEntry()
           researcher.lab = pseudoanonymizeEntry(
