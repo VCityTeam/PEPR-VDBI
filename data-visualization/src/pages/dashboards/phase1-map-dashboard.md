@@ -2,11 +2,11 @@
 sql:
   annex_partners: /data/partners_by_project_annex.csv
   # general_partners: /data/partners_general.csv
-  socioeco_partners: /data/phase1-socioeconomic_partners.tsv
-  etablissement_partners: /data/phase1-institutions.tsv
-  laboratory_partners: /data/phase1-laboratories.tsv
+  # socioeco_partners: /data/phase1-socioeconomic_partners.tsv
+  # etablissement_partners: /data/phase1-institutions.tsv
+  # laboratory_partners: /data/phase1-laboratories.tsv
   projects_by_partner: /data/partners_by_project.csv
-  # aap_partners: /data/private/partenaires_aap2023.csv
+  aap_partners: /data/partners.tsv
   terrain_locations: /data/project_summary_terrain_locations.csv
   project_summaries: /data/private/project_summary.csv
   project_terrains_by_scale: /data/private/project_summary_terrains.csv
@@ -575,92 +575,7 @@ console.debug('lab_disciplines_by_code', lab_disciplines_by_code)
 ```
 
 ```sql id=all_partner_data
-WITH user_partner_data AS (
-  SELECT
-    label,
-    siret as "ID primaire",
-    "type",
-    nom_complet,
-    code_postal,
-  FROM socioeco_partners
-  UNION
-  SELECT
-    label,
-    numero_national_de_structure as "ID primaire",
-    'LABORATOIRE' AS "type",
-    libelle AS nom_complet,
-    code_postal,
-  FROM laboratory_partners
-  UNION
-  SELECT
-    label,
-    siret as "ID primaire",
-    "type",
-    nom_complet,
-    code_postal,
-  FROM etablissement_partners
-)
-SELECT DISTINCT
-  projet,
-  user_partner_data.label,
-  "ID primaire",
-  -- user_partner_data.type,
-  -- nom_complet,
-  code_postal,
-  -- "IGNORE",
-FROM projects_by_partner
-JOIN user_partner_data
-ON projects_by_partner.source_label = user_partner_data.label
-WHERE NOT "IGNORE"
-```
-
-```sql id=all_partner_data_deprecated
--- Clean tables
-UPDATE general_partners
-  SET project_name = 'RESILIENCE'
-  WHERE project_name = 'RÉSILIENCE';
-UPDATE general_partners
-  SET project_name = 'NEO'
-  WHERE project_name = 'NÉO';
-UPDATE general_partners
-  SET project_name = 'NEO'
-  WHERE project_name = 'NÉO';
-
--- merge tables
--- WITH
---   union_all AS (
---     SELECT *
---     FROM aap_partners
---     UNION
---     SELECT *
---     FROM annex_partners
---     UNION
---     SELECT *
---     FROM general_partners
---   )
-SELECT
-  nom_complet,
-  siret,
-  -- siren,
-  -- list_distinct(list(siren)) as sirens,
-  -- list_distinct(list(project_name)) as projects,
-  project_name,
-  -- nature_juridique,
-  -- libelle_commune,
-  -- commune,
-  latitude,
-  longitude,
-  -- first(latitude) as latitude,
-  -- first(longitude) as longitude,
-  code_postal,
-  -- region,
-  -- list_distinct(list(project_coordinator)) AS project_coordinator,
-  -- list_distinct(list(source)) AS sources,
-  source_label,
-  -- count() as count,
-FROM general_partners
--- FROM union_all
--- GROUP BY ALL;
+SELECT * from aap_partners
 ```
 
 ```sql id=terrain_data
