@@ -1,6 +1,5 @@
 // A CLI helper script for querying the identified APIs and formatting the response.
 
-import { tsvFormat } from 'd3-dsv'
 import { queryAndFormatRE } from './siret_api.js'
 import { GeocodingService } from './geocoding.js'
 
@@ -17,10 +16,10 @@ const query = args[1]
 if (api === 'geocoding') {
   const geocodingService = new GeocodingService()
   const results = await geocodingService.simpleSearch(query)
-  process.stdout.write(JSON.stringify(results, null, 2))
+  process.stdout.write(JSON.stringify(results))
 } else if (api === 'siret') {
   const response = await queryAndFormatRE(query, 'cli', false)
-  process.stdout.write(tsvFormat([response]))
+  process.stdout.write(JSON.stringify(response))
 } else {
   console.error(`Unknown API: ${api}`)
   process.exit(1)
