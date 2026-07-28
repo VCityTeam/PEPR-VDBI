@@ -48,36 +48,9 @@ export class GeocodingService {
    */
   constructor({
     url = 'https://nominatim.openstreetmap.org/search',
-    requestTimeIntervalMs = '3000',
-    result = {
-      format: 'json',
-      basePath: '',
-      lon: 'lon',
-      lat: 'lat',
-    },
-    parameters = {
-      q: {
-        fill: 'query',
-      },
-      format: {
-        fill: 'value',
-        value: 'json',
-      },
-    },
-    extent = {
-      name: 'EPSG:3946',
-      west: 1837860,
-      east: 1851647,
-      south: 5169347,
-      north: 5180575,
-    },
+    requestTimeIntervalMs = 3000,
   } = {}) {
-    this.extent = extent
     this.geocodingUrl = url
-    this.parameters = parameters
-    this.basePath = result.basePath
-    this.latPath = result.lat
-    this.lonPath = result.lon
     this.requestTimeIntervalMs = requestTimeIntervalMs
     this.canDoRequest = true
   }
@@ -94,7 +67,20 @@ export class GeocodingService {
    *   `requestTimeIntervalMs` has elapsed since the previous request, or
    *   `'No result found'` if the API returned zero results.
    */
-  async simpleSearch(searchString) {
+  async simpleSearch(
+    searchString,
+    parameters = {
+      format: 'jsonv2',
+      limit: 1,
+      extent: {
+        name: 'EPSG:3946',
+        west: 1837860,
+        east: 1851647,
+        south: 5169347,
+        north: 5180575,
+      },
+    },
+  ) {
     if (!!this.requestTimeIntervalMs && !this.canDoRequest) {
       throw 'Cannot perform a request for now.'
     }
@@ -104,30 +90,12 @@ export class GeocodingService {
 
     // Build the URL according to parameter description (in config file)
     let url = this.geocodingUrl + `?q=${queryString}&format=jsonv2`
-    // for (const [paramName, param] of Object.entries(this.parameters)) {
-    //   if (param.fill === 'value') {
-    //     url += `${paramName}=${param.value}`
-    //   } else if (param.fill === 'query') {
-    //     url += `${paramName}=${queryString}`
-    //   } else if (param.fill === 'extent') {
-    //     url +=
-    //       paramName +
-    //       '=' +
-    //       param.format
-    //         .replace('SOUTH', this.extent.south)
-    //         .replace('WEST', this.extent.west)
-    //         .replace('NORTH', this.extent.north)
-    //         .replace('EAST', this.extent.east)
-    //   }
-    //   url += '&'
-    // }
 
     // Make the request
-    const response = await handleFetchJson(url, 0, {
+    const response = await handleFetchJson(url, this.requestTimeIntervalMs, {
       'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0',
     })
-    const results = this.basePath ? response[this.basePath] : response
 
     if (this.requestTimeIntervalMs) {
       this.canDoRequest = false
@@ -136,51 +104,6 @@ export class GeocodingService {
       }, Number(this.requestTimeIntervalMs))
     }
 
-    if (results.length > 0) {
-      return results
-    }
-    throw 'No result found'
-  }
-
-  /**
-   * Retrieves the coordinates based on the search string parameter.
-   *
-   * @param {string} searchString Either an address or the name of a place.
-   *   URL-encoded internally before being sent as the `query`-filled request
-   *   parameter.
-   * @returns {Promise<Array<{lat: number, lon: number}>>} All matching results,
-   *   as `{lat, lon}` pairs extracted per the `result.lat`/`result.lon` paths.
-   * @throws {string} `'Cannot perform a request for now.'` if called again before
-   *   `requestTimeIntervalMs` has elapsed since the previous request, or
-   *   `'No result found'` if the API returned zero results.
-   */
-  async getCoordinates(searchString) {
-    const results = await this.simpleSearch(searchString).map((res) => {
-      return {
-        lat: Number(res[this.latPath]),
-        lon: Number(res[this.lonPath]),
-      }
-    })
-  }
-
-  /**
-   * Retrieves the OSM code based on the search string parameter.
-   *
-   * @param {string} searchString Either an address or the name of a place.
-   *   URL-encoded internally before being sent as the `query`-filled request
-   *   parameter.
-   * @returns {Promise<Array<{lat: number, lon: number}>>} All matching results,
-   *   as `{lat, lon}` pairs extracted per the `result.lat`/`result.lon` paths.
-   * @throws {string} `'Cannot perform a request for now.'` if called again before
-   *   `requestTimeIntervalMs` has elapsed since the previous request, or
-   *   `'No result found'` if the API returned zero results.
-   */
-  async getOsmCode(searchString) {
-    const results = await this.simpleSearch(searchString).map((res) => {
-      return {
-        lat: Number(res[this.latPath]),
-        lon: Number(res[this.lonPath]),
-      }
-    })
+    return response
   }
 }

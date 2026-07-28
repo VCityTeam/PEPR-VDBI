@@ -28,7 +28,7 @@ let globalFetchQueue = Promise.resolve()
  * Send an HTTP request to a URL API with some basic error handling and logging.
  *
  * @param {string} url - The endpoint url.
- * @param {number} [sleep=0] - The number of seconds to sleep before sending the request to avoid rate limiting.
+ * @param {number} [sleep=0] - The number of milliseconds to sleep before sending the request to avoid rate limiting.
  * @param {Object} [header={}] - An object containing additional headers to include in the request.
  * @param {pino.Logger} [logger=pino(default_log_options('fetch url utility'))] - A pino logger instance.
  * @returns {Promise<Object|null>} A promise resolving to a dictionary (object) of the request response if successful, or null.
@@ -43,7 +43,7 @@ export async function handleFetchJson(
 
   const executeFetch = async () => {
     if (sleep > 0) {
-      await new Promise((resolve) => setTimeout(resolve, sleep * 1000))
+      await new Promise((resolve) => setTimeout(resolve, sleep))
     }
 
     try {
