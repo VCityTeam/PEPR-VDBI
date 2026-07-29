@@ -1,7 +1,7 @@
 ---
 sql:
   partners: /data/partners.csv
-  projects_by_partner: /data/partners_by_project.csv
+  projects_by_partner: /data/partners_by_project.tsv
   # lab_disciplines_ERC: /data/lab_disciplines_ERC.csv
   # lab_disciplines_HCERES: /data/lab_disciplines_HCERES.csv
 ---

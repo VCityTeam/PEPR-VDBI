@@ -6,7 +6,7 @@ import { randomBytes } from 'crypto'
 export const default_log_options = (
   name,
   destination = './data_loaders.js.log',
-  level = 'warn',
+  level = process.env.BUILD_ENV === 'production' ? 'warn' : 'debug',
 ) => ({
   name: name,
   level: level,
@@ -54,13 +54,16 @@ export async function handleFetchJson(
         },
       })
 
+      const data = await response.json()
+      logger.debug(`response: ${JSON.stringify(data)}`)
+
       if (!response.ok) {
         // Emulate response.raise_for_status()
-        throw new Error(`HTTP error! status: ${response.status}`)
+        throw new Error(
+          `HTTP error! status: ${response.status} error: ${response.error}`,
+        )
       }
 
-      const data = await response.json()
-      logger.debug(`${url} response: ${data}`)
       return data
     } catch (err) {
       if (err.message && err.message.startsWith('HTTP error')) {

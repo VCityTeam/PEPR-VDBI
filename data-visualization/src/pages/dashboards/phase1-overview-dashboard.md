@@ -6,7 +6,7 @@ sql:
   phase1_institutions: /data/phase1-institutions.tsv
   # general_partners: /data/partners_general.csv
   # aap_partners: /data/private/partenaires_aap2023.csv
-  terrains: /data/project_terrains.csv
+  terrains: /data/project_terrains.tsv
   project_summary: /data/private/project_summary.csv
 ---
 

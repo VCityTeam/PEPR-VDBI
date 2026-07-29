@@ -4,25 +4,28 @@ import { simpleGristQuery } from './utilities/grist_api.js'
 
 const query = `
 select
-  id,
-  nom_complet as label,
-  code_postal as postal_code,
+  gristHelper_Display as partner,
+  gristHelper_Display2 as project,
+  PARTENAIRE as partner_id,
+  PROJET as project_id,
   'SOCIOECONOMIQUE' as type
-from Partenaires_socioeconomiques
+from Partenaire_socioeco_par_projet
 union
 select
-  id,
-  if(sigle is null or sigle = '', libelle, concat(libelle, ' (', sigle, ')')) as label,
-  code_postal as postal_code,
+  gristHelper_Display as partner,
+  gristHelper_Display2 as project,
+  UNITE as partner_id,
+  PROJET as project_id,
   'LABORATOIRE' as type
-from Laboratoires
+from Laboratoire_par_projet
 union
 select
-  id,
-  nom_complet as label,
-  code_postal as postal_code,
+  gristHelper_Display as partner,
+  gristHelper_Display2 as project,
+  INSTITUTION as partner_id,
+  PROJET as project_id,
   'INSTITUTION' as type
-from Institutions
+from Institution_par_projet
 `
 
 simpleGristQuery(query, 'oUjutoUDF9xP29sxnd6SNX')

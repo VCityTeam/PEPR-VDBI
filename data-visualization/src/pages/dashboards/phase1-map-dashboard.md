@@ -1,15 +1,9 @@
 ---
 sql:
   annex_partners: /data/partners_by_project_annex.csv
-  # general_partners: /data/partners_general.csv
-  # socioeco_partners: /data/phase1-socioeconomic_partners.tsv
-  # etablissement_partners: /data/phase1-institutions.tsv
-  # laboratory_partners: /data/phase1-laboratories.tsv
-  projects_by_partner: /data/partners_by_project.csv
+  projects_by_partner: /data/partners_by_project.tsv
   aap_partners: /data/partners.tsv
-  terrain_locations: /data/project_summary_terrain_locations.csv
-  project_summaries: /data/private/project_summary.csv
-  project_terrains_by_scale: /data/private/project_summary_terrains.csv
+  project_terrains: /data/project_terrains.tsv
 ---
 
 # Phase 1 Cartography
@@ -64,32 +58,31 @@ import { vectorFromArray } from 'npm:apache-arrow'
 ## Projects by Terrain
 
 ```js
+const projects = [...(await sql`select distinct project from project_terrains`)].map((d) => d.project)
+
 const selected_terrain_project = view(
   Inputs.checkbox(
-    [...all_partner_data].map((d) => d.projet),
+    projects,
     {
       label: 'Included projects:',
       unique: true,
       sort: true,
-      value: [...all_partner_data].map((d) => d.projet),
+      value: projects,
     },
   ),
 )
 
+const scales = [
+  ...(await sql`select distinct scale from project_terrains`),
+].map((d) => d.scale)
+
 const selected_terrain_scale = view(
-  Inputs.checkbox(
-    [...(await sql`select echelle from project_terrains_by_scale`)].map(
-      (d) => d.echelle,
-    ),
-    {
-      label: 'Included scales:',
-      unique: true,
-      sort: true,
-      value: [
-        ...(await sql`select echelle from project_terrains_by_scale`),
-      ].map((d) => d.echelle),
-    },
-  ),
+  Inputs.checkbox(scales, {
+    label: 'Included scales:',
+    unique: true,
+    sort: true,
+    value: scales,
+  }),
 )
 
 const terrain_legend_type = view(
@@ -103,7 +96,7 @@ const terrain_legend_type = view(
 <div style="display: flex">
   <div>
     ${downloadTableButton(
-      () => [...terrain_data_by_city_by_scale].map((d) => d.toJSON()),
+      () => [...terrain_data_by_city].map((d) => d.toJSON()),
       {
         label: "Download terrains by location data",
         delimeter: "\t",
@@ -203,13 +196,13 @@ const terrain_legend_type = view(
         width,
         terrain_legend_type
         ? generateDotMapMarks(
-            terrain_data_by_city_by_scale_by_scale,
+            terrain_data_by_city_by_scale,
             italy_terrain_legend,
             0.1,
             width > 500,
           )
         : generateLineMapMarks(
-            terrain_data_by_city_by_scale_by_scale,
+            terrain_data_by_city_by_scale,
             italy_terrain_legend,
             width > 500,
           ),
@@ -304,7 +297,7 @@ const choropleth_terrain_data = d3.group(
         d3.geoContains(department, [d.longitude, d.latitude]),
       ) || { properties: { nom: null } }
     ).properties.nom,
-  (d) => d.project_acronyme,
+  (d) => d.project,
 )
 
 console.debug('choropleth_terrain_data', choropleth_terrain_data)
@@ -355,20 +348,13 @@ console.debug(
 
 ```js
 const selected_partner_project = view(
-  Inputs.select(
-    [
-      'All',
-      // ...[...(await sql`select "Nom projet" from project_summaries`)]
-      ...[...all_partner_data].map((d) => d.projet),
-    ],
-    {
-      multiple: false,
-      label: 'Optionally, select a project to focus on:',
-      unique: true,
-      sort: true,
-      value: 'All',
-    },
-  ),
+  Inputs.select(['All', ...[...all_partner_data].map((d) => d.project)], {
+    multiple: false,
+    label: 'Optionally, select a project to focus on:',
+    unique: true,
+    sort: true,
+    value: 'All',
+  }),
 )
 
 const flatten_choropleth = view(Inputs.toggle({ label: 'Flatten choropleth?' }))
@@ -442,7 +428,7 @@ ${downloadTableButton(
 ```js
 const choropleth_data = [...all_partner_data].filter(
   (d) =>
-    selected_partner_project == 'All' || d.projet == selected_partner_project,
+    selected_partner_project == 'All' || d.project == selected_partner_project,
 )
 ```
 
@@ -486,10 +472,10 @@ const terrain_partners_by_code = new Map(
     [...all_partner_data],
     (D) =>
       D.reduce(
-        (a, v) => (selected_terrain_project.includes(v.projet) ? a + 1 : a),
+        (a, v) => (selected_terrain_project.includes(v.project) ? a + 1 : a),
         0,
       ),
-    (d) => (d.code_postal ? String(d.code_postal).slice(0, 2) : null),
+    (d) => (d.postal_code ? String(d.postal_code).slice(0, 2) : null),
   ),
 )
 ```
@@ -501,40 +487,40 @@ const all_partners_by_code = new Map(
       [...all_partner_data].concat([
         // with hardcoded project corrections
         {
-          projet: 'INTEGREEN',
-          code_postal: 95,
+          project: 'INTEGREEN',
+          postal_code: 95,
         },
         {
-          projet: 'INTEGREEN',
-          code_postal: 93,
+          project: 'INTEGREEN',
+          postal_code: 93,
         },
         {
-          projet: 'URBHEALTH',
-          code_postal: 95,
+          project: 'URBHEALTH',
+          postal_code: 95,
         },
         {
-          projet: 'URBHEALTH',
-          code_postal: 78,
+          project: 'URBHEALTH',
+          postal_code: 78,
         },
         {
-          projet: 'URBHEALTH',
-          code_postal: 92,
+          project: 'URBHEALTH',
+          postal_code: 92,
         },
         {
-          projet: 'URBHEALTH',
-          code_postal: 91,
+          project: 'URBHEALTH',
+          postal_code: 91,
         },
       ]),
       (D) =>
         D.reduce(
           (a, v) =>
             selected_partner_project == 'All' ||
-            v.projet == selected_partner_project
+            v.project == selected_partner_project
               ? a * Number(!flatten_choropleth) + 1
               : a,
           0,
         ),
-      (d) => (d.code_postal ? String(d.code_postal).slice(0, 2) : null),
+      (d) => (d.postal_code ? String(d.postal_code).slice(0, 2) : null),
     )
     .filter((d) => d[1] > 0),
 )
@@ -561,12 +547,12 @@ const lab_disciplines_by_code = new Map(
         D.reduce(
           (a, v) =>
             selected_partner_project == 'All' ||
-            v.projet == selected_partner_project
+            v.project == selected_partner_project
               ? a + 1
               : a,
           0,
         ),
-      (d) => d.code_postal,
+      (d) => d.postal_code,
     )
     .filter((d) => d[1] > 0),
 )
@@ -579,236 +565,64 @@ SELECT * from aap_partners
 ```
 
 ```sql id=terrain_data
--- merge osm data with terrain+scale data
-
-select
-  acronyme as project_acronyme,
-  terrain_locations.terrain,
-  echelle as échelle,
-  latitude,
-  longitude,
-  raw_data->>'osm_id' as osm_id,
-  raw_data->>'osm_type' as osm_type,
-  raw_data->>'name' as osm_name,
-  raw_data->>'addresstype' as osm_address_type,
-  case
-    when json_exists(raw_data, '$.address.city')
-      then raw_data->>'$.address.city'
-    when json_exists(raw_data, '$.address.town')
-      then raw_data->>'$.address.town'
-    when json_exists(raw_data, '$.address.village')
-      then raw_data->>'$.address.village'
-    when json_exists(raw_data, '$.address.municipality')
-      then raw_data->>'$.address.municipality'
-    else null
-  end as osm_city_name,
-  case
-    when json_exists(raw_data, '$.address.local_authority')
-      then raw_data->>'$.address.local_authority'
-    when json_exists(raw_data, '$.address.county')
-      then raw_data->>'$.address.county'
-    else null
-  end as osm_agglomeration_name,
-  case
-    when json_exists(raw_data, '$.address.state')
-      then raw_data->>'$.address.state'
-    when json_exists(raw_data, '$.address.region')
-      then raw_data->>'$.address.region'
-    else null
-  end as osm_regional_name,
-  case
-    when json_exists(raw_data, '$.address.city') then 'city'
-    when json_exists(raw_data, '$.address.town') then 'town'
-    when json_exists(raw_data, '$.address.village') then 'village'
-    when json_exists(raw_data, '$.address.municipality') then 'municipality'
-    else null
-  end as osm_city_type,
-  case
-    when json_exists(raw_data, '$.address.local_authority') then 'local_authority'
-    when json_exists(raw_data, '$.address.county') then 'county'
-    when json_exists(raw_data, '$.address.state') then 'state'
-    when json_exists(raw_data, '$.address.region') then 'region'
-    else null
-  end as osm_agglomeration_type,
-  case
-    when json_exists(raw_data, '$.address.state') then 'state'
-    when json_exists(raw_data, '$.address.region') then 'region'
-    else null
-  end as osm_regional_type,
-  commentaire,
-from terrain_locations, project_terrains_by_scale
-where terrain_locations.terrain = project_terrains_by_scale.terrain
-```
-
-```sql id=terrain_data_by_city_by_scale
--- merge data on a terrain_label
--- (a simplified terrain label for merging locations at the city level)
-
-with
-  labeled_terrain_locations as (
-    select distinct
-      terrain as terrain_label,
-      latitude,
-      longitude,
-    FROM terrain_locations
-  ),
-  labeled_project_terrains_by_scale as (
-    select
-      *,
-      terrain as terrain_label,
-    from project_terrains_by_scale
-  )
-select distinct
-  labeled_terrain_locations.terrain_label,
-  -- list_distinct(list(labeled_terrain_locations.terrain)) as terrains,
-  list_distinct(list(labeled_project_terrains_by_scale.acronyme)) as projects,
-  first(labeled_terrain_locations.latitude) as latitude,
-  first(labeled_terrain_locations.longitude) as longitude,
-  -- echelle as scale,
-from labeled_terrain_locations
-join labeled_project_terrains_by_scale
-on labeled_project_terrains_by_scale.terrain_label = labeled_terrain_locations.terrain_label
-group by all
+select * from project_terrains
 ```
 
 ```sql id=terrain_data_by_city
 -- merge data on a terrain_label
 -- (a simplified terrain label for merging locations at the city level)
 
-with
-  labeled_terrain_locations as (
-    select distinct
-      terrain as terrain_label,
-      latitude,
-      longitude,
-    FROM terrain_locations
-  ),
-  labeled_project_terrains_by_scale as (
-    select
-      *,
-      terrain as terrain_label,
-    from project_terrains_by_scale
-  )
 select distinct
-  labeled_terrain_locations.terrain_label,
-  -- list_distinct(list(labeled_terrain_locations.terrain)) as terrains,
-  list_distinct(list(labeled_project_terrains_by_scale.acronyme)) as projects,
-  first(labeled_terrain_locations.latitude) as latitude,
-  first(labeled_terrain_locations.longitude) as longitude,
-  -- echelle as scale,
-from labeled_terrain_locations
-join labeled_project_terrains_by_scale
-on labeled_project_terrains_by_scale.terrain_label = labeled_terrain_locations.terrain_label
+  terrain,
+  -- list_distinct(list(terrain)) as terrains,
+  list_distinct(list(project)) as projects,
+  first(latitude) as latitude,
+  first(longitude) as longitude,
+  -- scale,
+from project_terrains
 group by all
 ```
 
-```sql id=terrain_data_by_city_deprecated
--- merge data on a terrain_label
--- (a simplified terrain label for merging locations at the city level)
-
-with
-  labeled_terrain_locations as (
-    select distinct
-      terrain,
-      case
-        when instr(terrain, 'Aix-Marseille-Provence') > 0
-          then replace(terrain, 'Aix-Marseille-Provence', 'Marseille')
-        else terrain
-      end as terrain_label,
-      latitude,
-      longitude,
-    FROM terrain_locations
-  ),
-  labeled_project_terrains_by_scale as (
-    select
-      *,
-      case
-        when instr(terrain, ' Méditerranée Métropole') > 0
-          then replace(terrain, ' Méditerranée Métropole', '')
-        when instr(terrain, 'Aix-Marseille-Provence') > 0
-          then replace(terrain, 'Aix-Marseille-Provence', 'Marseille')
-        when instr(terrain, 'Métropole du Grand Paris') > 0
-          then replace(terrain, 'Métropole du Grand Paris', 'Paris')
-        when instr(terrain, 'Métropole Européenne de ') > 0
-          then replace(terrain, 'Métropole Européenne de ', '')
-        when instr(terrain, 'Métropole d''') > 0
-          then replace(terrain, 'Métropole d''', '')
-        when instr(terrain, 'Métropole de ') > 0
-          then replace(terrain, 'Métropole de ', '')
-        when instr(terrain, ' Métropole') > 0
-          then replace(terrain, ' Métropole', '')
-        else terrain
-      end as terrain_label,
-    from project_terrains_by_scale
-  )
-select distinct
-  labeled_terrain_locations.terrain_label,
-  -- list_distinct(list(labeled_terrain_locations.terrain)) as terrains,
-  list_distinct(list(labeled_project_terrains_by_scale.acronyme)) as projects,
-  first(labeled_terrain_locations.latitude) as latitude,
-  first(labeled_terrain_locations.longitude) as longitude,
-from labeled_terrain_locations
-join labeled_project_terrains_by_scale
-on labeled_project_terrains_by_scale.terrain_label = labeled_terrain_locations.terrain_label
-group by all
-```
-
-```sql id=labs
+```sql id=labs display
 select
-  numero_national_de_structure as "ID primaire",
-  projet,
-  "code_postal"[0:2] as code_postal,
-  code_panel_erc,
-from laboratory_partners
+  label as "ID primaire",
+  project,
+  "postal_code"[0:2] as postal_code,
+  -- code_panel_erc,
+from aap_partners
 join projects_by_partner
-on laboratory_partners.label = projects_by_partner.source_label
+  on aap_partners.id = projects_by_partner.partner_id
+where aap_partners.type = 'LABORATOIRE'
 ```
 
 <!-- saving this for later when we figure out financial annex integration -->
 
 ```sql id=partner_project_code
-WITH user_partner_data AS (
-  SELECT
-    label,
-    siret as "ID primaire",
-    "type",
-    nom_complet,
-    code_postal,
-  FROM socioeco_partners
-  UNION
-  SELECT
-    label,
-    numero_national_de_structure as "ID primaire",
-    'LABORATOIRE' AS "type",
-    libelle AS nom_complet,
-    code_postal,
-  FROM laboratory_partners
-),
-user_partner_project_data as (
+WITH user_partner_project_data as (
   SELECT DISTINCT
-    projet,
-    user_partner_data.label,
-    "ID primaire",
-    user_partner_data.type,
+    project,
+    aap_partners.label,
+    aap_partners.id as "ID primaire",
+    aap_partners.type,
     -- nom_complet,
-    code_postal,
+    postal_code,
   FROM projects_by_partner
-  JOIN user_partner_data
-  ON trim(projects_by_partner.source_label) = trim(user_partner_data.label)
+  JOIN aap_partners
+  ON projects_by_partner.partner_id::VARCHAR = aap_partners.id::VARCHAR
 )
 SELECT
-  projet,
+  project,
   "ID primaire",
-  code_postal,
+  postal_code,
 FROM user_partner_project_data
 UNION
 SELECT DISTINCT
-  upper(project_name) AS projet,
+  upper(project_name) AS project,
   -- source_label AS label,
   siret AS "ID primaire",
   -- nature_juridique AS "type",
   -- nom_complet,
-  code_postal,
+  code_postal AS postal_code,
 FROM annex_partners
 ```
 
@@ -825,9 +639,7 @@ const inBBox = (
 ```
 
 ```js
-const terrain_data_by_city_by_scale_by_scale = [
-  ...terrain_data_by_city_by_scale,
-]
+const terrain_data_by_city_by_scale = [...terrain_data_by_city]
 // ].filter((d) => selected_terrain_scale.includes(d.scale))
 ```
 
@@ -846,7 +658,7 @@ const ile_de_france_bbox = {
   max_y: 49.24342474094858,
 }
 
-const france_terrain_data = terrain_data_by_city_by_scale_by_scale.filter(
+const france_terrain_data = terrain_data_by_city_by_scale.filter(
   (d) =>
     // keep projects within france
     inBBox(d.longitude, d.latitude, mainland_france_bbox) &&
@@ -856,20 +668,19 @@ const france_terrain_data = terrain_data_by_city_by_scale_by_scale.filter(
       d.terrain_label == 'Métropole du Grand Paris'),
 )
 
-const ile_de_france_terrain_data =
-  terrain_data_by_city_by_scale_by_scale.filter(
-    (d) =>
-      d.terrain_label != 'Île-de-France' &&
-      d.terrain_label != 'Métropole du Grand Paris' &&
-      inBBox(d.longitude, d.latitude, ile_de_france_bbox),
-  )
+const ile_de_france_terrain_data = terrain_data_by_city_by_scale.filter(
+  (d) =>
+    d.terrain_label != 'Île-de-France' &&
+    d.terrain_label != 'Métropole du Grand Paris' &&
+    inBBox(d.longitude, d.latitude, ile_de_france_bbox),
+)
 
 if (selected_terrain_scale.includes('région'))
   france_terrain_data.push({
     terrain_label: 'Île-de-France',
     projects: vectorFromArray([
       ...new Set(
-        terrain_data_by_city_by_scale_by_scale
+        terrain_data_by_city_by_scale
           .filter((d) => d.terrain_label == 'Île-de-France')
           .flatMap((d) => [...d.projects]),
       ),
@@ -880,12 +691,11 @@ if (selected_terrain_scale.includes('région'))
     longitude: 2.342,
   })
 
-const international_terrain_data =
-  terrain_data_by_city_by_scale_by_scale.filter(
-    (d) =>
-      // keep projects outside of france
-      !inBBox(d.longitude, d.latitude, mainland_france_bbox),
-  )
+const international_terrain_data = terrain_data_by_city_by_scale.filter(
+  (d) =>
+    // keep projects outside of france
+    !inBBox(d.longitude, d.latitude, mainland_france_bbox),
+)
 ```
 
 ```js
@@ -1353,7 +1163,7 @@ const choroplethFrance = (width, height, fill) =>
     fill,
     france_projection,
     mainland_france_departements_geojson,
-    '- Partenaires et parties prenantes des projets par département, France',
+    '- Partenaires et parties prenantes des projects par département, France',
   )
 
 const choroplethIdf = (width, fill) =>
@@ -1363,7 +1173,7 @@ const choroplethIdf = (width, fill) =>
     fill,
     idf_projection,
     idf_departements_geojson,
-    '- Partenaires et parties prenantes des projets par département, Île-de-France',
+    '- Partenaires et parties prenantes des projects par département, Île-de-France',
   )
 
 const choroplethItaly = (width, fill) =>
@@ -1373,7 +1183,7 @@ const choroplethItaly = (width, fill) =>
     fill,
     italy_projection,
     italy_regions_geojson,
-    '- Partenaires et parties prenantes des projets par département, Italy',
+    '- Partenaires et parties prenantes des projects par département, Italy',
   )
 
 console.debug('italy_regions_geojson', italy_regions_geojson)
@@ -1401,29 +1211,15 @@ console.debug(
   [...(await sql`select * from aap_partners`)].map((d) => d.toJSON()),
 )
 console.debug(
-  'terrain_locations',
-  [...(await sql`select * from terrain_locations`)].map((d) => d.toJSON()),
-)
-console.debug(
-  'project_summaries',
-  [...(await sql`select * from project_summaries`)].map((d) => d.toJSON()),
-)
-console.debug(
-  'project_terrains_by_scale',
-  [...(await sql`select * from project_terrains_by_scale`)].map((d) =>
-    d.toJSON(),
-  ),
+  'project_terrains',
+  [...(await sql`select * from project_terrains`)].map((d) => d.toJSON()),
 )
 ```
 
 ```js
 console.debug(
-  'terrain_data',
-  [...terrain_data].map((d) => d.toJSON()),
-)
-console.debug(
-  'terrain_data_by_city_by_scale',
-  [...terrain_data_by_city_by_scale].map((d) => d.toJSON()),
+  'terrain_data_by_city',
+  [...terrain_data_by_city].map((d) => d.toJSON()),
 )
 console.debug('france_terrain_data', france_terrain_data)
 console.debug('ile_de_france_terrain_data', ile_de_france_terrain_data)
