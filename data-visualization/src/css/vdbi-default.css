@@ -44,6 +44,39 @@ svg,
   color: var(--theme-blue);
 }
 
+/* Render Inputs.toggle() checkboxes as toggle switches instead of native checkboxes. */
+form[class*='-toggle'] input[type='checkbox'] {
+  appearance: none;
+  position: relative;
+  width: 2.5em;
+  height: 1.4em;
+  border-radius: 1em;
+  background: var(--theme-foreground-faintest);
+  outline: none;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+form[class*='-toggle'] input[type='checkbox']::after {
+  content: '';
+  position: absolute;
+  top: 0.1em;
+  left: 0.1em;
+  width: 1.2em;
+  height: 1.2em;
+  border-radius: 50%;
+  background: var(--theme-background);
+  transition: left 0.3s ease-in-out;
+}
+
+form[class*='-toggle'] input[type='checkbox']:checked {
+  background: var(--theme-foreground-focus);
+}
+
+form[class*='-toggle'] input[type='checkbox']:checked::after {
+  left: 1.2em;
+}
+
 /* Uncomment this if the observable framework ever supports local font hosting */
 
 /* body {
