@@ -52,8 +52,7 @@ used in this repo:
 - `*.py` — Python scripts run through the project's `uv`-managed venv; shared helpers live in
   `src/data/utilities/` (`io_utils.py`, `siret_api.py`, `text_mining.py`, `cortext.py`, etc.). Most just call
   `extractSheet()` from `io_utils.py` to pull a sheet out of a private Excel workbook and print CSV to stdout.
-- `*.sh` — thin `curl` wrappers for fetching static external geo/data files (e.g. `world.json.sh`,
-  `france_regions.json.sh`).
+- `*.sh` — thin `curl` wrappers for fetching static external geo/data files (e.g. `france_regions.json.sh`).
 
 Loaders that need API credentials (currently ORCiD) read them from a `.env` file in `src/data/`
 (`CLIENT_ID`/`CLIENT_SECRET`) — see `fetch-orcid-access-token.json.sh`. Some Python loaders write progress logs

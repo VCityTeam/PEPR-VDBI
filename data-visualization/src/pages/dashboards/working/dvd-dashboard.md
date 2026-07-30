@@ -2,7 +2,7 @@
 
 ```js
 import { countEntities, cropText } from '/components/utilities.js'
-import { donutChart } from '/components/pie-chart.js'
+import { DonutChart } from '/components/pie-chart.js'
 import { projectionMap } from '/components/projection-map.js'
 import {
   arcDiagramVertical,
@@ -28,7 +28,7 @@ const geocoded_researcher_sites = FileAttachment(
   '/data/researcher_sites.geocoded.csv',
 ).csv()
 
-const world = FileAttachment('/data/world.json').json()
+const world = FileAttachment('/data/countries-110m.json').json()
 ```
 
 ```js
@@ -131,14 +131,13 @@ const discipline_erc_count = countEntities(
   .filter((d) => exclude(d[0]))
   .sort((a, b) => d3.descending(a[1], b[1]))
 
-const discipline_erc_pie = donutChart(discipline_erc_count, {
+const discipline_erc_pie = new DonutChart(discipline_erc_count, {
   width: 650,
   legendWidth: 0,
   fontSize: 18,
   keyMap: (d) => d[0],
   valueMap: (d) => d[1],
-  legend: false,
-})
+}).render()
 
 // console.debug("discipline_erc_count", discipline_erc_count);
 ```
@@ -272,14 +271,13 @@ const position_count = d3
 ```
 
 ```js
-const position_pie = donutChart(position_count, {
+const position_pie = new DonutChart(position_count, {
   width: 650,
   legendWidth: 0,
   fontSize: 18,
   keyMap: (d) => d[0],
   valueMap: (d) => d[1],
-  legend: false,
-})
+}).render()
 ```
 
 ```js

@@ -233,7 +233,7 @@ ${downloadSVGButton("#plot svg")}<!-- $ -->
 ## Pie Chart
 
 ```js
-import { donutChart } from '/components/pie-chart.js'
+import { DonutChartWithLegend } from '/components/pie-chart.js'
 import { downloadSVGButton } from '/components/utilities.js'
 ```
 
@@ -282,7 +282,7 @@ const pie_config = view(
 <div id="pie" class="card">
   ${resize(
     (width) =>
-      donutChart(
+      new DonutChartWithLegend(
         d3.rollups(
           data,
           (D) => D.reduce((a, v) => a + v[pie_config.y], 0),
@@ -298,11 +298,9 @@ const pie_config = view(
             .unknown("grey"),
           innerRadiusRatio: pie_config.innerRadiusRatio,
           outerRadiusRatio: pie_config.outerRadiusRatio,
-          majorLabelText: () => "",
-          minorLabelText: () => "",
           legendWidth: pie_config.legendWidth,
         }
-      )
+      ).render()
   )}<!-- $ -->
 
 ${downloadSVGButton("#pie svg.donut-chart")}<!-- $ -->

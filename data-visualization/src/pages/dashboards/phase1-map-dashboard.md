@@ -58,18 +58,17 @@ import { vectorFromArray } from 'npm:apache-arrow'
 ## Projects by Terrain
 
 ```js
-const projects = [...(await sql`select distinct project from project_terrains`)].map((d) => d.project)
+const projects = [
+  ...(await sql`select distinct project from project_terrains`),
+].map((d) => d.project)
 
 const selected_terrain_project = view(
-  Inputs.checkbox(
-    projects,
-    {
-      label: 'Included projects:',
-      unique: true,
-      sort: true,
-      value: projects,
-    },
-  ),
+  Inputs.checkbox(projects, {
+    label: 'Included projects:',
+    unique: true,
+    sort: true,
+    value: projects,
+  }),
 )
 
 const scales = [
@@ -86,9 +85,9 @@ const selected_terrain_scale = view(
 )
 
 const terrain_legend_type = view(
-  Inputs.toggle({
-    label: 'Remove legend lines?',
-    value: false,
+  Inputs.select(['Polygon', 'Line', 'Dot'], {
+    label: 'Legend view type',
+    value: 'Polygon',
   }),
 )
 ```
@@ -149,42 +148,44 @@ const terrain_legend_type = view(
     style="padding: 10px;"
   >
     ${resize((width, height) =>
+      // Plot.plot({
+      //   width: width,
+      //   height: height,
+      //   projection: "equirectangular",
+      //   marks: [
+      //     Plot.geo(land),
+      //     generateGeojsonMarks(france_terrain_data, france_terrain_legend, width > 1030)
+      //   ],
+      // }),
       defaultProjectionFrance(
         width,
         height - 15,
-        terrain_legend_type
-          ? generateDotMapMarks(
-              france_terrain_data,
-              france_terrain_legend,
-              0.2,
-              width > 1030,
-            )
-          : generateLineMapMarks(
-              choropleth_terrain_data_by_city,
-              france_terrain_legend,
-              width > 1030,
-            ),
+        handleTerrainView(
+          terrain_legend_type,
+          france_terrain_data,
+          france_terrain_legend,
+          0.2,
+          width > 1030),
         "- Project terrains by city and Île-de-France, France"
-      ))
-    }
-
+      )
+    )}
+    <!-- $ -->
   </div>
   <div id="map-container-idf" class="card" style="padding: 10px; overflow: hidden;">
     ${resize(
-      (width) => defaultProjectionParis(
+      (width) =>         handleTerrainView(
+          terrain_legend_type,
+          ile_de_france_terrain_data,
+          idf_terrain_legend,
+          0.015,
+          width > 500),(
         width,
-        terrain_legend_type
-          ? generateDotMapMarks(
-              ile_de_france_terrain_data,
-              idf_terrain_legend,
-              0.015,
-              width > 500,
-            )
-          : generateLineMapMarks(
-              ile_de_france_terrain_data,
-              idf_terrain_legend,
-              width > 500,
-            ),
+        handleTerrainView(
+          terrain_legend_type,
+          ile_de_france_terrain_data,
+          idf_terrain_legend,
+          0.015,
+          width > 500),
         "- Project terrains by city, Grand Métropole de Paris"
       )
     )}
@@ -194,18 +195,12 @@ const terrain_legend_type = view(
     ${resize(
       (width) => defaultProjectionItaly(
         width,
-        terrain_legend_type
-        ? generateDotMapMarks(
-            terrain_data_by_city_by_scale,
-            italy_terrain_legend,
-            0.1,
-            width > 500,
-          )
-        : generateLineMapMarks(
-            terrain_data_by_city_by_scale,
-            italy_terrain_legend,
-            width > 500,
-          ),
+        handleTerrainView(
+          terrain_legend_type,
+          [...terrain_data_by_city],
+          italy_terrain_legend,
+          0.1,
+          width > 500),
         "- TRACES terrains by city, Italy"
       )
     )}
@@ -569,11 +564,14 @@ select * from project_terrains
 ```
 
 ```sql id=terrain_data_by_city
--- merge data on a terrain_label
+-- merge data on terrain feature
 -- (a simplified terrain label for merging locations at the city level)
 
 select distinct
+  terrain_id,
   terrain,
+  osm_id,
+  osm_type,
   -- list_distinct(list(terrain)) as terrains,
   list_distinct(list(project)) as projects,
   first(latitude) as latitude,
@@ -639,11 +637,6 @@ const inBBox = (
 ```
 
 ```js
-const terrain_data_by_city_by_scale = [...terrain_data_by_city]
-// ].filter((d) => selected_terrain_scale.includes(d.scale))
-```
-
-```js
 const mainland_france_bbox = {
   min_x: -5.273438,
   max_x: 8.833008,
@@ -658,30 +651,30 @@ const ile_de_france_bbox = {
   max_y: 49.24342474094858,
 }
 
-const france_terrain_data = terrain_data_by_city_by_scale.filter(
+const france_terrain_data = [...terrain_data_by_city].filter(
   (d) =>
     // keep projects within france
     inBBox(d.longitude, d.latitude, mainland_france_bbox) &&
     // separate out small scale ile-de-france data
     (!inBBox(d.longitude, d.latitude, ile_de_france_bbox) ||
-      // d.terrain_label == "Île-de-France" ||
-      d.terrain_label == 'Métropole du Grand Paris'),
+      // d.terrain == "Île-de-France" ||
+      d.terrain == 'Métropole du Grand Paris'),
 )
 
-const ile_de_france_terrain_data = terrain_data_by_city_by_scale.filter(
+const ile_de_france_terrain_data = [...terrain_data_by_city].filter(
   (d) =>
-    d.terrain_label != 'Île-de-France' &&
-    d.terrain_label != 'Métropole du Grand Paris' &&
+    d.terrain != 'Île-de-France' &&
+    d.terrain != 'Métropole du Grand Paris' &&
     inBBox(d.longitude, d.latitude, ile_de_france_bbox),
 )
 
 if (selected_terrain_scale.includes('région'))
   france_terrain_data.push({
-    terrain_label: 'Île-de-France',
+    terrain: 'Île-de-France',
     projects: vectorFromArray([
       ...new Set(
-        terrain_data_by_city_by_scale
-          .filter((d) => d.terrain_label == 'Île-de-France')
+        [...terrain_data_by_city]
+          .filter((d) => d.terrain == 'Île-de-France')
           .flatMap((d) => [...d.projects]),
       ),
       ...new Set(ile_de_france_terrain_data.flatMap((d) => [...d.projects])),
@@ -691,7 +684,7 @@ if (selected_terrain_scale.includes('région'))
     longitude: 2.342,
   })
 
-const international_terrain_data = terrain_data_by_city_by_scale.filter(
+const international_terrain_data = [...terrain_data_by_city].filter(
   (d) =>
     // keep projects outside of france
     !inBBox(d.longitude, d.latitude, mainland_france_bbox),
@@ -793,15 +786,23 @@ const tip_config = (datum, tip_anchor, big_labels) => ({
 })
 
 const terrain_tips = (data, big_labels) =>
-  data.map((d) => {
-    let tip_anchor = 'top-left'
-
-    if (terrain_anchor_map.has(d.terrain_label)) {
-      tip_anchor = terrain_anchor_map.get(d.terrain_label)
-    }
-
-    return Plot.tip([d.terrain_label], tip_config(d, tip_anchor, big_labels))
-  })
+  Plot.tip(
+    data.map((d) => d.terrain),
+    {
+      x: 'longitude',
+      y: 'latitude',
+      textPadding: big_labels ? 5 : 3,
+      strokeOpacity: 0,
+      fillOpacity: 0.5,
+      fontFamily: 'Marianne, sans-serif',
+      fontSize: big_labels ? 25 : 12,
+      // fontWeight: "bold",
+      anchor: 'top-left',
+      // anchor: (d) => terrain_anchor_map.has(d)
+      //   ? terrain_anchor_map.get(d)
+      //   : 'top-left',
+    },
+  )
 
 const terrain_tip_dots_float_left = [
   // 'Lyon',
@@ -822,7 +823,7 @@ const terrain_tip_dots = (data, legend, delta) =>
         const data = { ...d }
         data.projects = projects[index]
         data.project_index = index
-        data.x = terrain_tip_dots_float_left.includes(data.terrain_label)
+        data.x = terrain_tip_dots_float_left.includes(data.terrain)
           ? data.longitude - delta - index * delta
           : data.longitude + delta + index * delta
         data.y = data.latitude
@@ -840,6 +841,15 @@ const terrain_tip_dots = (data, legend, delta) =>
       return indexed_projects
     })
     .filter((d) => !!d)
+```
+
+```js
+const terrain_geometry = FileAttachment('/data/terrain_geometry.json').json()
+```
+
+```js
+const world = await FileAttachment('/data/countries-110m.json').json()
+const land = topojson.feature(world, world.objects.land)
 ```
 
 ```js
@@ -929,7 +939,69 @@ const map_legend_text = (terrain_legend, big_labels) =>
     text: (d) => d[0],
     opacity: (d) => (isProjectSelected(d[0]) ? 1 : 0.2),
   })
+```
 
+```js
+function generateGeojsonMarks(terrain_data, terrain_legend, big_labels) {
+  const terrain_data_by_terrain = d3.group(terrain_data, (d) => d.terrain_id)
+
+  const terrain_geometry_by_project = structuredClone(terrain_geometry)
+  terrain_data_by_terrain.entries().forEach(([id, data]) => {
+    const matching_feature_index =
+      terrain_geometry_by_project.features.findIndex(
+        (d) => d.properties.id == id,
+      )
+
+    if (matching_feature_index < 0) {
+      console.warn(`no matching feature found for terrain id: ${id}`)
+      return
+    }
+
+    const matching_projects = data.map((d) => d.projects.toArray())
+
+    terrain_geometry_by_project.features[
+      matching_feature_index
+    ].properties.projects = matching_projects
+  })
+  console.log('terrain_geometry_by_project', terrain_geometry_by_project)
+
+  const project_terrain_mark = Plot.geo(terrain_geometry_by_project, {
+    // fill: 'blue',
+    title: (d) => d.properties.projects,
+    fillOpacity: 0.1,
+    //   isProjectSelected(d.properties.project) ? 0.5 : 0.1,
+    stroke: 'black',
+    strokeWidth: 0.5,
+    channels: {
+      entity: {
+        value: (d) => d.properties.terrain,
+        label: 'City',
+      },
+      projects: {
+        value: (d) => d.properties.project,
+        label: 'Projects',
+      },
+      scales: {
+        value: (d) => d.properties.scale,
+        label: 'Scales',
+      },
+    },
+    tip: true,
+  })
+
+  return [
+    project_terrain_mark,
+    // legend marks //
+    // map_legend_dots(terrain_legend, big_labels),
+    // map_legend_text(terrain_legend, big_labels),
+    // legend_axis_label,
+    // tip marks //
+    // ...terrain_tips(terrain_data),
+  ]
+}
+```
+
+```js
 function generateLineMapMarks(terrain_data, terrain_legend, big_labels) {
   const strokeWidth = big_labels ? 2 : 1
 
@@ -953,7 +1025,7 @@ function generateLineMapMarks(terrain_data, terrain_legend, big_labels) {
     //fillOpacity: 0.5,
     channels: {
       entity: {
-        value: 'terrain_label',
+        value: 'terrain',
         label: 'City',
       },
       count: {
@@ -996,9 +1068,6 @@ function generateLineMapMarks(terrain_data, terrain_legend, big_labels) {
     // legend marks //
     map_legend_dots(terrain_legend, big_labels),
     map_legend_text(terrain_legend, big_labels),
-    // legend_axis_label,
-    // tip marks //
-    // ...terrain_tips(terrain_data),
   ]
 }
 
@@ -1081,9 +1150,33 @@ function generateDotMapMarks(
     map_legend_text(terrain_legend, big_labels),
     // legend_axis_label,
     // tip marks //
-    ...terrain_tips(terrain_data),
+    terrain_tips(terrain_data),
     tip_dots,
   ]
+}
+
+function handleTerrainView(
+  terrain_legend_type,
+  terrain_data,
+  terrain_legend,
+  tip_dot_delta,
+  big_labels,
+) {
+  switch (terrain_legend_type) {
+    case 'Polygon':
+      return generateGeojsonMarks(terrain_data, terrain_legend, big_labels)
+    case 'Dot':
+      return generateDotMapMarks(
+        terrain_data,
+        terrain_legend,
+        tip_dot_delta,
+        big_labels,
+      )
+    case 'Line':
+      return generateLineMapMarks(terrain_data, terrain_legend, big_labels)
+    default:
+      console.error('Invalid terrain_legend_type:', terrain_legend_type)
+  }
 }
 
 // choropleth configs and functions

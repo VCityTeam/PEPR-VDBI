@@ -75,7 +75,7 @@ French geocoding service:
 const geocoded_research_structures = FileAttachment(
   "/data/fr-esr-structures-recherche-publiques-actives.geocoded.csv"
 ).csv()
-const world = FileAttachment("/data/world.json").json()
+const world = FileAttachment("/data/countries-110m.json").json()
 ```
 
 ```js echo
