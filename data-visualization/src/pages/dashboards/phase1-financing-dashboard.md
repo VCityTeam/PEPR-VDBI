@@ -86,7 +86,7 @@ flowchart TD
 ```js
 import { resolveProjectFinancingEntities } from '/components/financing.js'
 import { sparkbar, countEntities, cropText, downloadTableButton } from '/components/utilities.js'
-import { donutChart } from '/components/pie-chart.js'
+import { DonutChartWithLegend } from '/components/pie-chart.js'
 ```
 
 ```js
@@ -372,10 +372,10 @@ if (debug) {
     <h2>All proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           all_type_post_count,
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -384,10 +384,10 @@ if (debug) {
     <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           [...all_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -677,10 +677,10 @@ if (debug) {
     <h2>All proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           inteGREEN_type_post_count,
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -689,10 +689,10 @@ if (debug) {
     <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           [...inteGREEN_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -786,10 +786,10 @@ if (debug) {
     <h2>All proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           VILLEGARDEN_type_post_count,
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -798,10 +798,10 @@ if (debug) {
     <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           [...VILLEGARDEN_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -892,10 +892,10 @@ if (debug) {
     <h2>All proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           NEO_type_post_count,
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -904,10 +904,10 @@ if (debug) {
     <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           [...NEO_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -1001,10 +1001,10 @@ if (debug) {
     <h2>All proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           RESILIENCE_type_post_count,
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -1013,10 +1013,10 @@ if (debug) {
     <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           [...RESILIENCE_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -1107,10 +1107,10 @@ if (debug) {
     <h2>All proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           TRACES_type_post_count,
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -1119,10 +1119,10 @@ if (debug) {
     <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           [...TRACES_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -1216,10 +1216,10 @@ if (debug) {
     <h2>All proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           URBHEALTH_type_post_count,
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -1228,10 +1228,10 @@ if (debug) {
     <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           [...URBHEALTH_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -1322,10 +1322,10 @@ if (debug) {
     <h2>All proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           VFpp_type_post_count,
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -1334,10 +1334,10 @@ if (debug) {
     <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           [...VFpp_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -1428,10 +1428,10 @@ if (debug) {
     <h2>All proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           WHAOU_type_post_count,
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>
@@ -1440,10 +1440,10 @@ if (debug) {
     <h2>Identified proposed posts by category</h2>
     <div style="overflow: auto;">
       ${
-        resize((width) => donutChart(
+        resize((width) => new DonutChartWithLegend(
           [...WHAOU_type_post_count.filter((d) => d[0] != "other/unknown")],
           default_pie_options(width)
-        ))
+        ).render())
       }
       <!-- $ -->
     </div>

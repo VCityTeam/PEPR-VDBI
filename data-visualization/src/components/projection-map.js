@@ -187,7 +187,7 @@ export function projectionMap(
     latMap = (d) => d[1][0].latitude,
     /*
      * list of Plot.geo compatible borders. For example:
-     * const world = FileAttachment("/data/world.json").json();
+     * const world = FileAttachment("/data/countries-110m.json").json();
      * const borders = [
      *   topojson.feature(world, world.objects.land),
      *   topojson.mesh(world, world.objects.countries, (a, b) => a !== b)

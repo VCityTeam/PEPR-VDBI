@@ -66,8 +66,22 @@ export const project_color_scale = d3
       'VF++',
       'VILLEGARDEN',
       'WHAOU',
+      'ATECA',
+      'CAPTURE',
+      'CARE',
+      'COOL ZINC',
+      'DC RISK CITY',
+      'GO PRO',
+      'MRHR',
+      'NESPAMEX',
+      'PERENNIS',
+      'PFAS-CITES',
+      'RARE',
+      'SITINERE',
+      'TOTEM',
+      'URBEXPOMIC',
     ],
-    d3.schemeCategory10.slice(0, 8),
+    d3.schemePaired,
   )
   .unknown('grey')
 

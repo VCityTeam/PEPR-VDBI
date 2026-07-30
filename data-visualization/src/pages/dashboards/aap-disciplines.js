@@ -24,7 +24,7 @@ import {
   interpolated_hceres_color,
 } from '../../components/color.js'
 import { generateIntersectionMatrix } from '../../components/chord.js'
-import { donutChart } from '../../components/pie-chart.js'
+import { DonutChartWithLegend } from '../../components/pie-chart.js'
 import { parallelSetToGraph } from '../../components/sankey.js'
 
 export const cnu_legend = Plot.legend({
@@ -397,8 +397,6 @@ const default_donut_config = {
   colorMap: (d) => d[0],
   legendTextLength: 35,
   legendWidth: 300,
-  majorLabelText: () => '',
-  minorLabelText: () => '',
 }
 
 /**
@@ -409,7 +407,7 @@ const default_donut_config = {
  * @returns {SVGElement} the rendered donut chart
  */
 export const cnu_group_donut = (data, width) =>
-  donutChart(data.cnu_count_by_category, {
+  new DonutChartWithLegend(data.cnu_count_by_category, {
     ...default_donut_config,
     width: width,
     color: d3
@@ -417,7 +415,7 @@ export const cnu_group_donut = (data, width) =>
       // .scaleOrdinal(d3.schemeCategory10)
       .domain(cnu_category_section_map.keys())
       .unknown('grey'),
-  })
+  }).render()
 
 /**
  * Donut chart variant of cnu_group_donut, taking pre-shaped count data
@@ -428,7 +426,7 @@ export const cnu_group_donut = (data, width) =>
  * @returns {SVGElement} the rendered donut chart
  */
 export const custom_cnu_group_donut = (data, width) =>
-  donutChart(data, {
+  new DonutChartWithLegend(data, {
     ...default_donut_config,
     width: width,
     color: d3
@@ -436,7 +434,7 @@ export const custom_cnu_group_donut = (data, width) =>
       // .scaleOrdinal(d3.schemeCategory10)
       .domain(cnu_category_section_map.keys())
       .unknown('grey'),
-  })
+  }).render()
 
 /**
  * cnu_plot wrapper colored by the ERC domain corresponding to each CNU
@@ -587,17 +585,17 @@ export const cnu_by_aap_plot_y_by_erc = (
  *
  * @param {Array} data - count data, rows of `[erc_domain, count]`
  * @param {number} width - chart width
- * @param {Object} [options={}] - additional donutChart options, merged over the defaults
+ * @param {Object} [options={}] - additional DonutChartWithLegend options, merged over the defaults
  * @returns {SVGElement} the rendered donut chart
  */
 export const erc_donut = (data, width, options = {}) =>
-  donutChart(data, {
+  new DonutChartWithLegend(data, {
     ...default_donut_config,
     width: width,
     legendTextLength: 28,
     color: erc_color_scale,
     ...options,
-  })
+  }).render()
 
 /**
  * Filter researchers by project/audition/financing status and compute CNU,
