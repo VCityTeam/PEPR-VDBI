@@ -1,25 +1,14 @@
-import {
-  countEntities,
-  sparkbar,
-  downloadTableButton,
-  downloadSVGButton,
-  writeToFile,
-} from '/components/utilities.js'
-import {
-  forceGraph,
-  mapTableToPropertyGraphLinks,
-  mapTableToTriples,
-} from '/components/graph.js'
+import * as d3 from 'npm:d3'
+import * as Plot from 'npm:@observablehq/plot'
 import {
   default_projection_style,
-  europe_geojson,
-  france_geojson,
+  // france_geojson,
   france_regions_geojson,
   mainland_france_regions_geojson,
-  idf_region_geojson,
+  // idf_region_geojson,
   france_departements_geojson,
   mainland_france_departements_geojson,
-  mainland_france_departements_no_idf_geojson,
+  // mainland_france_departements_no_idf_geojson,
   idf_departements_geojson,
   italy_regions_geojson,
   idf_department_codes,
@@ -29,158 +18,11 @@ import {
   italy_projection,
   default_mainland_france_marks,
   mainland_france_choropleth_marks,
-  idf_choropleth_marks,
-  italy_choropleth_marks,
+  // idf_choropleth_marks,
+  // italy_choropleth_marks,
 } from '/components/projection-map.js'
 import { vdbi_color_scheme, project_color_scale } from '/components/color.js'
 import { vectorFromArray } from 'npm:apache-arrow'
-
-const terrain_geometry = FileAttachment('/data/terrain_geometry.json').json()
-
-const world = await FileAttachment('/data/countries-110m.json').json()
-const land = topojson.feature(world, world.objects.land)
-
-export const choropleth_terrain_data = d3.group(
-  terrain_data,
-  (d) =>
-    (
-      mainland_france_departements_geojson.features.find((department) =>
-        d3.geoContains(department, [d.longitude, d.latitude]),
-      ) || { properties: { nom: null } }
-    ).properties.nom,
-  (d) => d.project_acronyme,
-)
-
-console.debug('choropleth_terrain_data', choropleth_terrain_data)
-
-export const choropleth_terrain_data_by_city = [
-  ...d3
-    .rollup(
-      france_terrain_data.map((d) => ({
-        projects: d.projects.toJSON(),
-        code: (
-          mainland_france_departements_geojson.features.find((department) =>
-            d3.geoContains(department, [d.longitude, d.latitude]),
-          ) || { properties: { code: null } }
-        ).properties.code,
-        latitude: d3.geoCentroid(
-          mainland_france_departements_geojson.features.find((department) =>
-            d3.geoContains(department, [d.longitude, d.latitude]),
-          ) || [0, 0],
-        )[1],
-        longitude: d3.geoCentroid(
-          mainland_france_departements_geojson.features.find((department) =>
-            d3.geoContains(department, [d.longitude, d.latitude]),
-          ) || [0, 0],
-        )[0],
-      })),
-      (D) =>
-        D.reduce(
-          (a, v) => ({
-            projects: [...new Set(a.projects).union(new Set(v.projects))],
-            code: v.code,
-            latitude: v.latitude,
-            longitude: v.longitude,
-          }),
-          { projects: [] },
-        ),
-      (d) => d.code,
-    )
-    .values(),
-]
-
-console.debug(
-  'choropleth_terrain_data_by_city',
-  choropleth_terrain_data_by_city,
-)
-
-export const terrain_partners_by_code = new Map(
-  d3.rollups(
-    [...all_partner_data],
-    (D) =>
-      D.reduce(
-        (a, v) => (selected_terrain_project.includes(v.projet) ? a + 1 : a),
-        0,
-      ),
-    (d) => (d.code_postal ? String(d.code_postal).slice(0, 2) : null),
-  ),
-)
-
-export const all_partners_by_code = new Map(
-  d3
-    .rollups(
-      [...all_partner_data].concat([
-        // with hardcoded project corrections
-        {
-          projet: 'INTEGREEN',
-          code_postal: 95,
-        },
-        {
-          projet: 'INTEGREEN',
-          code_postal: 93,
-        },
-        {
-          projet: 'URBHEALTH',
-          code_postal: 95,
-        },
-        {
-          projet: 'URBHEALTH',
-          code_postal: 78,
-        },
-        {
-          projet: 'URBHEALTH',
-          code_postal: 92,
-        },
-        {
-          projet: 'URBHEALTH',
-          code_postal: 91,
-        },
-      ]),
-      (D) =>
-        D.reduce(
-          (a, v) =>
-            selected_partner_project == 'All' ||
-            v.projet == selected_partner_project
-              ? a * Number(!flatten_choropleth) + 1
-              : a,
-          0,
-        ),
-      (d) => (d.code_postal ? String(d.code_postal).slice(0, 2) : null),
-    )
-    .filter((d) => d[1] > 0),
-)
-
-export const all_partners_by_code_group_idf = new Map(all_partners_by_code)
-
-let idf_count = 0
-all_partners_by_code_group_idf.forEach((value, key) =>
-  idf_department_codes.includes(key) ? (idf_count += value) : null,
-)
-idf_department_codes.forEach((code) =>
-  all_partners_by_code_group_idf.has(code)
-    ? all_partners_by_code_group_idf.set(code, idf_count)
-    : null,
-)
-
-export const lab_disciplines_by_code = new Map(
-  d3
-    .rollups(
-      [...labs],
-      (D) =>
-        D.reduce(
-          (a, v) =>
-            selected_partner_project == 'All' ||
-            v.projet == selected_partner_project
-              ? a + 1
-              : a,
-          0,
-        ),
-      (d) => d.code_postal,
-    )
-    .filter((d) => d[1] > 0),
-)
-
-console.debug('lab_disciplines_by_code', lab_disciplines_by_code)
 
 // Project terrain map
 
@@ -217,8 +59,11 @@ export const ile_de_france_bbox = {
   max_y: 49.24342474094858,
 }
 
-export const france_terrain_data =
-  terrain_data_by_city.filter(
+export const france_terrain_data = (
+  terrain_data_by_city,
+  selected_terrain_scale,
+) => {
+  const france_terrain_data = [...terrain_data_by_city].filter(
     (d) =>
       // keep projects within france
       inBBox(d.longitude, d.latitude, mainland_france_bbox) &&
@@ -228,31 +73,38 @@ export const france_terrain_data =
         d.terrain == 'Métropole du Grand Paris'),
   )
 
-export const ile_de_france_terrain_data =
-  terrain_data_by_city.filter(
+  if (selected_terrain_scale.includes('région'))
+    france_terrain_data.push({
+      terrain: 'Île-de-France',
+      projects: vectorFromArray([
+        ...new Set(
+          [...terrain_data_by_city]
+            .filter((d) => d.terrain == 'Île-de-France')
+            .flatMap((d) => [...d.projects]),
+        ),
+        ...new Set(
+          ile_de_france_terrain_data([...terrain_data_by_city]).flatMap((d) => [
+            ...d.projects,
+          ]),
+        ),
+      ]),
+      scale: 'région',
+      latitude: 48.856,
+      longitude: 2.342,
+    })
+
+  return france_terrain_data
+}
+
+export const ile_de_france_terrain_data = (terrain_data_by_city) =>
+  [...terrain_data_by_city].filter(
     (d) =>
       d.terrain != 'Île-de-France' &&
       d.terrain != 'Métropole du Grand Paris' &&
       inBBox(d.longitude, d.latitude, ile_de_france_bbox),
   )
 
-if (selected_terrain_scale.includes('région'))
-  france_terrain_data.push({
-    terrain: 'Île-de-France',
-    projects: vectorFromArray([
-      ...new Set(
-        terrain_data_by_city
-          .filter((d) => d.terrain == 'Île-de-France')
-          .flatMap((d) => [...d.projects]),
-      ),
-      ...new Set(ile_de_france_terrain_data.flatMap((d) => [...d.projects])),
-    ]),
-    scale: 'région',
-    latitude: 48.856,
-    longitude: 2.342,
-  })
-
-export const international_terrain_data =
+export const international_terrain_data = (terrain_data_by_city) =>
   terrain_data_by_city.filter(
     (d) =>
       // keep projects outside of france
@@ -271,47 +123,56 @@ export const base_legend = d3.zip(
   project_color_scale.range(),
 )
 
-export const france_terrain_legend = base_legend.map((d) => Object.create(d))
+export const france_terrain_legend = () => {
+  const legend = base_legend.map((d) => Object.create(d))
 
-for (let index = 0; index < france_terrain_legend.length; index++) {
-  // push longitude
-  france_terrain_legend[index].push(
-    d3.scaleLinear([0, france_terrain_legend.length], [-4, 9.5])(index),
-  )
-  // push latitude
-  france_terrain_legend[index].push(51.5)
+  for (let index = 0; index < legend.length; index++) {
+    // push longitude
+    legend[index].push(d3.scaleLinear([0, legend.length], [-4, 9.5])(index))
+    // push latitude
+    legend[index].push(51.5)
+  }
+
+  return legend
 }
 
-export const idf_terrains = new Set(
-  ile_de_france_terrain_data.flatMap((row) => [...row.projects]),
-)
-export const idf_terrain_legend = base_legend
-  .filter((d) => idf_terrains.has(d[0]))
-  .map((d) => Object.create(d))
-
-for (let index = 0; index < idf_terrain_legend.length; index++) {
-  // push longitude
-  idf_terrain_legend[index].push(
-    d3.scaleLinear([0, idf_terrain_legend.length], [2.15, 2.7])(index),
+export const idf_terrain_legend = (ile_de_france_terrain_data) => {
+  const idf_terrains = new Set(
+    ile_de_france_terrain_data.flatMap((row) => [...row.projects]),
   )
-  // push latitude
-  idf_terrain_legend[index].push(49)
+
+  const legend = base_legend
+    .filter((d) => idf_terrains.has(d[0]))
+    .map((d) => Object.create(d))
+  // .map((d) => structuredClone(d))
+
+  for (let index = 0; index < legend.length; index++) {
+    // push longitude
+    legend[index].push(d3.scaleLinear([0, legend.length], [2.15, 2.7])(index))
+    // push latitude
+    legend[index].push(49)
+  }
+
+  return legend
 }
 
-export const international_terrains = new Set(
-  international_terrain_data.flatMap((row) => [...row.projects]),
-)
-export const italy_terrain_legend = base_legend
-  .filter((d) => international_terrains.has(d[0]))
-  .map((d) => Object.create(d))
-
-for (let index = 0; index < italy_terrain_legend.length; index++) {
-  // push longitude
-  italy_terrain_legend[index].push(
-    d3.scaleLinear([0, italy_terrain_legend.length], [13.1, 13.1])(index),
+export const italy_terrain_legend = () => {
+  const international_terrains = new Set(
+    international_terrain_data.flatMap((row) => [...row.projects]),
   )
-  // push latitude
-  italy_terrain_legend[index].push(44.3)
+
+  const legend = base_legend
+    .filter((d) => international_terrains.has(d[0]))
+    .map((d) => Object.create(d))
+
+  for (let index = 0; index < legend.length; index++) {
+    // push longitude
+    legend[index].push(d3.scaleLinear([0, legend.length], [13.1, 13.1])(index))
+    // push latitude
+    legend[index].push(44.3)
+  }
+
+  return legend
 }
 
 export const terrain_anchor_map = new Map([
@@ -465,6 +326,16 @@ export const defaultProjection = (
     marks: [...marks],
   })
 
+// Plot.plot({
+//   width: width,
+//   height: height,
+//   projection: "equirectangular",
+//   marks: [
+//     Plot.geo(land),
+//     generateGeojsonMarks(france_terrain_data, france_terrain_legend, width > 1030)
+//   ],
+// }),
+
 /**
  * Convenience wrapper for France-projected maps, including the default
  * mainland France marks
@@ -587,34 +458,19 @@ export const map_legend_text = (terrain_legend, big_labels) =>
  * (project markers connected to legend entries by curved links)
  *
  * @param {Object[]} terrain_data - terrain data points
+ * @param {Object[]} terrain_features - terrain geojson feature collection
  * @param {Array} terrain_legend - legend rows (`[project, color, x, y]`)
  * @param {boolean} big_labels - whether to use larger marker/line styling
  * @returns {Array} an array of Plot marks
  */
-export function generateGeojsonMarks(terrain_data, terrain_legend, big_labels) {
-  const terrain_data_by_terrain = d3.group(terrain_data, (d) => d.terrain_id)
-
-  const terrain_geometry_by_project = structuredClone(terrain_geometry)
-  terrain_data_by_terrain.entries().forEach(([id, data]) => {
-    const matching_feature_index =
-      terrain_geometry_by_project.features.findIndex(
-        (d) => d.properties.id == id,
-      )
-
-    if (matching_feature_index < 0) {
-      console.warn(`no matching feature found for terrain id: ${id}`)
-      return
-    }
-
-    const matching_projects = data.map((d) => d.projects.toArray())
-
-    terrain_geometry_by_project.features[
-      matching_feature_index
-    ].properties.projects = matching_projects
-  })
-  console.log('terrain_geometry_by_project', terrain_geometry_by_project)
-
-  const project_terrain_mark = Plot.geo(terrain_geometry_by_project, {
+export function generateGeojsonMarks(
+  terrain_data,
+  terrain_features,
+  terrain_legend,
+  big_labels,
+) {
+  console.debug('terrain_features', terrain_features)
+  const project_terrain_mark = Plot.geo(terrain_features, {
     // fill: 'blue',
     title: (d) => d.properties.projects,
     fillOpacity: 0.1,
@@ -834,13 +690,19 @@ function generateDotMapMarks(
 export function handleTerrainView(
   terrain_legend_type,
   terrain_data,
+  terrain_features,
   terrain_legend,
   tip_dot_delta,
   big_labels,
 ) {
   switch (terrain_legend_type) {
     case 'Polygon':
-      return generateGeojsonMarks(terrain_data, terrain_legend, big_labels)
+      return generateGeojsonMarks(
+        terrain_data,
+        terrain_features,
+        terrain_legend,
+        big_labels,
+      )
     case 'Dot':
       return generateDotMapMarks(
         terrain_data,
@@ -857,11 +719,11 @@ export function handleTerrainView(
 
 // choropleth configs and functions
 
-export const color_config = {
+export const color_config = (flatten_choropleth = false) => ({
   scheme: 'Blues',
   label: `N° de partenaires et parties prenantes estimé`,
   // label: "N° of Partners",
-  // domain: [0, 6],
+  domain: flatten_choropleth ? [0, 2.7] : undefined,
   legend: true,
   marginLeft: 10,
   marginRight: 10,
@@ -869,9 +731,7 @@ export const color_config = {
   zero: true,
   nice: true,
   // ticks: 2,
-}
-
-if (flatten_choropleth) color_config.domain = [0, 2.7]
+})
 
 /**
  * Build a choropleth Plot.plot for given geojson features and a fill
@@ -939,11 +799,6 @@ export const choropleth = (
     ],
   })
 
-console.debug(
-  'mainland_france_regions_geojson',
-  mainland_france_regions_geojson,
-)
-
 /**
  * Choropleth wrapper specialized for mainland France departments
  *
@@ -996,16 +851,152 @@ export const choroplethItaly = (width, fill) =>
     '- Partenaires et parties prenantes des projets par département, Italy',
   )
 
-console.debug('italy_regions_geojson', italy_regions_geojson)
+export const choropleth_terrain_data = (terrain_data) =>
+  d3.group(
+    terrain_data,
+    (d) =>
+      (
+        mainland_france_departements_geojson.features.find((department) =>
+          d3.geoContains(department, [d.longitude, d.latitude]),
+        ) || { properties: { nom: null } }
+      ).properties.nom,
+    (d) => d.project_acronyme,
+  )
 
-export const download_lab_choropleth_france = downloadSVGButton(
-  '#lab-choropleth-container-france svg',
-  'Download French choropleth lab partner map',
-  `${selected_partner_project}_france_lab_partner_choropleth.svg`,
-)
+export const choropleth_terrain_data_by_city = (france_terrain_data) => [
+  ...d3
+    .rollup(
+      france_terrain_data.map((d) => ({
+        projects: d.projects.toJSON(),
+        code: (
+          mainland_france_departements_geojson.features.find((department) =>
+            d3.geoContains(department, [d.longitude, d.latitude]),
+          ) || { properties: { code: null } }
+        ).properties.code,
+        latitude: d3.geoCentroid(
+          mainland_france_departements_geojson.features.find((department) =>
+            d3.geoContains(department, [d.longitude, d.latitude]),
+          ) || [0, 0],
+        )[1],
+        longitude: d3.geoCentroid(
+          mainland_france_departements_geojson.features.find((department) =>
+            d3.geoContains(department, [d.longitude, d.latitude]),
+          ) || [0, 0],
+        )[0],
+      })),
+      (D) =>
+        D.reduce(
+          (a, v) => ({
+            projects: [...new Set(a.projects).union(new Set(v.projects))],
+            code: v.code,
+            latitude: v.latitude,
+            longitude: v.longitude,
+          }),
+          { projects: [] },
+        ),
+      (d) => d.code,
+    )
+    .values(),
+]
 
-export const download_lab_choropleth_idf = downloadSVGButton(
-  '#lab-choropleth-container-idf svg',
-  'Download Île-de-France choropleth lab partner map',
-  `${selected_partner_project}_idf_lab_partner_choropleth.svg`,
-)
+export const terrain_partners_by_code = (
+  all_partner_data,
+  selected_terrain_project,
+) =>
+  new Map(
+    d3.rollups(
+      [...all_partner_data],
+      (D) =>
+        D.reduce(
+          (a, v) => (selected_terrain_project.includes(v.projet) ? a + 1 : a),
+          0,
+        ),
+      (d) => (d.code_postal ? String(d.code_postal).slice(0, 2) : null),
+    ),
+  )
+
+export const all_partners_by_code = (
+  all_partner_data,
+  selected_partner_project,
+  flatten_choropleth,
+) =>
+  new Map(
+    d3
+      .rollups(
+        [...all_partner_data].concat([
+          // with hardcoded project corrections
+          {
+            projet: 'INTEGREEN',
+            code_postal: 95,
+          },
+          {
+            projet: 'INTEGREEN',
+            code_postal: 93,
+          },
+          {
+            projet: 'URBHEALTH',
+            code_postal: 95,
+          },
+          {
+            projet: 'URBHEALTH',
+            code_postal: 78,
+          },
+          {
+            projet: 'URBHEALTH',
+            code_postal: 92,
+          },
+          {
+            projet: 'URBHEALTH',
+            code_postal: 91,
+          },
+        ]),
+        (D) =>
+          D.reduce(
+            (a, v) =>
+              selected_partner_project == 'All' ||
+              v.projet == selected_partner_project
+                ? a * Number(!flatten_choropleth) + 1
+                : a,
+            0,
+          ),
+        (d) => (d.code_postal ? String(d.code_postal).slice(0, 2) : null),
+      )
+      .filter((d) => d[1] > 0),
+  )
+
+export const all_partners_by_code_group_idf = (all_partners_by_code) => {
+  const all_partners_by_code_group_idf = new Map(all_partners_by_code)
+
+  let idf_count = 0
+
+  all_partners_by_code_group_idf.forEach((value, key) =>
+    idf_department_codes.includes(key) ? (idf_count += value) : null,
+  )
+
+  idf_department_codes.forEach((code) =>
+    all_partners_by_code_group_idf.has(code)
+      ? all_partners_by_code_group_idf.set(code, idf_count)
+      : null,
+  )
+
+  return all_partners_by_code_group_idf
+}
+
+export const lab_disciplines_by_code = (labs, selected_partner_project) =>
+  new Map(
+    d3
+      .rollups(
+        [...labs],
+        (D) =>
+          D.reduce(
+            (a, v) =>
+              selected_partner_project == 'All' ||
+              v.projet == selected_partner_project
+                ? a + 1
+                : a,
+            0,
+          ),
+        (d) => d.code_postal,
+      )
+      .filter((d) => d[1] > 0),
+  )
