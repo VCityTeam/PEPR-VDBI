@@ -55,7 +55,10 @@ export async function handleFetchJson(
       })
 
       const data = await response.json()
-      logger.debug(`response: ${JSON.stringify(data)}`)
+
+      logger.debug(
+        `response:\n${JSON.stringify(data, null, 2).substring(0, 2000)}\n...`,
+      )
 
       if (!response.ok) {
         // Emulate response.raise_for_status()
