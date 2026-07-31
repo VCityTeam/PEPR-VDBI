@@ -26,9 +26,11 @@ import {
   france_terrain_legend,
   idf_terrain_legend,
   italy_terrain_legend,
-  defaultProjectionFrance,
-  defaultProjectionParis,
-  defaultProjectionItaly,
+  world_terrain_legend,
+  franceProjection,
+  parisProjection,
+  italyProjection,
+  worldProjection,
   handleTerrainView,
   choroplethFrance,
   choroplethIdf,
@@ -44,11 +46,6 @@ import {
 const terrain_features = FileAttachment(
   '/data/terrain_feature_collection.json',
 ).json()
-```
-
-```js
-const world = await FileAttachment('/data/countries-110m.json').json()
-const land = topojson.feature(world, world.objects.land)
 ```
 
 ```sql id=all_partner_data
@@ -77,7 +74,7 @@ from project_terrains
 group by all
 ```
 
-```sql id=labs display
+```sql id=labs
 select
   label as "ID primaire",
   project,
@@ -122,9 +119,6 @@ FROM annex_partners
 ```
 -->
 
-> [!CAUTION]
-> Some partner data sources are currently deprecated.
-
 <div class="warning" label="Data visualization notice">
   Data visualizations are unverified and errors may exist.
   Consider these data visualizations as estimations and not a "ground truth".
@@ -149,8 +143,6 @@ const selected_terrain_project = view(
 const scales = [
   ...(await sql`select distinct scale from project_terrains where scale is not null`),
 ].map((d) => d.scale)
-
-console.log('scales', scales)
 
 const selected_terrain_scale = view(
   Inputs.checkbox(scales, {
@@ -209,23 +201,29 @@ const terrain_legend_type = view(
       "paris_project_terrains_by_scales_map.svg"
     )}
     <!-- $ -->
-    ${downloadSVGButton(
+    <!-- ${downloadSVGButton(
       "#map-container-italy svg",
       "Download Italian project terrains map",
       "italy_project_terrains_by_scales_map.svg"
+    )} -->
+    <!-- $ -->
+    ${downloadSVGButton(
+      "#map-container-world svg",
+      "Download world project terrains map",
+      "world_project_terrains_by_scales_map.svg"
     )}
     <!-- $ -->
   </div>
 </div>
 
-<div class="grid grid-cols-3">
+<div class="grid grid-cols-3 card">
   <div
     id="map-container-france"
-    class="card grid-colspan-2 grid-rowspan-2"
+    class="grid-colspan-2 grid-rowspan-2"
     style="padding: 10px;"
   >
     ${resize((width, height) =>
-      defaultProjectionFrance(
+      franceProjection(
         width,
         height - 15,
         handleTerrainView(
@@ -240,9 +238,9 @@ const terrain_legend_type = view(
     )}
     <!-- $ -->
   </div>
-  <div id="map-container-idf" class="card" style="padding: 10px; overflow: hidden;">
+  <div id="map-container-idf" style="padding: 10px; overflow: hidden;">
     ${resize(
-      (width) => defaultProjectionParis(
+      (width) => parisProjection(
         width,
         handleTerrainView(
           terrain_legend_type,
@@ -254,9 +252,9 @@ const terrain_legend_type = view(
         "- Project terrains by city, Grand Métropole de Paris"
       )
     )}
-
+    <!-- $ -->
   </div>
-  <div id="map-container-italy" class="card" style="padding: 10px; overflow: hidden;">
+  <!-- <div id="map-container-italy" style="padding: 10px; overflow: hidden;">
     ${resize(
       (width) => defaultProjectionItaly(
         width,
@@ -270,7 +268,23 @@ const terrain_legend_type = view(
         "- TRACES terrains by city, Italy"
       )
     )}
-
+  </div> -->
+  <div id="map-container-world" style="padding: 10px; overflow: hidden;">
+    ${resize(
+      (width, height) => worldProjection(
+        width,
+        height,
+        handleTerrainView(
+          terrain_legend_type,
+          [...terrain_data_by_city].map((d) => d.toJSON()),
+          terrain_features,
+          world_terrain_legend,
+          0.1,
+          width > 500),
+        "- Global terrains"
+      )
+    )}
+    <!-- $ -->
   </div>
 </div>
 

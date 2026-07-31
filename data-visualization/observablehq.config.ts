@@ -8,23 +8,23 @@ const devOnlyPages = [
     pages: [
       {
         name: 'Phase 1 socio-economic partners',
-        path: 'pages/dashboards/working/phase1-partner-dashboard',
+        path: 'pages/working/phase1-partner-dashboard',
       },
       // {
       //   name: 'Phase 1 Researchers',
-      //   path: 'pages/dashboards/working/phase1-researcher-dashboard',
+      //   path: 'pages/working/phase1-researcher-dashboard',
       // },
       {
         name: 'Phase 1 Laboratories',
-        path: 'pages/dashboards/working/phase1-laboratory-dashboard',
+        path: 'pages/working/phase1-laboratory-dashboard',
       },
       {
         name: 'Demonstrateurs de la Ville Durable',
-        path: 'pages/dashboards/working/dvd-dashboard',
+        path: 'pages/working/dvd-dashboard',
       },
       // {
       //   name: 'Phase 1 Institutions',
-      //   path: 'pages/dashboards/working/phase1-university-dashboard',
+      //   path: 'pages/working/phase1-university-dashboard',
       // },
       {
         name: 'Mural Data',
@@ -125,27 +125,37 @@ export default {
   root: 'src', // path to the source root for preview
   pages: [
     {
-      name: 'Dashboards',
+      name: 'Projects',
       pages: [
         {
           name: 'Projects Overview',
-          path: 'pages/dashboards/aap-overview',
-        },
-        {
-          name: 'Projects Cartography',
-          path: 'pages/dashboards/phase1-map-dashboard',
-        },
-        {
-          name: 'Projects Scientific disciplines',
-          path: 'pages/dashboards/phase1-disciplines',
+          path: 'pages/projects/aap-overview',
         },
         {
           name: 'Projects Financing',
-          path: 'pages/dashboards/phase1-financing-dashboard',
+          path: 'pages/projects/phase1-financing-dashboard',
         },
         {
           name: 'PEPR VDBI Constellation',
-          path: 'pages/dashboards/vdbi-constellation',
+          path: 'pages/projects/vdbi-constellation',
+        },
+      ],
+    },
+    {
+      name: 'Maps',
+      pages: [
+        {
+          name: 'Projects Cartography',
+          path: 'pages/geo/phase1-map-dashboard',
+        },
+      ],
+    },
+    {
+      name: 'Researchers',
+      pages: [
+        {
+          name: 'Projects Scientific disciplines',
+          path: 'pages/researchers/phase1-disciplines',
         },
       ],
     },

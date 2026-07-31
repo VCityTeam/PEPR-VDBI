@@ -11,6 +11,7 @@ import {
   // mainland_france_departements_no_idf_geojson,
   idf_departements_geojson,
   italy_regions_geojson,
+  land_geojson,
   idf_department_codes,
   france_projection,
   idf_projection,
@@ -20,8 +21,11 @@ import {
   mainland_france_choropleth_marks,
   // idf_choropleth_marks,
   // italy_choropleth_marks,
-} from '/components/projection-map.js'
-import { vdbi_color_scheme, project_color_scale } from '/components/color.js'
+} from '../../components/projection-map.js'
+import {
+  vdbi_color_scheme,
+  project_color_scale,
+} from '../../components/color.js'
 import { vectorFromArray } from 'npm:apache-arrow'
 
 // Project terrain map
@@ -156,7 +160,26 @@ export const idf_terrain_legend = (ile_de_france_terrain_data) => {
   return legend
 }
 
-export const italy_terrain_legend = () => {
+export const italy_terrain_legend = (international_terrain_data) => {
+  const international_terrains = new Set(
+    international_terrain_data.flatMap((row) => [...row.projects]),
+  )
+
+  const legend = base_legend
+    .filter((d) => international_terrains.has(d[0]))
+    .map((d) => Object.create(d))
+
+  for (let index = 0; index < legend.length; index++) {
+    // push longitude
+    legend[index].push(d3.scaleLinear([0, legend.length], [13.1, 13.1])(index))
+    // push latitude
+    legend[index].push(44.3)
+  }
+
+  return legend
+}
+
+export const world_terrain_legend = (international_terrain_data) => {
   const international_terrains = new Set(
     international_terrain_data.flatMap((row) => [...row.projects]),
   )
@@ -326,16 +349,6 @@ export const defaultProjection = (
     marks: [...marks],
   })
 
-// Plot.plot({
-//   width: width,
-//   height: height,
-//   projection: "equirectangular",
-//   marks: [
-//     Plot.geo(land),
-//     generateGeojsonMarks(france_terrain_data, france_terrain_legend, width > 1030)
-//   ],
-// }),
-
 /**
  * Convenience wrapper for France-projected maps, including the default
  * mainland France marks
@@ -346,7 +359,7 @@ export const defaultProjection = (
  * @param {string} [caption=''] - the chart caption
  * @returns {SVGElement} the rendered map
  */
-export const defaultProjectionFrance = (width, height, marks, caption = '') =>
+export const franceProjection = (width, height, marks, caption = '') =>
   defaultProjection(
     width,
     height,
@@ -364,7 +377,7 @@ export const defaultProjectionFrance = (width, height, marks, caption = '') =>
  * @param {string} [caption=''] - the chart caption
  * @returns {SVGElement} the rendered map
  */
-export const defaultProjectionParis = (width, marks, caption = '') =>
+export const parisProjection = (width, marks, caption = '') =>
   defaultProjection(
     width,
     width,
@@ -388,7 +401,7 @@ export const defaultProjectionParis = (width, marks, caption = '') =>
  * @param {string} [caption=''] - the chart caption
  * @returns {SVGElement} the rendered map
  */
-export const defaultProjectionItaly = (width, marks, caption = '') =>
+export const italyProjection = (width, marks, caption = '') =>
   defaultProjection(
     width,
     width,
@@ -402,6 +415,40 @@ export const defaultProjectionItaly = (width, marks, caption = '') =>
     ],
     caption,
   )
+
+/**
+ * Convenience wrapper for world-projected maps, including an global
+ * landmass base layer
+ *
+ * @param {number} width - chart width (used for both width and height)
+ * @param {Array} marks - additional Plot marks to layer on top
+ * @param {string} [caption=''] - the chart caption
+ * @returns {SVGElement} the rendered map
+ */
+export const worldProjection = (width, height, marks, caption = '') =>
+  defaultProjection(
+    width,
+    height,
+    'equirectangular',
+    [
+      Plot.geo(land_geojson, {
+        ...default_projection_style,
+      }),
+      Plot.frame(),
+      marks,
+    ],
+    caption,
+  )
+
+// Plot.plot({
+//   width: width,
+//   height: height,
+//   projection: "equirectangular",
+//   marks: [
+//     Plot.geo(land),
+//     generateGeojsonMarks(france_terrain_data, france_terrain_legend, width > 1030)
+//   ],
+// }),
 
 // generate plot marks for each visualisation method
 
