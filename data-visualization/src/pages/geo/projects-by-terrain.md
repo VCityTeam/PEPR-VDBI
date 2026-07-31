@@ -19,29 +19,20 @@ sql:
 import {
   downloadTableButton,
   downloadSVGButton,
+  formTemplate,
 } from '/components/utilities.js'
 import {
-  choropleth_terrain_data,
-  all_partners_by_code,
-  all_partners_by_code_group_idf,
-  lab_disciplines_by_code,
   france_terrain_data,
   ile_de_france_terrain_data,
-  international_terrain_data,
   france_terrain_legend,
   idf_terrain_legend,
   italy_terrain_legend,
   world_terrain_legend,
   franceProjection,
-  parisProjection,
+  idfProjection,
   italyProjection,
   worldProjection,
   handleTerrainView,
-  choroplethFrance,
-  choroplethIdf,
-  choroplethItaly,
-  download_lab_choropleth_france,
-  download_lab_choropleth_idf,
 } from './aap-cartography.js'
 ```
 
@@ -51,13 +42,11 @@ import {
 const terrain_features = FileAttachment(
   '/data/terrain_feature_collection.json',
 ).json()
+
+console.debug('terrain_features', terrain_features)
 ```
 
-```sql id=all_partner_data
-SELECT * from aap_partners
-```
-
-```sql id=terrain_data
+```sql id=terrain_data display
 select * from project_terrains
 ```
 
@@ -79,17 +68,165 @@ from project_terrains
 group by all
 ```
 
-```sql id=labs
-select
-  label as "ID primaire",
-  project,
-  "postal_code"[0:2] as postal_code,
-  -- code_panel_erc,
-from aap_partners
-join projects_by_partner
-  on aap_partners.id = projects_by_partner.partner_id
-where aap_partners.type = 'LABORATOIRE'
+<div class="card">
+
+```js
+const projects = [
+  ...(await sql`select distinct project from project_terrains`),
+].map((d) => d.project)
+
+const scales = [
+  ...(await sql`select distinct scale from project_terrains where scale is not null`),
+].map((d) => d.scale)
+
+const settings = view(
+  Inputs.form(
+    {
+      selected_terrain_project: Inputs.checkbox(projects, {
+        label: 'Included projects',
+        unique: true,
+        sort: true,
+        value: projects,
+      }),
+      selected_terrain_scale: Inputs.checkbox(scales, {
+        label: 'Included scales',
+        unique: true,
+        sort: true,
+        value: scales,
+      }),
+      terrain_legend_type: Inputs.select(['Polygon', 'Line', 'Dot'], {
+        label: 'Legend view type',
+        value: 'Polygon',
+      }),
+    },
+    { template: formTemplate },
+  ),
+)
 ```
+
+</div>
+
+<div class="grid grid-cols-3 card">
+  <div
+    id="map-container-france"
+    class="grid-colspan-2 grid-rowspan-3"
+  >
+    ${resize((width, height) =>
+      franceProjection(
+        width,
+        height - 15,
+        handleTerrainView(
+          settings.terrain_legend_type,
+          france_terrain_data(
+            terrain_data_by_city,
+            settings.selected_terrain_scale),
+          terrain_features,
+          france_terrain_legend,
+          0.2,
+          width > 1030,
+          settings.selected_terrain_project),
+        "- Project terrains, France"
+      )
+    )}
+    <!-- $ -->
+  </div>
+  <div id="map-container-idf" class="grid-rowspan-2" style="overflow: hidden;">
+    ${resize(
+      (width) => idfProjection(
+        width,
+        handleTerrainView(
+          settings.terrain_legend_type,
+          ile_de_france_terrain_data(terrain_data_by_city),
+          terrain_features,
+          idf_terrain_legend,
+          0.015,
+          width > 500,
+          settings.selected_terrain_project),
+        "- Project terrains, Ile-de-France"
+      )
+    )}
+    <!-- $ -->
+  </div>
+  <!-- <div id="map-container-italy" style="overflow: hidden;">
+    ${resize(
+      (width) => defaultProjectionItaly(
+        width,
+        handleTerrainView(
+          settings.terrain_legend_type,
+          [...terrain_data_by_city],
+          terrain_features,
+          italy_terrain_legend,
+          0.1,
+          width > 500,
+          settings.selected_terrain_project),
+        "- TRACES terrains, Italy"
+      )
+    )}
+  </div> -->
+  <div id="map-container-world" style="overflow: hidden;">
+    ${resize(
+      (width) => worldProjection(
+        width,
+        width / 2,
+        handleTerrainView(
+          settings.terrain_legend_type,
+          [...terrain_data_by_city].map((d) => d.toJSON()),
+          terrain_features,
+          world_terrain_legend,
+          0.1,
+          width > 500,
+          settings.selected_terrain_project),
+        "- Global project terrains"
+      )
+    )}
+    <!-- $ -->
+  </div>
+</div>
+
+<div class="card">
+
+```js
+display(
+  Inputs.form(
+    [
+      downloadTableButton(
+        () => [...terrain_data_by_city].map((d) => d.toJSON()),
+        {
+          label: 'Download terrains by location data',
+          delimeter: '\t',
+        },
+      ),
+      downloadTableButton(() => [...terrain_data].map((d) => d.toJSON()), {
+        label: 'Download terrain and scale data',
+        delimeter: '\t',
+      }),
+      downloadSVGButton(
+        '#map-container-france svg',
+        'Download French project terrain map',
+        'france_project_terrains_by_scales_map.svg',
+      ),
+      downloadSVGButton(
+        '#map-container-idf svg',
+        'Download Grand Métropole de Paris project terrain map',
+        'paris_project_terrains_by_scales_map.svg',
+      ),
+      // downloadSVGButton(
+      //   '#map-container-italy svg',
+      //   'Download Italian project terrain map',
+      //   'italy_project_terrains_by_scales_map.svg'
+      // ),
+      downloadSVGButton(
+        '#map-container-world svg',
+        'Download world project terrain map',
+        'world_project_terrains_by_scales_map.svg',
+      ),
+    ],
+    { template: formTemplate },
+  ),
+)
+```
+
+</div>
 
 <!-- saving this for later when we figure out financial annex integration -->
 
@@ -123,165 +260,3 @@ SELECT DISTINCT
 FROM annex_partners
 ```
 -->
-
-```js
-const projects = [
-  ...(await sql`select distinct project from project_terrains`),
-].map((d) => d.project)
-
-const selected_terrain_project = view(
-  Inputs.checkbox(projects, {
-    label: 'Included projects:',
-    unique: true,
-    sort: true,
-    value: projects,
-  }),
-)
-
-const scales = [
-  ...(await sql`select distinct scale from project_terrains where scale is not null`),
-].map((d) => d.scale)
-
-const selected_terrain_scale = view(
-  Inputs.checkbox(scales, {
-    label: 'Included scales:',
-    unique: true,
-    sort: true,
-    value: scales,
-  }),
-)
-
-const terrain_legend_type = view(
-  Inputs.select(['Polygon', 'Line', 'Dot'], {
-    label: 'Legend view type',
-    value: 'Polygon',
-  }),
-)
-```
-
-<div style="display: flex">
-  <div>
-    ${downloadTableButton(
-      () => [...terrain_data_by_city].map((d) => d.toJSON()),
-      {
-        label: "Download terrains by location data",
-        delimeter: "\t",
-      }
-    )}
-    <!-- $ -->
-    ${downloadTableButton(
-      () => [...terrain_data].map((d) => d.toJSON()),
-      {
-        label: "Download terrain and scale data",
-        delimeter: "\t",
-      }
-    )}
-    <!-- $ -->
-    ${downloadTableButton(
-      () => [...all_partner_data].map((d) => d.toJSON()),
-      {
-        label: "Download partners by project data",
-        delimeter: "\t",
-      }
-    )}
-    <!-- $ -->
-  </div>
-  <div>
-    ${downloadSVGButton(
-      "#map-container-france svg",
-      "Download French project terrains map",
-      "france_project_terrains_by_scales_map.svg"
-    )}
-    <!-- $ -->
-    ${downloadSVGButton(
-      "#map-container-idf svg",
-      "Download Grand Métropole de Paris project terrains map",
-      "paris_project_terrains_by_scales_map.svg"
-    )}
-    <!-- $ -->
-    <!-- ${downloadSVGButton(
-      "#map-container-italy svg",
-      "Download Italian project terrains map",
-      "italy_project_terrains_by_scales_map.svg"
-    )} -->
-    <!-- $ -->
-    ${downloadSVGButton(
-      "#map-container-world svg",
-      "Download world project terrains map",
-      "world_project_terrains_by_scales_map.svg"
-    )}
-    <!-- $ -->
-  </div>
-</div>
-
-<div class="grid grid-cols-3 card">
-  <div
-    id="map-container-france"
-    class="grid-colspan-2 grid-rowspan-2"
-    style="padding: 10px;"
-  >
-    ${resize((width, height) =>
-      franceProjection(
-        width,
-        height - 15,
-        handleTerrainView(
-          terrain_legend_type,
-          france_terrain_data,
-          terrain_features,
-          france_terrain_legend,
-          0.2,
-          width > 1030),
-        "- Project terrains by city and Île-de-France, France"
-      )
-    )}
-    <!-- $ -->
-  </div>
-  <div id="map-container-idf" style="padding: 10px; overflow: hidden;">
-    ${resize(
-      (width) => parisProjection(
-        width,
-        handleTerrainView(
-          terrain_legend_type,
-          ile_de_france_terrain_data(terrain_data_by_city),
-          terrain_features,
-          idf_terrain_legend,
-          0.015,
-          width > 500),
-        "- Project terrains by city, Grand Métropole de Paris"
-      )
-    )}
-    <!-- $ -->
-  </div>
-  <!-- <div id="map-container-italy" style="padding: 10px; overflow: hidden;">
-    ${resize(
-      (width) => defaultProjectionItaly(
-        width,
-        handleTerrainView(
-          terrain_legend_type,
-          [...terrain_data_by_city],
-          terrain_features,
-          italy_terrain_legend,
-          0.1,
-          width > 500),
-        "- TRACES terrains by city, Italy"
-      )
-    )}
-  </div> -->
-  <div id="map-container-world" style="padding: 10px; overflow: hidden;">
-    ${resize(
-      (width, height) => worldProjection(
-        width,
-        height,
-        handleTerrainView(
-          terrain_legend_type,
-          [...terrain_data_by_city].map((d) => d.toJSON()),
-          terrain_features,
-          world_terrain_legend,
-          0.1,
-          width > 500),
-        "- Global terrains"
-      )
-    )}
-    <!-- $ -->
-  </div>
-</div>
