@@ -145,8 +145,20 @@ export default {
       name: 'Maps',
       pages: [
         {
-          name: 'Projects Cartography',
-          path: 'pages/geo/phase1-map-dashboard',
+          name: 'Projects by terrain',
+          path: 'pages/geo/projects-by-terrain',
+        },
+        {
+          name: 'Partners by project',
+          path: 'pages/geo/partners-by-project',
+        },
+        {
+          name: 'Project terrains by department',
+          path: 'pages/geo/project-terrains-by-department',
+        },
+        {
+          name: 'Financed labs',
+          path: 'pages/geo/financed-labs',
         },
       ],
     },
