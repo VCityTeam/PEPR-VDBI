@@ -4,6 +4,7 @@ import { simpleGristQuery } from './utilities/grist_api.js'
 const query = `
 select
   Lieux.id as id,
+  LIEU,
   OSM_ID,
   OSM_TYPE,
   ECHELLE,
@@ -20,10 +21,11 @@ join Terrains
 where ECHELLE != 'pays'
 group by
   Lieux.id,
+  LIEU,
   OSM_ID,
   OSM_TYPE,
- ECHELLE,
- GEOMETRY
+  ECHELLE,
+  GEOMETRY
 `
 
 simpleGristQuery(query, 'oUjutoUDF9xP29sxnd6SNX')
@@ -32,6 +34,7 @@ simpleGristQuery(query, 'oUjutoUDF9xP29sxnd6SNX')
       type: 'Feature',
       properties: {
         id: record.fields.id,
+        label: record.fields.LIEU,
         osm_id: record.fields.OSM_ID,
         osm_type: record.fields.OSM_TYPE,
         scale: record.fields.ECHELLE,

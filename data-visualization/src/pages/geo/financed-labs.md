@@ -47,36 +47,8 @@ import {
 
 <!-- DATA IMPORT -->
 
-```js
-const terrain_features = FileAttachment(
-  '/data/terrain_feature_collection.json',
-).json()
-```
-
-```sql id=all_partner_data
-SELECT * from aap_partners
-```
-
 ```sql id=terrain_data
 select * from project_terrains
-```
-
-```sql id=terrain_data_by_city
--- merge data on terrain feature
--- (a simplified terrain label for merging locations at the city level)
-
-select distinct
-  terrain_id,
-  terrain,
-  osm_id,
-  osm_type,
-  -- list_distinct(list(terrain)) as terrains,
-  list_distinct(list(project)) as projects,
-  first(latitude) as latitude,
-  first(longitude) as longitude,
-  -- scale,
-from project_terrains
-group by all
 ```
 
 ```sql id=labs
@@ -91,42 +63,13 @@ join projects_by_partner
 where aap_partners.type = 'LABORATOIRE'
 ```
 
-<!-- saving this for later when we figure out financial annex integration -->
-
-<!--
-```sql id=partner_project_code
-WITH user_partner_project_data as (
-  SELECT DISTINCT
-    project,
-    aap_partners.label,
-    aap_partners.id as "ID primaire",
-    aap_partners.type,
-    -- nom_complet,
-    postal_code,
-  FROM projects_by_partner
-  JOIN aap_partners
-  ON projects_by_partner.partner_id::VARCHAR = aap_partners.id::VARCHAR
-)
-SELECT
-  project,
-  "ID primaire",
-  postal_code,
-FROM user_partner_project_data
-UNION
-SELECT DISTINCT
-  upper(project_name) AS project,
-  -- source_label AS label,
-  siret AS "ID primaire",
-  -- nature_juridique AS "type",
-  -- nom_complet,
-  code_postal AS postal_code,
-FROM annex_partners
-```
--->
-
 ```js
+const projects = [
+  ...(await sql`select distinct project from project_terrains`),
+].map((d) => d.project)
+
 const selected_partner_project = view(
-  Inputs.select(['All', ...[...all_partner_data].map((d) => d.project)], {
+  Inputs.select(['All', projects], {
     multiple: false,
     label: 'Optionally, select a project to focus on:',
     unique: true,

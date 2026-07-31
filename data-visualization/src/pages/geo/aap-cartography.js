@@ -369,6 +369,30 @@ export const franceProjection = (width, height, marks, caption = '') =>
   )
 
 /**
+ * Convenience wrapper for Ile-de-France-projected maps, including a France
+ * departments base layer
+ *
+ * @param {number} width - chart width (used for both width and height)
+ * @param {Array} marks - additional Plot marks to layer on top
+ * @param {string} [caption=''] - the chart caption
+ * @returns {SVGElement} the rendered map
+ */
+export const idfProjection = (width, marks, caption = '') =>
+  defaultProjection(
+    width,
+    width,
+    idf_projection,
+    [
+      Plot.geo(france_departements_geojson, {
+        ...default_projection_style,
+      }),
+      Plot.frame(),
+      marks,
+    ],
+    caption,
+  )
+
+/**
  * Convenience wrapper for Paris-projected maps, including a France
  * departments base layer
  *
@@ -440,26 +464,7 @@ export const worldProjection = (width, height, marks, caption = '') =>
     caption,
   )
 
-// Plot.plot({
-//   width: width,
-//   height: height,
-//   projection: "equirectangular",
-//   marks: [
-//     Plot.geo(land),
-//     generateGeojsonMarks(france_terrain_data, france_terrain_legend, width > 1030)
-//   ],
-// }),
-
 // generate plot marks for each visualisation method
-
-/**
- * Check whether a project is in the currently selected terrain project list
- *
- * @param {string} project - the project acronym to check
- * @returns {boolean} true if the project is currently selected
- */
-export const isProjectSelected = (project) =>
-  selected_terrain_project.includes(project)
 
 /**
  * Build Plot.dot legend markers for the terrain legend, dimming unselected
@@ -467,15 +472,20 @@ export const isProjectSelected = (project) =>
  *
  * @param {Array} terrain_legend - legend rows (`[project, color, x, y]`)
  * @param {boolean} big_labels - whether to use larger marker styling
+ * @param {string[]} selected_projects - the user selected projects
  * @returns {Object} a Plot.dot mark
  */
-export const map_legend_dots = (terrain_legend, big_labels) =>
+export const map_legend_dots = (
+  terrain_legend,
+  big_labels,
+  selected_projects,
+) =>
   Plot.dot(terrain_legend, {
     x: (d) => d[2],
     y: (d) => d[3],
     r: big_labels ? 7 : 5,
     fill: (d) => d[1],
-    fillOpacity: (d) => (isProjectSelected(d[0]) ? 1 : 0.2),
+    fillOpacity: (d) => (selected_projects.includes(d[0]) ? 1 : 0.2),
   })
 
 /**
@@ -484,9 +494,14 @@ export const map_legend_dots = (terrain_legend, big_labels) =>
  *
  * @param {Array} terrain_legend - legend rows (`[project, color, x, y]`)
  * @param {boolean} big_labels - whether to use larger label styling
+ * @param {string[]} selected_projects - the user selected projects
  * @returns {Object} a Plot.text mark
  */
-export const map_legend_text = (terrain_legend, big_labels) =>
+export const map_legend_text = (
+  terrain_legend,
+  big_labels,
+  selected_projects,
+) =>
   Plot.text(terrain_legend, {
     x: (d) => d[2],
     y: (d) => d[3],
@@ -497,7 +512,7 @@ export const map_legend_text = (terrain_legend, big_labels) =>
     fontSize: big_labels ? 25 : 12,
     rotate: big_labels ? -15 : 0,
     text: (d) => d[0],
-    opacity: (d) => (isProjectSelected(d[0]) ? 1 : 0.2),
+    opacity: (d) => (selected_projects.includes(d[0]) ? 1 : 0.2),
   })
 
 /**
@@ -515,29 +530,26 @@ export function generateGeojsonMarks(
   terrain_features,
   terrain_legend,
   big_labels,
+  selected_projects,
 ) {
   console.debug('terrain_features', terrain_features)
-  const project_terrain_mark = Plot.geo(terrain_features, {
-    // fill: 'blue',
-    title: (d) => d.properties.projects,
+
+  const filtered_terrain_features = {
+    type: 'FeatureCollection',
+    features: [terrain_features.features.filter((feature) =>
+      terrain_data.some((d) => d.terrain_id == feature.properties.id),
+    )[4]],
+  }
+
+  console.debug('filtered terrain_features', filtered_terrain_features)
+
+  const project_terrain_mark = Plot.geo(filtered_terrain_features, {
+    fill: 'blue',
+    title: (d) => `${d.properties.label}\n${d.properties.projects.map((p) => p.label)}`,
     fillOpacity: 0.1,
-    //   isProjectSelected(d.properties.project) ? 0.5 : 0.1,
+    //   selected_projects.includes(d.properties.project) ? 0.5 : 0.1,
     stroke: 'black',
     strokeWidth: 0.5,
-    channels: {
-      entity: {
-        value: (d) => d.properties.terrain,
-        label: 'City',
-      },
-      projects: {
-        value: (d) => d.properties.project,
-        label: 'Projects',
-      },
-      scales: {
-        value: (d) => d.properties.scale,
-        label: 'Scales',
-      },
-    },
     tip: true,
   })
 
@@ -559,9 +571,15 @@ export function generateGeojsonMarks(
  * @param {Object[]} terrain_data - terrain data points
  * @param {Array} terrain_legend - legend rows (`[project, color, x, y]`)
  * @param {boolean} big_labels - whether to use larger marker/line styling
+ * @param {string[]} selected_projects - the user selected projects
  * @returns {Array} an array of Plot marks
  */
-function generateLineMapMarks(terrain_data, terrain_legend, big_labels) {
+function generateLineMapMarks(
+  terrain_data,
+  terrain_legend,
+  big_labels,
+  selected_projects,
+) {
   const strokeWidth = big_labels ? 2 : 1
 
   const links = Plot.link(terrain_tip_dots(terrain_data, terrain_legend, 0.2), {
@@ -570,8 +588,10 @@ function generateLineMapMarks(terrain_data, terrain_legend, big_labels) {
     x2: 'longitude',
     y2: 'latitude',
     stroke: (d) => project_color_scale(d.projects),
-    strokeWidth: (d) => (isProjectSelected(d.projects) ? strokeWidth : 0.5),
-    strokeOpacity: (d) => (isProjectSelected(d.projects) ? strokeWidth : 0.5),
+    strokeWidth: (d) =>
+      selected_projects.includes(d.projects) ? strokeWidth : 0.5,
+    strokeOpacity: (d) =>
+      selected_projects.includes(d.projects) ? strokeWidth : 0.5,
     curve: 'bump-y',
   })
 
@@ -638,6 +658,7 @@ function generateLineMapMarks(terrain_data, terrain_legend, big_labels) {
  * @param {Array} terrain_legend - legend rows (`[project, color, x, y]`)
  * @param {number} tip_dot_delta - horizontal offset between stacked per-project tip dots
  * @param {boolean} big_labels - whether to use larger marker styling
+ * @param {string[]} selected_projects - the user selected projects
  * @returns {Array} an array of Plot marks
  */
 function generateDotMapMarks(
@@ -645,6 +666,7 @@ function generateDotMapMarks(
   terrain_legend,
   tip_dot_delta,
   big_labels,
+  selected_projects,
 ) {
   const terrain_dots = Plot.dot(terrain_data, {
     x: 'longitude',
@@ -702,7 +724,7 @@ function generateDotMapMarks(
       y: 'y',
       r: big_labels ? 5 : 4,
       fill: (d) => project_color_scale(d.projects),
-      fillOpacity: (d) => (isProjectSelected(d.projects) ? 1 : 0.2),
+      fillOpacity: (d) => (selected_projects.includes(d.projects) ? 1 : 0.2),
     },
   )
 
@@ -729,9 +751,11 @@ function generateDotMapMarks(
  *
  * @param {Object[]} terrain_legend_type - style type (Polygon, Dot, Line)
  * @param {Object[]} terrain_data - terrain data points
+ * @param {Object[]} terrain_features - terrain geojson feature collection
  * @param {Array} terrain_legend - legend rows (`[project, color, x, y]`)
  * @param {number} tip_dot_delta - horizontal offset between stacked per-project tip dots
  * @param {boolean} big_labels - whether to use larger marker styling
+ * @param {string[]} selected_projects - the user selected projects
  * @returns {Array} an array of Plot marks
  */
 export function handleTerrainView(
@@ -741,6 +765,7 @@ export function handleTerrainView(
   terrain_legend,
   tip_dot_delta,
   big_labels,
+  selected_projects,
 ) {
   switch (terrain_legend_type) {
     case 'Polygon':
@@ -749,6 +774,7 @@ export function handleTerrainView(
         terrain_features,
         terrain_legend,
         big_labels,
+        selected_projects,
       )
     case 'Dot':
       return generateDotMapMarks(
@@ -756,9 +782,15 @@ export function handleTerrainView(
         terrain_legend,
         tip_dot_delta,
         big_labels,
+        selected_projects,
       )
     case 'Line':
-      return generateLineMapMarks(terrain_data, terrain_legend, big_labels)
+      return generateLineMapMarks(
+        terrain_data,
+        terrain_legend,
+        big_labels,
+        selected_projects,
+      )
     default:
       console.error('Invalid terrain_legend_type:', terrain_legend_type)
   }
