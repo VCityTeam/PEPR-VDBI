@@ -1,6 +1,7 @@
 import * as d3 from 'd3'
-import * as Plot from '@observablehq/plot'
+import { geo, graticule, sphere, dot, hexbin, plot } from '@observablehq/plot'
 import { FileAttachment } from 'observablehq:stdlib'
+import { feature } from 'npm:topojson-client'
 import { vdbi_color_scheme } from './color.js'
 
 // geospatial address data
@@ -69,7 +70,11 @@ export const italy_regions_geojson = FileAttachment(
   '/data/italy_regions.json',
 ).json()
 
+export const world_geojson = await FileAttachment(
+  '/data/countries-110m.json',
+).json()
 
+export const land_geojson = feature(world_geojson, world_geojson.objects.land)
 
 // default map options
 
@@ -131,11 +136,11 @@ export const default_projection_style = {
 }
 
 export const default_mainland_france_marks = [
-  Plot.geo(mainland_france_departements_geojson, {
+  geo(mainland_france_departements_geojson, {
     ...default_projection_style,
     strokeWidth: 0.5,
   }),
-  Plot.geo(mainland_france_regions_geojson, {
+  geo(mainland_france_regions_geojson, {
     ...default_projection_style,
     fill: undefined,
     fillOpacity: undefined,
@@ -143,24 +148,24 @@ export const default_mainland_france_marks = [
 ]
 
 export const mainland_france_choropleth_marks = [
-  Plot.geo(mainland_france_departements_geojson, {
+  geo(mainland_france_departements_geojson, {
     stroke: vdbi_color_scheme.blue,
     strokeWidth: 0.1,
   }),
-  Plot.geo(mainland_france_regions_geojson, {
+  geo(mainland_france_regions_geojson, {
     stroke: vdbi_color_scheme.blue,
   }),
 ]
 
 export const idf_choropleth_marks = [
-  Plot.geo(idf_departements_geojson, {
+  geo(idf_departements_geojson, {
     stroke: vdbi_color_scheme.blue,
     // strokeWidth: 0.1,
   }),
 ]
 
 export const italy_choropleth_marks = [
-  Plot.geo(italy_regions_geojson, {
+  geo(italy_regions_geojson, {
     stroke: vdbi_color_scheme.blue,
     // strokeWidth: 0.1,
   }),
@@ -186,7 +191,7 @@ export function projectionMap(
     lonMap = (d) => d[1][0].longitude,
     latMap = (d) => d[1][0].latitude,
     /*
-     * list of Plot.geo compatible borders. For example:
+     * list of geo compatible borders. For example:
      * const world = FileAttachment("/data/countries-110m.json").json();
      * const borders = [
      *   topojson.feature(world, world.objects.land),
@@ -233,9 +238,9 @@ export function projectionMap(
     },
     marks = [
       // default marks
-      Plot.graticule(),
-      Plot.sphere(),
-      Plot.dot(data, {
+      graticule(),
+      sphere(),
+      dot(data, {
         x: lonMap,
         y: latMap,
         r: valueMap,
@@ -265,7 +270,7 @@ export function projectionMap(
   )
   bordersToDraw.forEach((borderAndStroke) => {
     marks.push(
-      Plot.geo(borderAndStroke[0], {
+      geo(borderAndStroke[0], {
         stroke: borderAndStroke[1],
         strokeOpacity: borderAndStroke[2],
       }),
@@ -273,7 +278,7 @@ export function projectionMap(
   })
   console.debug('bordersToDraw', bordersToDraw)
 
-  return Plot.plot({
+  return plot({
     width: width,
     height: height,
     projection: {
@@ -291,9 +296,9 @@ export function projectionMap(
 //     width,
 //     height,
 //     [
-//       Plot.dot(
+//       dot(
 //         [...all_partner_data],
-//         Plot.hexbin(
+//         hexbin(
 //           {
 //             r: "count",
 //             fill: "count",
@@ -359,14 +364,14 @@ export const choropleth = (
   features,
   marks = [],
 ) =>
-  Plot.plot({
+  plot({
     width: width,
     height: height - 60,
     // caption: caption,
     color: choropleth_color_config(caption),
     projection: projection,
     marks: [
-      Plot.geo(features, {
+      geo(features, {
         channels: {
           Department: ({ properties }) => properties.nom,
           Code: ({ properties }) => properties.code,
