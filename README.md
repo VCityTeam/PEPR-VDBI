@@ -1,5 +1,8 @@
 # [PEPR-VDBI](https://pepr-vdbi.fr/) Veille
 
+[![Check Markdown Links](https://github.com/VCityTeam/PEPR-VDBI/actions/workflows/markdown-links.yml/badge.svg)](https://github.com/VCityTeam/PEPR-VDBI/actions/workflows/markdown-links.yml)
+[![CodeQL](https://github.com/VCityTeam/PEPR-VDBI/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/VCityTeam/PEPR-VDBI/actions/workflows/github-code-scanning/codeql)
+
 Data integration, analysis, and visualization tests for the **Programmes et Équipements Prioritaires de Recherche - Ville Durable et Bâtiment Innovant** (PEPR VDBI) "Veille"
 
 ## What is the purpose of the PEPR-VDBI Veille?
