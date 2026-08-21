@@ -125,6 +125,7 @@ def compare_wordcounts(
     strategy: str = "SUM",
     delimiter_1: str = ",",
     delimiter_2: str = ",",
+    normalize: bool = True,
 ) -> dict[str, int]:
 
     if strategy not in [member.name for member in CompareStrategy]:
@@ -144,7 +145,8 @@ def compare_wordcounts(
                 word_counts_1[row[1]] += int(row[0])
             else:
                 word_counts_1[row[1]] = int(row[0])
-    word_counts_1 = normalize_word_counts(word_counts_1)
+    if normalize:
+        word_counts_1 = normalize_word_counts(word_counts_1)
 
     # uncomment for debugging normalization
     # write_word_count(word_counts_1, "word_counts_1.csv")
@@ -158,7 +160,8 @@ def compare_wordcounts(
                 word_counts_2[row[1]] += int(row[0])
             else:
                 word_counts_2[row[1]] = int(row[0])
-    word_counts_2 = normalize_word_counts(word_counts_2)
+    if normalize:
+        word_counts_2 = normalize_word_counts(word_counts_2)
 
     # uncomment for debugging normalization
     # write_word_count(word_counts_2, "word_counts_2.csv")
@@ -181,7 +184,7 @@ def compare_wordcounts(
 def generate_intersection(input_1: dict, input_2: dict, strategy: str = "SUM") -> dict:
     """
     Takes two word counts returns a new word count containing the intersection of keys
-    with their average weights.
+    with their weights calculated based on the strategy.
 
     :param input_1: a dictionary containing words as keys and their corresponding
     counts (or weights) as values
@@ -200,7 +203,7 @@ def generate_intersection(input_1: dict, input_2: dict, strategy: str = "SUM") -
 
 def generate_complement(input_1: dict, input_2: dict) -> dict:
     """
-    Takes two word counts returns a new word count containing the complement of their keys
+    Takes two word counts returns a new word count containing the complement of their keys.
 
     :param input_1: a dictionary containing words as keys and their corresponding
     counts (or weights) as values
@@ -222,7 +225,7 @@ def generate_complement(input_1: dict, input_2: dict) -> dict:
 def generate_union(input_1: dict, input_2: dict, strategy: str = "SUM") -> dict:
     """
     Takes two word counts returns a new word count containing the union of keys.
-    The count of words in both inputs are averaged.
+    The count of words in both inputs are calculated based on the strategy.
 
     :param input_1: a dictionary containing words as keys and their corresponding
     counts (or weights) as values
@@ -263,7 +266,7 @@ def get_intersect_count(
 
 
 def normalize_word_counts(
-    word_counts: dict, range_min: int = 0, range_max: int = 100
+    word_counts: dict, range_min: int = 1, range_max: int = 100
 ) -> dict:
     """
     Normalize the weights of a word count to a given range.

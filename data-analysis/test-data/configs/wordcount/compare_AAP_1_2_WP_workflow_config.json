@@ -1,0 +1,56 @@
+[
+  {
+    "activity": "_parse",
+    "description": "tokenize PEPR VDBI AAP 1 WP and AAP 2 subject descriptions",
+    "inputs": [
+      "test-data/private/input/compare_aap1_2_wp_fr/aap1_wp_fr.txt",
+      "test-data/private/input/compare_aap1_2_wp_fr/aap2_wp_fr.txt"
+    ],
+    "output_dir": "test-data/private/compare_aap1_2_wp_fr_stage_0/"
+  },
+  {
+    "activity": "_count",
+    "description": "count AAP 1 WP and AAP 2 subject description tokens",
+    "input_dir": "test-data/private/compare_aap1_2_wp_fr_stage_0/",
+    "output_dir": "test-data/private/compare_aap1_2_wp_fr_stage_1/",
+    "limit": 100,
+    "params": {
+      "stop_words_path": "test-data/configs/wordcount/stop_words_french.csv"
+    }
+  },
+  {
+    "activity": "compare",
+    "description": "compare AAP 1 + 2 documents",
+    "inputs": [
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap1_wp_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap2_wp_fr_count.csv"
+    ],
+    "output_dir": "test-data/private/output/compare_aap1_2_wp_fr/",
+    "params": {
+      "mode": "INTERSECTION",
+      "strategy": "AVERAGE"
+    }
+  },
+  {
+    "activity": "compare",
+    "description": "compare AAP 1 + 2 documents",
+    "inputs": [
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap1_wp_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap2_wp_fr_count.csv"
+    ],
+    "output_dir": "test-data/private/output/compare_aap1_2_wp_fr/",
+    "params": {
+      "mode": "UNION",
+      "strategy": "AVERAGE"
+    }
+  },
+  {
+    "activity": "compare",
+    "description": "compare AAP 1 + 2 documents",
+    "inputs": [
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap1_wp_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap2_wp_fr_count.csv"
+    ],
+    "output_dir": "test-data/private/output/compare_aap1_2_wp_fr/",
+    "params": {
+      "mode": "COMPLEMENT"
+    }
+  }
+]

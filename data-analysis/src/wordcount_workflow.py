@@ -158,6 +158,7 @@ def runWorkflow(config: list[dict]) -> None:
             inputs = [
                 os.path.join(input_dir, input_file)
                 for input_file in os.listdir(input_dir)
+                if os.path.isfile(os.path.join(input_dir, input_file))
             ]
 
         for input_path in inputs:
