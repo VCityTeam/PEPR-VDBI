@@ -5,7 +5,7 @@
 # Usage: batch_query_api.sh <api> <csv-file>
 #   api       api: geocoding | siret, forwarded as-is to query_api.js
 #   csv-file  path to a CSV file with a header row; the first column of each
-#             data row is used as the query string
+#             data row is used as the query string; one query per row
 
 set -euo pipefail
 
