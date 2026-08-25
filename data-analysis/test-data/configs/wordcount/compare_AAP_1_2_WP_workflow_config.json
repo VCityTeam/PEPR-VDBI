@@ -1,7 +1,19 @@
 [
   {
-    "activity": "_parse",
-    "description": "tokenize PEPR VDBI AAP 1 WP and AAP 2 subject descriptions",
+    "activity": "parse",
+    "description": "tokenize PEPR VDBI AAP 1 WP descriptions",
+    "input_dir": "test-data/private/input/compare_aap1_2_wp_fr/aap1/",
+    "output_dir": "test-data/private/compare_aap1_2_wp_fr_stage_0/aap/"
+  },
+  {
+    "activity": "parse",
+    "description": "tokenize PEPR VDBI AAP 2 subject descriptions",
+    "input_dir": "test-data/private/input/compare_aap1_2_wp_fr/aap2/",
+    "output_dir": "test-data/private/compare_aap1_2_wp_fr_stage_0/aap/"
+  },
+  {
+    "activity": "parse",
+    "description": "tokenize compiled PEPR VDBI AAP 1 WP and AAP 2 subject descriptions",
     "inputs": [
       "test-data/private/input/compare_aap1_2_wp_fr/aap1_wp_fr.txt",
       "test-data/private/input/compare_aap1_2_wp_fr/aap2_wp_fr.txt"
@@ -9,13 +21,25 @@
     "output_dir": "test-data/private/compare_aap1_2_wp_fr_stage_0/"
   },
   {
-    "activity": "_count",
+    "activity": "count",
+    "description": "count AAP 1 WP and AAP 2 subject description tokens",
+    "input_dir": "test-data/private/compare_aap1_2_wp_fr_stage_0/aap/",
+    "output_dir": "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/",
+    "limit": 100,
+    "params": {
+      "stop_words_path": "test-data/configs/wordcount/stop_words_french.csv",
+      "language": "fr"
+    }
+  },
+  {
+    "activity": "count",
     "description": "count AAP 1 WP and AAP 2 subject description tokens",
     "input_dir": "test-data/private/compare_aap1_2_wp_fr_stage_0/",
     "output_dir": "test-data/private/compare_aap1_2_wp_fr_stage_1/",
     "limit": 100,
     "params": {
-      "stop_words_path": "test-data/configs/wordcount/stop_words_french.csv"
+      "stop_words_path": "test-data/configs/wordcount/stop_words_french.csv",
+      "language": "fr"
     }
   },
   {
@@ -50,7 +74,8 @@
     ],
     "output_dir": "test-data/private/output/compare_aap1_2_wp_fr/",
     "params": {
-      "mode": "COMPLEMENT"
+      "mode": "COMPLEMENT",
+      "strategy": "AVERAGE"
     }
   }
 ]
