@@ -234,11 +234,14 @@ def generate_union(input_1: dict, input_2: dict, strategy: str = "SUM") -> dict:
     :return: a dictionary containing the union of `input_1` and `input_2`.
     """
     union = input_1.copy()
+
     for word, count in input_2.items():
-        if word in union:
-            union[word] = get_intersect_count(union.get(word, 0), count, strategy)
-        else:
-            union[word] = count
+        union[word] = get_intersect_count(union.get(word, 0), count, strategy)
+
+    for word, count in union.items():
+        if word not in input_2:
+            union[word] = get_intersect_count(0, count, strategy)
+
     return union
 
 
