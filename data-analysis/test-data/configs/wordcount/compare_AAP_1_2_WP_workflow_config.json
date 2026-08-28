@@ -1,18 +1,18 @@
 [
   {
-    "activity": "parse",
+    "activity": "_parse",
     "description": "tokenize PEPR VDBI AAP 1 WP descriptions",
     "input_dir": "test-data/private/input/compare_aap1_2_wp_fr/aap1/",
     "output_dir": "test-data/private/compare_aap1_2_wp_fr_stage_0/aap/"
   },
   {
-    "activity": "parse",
+    "activity": "_parse",
     "description": "tokenize PEPR VDBI AAP 2 subject descriptions",
     "input_dir": "test-data/private/input/compare_aap1_2_wp_fr/aap2/",
     "output_dir": "test-data/private/compare_aap1_2_wp_fr_stage_0/aap/"
   },
   {
-    "activity": "parse",
+    "activity": "_parse",
     "description": "tokenize compiled PEPR VDBI AAP 1 WP and AAP 2 subject descriptions",
     "inputs": [
       "test-data/private/input/compare_aap1_2_wp_fr/aap1_wp_fr.txt",
@@ -21,22 +21,22 @@
     "output_dir": "test-data/private/compare_aap1_2_wp_fr_stage_0/"
   },
   {
-    "activity": "count",
+    "activity": "_count",
     "description": "count AAP 1 WP and AAP 2 subject description tokens",
     "input_dir": "test-data/private/compare_aap1_2_wp_fr_stage_0/aap/",
     "output_dir": "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/",
-    "limit": 100,
+    "limit": 50,
     "params": {
       "stop_words_path": "test-data/configs/wordcount/stop_words_french.csv",
       "language": "fr"
     }
   },
   {
-    "activity": "count",
+    "activity": "_count",
     "description": "count AAP 1 WP and AAP 2 subject description tokens",
     "input_dir": "test-data/private/compare_aap1_2_wp_fr_stage_0/",
     "output_dir": "test-data/private/compare_aap1_2_wp_fr_stage_1/",
-    "limit": 100,
+    "limit": 50,
     "params": {
       "stop_words_path": "test-data/configs/wordcount/stop_words_french.csv",
       "language": "fr"
@@ -44,6 +44,41 @@
   },
   {
     "activity": "compare",
+    "description": "generate normalisations for AAP 1 + 2 documents",
+    "inputs": [
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/AtecA_sujet_these_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/AtecA_sujet_these_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/PFAS-CITÉS_sujet_these_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/PFAS-CITÉS_sujet_these_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/VFpp_wp_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/VFpp_wp_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/nespamex_method_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/nespamex_method_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/CAPTURE_sujet_these_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/CAPTURE_sujet_these_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/PÉRENNIS_sujet_these_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/PÉRENNIS_sujet_these_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/VILLEGARDEN_wp_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/VILLEGARDEN_wp_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/sitinere_method_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/sitinere_method_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/Cool_Zinc_sujet_these_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/Cool_Zinc_sujet_these_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/RESILIENCE_wp_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/RESILIENCE_wp_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/WHAOU_wp_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/WHAOU_wp_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/totem_method_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/totem_method_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/GO_Pro_sujet_these_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/GO_Pro_sujet_these_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/RaRe_sujet_these_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/RaRe_sujet_these_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/care_method_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/care_method_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/urbexpomic_method_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/urbexpomic_method_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/MRHR_sujet_these_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/MRHR_sujet_these_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/TRACES_wp_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/TRACES_wp_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/dc_risk_city_method_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/dc_risk_city_method_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/NEO_wp_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/NEO_wp_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/URBHEALTH_wp_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/URBHEALTH_wp_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap/inteGREEN_wp_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap/inteGREEN_wp_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap1_wp_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap1_wp_fr_count.csv",
+      "test-data/private/compare_aap1_2_wp_fr_stage_1/aap2_wp_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap2_wp_fr_count.csv"
+    ],
+    "output_dir": "test-data/private/output/compare_aap1_2_wp_fr/normalisations/",
+    "params": {
+      "mode": "UNION",
+      "strategy": "AVERAGE"
+    }
+  },
+  {
+    "activity": "_compare",
     "description": "compare AAP 1 + 2 documents",
     "inputs": [
       "test-data/private/compare_aap1_2_wp_fr_stage_1/aap1_wp_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap2_wp_fr_count.csv"
@@ -55,7 +90,7 @@
     }
   },
   {
-    "activity": "compare",
+    "activity": "_compare",
     "description": "compare AAP 1 + 2 documents",
     "inputs": [
       "test-data/private/compare_aap1_2_wp_fr_stage_1/aap1_wp_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap2_wp_fr_count.csv"
@@ -67,7 +102,7 @@
     }
   },
   {
-    "activity": "compare",
+    "activity": "_compare",
     "description": "compare AAP 1 + 2 documents",
     "inputs": [
       "test-data/private/compare_aap1_2_wp_fr_stage_1/aap1_wp_fr_count.csv:test-data/private/compare_aap1_2_wp_fr_stage_1/aap2_wp_fr_count.csv"
