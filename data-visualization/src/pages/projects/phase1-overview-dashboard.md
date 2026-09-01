@@ -584,7 +584,7 @@ const filtered_terrain_data = [...terrain_data]
     return datum
   })
 
-const ile_de_france_terrain_data = [...terrain_data].filter((d) =>
+const filterIdfTerrains = [...terrain_data].filter((d) =>
   inBBox(d.longitude, d.latitude, ile_de_france_bbox),
 )
 
@@ -824,5 +824,5 @@ console.debug('general_partners', [
 console.debug('aap_partners', [...(await sql`select * from aap_partners`)])
 console.debug('terrains', [...(await sql`select * from terrains`)])
 console.debug('terrain_data', [...terrain_data])
-console.debug('ile_de_france_terrain_data', ile_de_france_terrain_data)
+console.debug('filterIdfTerrains', filterIdfTerrains)
 ```

@@ -1,8 +1,8 @@
 ---
 sql:
-  annex_partners: /data/partners_by_project_annex.csv
-  projects_by_partner: /data/partners_by_project.tsv
-  aap_partners: /data/partners.tsv
+  # annex_partners: /data/partners_by_project_annex.csv
+  # projects_by_partner: /data/partners_by_project.tsv
+  # aap_partners: /data/partners.tsv
   project_terrains: /data/project_terrains.tsv
 ---
 
@@ -22,8 +22,9 @@ import {
   formTemplate,
 } from '/components/utilities.js'
 import {
-  france_terrain_data,
-  ile_de_france_terrain_data,
+  filterFranceTerrains,
+  filterIdfTerrains,
+  filterInternationalTerrains,
   france_terrain_legend,
   idf_terrain_legend,
   italy_terrain_legend,
@@ -50,30 +51,52 @@ console.debug('terrain_features', terrain_features)
 select * from project_terrains
 ```
 
+${Inputs.table(terrain_data_by_city, {layout: 'auto'})}
+
+<!-- $ -->
+
 ```sql id=terrain_data_by_city
 -- merge data on terrain feature
 -- (a simplified terrain label for merging locations at the city level)
 
-select distinct
-  terrain_id,
-  terrain,
-  osm_id,
-  osm_type,
-  -- list_distinct(list(terrain)) as terrains,
-  list_distinct(list(project)) as projects,
-  first(latitude) as latitude,
-  first(longitude) as longitude,
-  -- scale,
+select distinct *
+  -- terrain_id,
+  -- terrain,
+  -- osm_id,
+  -- osm_type,
+  -- -- list_distinct(list(terrain)) as terrains,
+  -- list_distinct(list(project)) as projects,
+  -- first(latitude) as latitude,
+  -- first(longitude) as longitude,
+  -- -- scale,
 from project_terrains
-group by all
+-- group by all
+```
+
+```js
+const filtered_terrain_data = [...terrain_data_by_city]
+  .map((d) => d.toJSON())
+  .filter(
+    (d) =>
+      settings.selected_terrain_scale.includes(d.scale) &&
+      settings.selected_terrain_project_type.includes(d.project_type),
+    // && settings.selected_terrain_project.includes(d.project),
+  )
+display(filtered_terrain_data)
+display(filtered_terrain_data.find((d) => d.terrain === 'Hanoi'))
+display(terrain_features.features.find((d) => d.properties.label === 'Hanoi'))
 ```
 
 <div class="card">
 
 ```js
-const projects = [
-  ...(await sql`select distinct project from project_terrains`),
-].map((d) => d.project)
+// const projects = [
+//   ...(await sql`select distinct project from project_terrains`),
+// ].map((d) => d.project)
+
+const project_types = [
+  ...(await sql`select distinct project_type from project_terrains`),
+].map((d) => d.project_type)
 
 const scales = [
   ...(await sql`select distinct scale from project_terrains where scale is not null`),
@@ -82,11 +105,17 @@ const scales = [
 const settings = view(
   Inputs.form(
     {
-      selected_terrain_project: Inputs.checkbox(projects, {
-        label: 'Included projects',
+      // selected_terrain_project: Inputs.checkbox(projects, {
+      //   label: 'Included projects',
+      //   unique: true,
+      //   sort: true,
+      //   value: projects,
+      // }),
+      selected_terrain_project_type: Inputs.checkbox(project_types, {
+        label: 'Included project types',
         unique: true,
         sort: true,
-        value: projects,
+        value: project_types,
       }),
       selected_terrain_scale: Inputs.checkbox(scales, {
         label: 'Included scales',
@@ -94,10 +123,10 @@ const settings = view(
         sort: true,
         value: scales,
       }),
-      terrain_legend_type: Inputs.select(['Polygon', 'Line', 'Dot'], {
-        label: 'Legend view type',
-        value: 'Polygon',
-      }),
+      // terrain_legend_type: Inputs.select(['Polygon', 'Line', 'Dot'], {
+      //   label: 'Legend view type',
+      //   value: 'Polygon',
+      // }),
     },
     { template: formTemplate },
   ),
@@ -115,17 +144,17 @@ const settings = view(
       franceProjection(
         width,
         height - 15,
-        handleTerrainView(
-          settings.terrain_legend_type,
-          france_terrain_data(
-            terrain_data_by_city,
-            settings.selected_terrain_scale),
-          terrain_features,
-          france_terrain_legend,
-          0.2,
-          width > 1030,
-          settings.selected_terrain_project),
-        "- Project terrains, France"
+        // handleTerrainView(
+        //   'Polygon',
+        //   filterFranceTerrains(
+        //     filtered_terrain_data,
+        //     settings.selected_terrain_scale),
+        //   terrain_features,
+        //   france_terrain_legend,
+        //   0.2,
+        //   width > 1030,
+        //   settings.selected_terrain_project),
+        // "- Project terrains, France"
       )
     )}
     <!-- $ -->
@@ -134,15 +163,15 @@ const settings = view(
     ${resize(
       (width) => idfProjection(
         width,
-        handleTerrainView(
-          settings.terrain_legend_type,
-          ile_de_france_terrain_data(terrain_data_by_city),
-          terrain_features,
-          idf_terrain_legend,
-          0.015,
-          width > 500,
-          settings.selected_terrain_project),
-        "- Project terrains, Ile-de-France"
+        // handleTerrainView(
+        //   'Polygon',
+        //   filterIdfTerrains(filtered_terrain_data),
+        //   terrain_features,
+        //   idf_terrain_legend,
+        //   0.015,
+        //   width > 500,
+        //   settings.selected_terrain_project),
+        // "- Project terrains, Ile-de-France"
       )
     )}
     <!-- $ -->
@@ -152,8 +181,8 @@ const settings = view(
       (width) => defaultProjectionItaly(
         width,
         handleTerrainView(
-          settings.terrain_legend_type,
-          [...terrain_data_by_city],
+          'Polygon',
+          filtered_terrain_data,
           terrain_features,
           italy_terrain_legend,
           0.1,
@@ -169,8 +198,8 @@ const settings = view(
         width,
         width / 2,
         handleTerrainView(
-          settings.terrain_legend_type,
-          [...terrain_data_by_city].map((d) => d.toJSON()),
+          'Polygon',
+          filterInternationalTerrains(filtered_terrain_data),
           terrain_features,
           world_terrain_legend,
           0.1,
@@ -189,13 +218,10 @@ const settings = view(
 display(
   Inputs.form(
     [
-      downloadTableButton(
-        () => [...terrain_data_by_city].map((d) => d.toJSON()),
-        {
-          label: 'Download terrains by location data',
-          delimeter: '\t',
-        },
-      ),
+      downloadTableButton(() => filtered_terrain_data, {
+        label: 'Download terrains by location data',
+        delimeter: '\t',
+      }),
       downloadTableButton(() => [...terrain_data].map((d) => d.toJSON()), {
         label: 'Download terrain and scale data',
         delimeter: '\t',

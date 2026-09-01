@@ -63,11 +63,11 @@ export const ile_de_france_bbox = {
   max_y: 49.24342474094858,
 }
 
-export const france_terrain_data = (
+export const filterFranceTerrains = (
   terrain_data_by_city,
   selected_terrain_scale,
 ) => {
-  const france_terrain_data = [...terrain_data_by_city].filter(
+  const filterFranceTerrains = [...terrain_data_by_city].filter(
     (d) =>
       // keep projects within france
       inBBox(d.longitude, d.latitude, mainland_france_bbox) &&
@@ -78,7 +78,7 @@ export const france_terrain_data = (
   )
 
   if (selected_terrain_scale.includes('région'))
-    france_terrain_data.push({
+    filterFranceTerrains.push({
       terrain: 'Île-de-France',
       projects: vectorFromArray([
         ...new Set(
@@ -87,7 +87,7 @@ export const france_terrain_data = (
             .flatMap((d) => [...d.projects]),
         ),
         ...new Set(
-          ile_de_france_terrain_data([...terrain_data_by_city]).flatMap((d) => [
+          filterIdfTerrains([...terrain_data_by_city]).flatMap((d) => [
             ...d.projects,
           ]),
         ),
@@ -97,10 +97,10 @@ export const france_terrain_data = (
       longitude: 2.342,
     })
 
-  return france_terrain_data
+  return filterFranceTerrains
 }
 
-export const ile_de_france_terrain_data = (terrain_data_by_city) =>
+export const filterIdfTerrains = (terrain_data_by_city) =>
   [...terrain_data_by_city].filter(
     (d) =>
       d.terrain != 'Île-de-France' &&
@@ -108,7 +108,7 @@ export const ile_de_france_terrain_data = (terrain_data_by_city) =>
       inBBox(d.longitude, d.latitude, ile_de_france_bbox),
   )
 
-export const international_terrain_data = (terrain_data_by_city) =>
+export const filterInternationalTerrains = (terrain_data_by_city) =>
   terrain_data_by_city.filter(
     (d) =>
       // keep projects outside of france
@@ -140,9 +140,9 @@ export const france_terrain_legend = () => {
   return legend
 }
 
-export const idf_terrain_legend = (ile_de_france_terrain_data) => {
+export const idf_terrain_legend = (filterIdfTerrains) => {
   const idf_terrains = new Set(
-    ile_de_france_terrain_data.flatMap((row) => [...row.projects]),
+    filterIdfTerrains.flatMap((row) => [...row.projects]),
   )
 
   const legend = base_legend
@@ -160,9 +160,9 @@ export const idf_terrain_legend = (ile_de_france_terrain_data) => {
   return legend
 }
 
-export const italy_terrain_legend = (international_terrain_data) => {
+export const italy_terrain_legend = (filterInternationalTerrains) => {
   const international_terrains = new Set(
-    international_terrain_data.flatMap((row) => [...row.projects]),
+    filterInternationalTerrains.flatMap((row) => [...row.projects]),
   )
 
   const legend = base_legend
@@ -179,9 +179,9 @@ export const italy_terrain_legend = (international_terrain_data) => {
   return legend
 }
 
-export const world_terrain_legend = (international_terrain_data) => {
+export const world_terrain_legend = (filterInternationalTerrains) => {
   const international_terrains = new Set(
-    international_terrain_data.flatMap((row) => [...row.projects]),
+    filterInternationalTerrains.flatMap((row) => [...row.projects]),
   )
 
   const legend = base_legend
@@ -536,21 +536,26 @@ export function generateGeojsonMarks(
 
   const filtered_terrain_features = {
     type: 'FeatureCollection',
-    features: [terrain_features.features.filter((feature) =>
+    features: terrain_features.features.filter((feature) =>
       terrain_data.some((d) => d.terrain_id == feature.properties.id),
-    )[4]],
+    ),
   }
 
   console.debug('filtered terrain_features', filtered_terrain_features)
 
+  const project_terrain_tips = Plot.tip(terrain_data, {
+    title: (d) => d.terrain,
+    // `${d.properties.label}\n${d.properties.projects.map((p) => p.label)}`,
+    x: 'longitude',
+    y: 'latitude',
+    // anchor: 'bottom',
+    textPadding: 3,
+  })
+
   const project_terrain_mark = Plot.geo(filtered_terrain_features, {
-    fill: 'blue',
-    title: (d) => `${d.properties.label}\n${d.properties.projects.map((p) => p.label)}`,
-    fillOpacity: 0.1,
-    //   selected_projects.includes(d.properties.project) ? 0.5 : 0.1,
-    stroke: 'black',
-    strokeWidth: 0.5,
-    tip: true,
+    stroke: 'blue',
+    strokeWidth: 1,
+    fillOpacity: 0.5,
   })
 
   return [
@@ -560,6 +565,7 @@ export function generateGeojsonMarks(
     // map_legend_text(terrain_legend, big_labels),
     // legend_axis_label,
     // tip marks //
+    project_terrain_tips,
     // ...terrain_tips(terrain_data),
   ]
 }
@@ -942,10 +948,10 @@ export const choropleth_terrain_data = (terrain_data) =>
     (d) => d.project_acronyme,
   )
 
-export const choropleth_terrain_data_by_city = (france_terrain_data) => [
+export const choropleth_terrain_data_by_city = (filterFranceTerrains) => [
   ...d3
     .rollup(
-      france_terrain_data.map((d) => ({
+      filterFranceTerrains.map((d) => ({
         projects: d.projects.toJSON(),
         code: (
           mainland_france_departements_geojson.features.find((department) =>

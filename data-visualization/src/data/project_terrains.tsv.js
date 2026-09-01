@@ -5,6 +5,7 @@ import { simpleGristQuery } from './utilities/grist_api.js'
 const query = `
 select
   Terrains.PROJET as project_id,
+  Projets.TYPE as project_type,
   Terrains.TERRAIN as terrain_id,
   Terrains.gristHelper_Display as project,
   Terrains.gristHelper_Display3 as terrain,
@@ -18,6 +19,7 @@ select
   Terrains.COMMENTAIRE as comment
 from Terrains
 join Lieux on Terrains.TERRAIN = Lieux.id
+join Projets on Terrains.PROJET = Projets.id
 `
 
 simpleGristQuery(query, 'oUjutoUDF9xP29sxnd6SNX')
