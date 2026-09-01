@@ -313,7 +313,7 @@ export function projectionMap(
 //           }
 //         )
 //       ),
-//       ...terrain_tips(france_terrain_data),
+//       ...terrain_tips(filterFranceTerrains),
 //     ],
 //     "- Project partners, France"
 
