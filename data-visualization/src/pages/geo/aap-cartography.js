@@ -26,7 +26,6 @@ import {
   vdbi_color_scheme,
   project_color_scale,
 } from '../../components/color.js'
-import { vectorFromArray } from 'npm:apache-arrow'
 
 // Project terrain map
 
@@ -49,6 +48,13 @@ export const inBBox = (
 ) =>
   min_x < longitude && longitude < max_x && min_y < latitude && latitude < max_y
 
+export const europe_bbox = {
+  min_x: -10,
+  max_x: 30,
+  min_y: 30,
+  max_y: 70,
+}
+
 export const mainland_france_bbox = {
   min_x: -5.273438,
   max_x: 8.833008,
@@ -63,41 +69,33 @@ export const ile_de_france_bbox = {
   max_y: 49.24342474094858,
 }
 
-export const filterFranceTerrains = (
-  terrain_data_by_city,
-  selected_terrain_scale,
-) => {
-  const filterFranceTerrains = [...terrain_data_by_city].filter(
-    (d) =>
-      // keep projects within france
-      inBBox(d.longitude, d.latitude, mainland_france_bbox) &&
-      // separate out small scale ile-de-france data
-      (!inBBox(d.longitude, d.latitude, ile_de_france_bbox) ||
-        // d.terrain == "Île-de-France" ||
-        d.terrain == 'Métropole du Grand Paris'),
+export const filterFranceTerrains = (terrain_data) => {
+  const france_terrains_by_idf = [...terrain_data].filter((d) =>
+    inBBox(d.longitude, d.latitude, mainland_france_bbox),
   )
 
-  if (selected_terrain_scale.includes('région'))
-    filterFranceTerrains.push({
-      terrain: 'Île-de-France',
-      projects: vectorFromArray([
-        ...new Set(
-          [...terrain_data_by_city]
-            .filter((d) => d.terrain == 'Île-de-France')
-            .flatMap((d) => [...d.projects]),
-        ),
-        ...new Set(
-          filterIdfTerrains([...terrain_data_by_city]).flatMap((d) => [
-            ...d.projects,
-          ]),
-        ),
-      ]),
-      scale: 'région',
-      latitude: 48.856,
-      longitude: 2.342,
-    })
+  const idf_terrain = terrain_data.find((d) => d.terrain_id == 89)
 
-  return filterFranceTerrains
+  // this is pretty hacky but it works for now
+  france_terrains_by_idf.forEach((d) => {
+    // if ile-de-france terrain
+    if (!inBBox(d.longitude, d.latitude, ile_de_france_bbox)) return
+
+    // replace everything with idf terrain data but keep the project name
+    const project = d.project
+
+    // Source - https://stackoverflow.com/a/28570479
+    // Posted by Dave Lugg
+    // Retrieved 2026-09-04, License - CC BY-SA 3.0
+
+    for (var key in d) {
+      d[key] = idf_terrain[key]
+    }
+
+    d.project = project
+  })
+
+  return france_terrains_by_idf
 }
 
 export const filterIdfTerrains = (terrain_data_by_city) =>
@@ -113,6 +111,13 @@ export const filterInternationalTerrains = (terrain_data_by_city) =>
     (d) =>
       // keep projects outside of france
       !inBBox(d.longitude, d.latitude, mainland_france_bbox),
+  )
+
+export const filterExtraEuropeanTerrains = (terrain_data_by_city) =>
+  terrain_data_by_city.filter(
+    (d) =>
+      // keep projects outside of france
+      !inBBox(d.longitude, d.latitude, europe_bbox),
   )
 
 /* Legends are structured as a 2D array, each row containing a
@@ -521,17 +526,9 @@ export const map_legend_text = (
  *
  * @param {Object[]} terrain_data - terrain data points
  * @param {Object[]} terrain_features - terrain geojson feature collection
- * @param {Array} terrain_legend - legend rows (`[project, color, x, y]`)
- * @param {boolean} big_labels - whether to use larger marker/line styling
  * @returns {Array} an array of Plot marks
  */
-export function generateGeojsonMarks(
-  terrain_data,
-  terrain_features,
-  terrain_legend,
-  big_labels,
-  selected_projects,
-) {
+export function generateGeojsonMarks(terrain_data, terrain_features) {
   console.debug('terrain_features', terrain_features)
 
   const filtered_terrain_features = {
@@ -543,12 +540,12 @@ export function generateGeojsonMarks(
 
   console.debug('filtered terrain_features', filtered_terrain_features)
 
-  const project_terrain_tips = Plot.tip(terrain_data, {
+  const project_terrain_top_tips = Plot.tip(terrain_data, {
     title: (d) => d.terrain,
     // `${d.properties.label}\n${d.properties.projects.map((p) => p.label)}`,
     x: 'longitude',
     y: 'latitude',
-    // anchor: 'bottom',
+    anchor: 'left',
     textPadding: 3,
   })
 
@@ -565,9 +562,80 @@ export function generateGeojsonMarks(
     // map_legend_text(terrain_legend, big_labels),
     // legend_axis_label,
     // tip marks //
-    project_terrain_tips,
+    project_terrain_top_tips,
+    // project_terrain_top_tips,
     // ...terrain_tips(terrain_data),
   ]
+}
+
+/**
+ * Build marks for a simple terrain map with tips.
+ *
+ * @param {Object[]} terrain_data - terrain data points
+ * @param {string} default_anchor - default anchor position
+ * @param {Map} anchor_map - optional map of terrain to anchor position
+ * @returns {Array} an array of Plot marks
+ */
+export function generateSimpleGeoTipMarks(
+  terrain_data,
+  anchor_map,
+  default_anchor = 'left',
+) {
+  const grouped_terrains = d3.rollup(
+    terrain_data,
+    (v) => ({
+      terrain: v[0].terrain,
+      projects: v.map((d) => d.project),
+      label: v.find((d) => !!d.label)?.label,
+      longitude: v.find((d) => !!d.longitude)?.longitude,
+      latitude: v.find((d) => !!d.latitude)?.latitude,
+    }),
+    (d) => d.terrain,
+  )
+
+  const default_config = {
+    title: (d) => `${d.label}\n${d.projects.join(', ')}`,
+    x: 'longitude',
+    y: 'latitude',
+    anchor: 'left',
+    textPadding: 3,
+  }
+
+  const marks = []
+
+  // if an anchor map is provided generate the corresponding marks
+  if (!!anchor_map) {
+    for (const anchor of anchor_map.values()) {
+      marks.push(
+        Plot.tip(
+          grouped_terrains
+            .values()
+            .filter((d) => anchor_map.get(d.terrain) == anchor),
+          // terrain_data.filter((d) => anchor_map.get(d.terrain) == anchor),
+          {
+            ...default_config,
+            anchor: anchor,
+          },
+        ),
+      )
+    }
+  }
+
+  // add the default marks
+  marks.push(
+    Plot.tip(
+      grouped_terrains
+        .values()
+        .filter((d) => !anchor_map || !anchor_map.has(d.terrain)),
+      // terrain_data.filter((d) => !anchor_map || !anchor_map.has(d.terrain)),
+      {
+        ...default_config,
+        anchor: default_anchor,
+      },
+    ),
+  )
+
+  return marks
 }
 
 /**
@@ -580,7 +648,7 @@ export function generateGeojsonMarks(
  * @param {string[]} selected_projects - the user selected projects
  * @returns {Array} an array of Plot marks
  */
-function generateLineMapMarks(
+export function generateLineMapMarks(
   terrain_data,
   terrain_legend,
   big_labels,
@@ -667,7 +735,7 @@ function generateLineMapMarks(
  * @param {string[]} selected_projects - the user selected projects
  * @returns {Array} an array of Plot marks
  */
-function generateDotMapMarks(
+export function generateDotMapMarks(
   terrain_data,
   terrain_legend,
   tip_dot_delta,
@@ -750,56 +818,6 @@ function generateDotMapMarks(
     ...terrain_tips(terrain_data),
     tip_dots,
   ]
-}
-
-/**
- * Execute the chosen generator for a given terrain style
- *
- * @param {Object[]} terrain_legend_type - style type (Polygon, Dot, Line)
- * @param {Object[]} terrain_data - terrain data points
- * @param {Object[]} terrain_features - terrain geojson feature collection
- * @param {Array} terrain_legend - legend rows (`[project, color, x, y]`)
- * @param {number} tip_dot_delta - horizontal offset between stacked per-project tip dots
- * @param {boolean} big_labels - whether to use larger marker styling
- * @param {string[]} selected_projects - the user selected projects
- * @returns {Array} an array of Plot marks
- */
-export function handleTerrainView(
-  terrain_legend_type,
-  terrain_data,
-  terrain_features,
-  terrain_legend,
-  tip_dot_delta,
-  big_labels,
-  selected_projects,
-) {
-  switch (terrain_legend_type) {
-    case 'Polygon':
-      return generateGeojsonMarks(
-        terrain_data,
-        terrain_features,
-        terrain_legend,
-        big_labels,
-        selected_projects,
-      )
-    case 'Dot':
-      return generateDotMapMarks(
-        terrain_data,
-        terrain_legend,
-        tip_dot_delta,
-        big_labels,
-        selected_projects,
-      )
-    case 'Line':
-      return generateLineMapMarks(
-        terrain_data,
-        terrain_legend,
-        big_labels,
-        selected_projects,
-      )
-    default:
-      console.error('Invalid terrain_legend_type:', terrain_legend_type)
-  }
 }
 
 // choropleth configs and functions
@@ -948,10 +966,10 @@ export const choropleth_terrain_data = (terrain_data) =>
     (d) => d.project_acronyme,
   )
 
-export const choropleth_terrain_data_by_city = (filterFranceTerrains) => [
+export const choropleth_terrain_data_by_city = (terrains) => [
   ...d3
     .rollup(
-      filterFranceTerrains.map((d) => ({
+      terrains.map((d) => ({
         projects: d.projects.toJSON(),
         code: (
           mainland_france_departements_geojson.features.find((department) =>

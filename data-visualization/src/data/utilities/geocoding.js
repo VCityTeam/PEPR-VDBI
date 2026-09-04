@@ -47,12 +47,16 @@ export class GeocodingService {
    *   given by `extent.name`.
    */
   constructor({
-    url = 'https://nominatim.openstreetmap.org/search',
+    url = 'https://nominatim.openstreetmap.org/',
     requestTimeIntervalMs = 3000,
+    defaultParameters = {
+      limit: 1,
+    },
   } = {}) {
     this.geocodingUrl = url
     this.requestTimeIntervalMs = requestTimeIntervalMs
     this.canDoRequest = true
+    this.defaultParameters = defaultParameters
   }
 
   /**
@@ -71,25 +75,76 @@ export class GeocodingService {
     searchString,
     parameters = {
       format: 'jsonv2',
-      limit: 1,
-      extent: {
-        name: 'EPSG:3946',
-        west: 1837860,
-        east: 1851647,
-        south: 5169347,
-        north: 5180575,
-      },
+    },
+  ) {
+    if (!!this.requestTimeIntervalMs && !this.canDoRequest) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, this.requestTimeIntervalMs),
+      )
+    }
+
+    // URL parameters
+    const queryString = encodeURIComponent(searchString)
+
+    // search parameters
+    const searchParameters = new URLSearchParams({
+      ...this.defaultParameters,
+      ...parameters,
+    })
+    searchParameters.set('q', queryString)
+
+    // Build the URL according to parameter description (in config file)
+    let url = `${this.geocodingUrl}search/?${searchParameters}`
+
+    // Make the request
+    const response = await handleFetchJson(url, this.requestTimeIntervalMs, {
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0',
+    })
+
+    if (this.requestTimeIntervalMs) {
+      this.canDoRequest = false
+      setTimeout(() => {
+        this.canDoRequest = true
+      }, Number(this.requestTimeIntervalMs))
+    }
+
+    return response
+  }
+
+  /**
+   * Retrieve the feature properties based on an OSM object ID.
+   *
+   * @param {string} osmType The type of the OSM object (e.g. 'R' for relation).
+   * @param {string} osmId The ID of the OSM object.
+   * @param {object} parameters Additional parameters to pass to the API.
+   * @returns {Promise<Array<object>>} The raw array of matching result objects
+   *   found at `result.basePath` in the parsed response.
+   * @throws {string} `'Cannot perform a request for now.'` if called again before
+   *   `requestTimeIntervalMs` has elapsed since the previous request, or
+   *   `'No result found'` if the API returned zero results.
+   */
+  async detailedSearch(
+    osmType,
+    osmId,
+    parameters = {
+      format: 'json',
     },
   ) {
     if (!!this.requestTimeIntervalMs && !this.canDoRequest) {
       throw 'Cannot perform a request for now.'
     }
 
-    // URL parameters
-    const queryString = encodeURIComponent(searchString)
+    // search parameters
+    const searchParameters = new URLSearchParams({
+      ...this.defaultParameters,
+      ...parameters,
+      osmtype: osmType,
+      osmid: osmId,
+    })
 
     // Build the URL according to parameter description (in config file)
-    let url = this.geocodingUrl + `?q=${queryString}&format=jsonv2`
+    let url = `${this.geocodingUrl}details?${searchParameters}`
 
     // Make the request
     const response = await handleFetchJson(url, this.requestTimeIntervalMs, {
