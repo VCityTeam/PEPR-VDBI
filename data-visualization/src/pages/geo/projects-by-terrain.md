@@ -1,4 +1,5 @@
 ---
+toc: false
 sql:
   # annex_partners: /data/partners_by_project_annex.csv
   # projects_by_partner: /data/partners_by_project.tsv
@@ -6,7 +7,7 @@ sql:
   project_terrains: /data/project_terrains.tsv
 ---
 
-# Projects by Terrain
+# Projets par terrain d'étude
 
 <div class="warning" label="Data visualization notice">
   Data visualizations are unverified and errors may exist.
@@ -21,20 +22,7 @@ import {
   downloadSVGButton,
   formTemplate,
 } from '/components/utilities.js'
-import {
-  filterFranceTerrains,
-  filterIdfTerrains,
-  filterInternationalTerrains,
-  france_terrain_legend,
-  idf_terrain_legend,
-  italy_terrain_legend,
-  world_terrain_legend,
-  franceProjection,
-  idfProjection,
-  italyProjection,
-  worldProjection,
-  handleTerrainView,
-} from './aap-cartography.js'
+import * as geo from './aap-cartography.js'
 ```
 
 <!-- DATA IMPORT -->
@@ -47,13 +35,13 @@ const terrain_features = FileAttachment(
 console.debug('terrain_features', terrain_features)
 ```
 
+terrain_data
+
 ```sql id=terrain_data display
 select * from project_terrains
 ```
 
-${Inputs.table(terrain_data_by_city, {layout: 'auto'})}
-
-<!-- $ -->
+terrain_data_by_city
 
 ```sql id=terrain_data_by_city
 -- merge data on terrain feature
@@ -82,9 +70,9 @@ const filtered_terrain_data = [...terrain_data_by_city]
       settings.selected_terrain_project_type.includes(d.project_type),
     // && settings.selected_terrain_project.includes(d.project),
   )
-display(filtered_terrain_data)
-display(filtered_terrain_data.find((d) => d.terrain === 'Hanoi'))
-display(terrain_features.features.find((d) => d.properties.label === 'Hanoi'))
+// display(filtered_terrain_data)
+// display(filtered_terrain_data.find((d) => d.terrain === 'Hanoi'))
+// display(terrain_features.features.find((d) => d.properties.label === 'Hanoi'))
 ```
 
 <div class="card">
@@ -105,12 +93,6 @@ const scales = [
 const settings = view(
   Inputs.form(
     {
-      // selected_terrain_project: Inputs.checkbox(projects, {
-      //   label: 'Included projects',
-      //   unique: true,
-      //   sort: true,
-      //   value: projects,
-      // }),
       selected_terrain_project_type: Inputs.checkbox(project_types, {
         label: 'Included project types',
         unique: true,
@@ -123,10 +105,6 @@ const settings = view(
         sort: true,
         value: scales,
       }),
-      // terrain_legend_type: Inputs.select(['Polygon', 'Line', 'Dot'], {
-      //   label: 'Legend view type',
-      //   value: 'Polygon',
-      // }),
     },
     { template: formTemplate },
   ),
@@ -135,80 +113,83 @@ const settings = view(
 
 </div>
 
-<div class="grid grid-cols-3 card">
-  <div
-    id="map-container-france"
-    class="grid-colspan-2 grid-rowspan-3"
-  >
-    ${resize((width, height) =>
-      franceProjection(
-        width,
-        height - 15,
-        // handleTerrainView(
-        //   'Polygon',
-        //   filterFranceTerrains(
-        //     filtered_terrain_data,
-        //     settings.selected_terrain_scale),
-        //   terrain_features,
-        //   france_terrain_legend,
-        //   0.2,
-        //   width > 1030,
-        //   settings.selected_terrain_project),
-        // "- Project terrains, France"
-      )
-    )}
-    <!-- $ -->
-  </div>
-  <div id="map-container-idf" class="grid-rowspan-2" style="overflow: hidden;">
-    ${resize(
-      (width) => idfProjection(
-        width,
-        // handleTerrainView(
-        //   'Polygon',
-        //   filterIdfTerrains(filtered_terrain_data),
-        //   terrain_features,
-        //   idf_terrain_legend,
-        //   0.015,
-        //   width > 500,
-        //   settings.selected_terrain_project),
-        // "- Project terrains, Ile-de-France"
-      )
-    )}
-    <!-- $ -->
-  </div>
-  <!-- <div id="map-container-italy" style="overflow: hidden;">
-    ${resize(
-      (width) => defaultProjectionItaly(
-        width,
-        handleTerrainView(
-          'Polygon',
-          filtered_terrain_data,
-          terrain_features,
-          italy_terrain_legend,
-          0.1,
-          width > 500,
-          settings.selected_terrain_project),
-        "- TRACES terrains, Italy"
-      )
-    )}
-  </div> -->
-  <div id="map-container-world" style="overflow: hidden;">
-    ${resize(
-      (width) => worldProjection(
-        width,
-        width / 2,
-        handleTerrainView(
-          'Polygon',
-          filterInternationalTerrains(filtered_terrain_data),
-          terrain_features,
-          world_terrain_legend,
-          0.1,
-          width > 500,
-          settings.selected_terrain_project),
-        "- Global project terrains"
-      )
-    )}
-    <!-- $ -->
+<div class="card">
+  <div class="grid grid-cols-4">
+    <div
+      id="map-container-france"
+      class="grid-colspan-2 grid-rowspan-2"
+    >
+      ${resize((width, height) =>
+        // TODO: SWITCH TO CHOROPLETHS //
+        geo.franceProjection(
+          width,
+          height - 15,
+          geo.generateGeojsonMarks(
+            geo.filterFranceTerrains(filtered_terrain_data),
+            terrain_features,
+            geo.france_terrain_legend,
+            0.2,
+            width > 1030,
+            settings.selected_terrain_project),
+          "- Projets par terrain d'étude, France"
+        )
+      )}
+      <!-- $ -->
+    </div>
+    <div id="map-container-idf" style="overflow: hidden;">
+      ${resize(
+        (width) => geo.idfProjection(
+          width,
+          // geo.handleTerrainView(
+          //   geo.filterIdfTerrains(filtered_terrain_data),
+          //   terrain_features,
+          //   geo.idf_terrain_legend,
+          //   0.015,
+          //   width > 500,
+          //   settings.selected_terrain_project),
+          // "- Project terrains, Ile-de-France"
+        )
+      )}
+      <!-- $ -->
+    </div>
+    <div id="map-container-italy" style="overflow: hidden;">
+      ${resize(
+        (width) => geo.italyProjection(
+          width,
+          // geo.handleTerrainView(
+          //   filtered_terrain_data,
+          //   terrain_features,
+          //   geo.italy_terrain_legend,
+          //   0.1,
+          //   width > 500,
+          //   settings.selected_terrain_project),
+          // "- TRACES terrains, Italy"
+        )
+      )}
+      <!-- $ -->
+    </div>
+    <div id="map-container-world" class="grid-colspan-2" style="overflow: hidden;">
+      ${resize(
+        (width) => geo.worldProjection(
+          width,
+          width / 2,
+          geo.generateSimpleGeoTipMarks(
+            geo.filterExtraEuropeanTerrains(filtered_terrain_data).map((d) => ({
+              ...d,
+              label: `${d.terrain}, ${d.country_code.toUpperCase()}`,
+            })),
+            new Map([
+              ['Bangkok', 'top-right'],
+              ['Hanoi', 'bottom-left'],
+              ['Mayotte', 'bottom-right'],
+              ['Perth', 'top-right'],
+            ]),
+          ),
+          "- Terrains internationaux par ville"
+        )
+      )}
+      <!-- $ -->
+    </div>
   </div>
 </div>
 
