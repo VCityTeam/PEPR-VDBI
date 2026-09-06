@@ -120,18 +120,16 @@ const settings = view(
       class="grid-colspan-2 grid-rowspan-2"
     >
       ${resize((width, height) =>
-        // TODO: SWITCH TO CHOROPLETHS //
-        geo.franceProjection(
+        geo.choroplethFrance(
           width,
           height - 15,
-          geo.generateGeojsonMarks(
-            geo.filterFranceTerrains(filtered_terrain_data),
-            terrain_features,
-            geo.france_terrain_legend,
-            0.2,
-            width > 1030,
-            settings.selected_terrain_project),
-          "- Projets par terrain d'étude, France"
+          (department) => geo.filterFranceTerrains(filtered_terrain_data)
+            .reduce((acc, terrain) => d3.geoContains(
+              department,
+              [terrain.longitude, terrain.latitude]
+            )? acc + 1 : acc,
+            0
+          )
         )
       )}
       <!-- $ -->
@@ -174,7 +172,7 @@ const settings = view(
           width,
           width / 2,
           geo.generateSimpleGeoTipMarks(
-            geo.filterExtraEuropeanTerrains(filtered_terrain_data).map((d) => ({
+            geo.filterInternationalTerrains(filtered_terrain_data).map((d) => ({
               ...d,
               label: `${d.terrain}, ${d.country_code.toUpperCase()}`,
             })),
@@ -183,6 +181,9 @@ const settings = view(
               ['Hanoi', 'bottom-left'],
               ['Mayotte', 'bottom-right'],
               ['Perth', 'top-right'],
+              ['Urbino', 'bottom-right'],
+              ['Arquata del Tronto', 'left'],
+              ['Acquasanta Terme', 'top-right'],
             ]),
           ),
           "- Terrains internationaux par ville"

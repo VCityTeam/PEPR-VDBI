@@ -6,56 +6,23 @@ export class GeocodingService {
    * Adapted from https://www.npmjs.com/package/@ud-viz/widget_geocoding
    * Uses https://www.openstreetmap.org/ by default
    *
-   * @param {object} [configGeocoding] Geocoding config.
-   * @param {string} [configGeocoding.url] Base URL of the geocoding API endpoint
+   * @param {string} [url] Base URL of the geocoding API endpoint
    *   that requests are sent to (e.g. a Nominatim `/search` endpoint).
-   * @param {number|string} [configGeocoding.requestTimeIntervalMs] Minimum
-   *   delay, in milliseconds, to wait between two requests. While a request is
-   *   "cooling down", the service's request methods throw instead of calling
-   *   the API. Pass `0` or `''` (falsy) to disable throttling entirely.
-   * @param {object} [configGeocoding.result] Describes how to read a single
-   *   result out of the API's JSON response.
-   * @param {string} [configGeocoding.result.format] Expected response format
-   *   (informational only; the service always parses the response as JSON).
-   * @param {string} [configGeocoding.result.basePath] Dot-separated path, resolved
-   *   via {@link getAttributeByPath}, to the array of results within the parsed
-   *   response body. Leave empty (`''`) when the response body itself is that array.
-   * @param {string} [configGeocoding.result.lon] Dot-separated path to a result's
-   *   longitude field, resolved via {@link getAttributeByPath} on each result object.
-   * @param {string} [configGeocoding.result.lat] Dot-separated path to a result's
-   *   latitude field, resolved via {@link getAttributeByPath} on each result object.
-   * @param {object} [configGeocoding.parameters] Map describing the query string
-   *   parameters to append to the request URL. Each key is a parameter name; each
-   *   value is an object with:
-   *   - `fill: 'query'` — the parameter is filled with the URL-encoded search
-   *     string passed to `getCoordinates`/`simpleSearch`/`getOsmCode`.
-   *   - `fill: 'value'` — the parameter is filled with the literal `value` field.
-   *   - `fill: 'extent'` — the parameter is filled from `format`, a template
-   *     string containing the placeholders `SOUTH`, `WEST`, `NORTH`, `EAST`,
-   *     which are replaced with the matching bounds from `extent`.
-   * @param {object} [configGeocoding.extent] Bounding box used to fill
-   *   `fill: 'extent'` parameters (e.g. to restrict results to a region).
-   * @param {string} [configGeocoding.extent.name] CRS identifier the bounds are
-   *   expressed in (e.g. `'EPSG:3946'`); informational, not used in requests.
-   * @param {number} [configGeocoding.extent.west] Western bound, in the CRS
-   *   given by `extent.name`.
-   * @param {number} [configGeocoding.extent.east] Eastern bound, in the CRS
-   *   given by `extent.name`.
-   * @param {number} [configGeocoding.extent.south] Southern bound, in the CRS
-   *   given by `extent.name`.
-   * @param {number} [configGeocoding.extent.north] Northern bound, in the CRS
-   *   given by `extent.name`.
+   * @param {number} [requestTimeIntervalMs] Minimum time interval (in milliseconds) between requests to the geocoding API.
+   *   This is used to avoid rate limiting by the API. Default is 1000 ms (1 second).
+   * @param {object} [defaultParameters] Default parameters to include in every request to the geocoding API.
+   *   These can be overridden by passing in `parameters` to the `simpleSearch` or `detailedSearch` methods.
    */
   constructor({
     url = 'https://nominatim.openstreetmap.org/',
-    requestTimeIntervalMs = 3000,
+    requestTimeIntervalMs = 1000,
     defaultParameters = {
+      format: 'jsonv2',
       limit: 1,
     },
   } = {}) {
     this.geocodingUrl = url
     this.requestTimeIntervalMs = requestTimeIntervalMs
-    this.canDoRequest = true
     this.defaultParameters = defaultParameters
   }
 
@@ -71,18 +38,7 @@ export class GeocodingService {
    *   `requestTimeIntervalMs` has elapsed since the previous request, or
    *   `'No result found'` if the API returned zero results.
    */
-  async simpleSearch(
-    searchString,
-    parameters = {
-      format: 'jsonv2',
-    },
-  ) {
-    if (!!this.requestTimeIntervalMs && !this.canDoRequest) {
-      await new Promise((resolve) =>
-        setTimeout(resolve, this.requestTimeIntervalMs),
-      )
-    }
-
+  async simpleSearch(searchString, parameters) {
     // URL parameters
     const queryString = encodeURIComponent(searchString)
 
@@ -102,21 +58,13 @@ export class GeocodingService {
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0',
     })
 
-    if (this.requestTimeIntervalMs) {
-      this.canDoRequest = false
-      setTimeout(() => {
-        this.canDoRequest = true
-      }, Number(this.requestTimeIntervalMs))
-    }
-
     return response
   }
 
   /**
-   * Retrieve the feature properties based on an OSM object ID.
+   * Retrieve the feature properties based on OSM object IDs.
    *
-   * @param {string} osmType The type of the OSM object (e.g. 'R' for relation).
-   * @param {string} osmId The ID of the OSM object.
+   * @param {string} osmIds The IDs of the OSM objects.
    * @param {object} parameters Additional parameters to pass to the API.
    * @returns {Promise<Array<object>>} The raw array of matching result objects
    *   found at `result.basePath` in the parsed response.
@@ -124,27 +72,16 @@ export class GeocodingService {
    *   `requestTimeIntervalMs` has elapsed since the previous request, or
    *   `'No result found'` if the API returned zero results.
    */
-  async detailedSearch(
-    osmType,
-    osmId,
-    parameters = {
-      format: 'json',
-    },
-  ) {
-    if (!!this.requestTimeIntervalMs && !this.canDoRequest) {
-      throw 'Cannot perform a request for now.'
-    }
-
+  async detailedSearch(osmIds, parameters) {
     // search parameters
     const searchParameters = new URLSearchParams({
       ...this.defaultParameters,
       ...parameters,
-      osmtype: osmType,
-      osmid: osmId,
+      osm_ids: osmIds,
     })
 
     // Build the URL according to parameter description (in config file)
-    let url = `${this.geocodingUrl}details?${searchParameters}`
+    let url = `${this.geocodingUrl}lookup?${searchParameters}`
 
     // Make the request
     const response = await handleFetchJson(url, this.requestTimeIntervalMs, {
@@ -152,13 +89,10 @@ export class GeocodingService {
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0',
     })
 
-    if (this.requestTimeIntervalMs) {
-      this.canDoRequest = false
-      setTimeout(() => {
-        this.canDoRequest = true
-      }, Number(this.requestTimeIntervalMs))
-    }
-
     return response
   }
+}
+
+export function getOsmId(d) {
+  return `${d.osm_type[0].toUpperCase()}${d.osm_id}`
 }
