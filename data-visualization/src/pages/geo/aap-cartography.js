@@ -70,32 +70,32 @@ export const ile_de_france_bbox = {
 }
 
 export const filterFranceTerrains = (terrain_data) => {
-  const france_terrains_by_idf = [...terrain_data].filter((d) =>
+  return [...terrain_data].filter((d) =>
     inBBox(d.longitude, d.latitude, mainland_france_bbox),
   )
 
-  const idf_terrain = terrain_data.find((d) => d.terrain_id == 89)
+  // const idf_terrain = terrain_data.find((d) => d.terrain_id == 89)
 
-  // this is pretty hacky but it works for now
-  france_terrains_by_idf.forEach((d) => {
-    // if ile-de-france terrain
-    if (!inBBox(d.longitude, d.latitude, ile_de_france_bbox)) return
+  // // this is pretty hacky but it works for now
+  // france_terrains_by_idf.forEach((d) => {
+  //   // if ile-de-france terrain
+  //   if (!inBBox(d.longitude, d.latitude, ile_de_france_bbox)) return
 
-    // replace everything with idf terrain data but keep the project name
-    const project = d.project
+  //   // replace everything with idf terrain data but keep the project name
+  //   const project = d.project
 
-    // Source - https://stackoverflow.com/a/28570479
-    // Posted by Dave Lugg
-    // Retrieved 2026-09-04, License - CC BY-SA 3.0
+  //   // Source - https://stackoverflow.com/a/28570479
+  //   // Posted by Dave Lugg
+  //   // Retrieved 2026-09-04, License - CC BY-SA 3.0
 
-    for (var key in d) {
-      d[key] = idf_terrain[key]
-    }
+  //   for (var key in d) {
+  //     d[key] = idf_terrain[key]
+  //   }
 
-    d.project = project
-  })
+  //   d.project = project
+  // })
 
-  return france_terrains_by_idf
+  // return france_terrains_by_idf
 }
 
 export const filterIdfTerrains = (terrain_data_by_city) =>
@@ -458,12 +458,17 @@ export const worldProjection = (width, height, marks, caption = '') =>
   defaultProjection(
     width,
     height,
-    'equirectangular',
+    {
+      type: 'equal-earth',
+      rotate: [-80, 0],
+    },
     [
       Plot.geo(land_geojson, {
         ...default_projection_style,
       }),
-      Plot.frame(),
+      // Plot.frame(),
+      Plot.sphere(),
+      Plot.graticule(),
       marks,
     ],
     caption,
@@ -861,7 +866,7 @@ export const choropleth = (
     height: height - 60,
     caption: caption,
     // "- Project partners by department and Île-de-France, France",
-    color: color_config,
+    color: color_config(),
     projection: projection,
     marks: [
       // Plot.geo(projection.domain, { stroke: "red", strokeWidth: 2 }),
@@ -910,14 +915,19 @@ export const choropleth = (
  * @param {Function|string} fill - accessor or field name for the fill/color channel
  * @returns {SVGElement} the rendered choropleth map
  */
-export const choroplethFrance = (width, height, fill) =>
+export const choroplethFrance = (
+  width,
+  height,
+  fill,
+  caption = '- Partenaires et parties prenantes des projets par département, France',
+) =>
   choropleth(
     width,
     height,
     fill,
     france_projection,
     mainland_france_departements_geojson,
-    '- Partenaires et parties prenantes des projets par département, France',
+    caption,
   )
 
 /**
@@ -927,14 +937,18 @@ export const choroplethFrance = (width, height, fill) =>
  * @param {Function|string} fill - accessor or field name for the fill/color channel
  * @returns {SVGElement} the rendered choropleth map
  */
-export const choroplethIdf = (width, fill) =>
+export const choroplethIdf = (
+  width,
+  fill,
+  caption = '- Partenaires et parties prenantes des projets par département, Île-de-France',
+) =>
   choropleth(
     width,
     width,
     fill,
     idf_projection,
     idf_departements_geojson,
-    '- Partenaires et parties prenantes des projets par département, Île-de-France',
+    caption,
   )
 
 /**
@@ -944,14 +958,18 @@ export const choroplethIdf = (width, fill) =>
  * @param {Function|string} fill - accessor or field name for the fill/color channel
  * @returns {SVGElement} the rendered choropleth map
  */
-export const choroplethItaly = (width, fill) =>
+export const choroplethItaly = (
+  width,
+  fill,
+  caption = '- Partenaires et parties prenantes des projets par département, Italy',
+) =>
   choropleth(
     width,
     width,
     fill,
     italy_projection,
     italy_regions_geojson,
-    '- Partenaires et parties prenantes des projets par département, Italy',
+    caption,
   )
 
 export const choropleth_terrain_data = (terrain_data) =>

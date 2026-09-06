@@ -1,6 +1,6 @@
 import { tsvFormat } from 'd3'
 import { simpleGristQuery } from './utilities/grist_api.js'
-import { GeocodingService } from './utilities/geocoding.js'
+import { GeocodingService, getOsmId } from './utilities/geocoding.js'
 
 const query = `
 select
@@ -38,24 +38,36 @@ const geocodingService = new GeocodingService()
 // since our requests are throttled, use a cache to avoid unecessary queries
 const country_cache = new Map()
 
-for (let i = 0; i < data.length; i++) {
-  const d = data[i]
-  if (d.admin_level > 3 || d.address_rank > 6) {
-    await geocodingService
-      .detailedSearch(d.osm_type[0].toUpperCase(), d.osm_id)
-      .then((response) => {
-        const code = response.country_code
-        if (country_cache.has(code)) {
-          d.country_code = country_cache.get(code)
-        } else {
-          d.country_code = code
-          country_cache.set(code, code)
+const osm_ids = [
+  ...new Set(
+    data
+      .filter((d) => d.admin_level > 2 || d.address_rank > 5)
+      .map((d) => getOsmId(d)),
+  ),
+]
+
+// Nominatim API allows up to 50 osm_ids per request, so batch them
+for (let i = 0; i < osm_ids.length; i += 50) {
+  const batch = osm_ids.slice(i, i + 50)
+
+  await geocodingService
+    .detailedSearch(batch.join(','))
+    .then((response) => {
+      response.forEach((d) => {
+        const code = d.address.country_code
+        if (!country_cache.has(getOsmId(d))) {
+          country_cache.set(getOsmId(d), code)
         }
       })
-      .catch((error) => {
-        console.error('Error fetching data from Nominatim API:', error)
-      })
-  }
+    })
+    .catch((error) => {
+      console.error('Error fetching data from Nominatim API:', error)
+    })
+}
+
+for (const d of data) {
+  const osm_id = getOsmId(d)
+  d.country_code = country_cache.get(osm_id)
 }
 
 process.stdout.write(tsvFormat(data))
