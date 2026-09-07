@@ -66,7 +66,7 @@ export const idf_departements_geojson = {
   features: mainland_france_departements_by_idf.get(true),
 }
 
-export const italy_regions_geojson = FileAttachment(
+export const italy_regions_geojson = await FileAttachment(
   '/data/italy_regions.json',
 ).json()
 
@@ -75,6 +75,8 @@ export const world_geojson = await FileAttachment(
 ).json()
 
 export const land_geojson = feature(world_geojson, world_geojson.objects.land)
+
+export const countries_geojson = await FileAttachment('https://download.geonames.org/export/dump/FR.zip').zip()
 
 // default map options
 
@@ -326,49 +328,56 @@ export function projectionMap(
  * @param {string} [label='N° de partenaires et parties prenantes estimé'] - the color legend label
  * @returns {Object} a Plot `color` scale configuration object
  */
-const choropleth_color_config = (
-  label = 'N° de partenaires et parties prenantes estimé',
+export const choropleth_color_config = (
+  config = {
+    label: `N° de partenaires et parties prenantes estimé`,
+    // label: "N° of Partners",
+  },
+  flatten_choropleth = false,
 ) => ({
   scheme: 'Blues',
-  label: label,
-  // label: "N° of Partners",
-  // domain: [0, 6],
+  domain: flatten_choropleth ? [1, 10] : undefined,
+  range: [0.1, 1],
   legend: true,
   marginLeft: 10,
   marginRight: 10,
   // type: "log",
-  zero: true,
+  // zero: true,
   nice: true,
   // ticks: 2,
+  ...config,
 })
 
 /**
- * Build a generic Observable Plot choropleth map from geojson features and
- * a fill accessor
+ * Build a choropleth Plot.plot for given geojson features and a fill
+ * accessor
  *
  * @param {number} width - chart width
  * @param {number} height - chart height
- * @param {string} caption - color legend label/caption
  * @param {Function|string} fill - accessor or field name for the fill/color channel
- * @param {Function} projection - a d3/Plot geo projection
+ * @param {Object} projection - a d3/Plot geo projection specification
  * @param {Object} features - a GeoJSON FeatureCollection to render
- * @param {Array} [marks=[]] - additional Plot marks to layer on top of the geo mark
+ * @param {string} caption - color legend label/caption
  * @returns {SVGElement} the rendered choropleth map
  */
 export const choropleth = (
   width,
   height,
-  caption,
   fill,
   projection,
   features,
   marks = [],
+  caption = '- Project partners by department and Île-de-France, France',
+  custom_color_config,
 ) =>
   plot({
     width: width,
     height: height - 60,
-    // caption: caption,
-    color: choropleth_color_config(caption),
+    caption: caption,
+    color: choropleth_color_config(custom_color_config),
+    symbol: {
+      legend: true,
+    },
     projection: projection,
     marks: [
       geo(features, {
@@ -377,72 +386,89 @@ export const choropleth = (
           Code: ({ properties }) => properties.code,
           Lat: (d) => d3.geoCentroid(d)[0],
           Lon: (d) => d3.geoCentroid(d)[1],
-          Count: fill,
+          Value: fill,
         },
         tip: true,
         fill: fill,
         strokeOpacity: 0,
       }),
-      ...marks,
+      [...marks],
     ],
   })
 
 /**
- * Choropleth map preconfigured for mainland France departments
+ * Choropleth wrapper specialized for mainland France departments
  *
  * @param {number} width - chart width
- * @param {string} caption - color legend label/caption
+ * @param {number} height - chart height
  * @param {Function|string} fill - accessor or field name for the fill/color channel
- * @param {Array} [marks=[]] - additional Plot marks to layer on top
  * @returns {SVGElement} the rendered choropleth map
  */
-export const choroplethFrance = (width, caption, fill, marks = []) =>
+export const choroplethFrance = (
+  width,
+  height,
+  fill,
+  marks,
+  caption = '- Partenaires et parties prenantes des projets par département, France',
+  custom_color_config,
+) =>
   choropleth(
     width,
-    width * 0.92,
-    caption,
+    height,
     fill,
     france_projection,
     mainland_france_departements_geojson,
     [...mainland_france_choropleth_marks, ...marks],
+    caption,
+    custom_color_config,
   )
 
 /**
- * Choropleth map preconfigured for Île-de-France departments
+ * Choropleth wrapper specialized for Île-de-France departments
  *
- * @param {number} width - chart width
- * @param {string} caption - color legend label/caption
+ * @param {number} width - chart width (used for both width and height)
  * @param {Function|string} fill - accessor or field name for the fill/color channel
- * @param {Array} [marks=[]] - additional Plot marks to layer on top
  * @returns {SVGElement} the rendered choropleth map
  */
-export const choroplethIdf = (width, caption, fill, marks = []) =>
+export const choroplethIdf = (
+  width,
+  fill,
+  marks,
+  caption = '- Partenaires et parties prenantes des projets par département, Île-de-France',
+  custom_color_config,
+) =>
   choropleth(
     width,
     width,
-    caption,
     fill,
     idf_projection,
     idf_departements_geojson,
-    [...idf_choropleth_marks, ...marks],
+    [...mainland_france_choropleth_marks, ...marks],
+    caption,
+    custom_color_config,
   )
 
 /**
- * Choropleth map preconfigured for Italian regions
+ * Choropleth wrapper specialized for Italy regions
  *
- * @param {number} width - chart width
- * @param {string} caption - color legend label/caption
+ * @param {number} width - chart width (used for both width and height)
  * @param {Function|string} fill - accessor or field name for the fill/color channel
- * @param {Array} [marks=[]] - additional Plot marks to layer on top
  * @returns {SVGElement} the rendered choropleth map
  */
-export const choroplethItaly = (width, caption, fill, marks = []) =>
+export const choroplethItaly = (
+  width,
+  fill,
+  marks,
+  caption = '- Partenaires et parties prenantes des projets par département, Italy',
+  custom_color_config,
+) =>
   choropleth(
     width,
     width,
-    caption,
     fill,
     italy_projection,
     italy_regions_geojson,
     [...italy_choropleth_marks, ...marks],
+    caption,
+    custom_color_config,
   )

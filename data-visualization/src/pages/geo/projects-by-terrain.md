@@ -23,6 +23,8 @@ import {
   formTemplate,
 } from '/components/utilities.js'
 import * as geo from './aap-cartography.js'
+import * as projections from '/components/projection-map.js'
+import { vdbi_color_scheme } from '/components/color.js'
 ```
 
 <!-- DATA IMPORT -->
@@ -114,79 +116,101 @@ const settings = view(
 </div>
 
 <div class="card">
-  <div class="grid grid-cols-4">
+  <div id="map-container" class="grid grid-cols-4">
     <div
       id="map-container-france"
-      class="grid-colspan-2 grid-rowspan-2"
+      class="grid-colspan-3 grid-rowspan-3"
     >
       ${resize((width, height) =>
-        geo.choroplethFrance(
+        projections.choroplethFrance(
           width,
-          height - 15,
-          (department) => geo.filterFranceTerrains(filtered_terrain_data)
-            .reduce((acc, terrain) => d3.geoContains(
-              department,
-              [terrain.longitude, terrain.latitude]
-            )? acc + 1 : acc,
-            0
-          )
-        )
+          height * 0.8,
+          (department) => {
+            const count = geo.filterFranceTerrains(filtered_terrain_data)
+              .reduce((acc, terrain) => d3.geoContains(
+                  department,
+                  [terrain.longitude, terrain.latitude]
+                )? acc + 1 : acc,
+                0
+              )
+            return count > 0 ? count : null
+          },
+          [geo.choropleth_dot_mark(geo.filterFranceTerrains(filtered_terrain_data))],
+          "- Terrain d'étude par commune et métropole, France",
+          {
+            label: `N° de terrains d'étude par département, France`,
+          }
+        ),
       )}
       <!-- $ -->
     </div>
     <div id="map-container-idf" style="overflow: hidden;">
       ${resize(
-        (width) => geo.idfProjection(
+        (width) => projections.choroplethIdf(
           width,
-          // geo.handleTerrainView(
-          //   geo.filterIdfTerrains(filtered_terrain_data),
-          //   terrain_features,
-          //   geo.idf_terrain_legend,
-          //   0.015,
-          //   width > 500,
-          //   settings.selected_terrain_project),
-          // "- Project terrains, Ile-de-France"
+          (department) => {
+            const count = geo.filterIdfTerrains(filtered_terrain_data)
+              .reduce((acc, terrain) => d3.geoContains(
+                  department,
+                  [terrain.longitude, terrain.latitude]
+                )? acc + 1 : acc,
+                0
+              )
+            return count > 0 ? count : null
+          },
+          [geo.choropleth_dot_mark(geo.filterIdfTerrains(filtered_terrain_data))],
+          "- Terrains d'étude, Ile-de-France",
+          {
+            label: `N° de terrains d'étude par département, Ile-de-France`,
+            ticks: 2,
+          }
         )
       )}
       <!-- $ -->
     </div>
     <div id="map-container-italy" style="overflow: hidden;">
       ${resize(
-        (width) => geo.italyProjection(
+        (width) => projections.choroplethItaly(
           width,
-          // geo.handleTerrainView(
-          //   filtered_terrain_data,
-          //   terrain_features,
-          //   geo.italy_terrain_legend,
-          //   0.1,
-          //   width > 500,
-          //   settings.selected_terrain_project),
-          // "- TRACES terrains, Italy"
+          (department) => {
+            const count = geo.filterItalyTerrains(filtered_terrain_data)
+              .reduce((acc, terrain) => d3.geoContains(
+                  department,
+                  [terrain.longitude, terrain.latitude]
+                )? acc + 1 : acc,
+                0
+              )
+            return count > 0 ? count : null
+          },
+          [geo.choropleth_dot_mark(geo.filterItalyTerrains(filtered_terrain_data))],
+          "- Terrains d'étude, Italie",
+          {
+            label: `N° de terrains d'étude par région, Italie`,
+          }
         )
       )}
       <!-- $ -->
     </div>
-    <div id="map-container-world" class="grid-colspan-2" style="overflow: hidden;">
+    <!-- <div id="map-container-world" class="grid-colspan-2" style="overflow: hidden;"> -->
+    <div id="map-container-world" style="overflow: hidden;">
       ${resize(
         (width) => geo.worldProjection(
           width,
-          width / 2,
+          width * 0.6,
           geo.generateSimpleGeoTipMarks(
-            geo.filterInternationalTerrains(filtered_terrain_data).map((d) => ({
-              ...d,
-              label: `${d.terrain}, ${d.country_code.toUpperCase()}`,
-            })),
+            geo.filterExtraEuropeanTerrains(filtered_terrain_data)
+              .map((d) => ({
+                ...d,
+                label: `${d.terrain}, ${d.country_code.toUpperCase()}`,
+              })),
             new Map([
-              ['Bangkok', 'top-right'],
-              ['Hanoi', 'bottom-left'],
-              ['Mayotte', 'bottom-right'],
-              ['Perth', 'top-right'],
-              ['Urbino', 'bottom-right'],
-              ['Arquata del Tronto', 'left'],
-              ['Acquasanta Terme', 'top-right'],
+              ['Bangkok', 'top-left'],
+              ['Hanoi', 'bottom'],
+              ['Mayotte', 'right'],
+              ['Perth', 'top'],
             ]),
           ),
-          "- Terrains internationaux par ville"
+          "- Terrains internationaux non-european par ville"
         )
       )}
       <!-- $ -->
@@ -208,25 +232,30 @@ display(
         label: 'Download terrain and scale data',
         delimeter: '\t',
       }),
+      // downloadSVGButton(
+      //   '#map-container svg',
+      //   'Download all terrain maps',
+      //   'project_terrains.svg',
+      // ),
       downloadSVGButton(
         '#map-container-france svg',
         'Download French project terrain map',
-        'france_project_terrains_by_scales_map.svg',
+        'france_project_terrains.svg',
       ),
       downloadSVGButton(
         '#map-container-idf svg',
         'Download Grand Métropole de Paris project terrain map',
-        'paris_project_terrains_by_scales_map.svg',
+        'paris_project_terrains.svg',
       ),
-      // downloadSVGButton(
-      //   '#map-container-italy svg',
-      //   'Download Italian project terrain map',
-      //   'italy_project_terrains_by_scales_map.svg'
-      // ),
+      downloadSVGButton(
+        '#map-container-italy svg',
+        'Download Italian project terrain map',
+        'italy_project_terrains.svg'
+      ),
       downloadSVGButton(
         '#map-container-world svg',
         'Download world project terrain map',
-        'world_project_terrains_by_scales_map.svg',
+        'world_project_terrains.svg',
       ),
     ],
     { template: formTemplate },

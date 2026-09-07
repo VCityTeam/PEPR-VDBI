@@ -22,10 +22,7 @@ import {
   // idf_choropleth_marks,
   // italy_choropleth_marks,
 } from '../../components/projection-map.js'
-import {
-  vdbi_color_scheme,
-  project_color_scale,
-} from '../../components/color.js'
+import { project_color_scale } from '../../components/color.js'
 
 // Project terrain map
 
@@ -70,51 +67,33 @@ export const ile_de_france_bbox = {
 }
 
 export const filterFranceTerrains = (terrain_data) => {
-  return [...terrain_data].filter((d) =>
-    inBBox(d.longitude, d.latitude, mainland_france_bbox),
+  return [...terrain_data].filter(
+    (d) =>
+      inBBox(d.longitude, d.latitude, mainland_france_bbox) &&
+      (d.admin_level > 6 || d.address_rank > 12),
   )
-
-  // const idf_terrain = terrain_data.find((d) => d.terrain_id == 89)
-
-  // // this is pretty hacky but it works for now
-  // france_terrains_by_idf.forEach((d) => {
-  //   // if ile-de-france terrain
-  //   if (!inBBox(d.longitude, d.latitude, ile_de_france_bbox)) return
-
-  //   // replace everything with idf terrain data but keep the project name
-  //   const project = d.project
-
-  //   // Source - https://stackoverflow.com/a/28570479
-  //   // Posted by Dave Lugg
-  //   // Retrieved 2026-09-04, License - CC BY-SA 3.0
-
-  //   for (var key in d) {
-  //     d[key] = idf_terrain[key]
-  //   }
-
-  //   d.project = project
-  // })
-
-  // return france_terrains_by_idf
 }
 
-export const filterIdfTerrains = (terrain_data_by_city) =>
-  [...terrain_data_by_city].filter(
+export const filterIdfTerrains = (terrain_data) =>
+  [...terrain_data].filter(
     (d) =>
       d.terrain != 'Île-de-France' &&
       d.terrain != 'Métropole du Grand Paris' &&
       inBBox(d.longitude, d.latitude, ile_de_france_bbox),
   )
 
-export const filterInternationalTerrains = (terrain_data_by_city) =>
-  terrain_data_by_city.filter(
+export const filterItalyTerrains = (terrain_data) =>
+  terrain_data.filter((d) => d.country_code == 'it')
+
+export const filterInternationalTerrains = (terrain_data) =>
+  terrain_data.filter(
     (d) =>
       // keep projects outside of france
       !inBBox(d.longitude, d.latitude, mainland_france_bbox),
   )
 
-export const filterExtraEuropeanTerrains = (terrain_data_by_city) =>
-  terrain_data_by_city.filter(
+export const filterExtraEuropeanTerrains = (terrain_data) =>
+  terrain_data.filter(
     (d) =>
       // keep projects outside of france
       !inBBox(d.longitude, d.latitude, europe_bbox),
@@ -460,6 +439,7 @@ export const worldProjection = (width, height, marks, caption = '') =>
     height,
     {
       type: 'equal-earth',
+      // type: 'orthographic',
       rotate: [-80, 0],
     },
     [
@@ -825,152 +805,13 @@ export function generateDotMapMarks(
   ]
 }
 
-// choropleth configs and functions
-
-export const color_config = (flatten_choropleth = false) => ({
-  scheme: 'Blues',
-  label: `N° de partenaires et parties prenantes estimé`,
-  // label: "N° of Partners",
-  domain: flatten_choropleth ? [0, 2.7] : undefined,
-  legend: true,
-  marginLeft: 10,
-  marginRight: 10,
-  // type: "log",
-  zero: true,
-  nice: true,
-  // ticks: 2,
-})
-
-/**
- * Build a choropleth Plot.plot for given geojson features and a fill
- * accessor
- *
- * @param {number} width - chart width
- * @param {number} height - chart height
- * @param {Function|string} fill - accessor or field name for the fill/color channel
- * @param {Object} projection - a d3/Plot geo projection specification
- * @param {Object} features - a GeoJSON FeatureCollection to render
- * @param {string} caption - color legend label/caption
- * @returns {SVGElement} the rendered choropleth map
- */
-export const choropleth = (
-  width,
-  height,
-  fill,
-  projection,
-  features,
-  caption,
-) =>
-  Plot.plot({
-    width: width,
-    height: height - 60,
-    caption: caption,
-    // "- Project partners by department and Île-de-France, France",
-    color: color_config(),
-    projection: projection,
-    marks: [
-      // Plot.geo(projection.domain, { stroke: "red", strokeWidth: 2 }),
-      Plot.geo(features, {
-        channels: {
-          Department: ({ properties }) => properties.nom,
-          Code: ({ properties }) => properties.code,
-          Lat: (d) => d3.geoCentroid(d)[0],
-          Lon: (d) => d3.geoCentroid(d)[1],
-        },
-        tip: true,
-        fill: fill,
-        strokeOpacity: 0,
-      }),
-      // Plot.geo(
-      //   mainland_france_regions_geojson.features.find(
-      //     (d) => d.properties.code == "11"
-      //   ),
-      //   {
-      //     channels: {
-      //       Department: ({ properties }) => properties.nom,
-      //       Code: ({ properties }) => properties.code,
-      //       Lat: (d) => d3.geoCentroid(d)[0],
-      //       Lon: (d) => d3.geoCentroid(d)[1],
-      //     },
-      //     tip: true,
-      //     fill: (d) =>
-      //       choropleth_terrain_data_by_city.find((d) => d.code == "75").projects
-      //         .length,
-      //     strokeOpacity: 0,
-      //   }
-      // ),
-      [...mainland_france_choropleth_marks],
-      // generateLineMapMarks(
-      //   choropleth_terrain_data_by_city,
-      //   france_terrain_legend
-      // ),
-    ],
-  })
-
-/**
- * Choropleth wrapper specialized for mainland France departments
- *
- * @param {number} width - chart width
- * @param {number} height - chart height
- * @param {Function|string} fill - accessor or field name for the fill/color channel
- * @returns {SVGElement} the rendered choropleth map
- */
-export const choroplethFrance = (
-  width,
-  height,
-  fill,
-  caption = '- Partenaires et parties prenantes des projets par département, France',
-) =>
-  choropleth(
-    width,
-    height,
-    fill,
-    france_projection,
-    mainland_france_departements_geojson,
-    caption,
-  )
-
-/**
- * Choropleth wrapper specialized for Île-de-France departments
- *
- * @param {number} width - chart width (used for both width and height)
- * @param {Function|string} fill - accessor or field name for the fill/color channel
- * @returns {SVGElement} the rendered choropleth map
- */
-export const choroplethIdf = (
-  width,
-  fill,
-  caption = '- Partenaires et parties prenantes des projets par département, Île-de-France',
-) =>
-  choropleth(
-    width,
-    width,
-    fill,
-    idf_projection,
-    idf_departements_geojson,
-    caption,
-  )
-
-/**
- * Choropleth wrapper specialized for Italy regions
- *
- * @param {number} width - chart width (used for both width and height)
- * @param {Function|string} fill - accessor or field name for the fill/color channel
- * @returns {SVGElement} the rendered choropleth map
- */
-export const choroplethItaly = (
-  width,
-  fill,
-  caption = '- Partenaires et parties prenantes des projets par département, Italy',
-) =>
-  choropleth(
-    width,
-    width,
-    fill,
-    italy_projection,
-    italy_regions_geojson,
-    caption,
-  )
+export const france_terrain_dot_categories = new Map([
+  ['métropole', 'Métropole/agglomeration'],
+  ['agglomeration', 'Métropole/agglomeration'],
+  ['quartier', 'Commune'],
+  ['ville', 'Commune'],
+  ['feature', 'Commune'],
+])
 
 export const choropleth_terrain_data = (terrain_data) =>
   d3.group(
@@ -1121,3 +962,22 @@ export const lab_disciplines_by_code = (labs, selected_partner_project) =>
       )
       .filter((d) => d[1] > 0),
   )
+
+export const choropleth_dot_mark = (terrain_data) =>
+  Plot.dot(terrain_data, {
+    x: 'longitude',
+    y: 'latitude',
+    fill: 'var(--theme-foreground-focus)',
+    r: 5,
+    stroke: 'black',
+    strokeWidth: 0.4,
+    symbol: (d) =>
+      france_terrain_dot_categories.has(d.scale)
+        ? france_terrain_dot_categories.get(d.scale)
+        : d.scale,
+    tip: true,
+    channels: {
+      Terrain: 'terrain',
+      Scale: 'scale',
+    },
+  })
