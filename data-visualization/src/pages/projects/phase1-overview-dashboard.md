@@ -116,7 +116,7 @@ sql:
             Plot.geo(regions, {
               stroke: 'white',
               strokeOpacity: 0.5,
-              fill: vdbi_color_scheme.blue,
+              fill: 'var(--theme-foreground-focus-alt)',
               fillOpacity: 0.3,
             }),
             Plot.geo(departements, {
@@ -130,7 +130,7 @@ sql:
                 y: "latitude",
                 r: 3,
                 fill: 'black',
-                //stroke: vdbi_color_scheme.orange,
+                //stroke: 'var(--theme-foreground-focus)',
                 //fillOpacity: 0.5,
                 channels: {
                   entity: {
@@ -257,7 +257,7 @@ sql:
 import { countEntities, sparkbar } from '/components/utilities.js'
 import { Graph, mapTableToTriples } from '/components/graph.js'
 import { projectionMap } from '/components/projection-map.js'
-import { vdbi_color_scheme, project_color_scale } from '/components/color.js'
+import { project_color_scale } from '/components/color.js'
 import { getColumnOptions, filterOnInput } from '/components/plot.js'
 ```
 

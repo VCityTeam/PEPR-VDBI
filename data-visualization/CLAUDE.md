@@ -70,7 +70,7 @@ Shared JS modules imported by pages via `/components/<name>.js`. Organized by ch
 than by page — `graph.js` (force-directed/property graphs, largest module), `projection-map.js` (D3 geo
 projections + choropleth marks for France/Italy/IDF region presets), `sankey.js`, `chord.js`, `pie-chart.js`,
 `bubble-chart.js`, `radial-dendrogram.js`, `zoomable-sunburst.js`, `cloud.js` (word clouds), `cnu.js`,
-`financing.js`, `color.js` (shared color scales, e.g. `vdbi_color_scheme`, `project_color_scale`), `legend.js`,
+`financing.js`, `color.js` (shared color scales, e.g. `vdbi_color_scale_diverging`, `project_color_scale`), `legend.js`,
 `geocoding.js`, `orcid.js`, `timeline.js`. `utilities.js` holds generic data-shaping/export helpers
 (`countEntities`, `sparkbar`, `downloadTableButton`, `downloadSVGButton`, `writeToFile`, etc.) reused across many
 pages. Functions use JSDoc comments; `npm run build-jsdoc` renders these into `jsdoc/`.

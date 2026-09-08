@@ -659,7 +659,7 @@ export function generateLineMapMarks(
     y: 'latitude',
     r: big_labels ? 4 : 3,
     fill: 'black',
-    //stroke: vdbi_color_scheme.orange,
+    //stroke: 'var(--theme-foreground-focus)',
     //fillOpacity: 0.5,
     channels: {
       entity: {
@@ -731,7 +731,7 @@ export function generateDotMapMarks(
     x: 'longitude',
     y: 'latitude',
     r: big_labels ? 5 : 3,
-    fill: vdbi_color_scheme.blue,
+    fill: 'var(--theme-foreground-focus-alt)',
     fillOpacity: 0.5,
     channels: {
       entity: {

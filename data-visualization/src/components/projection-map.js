@@ -2,7 +2,6 @@ import * as d3 from 'd3'
 import { geo, graticule, sphere, dot, hexbin, plot } from '@observablehq/plot'
 import { FileAttachment } from 'observablehq:stdlib'
 import { feature } from 'npm:topojson-client'
-import { vdbi_color_scheme } from './color.js'
 
 // geospatial address data
 
@@ -76,7 +75,7 @@ export const world_geojson = await FileAttachment(
 
 export const land_geojson = feature(world_geojson, world_geojson.objects.land)
 
-export const countries_geojson = await FileAttachment('https://download.geonames.org/export/dump/FR.zip').zip()
+// export const france_geonames = await FileAttachment('https://download.geonames.org/export/dump/FR.zip').zip()
 
 // default map options
 
@@ -131,7 +130,7 @@ export const italy_projection = {
 
 export const default_projection_style = {
   stroke: 'white',
-  fill: vdbi_color_scheme.blue,
+  fill: 'var(--theme-foreground-focus-alt)',
   strokeWidth: 1.5,
   strokeOpacity: 0.7,
   fillOpacity: 0.4,
@@ -151,24 +150,24 @@ export const default_mainland_france_marks = [
 
 export const mainland_france_choropleth_marks = [
   geo(mainland_france_departements_geojson, {
-    stroke: vdbi_color_scheme.blue,
+    stroke: 'var(--theme-foreground-focus-alt)',
     strokeWidth: 0.1,
   }),
   geo(mainland_france_regions_geojson, {
-    stroke: vdbi_color_scheme.blue,
+    stroke: 'var(--theme-foreground-focus-alt)',
   }),
 ]
 
 export const idf_choropleth_marks = [
   geo(idf_departements_geojson, {
-    stroke: vdbi_color_scheme.blue,
+    stroke: 'var(--theme-foreground-focus-alt)',
     // strokeWidth: 0.1,
   }),
 ]
 
 export const italy_choropleth_marks = [
   geo(italy_regions_geojson, {
-    stroke: vdbi_color_scheme.blue,
+    stroke: 'var(--theme-foreground-focus-alt)',
     // strokeWidth: 0.1,
   }),
 ]
@@ -309,8 +308,8 @@ export function projectionMap(
 //           {
 //             x: "longitude",
 //             y: "latitude",
-//             // stroke: vdbi_color_scheme.orange,
-//             fill: vdbi_color_scheme.blue,
+//             // stroke: 'var(--theme-foreground-focus)',
+//             fill: 'var(--theme-foreground-focus-alt)',
 //             // binWidth: 15,
 //           }
 //         )
