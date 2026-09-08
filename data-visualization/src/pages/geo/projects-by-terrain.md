@@ -24,7 +24,6 @@ import {
 } from '/components/utilities.js'
 import * as geo from './aap-cartography.js'
 import * as projections from '/components/projection-map.js'
-import { vdbi_color_scheme } from '/components/color.js'
 ```
 
 <!-- DATA IMPORT -->

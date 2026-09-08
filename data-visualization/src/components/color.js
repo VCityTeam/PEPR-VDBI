@@ -1,17 +1,9 @@
 import * as d3 from 'd3'
 import { cnu_category_section_map, getGroupFromCNU } from './cnu.js'
 
-// PEPR VDBI colors //
-// - #3557a2
-// - #ff722c
-export const vdbi_color_scheme = {
-  blue: '#3558A2',
-  orange: '#FF732C',
-}
-
 export const vdbi_color_scale_diverging = d3
   .scaleDiverging()
-  .range([vdbi_color_scheme.blue, 'white', vdbi_color_scheme.orange])
+  .range(['var(--theme-foreground-focus-alt)', 'white', 'var(--theme-foreground-focus)'])
   .unknown('grey')
 
 export const vdbi_orange_analogic_color_scheme = [

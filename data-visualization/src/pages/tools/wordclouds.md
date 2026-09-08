@@ -10,7 +10,6 @@ import { downloadSVGButton } from '/components/utilities.js'
 import {
   vdbi_orange_analogic_color_scale,
   vdbi_blue_analogic_color_scale,
-  vdbi_color_scheme,
 } from '/components/color.js'
 ```
 
