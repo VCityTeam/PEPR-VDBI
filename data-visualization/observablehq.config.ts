@@ -153,10 +153,6 @@ export default {
           path: 'pages/geo/partners-by-project',
         },
         {
-          name: 'Project terrains by department',
-          path: 'pages/geo/project-terrains-by-department',
-        },
-        {
           name: 'Financed labs',
           path: 'pages/geo/financed-labs',
         },

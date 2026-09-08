@@ -32,38 +32,14 @@ import * as projections from '/components/projection-map.js'
 const terrain_features = FileAttachment(
   '/data/terrain_feature_collection.json',
 ).json()
-
-console.debug('terrain_features', terrain_features)
 ```
 
-terrain_data
-
-```sql id=terrain_data display
+```sql id=terrain_data
 select * from project_terrains
 ```
 
-terrain_data_by_city
-
-```sql id=terrain_data_by_city
--- merge data on terrain feature
--- (a simplified terrain label for merging locations at the city level)
-
-select distinct *
-  -- terrain_id,
-  -- terrain,
-  -- osm_id,
-  -- osm_type,
-  -- -- list_distinct(list(terrain)) as terrains,
-  -- list_distinct(list(project)) as projects,
-  -- first(latitude) as latitude,
-  -- first(longitude) as longitude,
-  -- -- scale,
-from project_terrains
--- group by all
-```
-
 ```js
-const filtered_terrain_data = [...terrain_data_by_city]
+const filtered_terrain_data = [...terrain_data]
   .map((d) => d.toJSON())
   .filter(
     (d) =>
@@ -106,6 +82,10 @@ const settings = view(
         sort: true,
         value: scales,
       }),
+      selected_color_domain_max: Inputs.range([0, 100], {
+        label: 'Color domain max (ignored if zero)',
+        value: 0,
+      }),
     },
     { template: formTemplate },
   ),
@@ -114,16 +94,22 @@ const settings = view(
 
 </div>
 
-<div class="card">
+<div class="card" style="">
+  <div>
+    <h2>Types des communes</h2>
+    ${geo.choropleth_terrain_dot_legend}
+    <!-- $ -->
+  </div>
   <div id="map-container" class="grid grid-cols-4">
     <div
       id="map-container-france"
       class="grid-colspan-3 grid-rowspan-3"
+      style="overflow: hidden;"
     >
-      ${resize((width, height) =>
+      ${resize((width) =>
         projections.choroplethFrance(
           width,
-          height * 0.8,
+          width * 0.9,
           (department) => {
             const count = geo.filterFranceTerrains(filtered_terrain_data)
               .reduce((acc, terrain) => d3.geoContains(
@@ -134,16 +120,32 @@ const settings = view(
               )
             return count > 0 ? count : null
           },
-          [geo.choropleth_dot_mark(geo.filterFranceTerrains(filtered_terrain_data))],
+          [geo.choropleth_terrain_dot_mark(
+            geo.filterFranceTerrains(filtered_terrain_data)
+              // apply a filter to remove overlapping dots
+              .filter((d) => ![
+                  'villeurbanne',
+                  'montpellier méditerranée métropole',
+                  'aix-marseille-provence',
+                  'nantes',
+                  'métropole du grand paris',
+                  'cachan',
+                  'ivry-sur-seine',
+                ].includes(d.terrain.toLowerCase()))
+          )],
           "- Terrain d'étude par commune et métropole, France",
           {
             label: `N° de terrains d'étude par département, France`,
+            domain: settings.selected_color_domain_max > 0
+              ? [0, settings.selected_color_domain_max] :
+              undefined,
+            ticks: 2,
           }
         ),
       )}
       <!-- $ -->
     </div>
-    <div id="map-container-idf" style="overflow: hidden;">
+    <div id="map-container-idf" style="margin-bottom: 1em; overflow: hidden;">
       ${resize(
         (width) => projections.choroplethIdf(
           width,
@@ -157,17 +159,24 @@ const settings = view(
               )
             return count > 0 ? count : null
           },
-          [geo.choropleth_dot_mark(geo.filterIdfTerrains(filtered_terrain_data))],
+          [geo.choropleth_terrain_dot_mark(
+            geo.filterIdfTerrains(filtered_terrain_data),
+            { r: 4}
+          )],
           "- Terrains d'étude, Ile-de-France",
           {
             label: `N° de terrains d'étude par département, Ile-de-France`,
-            ticks: 2,
+            domain: settings.selected_color_domain_max > 0
+              ? [0, settings.selected_color_domain_max] :
+              undefined,
+            //ticks: settings.selected_color_domain_max > 0 ? undefined : 2,
+            ticks: 1,
           }
         )
       )}
       <!-- $ -->
     </div>
-    <div id="map-container-italy" style="overflow: hidden;">
+    <div id="map-container-italy" style="margin-bottom: 1em; overflow: hidden;">
       ${resize(
         (width) => projections.choroplethItaly(
           width,
@@ -181,21 +190,29 @@ const settings = view(
               )
             return count > 0 ? count : null
           },
-          [geo.choropleth_dot_mark(geo.filterItalyTerrains(filtered_terrain_data))],
+          [geo.choropleth_terrain_dot_mark(
+            geo.filterItalyTerrains(filtered_terrain_data),
+            { r: 4}
+          )],
           "- Terrains d'étude, Italie",
           {
             label: `N° de terrains d'étude par région, Italie`,
+            domain: settings.selected_color_domain_max > 0
+              ? [0, settings.selected_color_domain_max] :
+              undefined,
           }
         )
       )}
       <!-- $ -->
     </div>
-    <!-- <div id="map-container-world" class="grid-colspan-2" style="overflow: hidden;"> -->
-    <div id="map-container-world" style="overflow: hidden;">
+    <div
+      id="map-container-world"
+      style="margin-bottom: 1em; overflow: hidden;"
+    >
       ${resize(
         (width) => geo.worldProjection(
           width,
-          width * 0.6,
+          width * 0.5,
           geo.generateSimpleGeoTipMarks(
             geo.filterExtraEuropeanTerrains(filtered_terrain_data)
               .map((d) => ({
@@ -215,13 +232,7 @@ const settings = view(
       <!-- $ -->
     </div>
   </div>
-</div>
-
-<div class="card">
-
-```js
-display(
-  Inputs.form(
+  ${Inputs.form(
     [
       downloadTableButton(() => filtered_terrain_data, {
         label: 'Download terrains by location data',
@@ -231,11 +242,6 @@ display(
         label: 'Download terrain and scale data',
         delimeter: '\t',
       }),
-      // downloadSVGButton(
-      //   '#map-container svg',
-      //   'Download all terrain maps',
-      //   'project_terrains.svg',
-      // ),
       downloadSVGButton(
         '#map-container-france svg',
         'Download French project terrain map',
@@ -249,7 +255,7 @@ display(
       downloadSVGButton(
         '#map-container-italy svg',
         'Download Italian project terrain map',
-        'italy_project_terrains.svg'
+        'italy_project_terrains.svg',
       ),
       downloadSVGButton(
         '#map-container-world svg',
@@ -258,10 +264,8 @@ display(
       ),
     ],
     { template: formTemplate },
-  ),
-)
-```
-
+  )}
+  <!-- $ -->
 </div>
 
 <!-- saving this for later when we figure out financial annex integration -->

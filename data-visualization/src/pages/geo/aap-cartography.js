@@ -572,6 +572,7 @@ export function generateSimpleGeoTipMarks(
       terrain: v[0].terrain,
       projects: v.map((d) => d.project),
       label: v.find((d) => !!d.label)?.label,
+      city_type: v.find((d) => !!d.city_type)?.city_type,
       longitude: v.find((d) => !!d.longitude)?.longitude,
       latitude: v.find((d) => !!d.latitude)?.latitude,
     }),
@@ -606,7 +607,7 @@ export function generateSimpleGeoTipMarks(
     }
   }
 
-  // add the default marks
+  // add the default mark
   marks.push(
     Plot.tip(
       grouped_terrains
@@ -805,14 +806,6 @@ export function generateDotMapMarks(
   ]
 }
 
-export const france_terrain_dot_categories = new Map([
-  ['métropole', 'Métropole/agglomeration'],
-  ['agglomeration', 'Métropole/agglomeration'],
-  ['quartier', 'Commune'],
-  ['ville', 'Commune'],
-  ['feature', 'Commune'],
-])
-
 export const choropleth_terrain_data = (terrain_data) =>
   d3.group(
     terrain_data,
@@ -823,58 +816,6 @@ export const choropleth_terrain_data = (terrain_data) =>
         ) || { properties: { nom: null } }
       ).properties.nom,
     (d) => d.project_acronyme,
-  )
-
-export const choropleth_terrain_data_by_city = (terrains) => [
-  ...d3
-    .rollup(
-      terrains.map((d) => ({
-        projects: d.projects.toJSON(),
-        code: (
-          mainland_france_departements_geojson.features.find((department) =>
-            d3.geoContains(department, [d.longitude, d.latitude]),
-          ) || { properties: { code: null } }
-        ).properties.code,
-        latitude: d3.geoCentroid(
-          mainland_france_departements_geojson.features.find((department) =>
-            d3.geoContains(department, [d.longitude, d.latitude]),
-          ) || [0, 0],
-        )[1],
-        longitude: d3.geoCentroid(
-          mainland_france_departements_geojson.features.find((department) =>
-            d3.geoContains(department, [d.longitude, d.latitude]),
-          ) || [0, 0],
-        )[0],
-      })),
-      (D) =>
-        D.reduce(
-          (a, v) => ({
-            projects: [...new Set(a.projects).union(new Set(v.projects))],
-            code: v.code,
-            latitude: v.latitude,
-            longitude: v.longitude,
-          }),
-          { projects: [] },
-        ),
-      (d) => d.code,
-    )
-    .values(),
-]
-
-export const terrain_partners_by_code = (
-  all_partner_data,
-  selected_terrain_project,
-) =>
-  new Map(
-    d3.rollups(
-      [...all_partner_data],
-      (D) =>
-        D.reduce(
-          (a, v) => (selected_terrain_project.includes(v.projet) ? a + 1 : a),
-          0,
-        ),
-      (d) => (d.code_postal ? String(d.code_postal).slice(0, 2) : null),
-    ),
   )
 
 export const all_partners_by_code = (
@@ -963,21 +904,40 @@ export const lab_disciplines_by_code = (labs, selected_partner_project) =>
       .filter((d) => d[1] > 0),
   )
 
-export const choropleth_dot_mark = (terrain_data) =>
+const choropleth_terrain_dot_default_config = {
+  fill: 'var(--theme-foreground-focus)',
+  r: 5,
+  stroke: 'black',
+  strokeWidth: 0.4,
+}
+
+export const choropleth_terrain_dot_symbols = new Map([
+  ['Petite ville', 'triangle'],
+  ['Ville moyenne', 'square'],
+  ['Ville periurbaine', 'cross'],
+  ['Métropole', 'circle'],
+])
+
+export const choropleth_terrain_dot_legend = Plot.legend({
+  ...choropleth_terrain_dot_default_config,
+  symbol: {
+    domain: choropleth_terrain_dot_symbols.keys(),
+    range: choropleth_terrain_dot_symbols.values(),
+    type: 'categorical',
+  },
+})
+
+export const choropleth_terrain_dot_mark = (terrain_data, options = {}) =>
   Plot.dot(terrain_data, {
+    ...choropleth_terrain_dot_default_config,
     x: 'longitude',
     y: 'latitude',
-    fill: 'var(--theme-foreground-focus)',
-    r: 5,
-    stroke: 'black',
-    strokeWidth: 0.4,
-    symbol: (d) =>
-      france_terrain_dot_categories.has(d.scale)
-        ? france_terrain_dot_categories.get(d.scale)
-        : d.scale,
+    symbol: (d) => choropleth_terrain_dot_symbols.get(d.city_type),
     tip: true,
     channels: {
       Terrain: 'terrain',
       Scale: 'scale',
+      'City type': 'city_type',
     },
+    ...options,
   })
