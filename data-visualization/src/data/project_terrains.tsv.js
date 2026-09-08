@@ -10,6 +10,7 @@ select
   Terrains.gristHelper_Display as project,
   Terrains.gristHelper_Display3 as terrain,
   Terrains.ECHELLE as scale,
+  Lieux.TYPE_COMMUNE as city_type,
   Lieux.OSM_ID as osm_id,
   Lieux.OSM_TYPE as osm_type,
   Lieux.LATITUDE as latitude,
