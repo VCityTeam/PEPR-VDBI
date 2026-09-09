@@ -66,11 +66,16 @@ const settings = view(
         label: 'Filter by project type',
         value: project_types,
       }),
-      selected_project: Inputs.select(['All', ...project_list], {
-        label: 'Filter by project',
-        value: 'All',
+      // selected_project: Inputs.select(['All', ...project_list], {
+      //   label: 'Filter by project',
+      //   value: 'All',
+      // }),
+      show_tips: Inputs.toggle({ label: 'Show tips', value: true }),
+      tip_cuttoff: Inputs.range([0, 100], {
+        label: 'Min partner count to show tip',
+        step: 1,
+        value: 10,
       }),
-      show_tips: Inputs.toggle({ label: 'Show tips' }),
       flatten_choropleth: Inputs.toggle({ label: 'Flatten choropleth' }),
       group_idf: Inputs.toggle({ label: 'Group Île-de-France' }),
     },
@@ -144,19 +149,45 @@ const filtered_partners_by_project = [...projects_by_partner]
   .map((d) => d.toJSON())
   .filter(
     (d) =>
-      (settings.selected_project == 'All' ||
-        d.project == settings.selected_project) &&
+      // (settings.selected_project == 'All' ||
+      //   d.project == settings.selected_project) &&
       settings.selected_project_types.includes(d.project_type) &&
       settings.selected_partner_types.includes(d.type),
   )
 ```
 
 ```js
+// left is all false
+const anchor_map = d3.group(
+  filtered_partners_by_project,
+  (d) => ['13', '75'].includes(d.postal_code?.slice(0, 2)), // right
+  (d) => ['69'].includes(d.postal_code?.slice(0, 2)), // bottom-right
+)
+
 const francePartnerMap = (width) => {
   const map = projections.choroplethFrance(
     geo.choroplethCountByPostalCode(filtered_partners_by_project),
     settings.show_tips
-      ? [geo.francePartnerMapTips(filtered_partners_by_project)]
+      ? [
+          geo.francePartnerMapTips(
+            anchor_map.get(false).get(false),
+            settings.tip_cuttoff,
+          ),
+          geo.francePartnerMapTips(
+            anchor_map.get(true).get(false),
+            settings.tip_cuttoff,
+            {
+              anchor: 'right',
+            },
+          ),
+          geo.francePartnerMapTips(
+            anchor_map.get(false).get(true),
+            settings.tip_cuttoff,
+            {
+              anchor: 'bottom-left',
+            },
+          ),
+        ]
       : [],
     { width, height: width * 0.9 },
   )
@@ -168,7 +199,12 @@ const idfPartnerMap = (width) => {
   const map = projections.choroplethIdf(
     geo.choroplethCountByPostalCode(filtered_partners_by_project),
     settings.show_tips
-      ? [geo.idfPartnerMapTips(filtered_partners_by_project)]
+      ? [
+          geo.idfPartnerMapTips(
+            filtered_partners_by_project,
+            settings.tip_cuttoff,
+          ),
+        ]
       : [],
     { width, height: width * 0.8 },
   )
