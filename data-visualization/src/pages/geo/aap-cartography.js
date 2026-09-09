@@ -818,50 +818,35 @@ export const choropleth_terrain_data = (terrain_data) =>
     (d) => d.project_acronyme,
   )
 
-export const all_partners_by_code = (
-  all_partner_data,
-  selected_partner_project,
-  flatten_choropleth,
-) =>
+export const choroplethCountByPosition = (data) => (department) => {
+  const count = data.reduce(
+    (acc, val) =>
+      d3.geoContains(department, [val.longitude, val.latitude]) ? acc + 1 : acc,
+    0,
+  )
+  return count > 0 ? count : null
+}
+
+export const choroplethCountByPostalCode =
+  (data) =>
+  (d) => {
+    const count = data.reduce(
+      (acc, val) =>
+        String(d.properties.code).slice(0, 2) ===
+        String(val.postal_code).slice(0, 2)
+          ? acc + 1
+          : acc,
+      0,
+    )
+    return count > 0 ? count : null
+  }
+
+export const all_partners_by_code = (partner_by_project_data) =>
   new Map(
     d3
       .rollups(
-        [...all_partner_data].concat([
-          // with hardcoded project corrections
-          {
-            projet: 'INTEGREEN',
-            code_postal: 95,
-          },
-          {
-            projet: 'INTEGREEN',
-            code_postal: 93,
-          },
-          {
-            projet: 'URBHEALTH',
-            code_postal: 95,
-          },
-          {
-            projet: 'URBHEALTH',
-            code_postal: 78,
-          },
-          {
-            projet: 'URBHEALTH',
-            code_postal: 92,
-          },
-          {
-            projet: 'URBHEALTH',
-            code_postal: 91,
-          },
-        ]),
-        (D) =>
-          D.reduce(
-            (a, v) =>
-              selected_partner_project == 'All' ||
-              v.projet == selected_partner_project
-                ? a * Number(!flatten_choropleth) + 1
-                : a,
-            0,
-          ),
+        [...partner_by_project_data].concat(project_corrections),
+        (D) => D.reduce((a, v) => a + 1, 0),
         (d) => (d.code_postal ? String(d.code_postal).slice(0, 2) : null),
       )
       .filter((d) => d[1] > 0),
@@ -903,6 +888,33 @@ export const lab_disciplines_by_code = (labs, selected_partner_project) =>
       )
       .filter((d) => d[1] > 0),
   )
+
+export const project_corrections = [
+  {
+    projet: 'INTEGREEN',
+    code_postal: 95,
+  },
+  {
+    projet: 'INTEGREEN',
+    code_postal: 93,
+  },
+  {
+    projet: 'URBHEALTH',
+    code_postal: 95,
+  },
+  {
+    projet: 'URBHEALTH',
+    code_postal: 78,
+  },
+  {
+    projet: 'URBHEALTH',
+    code_postal: 92,
+  },
+  {
+    projet: 'URBHEALTH',
+    code_postal: 91,
+  },
+]
 
 const choropleth_terrain_dot_default_config = {
   fill: 'var(--theme-foreground-focus)',

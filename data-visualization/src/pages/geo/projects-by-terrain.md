@@ -267,36 +267,3 @@ const settings = view(
   )}
   <!-- $ -->
 </div>
-
-<!-- saving this for later when we figure out financial annex integration -->
-
-<!--
-```sql id=partner_project_code
-WITH user_partner_project_data as (
-  SELECT DISTINCT
-    project,
-    aap_partners.label,
-    aap_partners.id as "ID primaire",
-    aap_partners.type,
-    -- nom_complet,
-    postal_code,
-  FROM projects_by_partner
-  JOIN aap_partners
-  ON projects_by_partner.partner_id::VARCHAR = aap_partners.id::VARCHAR
-)
-SELECT
-  project,
-  "ID primaire",
-  postal_code,
-FROM user_partner_project_data
-UNION
-SELECT DISTINCT
-  upper(project_name) AS project,
-  -- source_label AS label,
-  siret AS "ID primaire",
-  -- nature_juridique AS "type",
-  -- nom_complet,
-  code_postal AS postal_code,
-FROM annex_partners
-```
--->

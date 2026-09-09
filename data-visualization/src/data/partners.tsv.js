@@ -1,15 +1,7 @@
 import { tsvFormat } from 'd3'
-import { loadEnvFile } from 'node:process'
 import { simpleGristQuery } from './utilities/grist_api.js'
 
 const query = `
-select
-  id,
-  nom_complet as label,
-  code_postal as postal_code,
-  'SOCIOECONOMIQUE' as type
-from Partenaires_socioeconomiques
-union
 select
   id,
   if(sigle is null or sigle = '', libelle, concat(libelle, ' (', sigle, ')')) as label,
@@ -23,6 +15,13 @@ select
   code_postal as postal_code,
   'INSTITUTION' as type
 from Institutions
+union
+select
+  id,
+  nom_complet as label,
+  code_postal as postal_code,
+  'SOCIOECONOMIQUE' as type
+from Partenaires_socioeconomiques
 `
 
 simpleGristQuery(query, 'oUjutoUDF9xP29sxnd6SNX')
