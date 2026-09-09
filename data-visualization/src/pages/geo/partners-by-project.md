@@ -1,9 +1,8 @@
 ---
+toc: false
 sql:
-  annex_partners: /data/partners_by_project_annex.csv
-  projects_by_partner: /data/partners_by_project.tsv
   aap_partners: /data/partners.tsv
-  project_terrains: /data/project_terrains.tsv
+  projects_by_partner: /data/partners_by_project.tsv
 ---
 
 # Partners by Project
@@ -14,20 +13,31 @@ sql:
 import {
   downloadTableButton,
   downloadSVGButton,
+  formTemplate,
 } from '/components/utilities.js'
-import {
-  all_partners_by_code,
-  all_partners_by_code_group_idf,
-  choroplethFrance,
-  choroplethIdf,
-  choroplethItaly,
-} from './aap-cartography.js'
+import * as geo from './aap-cartography.js'
+import * as projections from '/components/projection-map.js'
 ```
 
 <!-- DATA IMPORT -->
 
-```sql id=all_partner_data
-SELECT * from aap_partners
+```sql id=projects_by_partner display
+SELECT
+  projects_by_partner.*,
+  postal_code,
+from projects_by_partner
+join aap_partners
+  on projects_by_partner.partner_id = aap_partners.id
+    and projects_by_partner.type = aap_partners.type
+
+```
+
+```sql id=projects
+select distinct project
+from projects_by_partner
+where project is not null
+  and financed
+order by project
 ```
 
 <div class="warning" label="Data visualization notice">
@@ -36,41 +46,47 @@ SELECT * from aap_partners
 </div>
 
 ```js
-const selected_partner_project = view(
-  Inputs.select(['All', ...[...all_partner_data].map((d) => d.project)], {
-    multiple: false,
-    label: 'Optionally, select a project to focus on:',
-    unique: true,
-    sort: true,
-    value: 'All',
-  }),
+const settings = view(
+  Inputs.form(
+    {
+      selected_partner_project: Inputs.select(
+        ['All', ...[...projects].map((d) => d.project)],
+        {
+          label: 'Optionally, select a project to focus on',
+          value: 'All',
+        },
+      ),
+      flatten_choropleth: Inputs.toggle({ label: 'Flatten choropleth' }),
+      group_idf: Inputs.toggle({ label: 'Group Île-de-France' }),
+    },
+    { template: formTemplate },
+  ),
 )
-
-const flatten_choropleth = view(Inputs.toggle({ label: 'Flatten choropleth?' }))
-
-const group_idf = view(Inputs.toggle({ label: 'Group Île-de-France?' }))
 ```
 
 <div style="display: flex">
   ${downloadSVGButton(
     "#choropleth-container-france svg:nth-of-type(2)",
     "Download French choropleth partner map",
-    `${selected_partner_project}_france_partner_choropleth.svg`
+    `${settings.selected_partner_project}_france_partner_choropleth.svg`
   )}
+  <!-- $ -->
   ${downloadSVGButton(
     "#choropleth-container-france svg:nth-of-type(1)",
     "Download legend",
-    `${selected_partner_project}_france_partner_choropleth_legend.svg`
+    `${settings.selected_partner_project}_france_partner_choropleth_legend.svg`
   )}
+  <!-- $ -->
   ${downloadSVGButton(
     "#choropleth-container-idf svg:nth-of-type(2)",
     "Download Île-de-France choropleth partner map",
-    `${selected_partner_project}_idf_partner_choropleth.svg`
+    `${settings.selected_partner_project}_idf_partner_choropleth.svg`
   )}
+  <!-- $ -->
   ${downloadSVGButton(
     "#choropleth-container-idf svg:nth-of-type(1)",
     "Download legend",
-    `${selected_partner_project}_idf_partner_choropleth_legend.svg`
+    `${settings.selected_partner_project}_idf_partner_choropleth_legend.svg`
   )}
   <!-- ${open_choropleth_italy} -->
   <!-- $ -->
@@ -81,57 +97,40 @@ const group_idf = view(Inputs.toggle({ label: 'Group Île-de-France?' }))
     class="card grid-colspan-2 grid-rowspan-2"
     style="padding: 12px;"
   >
-    ${resize((width, height) => choroplethFrance(
+    ${resize((width) => projections.choroplethFrance(
       width,
-      height,
-      ({ properties }) => group_idf ?
-        all_partners_by_code_group_idf.get(properties.code) :
-        all_partners_by_code(
-          all_partner_data,
-          selected_partner_project,
-          flatten_choropleth)
-        .get(properties.code),
+      width * 0.9,
+      geo.choroplethCountByPostalCode(filtered_partners_by_project),
     ))}
     <!-- $ -->
   </div>
   <div id="choropleth-container-idf" class="card" style="padding: 12px;">
-    ${resize((width) => choroplethIdf(
+    ${resize((width) => projections.choroplethIdf(
       width,
-      ({ properties }) => all_partners_by_code(
-          all_partner_data,
-          selected_partner_project,
-          flatten_choropleth)
-        .get(properties.code),
+      geo.choroplethCountByPostalCode(filtered_partners_by_project),
     ))}
     <!-- $ -->
   </div>
-  <!-- <div id="choropleth-container-italy" class="card" style="padding: 12px;">
-    ${resize((width) => choroplethItaly(
-      width,
-      ({ properties }) => true
-    ))}
-  </div> -->
 </div>
 
 <div class="card">
-  ${Inputs.table(choropleth_data, { layout: "auto" })}
+  ${Inputs.table(filtered_partners_by_project, { layout: "auto" })}
   <!-- $ -->
 </div>
 
 <div>
   ${downloadTableButton(
-    () => [...choropleth_data].map(d => d.toJSON()),
-    { filename: `${selected_partner_project}\_partenaires.csv` })}<!-- $ -->
-  ${downloadTableButton(
-    () => [...all_partner_data].map((d) => d.toJSON()), {
-      label: 'Download partners by project data',
-      delimeter: '\t'
-    })}<!-- $ -->
+    () => filtered_partners_by_project,
+    { filename: `${settings.selected_partner_project}\_partenaires.csv` })}
+  <!-- $ -->
 </div>
 
 ```js
-const choropleth_data = [...all_partner_data].filter(
-  (d) =>
-    selected_partner_project == 'All' || d.project == selected_partner_project,
-)
+const filtered_partners_by_project = [...projects_by_partner]
+  .map((d) => d.toJSON())
+  .filter(
+    (d) =>
+      settings.selected_partner_project == 'All' ||
+      d.project == settings.selected_partner_project,
+  )
 ```

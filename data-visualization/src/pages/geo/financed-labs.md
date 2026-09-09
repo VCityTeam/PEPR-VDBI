@@ -1,4 +1,5 @@
 ---
+toc: false
 sql:
   annex_partners: /data/partners_by_project_annex.csv
   projects_by_partner: /data/partners_by_project.tsv

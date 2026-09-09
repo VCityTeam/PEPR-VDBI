@@ -417,7 +417,7 @@ export const choroplethFrance = (
     fill,
     france_projection,
     mainland_france_departements_geojson,
-    [...mainland_france_choropleth_marks, ...marks],
+    mainland_france_choropleth_marks.concat(marks),
     caption,
     custom_color_config,
   )
@@ -442,7 +442,7 @@ export const choroplethIdf = (
     fill,
     idf_projection,
     idf_departements_geojson,
-    [...mainland_france_choropleth_marks, ...marks],
+    mainland_france_choropleth_marks.concat(marks),
     caption,
     custom_color_config,
   )
@@ -467,7 +467,7 @@ export const choroplethItaly = (
     fill,
     italy_projection,
     italy_regions_geojson,
-    [...italy_choropleth_marks, ...marks],
+    italy_choropleth_marks.concat(marks),
     caption,
     custom_color_config,
   )
