@@ -44,6 +44,10 @@ svg,
   color: var(--theme-blue);
 }
 
+svg {
+  font-family: 'marianne';
+}
+
 /* Render Inputs.toggle() checkboxes as toggle switches instead of native checkboxes. */
 form[class*='-toggle'] input[type='checkbox'] {
   appearance: none;
