@@ -1006,7 +1006,6 @@ const partnerMapTips = (geojson, data, cuttoff = 10, options) =>
       anchor: 'left',
       fontSize: 13,
       lineWidth: 30,
-      fontFamily: 'marianne',
       textOverflow: 'ellipsis-middle',
       title: (feature) => {
         const partners = new Set(
