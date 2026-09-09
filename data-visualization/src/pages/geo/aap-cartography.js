@@ -3,26 +3,28 @@ import * as Plot from 'npm:@observablehq/plot'
 import {
   default_projection_style,
   // france_geojson,
-  france_regions_geojson,
-  mainland_france_regions_geojson,
+  // france_regions_geojson,
+  // mainland_france_regions_geojson,
   // idf_region_geojson,
   france_departements_geojson,
   mainland_france_departements_geojson,
   // mainland_france_departements_no_idf_geojson,
-  idf_departements_geojson,
+  // idf_departements_geojson,
   italy_regions_geojson,
   land_geojson,
   idf_department_codes,
-  france_projection,
+  // france_projection,
   idf_projection,
   paris_projection,
   italy_projection,
   default_mainland_france_marks,
-  mainland_france_choropleth_marks,
+  idf_departements_geojson,
+  // mainland_france_choropleth_marks,
   // idf_choropleth_marks,
   // italy_choropleth_marks,
 } from '../../components/projection-map.js'
 import { project_color_scale } from '../../components/color.js'
+import { html } from 'npm:htl'
 
 // Project terrain map
 
@@ -827,19 +829,17 @@ export const choroplethCountByPosition = (data) => (department) => {
   return count > 0 ? count : null
 }
 
-export const choroplethCountByPostalCode =
-  (data) =>
-  (d) => {
-    const count = data.reduce(
-      (acc, val) =>
-        String(d.properties.code).slice(0, 2) ===
-        String(val.postal_code).slice(0, 2)
-          ? acc + 1
-          : acc,
-      0,
-    )
-    return count > 0 ? count : null
-  }
+export const choroplethCountByPostalCode = (data) => (d) => {
+  const count = data.reduce(
+    (acc, val) =>
+      String(d.properties.code).slice(0, 2) ===
+      String(val.postal_code).slice(0, 2)
+        ? acc + 1
+        : acc,
+    0,
+  )
+  return count > 0 ? count : null
+}
 
 export const all_partners_by_code = (partner_by_project_data) =>
   new Map(
@@ -917,34 +917,79 @@ export const project_corrections = [
 ]
 
 const choropleth_terrain_dot_default_config = {
-  fill: 'var(--theme-foreground-focus)',
-  r: 5,
   stroke: 'black',
-  strokeWidth: 0.4,
+  strokeWidth: 0.6,
 }
 
-export const choropleth_terrain_dot_symbols = new Map([
-  ['Petite ville', 'triangle'],
-  ['Ville moyenne', 'square'],
-  ['Ville periurbaine', 'cross'],
-  ['Métropole', 'circle'],
+const choropleth_terrain_dot_types = [
+  { city_type: 'Petite ville', type: 'Ville', color: d3.schemeRdYlGn[5][0] },
+  { city_type: 'Ville moyenne', type: 'Ville', color: d3.schemeRdYlGn[5][1] },
+  { city_type: 'Grande ville', type: 'Ville', color: d3.schemePurples[4][3] },
+  {
+    city_type: 'Ville periurbaine',
+    type: 'Ville',
+    color: d3.schemeRdYlGn[5][3],
+  },
+  {
+    city_type: 'Métropole',
+    type: 'Métropole/Agglomeration',
+    color: d3.schemeRdYlGn[5][4],
+  },
+]
+
+const choropleth_terrain_dot_color_scale = d3.scaleOrdinal(
+  choropleth_terrain_dot_types.map((d) => d.city_type),
+  choropleth_terrain_dot_types.map((d) => d.color),
+  // d3.schemeRdYlGn[choropleth_terrain_dot_types.length],
+)
+
+const choropleth_terrain_dot_symbols = new Map([
+  ['Ville', 'circle'],
+  ['Métropole/Agglomeration', 'cross'],
 ])
 
-export const choropleth_terrain_dot_legend = Plot.legend({
-  ...choropleth_terrain_dot_default_config,
-  symbol: {
-    domain: choropleth_terrain_dot_symbols.keys(),
-    range: choropleth_terrain_dot_symbols.values(),
-    type: 'categorical',
-  },
-})
+export const choropleth_terrain_dot_legend = html` <div style="display: flex;">
+  <div style="margin-right: 2em;">
+    <h2>Tailles des communes</h2>
+    ${Plot.legend({
+      color: {
+        domain: choropleth_terrain_dot_color_scale.domain(),
+        range: choropleth_terrain_dot_color_scale.range(),
+        type: 'categorical',
+      },
+    })}
+  </div>
+  <div>
+    <h2>Types des communes</h2>
+    ${Plot.legend({
+      ...choropleth_terrain_dot_default_config,
+      r: 7,
+      fill: 'ghostwhite',
+      symbol: {
+        domain: choropleth_terrain_dot_symbols.keys(),
+        range: choropleth_terrain_dot_symbols.values(),
+        type: 'categorical',
+      },
+    })}
+  </div>
+</div>`
 
 export const choropleth_terrain_dot_mark = (terrain_data, options = {}) =>
   Plot.dot(terrain_data, {
     ...choropleth_terrain_dot_default_config,
     x: 'longitude',
     y: 'latitude',
-    symbol: (d) => choropleth_terrain_dot_symbols.get(d.city_type),
+    fill: (d) =>
+      choropleth_terrain_dot_types.find(
+        ({ city_type }) => d.city_type == city_type,
+      )?.color || 'grey',
+    // fill: (d) => choropleth_terrain_dot_color_scale(d.city_type),
+    symbol: (d) =>
+      choropleth_terrain_dot_symbols.get(
+        choropleth_terrain_dot_types.find(
+          ({ city_type }) => d.city_type == city_type,
+        )?.type || 'grey',
+      ),
     tip: true,
     channels: {
       Terrain: 'terrain',
@@ -953,3 +998,30 @@ export const choropleth_terrain_dot_mark = (terrain_data, options = {}) =>
     },
     ...options,
   })
+
+const partnerMapTips = (geojson, data, cuttoff = 10, options) =>
+  Plot.tip(
+    geojson,
+    Plot.geoCentroid({
+      fontSize: 13,
+      anchor: 'left',
+      title: (feature) => {
+        const partners = new Set(
+          data
+            .filter(
+              (d) => d.postal_code?.slice(0, 2) == feature.properties.code,
+            )
+            .map((d) => d.partner),
+        )
+        if (partners.size > cuttoff)
+          return `${feature.properties.nom}:${[...partners].map((d) => `\n- ${d}`)}`
+      },
+      ...options,
+    }),
+  )
+
+export const francePartnerMapTips = (data, cuttoff, options) =>
+  partnerMapTips(mainland_france_departements_geojson, data, cuttoff, options)
+
+export const idfPartnerMapTips = (data, cuttoff, options) =>
+  partnerMapTips(idf_departements_geojson, data, cuttoff, options)

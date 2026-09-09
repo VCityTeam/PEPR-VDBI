@@ -619,18 +619,20 @@ export function writeToFile(
   window.URL.revokeObjectURL(url)
 }
 
-export const formTemplate = (inputs, columns = 2) =>
-  html`<div class="styled">${Object.values(inputs)}</div>
-    <style>
-      div.styled {
-        text-align: left;
-        column-count: ${columns};
-      }
-      div.styled label {
-        font-weight: bold;
-        line-height: 200%;
-      }
-      div.styled label:not(div > label):after {
-        content: ':';
-      }
-    </style>`
+export const formTemplate =
+  (columns = 2, id = `form_${Math.random().toString(36).slice(2)}`) =>
+  (inputs) =>
+    html`<div id="${id}">${Object.values(inputs)}</div>
+      <style>
+        div#${id} {
+          text-align: left;
+          column-count: ${columns};
+        }
+        div#${id} label {
+          font-weight: bold;
+          line-height: 100%;
+        }
+        div#${id} label:not(div > label):after {
+          content: ':';
+        }
+      </style>`

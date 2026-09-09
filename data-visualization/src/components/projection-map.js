@@ -329,12 +329,12 @@ export function projectionMap(
  */
 export const choropleth_color_config = (
   config = {
-    label: `N° de partenaires et parties prenantes estimé`,
+    label: `N° de partenaires et parties prenantes`,
     // label: "N° of Partners",
   },
   flatten_choropleth = false,
 ) => ({
-  scheme: 'Blues',
+  color: '#3558a2',
   domain: flatten_choropleth ? [1, 10] : undefined,
   range: [0.1, 1],
   legend: true,
@@ -353,31 +353,25 @@ export const choropleth_color_config = (
  *
  * @param {number} width - chart width
  * @param {number} height - chart height
- * @param {Function|string} fill - accessor or field name for the fill/color channel
+ * @param {Function|string} opacity - accessor or field name for the opacity channel
  * @param {Object} projection - a d3/Plot geo projection specification
  * @param {Object} features - a GeoJSON FeatureCollection to render
  * @param {string} caption - color legend label/caption
  * @returns {SVGElement} the rendered choropleth map
  */
 export const choropleth = (
-  width,
-  height,
-  fill,
-  projection,
+  opacity,
   features,
   marks = [],
-  caption = '- Project partners by department and Île-de-France, France',
-  custom_color_config,
+  options = {
+    width: 600,
+    height: 500,
+    caption: '- Project partners by department and Île-de-France, France',
+    projection,
+  },
 ) =>
   plot({
-    width: width,
-    height: height - 60,
-    caption: caption,
-    color: choropleth_color_config(custom_color_config),
-    symbol: {
-      legend: true,
-    },
-    projection: projection,
+    ...options,
     marks: [
       geo(features, {
         channels: {
@@ -385,10 +379,11 @@ export const choropleth = (
           Code: ({ properties }) => properties.code,
           Lat: (d) => d3.geoCentroid(d)[0],
           Lon: (d) => d3.geoCentroid(d)[1],
-          Value: fill,
+          Value: opacity,
         },
         tip: true,
-        fill: fill,
+        fill: 'var(--theme-foreground-focus-alt)',
+        fillOpacity: opacity,
         strokeOpacity: 0,
       }),
       [...marks],
@@ -400,74 +395,52 @@ export const choropleth = (
  *
  * @param {number} width - chart width
  * @param {number} height - chart height
- * @param {Function|string} fill - accessor or field name for the fill/color channel
+ * @param {Function|string} opacity - accessor or field name for the opacity channel
  * @returns {SVGElement} the rendered choropleth map
  */
-export const choroplethFrance = (
-  width,
-  height,
-  fill,
-  marks,
-  caption = '- Partenaires et parties prenantes des projets par département, France',
-  custom_color_config,
-) =>
+export const choroplethFrance = (opacity, marks, options = {}) =>
   choropleth(
-    width,
-    height,
-    fill,
-    france_projection,
+    opacity,
     mainland_france_departements_geojson,
     mainland_france_choropleth_marks.concat(marks),
-    caption,
-    custom_color_config,
+    {
+      projection: france_projection,
+      ...options,
+    },
   )
 
 /**
  * Choropleth wrapper specialized for Île-de-France departments
  *
  * @param {number} width - chart width (used for both width and height)
- * @param {Function|string} fill - accessor or field name for the fill/color channel
+ * @param {Function|string} opacity - accessor or field name for the opacity channel
  * @returns {SVGElement} the rendered choropleth map
  */
-export const choroplethIdf = (
-  width,
-  fill,
-  marks,
-  caption = '- Partenaires et parties prenantes des projets par département, Île-de-France',
-  custom_color_config,
-) =>
+export const choroplethIdf = (opacity, marks, options = {}) =>
   choropleth(
-    width,
-    width,
-    fill,
-    idf_projection,
+    opacity,
     idf_departements_geojson,
     mainland_france_choropleth_marks.concat(marks),
-    caption,
-    custom_color_config,
+    {
+      projection: idf_projection,
+      ...options,
+    },
   )
 
 /**
  * Choropleth wrapper specialized for Italy regions
  *
  * @param {number} width - chart width (used for both width and height)
- * @param {Function|string} fill - accessor or field name for the fill/color channel
+ * @param {Function|string} opacity - accessor or field name for the opacity channel
  * @returns {SVGElement} the rendered choropleth map
  */
-export const choroplethItaly = (
-  width,
-  fill,
-  marks,
-  caption = '- Partenaires et parties prenantes des projets par département, Italy',
-  custom_color_config,
-) =>
+export const choroplethItaly = (opacity, marks, options = {}) =>
   choropleth(
-    width,
-    width,
-    fill,
-    italy_projection,
+    opacity,
     italy_regions_geojson,
     italy_choropleth_marks.concat(marks),
-    caption,
-    custom_color_config,
+    {
+      projection: italy_projection,
+      ...options,
+    },
   )
