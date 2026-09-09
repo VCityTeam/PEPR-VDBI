@@ -87,127 +87,70 @@ const settings = view(
         value: 0,
       }),
     },
-    { template: formTemplate },
+    { template: formTemplate(3) },
   ),
 )
 ```
 
 </div>
 
-<div class="card" style="">
-  <div>
-    <h2>Types des communes</h2>
-    ${geo.choropleth_terrain_dot_legend}
-    <!-- $ -->
-  </div>
+<div class="card">
+  ${geo.choropleth_terrain_dot_legend}
+  <!-- $ -->
   <div id="map-container" class="grid grid-cols-4">
     <div
       id="map-container-france"
       class="grid-colspan-3 grid-rowspan-3"
       style="overflow: hidden;"
     >
-      ${resize((width) =>
-        projections.choroplethFrance(
-          width,
-          width * 0.9,
-          (department) => {
-            const count = geo.filterFranceTerrains(filtered_terrain_data)
-              .reduce((acc, terrain) => d3.geoContains(
-                  department,
-                  [terrain.longitude, terrain.latitude]
-                )? acc + 1 : acc,
-                0
-              )
-            return count > 0 ? count : null
-          },
-          [geo.choropleth_terrain_dot_mark(
-            geo.filterFranceTerrains(filtered_terrain_data)
-              // apply a filter to remove overlapping dots
-              .filter((d) => ![
-                  'villeurbanne',
-                  'montpellier méditerranée métropole',
-                  'aix-marseille-provence',
-                  'nantes',
-                  'métropole du grand paris',
-                  'cachan',
-                  'ivry-sur-seine',
-                ].includes(d.terrain.toLowerCase()))
-          )],
-          "- Terrain d'étude par commune et métropole, France",
-          {
-            label: `N° de terrains d'étude par département, France`,
-            domain: settings.selected_color_domain_max > 0
-              ? [0, settings.selected_color_domain_max] :
-              undefined,
-            ticks: 2,
-          }
-        ),
+      ${franceTerrainMap().legend(
+        'opacity',
+        projections.choropleth_color_config({
+          label: `N° de terrains d'étude par département, France`,
+          domain: settings.selected_color_domain_max > 0
+            ? [0, settings.selected_color_domain_max]
+            : undefined,
+          // ticks: 2,
+        }),
       )}
       <!-- $ -->
-    </div>
-    <div id="map-container-idf" style="margin-bottom: 1em; overflow: hidden;">
-      ${resize(
-        (width) => projections.choroplethIdf(
-          width,
-          (department) => {
-            const count = geo.filterIdfTerrains(filtered_terrain_data)
-              .reduce((acc, terrain) => d3.geoContains(
-                  department,
-                  [terrain.longitude, terrain.latitude]
-                )? acc + 1 : acc,
-                0
-              )
-            return count > 0 ? count : null
-          },
-          [geo.choropleth_terrain_dot_mark(
-            geo.filterIdfTerrains(filtered_terrain_data),
-            { r: 4}
-          )],
-          "- Terrains d'étude, Ile-de-France",
-          {
-            label: `N° de terrains d'étude par département, Ile-de-France`,
-            domain: settings.selected_color_domain_max > 0
-              ? [0, settings.selected_color_domain_max] :
-              undefined,
-            //ticks: settings.selected_color_domain_max > 0 ? undefined : 2,
-            ticks: 1,
-          }
-        )
-      )}
+      ${resize((width) => franceTerrainMap(width))}
       <!-- $ -->
     </div>
-    <div id="map-container-italy" style="margin-bottom: 1em; overflow: hidden;">
-      ${resize(
-        (width) => projections.choroplethItaly(
-          width,
-          (department) => {
-            const count = geo.filterItalyTerrains(filtered_terrain_data)
-              .reduce((acc, terrain) => d3.geoContains(
-                  department,
-                  [terrain.longitude, terrain.latitude]
-                )? acc + 1 : acc,
-                0
-              )
-            return count > 0 ? count : null
-          },
-          [geo.choropleth_terrain_dot_mark(
-            geo.filterItalyTerrains(filtered_terrain_data),
-            { r: 4}
-          )],
-          "- Terrains d'étude, Italie",
-          {
-            label: `N° de terrains d'étude par région, Italie`,
-            domain: settings.selected_color_domain_max > 0
-              ? [0, settings.selected_color_domain_max] :
-              undefined,
-          }
-        )
+    <div id="map-container-idf" style="overflow: hidden;">
+      ${idfTerrainMap().legend(
+        'opacity',
+        projections.choropleth_color_config({
+          label: `N° de terrains d'étude par département, Ile-de-France`,
+          domain: settings.selected_color_domain_max > 0
+             ? [0, settings.selected_color_domain_max]
+             : undefined,
+          // ticks: settings.selected_color_domain_max > 0 ? undefined : 2,
+          // ticks: 1,
+        }),
       )}
+      <!-- $ -->
+      ${resize((width) => idfTerrainMap(width))}
+      <!-- $ -->
+    </div>
+    <div id="map-container-italy" style="overflow: hidden;">
+      ${italyTerrainMap().legend(
+        'opacity',
+        projections.choropleth_color_config({
+          label: `N° de terrains d'étude par région, Italie`,
+          domain:
+            settings.selected_color_domain_max > 0
+              ? [0, settings.selected_color_domain_max]
+              : undefined,
+        }),
+      )}
+      <!-- $ -->
+      ${resize((width) => italyTerrainMap(width))}
       <!-- $ -->
     </div>
     <div
       id="map-container-world"
-      style="margin-bottom: 1em; overflow: hidden;"
+      style="overflow: hidden;"
     >
       ${resize(
         (width) => geo.worldProjection(
@@ -232,6 +175,9 @@ const settings = view(
       <!-- $ -->
     </div>
   </div>
+</div>
+
+<div class="card">
   ${Inputs.form(
     [
       downloadTableButton(() => filtered_terrain_data, {
@@ -263,7 +209,98 @@ const settings = view(
         'world_project_terrains.svg',
       ),
     ],
-    { template: formTemplate },
+    { template: formTemplate(3) },
   )}
   <!-- $ -->
 </div>
+
+```js
+const franceTerrainMap = (width) =>
+  projections.choroplethFrance(
+    width,
+    width * 0.9,
+    (department) => {
+      const count = geo
+        .filterFranceTerrains(filtered_terrain_data)
+        .reduce(
+          (acc, terrain) =>
+            d3.geoContains(department, [terrain.longitude, terrain.latitude])
+              ? acc + 1
+              : acc,
+          0,
+        )
+      return count > 0 ? count : null
+    },
+    [
+      geo.choropleth_terrain_dot_mark(
+        geo
+          .filterFranceTerrains(filtered_terrain_data)
+          // apply a filter to remove overlapping dots
+          .filter(
+            (d) =>
+              ![
+                'villeurbanne',
+                'montpellier méditerranée métropole',
+                'aix-marseille-provence',
+                'nantes',
+                'paris',
+                'cachan',
+                'toulouse métropole',
+                'ivry-sur-seine',
+              ].includes(d.terrain.toLowerCase()),
+          ),
+      ),
+    ],
+    "- Terrain d'étude par commune et métropole, France",
+  )
+
+const idfTerrainMap = (width) =>
+  projections.choroplethIdf(
+    width,
+    width * 0.8,
+    (department) => {
+      const count = geo
+        .filterIdfTerrains(filtered_terrain_data)
+        .reduce(
+          (acc, terrain) =>
+            d3.geoContains(department, [terrain.longitude, terrain.latitude])
+              ? acc + 1
+              : acc,
+          0,
+        )
+      return count > 0 ? count : null
+    },
+    [
+      geo.choropleth_terrain_dot_mark(
+        geo.filterIdfTerrains(filtered_terrain_data),
+        { r: 4 },
+      ),
+    ],
+    "- Terrains d'étude, Ile-de-France",
+  )
+
+const italyTerrainMap = (width) =>
+  projections.choroplethItaly(
+    width,
+    width * 0.8,
+    (department) => {
+      const count = geo
+        .filterItalyTerrains(filtered_terrain_data)
+        .reduce(
+          (acc, terrain) =>
+            d3.geoContains(department, [terrain.longitude, terrain.latitude])
+              ? acc + 1
+              : acc,
+          0,
+        )
+      return count > 0 ? count : null
+    },
+    [
+      geo.choropleth_terrain_dot_mark(
+        geo.filterItalyTerrains(filtered_terrain_data),
+        { r: 4 },
+      ),
+    ],
+    "- Terrains d'étude, Italie",
+  )
+```

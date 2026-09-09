@@ -100,7 +100,7 @@ const settings = view(
         value: 'hide',
       }),
     },
-    { template: formTemplate },
+    { template: formTemplate() },
   ),
 )
 ```
@@ -153,7 +153,7 @@ const new_task = view(
       }),
       description: Inputs.text({ value: undefined, label: 'Description' }),
     },
-    { template: formTemplate },
+    { template: formTemplate() },
   ),
 )
 ```
@@ -177,7 +177,7 @@ const new_group = view(
       }),
       color: Inputs.color({ value: undefined, label: 'Group color' }),
     },
-    { template: formTemplate },
+    { template: formTemplate() },
   ),
 )
 ```
