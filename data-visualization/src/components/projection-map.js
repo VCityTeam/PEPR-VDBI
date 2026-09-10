@@ -359,18 +359,11 @@ export const choropleth_color_config = (
  * @param {string} caption - color legend label/caption
  * @returns {SVGElement} the rendered choropleth map
  */
-export const choropleth = (
-  opacity,
-  features,
-  marks = [],
-  options = {
+export const choropleth = (opacity, features, marks = [], options = {}) =>
+  plot({
     width: 600,
     height: 500,
     caption: '- Project partners by department and Île-de-France, France',
-    projection,
-  },
-) =>
-  plot({
     ...options,
     marks: [
       geo(features, {

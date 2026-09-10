@@ -76,7 +76,11 @@ const settings = view(
         step: 1,
         value: 10,
       }),
-      flatten_choropleth: Inputs.toggle({ label: 'Flatten choropleth' }),
+      // flatten_choropleth: Inputs.toggle({ label: 'Flatten choropleth' }),
+      group_partnerships: Inputs.toggle({
+        label: 'Group by distinct partners (as opposed to n° of partnerships)',
+        value: true,
+      }),
       group_idf: Inputs.toggle({ label: 'Group Île-de-France' }),
     },
     { template: formTemplate() },
@@ -154,28 +158,57 @@ const filtered_partners_by_project = [...projects_by_partner]
       settings.selected_project_types.includes(d.project_type) &&
       settings.selected_partner_types.includes(d.type),
   )
+
+const grouped_partners_by_project = [
+  ...d3
+    .rollup(
+      filtered_partners_by_project,
+      (D) => ({
+        ...D[0],
+        projects: D.map((d) => ({
+          project: d.project,
+          project_id: d.project_id,
+        })),
+      }),
+      (d) => `${d.partner_id};${d.type}`,
+    )
+    .values(),
+]
 ```
 
 ```js
 // left is all false
 const anchor_map = d3.group(
-  filtered_partners_by_project,
+  [...grouped_partners_by_project],
   (d) => ['13', '75'].includes(d.postal_code?.slice(0, 2)), // right
   (d) => ['69'].includes(d.postal_code?.slice(0, 2)), // bottom-right
 )
 
+const caption = `- ${
+  settings.group_partnerships ? 'Partenaires' : 'Liens partenariales'
+} et parties prenantes ${settings.selected_partner_types
+  .join(', ')
+  .toLowerCase()} par department`
+
 const francePartnerMap = (width) => {
   const map = projections.choroplethFrance(
-    geo.choroplethCountByPostalCode(filtered_partners_by_project),
+    geo.choroplethCountByPostalCode(
+      grouped_partners_by_project,
+      settings.group_partnerships
+        ? (a, v) => a + 1
+        : (a, v) => a + v.projects.length,
+    ),
     settings.show_tips
       ? [
           geo.francePartnerMapTips(
             anchor_map.get(false).get(false),
             settings.tip_cuttoff,
+            settings.group_partnerships,
           ),
           geo.francePartnerMapTips(
             anchor_map.get(true).get(false),
             settings.tip_cuttoff,
+            settings.group_partnerships,
             {
               anchor: 'right',
             },
@@ -183,32 +216,48 @@ const francePartnerMap = (width) => {
           geo.francePartnerMapTips(
             anchor_map.get(false).get(true),
             settings.tip_cuttoff,
+            settings.group_partnerships,
             {
               anchor: 'bottom-left',
             },
           ),
         ]
       : [],
-    { width, height: width * 0.9 },
+    {
+      width,
+      height: width * 0.9,
+      caption: `${caption}, France`,
+    },
   )
-  return html` ${map.legend('opacity', projections.choropleth_color_config())}
+
+  return html`${map.legend('opacity', projections.choropleth_color_config())}
   ${map}`
 }
 
 const idfPartnerMap = (width) => {
   const map = projections.choroplethIdf(
-    geo.choroplethCountByPostalCode(filtered_partners_by_project),
+    geo.choroplethCountByPostalCode(
+      grouped_partners_by_project,
+      settings.group_partnerships
+        ? (a, v) => a + 1
+        : (a, v) => a + v.projects.length,
+    ),
     settings.show_tips
       ? [
           geo.idfPartnerMapTips(
-            filtered_partners_by_project,
+            grouped_partners_by_project,
             settings.tip_cuttoff,
+            settings.group_partnerships,
           ),
         ]
       : [],
-    { width, height: width * 0.8 },
+    {
+      width,
+      height: width * 0.8,
+      caption: `${caption}, Île-de-France`,
+    },
   )
-  return html` ${map.legend('opacity', projections.choropleth_color_config())}
+  return html`${map.legend('opacity', projections.choropleth_color_config())}
   ${map}`
 }
 ```
