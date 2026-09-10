@@ -1,6 +1,4 @@
-# Scientific disciplines
-
-## Phase 1 scientific disciplines and research interests
+# Researcher disciplines
 
 ```js
 import {
@@ -8,7 +6,6 @@ import {
   downloadTableButton,
   downloadSVGButton,
 } from '/components/utilities.js'
-import { extractPhase1Workbook } from '/data/utilities/phase1-workbook.js'
 import { quantized_cnu_color, cnu_dark_color_map } from '/components/color.js'
 import { getGroupFromCNU } from '/components/cnu.js'
 import { chordDiagram } from '/components/chord.js'
@@ -29,16 +26,7 @@ import { sankeyDiagram, parallelSet } from '/components/sankey.js'
   </ul>
 </div>
 
-### CNU group color legend
-
-${Plot.legend({
-color: {
-domain: cnu_dark_color_map.keys(),
-range: cnu_dark_color_map.values(),
-type: "ordinal"},
-})}
-
-<!-- $ -->
+<!-- DATA IMPORT -->
 
 ```js
 const phase_1_data = await FileAttachment('/data/phase1-workbook.json').json()
@@ -57,6 +45,8 @@ console.debug('auditioned_projects', auditioned_projects)
 console.debug('financed_projects', financed_projects)
 ```
 
+<div class="card">
+
 ```js
 const selected_project = view(
   Inputs.select(discipline_data_by_project.keys(), {
@@ -66,7 +56,21 @@ const selected_project = view(
 )
 ```
 
-## ${selected_project} Disciplines
+</div>
+
+## ${selected_project} Keywords
+
+<div class="card">
+  <h2>CNU group color legend</h2>
+  ${Plot.legend({
+    color: {
+      domain: cnu_dark_color_map.keys(),
+      range: cnu_dark_color_map.values(),
+      type: 'ordinal',
+    },
+  })}
+  <!-- $ -->
+</div>
 
 <div class="grid grid-cols-2">
   <div class="card grid-rowspan-2">
@@ -473,21 +477,25 @@ const selected_project = view(
     )}
   </div>
 </div>
+
+## ${selected_project} CNUs
+
 <div class="grid grid-cols-2">
   <div id="cnu-group-container" class="card">
-    <h2>Researcher CNU groups</h2>
-    <!-- <h2>Chercheurs PEPR VDBI par groupe CNU</h2> -->
+    <!-- <h2>Researcher CNU groups</h2> -->
+    <h2>Chercheurs par catégorie de section CNU</h2>
     ${resize((width) => page.cnu_group_donut(selected_project_data, width))}
     <!-- $ -->
-    <h3>*Groups are defined by the CNU</h3>
-    <!-- <h3>*Les regroupements des sections est définis par le CNU</h3> -->
+    <!-- <h3>*Groups are defined by the CNU</h3> -->
+    <h3>*Les catégories sont définis par le CNU</h3>
     ${downloadTableButton(() => selected_project_data.cnu_count_by_category)}
     <!-- $ -->
     ${downloadSVGButton("#cnu-group-container svg:nth-of-type(1)")}
     <!-- $ -->
   </div>
   <div id="erc-container" class="card">
-    <h2>Researcher ERC discipline</h2>
+    <!-- <h2>Researcher ERC discipline</h2> -->
+    <h2>Chercheurs par section CNU: SHS, Science, et Vie et Santé</h2>
     ${resize((width) => page.erc_donut(
       selected_project_data.discipline_erc_count,
       width
@@ -499,7 +507,7 @@ const selected_project = view(
     <!-- $ -->
   </div>
   <div id="custom-cnu-group-container" class="card">
-    <h2>Disciplines des chercheurs</h2>
+    <h2>Chercheurs par section CNU: SHS, Science, et Santé</h2>
     ${resize((width) => page.custom_cnu_group_donut(
       selected_project_data.cnu_count_by_custom_category,
       width
@@ -842,316 +850,6 @@ const discipline_data_by_project = new Map([
   URBHEALTH_discipline_data_by_project,
 ])
 console.debug('discipline_data_by_project', discipline_data_by_project)
-```
-
-## Call for project dynamics
-
-<div class="card">
-  ${resize((width) => sankeyDiagram(project_aap_dynamics, {
-      width: width,
-      height: 300,
-      nodeFill: () => 'rgba(1,1,1,0.9)',
-      linkStroke: (d) =>
-        page.aap_state_color_scale.unknown('lightgrey')(d.path.slice(-2).join('-')),
-    })
-  )}
-  <!-- $ -->
-</div>
-
-### CNU categories by AAP status
-
-<div class="card">
-  ${resize((width) => sankeyDiagram(cnu_categories_by_aap_status_graph, {
-      width: width,
-      height: cnu_categories_by_aap_status_graph.nodes.length * 50,
-      nodeFill: () => 'rgba(1,1,1,0.9)',
-      linkStroke: (d) =>
-        page.cnu_category_link_color_scale(d),
-    })
-  )}
-  <!-- $ -->
-</div>
-
-<div class="card grid grid-cols-3">
-
-  <div class="grid-rowspan-2">
-    ${resize((width) => sankeyDiagram(
-      cnu_letters_aap_dynamics,
-      page.cnu_sankey_config(cnu_letters_aap_dynamics, width))
-    )}
-    <!-- $ -->
-  </div>
-  <div class="grid-rowspan-2">
-    ${resize((width) => sankeyDiagram(
-      cnu_health_aap_dynamics,
-      page.cnu_sankey_config(cnu_health_aap_dynamics, width))
-    )}
-    <!-- $ -->
-  </div>
-  <div class="grid-rowspan-3">
-    ${resize((width) => sankeyDiagram(
-      cnu_sciences_aap_dynamics,
-      page.cnu_sankey_config(cnu_sciences_aap_dynamics, width))
-    )}
-    <!-- $ -->
-  </div>
-  <div>
-    ${resize((width) => sankeyDiagram(
-      cnu_law_aap_dynamics,
-      page.cnu_sankey_config(cnu_law_aap_dynamics, width))
-    )}
-    <!-- $ -->
-  </div>
-  <div>
-    ${resize((width) => sankeyDiagram(
-      cnu_multidisciplinary_aap_dynamics,
-      page.cnu_sankey_config(cnu_multidisciplinary_aap_dynamics, width))
-    )}
-    <!-- $ -->
-  </div>
-</div>
-
-```js
-const project_aap_dynamics = page.projects_by_aap_status_graph(
-  phase_1_data.projects,
-)
-```
-
-```js
-const researcher_by_aap_status = page.researcher_by_aap_status(
-  phase_1_data.researchers,
-  phase_1_data.projects,
-)
-```
-
-```js
-const cnu_by_aap_status = page.cnu_by_aap_status(researcher_by_aap_status)
-```
-
-```js
-const cnu_aap_dynamics = page.cnu_by_aap_status_graph(cnu_by_aap_status)
-
-const cnu_letters_aap_dynamics = page.cnu_category_by_aap_status_graph(
-  cnu_by_aap_status,
-  'Lettres et sciences humaines',
-)
-const cnu_health_aap_dynamics = page.cnu_category_by_aap_status_graph(
-  cnu_by_aap_status,
-  'Sections de santé',
-)
-const cnu_sciences_aap_dynamics = page.cnu_category_by_aap_status_graph(
-  cnu_by_aap_status,
-  'Sciences',
-)
-const cnu_law_aap_dynamics = page.cnu_category_by_aap_status_graph(
-  cnu_by_aap_status,
-  'Droit, économie et gestion',
-)
-const cnu_multidisciplinary_aap_dynamics =
-  page.cnu_category_by_aap_status_graph(cnu_by_aap_status, 'Pluridisciplinaire')
-
-const cnu_categories_by_aap_status_graph =
-  page.cnu_categories_by_aap_status_graph(cnu_by_aap_status)
-```
-
-### CNU section as ERC discipline by AAP status
-
-<div class="card">
-  ${resize((width) => sankeyDiagram(
-    custom_discipline_by_aap_status_graph,
-    page.erc_sankey_config(custom_discipline_by_aap_status_graph, width),
-  ))}
-  <!-- $ -->
-</div>
-
-<div class="card grid grid-cols-3">
-    ${resize((width) => sankeyDiagram(
-      cnu_CNRS_SHS_category_by_aap_status_graph,
-      page.cnrs_sankey_config(cnu_CNRS_SHS_category_by_aap_status_graph, width))
-    )}
-    <!-- $ -->
-    ${resize((width) => sankeyDiagram(
-      cnu_health_aap_dynamics,
-      page.cnrs_sankey_config(cnu_health_aap_dynamics, width))
-    )}
-    <!-- $ -->
-    ${resize((width) => sankeyDiagram(
-      cnu_sciences_aap_dynamics,
-      page.cnrs_sankey_config(cnu_sciences_aap_dynamics, width))
-    )}
-    <!-- $ -->
-</div>
-
-```js
-const custom_discipline_by_aap_status_graph =
-  page.custom_discipline_by_aap_status_graph(cnu_by_aap_status)
-
-const cnu_CNRS_SHS_category_by_aap_status_graph =
-  page.cnu_CNRS_SHS_category_by_aap_status_graph(cnu_by_aap_status)
-```
-
-### ERC by AAP status
-
-<div class="card">
-  ${resize((width) => sankeyDiagram(
-    erc_aap_dynamics,
-    page.erc_sankey_config(erc_aap_dynamics, width))
-  )}
-  <!-- $ -->
-</div>
-
-<div class="card grid grid-cols-3">
-    ${resize((width) => sankeyDiagram(
-      erc_discipline_LS_by_aap_status_graph,
-      page.erc_disciplines_sankey_config(
-        erc_discipline_LS_by_aap_status_graph,
-        width
-      )
-    ))}
-    <!-- $ -->
-    ${resize((width) => sankeyDiagram(
-      erc_discipline_PE_by_aap_status_graph,
-      page.erc_disciplines_sankey_config(
-        erc_discipline_PE_by_aap_status_graph,
-        width
-      )
-    ))}
-    <!-- $ -->
-    ${resize((width) => sankeyDiagram(
-      erc_discipline_SH_by_aap_status_graph,
-      page.erc_disciplines_sankey_config(
-        erc_discipline_SH_by_aap_status_graph,
-        width
-      )
-    ))}
-    <!-- $ -->
-</div>
-
-```js
-const lab_by_aap_status = page.lab_by_aap_status(phase_1_data)
-```
-
-```js
-display(lab_by_aap_status)
-```
-
-```js
-const erc_by_aap_status = page.erc_by_aap_status(lab_by_aap_status)
-
-const erc_aap_dynamics = page.erc_by_aap_status_graph(erc_by_aap_status)
-```
-
-```js
-const erc_disciplines_by_aap_status =
-  page.erc_disciplines_by_aap_status(lab_by_aap_status)
-
-const erc_disciplines_aap_dynamics = page.erc_disciplines_by_aap_status_graph(
-  erc_disciplines_by_aap_status,
-)
-
-const erc_discipline_LS_by_aap_status_graph =
-  page.erc_discipline_category_by_aap_status_graph(
-    erc_disciplines_by_aap_status,
-    'LS',
-  )
-const erc_discipline_PE_by_aap_status_graph =
-  page.erc_discipline_category_by_aap_status_graph(
-    erc_disciplines_by_aap_status,
-    'PE',
-  )
-const erc_discipline_SH_by_aap_status_graph =
-  page.erc_discipline_category_by_aap_status_graph(
-    erc_disciplines_by_aap_status,
-    'SH',
-  )
-```
-
-### HCERES by AAP status
-
-<div class="card">
-  ${resize((width) => sankeyDiagram(
-    hceres_aap_dynamics,
-    page.hceres_sankey_config(hceres_aap_dynamics, width))
-  )}
-  <!-- $ -->
-</div>
-
-<div class="card grid grid-cols-3">
-    ${resize((width) => sankeyDiagram(
-      hceres_discipline_SHS_by_aap_status_graph,
-      page.hceres_disciplines_sankey_config(
-        hceres_discipline_SHS_by_aap_status_graph,
-        width
-      )
-    ))}
-    <!-- $ -->
-    ${resize((width) => sankeyDiagram(
-      hceres_discipline_ST_by_aap_status_graph,
-      page.hceres_disciplines_sankey_config(
-        hceres_discipline_ST_by_aap_status_graph,
-        width
-      )
-    ))}
-    <!-- $ -->
-    ${resize((width) => sankeyDiagram(
-      hceres_discipline_SVE_by_aap_status_graph,
-      page.hceres_disciplines_sankey_config(
-        hceres_discipline_SVE_by_aap_status_graph,
-        width
-      )
-    ))}
-    <!-- $ -->
-</div>
-
-```js
-const hceres_by_aap_status = page.hceres_by_aap_status(lab_by_aap_status)
-
-const hceres_aap_dynamics =
-  page.hceres_by_aap_status_graph(hceres_by_aap_status)
-```
-
-```js
-const hceres_disciplines_by_aap_status =
-  page.hceres_disciplines_by_aap_status(lab_by_aap_status)
-
-const hceres_disciplines_aap_dynamics =
-  page.hceres_disciplines_by_aap_status_graph(hceres_disciplines_by_aap_status)
-
-const hceres_discipline_SHS_by_aap_status_graph =
-  page.hceres_discipline_category_by_aap_status_graph(
-    hceres_disciplines_by_aap_status,
-    'SHS',
-  )
-const hceres_discipline_ST_by_aap_status_graph =
-  page.hceres_discipline_category_by_aap_status_graph(
-    hceres_disciplines_by_aap_status,
-    'ST',
-  )
-const hceres_discipline_SVE_by_aap_status_graph =
-  page.hceres_discipline_category_by_aap_status_graph(
-    hceres_disciplines_by_aap_status,
-    'SVE',
-  )
-```
-
-### Keyword by AAP status
-
-<div class="card">
-  ${resize((width) => sankeyDiagram(
-    keyword_aap_dynamics,
-    page.keyword_sankey_config(keyword_aap_dynamics, width))
-  )}
-  <!-- $ -->
-</div>
-
-```js
-const keyword_by_aap_status = page.keyword_by_aap_status(
-  researcher_by_aap_status,
-)
-
-const keyword_aap_dynamics = page.keyword_by_aap_status_graph(
-  keyword_by_aap_status,
-)
 ```
 
 ## Data quality metrics
