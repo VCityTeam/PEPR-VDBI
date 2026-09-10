@@ -212,9 +212,28 @@ export const erc_color_range_map = new Map([
   ['SH - Sciences Humaines & Sociales', d3.interpolateViridis],
 ])
 
+export const erc_category_colors_alt = new Map([
+  ['Sciences', d3.schemeCategory10[0]],
+  ['Sections de santé', d3.schemeCategory10[4]],
+  ['Sciences Humaines & Sociales', d3.schemeCategory10[2]],
+])
+
+export const erc_color_range_map_alt = new Map([
+  ['Sciences', d3.interpolateCool],
+  ['Sections de santé', d3.interpolateWarm],
+  ['Sciences Humaines & Sociales', d3.interpolateViridis],
+])
+
 export const erc_color_scale = d3
   .scaleOrdinal(erc_category_colors.keys(), erc_category_colors.values())
   .unknown('grey')
+
+  export const erc_color_scale_alt = d3
+    .scaleOrdinal(
+      erc_category_colors_alt.keys(),
+      erc_category_colors_alt.values(),
+    )
+    .unknown('grey')
 
 /**
  * Find the ERC category matching the first 2 characters of an ERC
