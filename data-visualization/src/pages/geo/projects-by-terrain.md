@@ -103,48 +103,14 @@ const settings = view(
       class="grid-colspan-3 grid-rowspan-3"
       style="overflow: hidden;"
     >
-      ${franceTerrainMap().legend(
-        'opacity',
-        projections.choropleth_color_config({
-          label: `N° de terrains d'étude par département, France`,
-          domain: settings.selected_color_domain_max > 0
-            ? [0, settings.selected_color_domain_max]
-            : undefined,
-          // ticks: 2,
-        }),
-      )}
-      <!-- $ -->
       ${resize((width) => franceTerrainMap(width))}
       <!-- $ -->
     </div>
     <div id="map-container-idf" style="overflow: hidden;">
-      ${idfTerrainMap().legend(
-        'opacity',
-        projections.choropleth_color_config({
-          label: `N° de terrains d'étude par département, Ile-de-France`,
-          domain: settings.selected_color_domain_max > 0
-             ? [0, settings.selected_color_domain_max]
-             : undefined,
-          // ticks: settings.selected_color_domain_max > 0 ? undefined : 2,
-          // ticks: 1,
-        }),
-      )}
-      <!-- $ -->
       ${resize((width) => idfTerrainMap(width))}
       <!-- $ -->
     </div>
     <div id="map-container-italy" style="overflow: hidden;">
-      ${italyTerrainMap().legend(
-        'opacity',
-        projections.choropleth_color_config({
-          label: `N° de terrains d'étude par région, Italie`,
-          domain:
-            settings.selected_color_domain_max > 0
-              ? [0, settings.selected_color_domain_max]
-              : undefined,
-        }),
-      )}
-      <!-- $ -->
       ${resize((width) => italyTerrainMap(width))}
       <!-- $ -->
     </div>
@@ -215,10 +181,8 @@ const settings = view(
 </div>
 
 ```js
-const franceTerrainMap = (width) =>
-  projections.choroplethFrance(
-    width,
-    width * 0.9,
+const franceTerrainMap = (width) => {
+  const map = projections.choroplethFrance(
     (department) => {
       const count = geo
         .filterFranceTerrains(filtered_terrain_data)
@@ -251,13 +215,28 @@ const franceTerrainMap = (width) =>
           ),
       ),
     ],
-    "- Terrain d'étude par commune et métropole, France",
+    {
+      width,
+      height: width * 0.9,
+      caption: "- Terrain d'étude par commune et métropole, France",
+    },
   )
+  return html` ${map.legend(
+    'opacity',
+    projections.choropleth_color_config({
+      label: `N° de terrains d'étude par département, France`,
+      domain:
+        settings.selected_color_domain_max > 0
+          ? [0, settings.selected_color_domain_max]
+          : undefined,
+      // ticks: 2,
+    }),
+  )}
+  ${map}`
+}
 
-const idfTerrainMap = (width) =>
-  projections.choroplethIdf(
-    width,
-    width * 0.8,
+const idfTerrainMap = (width) => {
+  const map = projections.choroplethIdf(
     (department) => {
       const count = geo
         .filterIdfTerrains(filtered_terrain_data)
@@ -276,13 +255,29 @@ const idfTerrainMap = (width) =>
         { r: 4 },
       ),
     ],
-    "- Terrains d'étude, Ile-de-France",
+    {
+      width,
+      height: width * 0.8,
+      caption: "- Terrains d'étude, Ile-de-France",
+    },
   )
+  return html`${map.legend(
+    'opacity',
+    projections.choropleth_color_config({
+      label: `N° de terrains d'étude par département, Ile-de-France`,
+      domain:
+        settings.selected_color_domain_max > 0
+          ? [0, settings.selected_color_domain_max]
+          : undefined,
+      // ticks: settings.selected_color_domain_max > 0 ? undefined : 2,
+      // ticks: 1,
+    }),
+  )}
+  ${map}`
+}
 
-const italyTerrainMap = (width) =>
-  projections.choroplethItaly(
-    width,
-    width * 0.8,
+const italyTerrainMap = (width) => {
+  const map = projections.choroplethItaly(
     (department) => {
       const count = geo
         .filterItalyTerrains(filtered_terrain_data)
@@ -301,6 +296,19 @@ const italyTerrainMap = (width) =>
         { r: 4 },
       ),
     ],
-    "- Terrains d'étude, Italie",
+    { width, height: width * 0.8, caption: "- Terrains d'étude, Italie" },
   )
+
+  return html` ${map.legend(
+    'opacity',
+    projections.choropleth_color_config({
+      label: `N° de terrains d'étude par région, Italie`,
+      domain:
+        settings.selected_color_domain_max > 0
+          ? [0, settings.selected_color_domain_max]
+          : undefined,
+    }),
+  )}
+  ${map}`
+}
 ```

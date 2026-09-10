@@ -829,24 +829,26 @@ export const choroplethCountByPosition = (data) => (department) => {
   return count > 0 ? count : null
 }
 
-export const choroplethCountByPostalCode = (data) => (d) => {
-  const count = data.reduce(
-    (acc, val) =>
-      String(d.properties.code).slice(0, 2) ===
-      String(val.postal_code).slice(0, 2)
-        ? acc + 1
-        : acc,
-    0,
-  )
-  return count > 0 ? count : null
-}
+export const choroplethCountByPostalCode =
+  (data, accessor = (a, v) => a + 1) =>
+  (d) => {
+    const count = data.reduce(
+      (acc, val) =>
+        String(d.properties.code).slice(0, 2) ===
+        String(val.postal_code).slice(0, 2)
+          ? accessor(acc, val)
+          : acc,
+      0,
+    )
+    return count > 0 ? count : null
+  }
 
 export const all_partners_by_code = (partner_by_project_data) =>
   new Map(
     d3
       .rollups(
         [...partner_by_project_data].concat(project_corrections),
-        (D) => D.reduce((a, v) => a + 1, 0),
+        (D) => D.reduce((a, v) => a + 1, 0), // just use length???
         (d) => (d.code_postal ? String(d.code_postal).slice(0, 2) : null),
       )
       .filter((d) => d[1] > 0),
@@ -999,7 +1001,7 @@ export const choropleth_terrain_dot_mark = (terrain_data, options = {}) =>
     ...options,
   })
 
-const partnerMapTips = (geojson, data, cuttoff = 10, options) =>
+const partnerMapTips = (geojson, data, cuttoff = 10, group = true, options) =>
   Plot.tip(
     geojson,
     Plot.geoCentroid({
@@ -1008,22 +1010,29 @@ const partnerMapTips = (geojson, data, cuttoff = 10, options) =>
       lineWidth: 30,
       textOverflow: 'ellipsis-middle',
       title: (feature) => {
-        const partners = new Set(
-          data
-            .filter(
-              (d) => d.postal_code?.slice(0, 2) == feature.properties.code,
-            )
-            .map((d) => d.partner),
+        const partnerships = data.filter(
+          (d) => d.postal_code?.slice(0, 2) == feature.properties.code,
         )
-        if (partners.size > cuttoff)
+        const partners = new Set(partnerships.map((d) => d.partner))
+        if (
+          group
+            ? partners.size > cuttoff
+            : partnerships.reduce((a, v) => a + v.projects.length, 0) > cuttoff
+        )
           return `${feature.properties.nom}:${[...partners].map((d) => `\n- ${d}`)}`
       },
       ...options,
     }),
   )
 
-export const francePartnerMapTips = (data, cuttoff, options) =>
-  partnerMapTips(mainland_france_departements_geojson, data, cuttoff, options)
+export const francePartnerMapTips = (data, cuttoff, group, options) =>
+  partnerMapTips(
+    mainland_france_departements_geojson,
+    data,
+    cuttoff,
+    group,
+    options,
+  )
 
-export const idfPartnerMapTips = (data, cuttoff, options) =>
-  partnerMapTips(idf_departements_geojson, data, cuttoff, options)
+export const idfPartnerMapTips = (data, cuttoff, group, options) =>
+  partnerMapTips(idf_departements_geojson, data, cuttoff, group, options)
