@@ -10,7 +10,8 @@ sql:
   aap1_project_by_researchers: /data/phase1-project_by_researchers.tsv
   aap1_project_by_socioeconomic_partners: /data/phase1-project_by_socioeconomic_partners.tsv
   aap1_researchers: /data/phase1-researchers.tsv
-  aap1_all_partners: /data/partners.csv
+  researchers: /data/researchers-active.tsv
+  aap1_all_partners: /data/partners.tsv
   co_researchers: /data/private/co-researchers.tsv
   aap1_researcher_by_keywords: /data/phase1-researcher_by_keywords.tsv
   aap1_laboratories: /data/phase1-laboratories.tsv
@@ -54,7 +55,7 @@ import {
   formTemplate,
 } from '../../components/utilities.js'
 import * as overview from './aap-overview.js'
-import * as disciplines from './aap-disciplines.js'
+import * as disciplines from '../researchers/aap-disciplines.js'
 import * as cnu from '../../components/cnu.js'
 import * as color from '../../components/color.js'
 import { cropText } from '../../components/utilities.js'
@@ -89,10 +90,14 @@ const dashboard_filter = view(
 ## Chiffres clés
 
 Count: ${[...out].length}
+
 <!-- $ -->
 
 ${downloadTableButton(() => [...out])}
+
 <!-- $ -->
+
+out
 
 ```sql id=out display
 select
@@ -1700,7 +1705,36 @@ where not contains(aap2_researcher_by_cnu.researcher_id, '@') and selected
 group by all
 ```
 
-<div class="grid grid-cols-3" id="cnu-donuts">
+<div class="grid grid-cols-2" id="cnu-donuts">
+  <div class="card">
+    <h2>Distribution des CNUs financées par catégorie de l'AAP 1</h2>
+    <h3>Les sections CNU identifiés dans les projets financés de l'AAP 1.</h3>
+    ${disciplines.erc_legend_alt()}
+    <!-- $ -->
+    ${resize((width) => disciplines.erc_donut(
+      grist_cnu_count_by_erc,
+      width,
+      {
+        legendTextLength: 40,
+        color: color.erc_color_scale_alt,
+      }
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Distribution des CNUs proposés par catégorie de l'AAP 2</h2>
+    <h3>Les sections CNU identifiés dans les projets proposés de l'AAP 2.</h3>
+    ${disciplines.erc_legend()}
+    <!-- $ -->
+    ${resize((width) => new DonutChartWithLegend(
+      aap2_cnu_count_erc.filter((d) => d.selected),
+      {
+        ...default_cnu_aap_donut_config(width),
+        legendTextLength: 40,
+      },
+    ).render())}
+    <!-- $ -->
+  </div>
   <div class="card">
     <h2>Distribution des CNUs financées par catégorie de l'AAP 1</h2>
     <h3>Les sections CNU identifiés dans les projets financés de l'AAP 1.</h3>
@@ -1724,52 +1758,10 @@ group by all
       aap2_cnu_count_erc.filter((d) => d.selected),
       {
         ...default_cnu_aap_donut_config(width),
-        legendWidth: 300,
         legendTextLength: 40,
       },
     ).render())}
     <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Distribution des CNUs par catégorie de l'AAP 2</h2>
-    <h3>
-      Les sections CNU identifiés dans les projets de l'AAP 2. Les sections plus
-      épaisses représentent les CNUs dans les projets proposés.
-    </h3>
-    ${disciplines.erc_legend()}
-    <!-- $ -->
-    <div class="grid grid-cols-3">
-      ${resize((width) => new DonutChart(
-        aap2_cnu_count_erc,
-        {
-          ...default_cnu_aap_donut_config(width),
-          width: width,
-          legendWidth: 0,
-          outerRadiusRatio: (d) => (d.data.selected ? width * 0.5 : width * 0.48),
-        },
-      ).render())}
-      <!-- $ -->
-      <div class="grid-colspan-2">
-        ${resize((width) => new DonutChartWithLegend(
-          d3.rollups(aap2_cnu_count_erc,
-            (v) => v.reduce((a, b) => a + b.count, 0),
-            (d) => d.group,
-          ).flatMap(([group, count]) => ({
-            group,
-            count,
-          })),
-          {
-            ...default_cnu_aap_donut_config(),
-            width: 1,
-            legendWidth: 2,
-            legendTextLength: 40,
-            innerRadiusRatio: 0,
-            outerRadiusRatio: 0,
-          },
-        ).render())}
-        <!-- $ -->
-      </div>
-    </div>
   </div>
 </div>
 
@@ -1779,6 +1771,50 @@ const show_non_selected_aap2 = view(
     label: "Afficher les sections CNU non-proposées de l'AAP 2",
   }),
 )
+```
+
+```js
+const grist_cnu_count_by_erc = d3.rollups(
+  [...grist_cnu_count],
+  (D) => D.reduce((a, v) => v.count + a, 0),
+  (d) =>
+    [
+      'Lettres et sciences humaines',
+      'Droit, économie et gestion',
+      'Pluridisciplinaire',
+    ].includes(d.cnu_category)
+      ? 'Sciences Humaines & Sociales'
+      : d.cnu_category,
+).filter((d) => !!d[0])
+
+// const grist_cnu_count_by_erc_aap1 = d3.rollups(
+//   [...grist_cnu_count].filter(),
+//   (D) => D.reduce((a, v) => v.count + a, 0),
+//   (d) =>
+//     [
+//       'Lettres et sciences humaines',
+//       'Droit, économie et gestion',
+//       'Pluridisciplinaire',
+//     ].includes(d.cnu_category)
+//       ? 'Sciences Humaines & Sociales'
+//       : d.cnu_category,
+// ).filter((d) => !!d[0])
+
+// const grist_cnu_count_by_alt = d3.rollups(
+//   [...grist_cnu_count],
+//   (D) => D.reduce((a, v) => v.count + a, 0),
+//   (d) =>
+//     [
+//       'Lettres et sciences humaines',
+//       'Droit, économie et gestion',
+//       'Pluridisciplinaire',
+//     ].includes(d.cnu_category)
+//       ? 'Sciences Humaines & Sociales'
+//       : d.cnu_category,
+// )
+// .filter((d) => !!d[0])
+
+display(grist_cnu_count_by_erc)
 ```
 
 <div class="card" id="aap2-cnu-plot">
@@ -1917,34 +1953,23 @@ where cnu[:2] similar to '[0-9]{2}'
 order by cnu, selected, financed
 ```
 
-```sql
-select * from (
+grist_cnu_count
+
+```sql id=grist_cnu_count display
+select
+  cnu::INT as cnu,
+  first(cnu_category) as cnu_category,
+  aap,
+  count(*) as count,
+from (
   select
-    cnu[:2] as cnu,
-    financed,
-    count(distinct id) as count,
-    'AAP 1' as aap,
-  from aap1_researchers
-  join aap1_projects
-    on aap1_projects.acronyme in aap1_researchers.project
-  group by cnu[:2], financed
-  union
-  select
-    cnu,
-    selected as financed,
-    count(distinct aap2_researcher_by_cnu.researcher_id) as count,
-    'AAP 2' as aap,
-  from aap2_researcher_by_cnu
-  left join aap2_project_by_researchers
-    on aap2_researcher_by_cnu.researcher_id = aap2_project_by_researchers.researcher_id
-  left join aap2_projects
-    on aap2_project_by_researchers.project_id = aap2_projects.project_id
-  where cnu is not null and cnu::VARCHAR != ''
-  group by all
+    unnest(split(cnus[2:-2], ',')) as cnu,
+    unnest(split(cnu_type[3:-3], '","')) as cnu_category,
+    unnest(split(aaps[3:-3], '","')) as aap,
+  from researchers
 )
-where cnu[:2] similar to '[0-9]{2}'
-  and financed
-order by cnu, financed
+where aap = 2024 or aap = 2025
+group by cnu, aap
 ```
 
 ```js

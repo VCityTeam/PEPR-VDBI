@@ -19,6 +19,7 @@ import {
   cnrs_color_map,
   quantized_cnrs_color,
   erc_color_scale,
+  erc_color_scale_alt,
   interpolated_erc_color,
   hceres_color_scale,
   interpolated_hceres_color,
@@ -45,6 +46,15 @@ export const erc_legend = () =>
     color: {
       domain: erc_color_scale.domain(),
       range: erc_color_scale.range(),
+      type: 'ordinal',
+    },
+  })
+
+export const erc_legend_alt = () =>
+  Plot.legend({
+    color: {
+      domain: erc_color_scale_alt.domain(),
+      range: erc_color_scale_alt.range(),
       type: 'ordinal',
     },
   })
@@ -396,7 +406,7 @@ const default_donut_config = {
   valueMap: (d) => d[1],
   colorMap: (d) => d[0],
   legendTextLength: 35,
-  legendWidth: 300,
+  legendWidth: 400,
 }
 
 /**
