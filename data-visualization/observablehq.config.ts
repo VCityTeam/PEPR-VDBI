@@ -159,7 +159,11 @@ export default {
       pages: [
         {
           name: 'Projects Scientific disciplines',
-          path: 'pages/researchers/phase1-disciplines',
+          path: 'pages/researchers/disciplines',
+        },
+        {
+          name: 'Projects Selection Dynamics',
+          path: 'pages/researchers/aap-selection-dynamiques',
         },
       ],
     },
