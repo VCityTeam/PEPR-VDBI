@@ -22,7 +22,6 @@ export class DonutChart {
    * @param {object} options - configuration options for the chart
    * @param {number} options.width - width of the chart
    * @param {number} options.height - height of the chart
-   * @param {number} options.legendWidth - horizontal space reserved to the side of the donut (for a legend, or extra breathing room)
    * @param {number|function} options.innerRadiusRatio - ratio (or per-datum function) of the radius to the inner radius
    * @param {number|function} options.outerRadiusRatio - ratio (or per-datum function) of the radius to the outer radius
    * @param {function} options.keyMap - accessor function to map the data to the key
@@ -39,8 +38,7 @@ export class DonutChart {
     data,
     {
       width = 600,
-      legendWidth = width * 0.4,
-      height = width - legendWidth,
+      height = width,
       innerRadiusRatio = 0.5,
       outerRadiusRatio = 0.9,
       keyMap = (d) => d.entity,
@@ -59,7 +57,6 @@ export class DonutChart {
   ) {
     this.data = data
     this.width = width
-    this.legendWidth = legendWidth
     this.height = height
     this.innerRadiusRatio = innerRadiusRatio
     this.outerRadiusRatio = outerRadiusRatio
@@ -73,7 +70,7 @@ export class DonutChart {
     this.labelCuttoff = labelCuttoff
     this.color = color
 
-    this.radius = Math.min(width - legendWidth, height) / 2
+    this.radius = Math.min(width, height) / 2
 
     this.arc = d3
       .arc()
@@ -88,7 +85,11 @@ export class DonutChart {
           : this.radius * outerRadiusRatio,
       )
 
-    this.pie = d3.pie().padAngle(1 / this.radius).value(valueMap).sort(sort)
+    this.pie = d3
+      .pie()
+      .padAngle(1 / this.radius)
+      .value(valueMap)
+      .sort(sort)
     this.pieData = this.pie(data)
     this.cuttoffData = this.pieData
       .filter((d) => !this.isMajorArc(d))
@@ -125,7 +126,12 @@ export class DonutChart {
       .classed('donut-chart', true)
       .attr('width', this.width)
       .attr('height', this.height)
-      .attr('viewBox', [-this.width / 2, -this.height / 2, this.width, this.height])
+      .attr('viewBox', [
+        -this.width / 2,
+        -this.height / 2,
+        this.width,
+        this.height,
+      ])
       .attr('style', 'max-width: 100%; height: auto;')
   }
 
@@ -165,7 +171,9 @@ export class DonutChart {
         }
         d3.select('body').append(() => tooltip)
         // highlight the arc
-        d3.select(_e.target).attr('stroke', this.sliceStrokeColor).attr('stroke-width', 1)
+        d3.select(_e.target)
+          .attr('stroke', this.sliceStrokeColor)
+          .attr('stroke-width', 1)
       })
       .on('mousemove', (event) =>
         d3
@@ -209,6 +217,7 @@ export class DonutChartWithLegend extends DonutChart {
   /**
    * @param {Object[]} data
    * @param {object} options - all `DonutChart` options, plus:
+   * @param {number} options.legendWidth - horizontal space reserved to the side of the donut (for a legend, or extra breathing room)
    * @param {number} options.legendTextLength - length of the legend text
    * @param {function} options.legendText - function to map the data to the legend text
    * @param {number} options.legendFontSize - font size of the legend text
@@ -217,15 +226,47 @@ export class DonutChartWithLegend extends DonutChart {
   constructor(
     data,
     {
+      width = 600,
+      height = width,
+      innerRadiusRatio = 0.5,
+      outerRadiusRatio = 0.9,
+      keyMap = (d) => d.entity,
+      valueMap = (d) => d.count,
+      colorMap = keyMap,
+      sort = (a, b) => valueMap(b) - valueMap(a),
+      fontSize = 16,
+      fontFamily = 'sans-serif',
+      sliceStrokeColor = 'black',
+      labelCuttoff = 0.25,
+      color = d3
+        .scaleOrdinal(d3.schemeObservable10)
+        .domain(new Set(data.map(keyMap)))
+        .unknown('grey'),
+      legendWidthRatio = 0.5,
       legendTextLength = 30,
       legendText,
       legendFontSize = 16,
       legendLineSeparation = 25,
-      ...options
     } = {},
   ) {
-    super(data, options)
+    super(data, {
+      width: width - width * legendWidthRatio,
+      height: height - width * legendWidthRatio,
+      innerRadiusRatio,
+      outerRadiusRatio,
+      keyMap,
+      valueMap,
+      colorMap,
+      sort,
+      fontSize,
+      fontFamily,
+      sliceStrokeColor,
+      labelCuttoff,
+      color,
+    })
     const total = d3.sum(data.map(this.valueMap))
+
+    this.legendWidth = width * legendWidthRatio
     this.legendTextLength = legendTextLength
     this.legendText =
       legendText ??
@@ -253,10 +294,12 @@ export class DonutChartWithLegend extends DonutChart {
       text: this.legendText,
     })
 
-    svg.selectAll('g').attr('transform', `translate(${-this.radius / 2} 0)`)
+    svg
+      .selectAll('g')
+      .attr('transform', `translate(${-this.width / 2 + this.radius} 0)`)
     svg
       .append('g')
-      .attr('transform', `translate(${this.radius / 2} ${-this.radius * 0.9})`)
+      .attr('transform', `translate(${this.width / 2} ${-this.radius * 0.9})`)
       .append(() => legend)
   }
 }
@@ -275,7 +318,12 @@ export class DonutChartWithLabels extends DonutChart {
    */
   constructor(
     data,
-    { labelText, labelRadiusRatio = 1.4, labelStrokeColor = 'black', ...options } = {},
+    {
+      labelText,
+      labelRadiusRatio = 1.4,
+      labelStrokeColor = 'black',
+      ...options
+    } = {},
   ) {
     super(data, options)
     this.labelText = labelText ?? ((d) => cropText(this.keyMap(d.data), 30))
@@ -338,7 +386,9 @@ export class DonutChartWithLabels extends DonutChart {
       .data(this.pieData)
       .join('text')
       .attr('transform', (d) => `translate(${this.labelAnchor(d)})`)
-      .attr('text-anchor', (d) => (this.midAngle(d) < Math.PI ? 'start' : 'end'))
+      .attr('text-anchor', (d) =>
+        this.midAngle(d) < Math.PI ? 'start' : 'end',
+      )
       .attr('dy', '0.35em')
       .text(this.labelText)
   }

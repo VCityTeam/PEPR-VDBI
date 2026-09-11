@@ -406,7 +406,6 @@ const default_donut_config = {
   valueMap: (d) => d[1],
   colorMap: (d) => d[0],
   legendTextLength: 35,
-  legendWidth: 400,
 }
 
 /**
@@ -602,7 +601,7 @@ export const erc_donut = (data, width, options = {}) =>
   new DonutChartWithLegend(data, {
     ...default_donut_config,
     width: width,
-    legendTextLength: 28,
+    legendTextLength: 35,
     color: erc_color_scale,
     ...options,
   }).render()

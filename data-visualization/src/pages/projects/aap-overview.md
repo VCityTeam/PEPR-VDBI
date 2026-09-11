@@ -10,7 +10,7 @@ sql:
   aap1_project_by_researchers: /data/phase1-project_by_researchers.tsv
   aap1_project_by_socioeconomic_partners: /data/phase1-project_by_socioeconomic_partners.tsv
   aap1_researchers: /data/phase1-researchers.tsv
-  researchers: /data/researchers-active.tsv
+  # researchers: /data/researchers-active.tsv
   aap1_all_partners: /data/partners.tsv
   co_researchers: /data/private/co-researchers.tsv
   aap1_researcher_by_keywords: /data/phase1-researcher_by_keywords.tsv
@@ -65,6 +65,11 @@ import {
   choroplethFrance,
   mainland_france_departements_geojson,
 } from '../../components/projection-map.js'
+```
+
+```js
+const researchers = await FileAttachment('/data/researchers-active.json').json()
+display(Inputs.table(researchers.map((d) => ({...d, count: d.cnus.length}))))
 ```
 
 <div class="warning" label="Avertissement sur la qualité des données">
@@ -1707,60 +1712,72 @@ group by all
 
 <div class="grid grid-cols-2" id="cnu-donuts">
   <div class="card">
+    <h2>Distribution des CNUs financées par catégorie</h2>
+    <h3>Les sections CNU identifiés dans les projets financés.</h3>
+    ${disciplines.erc_legend()}
+    <!-- $ -->
+    ${resize((width) => disciplines.erc_donut(
+      grist_cnu_count_by_erc,
+      width,
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Distribution des CNUs financées par catégorie</h2>
+    <h3>Les sections CNU identifiés dans les projets financés.</h3>
+    ${disciplines.erc_legend_alt()}
+    <!-- $ -->
+    ${resize((width) => disciplines.erc_donut(
+      grist_cnu_count_by_erc_alt,
+      width,
+      { color: color.erc_color_scale_alt }
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
+    <h2>Distribution des CNUs financées par catégorie de l'AAP 1</h2>
+    <h3>Les sections CNU identifiés dans les projets financés de l'AAP 1.</h3>
+    ${disciplines.erc_legend()}
+    <!-- $ -->
+    ${resize((width) => disciplines.erc_donut(
+      grist_cnu_count_by_erc_aap1,
+      width,
+    ))}
+    <!-- $ -->
+  </div>
+  <div class="card">
     <h2>Distribution des CNUs financées par catégorie de l'AAP 1</h2>
     <h3>Les sections CNU identifiés dans les projets financés de l'AAP 1.</h3>
     ${disciplines.erc_legend_alt()}
     <!-- $ -->
     ${resize((width) => disciplines.erc_donut(
-      grist_cnu_count_by_erc,
+      grist_cnu_count_by_erc_alt_aap1,
       width,
-      {
-        legendTextLength: 40,
-        color: color.erc_color_scale_alt,
-      }
+      { color: color.erc_color_scale_alt }
     ))}
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Distribution des CNUs proposés par catégorie de l'AAP 2</h2>
-    <h3>Les sections CNU identifiés dans les projets proposés de l'AAP 2.</h3>
-    ${disciplines.erc_legend()}
-    <!-- $ -->
-    ${resize((width) => new DonutChartWithLegend(
-      aap2_cnu_count_erc.filter((d) => d.selected),
-      {
-        ...default_cnu_aap_donut_config(width),
-        legendTextLength: 40,
-      },
-    ).render())}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>Distribution des CNUs financées par catégorie de l'AAP 1</h2>
-    <h3>Les sections CNU identifiés dans les projets financés de l'AAP 1.</h3>
+    <h2>Distribution des CNUs financées par catégorie de l'AAP 2</h2>
+    <h3>Les sections CNU identifiés dans les projets financés de l'AAP 2.</h3>
     ${disciplines.erc_legend()}
     <!-- $ -->
     ${resize((width) => disciplines.erc_donut(
-      aap1_cnu_count_erc,
+      grist_cnu_count_by_erc_aap2,
       width,
-      {
-        legendTextLength: 40,
-      }
     ))}
     <!-- $ -->
   </div>
   <div class="card">
-    <h2>Distribution des CNUs proposés par catégorie de l'AAP 2</h2>
-    <h3>Les sections CNU identifiés dans les projets proposés de l'AAP 2.</h3>
-    ${disciplines.erc_legend()}
+    <h2>Distribution des CNUs financées par catégorie de l'AAP 2</h2>
+    <h3>Les sections CNU identifiés dans les projets financés de l'AAP 2.</h3>
+    ${disciplines.erc_legend_alt()}
     <!-- $ -->
-    ${resize((width) => new DonutChartWithLegend(
-      aap2_cnu_count_erc.filter((d) => d.selected),
-      {
-        ...default_cnu_aap_donut_config(width),
-        legendTextLength: 40,
-      },
-    ).render())}
+    ${resize((width) => disciplines.erc_donut(
+      grist_cnu_count_by_erc_alt_aap2,
+      width,
+      { color: color.erc_color_scale_alt }
+    ))}
     <!-- $ -->
   </div>
 </div>
@@ -1774,47 +1791,102 @@ const show_non_selected_aap2 = view(
 ```
 
 ```js
-const grist_cnu_count_by_erc = d3.rollups(
-  [...grist_cnu_count],
-  (D) => D.reduce((a, v) => v.count + a, 0),
-  (d) =>
-    [
-      'Lettres et sciences humaines',
-      'Droit, économie et gestion',
-      'Pluridisciplinaire',
-    ].includes(d.cnu_category)
-      ? 'Sciences Humaines & Sociales'
-      : d.cnu_category,
-).filter((d) => !!d[0])
+const cnuFlatMap = (cnu_data) =>
+  cnu_data
+    .filter((d) => d.aaps.includes('2024') || d.aaps.includes('2025'))
+    .flatMap((d) =>
+      d.cnus.map((c) => ({
+        ...d,
+        cnu: c?.CNU,
+        cnu_category: c?.CATEGORIE,
+        cnu_category_erc: c?.CATEGORIE_ERC,
+      })),
+    )
 
-// const grist_cnu_count_by_erc_aap1 = d3.rollups(
-//   [...grist_cnu_count].filter(),
-//   (D) => D.reduce((a, v) => v.count + a, 0),
-//   (d) =>
-//     [
-//       'Lettres et sciences humaines',
-//       'Droit, économie et gestion',
-//       'Pluridisciplinaire',
-//     ].includes(d.cnu_category)
-//       ? 'Sciences Humaines & Sociales'
-//       : d.cnu_category,
-// ).filter((d) => !!d[0])
+const countCnusByErcCategory = (cnu_data) =>
+  d3.rollups(
+    cnuFlatMap(cnu_data),
+    (D) => D.reduce((a, v) => 1 + a, 0),
+    (d) => d.cnu_category_erc,
+  )
 
-// const grist_cnu_count_by_alt = d3.rollups(
-//   [...grist_cnu_count],
-//   (D) => D.reduce((a, v) => v.count + a, 0),
-//   (d) =>
-//     [
-//       'Lettres et sciences humaines',
-//       'Droit, économie et gestion',
-//       'Pluridisciplinaire',
-//     ].includes(d.cnu_category)
-//       ? 'Sciences Humaines & Sociales'
-//       : d.cnu_category,
-// )
-// .filter((d) => !!d[0])
+const countCnusByErcAltCategory = (cnu_data) =>
+  d3.rollups(
+    cnuFlatMap(cnu_data),
+    (D) => D.reduce((a, v) => 1 + a, 0),
+    (d) =>
+      [
+        'Lettres et sciences humaines',
+        'Droit, économie et gestion',
+        'Pluridisciplinaire',
+      ].includes(d.cnu_category)
+        ? 'Sciences Humaines & Sociales'
+        : d.cnu_category,
+  )
+```
 
-display(grist_cnu_count_by_erc)
+```js
+const grist_cnu_count_by_erc = countCnusByErcCategory(researchers)
+
+const grist_cnu_count_by_erc_aap1 = countCnusByErcCategory(
+  researchers.filter((d) => d.aaps.includes('2024')),
+)
+
+const grist_cnu_count_by_erc_aap2 = countCnusByErcCategory(
+  researchers.filter((d) => d.aaps.includes('2025')),
+)
+
+display('grist_cnu_counts')
+display(
+  Inputs.table([
+    ...grist_cnu_count_by_erc.map((d) => ({
+      category: d[0],
+      count: d[1],
+      aap: 'all',
+    })),
+    ...grist_cnu_count_by_erc_aap1.map((d) => ({
+      category: d[0],
+      count: d[1],
+      aap: 'aap1',
+    })),
+    ...grist_cnu_count_by_erc_aap2.map((d) => ({
+      category: d[0],
+      count: d[1],
+      aap: 'aap2',
+    })),
+  ]),
+)
+
+const grist_cnu_count_by_erc_alt = countCnusByErcAltCategory(researchers)
+
+const grist_cnu_count_by_erc_alt_aap1 = countCnusByErcAltCategory(
+  researchers.filter((d) => d.aaps.includes('2024')),
+)
+
+const grist_cnu_count_by_erc_alt_aap2 = countCnusByErcAltCategory(
+  researchers.filter((d) => d.aaps.includes('2025')),
+)
+
+display('grist_cnu_counts alt')
+display(
+  Inputs.table([
+    ...grist_cnu_count_by_erc_alt.map((d) => ({
+      category: d[0],
+      count: d[1],
+      aap: 'all',
+    })),
+    ...grist_cnu_count_by_erc_alt_aap1.map((d) => ({
+      category: d[0],
+      count: d[1],
+      aap: 'aap1',
+    })),
+    ...grist_cnu_count_by_erc_alt_aap2.map((d) => ({
+      category: d[0],
+      count: d[1],
+      aap: 'aap2',
+    })),
+  ]),
+)
 ```
 
 <div class="card" id="aap2-cnu-plot">
@@ -1953,23 +2025,78 @@ where cnu[:2] similar to '[0-9]{2}'
 order by cnu, selected, financed
 ```
 
-grist_cnu_count
-
 ```sql id=grist_cnu_count display
+-- select
+--   cnu,
+--   any_value(cnu_category) as cnu_category,
+--   aap,
+--   count(*) as count,
+-- from (
+  select
+    cnu as cnu,
+    case
+      when cnu < 25
+        or (69 < cnu and cnu < 78)
+      then 'SH - Sciences Humaines & Sociales'
+      when (24 < cnu and cnu < 38)
+        or (59 < cnu and cnu < 64)
+      then 'PE - Sciences & Technologies'
+      when (41 < cnu and cnu < 59)
+        or (63 < cnu and cnu < 70)
+        or (79 < cnu and cnu < 93)
+      then 'LS - Vie & Santé'
+    end as cnu_category,
+    unnest(split(aaps[3:-3], '","')) as aap,
+  from (
+    select
+      unnest(split(cnus[2:-2], ','))::INT as cnu,
+      -- unnest(split(cnu_type[3:-3], '","')) as cnu_type,
+      aaps,
+    from researchers
+  )
+-- )
+-- where aap = 2024 or aap = 2025
+-- group by cnu, aap
+```
+
+```sql id=grist_cnu_type_count display
 select
-  cnu::INT as cnu,
-  first(cnu_category) as cnu_category,
+  cnu as cnu,
+  first(cnu_type) as cnu_group,
+  case
+    when cnu < 25
+      or (69 < cnu and cnu < 78)
+    then 'SH - Sciences Humaines & Sociales'
+    when (24 < cnu and cnu < 38)
+      or (59 < cnu and cnu < 64)
+    then 'PE - Sciences & Technologies'
+    when (41 < cnu and cnu < 59)
+      or (63 < cnu and cnu < 70)
+      or (79 < cnu and cnu < 93)
+    then 'LS - Vie & Santé'
+  end as cnu_category,
   aap,
   count(*) as count,
 from (
   select
-    unnest(split(cnus[2:-2], ',')) as cnu,
-    unnest(split(cnu_type[3:-3], '","')) as cnu_category,
+    -- unnest(split(cnus[2:-2], ','))::INT as cnu,
+    unnest(split(cnu_type[3:-3], '","')) as cnu_type,
     unnest(split(aaps[3:-3], '","')) as aap,
   from researchers
 )
 where aap = 2024 or aap = 2025
 group by cnu, aap
+```
+
+```sql
+-- select
+  -- *
+  -- fullname,
+  -- unnest(split(cnus[2:-2], ','))::INT as cnu,
+  -- cnu_type,
+  -- unnest(split(cnu_type[3:-3], '","')) as cnu_type,
+  -- unnest(split(aaps[3:-3], '","')) as aap,
+-- from researchers
 ```
 
 ```js
