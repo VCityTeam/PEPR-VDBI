@@ -105,19 +105,6 @@ export class DonutChart {
   }
 
   /**
-   * The outer radius in effect for a given pie datum, resolving the
-   * function-or-ratio form of `outerRadiusRatio`.
-   *
-   * @param {object} d - a datum produced by d3.pie()
-   * @returns {number}
-   */
-  outerRadiusFor(d) {
-    return typeof this.outerRadiusRatio === 'function'
-      ? this.outerRadiusRatio(d)
-      : this.radius * this.outerRadiusRatio
-  }
-
-  /**
    * @returns {d3.Selection} a blank SVG root sized/viewboxed for this chart
    */
   createSvg() {
@@ -313,22 +300,61 @@ export class DonutChartWithLabels extends DonutChart {
    * @param {Object[]} data
    * @param {object} options - all `DonutChart` options, plus:
    * @param {function} options.labelText - accessor for the label text of a pie datum (defaults to the key)
-   * @param {number} options.labelRadiusRatio - ratio (relative to the slice's outer radius) at which the leader line breaks and the label is anchored
+   * @param {number} options.labelOuterRadiusRatio - ratio (relative to the slice's outer radius) at which the leader line breaks and the label is anchored
    * @param {string} options.labelStrokeColor - color of the leader line
    */
   constructor(
     data,
     {
-      labelText,
-      labelRadiusRatio = 1.4,
+      width = 600,
+      height = width,
+      innerRadiusRatio = 0.5,
+      outerRadiusRatio = 0.9,
+      keyMap = (d) => d.entity,
+      valueMap = (d) => d.count,
+      colorMap = keyMap,
+      sort = (a, b) => valueMap(b) - valueMap(a),
+      fontSize = 18,
+      fontFamily = 'sans-serif',
+      sliceStrokeColor = 'black',
+      labelCuttoff = 0.25,
+      color = d3
+        .scaleOrdinal(d3.schemeObservable10)
+        .domain(new Set(data.map(keyMap)))
+        .unknown('grey'),
+      labelWidthRatio = 0.5, // some factor of 2
+      labelOuterRadiusRatio = 1,
+      labelInnerRadiusRatio = 1.05,
       labelStrokeColor = 'black',
-      ...options
+      labelStrokeWidth = 2,
+      labelText = (d) => cropText(this.keyMap(d.data), 30),
+      labelTextXOffset = 30,
+      labelTextPadding = 7,
     } = {},
   ) {
-    super(data, options)
-    this.labelText = labelText ?? ((d) => cropText(this.keyMap(d.data), 30))
-    this.labelRadiusRatio = labelRadiusRatio
+    super(data, {
+      width: width - width * labelWidthRatio,
+      height: height - width * labelWidthRatio,
+      innerRadiusRatio,
+      outerRadiusRatio,
+      keyMap,
+      valueMap,
+      colorMap,
+      sort,
+      fontSize,
+      fontFamily,
+      sliceStrokeColor,
+      labelCuttoff,
+      color,
+    })
+    this.labelText = labelText
+    this.labelWidthRatio = labelWidthRatio
+    this.labelOuterRadiusRatio = labelOuterRadiusRatio
+    this.labelInnerRadiusRatio = labelInnerRadiusRatio
+    this.labelTextXOffset = labelTextXOffset
+    this.labelTextPadding = labelTextPadding
     this.labelStrokeColor = labelStrokeColor
+    this.labelStrokeWidth = labelStrokeWidth
   }
 
   /**
@@ -340,6 +366,19 @@ export class DonutChartWithLabels extends DonutChart {
   }
 
   /**
+   * The outer radius in effect for a given pie datum, resolving the
+   * function-or-ratio form of `outerRadiusRatio`.
+   *
+   * @param {object} d - a datum produced by d3.pie()
+   * @returns {number}
+   */
+  outerRadiusFor(d) {
+    return typeof this.outerRadiusRatio === 'function'
+      ? this.outerRadiusRatio(d) * this.labelInnerRadiusRatio
+      : this.radius * this.outerRadiusRatio * this.labelInnerRadiusRatio
+  }
+
+  /**
    * The point at which a slice's leader line breaks toward its label,
    * pushed left/right depending on which half of the donut the slice falls in.
    *
@@ -347,7 +386,7 @@ export class DonutChartWithLabels extends DonutChart {
    * @returns {[number, number]}
    */
   labelAnchor(d) {
-    const labelRadius = this.outerRadiusFor(d) * this.labelRadiusRatio
+    const labelRadius = this.outerRadiusFor(d) * this.labelOuterRadiusRatio
     const pos = d3
       .arc()
       .innerRadius(labelRadius)
@@ -357,14 +396,37 @@ export class DonutChartWithLabels extends DonutChart {
     return pos
   }
 
+  /**
+   * The point at which a slice's leader line breaks again toward its label,
+   * pushed left/right depending on which half of the donut the slice falls in.
+   *
+   * @param {object} d - a datum produced by d3.pie()
+   * @returns {[number, number]}
+   */
+  labelTextAnchor(d) {
+    const labelRadius = this.outerRadiusFor(d) * this.labelOuterRadiusRatio
+    const pos = d3
+      .arc()
+      .innerRadius(labelRadius)
+      .outerRadius(labelRadius)
+      .centroid(d)
+    pos[0] = labelRadius * (this.midAngle(d) < Math.PI ? 1 : -1)
+    //  +
+    // (this.midAngle(d) < Math.PI
+    //   ? this.labelTextXOffset
+    //   : -this.labelTextXOffset)
+    return pos
+  }
+
   renderExtensions(svg) {
     super.renderExtensions(svg)
 
+    // draw lines
     svg
       .append('g')
       .attr('fill', 'none')
       .attr('stroke', this.labelStrokeColor)
-      .attr('stroke-width', 1)
+      .attr('stroke-width', this.labelStrokeWidth)
       .selectAll('polyline')
       .data(this.pieData)
       .join('polyline')
@@ -376,8 +438,10 @@ export class DonutChartWithLabels extends DonutChart {
           .outerRadius(this.outerRadiusFor(d))
           .centroid(d),
         this.labelAnchor(d),
+        this.labelTextAnchor(d),
       ])
 
+    // draw labels
     svg
       .append('g')
       .attr('font-family', this.fontFamily)
@@ -385,12 +449,25 @@ export class DonutChartWithLabels extends DonutChart {
       .selectAll('text')
       .data(this.pieData)
       .join('text')
-      .attr('transform', (d) => `translate(${this.labelAnchor(d)})`)
+      .attr('transform', (d) => `translate(${this.labelTextAnchor(d)})`)
       .attr('text-anchor', (d) =>
         this.midAngle(d) < Math.PI ? 'start' : 'end',
       )
       .attr('dy', '0.35em')
+      .attr('dx', (d) =>
+        this.midAngle(d) < Math.PI
+          ? this.labelTextPadding
+          : -this.labelTextPadding,
+      )
+
       .text(this.labelText)
+
+    svg
+      .selectAll('g')
+      .attr(
+        'transform',
+        `translate(${this.width / this.labelWidthRatio / 4} 0)`,
+      )
   }
 }
 

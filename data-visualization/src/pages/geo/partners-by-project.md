@@ -36,8 +36,6 @@ select distinct
   project,
   project_type
 from projects_by_partner
-where project is not null
-  and financed
 order by project
 ```
 

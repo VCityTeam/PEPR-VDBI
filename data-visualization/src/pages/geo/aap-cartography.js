@@ -1007,8 +1007,9 @@ const partnerMapTips = (geojson, data, cuttoff = 10, group = true, options) =>
     Plot.geoCentroid({
       anchor: 'left',
       fontSize: 13,
-      lineWidth: 30,
-      textOverflow: 'ellipsis-middle',
+      lineWidth: 100,
+      // lineWidth: 30,
+      // textOverflow: 'ellipsis-middle',
       title: (feature) => {
         const partnerships = data.filter(
           (d) => d.postal_code?.slice(0, 2) == feature.properties.code,

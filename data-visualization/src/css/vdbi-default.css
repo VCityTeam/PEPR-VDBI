@@ -45,7 +45,7 @@ svg,
 }
 
 svg {
-  font-family: 'marianne';
+  font-family: var(--sans-serif);
 }
 
 /* Render Inputs.toggle() checkboxes as toggle switches instead of native checkboxes. */
