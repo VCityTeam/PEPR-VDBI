@@ -1714,23 +1714,30 @@ where not contains(aap2_researcher_by_cnu.researcher_id, '@') and selected
 group by all
 ```
 
-<div class="card grid" style="width: 50%;">
+```js
+const show_empty_cnus = view(
+  Inputs.toggle({
+    label: 'Afficher les sections CNU non-identifiées',
+  }),
+)
+```
+
+<!-- <div class="card">
   ${resize((width) => new DonutChartWithLabels(
     grist_cnu_count_by_erc,
     {
       width: width,
+      height: width / 2,
       keyMap: (d) => d[0],
       valueMap: (d) => d[1],
       colorMap: (d) => d[0],
-      legendTextLength: 35,
       color: color.erc_color_scale,
     }).render()
   )}
-  <!-- $ -->
-</div>
+</div> -->
 
-<div class="grid grid-cols-2" id="cnu-donuts">
-  <div class="card">
+<div class="grid grid-cols-2 card" id="cnu-donuts">
+  <div>
     <h2>Distribution des CNUs financées par catégorie</h2>
     <h3>Les sections CNU identifiés dans les projets financés.</h3>
     ${disciplines.erc_legend()}
@@ -1741,7 +1748,7 @@ group by all
     ))}
     <!-- $ -->
   </div>
-  <div class="card">
+  <div>
     <h2>Distribution des CNUs financées par catégorie</h2>
     <h3>Les sections CNU identifiés dans les projets financés.</h3>
     ${disciplines.erc_legend_alt()}
@@ -1753,7 +1760,7 @@ group by all
     ))}
     <!-- $ -->
   </div>
-  <div class="card">
+  <div>
     <h2>Distribution des CNUs financées par catégorie de l'AAP 1</h2>
     <h3>Les sections CNU identifiés dans les projets financés de l'AAP 1.</h3>
     ${disciplines.erc_legend()}
@@ -1764,7 +1771,7 @@ group by all
     ))}
     <!-- $ -->
   </div>
-  <div class="card">
+  <div>
     <h2>Distribution des CNUs financées par catégorie de l'AAP 1</h2>
     <h3>Les sections CNU identifiés dans les projets financés de l'AAP 1.</h3>
     ${disciplines.erc_legend_alt()}
@@ -1776,7 +1783,7 @@ group by all
     ))}
     <!-- $ -->
   </div>
-  <div class="card">
+  <div>
     <h2>Distribution des CNUs financées par catégorie de l'AAP 2</h2>
     <h3>Les sections CNU identifiés dans les projets financés de l'AAP 2.</h3>
     ${disciplines.erc_legend()}
@@ -1787,7 +1794,7 @@ group by all
     ))}
     <!-- $ -->
   </div>
-  <div class="card">
+  <div>
     <h2>Distribution des CNUs financées par catégorie de l'AAP 2</h2>
     <h3>Les sections CNU identifiés dans les projets financés de l'AAP 2.</h3>
     ${disciplines.erc_legend_alt()}
@@ -1812,7 +1819,11 @@ const show_non_selected_aap2 = view(
 ```js
 const cnuFlatMap = (cnu_data) =>
   cnu_data
-    .filter((d) => d.aaps.includes('2024') || d.aaps.includes('2025'))
+    .filter((d) =>
+      !show_empty_cnus
+        ? !!d.cnus.find((d) => !!d)
+        : true && (d.aaps.includes('2024') || d.aaps.includes('2025')),
+    )
     .flatMap((d) =>
       d.cnus.map((c) => ({
         ...d,

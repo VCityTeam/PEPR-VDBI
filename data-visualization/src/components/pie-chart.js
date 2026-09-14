@@ -322,19 +322,20 @@ export class DonutChartWithLabels extends DonutChart {
         .scaleOrdinal(d3.schemeObservable10)
         .domain(new Set(data.map(keyMap)))
         .unknown('grey'),
-      labelWidthRatio = 0.5, // some factor of 2
       labelOuterRadiusRatio = 1,
       labelInnerRadiusRatio = 1.05,
       labelStrokeColor = 'black',
       labelStrokeWidth = 2,
-      labelText = (d) => cropText(this.keyMap(d.data), 30),
+      labelText,
+      labelTextLength = 30,
       labelTextXOffset = 30,
       labelTextPadding = 7,
     } = {},
   ) {
     super(data, {
-      width: width - width * labelWidthRatio,
-      height: height - width * labelWidthRatio,
+      width,
+      height,
+      // height: height - width * labelWidthRatio,
       innerRadiusRatio,
       outerRadiusRatio,
       keyMap,
@@ -347,14 +348,23 @@ export class DonutChartWithLabels extends DonutChart {
       labelCuttoff,
       color,
     })
-    this.labelText = labelText
-    this.labelWidthRatio = labelWidthRatio
+    this.labelTextLength = labelTextLength
     this.labelOuterRadiusRatio = labelOuterRadiusRatio
     this.labelInnerRadiusRatio = labelInnerRadiusRatio
     this.labelTextXOffset = labelTextXOffset
     this.labelTextPadding = labelTextPadding
     this.labelStrokeColor = labelStrokeColor
     this.labelStrokeWidth = labelStrokeWidth
+
+    const total = d3.sum(data.map(this.valueMap))
+
+    this.labelText =
+      labelText ??
+      ((d) =>
+        `${this.valueMap(d.data) / total < 0.1 ? ' ' : ''}${(
+          (this.valueMap(d.data) / total) *
+          100
+        ).toFixed(1)}% ${cropText(this.keyMap(d.data), this.labelTextLength)}`)
   }
 
   /**
@@ -411,10 +421,6 @@ export class DonutChartWithLabels extends DonutChart {
       .outerRadius(labelRadius)
       .centroid(d)
     pos[0] = labelRadius * (this.midAngle(d) < Math.PI ? 1 : -1)
-    //  +
-    // (this.midAngle(d) < Math.PI
-    //   ? this.labelTextXOffset
-    //   : -this.labelTextXOffset)
     return pos
   }
 
@@ -459,15 +465,7 @@ export class DonutChartWithLabels extends DonutChart {
           ? this.labelTextPadding
           : -this.labelTextPadding,
       )
-
       .text(this.labelText)
-
-    svg
-      .selectAll('g')
-      .attr(
-        'transform',
-        `translate(${this.width / this.labelWidthRatio / 4} 0)`,
-      )
   }
 }
 
