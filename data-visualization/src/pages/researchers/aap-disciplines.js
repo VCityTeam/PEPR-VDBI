@@ -601,7 +601,6 @@ export const erc_donut = (data, width, options = {}) =>
   new DonutChartWithLegend(data, {
     ...default_donut_config,
     width: width,
-    legendTextLength: 35,
     color: erc_color_scale,
     ...options,
   }).render()

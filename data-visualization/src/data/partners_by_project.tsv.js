@@ -8,9 +8,9 @@ select
   PARTENAIRE as partner_id,
   PROJET as project_id,
   PROJET_TYPE as project_type,
-  PROJET_FINANCE as financed,
   'SOCIOECONOMIQUE' as type
 from Partenaire_socioeco_par_projet
+where PROJET_FINANCE
 union
 select
   gristHelper_Display2 as partner,
@@ -18,9 +18,9 @@ select
   UNITE as partner_id,
   PROJET as project_id,
   PROJET_TYPE as project_type,
-  PROJET_FINANCE as financed,
   'LABORATOIRE' as type
 from Laboratoire_par_projet
+where PROJET_FINANCE
 union
 select
   gristHelper_Display as partner,
@@ -28,9 +28,9 @@ select
   INSTITUTION as partner_id,
   PROJET as project_id,
   PROJET_TYPE as project_type,
-  PROJET_FINANCE as financed,
   'INSTITUTION' as type
 from Institution_par_projet
+where PROJET_FINANCE
 `
 
 simpleGristQuery(query, 'oUjutoUDF9xP29sxnd6SNX')

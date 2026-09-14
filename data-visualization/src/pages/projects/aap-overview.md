@@ -60,7 +60,11 @@ import * as cnu from '../../components/cnu.js'
 import * as color from '../../components/color.js'
 import { cropText } from '../../components/utilities.js'
 import { bubbleChartX } from '../../components/bubble-chart.js'
-import { DonutChart, DonutChartWithLegend } from '../../components/pie-chart.js'
+import {
+  DonutChart,
+  DonutChartWithLegend,
+  DonutChartWithLabels,
+} from '../../components/pie-chart.js'
 import {
   choroplethFrance,
   mainland_france_departements_geojson,
@@ -69,7 +73,7 @@ import {
 
 ```js
 const researchers = await FileAttachment('/data/researchers-active.json').json()
-display(Inputs.table(researchers.map((d) => ({...d, count: d.cnus.length}))))
+display(Inputs.table(researchers.map((d) => ({ ...d, count: d.cnus.length }))))
 ```
 
 <div class="warning" label="Avertissement sur la qualité des données">
@@ -1709,6 +1713,21 @@ left join aap2_projects
 where not contains(aap2_researcher_by_cnu.researcher_id, '@') and selected
 group by all
 ```
+
+<div class="card grid" style="width: 50%;">
+  ${resize((width) => new DonutChartWithLabels(
+    grist_cnu_count_by_erc,
+    {
+      width: width,
+      keyMap: (d) => d[0],
+      valueMap: (d) => d[1],
+      colorMap: (d) => d[0],
+      legendTextLength: 35,
+      color: color.erc_color_scale,
+    }).render()
+  )}
+  <!-- $ -->
+</div>
 
 <div class="grid grid-cols-2" id="cnu-donuts">
   <div class="card">
