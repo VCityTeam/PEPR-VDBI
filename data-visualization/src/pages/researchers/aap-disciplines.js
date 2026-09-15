@@ -11,6 +11,7 @@ import {
   getGroupFromCNU,
   getERCFromCNU,
   cnu_section_label_map,
+  erc_category_by_alt_cnu_section_map,
 } from '../../components/cnu.js'
 import {
   cnu_color_map,
@@ -245,28 +246,21 @@ export const cnu_by_aap_plot = (
  */
 export const cnu_plot_y = (
   data,
+  options = {},
   {
-    width = 600,
-    height = 800,
-    marginTop = 50,
-    marginLeft = 50,
-    marginRight = 50,
-    marginBottom = 100,
+    x_accessor = (d) => cnu_section_label_map.get(Number(d.cnu)),
+    fill_accessor = (d) => erc_color_scale(d.cnu_category_erc),
     sort = 'y',
-    x_accessor = (d) => d[1],
-    y_accessor = (d) => d[0],
-    fill_accessor = (d) =>
-      cnu_dark_color_map.get(getGroupFromCNU(y_accessor(d))),
-    opacity_accessor = () => 1,
+    fontSize = 11,
   } = {},
 ) =>
   Plot.plot({
-    width: width,
-    height: height,
-    marginTop: marginTop,
-    marginLeft: marginLeft,
-    marginRight: marginRight,
-    marginBottom: marginBottom,
+    width: 800,
+    height: 600,
+    marginTop: 20,
+    marginLeft: 20,
+    marginRight: 180,
+    marginBottom: 200,
     y: {
       grid: true,
       axis: 'both',
@@ -277,7 +271,6 @@ export const cnu_plot_y = (
       domain: cnu_section_label_map.values(),
     },
     color: {
-      // legend: true,
       type: 'categorical',
     },
     marks: [
@@ -287,29 +280,38 @@ export const cnu_plot_y = (
         lineWidth: 24,
         textOverflow: 'ellipsis',
         tickRotate: 40,
-        fontSize: 11,
-      }),
-      Plot.barY(data, {
-        y: x_accessor,
-        x: y_accessor,
-        fill: fill_accessor,
-        fillOpacity: opacity_accessor,
-        stroke: 'black',
-        strokeOpacity: 0.1,
-        sort: { x: sort },
-        tip: true,
+        fontSize: fontSize,
       }),
       Plot.barY(
         data,
-        Plot.pointerX({
-          x: y_accessor,
-          y: x_accessor,
-          fill: 'white',
-          opacity: 0.5,
-        }),
+        Plot.groupX(
+          { y: 'count' },
+          {
+            x: x_accessor,
+            fill: fill_accessor,
+            stroke: 'black',
+            strokeOpacity: 0.1,
+            sort: { x: sort },
+            tip: true,
+          },
+        ),
       ),
     ],
+    ...options,
   })
+
+export const cnu_alt_plot_y = (
+  data,
+  options = {},
+  {
+    x_accessor = (d) => cnu_section_label_map.get(Number(d.cnu)),
+    fill_accessor = (d) =>
+      erc_color_scale_alt(
+        erc_category_by_alt_cnu_section_map.get(d.cnu_category),
+      ),
+    sort = 'y',
+  } = {},
+) => cnu_plot_y(data, options, { x_accessor, fill_accessor, sort })
 
 /**
  * Vertical variant of cnu_by_aap_plot
@@ -331,27 +333,16 @@ export const cnu_plot_y = (
  */
 export const cnu_by_aap_plot_y = (
   data,
-  {
-    width = 600,
-    height = 800,
-    marginTop = 50,
-    marginLeft = 50,
-    marginRight = 50,
-    marginBottom = 100,
-    sort = 'y',
-    x_accessor = (d) => d[1],
-    y_accessor = (d) => d[0],
-    fill_accessor = (d) => d[0],
-    opacity_accessor = () => 1,
-  } = {},
+  options = {},
+  { sort = 'y', x_accessor = (d) => d[1], fill_accessor = (d) => d[0] },
 ) =>
   Plot.plot({
-    width: width,
-    height: height,
-    marginTop: marginTop,
-    marginLeft: marginLeft,
-    marginRight: marginRight,
-    marginBottom: marginBottom,
+    width: 800,
+    height: 600,
+    marginTop: 20,
+    marginLeft: 20,
+    marginRight: 180,
+    marginBottom: 200,
     y: {
       grid: true,
       axis: 'both',
@@ -363,8 +354,9 @@ export const cnu_by_aap_plot_y = (
     },
     color: {
       legend: true,
-      domain: ['AAP 1', 'AAP 2'],
+      domain: ['AAP 1 et 2', 'AAP 1', 'AAP 2'],
       range: [
+        d3.schemeCategory10[2],
         'var(--theme-foreground-focus)',
         'var(--theme-foreground-focus-alt)',
       ],
@@ -379,26 +371,22 @@ export const cnu_by_aap_plot_y = (
         tickRotate: 40,
         fontSize: 11,
       }),
-      Plot.barY(data, {
-        x: y_accessor,
-        y: x_accessor,
-        fill: fill_accessor,
-        fillOpacity: opacity_accessor,
-        stroke: 'black',
-        strokeOpacity: 0.1,
-        sort: { y: sort },
-        tip: true,
-      }),
       Plot.barY(
         data,
-        Plot.pointerX({
-          x: y_accessor,
-          y: x_accessor,
-          fill: 'white',
-          opacity: 0.5,
-        }),
+        Plot.groupX(
+          { y: 'count' },
+          {
+            x: x_accessor,
+            fill: fill_accessor,
+            stroke: 'black',
+            strokeOpacity: 0.1,
+            sort: { x: sort },
+            tip: true,
+          },
+        ),
       ),
     ],
+    ...options,
   })
 
 const default_donut_config = {
@@ -529,7 +517,7 @@ export const cnu_plot_y_by_erc = (
     marginTop = 20,
     marginLeft = 20,
     marginRight = 180,
-    marginBottom = 180,
+    marginBottom = 200,
     sort = 'y',
     x_accessor = (d) => d[1],
     y_accessor = (d) => d[0],
@@ -561,33 +549,22 @@ export const cnu_plot_y_by_erc = (
  */
 export const cnu_by_aap_plot_y_by_erc = (
   data,
-  {
-    width = 600,
-    height = 800,
-    marginTop = 20,
-    marginLeft = 20,
-    marginRight = 180,
-    marginBottom = 180,
-    sort = 'y',
-    x_accessor = (d) => d[1],
-    y_accessor = (d) => d[0],
-    fill_accessor = (d) => erc_color_scale(getERCFromCNU(y_accessor(d))),
-    opacity_accessor = () => 1,
-  } = {},
+  options,
+  sort = 'y',
+  x_accessor = (d) => d[1],
+  y_accessor = (d) => d[0],
+  fill_accessor = (d) => erc_color_scale(getERCFromCNU(y_accessor(d))),
+  opacity_accessor = () => 1,
 ) =>
-  cnu_by_aap_plot_y(data, {
-    width: width,
-    height: height,
-    marginTop: marginTop,
-    marginLeft: marginLeft,
-    marginRight: marginRight,
-    marginBottom: marginBottom,
-    sort: sort,
-    x_accessor: x_accessor,
-    y_accessor: y_accessor,
-    fill_accessor: fill_accessor,
-    opacity_accessor: opacity_accessor,
-  })
+  cnu_by_aap_plot_y(
+    data,
+    options,
+    sort,
+    x_accessor,
+    y_accessor,
+    fill_accessor,
+    opacity_accessor,
+  )
 
 /**
  * Donut chart of ERC domain counts

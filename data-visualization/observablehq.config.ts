@@ -128,15 +128,15 @@ export default {
       name: 'Projects',
       pages: [
         {
-          name: 'Projects Overview',
+          name: 'Projects overview',
           path: 'pages/projects/aap-overview',
         },
         {
-          name: 'Projects Financing',
+          name: 'Projects financing',
           path: 'pages/projects/phase1-financing-dashboard',
         },
         {
-          name: 'PEPR VDBI Constellation',
+          name: 'PEPR VDBI constellation',
           path: 'pages/projects/vdbi-constellation',
         },
       ],
@@ -158,11 +158,11 @@ export default {
       name: 'Researchers',
       pages: [
         {
-          name: 'Projects Scientific disciplines',
+          name: 'Scientific disciplines',
           path: 'pages/researchers/disciplines',
         },
         {
-          name: 'Projects Selection Dynamics',
+          name: 'Projects selection dynamics',
           path: 'pages/researchers/aap-selection-dynamiques',
         },
       ],

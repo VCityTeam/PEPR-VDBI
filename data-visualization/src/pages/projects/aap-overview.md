@@ -72,8 +72,11 @@ import {
 ```
 
 ```js
-const researchers = await FileAttachment('/data/researchers-active.json').json()
-display(Inputs.table(researchers.map((d) => ({ ...d, count: d.cnus.length }))))
+const researchers = FileAttachment('/data/researchers-active.json').json()
+```
+
+```js
+const grist_projects = FileAttachment('/data/projects.json').json()
 ```
 
 <div class="warning" label="Avertissement sur la qualité des données">
@@ -97,26 +100,6 @@ const dashboard_filter = view(
 ```
 
 ## Chiffres clés
-
-Count: ${[...out].length}
-
-<!-- $ -->
-
-${downloadTableButton(() => [...out])}
-
-<!-- $ -->
-
-out
-
-```sql id=out display
-select
-  *
-  -- label,
-  -- siret,
-  -- source_label
-from aap2_socioeconomic_partners
-where 'ACTEE/FNCCR' in labels
-```
 
 <div class="grid grid-cols-4" id="aap-key-numbers">
   <!-- ALL projects -->
@@ -1111,6 +1094,11 @@ const aap2_selected_partners_x_sort = Generators.input(
 )
 ```
 
+```js
+display(Inputs.table(projects))
+display(Inputs.table(grist_projects))
+```
+
 ## Défis
 
 <div class="grid grid-cols-3" id="challenge-plots">
@@ -1120,7 +1108,6 @@ const aap2_selected_partners_x_sort = Generators.input(
       challenge_count_by_aap,
       { width })
     )}
-    <!-- $ -->
   </div>
   <div class="card grid grid-colspan-2">
     ${resize((width) => overview.challengeCountPlot(
@@ -1486,154 +1473,6 @@ group by discipline
 order by count desc
 ``` -->
 
-## Chercheurs
-
-<div class="grid">
-  <div class="card">
-    <h2>Tous les chercheurs</h2>
-    <br/>
-    ${researcher_search_filter_input}
-    <!-- $ -->
-    <br/>
-    ${researcher_search_input}
-    <!-- $ -->
-    <br/>
-    ${resize((width) => Inputs.table(
-      [...researcher_search],
-      {
-        width: width,
-        layout: 'auto',
-        rows: 40,
-      }
-    ))}
-    <!-- $ -->
-    <br/>
-    ${downloadTableButton(() => researcher_search)}
-    <!-- $ -->
-  </div>
-</div>
-
-```js
-const researcher_search_input = Inputs.search(
-  [...all_researchers_by_project].filter(
-    (d) =>
-      // (researcher_search_filter.includes('financed_projects')
-      //   ? d.financed.includes(true)
-      //   : true) &&
-      (researcher_search_filter.includes('CO-PILOT')
-        ? d.phase.includes('0')
-        : true) &&
-      (researcher_search_filter.includes('AAP 1')
-        ? d.phase.includes('1')
-        : true) &&
-      (researcher_search_filter.includes('AAP 2')
-        ? d.phase.includes('2')
-        : true),
-  ),
-)
-const researcher_search = Generators.input(researcher_search_input)
-```
-
-```js
-const researcher_search_filter_input = Inputs.checkbox(
-  [
-    // 'financed_projects',
-    'CO-PILOT',
-    'AAP 1',
-    'AAP 2',
-  ],
-  {
-    value: [
-      // 'financed_projects',
-      'CO-PILOT',
-      'AAP 1',
-      'AAP 2',
-    ],
-  },
-)
-const researcher_search_filter = Generators.input(
-  researcher_search_filter_input,
-)
-```
-
-```sql id=all_researchers_by_project
-select
-  id,
-  list_distinct(flatten(list(firstnames))) as firstnames,
-  list_distinct(flatten(list(lastnames))) as lastnames,
-  list_distinct(flatten(list(projects))) as projects,
-  list_distinct(flatten(list(financed))) as financed,
-  list_distinct(flatten(list(positions))) as positions,
-  list_distinct(list(phase)) as phase,
-  list_distinct(flatten(list(institutions))) as institutions,
-  list_distinct(flatten(list(units))) as units,
-  list_distinct(flatten(list(orcids))) as orcids,
-  list_distinct(flatten(list(idhals))) as idhals,
-  list_distinct(flatten(list(idrefs))) as idrefs,
-  list_distinct(flatten(list(sites))) as sites,
-from (
-  select
-    email as id,
-    list_distinct(list(firstname)) as firstnames,
-    list_distinct(list(lastname)) as lastnames,
-    list_distinct(list(aap2_projects.project_id)) as projects,
-    list(selected) as financed,
-    list(position) as positions,
-    '2' as phase,
-    list_distinct(list(institution_id)) as institutions,
-    list_distinct(list(unite_id)) as units,
-    list_distinct(list(orcid)) as orcids,
-    list_distinct(list(idhal)) as idhals,
-    list_distinct(list(idref)) as idrefs,
-    list_distinct(list(site)) as sites,
-  from aap2_researchers
-  left join aap2_project_by_researchers
-    on aap2_researchers.email = aap2_project_by_researchers.researcher_id
-  left join aap2_projects
-    on aap2_project_by_researchers.project_id = aap2_projects.project_id
-  where selected
-  group by all
-  union
-    select
-      if(email = '' or email is null, fullname, email) as id,
-      list_distinct(list(firstname)) as firstnames,
-      list_distinct(list(lastname)) as lastnames,
-      list_distinct(list(acronyme)) as projects,
-      list(financed) as financed,
-      list(position) as positions,
-      '1' as phase,
-      [] as institutions,
-      list_distinct(list(lab)) as units,
-      list_distinct(list(orcid)) as orcids,
-      list_distinct(list(idhal)) as idhals,
-      [] as idrefs,
-      list_distinct(list(site)) as sites,
-    from aap1_researchers
-    left join aap1_projects
-      on acronyme in aap1_researchers.project
-    where financed
-    group by all
-    union
-      select
-        id,
-        list_distinct(list(firstname)) as firstnames,
-        list_distinct(list(lastname)) as lastnames,
-        list_distinct(list(project)) as projects,
-        [true] as financed,
-        list(position) as positions,
-        '0' as phase,
-        [] as institutions,
-        list_distinct(list(lab)) as units,
-        list_distinct(list(orcid)) as orcids,
-        list_distinct(list(idhal)) as idhals,
-        [] as idrefs,
-        list_distinct(list(site)) as sites,
-      from co_researchers
-      group by all
-)
-group by id
-```
-
 ## CNUs
 
 <div class="note" label="Notice">
@@ -1657,62 +1496,6 @@ Pour plus de détails sur les sections du CNU et la catégorisation officielle,
 [voir la page du CNU](https://conseil-national-des-universites.fr).
 
 </div>
-
-<div class="grid grid-cols-2">
-  <div class="card">
-    <h2>CNUs des chercheurs des projets proposées dans l'AAP 2</h2>
-    ${aap2_cnus_search_input_researchers}
-    <!-- $ -->
-    <br/>
-    ${resize((width) => Inputs.table(aap2_cnus_search_researchers))}
-    <!-- $ -->
-  </div>
-  <div class="card">
-    <h2>CNUs des thésards des projets proposées dans l'AAP 2</h2>
-    ${aap2_cnus_search_input_phds}
-    <!-- $ -->
-    <br/>
-    ${resize((width) => Inputs.table(aap2_cnus_search_phds))}
-    <!-- $ -->
-  </div>
-</div>
-
-```js
-const aap2_cnus_search_input_researchers = Inputs.search(aap2_cnus_researchers)
-const aap2_cnus_search_researchers = Generators.input(
-  aap2_cnus_search_input_researchers,
-)
-const aap2_cnus_search_input_phds = Inputs.search(aap2_cnus_phds)
-const aap2_cnus_search_phds = Generators.input(aap2_cnus_search_input_phds)
-```
-
-```sql id=aap2_cnus_researchers
-select distinct
-  aap2_researcher_by_cnu.researcher_id as researcher_id,
-  cnu,
-  list_distinct(list(aap2_projects.project_id)) as projects
-from aap2_researcher_by_cnu
-left join aap2_project_by_researchers
-  on aap2_researcher_by_cnu.researcher_id = aap2_project_by_researchers.researcher_id
-left join aap2_projects
-  on aap2_project_by_researchers.project_id = aap2_projects.project_id
-where contains(aap2_researcher_by_cnu.researcher_id, '@') and selected
-group by all
-```
-
-```sql id=aap2_cnus_phds
-select distinct
-  aap2_researcher_by_cnu.researcher_id as researcher_id,
-  cnu,
-  list_distinct(list(aap2_projects.project_id)) as projects
-from aap2_researcher_by_cnu
-left join aap2_project_by_researchers
-  on aap2_researcher_by_cnu.researcher_id = aap2_project_by_researchers.researcher_id
-left join aap2_projects
-  on aap2_project_by_researchers.project_id = aap2_projects.project_id
-where not contains(aap2_researcher_by_cnu.researcher_id, '@') and selected
-group by all
-```
 
 ```js
 const show_empty_cnus = view(
@@ -1809,16 +1592,8 @@ const show_empty_cnus = view(
 </div>
 
 ```js
-const show_non_selected_aap2 = view(
-  Inputs.toggle({
-    label: "Afficher les sections CNU non-proposées de l'AAP 2",
-  }),
-)
-```
-
-```js
-const cnuFlatMap = (cnu_data) =>
-  cnu_data
+const cnuFlatMap = (researcher_cnu_data) =>
+  researcher_cnu_data
     .filter((d) =>
       !show_empty_cnus
         ? !!d.cnus.find((d) => !!d)
@@ -1828,6 +1603,8 @@ const cnuFlatMap = (cnu_data) =>
       d.cnus.map((c) => ({
         ...d,
         cnu: c?.CNU,
+        label: c?.LIBELLE,
+        group: c?.GROUPE,
         cnu_category: c?.CATEGORIE,
         cnu_category_erc: c?.CATEGORIE_ERC,
       })),
@@ -1835,14 +1612,14 @@ const cnuFlatMap = (cnu_data) =>
 
 const countCnusByErcCategory = (cnu_data) =>
   d3.rollups(
-    cnuFlatMap(cnu_data),
+    cnu_data,
     (D) => D.reduce((a, v) => 1 + a, 0),
     (d) => d.cnu_category_erc,
   )
 
 const countCnusByErcAltCategory = (cnu_data) =>
   d3.rollups(
-    cnuFlatMap(cnu_data),
+    cnu_data,
     (D) => D.reduce((a, v) => 1 + a, 0),
     (d) =>
       [
@@ -1856,137 +1633,181 @@ const countCnusByErcAltCategory = (cnu_data) =>
 ```
 
 ```js
-const grist_cnu_count_by_erc = countCnusByErcCategory(researchers)
+const grist_cnus = cnuFlatMap(researchers)
+const grist_cnus_aap1 = grist_cnus.filter((d) => d.aaps.includes('2024'))
+const grist_cnus_aap2 = grist_cnus.filter((d) => d.aaps.includes('2025'))
 
-const grist_cnu_count_by_erc_aap1 = countCnusByErcCategory(
-  researchers.filter((d) => d.aaps.includes('2024')),
+console.debug('grist_cnus', grist_cnus)
+
+const grist_cnu_count_by_erc = countCnusByErcCategory(grist_cnus)
+
+const grist_cnu_count_by_erc_aap1 = countCnusByErcCategory(grist_cnus_aap1)
+
+const grist_cnu_count_by_erc_aap2 = countCnusByErcCategory(grist_cnus_aap2)
+
+console.debug('grist_cnu_counts', [
+  ...grist_cnu_count_by_erc.map((d) => ({
+    category: d[0],
+    count: d[1],
+    aap: 'all',
+  })),
+  ...grist_cnu_count_by_erc_aap1.map((d) => ({
+    category: d[0],
+    count: d[1],
+    aap: 'aap1',
+  })),
+  ...grist_cnu_count_by_erc_aap2.map((d) => ({
+    category: d[0],
+    count: d[1],
+    aap: 'aap2',
+  })),
+])
+
+console.debug('grist_cnu_counts', [
+  ...grist_cnu_count_by_erc.map((d) => ({
+    category: d[0],
+    count: d[1],
+    aap: 'all',
+  })),
+  ...grist_cnu_count_by_erc_aap1.map((d) => ({
+    category: d[0],
+    count: d[1],
+    aap: 'aap1',
+  })),
+  ...grist_cnu_count_by_erc_aap2.map((d) => ({
+    category: d[0],
+    count: d[1],
+    aap: 'aap2',
+  })),
+])
+
+const grist_cnu_count_by_erc_alt = countCnusByErcAltCategory(grist_cnus)
+
+const grist_cnu_count_by_erc_alt_aap1 =
+  countCnusByErcAltCategory(grist_cnus_aap1)
+
+const grist_cnu_count_by_erc_alt_aap2 =
+  countCnusByErcAltCategory(grist_cnus_aap2)
+
+console.debug('grist_cnu_counts_alt', [
+  ...grist_cnu_count_by_erc_alt.map((d) => ({
+    category: d[0],
+    count: d[1],
+    aap: 'all',
+  })),
+  ...grist_cnu_count_by_erc_alt_aap1.map((d) => ({
+    category: d[0],
+    count: d[1],
+    aap: 'aap1',
+  })),
+  ...grist_cnu_count_by_erc_alt_aap2.map((d) => ({
+    category: d[0],
+    count: d[1],
+    aap: 'aap2',
+  })),
+])
+```
+
+```js
+const show_non_financed = view(
+  Inputs.toggle({
+    label: 'Afficher les sections des chercheurs non-financées',
+  }),
 )
-
-const grist_cnu_count_by_erc_aap2 = countCnusByErcCategory(
-  researchers.filter((d) => d.aaps.includes('2025')),
-)
-
-display('grist_cnu_counts')
-display(
-  Inputs.table([
-    ...grist_cnu_count_by_erc.map((d) => ({
-      category: d[0],
-      count: d[1],
-      aap: 'all',
-    })),
-    ...grist_cnu_count_by_erc_aap1.map((d) => ({
-      category: d[0],
-      count: d[1],
-      aap: 'aap1',
-    })),
-    ...grist_cnu_count_by_erc_aap2.map((d) => ({
-      category: d[0],
-      count: d[1],
-      aap: 'aap2',
-    })),
-  ]),
-)
-
-const grist_cnu_count_by_erc_alt = countCnusByErcAltCategory(researchers)
-
-const grist_cnu_count_by_erc_alt_aap1 = countCnusByErcAltCategory(
-  researchers.filter((d) => d.aaps.includes('2024')),
-)
-
-const grist_cnu_count_by_erc_alt_aap2 = countCnusByErcAltCategory(
-  researchers.filter((d) => d.aaps.includes('2025')),
-)
-
-display('grist_cnu_counts alt')
-display(
-  Inputs.table([
-    ...grist_cnu_count_by_erc_alt.map((d) => ({
-      category: d[0],
-      count: d[1],
-      aap: 'all',
-    })),
-    ...grist_cnu_count_by_erc_alt_aap1.map((d) => ({
-      category: d[0],
-      count: d[1],
-      aap: 'aap1',
-    })),
-    ...grist_cnu_count_by_erc_alt_aap2.map((d) => ({
-      category: d[0],
-      count: d[1],
-      aap: 'aap2',
-    })),
-  ]),
+const aap_selected = view(
+  Inputs.select(
+    new Map([
+      ['all', grist_cnus],
+      ['AAP1', grist_cnus_aap1],
+      ['AAP2', grist_cnus_aap2],
+    ]),
+    {
+      label: 'Filtrer les CNUs par AAP',
+      value: 'all',
+    },
+  ),
 )
 ```
 
-<div class="card" id="aap2-cnu-plot">
-  <h2>
-    Distribution des sections
-    ${show_non_selected_aap2 ? "" : "proposées"}
-    <!-- $ -->
-    CNU de l'AAP 2
-  </h2>
-  <h3>
-    Distribution détaillée des sections
-    ${show_non_selected_aap2 ? "" : "proposées"}
-    <!-- $ -->
-    de l'AAP 2 par catégorie.
-    ${show_non_selected_aap2 ? "Les sections proposées sont plus foncées." : ""}
-    <!-- $ -->
-  </h3>
+<!-- <h2>
+  Distribution des sections CNU
+  ${show_non_financed ? "" : "financées"}
+  de l'AAP 2
+</h2>
+<h3>
+  Distribution détaillée des sections des chercheurs
+  ${show_non_financed ? "" : "financées"}
+  de l'AAP 2 par catégorie.
+  ${show_non_financed ? "Les sections financées sont plus foncées." : ""}
+</h3> -->
+
+<div class="card" id="aap-cnu-plot">
+  <h2>Distribution des sections CNU financées</h2>
+  <h3>Distribution détaillée des sections des chercheurs financées par catégorie.</h3>
   ${disciplines.erc_legend()}
   <!-- $ -->
-  ${resize((width) => disciplines.cnu_plot_y_by_erc(
-    [...aap2_cnu_count].filter((d) => show_non_selected_aap2 || d.selected),
-    {
-      width: width,
-      height: 600,
-      x_accessor: (d) => d.count,
-      y_accessor: (d) =>
-        cnu.cnu_section_label_map.get(Number(d.cnu)) || String(d.cnu),
-      opacity_accessor: (d) => d.selected || d.financed ? 1 : 0.7,
-    }
-  ))}
+  ${resize((width) => disciplines.cnu_plot_y(aap_selected, { width: width }))}
+  <!-- $ -->
+</div>
+<div class="card" id="aap-cnu-alt-plot">
+  <h2>Distribution des sections CNU financées</h2>
+  <h3>Distribution détaillée des sections des chercheurs financées par catégorie.</h3>
+  ${disciplines.erc_legend_alt()}
+  <!-- $ -->
+  ${resize((width) => disciplines.cnu_alt_plot_y(aap_selected, { width: width }))}
   <!-- $ -->
 </div>
 
 ```js
-const show_non_financed_aap12 = view(
-  Inputs.toggle({
-    label: "Afficher les sections CNU non-financées de l'AAP 1",
-  }),
-)
-const show_non_selected_aap12 = view(
-  Inputs.toggle({
-    label: "Afficher les sections CNU non-proposées de l'AAP 2",
-  }),
-)
+// const show_non_financed_aap12 = view(
+//   Inputs.toggle({
+//     label: "Afficher les sections CNU non-financées de l'AAP 1",
+//   }),
+// )
+// const show_non_selected_aap12 = view(
+//   Inputs.toggle({
+//     label: "Afficher les sections CNU non-proposées de l'AAP 2",
+//   }),
+// )
 ```
 
+<!-- <h2>
+  Distribution des sections CNU
+  ${show_non_financed_aap12 ? '' : 'financés'}
+  de l'AAP 1 et
+  ${show_non_selected_aap12 ? '' : 'proposées'}
+  de l'AAP 2
+</h2>
+<h3>
+  Distribution détaillée des sections de l'AAP 1 et 2 par appel.
+  ${show_non_financed_aap12 ? "Les sections financées de l'AAP 1" : ''}
+  ${show_non_financed_aap12 && show_non_selected_aap12 ? "et" : ''}
+  ${show_non_selected_aap12 ? "les sections proposées de l'AAP 2" : ''}
+  ${show_non_financed_aap12 || show_non_selected_aap12
+    ? "sont plus foncées."
+    : ''}
+</h3> -->
+
 <div class="card" id="aap12-cnu-plot">
-  <h2>
-    Distribution des sections CNU
-    ${show_non_financed_aap12 ? '' : 'financés'}
-    <!-- $ -->
-    de l'AAP 1 et
-    ${show_non_selected_aap12 ? '' : 'proposées'}
-    <!-- $ -->
-    de l'AAP 2
-  </h2>
+  <h2>Distribution des sections CNU financés de l'AAP 1 et 2</h2>
   <h3>
-    Distribution détaillée des sections de l'AAP 1 et 2 par appel.
-    ${show_non_financed_aap12 ? "Les sections financées de l'AAP 1" : ''}
-    <!-- $ -->
-    ${show_non_financed_aap12 && show_non_selected_aap12 ? "et" : ''}
-    <!-- $ -->
-    ${show_non_selected_aap12 ? "les sections proposées de l'AAP 2" : ''}
-    <!-- $ -->
-    ${show_non_financed_aap12 || show_non_selected_aap12
-      ? "sont plus foncées."
-      : ''}
-    <!-- $ -->
+    Distribution détaillée des sections des chercheurs financées
+    de l'AAP 1 et 2 par appel.
   </h3>
-  ${resize((width) => disciplines.cnu_by_aap_plot_y_by_erc(
+  ${resize((width) => disciplines.cnu_by_aap_plot_y(
+    grist_cnus,
+    { width: width },
+    {
+      x_accessor: (d) => cnu.cnu_section_label_map.get(Number(d.cnu)),
+      fill_accessor: (d) => d.aaps.includes('2024')
+        ? d.aaps.includes('2025')
+          ? 'AAP 1 et 2'
+          : 'AAP 1'
+        : 'AAP 2',
+    }
+  ))}
+  <!-- $ -->
+  <!-- ${resize((width) => disciplines.cnu_by_aap_plot_y_by_erc(
     [...cnu_count]
       .filter((d) => show_non_financed_aap12
         || d.aap === 'AAP 2'
@@ -2006,8 +1827,7 @@ const show_non_selected_aap12 = view(
       fill_accessor: (d) => String(d.aap),
       opacity_accessor: (d) => d.selected || d.financed ? 1 : 0.7,
     }
-  ))}
-  <!-- $ -->
+  ))} -->
 </div>
 
 ```js
@@ -2015,8 +1835,12 @@ const cnu_donuts_download_button = view(
   downloadPNGButton('cnu-donuts', 'Download CNU donuts'),
 )
 
+const aap1_cnu_plot_download_button = view(
+  downloadPNGButton('aap-cnu-plot', 'Download AAP1 CNU plot'),
+)
+
 const aap2_cnu_plot_download_button = view(
-  downloadPNGButton('aap2-cnu-plot', 'Download AAP2 CNU plot'),
+  downloadPNGButton('aap-cnu-alt-plot', 'Download AAP2 CNU plot'),
 )
 
 const aap12_cnu_plot_download_button = view(
@@ -2055,80 +1879,6 @@ where cnu[:2] similar to '[0-9]{2}'
 order by cnu, selected, financed
 ```
 
-```sql id=grist_cnu_count display
--- select
---   cnu,
---   any_value(cnu_category) as cnu_category,
---   aap,
---   count(*) as count,
--- from (
-  select
-    cnu as cnu,
-    case
-      when cnu < 25
-        or (69 < cnu and cnu < 78)
-      then 'SH - Sciences Humaines & Sociales'
-      when (24 < cnu and cnu < 38)
-        or (59 < cnu and cnu < 64)
-      then 'PE - Sciences & Technologies'
-      when (41 < cnu and cnu < 59)
-        or (63 < cnu and cnu < 70)
-        or (79 < cnu and cnu < 93)
-      then 'LS - Vie & Santé'
-    end as cnu_category,
-    unnest(split(aaps[3:-3], '","')) as aap,
-  from (
-    select
-      unnest(split(cnus[2:-2], ','))::INT as cnu,
-      -- unnest(split(cnu_type[3:-3], '","')) as cnu_type,
-      aaps,
-    from researchers
-  )
--- )
--- where aap = 2024 or aap = 2025
--- group by cnu, aap
-```
-
-```sql id=grist_cnu_type_count display
-select
-  cnu as cnu,
-  first(cnu_type) as cnu_group,
-  case
-    when cnu < 25
-      or (69 < cnu and cnu < 78)
-    then 'SH - Sciences Humaines & Sociales'
-    when (24 < cnu and cnu < 38)
-      or (59 < cnu and cnu < 64)
-    then 'PE - Sciences & Technologies'
-    when (41 < cnu and cnu < 59)
-      or (63 < cnu and cnu < 70)
-      or (79 < cnu and cnu < 93)
-    then 'LS - Vie & Santé'
-  end as cnu_category,
-  aap,
-  count(*) as count,
-from (
-  select
-    -- unnest(split(cnus[2:-2], ','))::INT as cnu,
-    unnest(split(cnu_type[3:-3], '","')) as cnu_type,
-    unnest(split(aaps[3:-3], '","')) as aap,
-  from researchers
-)
-where aap = 2024 or aap = 2025
-group by cnu, aap
-```
-
-```sql
--- select
-  -- *
-  -- fullname,
-  -- unnest(split(cnus[2:-2], ','))::INT as cnu,
-  -- cnu_type,
-  -- unnest(split(cnu_type[3:-3], '","')) as cnu_type,
-  -- unnest(split(aaps[3:-3], '","')) as aap,
--- from researchers
-```
-
 ```js
 const cnu_count_erc = d3.rollups(
   cnu_count,
@@ -2158,7 +1908,9 @@ const aap1_cnu_count_erc = d3.rollups(
 )
 ```
 
-```sql id=aap2_cnu_count
+aap2_cnu_count
+
+```sql id=aap2_cnu_count display
 select
   cnu,
   selected,
@@ -2212,202 +1964,6 @@ group by keyword
 order by count desc
 ```
 -->
-
-## Cartographies
-
-```js
-const carto_options = view(
-  Inputs.form({
-    show_labels: Inputs.toggle({
-      label: 'Afficher les labels',
-    }),
-    map_filter: Inputs.select(
-      new Map([
-        ['Institutions', institution_count_by_postal_code],
-        ['Laboratoires', laboratory_count_by_postal_code],
-        [
-          'Partenaires socio-économiques',
-          socioeconomic_partner_count_by_postal_code,
-        ],
-      ]),
-      {
-        label: 'Filtrer les entités de la carte par ',
-      },
-    ),
-  }),
-)
-```
-
-<div class="grid grid-cols-2" id="choropleths">
-  <div class="card">
-    ${resize((width) => choroplethFrance(
-      width,
-      label_map.get(carto_options.map_filter),
-      ({ properties }) => [...carto_options.map_filter].find(
-          (d) => d.departement_code === properties.code
-        )?.count,
-      carto_options.show_labels ? map_tip_map.get(carto_options.map_filter) : [],
-    ))}
-    <!-- $ -->
-  </div>
-</div>
-
-```js
-const choropleths_download_button = view(
-  downloadPNGButton('choropleths', 'Download choropleth'),
-)
-```
-
-```js
-const default_choropleth_tip_config = {
-  textPadding: 3,
-  lineWidth: 25,
-  textOverflow: 'ellipsis-middle',
-}
-
-const get_choropleth_tip = (
-  data,
-  {
-    min_threshold = 0,
-    max_threshold = [...data].length,
-    anchor = 'top-left',
-  } = {},
-) =>
-  Plot.tip(
-    mainland_france_departements_geojson,
-    Plot.geoCentroid({
-      title: ({ properties }) =>
-        min_threshold <
-          [...data].filter((d) => d.departement_code === properties.code)
-            .length &&
-        [...data].filter((d) => d.departement_code === properties.code)
-          .length <= max_threshold
-          ? properties.nom +
-            ' :\n' +
-            [...data]
-              .filter((d) => d.departement_code === properties.code)
-              .map((d) => '• ' + d.nom_complet)
-              .join('\n')
-          : null,
-      ...default_choropleth_tip_config,
-      anchor,
-    }),
-  )
-
-const label_map = new Map([
-  [
-    institution_count_by_postal_code,
-    "Nombre d'institutions de l'AAP 2 par département, France",
-  ],
-  [
-    laboratory_count_by_postal_code,
-    "Nombre de laboratoires de l'AAP 2 par département, France",
-  ],
-  [
-    socioeconomic_partner_count_by_postal_code,
-    "Nombre de partenaires socio-économiques de l'AAP 2 par département, France",
-  ],
-])
-
-const map_tip_map = new Map([
-  [
-    institution_count_by_postal_code,
-    [
-      get_choropleth_tip(institutions_by_postal_code, {
-        min_threshold: 3,
-        anchor: 'top-left',
-      }),
-    ],
-  ],
-  [
-    laboratory_count_by_postal_code,
-    [
-      get_choropleth_tip(laboratories_by_postal_code, {
-        min_threshold: 6,
-        max_threshold: 10,
-        anchor: 'top-right',
-      }),
-      get_choropleth_tip(laboratories_by_postal_code, {
-        min_threshold: 10,
-        anchor: 'bottom',
-      }),
-    ],
-  ],
-  [
-    socioeconomic_partner_count_by_postal_code,
-    [
-      get_choropleth_tip(socioeconomic_partners_by_postal_code, {
-        min_threshold: 12,
-        max_threshold: 15,
-        anchor: 'top-right',
-      }),
-      get_choropleth_tip(socioeconomic_partners_by_postal_code, {
-        min_threshold: 15,
-        max_threshold: 18,
-        anchor: 'right',
-      }),
-      get_choropleth_tip(socioeconomic_partners_by_postal_code, {
-        min_threshold: 18,
-        anchor: 'bottom-left',
-      }),
-    ],
-  ],
-])
-```
-
-```sql id=institution_count_by_postal_code
-select
-  code_postal[:2] as departement_code,
-  count(*) as count,
-from aap2_institutions
-where code_postal is not null
-group by departement_code
-```
-
-```sql id=institutions_by_postal_code
-select
-  first(nom_complet) as nom_complet,
-  first(code_postal[:2]) as departement_code,
-from aap2_institutions
-where code_postal is not null
-group by siren
-```
-
-```sql id=laboratory_count_by_postal_code
-select
-  (code_postal::VARCHAR)[:2] as departement_code,
-  count(*) as count,
-from aap2_laboratories
-where code_postal is not null
-group by departement_code
-```
-
-```sql id=laboratories_by_postal_code
-select
-  first(libelle) as nom_complet,
-  first((code_postal::VARCHAR)[:2]) as departement_code,
-from aap2_laboratories
-where code_postal is not null
-group by numero_national_de_structure
-```
-
-```sql id=socioeconomic_partner_count_by_postal_code
-select
-  code_postal[:2] as departement_code,
-  count(*) as count,
-from aap2_socioeconomic_partners
-where code_postal is not null
-group by departement_code
-```
-
-```sql id=socioeconomic_partners_by_postal_code
-select
-  first(nom_complet) as nom_complet,
-  first(code_postal[:2]) as departement_code,
-from aap2_socioeconomic_partners
-where code_postal is not null
-group by siren
-```
 
 ## Qualité des données
 

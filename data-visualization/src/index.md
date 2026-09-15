@@ -82,7 +82,7 @@ stateDiagram-v2
   P --> Call
 
   ZZ : Phase 1 start
-  Call : Call for projects
+  Call : Calls for projects
   DI : Data integration
   DA : Data analysis
   AA : Analysis Anonymisation
@@ -121,7 +121,6 @@ sequenceDiagram
   gr->>gr: Data cleaning
   gr->>open: API call
   open->>gr: Data fusion
-  gr->>sh: Data update
   app->>gr: API call
   gr->>app: Data import
   app->>app: (Visualisation-specific) Data treatment
