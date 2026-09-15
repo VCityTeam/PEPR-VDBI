@@ -24,6 +24,15 @@ export const erc_category_by_cnu_section_map = new Map([
   ['Théologie', 'SH - Sciences Humaines & Sociales'],
 ])
 
+export const erc_category_by_alt_cnu_section_map = new Map([
+  ['Droit, économie et gestion', 'Sciences Humaines & Sociales'],
+  ['Lettres et sciences humaines', 'Sciences Humaines & Sociales'],
+  ['Sciences', 'Sciences'],
+  ['Sections de santé', 'Sections de santé'],
+  ['Pluridisciplinaire', 'Sciences Humaines & Sociales'],
+  ['Théologie', 'Sciences Humaines & Sociales'],
+])
+
 export const cnu_group_section_map = new Map([
   ['Groupe 1', [1, 2, 3, 4]],
   ['Groupe 2', [5, 6]],

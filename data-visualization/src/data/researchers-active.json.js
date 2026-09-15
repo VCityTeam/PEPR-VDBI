@@ -1,12 +1,14 @@
-// import { tsvFormat } from 'd3'
 import { simpleGristQuery } from './utilities/grist_api.js'
 
+// get researcher data
 const query_1 = `
 select
   id,
   NOM_COMPLET as fullname,
   EMAILS as email,
   GENRE as gender,
+  TYPE_TITRE as titres,
+  TYPES_ROLES as roles,
   MOT_CLES as keywords,
   PROJETS as projects,
   ANNEES_LANCEMENT_PROJET as aaps,
@@ -25,6 +27,7 @@ await simpleGristQuery(query_1, 'oUjutoUDF9xP29sxnd6SNX')
     console.error('Error fetching data from Grist API:', error)
   })
 
+// get CNU data
 const query_2 = `select * from CNUs`
 
 const cnu_data = []
@@ -38,10 +41,13 @@ await simpleGristQuery(query_2, 'oUjutoUDF9xP29sxnd6SNX')
     console.error('Error fetching data from Grist API:', error)
   })
 
+// reparse aggregated lists to JSON
 for (const d of data) {
   d.cnus = d.cnus
     ? JSON.parse(d.cnus).map((cnu) => cnu_data.find((c) => c.id == cnu))
     : [null]
+  d.titres = JSON.parse(d.titres)
+  d.roles = JSON.parse(d.roles)
   d.keywords = JSON.parse(d.keywords)
   d.projects = JSON.parse(d.projects)
   d.aaps = JSON.parse(d.aaps)
