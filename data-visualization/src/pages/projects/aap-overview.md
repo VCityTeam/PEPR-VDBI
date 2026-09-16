@@ -1096,7 +1096,76 @@ const aap2_selected_partners_x_sort = Generators.input(
 
 ```js
 display(Inputs.table(projects))
+```
+
+```js
 display(Inputs.table(grist_projects))
+```
+
+```js
+display(Inputs.table(challenge_count_by_aap))
+```
+
+```js
+display(Inputs.table(grist_challenge_count_by_aap))
+```
+
+```js
+const aap_projects = grist_projects.filter(
+  (d) => d.TYPE.includes('PITT') || d.TYPE.includes('AAP'),
+)
+
+const countChallengeByType = (projects, challenge) =>
+  d3
+    .rollups(
+      projects.filter((d) => Boolean(d[challenge])),
+      (D) => ({
+        defi: challenge[challenge.length - 1],
+        type: D[0].TYPE,
+        financed: Boolean(D[0].FINANCE),
+        count: D.length,
+      }),
+      (d) => d.TYPE,
+      (d) => Boolean(d.FINANCE),
+    )
+    .flatMap((d) => d[1])
+    .flatMap((d) => d[1])
+
+const countChallengeByAAP = (projects, challenge) =>
+  d3
+    .rollups(
+      projects.filter((d) => Boolean(d[challenge])),
+      (D) => ({
+        defi: challenge[challenge.length - 1],
+        aap: D[0].TYPE.includes('PITT') ? 'AAP 2' : 'AAP 1',
+        financed: Boolean(D[0].FINANCE),
+        count: D.length,
+      }),
+      (d) => (d.TYPE.includes('PITT') ? 'AAP 2' : 'AAP 1'),
+      (d) => Boolean(d.FINANCE),
+    )
+    .flatMap((d) => d[1])
+    .flatMap((d) => d[1])
+
+const grist_challenge_count_by_aap = [
+  ...countChallengeByAAP(aap_projects, 'DEFI_1'),
+  ...countChallengeByAAP(aap_projects, 'DEFI_2'),
+  ...countChallengeByAAP(aap_projects, 'DEFI_3'),
+  ...countChallengeByAAP(aap_projects, 'DEFI_4'),
+  ...countChallengeByAAP(aap_projects, 'DEFI_5'),
+  ...countChallengeByAAP(aap_projects, 'DEFI_6'),
+]
+
+display(grist_challenge_count_by_aap)
+
+// display(grist_challenge_count_by_type)
+// select
+//   defi,
+//   aap,
+//   financed,
+//   selected,
+//   sum(count)::INT as count,
+//   group by defi, aap, financed, selected
 ```
 
 ## Défis
@@ -1108,10 +1177,21 @@ display(Inputs.table(grist_projects))
       challenge_count_by_aap,
       { width })
     )}
+    <!-- $ -->
+    ${resize((width) => overview.stackedChallengeCountPlot(
+      grist_challenge_count_by_aap,
+      { width })
+    )}
+    <!-- $ -->
   </div>
   <div class="card grid grid-colspan-2">
     ${resize((width) => overview.challengeCountPlot(
       challenge_count_by_aap,
+      { width })
+    )}
+    <!-- $ -->
+    ${resize((width) => overview.challengeCountPlot(
+      grist_challenge_count_by_aap,
       { width })
     )}
     <!-- $ -->
@@ -1314,6 +1394,31 @@ const default_defi_aap_donut_config = (width) => ({
     'défi 6',
   ]),
 })
+```
+
+debug
+
+```sql
+select *
+from aap1_project_by_challenge
+```
+
+```sql
+select acronyme, challenge
+from aap1_project_by_challenge
+group by challenge, acronyme
+```
+
+```sql
+select
+  aap1_project_by_challenge.challenge::VARCHAR as defi,
+  financed,
+  count(*) as count,
+  list(aap1_projects.acronyme) as projects,
+from aap1_project_by_challenge
+join aap1_projects
+  on aap1_project_by_challenge.acronyme = aap1_projects.acronyme
+group by aap1_project_by_challenge.challenge, financed
 ```
 
 ```sql id=challenge_count_by_aap
@@ -1644,24 +1749,6 @@ const grist_cnu_count_by_erc = countCnusByErcCategory(grist_cnus)
 const grist_cnu_count_by_erc_aap1 = countCnusByErcCategory(grist_cnus_aap1)
 
 const grist_cnu_count_by_erc_aap2 = countCnusByErcCategory(grist_cnus_aap2)
-
-console.debug('grist_cnu_counts', [
-  ...grist_cnu_count_by_erc.map((d) => ({
-    category: d[0],
-    count: d[1],
-    aap: 'all',
-  })),
-  ...grist_cnu_count_by_erc_aap1.map((d) => ({
-    category: d[0],
-    count: d[1],
-    aap: 'aap1',
-  })),
-  ...grist_cnu_count_by_erc_aap2.map((d) => ({
-    category: d[0],
-    count: d[1],
-    aap: 'aap2',
-  })),
-])
 
 console.debug('grist_cnu_counts', [
   ...grist_cnu_count_by_erc.map((d) => ({
