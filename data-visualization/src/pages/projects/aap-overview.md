@@ -1111,61 +1111,62 @@ display(Inputs.table(grist_challenge_count_by_aap))
 ```
 
 ```js
-const aap_projects = grist_projects.filter(
-  (d) => d.TYPE.includes('PITT') || d.TYPE.includes('AAP'),
+const aap_projects = grist_projects.filter((d) =>
+  ['2024', '2025'].includes(d.AAP),
 )
 
-const countChallengeByType = (projects, challenge) =>
+const countChallenges = (projects, challenge) =>
   d3
     .rollups(
-      projects.filter((d) => Boolean(d[challenge])),
+      projects.filter((d) => d.DEFIS.includes(challenge)),
       (D) => ({
-        defi: challenge[challenge.length - 1],
+        defi: challenge,
+        aap: D[0].AAP,
         type: D[0].TYPE,
         financed: Boolean(D[0].FINANCE),
         count: D.length,
       }),
+      (d) => d.DEFIS.includes(challenge),
+      (d) => d.AAP,
       (d) => d.TYPE,
       (d) => Boolean(d.FINANCE),
     )
     .flatMap((d) => d[1])
     .flatMap((d) => d[1])
-
-const countChallengeByAAP = (projects, challenge) =>
-  d3
-    .rollups(
-      projects.filter((d) => Boolean(d[challenge])),
-      (D) => ({
-        defi: challenge[challenge.length - 1],
-        aap: D[0].TYPE.includes('PITT') ? 'AAP 2' : 'AAP 1',
-        financed: Boolean(D[0].FINANCE),
-        count: D.length,
-      }),
-      (d) => (d.TYPE.includes('PITT') ? 'AAP 2' : 'AAP 1'),
-      (d) => Boolean(d.FINANCE),
-    )
     .flatMap((d) => d[1])
     .flatMap((d) => d[1])
 
-const grist_challenge_count_by_aap = [
-  ...countChallengeByAAP(aap_projects, 'DEFI_1'),
-  ...countChallengeByAAP(aap_projects, 'DEFI_2'),
-  ...countChallengeByAAP(aap_projects, 'DEFI_3'),
-  ...countChallengeByAAP(aap_projects, 'DEFI_4'),
-  ...countChallengeByAAP(aap_projects, 'DEFI_5'),
-  ...countChallengeByAAP(aap_projects, 'DEFI_6'),
-]
+const grist_challenge_count_by_aap = d3.sort(
+  [
+    ...countChallenges(aap_projects, '1'),
+    ...countChallenges(aap_projects, '2'),
+    ...countChallenges(aap_projects, '3'),
+    ...countChallenges(aap_projects, '4'),
+    ...countChallenges(aap_projects, '5'),
+    ...countChallenges(aap_projects, '6'),
+  ],
+  (d) => d.defi,
+  (d) => d.aap,
+  (d) => d.financed,
+  (d) => d.type,
+)
 
-display(grist_challenge_count_by_aap)
+const grist_challenge_count_by_type = d3.sort(
+  [
+    ...countChallenges(aap_projects, '1'),
+    ...countChallenges(aap_projects, '2'),
+    ...countChallenges(aap_projects, '3'),
+    ...countChallenges(aap_projects, '4'),
+    ...countChallenges(aap_projects, '5'),
+    ...countChallenges(aap_projects, '6'),
+  ],
+  (d) => d.defi,
+  (d) => d.type,
+  (d) => d.financed,
+  (d) => d.aap,
+)
 
-// display(grist_challenge_count_by_type)
-// select
-//   defi,
-//   aap,
-//   financed,
-//   selected,
-//   sum(count)::INT as count,
-//   group by defi, aap, financed, selected
+display(Inputs.table(grist_challenge_count_by_aap))
 ```
 
 ## Défis
@@ -1174,22 +1175,12 @@ display(grist_challenge_count_by_aap)
   <!-- AAP 1 + 2 -->
   <div class="card">
     ${resize((width) => overview.stackedChallengeCountPlot(
-      challenge_count_by_aap,
-      { width })
-    )}
-    <!-- $ -->
-    ${resize((width) => overview.stackedChallengeCountPlot(
       grist_challenge_count_by_aap,
       { width })
     )}
     <!-- $ -->
   </div>
-  <div class="card grid grid-colspan-2">
-    ${resize((width) => overview.challengeCountPlot(
-      challenge_count_by_aap,
-      { width })
-    )}
-    <!-- $ -->
+  <div class="card grid-colspan-2">
     ${resize((width) => overview.challengeCountPlot(
       grist_challenge_count_by_aap,
       { width })
@@ -1199,7 +1190,7 @@ display(grist_challenge_count_by_aap)
   <!-- AAP 1 financé + AAP 2 proposé -->
   <div class="card">
     ${resize((width) => overview.stackedChallengeCountPlot(
-      [...challenge_count_by_aap].filter((d) => d.financed || d.selected),
+      grist_challenge_count_by_aap.filter((d) => d.financed),
       {
         width,
         subtitle: `Les défis indiqués dans les métadonnées et les templates des
@@ -1209,9 +1200,9 @@ display(grist_challenge_count_by_aap)
     )}
     <!-- $ -->
   </div>
-  <div class="card grid grid-colspan-2">
+  <div class="card grid-colspan-2">
     ${resize((width) => overview.challengeCountPlot(
-      [...challenge_count_by_aap].filter((d) => d.financed || d.selected),
+      grist_challenge_count_by_aap.filter((d) => d.financed),
       {
         width,
         subtitle: `Les défis indiqués dans les métadonnées et les templates des
@@ -1224,10 +1215,10 @@ display(grist_challenge_count_by_aap)
   <!-- AAP 2 by project type -->
   <div class="card">
     ${resize((width) => overview.stackedChallengeCountPlot(
-      aap2_challenge_count,
+      grist_challenge_count_by_type.filter((d) => d.aap == '2025'),
       {
         width: width,
-        fill_accessor: 'project_type',
+        fill_accessor: 'type',
         color_range: overview.projectTypeColorScale.range(),
         title: 'Défis par type de projet',
         subtitle: `Les défis indiqués dans les métadonnées et les templates des
@@ -1237,12 +1228,12 @@ display(grist_challenge_count_by_aap)
     )}
     <!-- $ -->
   </div>
-  <div class="card grid grid-colspan-2">
+  <div class="card grid-colspan-2">
     ${resize((width) => overview.challengeCountPlot(
-      aap2_challenge_count,
+      grist_challenge_count_by_type.filter((d) => d.aap == '2025'),
       {
         width: width,
-        x_accessor: 'project_type',
+        x_accessor: 'type',
         color_range: overview.projectTypeColorScale.range(),
         title: 'Défis par type de projet',
         subtitle: `Les défis indiqués dans les métadonnées et les templates des
@@ -1396,31 +1387,6 @@ const default_defi_aap_donut_config = (width) => ({
 })
 ```
 
-debug
-
-```sql
-select *
-from aap1_project_by_challenge
-```
-
-```sql
-select acronyme, challenge
-from aap1_project_by_challenge
-group by challenge, acronyme
-```
-
-```sql
-select
-  aap1_project_by_challenge.challenge::VARCHAR as defi,
-  financed,
-  count(*) as count,
-  list(aap1_projects.acronyme) as projects,
-from aap1_project_by_challenge
-join aap1_projects
-  on aap1_project_by_challenge.acronyme = aap1_projects.acronyme
-group by aap1_project_by_challenge.challenge, financed
-```
-
 ```sql id=challenge_count_by_aap
 select
   defi,
@@ -1434,7 +1400,8 @@ from (
     'AAP 1' as aap,
     financed,
     null as selected,
-    count(*) as count,
+    -- count(*) as count,
+    count(distinct aap1_projects.acronyme) as count,
   from aap1_project_by_challenge
   join aap1_projects
     on aap1_project_by_challenge.acronyme = aap1_projects.acronyme
@@ -1502,6 +1469,24 @@ from (
 )
 group by defi, aap, financed, selected
 order by defi, aap, financed, selected
+```
+
+aap1_challenge_count
+
+```sql id=aap1_challenge_count display
+select
+  aap1_project_by_challenge.challenge::VARCHAR as defi,
+  financed,
+  list(distinct aap1_projects.acronyme) as projets,
+  -- count(distinct aap1_projects.acronyme) as count_projets,
+  -- count(*) as count,
+  count(distinct aap1_projects.acronyme) as count,
+  count(*) as count_alt,
+from aap1_project_by_challenge
+join aap1_projects
+  on aap1_project_by_challenge.acronyme = aap1_projects.acronyme
+group by aap1_project_by_challenge.challenge, financed
+order by aap1_project_by_challenge.challenge, financed
 ```
 
 ```sql id=aap2_challenge_count

@@ -34,6 +34,11 @@ const data_2 = rowsToObjectArray(
 ).flatMap((d) => [
   {
     acronyme: d.Acronyme,
+    challenge: challenge_label_id_map.get(d['Defi principal']),
+    primary: false,
+  },
+  {
+    acronyme: d.Acronyme,
     challenge: challenge_label_id_map.get(d['autre défi 1']),
     primary: false,
   },
