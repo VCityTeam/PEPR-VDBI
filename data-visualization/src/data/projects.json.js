@@ -3,29 +3,26 @@ import { simpleGristQuery } from './utilities/grist_api.js'
 const project_data = []
 
 const query_1 = `
-select
-  id,
+select distinct
+  Projets.id as id,
   ID_PROJET,
   TYPE,
+  AAP,
   NOM_FR,
   NOM_EN,
   FINANCE,
   NOTE,
-  cast(DEFI_PRINCIPALE as text) as DEFI_PRINCIPALE,
-  -- DEFI_PRINCIPALE,
-  DEFI_1,
-  DEFI_2,
-  DEFI_3,
-  DEFI_4,
-  DEFI_5,
-  DEFI_6,
+  group_concat(DEFI) as DEFIS,
   BUDGET,
   COMMENTAIRE,
   TITRE_COURT,
   CODE_ANR,
-  ANNEE_LANCEMENT
+  AAP
 from Projets
-order by manualSort
+join Projet_par_defi
+  on Projet_par_defi.PROJET = Projets.id
+-- order by manualSort
+group by Projets.id
 `
 
 await simpleGristQuery(query_1, 'oUjutoUDF9xP29sxnd6SNX')
@@ -68,7 +65,7 @@ for (const d of project_data) {
     .filter((kw) => kw.project_id == d.id)
     .map((d) => d.keyword)
 
-  d.DEFI_PRINCIPALE = d.DEFI_PRINCIPALE.replace(magic_prefix, '')
+  d.DEFIS = d.DEFIS.split(',').map((d) => d.replace(magic_prefix, ''))
 
   delete d.manualSort
 }

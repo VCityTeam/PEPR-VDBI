@@ -490,6 +490,7 @@ export const stackedChallengeCountPlot = (
     fill_accessor = 'aap',
     color_range = aapColorScale.range(),
     title = 'Défis par AAP',
+    sort = undefined,
     subtitle = `Les défis indiqués dans les métadonnées et les templates des
       soumissions sur le site du dépôt de l'AAP 1 et 2.
       Les sections financées ou proposées sont plus foncées.`,
@@ -517,6 +518,7 @@ export const stackedChallengeCountPlot = (
       Plot.barY(data, {
         x: 'defi',
         y: 'count',
+        sort: sort,
         fill: fill_accessor,
         fillOpacity: (d) => (d.financed || d.selected ? 1 : 0.7),
         tip: true,
@@ -562,6 +564,7 @@ export const challengeCountPlot = (
       label: null,
       tickFormat: null,
       tickSize: null,
+      type: 'band',
     },
     y: {
       axis: 'both',
