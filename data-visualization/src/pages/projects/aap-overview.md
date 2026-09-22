@@ -1,5 +1,6 @@
 ---
 sql:
+  grist_projects: /data/projects.json
   aap1_projects: /data/phase1-projects.tsv
   aap1_project_by_keyword: /data/phase1-project_by_keyword.tsv
   aap1_project_by_challenge: /data/phase1-project_by_challenge.tsv
@@ -10,8 +11,7 @@ sql:
   aap1_project_by_researchers: /data/phase1-project_by_researchers.tsv
   aap1_project_by_socioeconomic_partners: /data/phase1-project_by_socioeconomic_partners.tsv
   aap1_researchers: /data/phase1-researchers.tsv
-  # researchers: /data/researchers-active.tsv
-  aap1_all_partners: /data/partners.tsv
+  partners: /data/partners.tsv
   co_researchers: /data/private/co-researchers.tsv
   aap1_researcher_by_keywords: /data/phase1-researcher_by_keywords.tsv
   aap1_laboratories: /data/phase1-laboratories.tsv
@@ -71,12 +71,98 @@ import {
 } from '../../components/projection-map.js'
 ```
 
+<!-- DATA IMPORT -->
+
 ```js
 const researchers = FileAttachment('/data/researchers-active.json').json()
 ```
 
-```js
-const grist_projects = FileAttachment('/data/projects.json').json()
+```sql
+select * from grist_projects
+```
+
+```sql
+select * from partners
+```
+
+```sql id=projects
+select
+  id as project_id,
+  ID_PROJET,
+  TITRE_COURT,
+  TYPE,
+  NOM_FR,
+  NOM_EN,
+  FINANCE as financed,
+  NOTE as grade,
+  DEFIS as challenge,
+  AAP as aap,
+from grist_projects
+where 
+```
+
+```sql id=project_by_keyword
+(
+  select
+    acronyme as project_id,
+    keyword,
+    1 as aap,
+  from aap1_project_by_keyword
+) union (
+  select
+    project_id,
+    keyword,
+    2 as aap,
+  from aap2_project_by_keyword
+)
+```
+
+```sql id=project_institutions
+(
+  select
+    project as project_id,
+    university as institution,
+    1 as aap,
+  from aap1_project_by_institutions
+) union (
+  select
+    project_id,
+    institution_id as institution,
+    2 as aap,
+  from aap2_project_by_institutions
+)
+```
+
+```sql id=project_laboratories
+(
+  select
+    project as project_id,
+    lab,
+    1 as aap,
+  from aap1_project_by_laboratories
+) union (
+  select
+    project_id,
+    unit_id as lab,
+    2 as aap,
+  from aap2_project_by_laboratories
+)
+```
+
+```sql id=project_socioeconomic_partners
+(
+  select
+    project as project_id,
+    partner,
+    1 as aap,
+  from aap1_project_by_socioeconomic_partners
+) union (
+  select
+    project_id,
+    partner_id as partner,
+    2 as aap,
+  from aap2_project_by_socioeconomic_partners
+)
 ```
 
 <div class="warning" label="Avertissement sur la qualité des données">
@@ -104,12 +190,12 @@ const dashboard_filter = view(
 <div class="grid grid-cols-4" id="aap-key-numbers">
   <!-- ALL projects -->
   <div class="card">
-    <h2>Nombre de projets totales<br/><span class="muted">(Soumis / Proposés)</span></h2>
+    <h2>Nombre de projets totales<br/><span class="muted">(financés)</span></h2>
     <span class="big">
       <span class="muted">80</span> / ${14 + 8} </span>
   </div>
   <div class="card">
-    <h2>Nombre d'institutions totales<br/><span class="muted">(Soumis / Proposés)</span></h2>
+    <h2>Nombre d'institutions totales<br/><span class="muted">(financés)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
@@ -130,7 +216,7 @@ const dashboard_filter = view(
     </span>
   </div>
   <div class="card">
-    <h2>Nombre d'unités totales<br/><span class="muted">(Soumis / Proposés)</span></h2>
+    <h2>Nombre d'unités totales<br/><span class="muted">(financés)</span></h2>
     <span class="big">
       <span class="muted">
         ${[...await sql`
@@ -145,7 +231,7 @@ const dashboard_filter = view(
   <div class="card">
     <h2>
       Nombre de partenaires socioéconomiques totales
-      <br/><span class="muted">(Soumis / Proposés)</span>
+      <br/><span class="muted">(financés)</span>
     </h2>
     <span class="big">
       <span class="muted">
@@ -161,203 +247,7 @@ const dashboard_filter = view(
   <div class="card">
     <h2>
       Nombre de chercheurs totales
-      <br/><span class="muted">(Soumis / Proposés)</span>
-    </h2>
-    <span class="big">
-      <span class="muted">
-        ${[...await sql`
-          select count(distinct email) as count from aap2_researchers
-        `][0].count.toLocaleString()}
-        <!-- $ -->
-      </span> /
-      ${[...await sql`
-        select count(distinct researcher_id) as count
-        from aap2_project_by_researchers
-        where project_id in (
-            select project_id
-            from aap2_projects
-            where selected
-          )
-          and (position is null or position != 'thésard')
-        group by all
-        `][0].count.toLocaleString()}
-      <!-- $ -->
-    </span>
-  </div>
-  <!-- AAP1 -->
-  <div class="card">
-    <h2>Nombre de projets AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
-    <span class="big">
-      <span class="muted">
-        ${[...await sql`
-          select count(*) as count from aap1_projects
-        `][0].count.toLocaleString()}
-        <!-- $ -->
-      </span> /
-      ${[...await sql`
-        select count(*) as count from aap1_projects where financed
-      `][0].count.toLocaleString()}
-      <!-- $ -->
-    </span>
-  </div>
-  <div class="card">
-    <h2>Nombre d'institutions AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
-    <span class="big">
-      <span class="muted">
-        ${[...await sql`
-          select count(*) as count from aap1_institutions
-        `][0].count.toLocaleString()}
-        <!-- $ -->
-      </span> /
-      ${[...await sql`
-        select count(*) as count
-        from aap1_institutions
-        where label in (
-          select university
-          from aap1_project_by_institutions
-          where project in (
-            select acronyme
-            from aap1_projects
-            where financed
-          )
-        )
-      `][0].count.toLocaleString()}
-      <!-- $ -->
-    </span>
-  </div>
-  <div class="card">
-    <h2>Nombre d'unités AAP 1 <br/><span class="muted">(Soumis / Lauréats)</span></h2>
-    <span class="big">
-      <span class="muted">
-        ${[...await sql`
-          select count(*) as count from aap1_laboratories
-        `][0].count.toLocaleString()}
-        <!-- $ -->
-      </span> /
-      ${[...await sql`
-        select count(*) as count
-        from aap1_laboratories
-        where label in (
-          select lab
-          from aap1_project_by_laboratories
-          where project in (
-            select acronyme
-            from aap1_projects
-            where financed
-          )
-        )
-      `][0].count.toLocaleString()}
-      <!-- $ -->
-    </span>
-  </div>
-  <div class="card">
-    <h2>
-      Nombre de partenaires socioéconomiques AAP 1
-      <br/><span class="muted">(Soumis / Lauréats)</span>
-    </h2>
-    <span class="big">
-      <span class="muted">
-        ${[...await sql`
-          select count(*) as count from aap1_socioeconomic_partners`][
-        0].count.toLocaleString()}
-        <!-- $ -->
-      </span> /
-      ${[...await sql`
-        select count(*) as count
-        from aap1_socioeconomic_partners
-        where label in (
-          select partner
-          from aap1_project_by_socioeconomic_partners
-          where project in (
-            select acronyme
-            from aap1_projects
-            where financed
-          )
-        )
-      `][0].count.toLocaleString()}
-      <!-- $ -->
-    </span>
-  </div>
-  <div class="card">
-    <h2>
-      Nombre de chercheurs AAP 1
-      <br/><span class="muted">(Soumis / Lauréats)</span>
-    </h2>
-    <span class="big">
-      <span class="muted">
-        XXX
-        <!-- $ -->
-      </span> /
-      ${[...all_researchers_by_project]
-        .filter((d) => d.phase.includes('1'))
-        .length.toLocaleString()}
-      <!-- $ -->
-    </span>
-  </div>
-  <!-- AAP2 -->
-  <div class="card">
-    <h2>Nombre de projets AAP 2 <br/><span class="muted">(Soumis / Proposés)</span></h2>
-    <span class="big">
-      <span class="muted">
-        ${[...await sql`
-          select count(*) as count from aap2_projects
-        `][0].count.toLocaleString()}
-        <!-- $ -->
-      </span> /
-      ${[...await sql`
-          select count(*) as count
-          from aap2_projects
-          where selected
-        `][0].count.toLocaleString()}
-      <!-- $ -->
-    </span>
-  </div>
-  <div class="card">
-    <h2>Nombre d'institutions AAP 2 <br/><span class="muted">(Soumis / Proposés)</span></h2>
-    <span class="big">
-      <span class="muted">
-        ${[...await sql`
-          select count(*) as count from aap2_institutions
-        `][0].count.toLocaleString()}
-        <!-- $ -->
-      </span> /
-      ${[...aap2_selected_institutions_count].length.toLocaleString()}
-      <!-- $ -->
-    </span>
-  </div>
-  <div class="card">
-    <h2>Nombre d'unités AAP 2 <br/><span class="muted">(Soumis / Proposés)</span></h2>
-    <span class="big">
-      <span class="muted">
-        ${[...await sql`
-          select count(*) as count from aap2_laboratories
-        `][0].count.toLocaleString()}
-        <!-- $ -->
-      </span> /
-      ${[...aap2_selected_laboratories_count].length.toLocaleString()}
-      <!-- $ -->
-    </span>
-  </div>
-  <div class="card">
-    <h2>
-      Nombre de partenaires socioéconomiques AAP 2
-      <br/><span class="muted">(Soumis / Proposés)</span>
-    </h2>
-    <span class="big">
-      <span class="muted">
-        ${[...await sql`
-          select count(*) as count from aap2_socioeconomic_partners
-        `][0].count.toLocaleString()}
-        <!-- $ -->
-      </span> /
-      ${[...aap2_selected_partners_count].length.toLocaleString()}
-      <!-- $ -->
-    </span>
-  </div>
-  <div class="card">
-    <h2>
-      Nombre de chercheurs AAP 2
-      <br/><span class="muted">(Soumis / Proposés)</span>
+      <br/><span class="muted">(financés)</span>
     </h2>
     <span class="big">
       <span class="muted">
@@ -1099,10 +989,6 @@ display(Inputs.table(projects))
 ```
 
 ```js
-display(Inputs.table(grist_projects))
-```
-
-```js
 display(Inputs.table(challenge_count_by_aap))
 ```
 
@@ -1111,10 +997,6 @@ display(Inputs.table(grist_challenge_count_by_aap))
 ```
 
 ```js
-const aap_projects = grist_projects.filter((d) =>
-  ['2024', '2025'].includes(d.AAP),
-)
-
 const countChallenges = (projects, challenge) =>
   d3
     .rollups(
@@ -1138,12 +1020,12 @@ const countChallenges = (projects, challenge) =>
 
 const grist_challenge_count_by_aap = d3.sort(
   [
-    ...countChallenges(aap_projects, '1'),
-    ...countChallenges(aap_projects, '2'),
-    ...countChallenges(aap_projects, '3'),
-    ...countChallenges(aap_projects, '4'),
-    ...countChallenges(aap_projects, '5'),
-    ...countChallenges(aap_projects, '6'),
+    ...countChallenges(projects, '1'),
+    ...countChallenges(projects, '2'),
+    ...countChallenges(projects, '3'),
+    ...countChallenges(projects, '4'),
+    ...countChallenges(projects, '5'),
+    ...countChallenges(projects, '6'),
   ],
   (d) => d.defi,
   (d) => d.aap,
@@ -1153,12 +1035,12 @@ const grist_challenge_count_by_aap = d3.sort(
 
 const grist_challenge_count_by_type = d3.sort(
   [
-    ...countChallenges(aap_projects, '1'),
-    ...countChallenges(aap_projects, '2'),
-    ...countChallenges(aap_projects, '3'),
-    ...countChallenges(aap_projects, '4'),
-    ...countChallenges(aap_projects, '5'),
-    ...countChallenges(aap_projects, '6'),
+    ...countChallenges(projects, '1'),
+    ...countChallenges(projects, '2'),
+    ...countChallenges(projects, '3'),
+    ...countChallenges(projects, '4'),
+    ...countChallenges(projects, '5'),
+    ...countChallenges(projects, '6'),
   ],
   (d) => d.defi,
   (d) => d.type,
@@ -2286,238 +2168,6 @@ const missing_researcher_cnu = [
     d.cnu === null ||
     d.cnu === '' ||
     ![...cnu.cnu_category_section_map.values()].flat().includes(Number(d.cnu)),
-)
-```
-
-<!-- DATA IMPORT -->
-
-```sql id=projects
-(
-  select
-    acronyme as project_id,
-    present,
-    auditioned,
-    financed,
-    budget,
-    null as supplementary_budget,
-    grade,
-    challenge,
-    name_fr,
-    name_en,
-    1 as aap,
-  from aap1_projects
-) union (
-  select
-    project_id,
-    true as present,
-    null as auditioned,
-    null as financed,
-    budget,
-    supplementary_budget,
-    null as grade,
-    challenge,
-    name_fr,
-    null as name_en,
-    2 as aap,
-  from aap2_projects
-)
-```
-
-```sql id=laboratories
-select * from (
-  select
-    source_label,
-    source,
-    numero_national_de_structure,
-    libelle,
-    sigle,
-    annee_de_creation,
-    type_de_structure,
-    code_de_type_de_structure,
-    code_de_niveau_de_structure,
-    site_web,
-    adresse,
-    code_postal,
-    commune,
-    nom_du_responsable,
-    prenom_du_responsable,
-    titre_du_responsable,
-    label_numero,
-    tutelles,
-    sigles_des_tutelles,
-    code_de_nature_de_tutelle,
-    nature_de_tutelle,
-    uai_des_tutelles,
-    siret_des_tutelles,
-    code_de_type_de_tutelle,
-    type_de_tutelle,
-    numero_de_structure_enfant,
-    numero_de_structure_parent,
-    numero_de_structure_historique,
-    type_de_succession,
-    code_de_type_de_succession,
-    annee_d_effet_historique,
-    code_domaine_scientifique,
-    domaine_scientifique,
-    code_panel_erc,
-    panel_erc,
-    fiche_rnsr,
-  from aap1_laboratories
-) union (
-  select
-    source_label,
-    source,
-    numero_national_de_structure,
-    libelle,
-    sigle,
-    annee_de_creation,
-    type_de_structure,
-    code_de_type_de_structure,
-    code_de_niveau_de_structure,
-    site_web,
-    adresse,
-    code_postal,
-    commune,
-    nom_du_responsable,
-    prenom_du_responsable,
-    titre_du_responsable,
-    label_numero,
-    tutelles,
-    sigles_des_tutelles,
-    code_de_nature_de_tutelle,
-    nature_de_tutelle,
-    uai_des_tutelles,
-    siret_des_tutelles,
-    code_de_type_de_tutelle,
-    type_de_tutelle,
-    numero_de_structure_enfant,
-    numero_de_structure_parent,
-    numero_de_structure_historique,
-    type_de_succession,
-    code_de_type_de_succession,
-    annee_d_effet_historique,
-    code_domaine_scientifique,
-    domaine_scientifique,
-    code_panel_erc,
-    panel_erc,
-    fiche_rnsr,
-  from aap2_laboratories
-)
-```
-
-```sql id=institutions
-(
-  select
-    siret,
-    siren,
-    nom_complet,
-    nature_juridique,
-    latitude,
-    longitude,
-    libelle_commune,
-    commune,
-    code_postal,
-    region,
-    source_label,
-    source,
-  from aap1_institutions
-) union (
-  select
-    siret,
-    siren,
-    nom_complet,
-    nature_juridique,
-    latitude,
-    longitude,
-    libelle_commune,
-    commune,
-    code_postal,
-    region,
-    source_label,
-    source,
-  from aap2_institutions
-)
-```
-
-```sql id=socioeconomic_partners
-(
-  select
-    null as partner_id,
-    label as labels,
-    null as activities,
-    1 as aap,
-  from aap1_socioeconomic_partners
-) union (
-  select
-    partner_id,
-    labels,
-    activities,
-    2 as aap,
-  from aap2_socioeconomic_partners
-)
-```
-
-```sql id=project_by_keyword
-(
-  select
-    acronyme as project_id,
-    keyword,
-    1 as aap,
-  from aap1_project_by_keyword
-) union (
-  select
-    project_id,
-    keyword,
-    2 as aap,
-  from aap2_project_by_keyword
-)
-```
-
-```sql id=project_institutions
-(
-  select
-    project as project_id,
-    university as institution,
-    1 as aap,
-  from aap1_project_by_institutions
-) union (
-  select
-    project_id,
-    institution_id as institution,
-    2 as aap,
-  from aap2_project_by_institutions
-)
-```
-
-```sql id=project_laboratories
-(
-  select
-    project as project_id,
-    lab,
-    1 as aap,
-  from aap1_project_by_laboratories
-) union (
-  select
-    project_id,
-    unit_id as lab,
-    2 as aap,
-  from aap2_project_by_laboratories
-)
-```
-
-```sql id=project_socioeconomic_partners
-(
-  select
-    project as project_id,
-    partner,
-    1 as aap,
-  from aap1_project_by_socioeconomic_partners
-) union (
-  select
-    project_id,
-    partner_id as partner,
-    2 as aap,
-  from aap2_project_by_socioeconomic_partners
 )
 ```
 

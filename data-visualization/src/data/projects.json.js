@@ -16,8 +16,7 @@ select distinct
   BUDGET,
   COMMENTAIRE,
   TITRE_COURT,
-  CODE_ANR,
-  AAP
+  CODE_ANR
 from Projets
 join Projet_par_defi
   on Projet_par_defi.PROJET = Projets.id
