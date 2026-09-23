@@ -25,6 +25,7 @@ import * as projections from '/components/projection-map.js'
 SELECT
   projects_by_partner.*,
   postal_code,
+  siret_or_rnsr,
 from projects_by_partner
 join aap_partners
   on projects_by_partner.partner_id = aap_partners.id
@@ -47,7 +48,7 @@ order by project
 <div class="card">
 
 ```js
-const project_list = [...projects].map((d) => d.project)
+const project_list = [...projects].map((d) => d.project).sort()
 
 const project_types = new Set([...projects].map((d) => d.project_type))
 
@@ -64,10 +65,10 @@ const settings = view(
         label: 'Filter by project type',
         value: project_types,
       }),
-      // selected_project: Inputs.select(['All', ...project_list], {
-      //   label: 'Filter by project',
-      //   value: 'All',
-      // }),
+      selected_project: Inputs.select(['All', ...project_list], {
+        label: 'Filter by project',
+        value: 'All',
+      }),
       show_tips: Inputs.toggle({ label: 'Show tips', value: true }),
       tip_cuttoff: Inputs.range([0, 100], {
         label: 'Min partner count to show tip',
@@ -110,12 +111,12 @@ display(
     [
       downloadSVGButton(
         '#choropleth-container-france svg:nth-of-type(2)',
-        'Download French choropleth partner map',
+        'Download France choropleth partner map',
         `${settings.selected_project}_france_partner_choropleth.svg`,
       ),
       downloadSVGButton(
         '#choropleth-container-france svg:nth-of-type(1)',
-        'Download legend',
+        'Download France legend',
         `${settings.selected_project}_france_partner_choropleth_legend.svg`,
       ),
       downloadSVGButton(
@@ -125,7 +126,7 @@ display(
       ),
       downloadSVGButton(
         '#choropleth-container-idf svg:nth-of-type(1)',
-        'Download legend',
+        'Download Île-de-France legend',
         `${settings.selected_project}_idf_partner_choropleth_legend.svg`,
       ),
     ],
@@ -151,8 +152,8 @@ const filtered_partners_by_project = [...projects_by_partner]
   .map((d) => d.toJSON())
   .filter(
     (d) =>
-      // (settings.selected_project == 'All' ||
-      //   d.project == settings.selected_project) &&
+      (settings.selected_project == 'All' ||
+        d.project == settings.selected_project) &&
       settings.selected_project_types.includes(d.project_type) &&
       settings.selected_partner_types.includes(d.type),
   )
@@ -185,8 +186,8 @@ const anchor_map = d3.group(
 const caption = `- ${
   settings.group_partnerships ? 'Partenaires' : 'Liens partenariales'
 } et parties prenantes ${settings.selected_partner_types
-  .join(', ')
-  .toLowerCase()} par department`
+  .join('(s), ')
+  .toLowerCase()}(s) par department`
 
 const francePartnerMap = (width) => {
   const map = projections.choroplethFrance(
