@@ -1011,9 +1011,9 @@ const partnerMapTips = (geojson, data, cuttoff = 10, group = true, options) =>
       // lineWidth: 30,
       // textOverflow: 'ellipsis-middle',
       title: (feature) => {
-        const partnerships = data.filter(
+        const partnerships = data?.filter(
           (d) => d.postal_code?.slice(0, 2) == feature.properties.code,
-        )
+        ) || []
         const partners = new Set(partnerships.map((d) => d.partner))
         if (
           group

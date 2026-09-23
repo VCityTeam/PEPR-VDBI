@@ -4,6 +4,7 @@ import { simpleGristQuery } from './utilities/grist_api.js'
 const query = `
 select
   id,
+  numero_national_de_structure as siret_or_rnsr,
   if(sigle is null or sigle = '', libelle, concat(libelle, ' (', sigle, ')')) as label,
   code_postal as postal_code,
   'LABORATOIRE' as type
@@ -11,6 +12,7 @@ from Laboratoires
 union
 select
   id,
+  siret as siret_or_rnsr,
   nom_complet as label,
   code_postal as postal_code,
   'INSTITUTION' as type
@@ -18,6 +20,7 @@ from Institutions
 union
 select
   id,
+  siret as siret_or_rnsr,
   nom_complet as label,
   code_postal as postal_code,
   'SOCIOECONOMIQUE' as type

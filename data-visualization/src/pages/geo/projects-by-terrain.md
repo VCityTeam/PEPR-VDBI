@@ -34,7 +34,7 @@ const terrain_features = FileAttachment(
 ).json()
 ```
 
-```sql id=terrain_data
+```sql id=terrain_data display
 select * from project_terrains
 ```
 
@@ -43,11 +43,12 @@ const filtered_terrain_data = [...terrain_data]
   .map((d) => d.toJSON())
   .filter(
     (d) =>
-      settings.selected_terrain_scale.includes(d.scale) &&
-      settings.selected_terrain_project_type.includes(d.project_type),
-    // && settings.selected_terrain_project.includes(d.project),
+      settings.selected_scale.includes(d.scale) &&
+      settings.selected_project_type.includes(d.project_type) &&
+      (settings.selected_project == 'All' ||
+        settings.selected_project == d.project),
   )
-// display(filtered_terrain_data)
+display(filtered_terrain_data)
 // display(filtered_terrain_data.find((d) => d.terrain === 'Hanoi'))
 // display(terrain_features.features.find((d) => d.properties.label === 'Hanoi'))
 ```
@@ -55,9 +56,9 @@ const filtered_terrain_data = [...terrain_data]
 <div class="card">
 
 ```js
-// const projects = [
-//   ...(await sql`select distinct project from project_terrains`),
-// ].map((d) => d.project)
+const projects = [...(await sql`select distinct project from project_terrains`)]
+  .map((d) => d.project)
+  .sort()
 
 const project_types = [
   ...(await sql`select distinct project_type from project_terrains`),
@@ -70,24 +71,30 @@ const scales = [
 const settings = view(
   Inputs.form(
     {
-      selected_terrain_project_type: Inputs.checkbox(project_types, {
-        label: 'Included project types',
-        unique: true,
-        sort: true,
-        value: project_types,
-      }),
-      selected_terrain_scale: Inputs.checkbox(scales, {
+      selected_scale: Inputs.checkbox(scales, {
         label: 'Included scales',
         unique: true,
         sort: true,
         value: scales,
+      }),
+      selected_project: Inputs.select(['All', ...projects], {
+        label: 'Filter by project',
+        unique: true,
+        sort: false,
+        value: 'All',
+      }),
+      selected_project_type: Inputs.checkbox(project_types, {
+        label: 'Included project types',
+        unique: true,
+        sort: true,
+        value: project_types,
       }),
       selected_color_domain_max: Inputs.range([0, 100], {
         label: 'Color domain max (ignored if zero)',
         value: 0,
       }),
     },
-    { template: formTemplate(3) },
+    { template: formTemplate(2) },
   ),
 )
 ```
@@ -114,30 +121,8 @@ const settings = view(
       ${resize((width) => italyTerrainMap(width))}
       <!-- $ -->
     </div>
-    <div
-      id="map-container-world"
-      style="overflow: hidden;"
-    >
-      ${resize(
-        (width) => geo.worldProjection(
-          width,
-          width * 0.5,
-          geo.generateSimpleGeoTipMarks(
-            geo.filterExtraEuropeanTerrains(filtered_terrain_data)
-              .map((d) => ({
-                ...d,
-                label: `${d.terrain}, ${d.country_code.toUpperCase()}`,
-              })),
-            new Map([
-              ['Bangkok', 'top-left'],
-              ['Hanoi', 'bottom'],
-              ['Mayotte', 'right'],
-              ['Perth', 'top'],
-            ]),
-          ),
-          "- Terrains internationaux non-european par ville"
-        )
-      )}
+    <div id="map-container-world" style="overflow: hidden;">
+      ${resize((width) => worldMap(width))}
       <!-- $ -->
     </div>
   </div>
@@ -311,4 +296,23 @@ const italyTerrainMap = (width) => {
   )}
   ${map}`
 }
+
+const worldMap = (width) =>
+  geo.worldProjection(
+    width,
+    width * 0.5,
+    geo.generateSimpleGeoTipMarks(
+      geo.filterExtraEuropeanTerrains(filtered_terrain_data).map((d) => ({
+        ...d,
+        label: `${d.terrain}, ${d.country_code.toUpperCase()}`,
+      })),
+      new Map([
+        ['Bangkok', 'top-left'],
+        ['Hanoi', 'bottom'],
+        ['Mayotte', 'right'],
+        ['Perth', 'top'],
+      ]),
+    ),
+    '- Terrains internationaux non-european par ville',
+  )
 ```
