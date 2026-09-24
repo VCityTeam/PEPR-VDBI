@@ -20,9 +20,9 @@ using the following format:
 {
   "tasks": [
     {
-      "task": "Task name",
+      "task": "task_id",
       "title": "Task title",
-      "group": "Group name",
+      "group": "group_id",
       "startDate": "YYYY-MM-DD",
       "endDate": "YYYY-MM-DD",
       "description": "Task description"
@@ -31,8 +31,9 @@ using the following format:
   ],
   "colors": [
     {
-      "group": "Group name",
-      "color": "color name"
+      "group": "group_id",
+      "group": "Group title",
+      "color": "(css friendly) color"
     },
     ...
   ]
@@ -60,7 +61,7 @@ const settings = view(
       plotHeight: Inputs.range([15 * tasks.length, 100 * tasks.length], {
         label: 'Plot height',
         step: 1,
-        value: 30 * tasks.length,
+        value: 50 * tasks.length,
       }),
       plotWidth: Inputs.range([100, width], {
         label: 'Plot width',
@@ -70,7 +71,7 @@ const settings = view(
       barHeight: Inputs.range([0, 20], {
         label: 'Adjust bar height',
         step: 1,
-        value: 0,
+        value: 1,
       }),
       textPositionX: Inputs.range([-50, 50], {
         label: 'Label X dodge',
@@ -95,9 +96,13 @@ const settings = view(
         label: 'Gridlines',
         value: 'x',
       }),
-      panelBorder: Inputs.radio(['show', 'hide'], {
-        label: 'Panel border',
-        value: 'hide',
+      marginLeft: Inputs.range([0, 100], {
+        label: 'Left Margin',
+        value: 20,
+      }),
+      marginRight: Inputs.range([0, 100], {
+        label: 'Right Margin',
+        value: 20,
       }),
     },
     { template: formTemplate() },
@@ -191,6 +196,11 @@ const add_group = view(Inputs.button('Add group', { reduce: update_groups }))
 ```js
 const invalidator_2 = refresh
 
+const getGroupTitle = (d) => {
+  const color = colors.find((c) => c.group === d.group)
+  return color.title ? color.title : color.group
+}
+
 tasks.forEach((d) => {
   d.midpoint = new Date(
     parser(d.startDate).getTime() +
@@ -198,12 +208,8 @@ tasks.forEach((d) => {
   )
 })
 
-const domainByDate = tasks
-  .sort((a, b) => d3.ascending(a.startDate, b.startDate))
-  .map((d) => d.task)
-
 const domainByGroup = d3
-  .groups(tasks, (d) => d.group)
+  .groups(tasks, (d) => getGroupTitle(d))
   .sort((a, b) => d3.ascending(a.startDate, b.startDate))
   .map((d) => d[0])
 
@@ -214,7 +220,9 @@ const global_midpoint = new Date(
   minDate.getTime() + (maxDate.getTime() - minDate.getTime()) / 2,
 )
 
-const colorMap = new Map(colors.map((obj) => [obj.group, obj.color]))
+const colorMap = new Map(
+  colors.map((obj) => [obj.title ? obj.title : obj.group, obj.color]),
+)
 
 const color_list = domainByGroup.map((d) => colorMap.get(d))
 
@@ -226,8 +234,36 @@ const titleFormat = (d) =>
 ```js
 const gantt = (tasks, settings) =>
   Plot.plot({
+    height: settings.plotHeight,
+    width: settings.plotWidth,
+    marginLeft: settings.marginLeft,
+    marginRight: settings.marginRight,
+    x: {
+      axis: 'both',
+      grid:
+        (settings.gridlines == 'x') | (settings.gridlines == 'both')
+          ? true
+          : null,
+    },
+    y: {
+      domain: tasks
+        .sort((a, b) => d3.ascending(a.startDate, b.startDate))
+        .map((d) => d.task),
+      label: null,
+      tickFormat: null,
+      tickSize: null,
+      grid:
+        (settings.gridlines == 'y') | (settings.gridlines == 'both')
+          ? true
+          : null,
+    },
+    color: {
+      domain: domainByGroup,
+      range: color_list,
+      unknown: 'gray',
+      legend: true,
+    },
     marks: [
-      Plot.frame({ stroke: settings.panelBorder == 'show' ? '#ccc' : null }),
       Plot.barX(tasks, {
         y: 'task',
         x1: (d) => parser(d.startDate),
@@ -235,7 +271,7 @@ const gantt = (tasks, settings) =>
           d.startDate === d.endDate
             ? parser(d.endDate).setDate(parser(d.endDate).getDate() + 1)
             : parser(d.endDate),
-        fill: 'group',
+        fill: (d) => getGroupTitle(d),
         rx: settings.barRoundness,
         insetTop: settings.barHeight,
         insetBottom: settings.barHeight,
@@ -280,31 +316,6 @@ const gantt = (tasks, settings) =>
         }),
       ),
     ],
-    height: settings.plotHeight,
-    width: settings.plotWidth,
-    x: {
-      axis: 'both',
-      grid:
-        (settings.gridlines == 'x') | (settings.gridlines == 'both')
-          ? true
-          : null,
-    },
-    y: {
-      domain: domainByDate,
-      label: null,
-      tickFormat: null,
-      tickSize: null,
-      grid:
-        (settings.gridlines == 'y') | (settings.gridlines == 'both')
-          ? true
-          : null,
-    },
-    color: {
-      domain: domainByGroup,
-      range: color_list,
-      unknown: 'gray',
-      legend: true,
-    },
   })
 ```
 
