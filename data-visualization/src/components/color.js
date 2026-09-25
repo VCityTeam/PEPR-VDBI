@@ -3,7 +3,11 @@ import { cnu_category_section_map, getGroupFromCNU } from './cnu.js'
 
 export const vdbi_color_scale_diverging = d3
   .scaleDiverging()
-  .range(['var(--theme-foreground-focus-alt)', 'white', 'var(--theme-foreground-focus)'])
+  .range([
+    'var(--theme-foreground-focus)',
+    'white',
+    'var(--theme-foreground-focus-alt)',
+  ])
   .unknown('grey')
 
 export const vdbi_orange_analogic_color_scheme = [
@@ -228,12 +232,12 @@ export const erc_color_scale = d3
   .scaleOrdinal(erc_category_colors.keys(), erc_category_colors.values())
   .unknown('grey')
 
-  export const erc_color_scale_alt = d3
-    .scaleOrdinal(
-      erc_category_colors_alt.keys(),
-      erc_category_colors_alt.values(),
-    )
-    .unknown('grey')
+export const erc_color_scale_alt = d3
+  .scaleOrdinal(
+    erc_category_colors_alt.keys(),
+    erc_category_colors_alt.values(),
+  )
+  .unknown('grey')
 
 /**
  * Find the ERC category matching the first 2 characters of an ERC
