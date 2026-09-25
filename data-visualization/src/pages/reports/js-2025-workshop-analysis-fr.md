@@ -139,7 +139,7 @@ stateDiagram-v2
   audio     : Son de l'atelier
   corpus    : Corpus Cortext
   entities  : Entités nommées
-  %sim       : Term/Entity similarity
+  %% sim       : Term/Entity similarity
 
   [*] --> video
   [*] --> audio
@@ -152,10 +152,10 @@ stateDiagram-v2
     fork2 --> entities    : Reconnaissance d'entités nommées
     fork2 --> Multiterms  : Extraction de multitermes
 
-  %state join <<join>>
-  %  Multiterms --> join
-  %  entities --> join
-  %  join --> sim : W2VExplorer
+  %% state join <<join>>
+  %%   Multiterms --> join
+  %%   entities --> join
+  %%   join --> sim : W2VExplorer
 
   state join2 <<join>>
     entities --> join2
