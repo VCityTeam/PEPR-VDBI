@@ -92,46 +92,17 @@ stateDiagram-v2
 
 ```mermaid
 ---
-title: Veille data integration sequence
 config:
-  theme: default
+  theme: redux-color
+  layout: elk
+title: Flux d'intégration des données de Veille
 ---
-sequenceDiagram
-
-  %% call->>PDFs: Store responses
-  %% PDFs->>sheets: Data extraction
-  %% sheets->>app: Data import
-  %% app->>app: Data cleaning
-  %% app->>open: API call
-  %% open->>app: Data fusion
-  %% app->>sheets: Data update
-
-  %% participant call as Calls for project
-  %% participant app as Observable App
-  %% participant open@{ "type": "database"} as Open Data Sources
-
-  %% box Nextcloud Document Corpus
-  %%   participant PDFs@{ "type": "collections"}
-  %%   participant sheets@{ "type": "collections"} as Spreadsheets
-  %% end
-
-  call->>PDFs: Store responses
-  PDFs->>sh: Data extraction
-  sh->>gr: Data import
-  gr->>gr: Data cleaning
-  gr->>open: API call
-  open->>gr: Data fusion
-  app->>gr: API call
-  gr->>app: Data import
-  app->>app: (Visualisation-specific) Data treatment
-
-  participant call as Calls for project
-  participant app as Observable App
-  participant open as Open Data Sources
-  participant gr as Grist
-
-  box Nextcloud Document Corpus
-    participant PDFs
-    participant sh as Spreadsheets
-  end
+flowchart LR
+  calls["Appels à projets"] -->|Importation de données| grist[("Grist")]
+  grist -->|Nettoyage des données| grist
+  grist -->|Appel d'API| open[("Sources de données ouvertes")]
+  open -->|Fusion de données| grist
+  apps@{ shape: curv-trap, label: "Applications d'analyse/visualisation de données" } -->|Appel d'API| grist
+  grist -->|Importation de données| apps
+  apps -->|Traitement des données spécifique à la visualisation| apps
 ```
