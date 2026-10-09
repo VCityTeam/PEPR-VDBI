@@ -2,15 +2,15 @@
 # Batch runner for query_api.js: queries the given API once per row of a CSV
 # file and prints the combined results as a single JSON array.
 #
-# Usage: batch_query_api.sh <api> <csv-file>
-#   api       api: geocoding | siret, forwarded as-is to query_api.js
-#   csv-file  path to a CSV file with a header row; the first column of each
-#             data row is used as the query string; one query per row
+
 
 set -euo pipefail
 
 if [ "$#" -ne 2 ]; then
   echo "Usage: batch_query_api.sh <api> <csv-file>" >&2
+  echo "  api       (geocoding | siret) forwarded as-is to query_api.js" >&2
+  echo "  csv-file  path to a CSV file with a header row; the first column of each" >&2
+  echo "            data row is used as the query string; one query per row" >&2
   exit 1
 fi
 
