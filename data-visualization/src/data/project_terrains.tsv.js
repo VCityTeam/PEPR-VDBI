@@ -22,11 +22,6 @@ from Terrains
 join Lieux on Terrains.TERRAIN = Lieux.id
 join Projets on Terrains.PROJET = Projets.id
 where Projets.FINANCE
-  and (
-    Projets.TYPE = 'AAP1' or
-    Projets.TYPE = 'PITT - Interdisciplinaire' or
-    Projets.TYPE = 'PITT - Trio de Thèses'
-  )
 `
 
 const data = []

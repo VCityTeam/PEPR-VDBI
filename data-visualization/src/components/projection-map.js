@@ -130,7 +130,7 @@ export const italy_projection = {
 
 export const default_projection_style = {
   stroke: 'white',
-  fill: 'var(--theme-foreground-focus-alt)',
+  fill: 'var(--theme-foreground-focus)',
   strokeWidth: 1.5,
   strokeOpacity: 0.7,
   fillOpacity: 0.4,
@@ -150,24 +150,24 @@ export const default_mainland_france_marks = [
 
 export const mainland_france_choropleth_marks = [
   geo(mainland_france_departements_geojson, {
-    stroke: 'var(--theme-foreground-focus-alt)',
+    stroke: 'var(--theme-foreground-focus)',
     strokeWidth: 0.1,
   }),
   geo(mainland_france_regions_geojson, {
-    stroke: 'var(--theme-foreground-focus-alt)',
+    stroke: 'var(--theme-foreground-focus)',
   }),
 ]
 
 export const idf_choropleth_marks = [
   geo(idf_departements_geojson, {
-    stroke: 'var(--theme-foreground-focus-alt)',
+    stroke: 'var(--theme-foreground-focus)',
     // strokeWidth: 0.1,
   }),
 ]
 
 export const italy_choropleth_marks = [
   geo(italy_regions_geojson, {
-    stroke: 'var(--theme-foreground-focus-alt)',
+    stroke: 'var(--theme-foreground-focus)',
     // strokeWidth: 0.1,
   }),
 ]
@@ -180,6 +180,26 @@ export const italy_choropleth_marks = [
  * @param {object} data - input dataset, by default expects a grouped d3 array. See:
  * - https://d3js.org/d3-array/group#groups
  * - https://d3js.org/d3-array/group#rollups
+ * @param {Object} [options={}] - map configuration
+ * @param {number} [options.width=800] - chart width
+ * @param {number} [options.height=800] - chart height; depending on the
+ *   projection this may not be the final size
+ * @param {Function} [options.keyMap] - accessor for a datum's entity label
+ * @param {Function} [options.valueMap] - accessor for a datum's count, used as the dot radius
+ * @param {Function} [options.lonMap] - accessor for a datum's longitude
+ * @param {Function} [options.latMap] - accessor for a datum's latitude
+ * @param {Array} [options.borderList=[]] - geo-compatible border features to draw beneath the data
+ * @param {string[]} [options.borderListStrokes] - one stroke color per entry in `borderList`
+ * @param {number[]} [options.borderListStrokeOpacity] - one stroke opacity per entry in `borderList`
+ * @param {string} [options.projectionType='equal-earth'] - Plot projection name
+ * @param {Object} [options.projectionDomain] - GeoJSON object the projection is fitted to; defaults to a circle over France
+ * @param {string} [options.stroke='#f43f5e'] - dot stroke color
+ * @param {string} [options.fill='#f43f5e'] - dot fill color
+ * @param {number} [options.fillOpacity=0.5] - dot fill opacity
+ * @param {string} [options.entity_label='City'] - tip label for the entity channel
+ * @param {Object} [options.channels] - Plot channel definitions for the dot mark's tip
+ * @param {Object} [options.tip] - Plot tip options
+ * @param {Array} [options.marks] - marks to render; replaces the default graticule/sphere/dot marks
  * @returns {d3.node} - SVG node containing the map
  */
 export function projectionMap(
@@ -287,6 +307,7 @@ export function projectionMap(
       domain: projectionDomain,
     },
     marks: marks,
+    ...options,
   })
 }
 
@@ -309,7 +330,7 @@ export function projectionMap(
 //             x: "longitude",
 //             y: "latitude",
 //             // stroke: 'var(--theme-foreground-focus)',
-//             fill: 'var(--theme-foreground-focus-alt)',
+//             fill: 'var(--theme-foreground-focus)',
 //             // binWidth: 15,
 //           }
 //         )
@@ -324,8 +345,12 @@ export function projectionMap(
  * Default Observable Plot color-scale config (Blues scheme, legend, margins)
  * for choropleth maps
  *
- * @param {string} [label='N° de partenaires et parties prenantes estimé'] - the color legend label
- * @returns {Object} a Plot `color` scale configuration object
+ * @param {Object} [config] - color scale overrides merged over the defaults;
+ *   defaults to `{label: 'N° de partenaires et parties prenantes'}`
+ * @param {boolean} [flatten_choropleth=false] - clamp the color domain to
+ *   `[1, 10]` so that a few high-count departments stop flattening the rest of
+ *   the scale; otherwise the domain is inferred from the data
+ * @returns {Object} an object wrapping a Plot `color` scale configuration
  */
 export const choropleth_color_config = (
   config = {
@@ -351,12 +376,12 @@ export const choropleth_color_config = (
  * Build a choropleth Plot.plot for given geojson features and a fill
  * accessor
  *
- * @param {number} width - chart width
- * @param {number} height - chart height
- * @param {Function|string} opacity - accessor or field name for the opacity channel
- * @param {Object} projection - a d3/Plot geo projection specification
+ * @param {Function|string} opacity - accessor or field name for the fill opacity
+ *   channel, which carries the mapped value
  * @param {Object} features - a GeoJSON FeatureCollection to render
- * @param {string} caption - color legend label/caption
+ * @param {Array} [marks=[]] - additional marks drawn over the geo mark
+ * @param {Object} [options={}] - Plot.plot options merged over the defaults
+ *   (`width`, `height`, `caption`, and e.g. `projection`)
  * @returns {SVGElement} the rendered choropleth map
  */
 export const choropleth = (opacity, features, marks = [], options = {}) =>
@@ -375,7 +400,7 @@ export const choropleth = (opacity, features, marks = [], options = {}) =>
           Value: opacity,
         },
         tip: true,
-        fill: 'var(--theme-foreground-focus-alt)',
+        fill: 'var(--theme-foreground-focus)',
         fillOpacity: opacity,
         strokeOpacity: 0,
       }),
@@ -386,9 +411,9 @@ export const choropleth = (opacity, features, marks = [], options = {}) =>
 /**
  * Choropleth wrapper specialized for mainland France departments
  *
- * @param {number} width - chart width
- * @param {number} height - chart height
- * @param {Function|string} opacity - accessor or field name for the opacity channel
+ * @param {Function|string} opacity - accessor or field name for the fill opacity channel
+ * @param {Array} [marks] - additional marks drawn over the department borders
+ * @param {Object} [options={}] - Plot.plot options merged over the defaults
  * @returns {SVGElement} the rendered choropleth map
  */
 export const choroplethFrance = (opacity, marks, options = {}) =>
@@ -405,8 +430,9 @@ export const choroplethFrance = (opacity, marks, options = {}) =>
 /**
  * Choropleth wrapper specialized for Île-de-France departments
  *
- * @param {number} width - chart width (used for both width and height)
- * @param {Function|string} opacity - accessor or field name for the opacity channel
+ * @param {Function|string} opacity - accessor or field name for the fill opacity channel
+ * @param {Array} [marks] - additional marks drawn over the department borders
+ * @param {Object} [options={}] - Plot.plot options merged over the defaults
  * @returns {SVGElement} the rendered choropleth map
  */
 export const choroplethIdf = (opacity, marks, options = {}) =>
@@ -423,8 +449,9 @@ export const choroplethIdf = (opacity, marks, options = {}) =>
 /**
  * Choropleth wrapper specialized for Italy regions
  *
- * @param {number} width - chart width (used for both width and height)
- * @param {Function|string} opacity - accessor or field name for the opacity channel
+ * @param {Function|string} opacity - accessor or field name for the fill opacity channel
+ * @param {Array} [marks] - additional marks drawn over the region borders
+ * @param {Object} [options={}] - Plot.plot options merged over the defaults
  * @returns {SVGElement} the rendered choropleth map
  */
 export const choroplethItaly = (opacity, marks, options = {}) =>
