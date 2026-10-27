@@ -52,9 +52,9 @@ svg {
 form[class*='-toggle'] input[type='checkbox'] {
   appearance: none;
   position: relative;
-  width: 2.4em;
-  height: 1.3em;
-  border-radius: 1em;
+  width: 2.4rem;
+  height: 1.3rem;
+  border-radius: 1rem;
   background: var(--theme-foreground-faintest);
   outline: none;
   cursor: pointer;
@@ -64,21 +64,21 @@ form[class*='-toggle'] input[type='checkbox'] {
 form[class*='-toggle'] input[type='checkbox']::after {
   content: '';
   position: absolute;
-  top: 0.15em;
-  left: 0.15em;
-  width: 1em;
-  height: 1em;
+  top: 0.15rem;
+  left: 0.15rem;
+  width: 1rem;
+  height: 1rem;
   border-radius: 50%;
   background: var(--theme-background);
   transition: left 0.3s ease-in-out;
 }
 
 form[class*='-toggle'] input[type='checkbox']:checked {
-  background: var(--theme-foreground-focus-alt);
+  background: var(--theme-foreground-focus);
 }
 
 form[class*='-toggle'] input[type='checkbox']:checked::after {
-  left: 1.25em;
+  left: 1.25rem;
 }
 
 /* Uncomment this if the observable framework ever supports local font hosting */

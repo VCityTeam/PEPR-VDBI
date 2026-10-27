@@ -19,9 +19,14 @@ import * as geo from './aap-cartography.js'
 import * as projections from '/components/projection-map.js'
 ```
 
+<div class="warning" label="Data visualization notice">
+  Data visualizations are unverified and errors may exist.
+  Consider these data visualizations as estimations and not a "ground truth".
+</div>
+
 <!-- DATA IMPORT -->
 
-```sql id=projects_by_partner
+```sql id=projects_by_partner display
 SELECT
   projects_by_partner.*,
   postal_code,
@@ -40,17 +45,16 @@ from projects_by_partner
 order by project
 ```
 
-<div class="warning" label="Data visualization notice">
-  Data visualizations are unverified and errors may exist.
-  Consider these data visualizations as estimations and not a "ground truth".
-</div>
-
 <div class="card">
 
 ```js
-const project_list = [...projects].map((d) => d.project).sort()
+const project_list = [...projects, { project: 'CO SIVDBI' }]
+  .map((d) => d.project)
+  .sort()
 
-const project_types = new Set([...projects].map((d) => d.project_type))
+const project_types = new Set(
+  [...projects, { project_type: 'CO' }].map((d) => d.project_type),
+)
 
 const partner_types = new Set([...projects_by_partner].map((d) => d.type))
 
@@ -69,7 +73,7 @@ const settings = view(
         label: 'Filter by project',
         value: 'All',
       }),
-      show_tips: Inputs.toggle({ label: 'Show tips', value: true }),
+      show_tips: Inputs.toggle({ label: 'Show tips', value: false }),
       tip_cuttoff: Inputs.range([0, 100], {
         label: 'Min partner count to show tip',
         step: 1,
