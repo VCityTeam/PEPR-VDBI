@@ -58,7 +58,7 @@ display(Inputs.table(csv_data, { layout: 'auto' }))
   <!-- $ -->
   ${selected_size}
   <!-- $ -->
-  ${selected_margins}
+  ${selected_margin}
   <!-- $ -->
 </div>
 <div id="chord_diagram_container" class="card">
@@ -75,9 +75,7 @@ const chord = resize((width) =>
     width: selected_size_value.width || width,
     height: selected_size_value.height || selected_size_value.width || width,
     // an emptied margin field is NaN
-    ...Object.fromEntries(
-      Object.entries(selected_margins_value).map(([k, v]) => [k, v || 0]),
-    ),
+    margin: selected_margin_value || 0,
     showGroupLabels: selected_group_labels_value,
     groupLabelMaxLength: selected_group_label_length_value,
     ...format_config,
@@ -240,26 +238,16 @@ const selected_size_value = Generators.input(selected_size)
 ```
 
 ```js
-const marginInput = (side) =>
-  Inputs.number([0, Infinity], {
-    label: `${side} margin (px)`,
-    step: 1,
-    value: 100,
-  })
-
-const selected_margins = Inputs.form(
-  {
-    marginTop: marginInput('Top'),
-    marginRight: marginInput('Right'),
-    marginBottom: marginInput('Bottom'),
-    marginLeft: marginInput('Left'),
-  },
-  { template: formTemplate() },
-)
+// applied to each side of the SVG
+const selected_margin = Inputs.number([0, Infinity], {
+  label: 'Margin (px)',
+  step: 1,
+  value: 100,
+})
 ```
 
 ```js
-const selected_margins_value = Generators.input(selected_margins)
+const selected_margin_value = Generators.input(selected_margin)
 ```
 
 ```js
