@@ -105,8 +105,8 @@ const settings_form = Inputs.form(
     }),
     measure: Inputs.select(
       new Map([
-        ['Share of all distinct values', 'superset'],
         ['Number of shared values', 'count'],
+        ['% share of all distinct values', 'superset'],
         ['Jaccard index (shared / either)', 'jaccard'],
       ]),
       { label: 'Ribbon size' },
@@ -115,6 +115,14 @@ const settings_form = Inputs.form(
       label: 'Show self-intersections',
       value: true,
     }),
+    sort: Inputs.select(
+      new Map([
+        ['Largest first', ([, a], [, b]) => d3.descending(a.size, b.size)],
+        ['Alphabetical', ([a], [b]) => a.localeCompare(b)],
+        ['Order in file', null],
+      ]),
+      { label: 'Group order' },
+    ),
   },
   { template: formTemplate() },
 )
@@ -193,6 +201,7 @@ const chord_data = columnsToIntersectionMatrix(
     measure: settings.measure,
     diagonal: settings.diagonal,
     limit: selected_group_limit_value,
+    sort: settings.sort,
   },
 )
 console.debug('chord_data', chord_data)
