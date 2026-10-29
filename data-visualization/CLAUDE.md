@@ -15,7 +15,7 @@ Observable Plot charts against data produced by build-time data loaders.
 npm i && uv sync && source .venv/bin/activate   # install JS + Python deps (first time / after pulling)
 npm run dev                                      # start local preview server at http://localhost:3000
 npm run build                                    # build static site to ./dist
-npm run build-jsdoc                              # generate JS docs for src/components into jsdoc/
+npm run jsdoc                                    # generate JS docs for src/components into jsdoc/
 npm run refresh                                   # clear only the data loader cache (src/.observablehq/cache/data)
 npm run clean                                    # nuke dist, .venv, node_modules, and the loader cache
 npx eslint .                                     # lint JS (eslint.config.js: recommended rules + browser globals)
@@ -73,7 +73,7 @@ projections + choropleth marks for France/Italy/IDF region presets), `sankey.js`
 `financing.js`, `color.js` (shared color scales, e.g. `vdbi_color_scale_diverging`, `project_color_scale`), `legend.js`,
 `geocoding.js`, `orcid.js`, `timeline.js`. `utilities.js` holds generic data-shaping/export helpers
 (`countEntities`, `sparkbar`, `downloadTableButton`, `downloadSVGButton`, `writeToFile`, etc.) reused across many
-pages. Functions use JSDoc comments; `npm run build-jsdoc` renders these into `jsdoc/`.
+pages. Functions use JSDoc comments; `npm run jsdoc` renders these into `jsdoc/`.
 
 `force-layout-simulation-worker.js` is a Web Worker used to offload force-simulation layout computation from
 graph visualizations.
@@ -90,3 +90,55 @@ needs a matching change.
 - Use ES modules (import/export) syntax, not CommonJS (require)
 - Use Prettier for code formatting (see .prettierrc)
 - Use ESLint for code linting (see .eslintrc.js)
+
+### Signatures for Plot wrapper functions
+
+Functions that wrap an Observable Plot visualisation take a fixed 2- or 3-parameter signature rather than
+listing every tunable in the signature:
+
+```js
+chart = (data, options = {}, accessors = {}) => Plot.plot({ /* defaults */, ...options })
+```
+
+1. `data` — the rows to plot.
+2. `options` — Plot.plot options, **spread last** inside `Plot.plot({...})` so a caller can override any
+   default (`width`, `height`, margins, scales) without the wrapper having to declare it.
+3. `accessors` — the destructured channel accessors (`x_accessor`, `fill_accessor`, `sort`, …) that the
+   wrapper reads when building its marks. Omit this parameter when a chart has no accessors to override.
+
+Give every object parameter a `= {}` default, so the wrapper is callable with `data` alone.
+
+This keeps wrappers overloadable: a preset wraps another wrapper by overriding only what it changes and
+spreading the caller's arguments after its own defaults, so the caller still wins:
+
+```js
+chart_by_erc = (data, options = {}, accessors = {}) =>
+  chart(data, { color: erc_color_config, ...options }, { fill_accessor: ercOf, ...accessors })
+```
+
+Two things to watch:
+
+- Keep accessors in the `accessors` parameter, not in `options`. Plot silently ignores unknown keys in
+  `Plot.plot({...})`, so an accessor passed in `options` is dropped without any error.
+- A `color: {type: 'categorical'}` scale with no `domain`/`range` is an *ordinal* scale: Plot treats whatever
+  the fill channel returns as a category label and assigns its own scheme colors. To get project colors, have
+  the fill accessor return the category **name** and pin the scale's `domain`/`range` to the intended palette
+  (see `erc_color_config` in `src/pages/researchers/aap-disciplines.js`); returning a color string from the
+  accessor does not make Plot use it.
+
+### Structure of dashboard pages (`.md`)
+
+Observable Framework pages follow a consistent top-to-bottom order so they stay readable and the syntax
+highlighting holds up:
+
+1. **Top of the document**: the `sql:` frontmatter, all `import`s, and every data load / query. Data is
+   loaded once, up front, not next to the chart that happens to need it.
+2. Datasets loaded in JS code blocks should be loaded in their own block - This avoids extraneous dataloader
+   calls on code updates or data cache changes.
+3. **Then, per section or subsection**: the HTML structure comes *first*, and the JS code blocks it
+   references come *after* it. The only thing an HTML block may reference ahead of its definition is data,
+   which the top of the page has already loaded.
+4. Keep the JS inside the HTML structure minimal — ideally a single call such as
+   `${resize((width) => charts.someChart(data, { width }))}`. Push real logic into a JS block below the
+   section, or into a sibling `.js` module (e.g. `aap-overview.md` + `aap-overview.js`). Interpolating long
+   expressions into markup hurts readability and breaks editor syntax highlighting.

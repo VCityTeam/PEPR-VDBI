@@ -58,6 +58,8 @@ export function countEntities(data, mapFunction) {
  * @param {Array} target_data - table to join onto if you will. Count data will be materialized in this dataset
  * @param {string} source_key - like a foreign key from the source dataset
  * @param {string} target_key - like a primary key from the target dataset
+ * @returns {void} mutates each row of `target_data` in place, adding
+ *  `project_owner_count`, `project_partner_count` and `project_total_count`
  */
 export function addEntityProjectOwnerAndPartnerCounts(
   source_data,
@@ -347,10 +349,11 @@ export function formatIfString(d) {
  * @param {object[]} data - the data to be copied, rows should contain keys
  *  corresponding to the columns of the table
  * @param {object} options - button options
- * @param {Array|null} options.columns - a list of columns to be copied, if null all columns
+ * @param {Object} [options={}]
+ * @param {Array|null} [options.columns=null] - a list of columns to be copied, if null all columns
  *  will be copied
- * @param {string} options.label - button label
- * @param {string} options.delimeter -
+ * @param {string} [options.label='Copy to clipboard'] - button label
+ * @param {string} [options.delimeter=','] - the column separator written between values
  * @returns {button} - a button element that copies the data to the clipboard
  */
 export function copyTableToClipboardButton(
@@ -408,9 +411,13 @@ export function copySVGToClipboardButton(
  *
  * @param {Function} callback - a callback function to get the data to be downloaded,
  *   rows should contain keys corresponding to the columns of the table
- * @param {string} label - button label
- * @param {string} filename - downloaded file name
- * @returns {button} - a button element that copies the element html to the clipboard
+ * @param {Object} [options={}]
+ * @param {string} [options.label='Download (.tsv)'] - button label
+ * @param {string} [options.filename='download.tsv'] - downloaded file name
+ * @param {Array|null} [options.columns=null] - the columns to write, in order;
+ *   if null, the keys of the first row are used
+ * @param {string} [options.delimeter='\t'] - the column separator written between values
+ * @returns {button} - a button element that downloads the data when clicked
  */
 export function downloadTableButton(
   callback,
@@ -448,11 +455,11 @@ export function downloadTableButton(
 /**
  * A button for downloading a table as a csv.
  *
- * @param {Function} callback - a callback function to get the data to be downloaded,
- *   rows should contain keys corresponding to the columns of the table
- * @param {string} label - button label
- * @param {string} filename - downloaded file name
- * @returns {button} - a button element that copies the element html to the clipboard
+ * @param {Function} callback - a callback function to get the data to be downloaded
+ * @param {Object} [options={}]
+ * @param {string} [options.label='Download (.json)'] - button label
+ * @param {string} [options.filename='download.json'] - downloaded file name
+ * @returns {button} - a button element that downloads the data as JSON when clicked
  */
 export function downloadJSONButton(
   callback,
@@ -484,7 +491,8 @@ export function downloadJSONButton(
  * @param {string} selector - a d3 selector string for returning the svg elements to be downloaded.
  * @param {string} [label='Download (.svg)'] - button label
  * @param {string} [filename='download.svg'] - downloaded file name
- * @returns {button} - a button element that copies the element html to the clipboard
+ * @returns {button} - a button element that downloads the matched SVG elements,
+ *   concatenated into a single stacked SVG document, when clicked
  */
 export function downloadSVGButton(
   selector,
@@ -575,16 +583,16 @@ export function downloadPNGButton(selector, label = 'Download (.png)') {
 }
 
 /**
- * Generate a button to write a blob to a file
- * adapted from https://flexiple.com/javascript/javascript-write-to-file-detailed.
+ * Write content to a file and prompt the browser to download it, by building a
+ * Blob and clicking a temporary anchor element.
+ * Adapted from https://flexiple.com/javascript/javascript-write-to-file-detailed.
  *
  * Used Github Copilot to improve BOM handling for UTF-8 text files.
  *
  * @param {any} content - content to write
  * @param {string} [filename='download.txt'] - downloaded file name
  * @param {string} [content_type='text/plain;charset=utf-8'] - file content mime type
- *
- * @returns {button}
+ * @returns {void} triggers the download as a side effect
  */
 export function writeToFile(
   content,
@@ -619,6 +627,16 @@ export function writeToFile(
   window.URL.revokeObjectURL(url)
 }
 
+/**
+ * Build an Observable Inputs `form` template that lays its inputs out in
+ * newspaper columns, bolding each label and appending a colon to it.
+ *
+ * @param {number} [columns=2] - the number of columns to flow the inputs into
+ * @param {string} [id] - the id given to the wrapper div, used to scope the
+ *   injected styles; defaults to a random `form_*` id
+ * @returns {Function} a template function that, given Observable Inputs'
+ *   `inputs` object, returns the wrapper element
+ */
 export const formTemplate =
   (columns = 2, id = `form_${Math.random().toString(36).slice(2)}`) =>
   (inputs) =>

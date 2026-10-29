@@ -127,7 +127,8 @@ export class DonutChart {
    * for major slices, a color-legend tooltip listing all minor slices when
    * hovering any one of them).
    *
-   * @param {d3.Selection} svg
+   * @param {d3.Selection} svg - the chart's root SVG selection
+   * @returns {void}
    */
   renderArcs(svg) {
     const tooltip = createTooltip()
@@ -177,9 +178,11 @@ export class DonutChart {
 
   /**
    * Hook for subclasses to draw additional chart elements (a legend, labels,
-   * etc.) after the arcs have been rendered. No-op in the base class.
+   * etc.) after the arcs have been rendered. Overrides receive the chart's
+   * root `d3.Selection` from `render()`; the base implementation is a no-op
+   * and so declares no parameter.
    *
-   * @param {d3.Selection} svg
+   * @returns {void}
    */
   renderExtensions() {
     // no-op, overridden by extensions
@@ -266,6 +269,13 @@ export class DonutChartWithLegend extends DonutChart {
     this.legendLineSeparation = legendLineSeparation
   }
 
+  /**
+   * Draw the circle legend beside the donut, shifting the donut's own groups
+   * left to make room for it.
+   *
+   * @param {d3.Selection} svg - the chart's root SVG selection
+   * @returns {void}
+   */
   renderExtensions(svg) {
     super.renderExtensions(svg)
 
@@ -393,7 +403,7 @@ export class DonutChartWithLabels extends DonutChart {
    * pushed left/right depending on which half of the donut the slice falls in.
    *
    * @param {object} d - a datum produced by d3.pie()
-   * @returns {[number, number]}
+   * @returns {number[]} the `[x, y]` point, in SVG user units
    */
   labelAnchor(d) {
     const labelRadius = this.outerRadiusFor(d) * this.labelOuterRadiusRatio
@@ -411,7 +421,7 @@ export class DonutChartWithLabels extends DonutChart {
    * pushed left/right depending on which half of the donut the slice falls in.
    *
    * @param {object} d - a datum produced by d3.pie()
-   * @returns {[number, number]}
+   * @returns {number[]} the `[x, y]` point, in SVG user units
    */
   labelTextAnchor(d) {
     const labelRadius = this.outerRadiusFor(d) * this.labelOuterRadiusRatio
@@ -424,6 +434,14 @@ export class DonutChartWithLabels extends DonutChart {
     return pos
   }
 
+  /**
+   * Draw a leader line from each slice out to its label, then the label text,
+   * anchored left or right depending on which half of the donut the slice
+   * falls in.
+   *
+   * @param {d3.Selection} svg - the chart's root SVG selection
+   * @returns {void}
+   */
   renderExtensions(svg) {
     super.renderExtensions(svg)
 

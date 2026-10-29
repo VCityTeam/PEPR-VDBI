@@ -4,13 +4,16 @@ import { default_log_options, handleFetchJson } from './data_utilities.js'
 const logger = pino(default_log_options('rnsr api utility'))
 
 /**
- * Queries the API and formats the response. If the query fails or yields no results,
- * returns a default response matching the CSV header structure.
+ * Look up a research structure by its RNSR number in the French higher
+ * education and research open data catalogue, and merge the top result into a
+ * record tagged with the query and its source. If the query is empty, the
+ * request fails, or no structure matches, only the `{source_label, source}`
+ * tag is returned so that every row keeps the same CSV header structure.
  *
- * @param {string} query - The search query to be sent.
- * @param {string} source - The source of the data.
- * @param {boolean} [useSiege=true] - Prefer siege results over matching etablissements data.
- * @returns {Promise<object[]|null>} A promise resolving to an object.
+ * @param {string} query - The RNSR (numero_national_de_structure) to look up.
+ * @param {string} source - Label identifying where the query came from, copied
+ *   onto the result for traceability.
+ * @returns {Promise<object>} A promise resolving to the tagged result record.
  */
 export async function queryAndFormatESR(query, source) {
   const formattedResponse = {

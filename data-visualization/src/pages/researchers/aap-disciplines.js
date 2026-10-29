@@ -29,6 +29,7 @@ import { generateIntersectionMatrix } from '../../components/chord.js'
 import { DonutChartWithLegend } from '../../components/pie-chart.js'
 import { parallelSetToGraph } from '../../components/sankey.js'
 
+/** Ordinal Plot.legend for the CNU group colors, shared by the CNU plots. */
 export const cnu_legend = Plot.legend({
   color: {
     domain: cnu_dark_color_map.keys(),
@@ -36,6 +37,18 @@ export const cnu_legend = Plot.legend({
     type: 'ordinal',
   },
 })
+
+/**
+ * Plot `color` scale configuration pinning a plot's categorical color scale to
+ * the ERC palette, for plots whose fill channel yields an ERC domain name.
+ * Needed because an unconfigured `{type: 'categorical'}` scale assigns its own
+ * scheme colors to whatever the fill channel returns.
+ */
+export const erc_color_config = {
+  domain: erc_color_scale.domain(),
+  range: erc_color_scale.range(),
+  type: 'categorical',
+}
 
 /**
  * Build an ordinal Plot.legend for ERC domain colors
@@ -51,6 +64,13 @@ export const erc_legend = () =>
     },
   })
 
+/**
+ * Build an ordinal Plot.legend for the alternative ERC domain colors, i.e. the
+ * palette keyed on the custom CNU categories used by `cnu_alt_plot_y` rather
+ * than on the standard ERC domains.
+ *
+ * @returns {Element} the rendered legend
+ */
 export const erc_legend_alt = () =>
   Plot.legend({
     color: {
@@ -227,21 +247,18 @@ export const cnu_by_aap_plot = (
   })
 
 /**
- * Vertical (y-axis bar) variant of cnu_plot
+ * Vertical (y-axis bar) variant of cnu_plot: CNU sections along the x axis,
+ * grouped occurrence counts up the y axis.
  *
- * @param {Array} data - count data, rows of `[cnu_label, count]`
- * @param {Object} [options={}]
- * @param {number} [options.width=600] - chart width
- * @param {number} [options.height=800] - chart height
- * @param {number} [options.marginTop=50] - chart top margin
- * @param {number} [options.marginLeft=50] - chart left margin
- * @param {number} [options.marginRight=50] - chart right margin
- * @param {number} [options.marginBottom=100] - chart bottom margin
- * @param {string} [options.sort='y'] - Plot sort specification applied to the x axis
- * @param {Function} [options.x_accessor] - accessor for the bar length (count)
- * @param {Function} [options.y_accessor] - accessor for the CNU label
- * @param {Function} [options.fill_accessor] - accessor for the bar fill color
- * @param {Function} [options.opacity_accessor] - accessor for the bar fill opacity
+ * @param {Array} data - researcher rows, each with a `cnu` section number
+ * @param {Object} [options={}] - Plot.plot options, merged last and so able to
+ *  override any of the defaults (`width: 800`, `height: 600`, `marginTop: 20`,
+ *  `marginLeft: 20`, `marginRight: 180`, `marginBottom: 200`, and the scales)
+ * @param {Object} [accessors={}] - how to read and color each bar
+ * @param {Function} [accessors.x_accessor] - accessor for a row's CNU section label
+ * @param {Function} [accessors.fill_accessor] - accessor for the bar fill color
+ * @param {string} [accessors.sort='y'] - Plot sort specification applied to the x axis
+ * @param {number} [accessors.fontSize=11] - font size of the x axis tick labels
  * @returns {SVGElement} the rendered bar plot
  */
 export const cnu_plot_y = (
@@ -300,6 +317,17 @@ export const cnu_plot_y = (
     ...options,
   })
 
+/**
+ * `cnu_plot_y` preset that colors each bar by the alternative ERC category of
+ * its custom CNU category (see `erc_legend_alt`) instead of by the standard
+ * ERC domain.
+ *
+ * @param {Array} data - researcher rows, each with a `cnu` section number and
+ *  a `cnu_category`
+ * @param {Object} [options={}] - Plot.plot options; see `cnu_plot_y`
+ * @param {Object} [accessors={}] - accessor overrides; see `cnu_plot_y`
+ * @returns {SVGElement} the rendered bar plot
+ */
 export const cnu_alt_plot_y = (
   data,
   options = {},
@@ -314,27 +342,23 @@ export const cnu_alt_plot_y = (
 ) => cnu_plot_y(data, options, { x_accessor, fill_accessor, sort })
 
 /**
- * Vertical variant of cnu_by_aap_plot
+ * Vertical variant of cnu_by_aap_plot: CNU sections along the x axis, counts
+ * up the y axis, stacked by AAP round.
  *
- * @param {Array} data - count data, rows of `[cnu_label, count]`
- * @param {Object} [options={}]
- * @param {number} [options.width=600] - chart width
- * @param {number} [options.height=800] - chart height
- * @param {number} [options.marginTop=50] - chart top margin
- * @param {number} [options.marginLeft=50] - chart left margin
- * @param {number} [options.marginRight=50] - chart right margin
- * @param {number} [options.marginBottom=100] - chart bottom margin
- * @param {string} [options.sort='y'] - Plot sort specification applied to the x axis
- * @param {Function} [options.x_accessor] - accessor for the bar length (count)
- * @param {Function} [options.y_accessor] - accessor for the CNU label
- * @param {Function} [options.fill_accessor] - accessor for the bar fill (AAP round) color
- * @param {Function} [options.opacity_accessor] - accessor for the bar fill opacity
+ * @param {Array} data - count data, rows of `[aap_label, count]` by default
+ * @param {Object} [options={}] - Plot.plot options, merged last and so able to
+ *  override any of the defaults (`width: 800`, `height: 600`, `marginTop: 20`,
+ *  `marginLeft: 20`, `marginRight: 180`, `marginBottom: 200`, and the scales)
+ * @param {Object} [accessors={}] - how to read and color each bar
+ * @param {string} [accessors.sort='y'] - Plot sort specification applied to the x axis
+ * @param {Function} [accessors.x_accessor] - accessor for a row's CNU section label
+ * @param {Function} [accessors.fill_accessor] - accessor for the bar fill (AAP round) color
  * @returns {SVGElement} the rendered bar plot
  */
 export const cnu_by_aap_plot_y = (
   data,
   options = {},
-  { sort = 'y', x_accessor = (d) => d[1], fill_accessor = (d) => d[0] },
+  { sort = 'y', x_accessor = (d) => d[1], fill_accessor = (d) => d[0] } = {},
 ) =>
   Plot.plot({
     width: 800,
@@ -438,7 +462,17 @@ export const custom_cnu_group_donut = (data, width) =>
  * section
  *
  * @param {Array} data - count data, rows of `[cnu_label, count]`
- * @param {Object} [options={}] - same as cnu_plot, with fill_accessor defaulting to an ERC-domain color
+ * @param {Object} [options={}] - same as cnu_plot's options
+ * @param {number} [options.width=600] - chart width
+ * @param {number} [options.marginTop=20] - chart top margin
+ * @param {number} [options.marginLeft=18] - chart left margin
+ * @param {number} [options.marginRight=250] - chart right margin
+ * @param {string} [options.sort='y'] - Plot sort specification applied to the y axis
+ * @param {Function} [options.x_accessor] - accessor for the bar length (count)
+ * @param {Function} [options.y_accessor] - accessor for the CNU label
+ * @param {Function} [options.fill_accessor] - accessor for the bar fill color;
+ *  defaults to the ERC domain color of the row's CNU section
+ * @param {Function} [options.opacity_accessor] - accessor for the bar fill opacity
  * @returns {SVGElement} the rendered bar plot
  */
 export const cnu_plot_by_erc = (
@@ -472,7 +506,17 @@ export const cnu_plot_by_erc = (
  * CNU section
  *
  * @param {Array} data - count data, rows of `[cnu_label, count]`
- * @param {Object} [options={}] - same as cnu_by_aap_plot, with fill_accessor defaulting to an ERC-domain color
+ * @param {Object} [options={}] - same as cnu_by_aap_plot's options
+ * @param {number} [options.width=600] - chart width
+ * @param {number} [options.marginTop=20] - chart top margin
+ * @param {number} [options.marginLeft=18] - chart left margin
+ * @param {number} [options.marginRight=250] - chart right margin
+ * @param {string} [options.sort='y'] - Plot sort specification applied to the y axis
+ * @param {Function} [options.x_accessor] - accessor for the bar length (count)
+ * @param {Function} [options.y_accessor] - accessor for the CNU label
+ * @param {Function} [options.fill_accessor] - accessor for the bar fill color;
+ *  defaults to the ERC domain color of the row's CNU section
+ * @param {Function} [options.opacity_accessor] - accessor for the bar fill opacity
  * @returns {SVGElement} the rendered bar plot
  */
 export const cnu_by_aap_plot_by_erc = (
@@ -502,68 +546,61 @@ export const cnu_by_aap_plot_by_erc = (
   })
 
 /**
- * cnu_plot_y wrapper colored by the ERC domain corresponding to each CNU
- * section
+ * `cnu_plot_y` preset that groups the bars by the ERC domain derived from each
+ * row's CNU section number, rather than by the precomputed `cnu_category_erc`
+ * field that `cnu_plot_y` colors by on its own.
  *
- * @param {Array} data - count data, rows of `[cnu_label, count]`
- * @param {Object} [options={}] - same as cnu_plot_y, with fill_accessor defaulting to an ERC-domain color
+ * The fill accessor yields the ERC domain *name* and the color scale maps it to
+ * the ERC palette, so the bars get `erc_color_scale`'s colors rather than the
+ * scheme colors Plot would assign to an unconfigured categorical scale.
+ *
+ * Only the color scale and the fill are overridden; everything else falls
+ * through to `cnu_plot_y`, so anything passed in `options` or `accessors` wins
+ * over these defaults.
+ *
+ * @param {Array} data - researcher rows, each with a `cnu` section number
+ * @param {Object} [options={}] - Plot.plot options; see `cnu_plot_y`
+ * @param {Object} [accessors={}] - accessor overrides; see `cnu_plot_y`
  * @returns {SVGElement} the rendered bar plot
  */
-export const cnu_plot_y_by_erc = (
-  data,
-  {
-    width = 600,
-    height = 800,
-    marginTop = 20,
-    marginLeft = 20,
-    marginRight = 180,
-    marginBottom = 200,
-    sort = 'y',
-    x_accessor = (d) => d[1],
-    y_accessor = (d) => d[0],
-    fill_accessor = (d) => erc_color_scale(getERCFromCNU(y_accessor(d))),
-    opacity_accessor = () => 1,
-  } = {},
-) =>
-  cnu_plot_y(data, {
-    width: width,
-    height: height,
-    marginTop: marginTop,
-    marginLeft: marginLeft,
-    marginRight: marginRight,
-    marginBottom: marginBottom,
-    sort: sort,
-    x_accessor: x_accessor,
-    y_accessor: y_accessor,
-    fill_accessor: fill_accessor,
-    opacity_accessor: opacity_accessor,
-  })
+export const cnu_plot_y_by_erc = (data, options = {}, accessors = {}) =>
+  cnu_plot_y(
+    data,
+    { color: erc_color_config, ...options },
+    {
+      fill_accessor: (d) => getERCFromCNU(d.cnu),
+      ...accessors,
+    },
+  )
 
 /**
- * cnu_by_aap_plot_y wrapper colored by the ERC domain corresponding to each
- * CNU section
+ * `cnu_by_aap_plot_y` preset that groups the bars by the ERC domain derived
+ * from each row's CNU section number instead of by AAP round, keeping the CNU
+ * sections on the x axis.
  *
- * @param {Array} data - count data, rows of `[cnu_label, count]`
- * @param {Object} [options={}] - same as cnu_by_aap_plot_y, with fill_accessor defaulting to an ERC-domain color
- * @returns {SVGElement} the rendered bar plot
+ * The color scale must be overridden alongside the fill: `cnu_by_aap_plot_y`
+ * pins its color domain to the three AAP labels, against which every ERC
+ * domain would fall through to the scale's unknown color.
+ *
+ * Only the color scale and the two accessors are overridden; everything else
+ * falls through to `cnu_by_aap_plot_y`, so anything passed in `options` or
+ * `accessors` wins over these defaults.
+ *
+ * @param {Array} data - CNU count rows, each with a `cnu` section number
+ * @param {Object} [options={}] - Plot.plot options; see `cnu_by_aap_plot_y`
+ * @param {Object} [accessors={}] - accessor overrides; see `cnu_by_aap_plot_y`
+ * @returns {HTMLElement} a figure wrapping the bar plot and its ERC color
+ *  legend, as `cnu_by_aap_plot_y` renders a legend of its own
  */
-export const cnu_by_aap_plot_y_by_erc = (
-  data,
-  options,
-  sort = 'y',
-  x_accessor = (d) => d[1],
-  y_accessor = (d) => d[0],
-  fill_accessor = (d) => erc_color_scale(getERCFromCNU(y_accessor(d))),
-  opacity_accessor = () => 1,
-) =>
+export const cnu_by_aap_plot_y_by_erc = (data, options = {}, accessors = {}) =>
   cnu_by_aap_plot_y(
     data,
-    options,
-    sort,
-    x_accessor,
-    y_accessor,
-    fill_accessor,
-    opacity_accessor,
+    { color: { ...erc_color_config, legend: true }, ...options },
+    {
+      x_accessor: (d) => cnu_section_label_map.get(Number(d.cnu)),
+      fill_accessor: (d) => getERCFromCNU(d.cnu),
+      ...accessors,
+    },
   )
 
 /**
@@ -1127,8 +1164,25 @@ export const aap_state_color_scale = d3.scaleOrdinal(
   ['lightblue', 'pink', 'lightgreen', 'pink', 'pink', 'pink'],
 )
 
+/**
+ * Color a parallel-set link by the CNU group it starts from, so that each
+ * ribbon keeps the color of its source category across the whole diagram.
+ *
+ * @param {Object} d - a link with a `path` array of node ids
+ * @returns {string} the CNU group's color
+ */
 export const cnu_category_link_color_scale = (d) => cnu_color_map.get(d.path[0])
 
+/**
+ * `sankey_config` preset for the CNU parallel sets, coloring each ribbon by a
+ * CNU section quantized over the graph's section nodes. The four non-section
+ * nodes (the AAP status columns) are subtracted from the node count so that the
+ * color scale spans only the CNU sections.
+ *
+ * @param {Object} data - the parallel-set graph, with `nodes` and `links`
+ * @param {number} width - width of the SVG element
+ * @returns {Object} a `parallelSet` options object
+ */
 export const cnu_sankey_config = (data, width) => ({
   ...sankey_config(data, width),
   linkStroke: (d) => quantized_cnu_color(d.path[0], data.nodes.length - 4),

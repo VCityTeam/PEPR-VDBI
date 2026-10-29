@@ -1,4 +1,9 @@
-// A CLI helper script for querying the identified APIs and formatting the response.
+// A CLI helper script for querying the identified APIs and formatting the
+// response. Intended for checking by hand what an API returns for a given
+// query, rather than being imported by a data loader.
+//
+// Usage: node src/data/utilities/query_api.js <geocoding|siret> <query>
+// Writes the JSON response to stdout; exits 1 on a usage or unknown-API error.
 
 import { queryAndFormatRE } from './siret_api.js'
 import { GeocodingService } from './geocoding.js'

@@ -3,6 +3,8 @@ import { default_log_options, handleFetchJson } from './data_utilities.js'
 
 const logger = pino(default_log_options('siret api utility'))
 
+// Null-filled template guaranteeing every returned record carries the same
+// keys, so failed lookups still line up with the generated CSV's header.
 const defaultResponse = {
   siret: null,
   siren: null,
@@ -22,9 +24,14 @@ const defaultResponse = {
  * result is returned. https://recherche-entreprises.api.gouv.fr/
  *
  * @param {string} query - The search query to be sent.
- * @param {string} source - The source of the data.
- * @param {boolean} [useSiege=true] - Prefer siege results over matching etablissements data.
- * @returns {Promise<object[]>} A promise resolving to an object.
+ * @param {string} source - Label identifying where the query came from, copied
+ *   onto the result for traceability.
+ * @param {boolean} [useSiege=true] - Prefer the company's `siege` (head office)
+ *   data; when false, the first matching etablissement's location is used
+ *   instead where one exists, as it is often more accurate.
+ * @returns {Promise<object>} A promise resolving to a single record with the
+ *   `defaultResponse` keys (all null when nothing matched) plus
+ *   `source_label` and `source`.
  */
 export async function queryAndFormatRE(query, source, useSiege = true) {
   const formattedResponse = {
