@@ -61,11 +61,13 @@ display(Inputs.table(csv_data, { layout: 'auto' }))
   ${selected_margins}
   <!-- $ -->
 </div>
-<div id="chord_diagram_container" class="card">
-  ${chord}
-  <!-- $ -->
-  ${copy_button}
-  <!-- $ -->
+<div class="card">
+  <div>
+    ${chord}
+    <!-- $ -->
+    ${copy_button}
+    <!-- $ -->
+  </div>
 </div>
 
 ```js
@@ -90,6 +92,7 @@ const copy_button = downloadSVGButton(
   '#chord_diagram_svg',
   'Download (.svg)',
   'chord-diagram.svg',
+  true,
 )
 ```
 

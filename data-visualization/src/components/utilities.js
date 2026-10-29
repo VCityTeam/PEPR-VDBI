@@ -491,6 +491,9 @@ export function downloadJSONButton(
  * @param {string} selector - a d3 selector string for returning the svg elements to be downloaded.
  * @param {string} [label='Download (.svg)'] - button label
  * @param {string} [filename='download.svg'] - downloaded file name
+ * @param {boolean} [canva=false] - if true, rescale the exported SVG so that it is
+ *   between 150 and 200 px wide (height scaled proportionally) as required by Canva's
+ *   SVG import, and warn if the file exceeds Canva's 3 MB limit
  * @returns {button} - a button element that downloads the matched SVG elements,
  *   concatenated into a single stacked SVG document, when clicked
  */
@@ -498,6 +501,7 @@ export function downloadSVGButton(
   selector,
   label = 'Download (.svg)',
   filename = 'download.svg',
+  canva = false,
 ) {
   return button(label, {
     value: null,
@@ -508,11 +512,16 @@ export function downloadSVGButton(
       const content = create('svg')
         .attr('xmlns', 'http://www.w3.org/2000/svg')
         .attr('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+        .attr('version', '1.1')
 
       selectAll(selector)
         .nodes()
         .forEach((d) => {
-          content.html(content.html() + d.outerHTML)
+          // stack each svg below the previous ones; x/y are ignored on outermost
+          // svg elements in the page, so overwriting y here is safe
+          const clone = d.cloneNode(true)
+          clone.setAttribute('y', height)
+          content.node().appendChild(clone)
 
           width = Math.max(
             width,
@@ -523,10 +532,17 @@ export function downloadSVGButton(
           )
         })
 
-      content
-        .attr('width', width)
-        .attr('height', height)
-        .attr('viewBox', `-5 0 ${width + 5} ${height}`)
+      content.attr('viewBox', `-5 0 ${width + 5} ${height}`)
+
+      // Canva only accepts SVGs between 150 and 200 px wide; the viewBox keeps the
+      // original coordinate system so the content is scaled rather than cropped
+      if (canva && width > 0) {
+        const canva_width = Math.min(200, Math.max(150, width))
+        height = Math.round((height * canva_width) / width)
+        width = canva_width
+      }
+
+      content.attr('width', width).attr('height', height)
 
       // serialize the svg content
       const serializer = new XMLSerializer()
@@ -534,6 +550,13 @@ export function downloadSVGButton(
 
       //add xml declaration
       source = '<?xml version="1.0" standalone="no"?>\r\n' + source
+
+      const max_canva_size = 3 * 1024 * 1024
+      if (canva && new Blob([source]).size > max_canva_size) {
+        console.warn(
+          `${filename} is larger than 3 MB and will be rejected by Canva`,
+        )
+      }
 
       writeToFile(source, filename, 'image/svg+xml')
     },
