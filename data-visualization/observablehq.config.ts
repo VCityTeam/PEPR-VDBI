@@ -175,6 +175,10 @@ export default {
           path: 'pages/tools/wordclouds',
         },
         {
+          name: 'Word bubble generator',
+          path: 'pages/tools/wordbubbles',
+        },
+        {
           name: 'Knowledge graph generator',
           path: 'pages/tools/graphs',
         },

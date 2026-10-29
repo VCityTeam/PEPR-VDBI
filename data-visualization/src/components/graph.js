@@ -1120,6 +1120,14 @@ export class WordBubbles extends Graph {
    * @param {Function} [options.labelMap] - node label text accessor (wraps/crops the node's `label`)
    * @param {Function} [options.nodeLabelXOffset] - horizontal label offset, based on number of wrapped lines
    * @param {element} [options.legend=null] - legend for the graph
+   * @param {number} [options.wrapRatio=4] - radius / characters per line ratio used by the default `labelMap`
+   * @param {number} [options.labelLineHeight=0.75] - vertical offset (in em) per wrapped line used by the
+   *  default `nodeLabelXOffset` to center labels
+   * @param {number} [options.collideRadiusRatio=1.1] - collision radius as a multiple of the node radius
+   *  (spacing between bubbles)
+   * @param {number} [options.collideIterations=3] - collision force iterations per tick
+   * @param {number} [options.chargeDistanceMax=width / 2] - maximum distance of the charge force
+   * @param {number} [options.centerStrength=0.1] - strength of the x/y centering forces
    */
   constructor(
     nodes,
@@ -1130,10 +1138,18 @@ export class WordBubbles extends Graph {
       color = () => 'var(--theme-foreground-focus)',
       r = (d) => d.r || 3,
       fontSize = (d) => d.r / 3.5,
-      labelMap = (d) => wrapText(cropText(d.label, textLength), r(d) / 4),
+      wrapRatio = 4,
+      labelLineHeight = 0.75,
+      labelMap = (d) =>
+        wrapText(cropText(d.label, textLength), r(d) / wrapRatio),
       nodeLabelXOffset = (d) =>
-        `${1 - labelMap(d).split('\n').length * 0.75}em`,
+        `${1 - labelMap(d).split('\n').length * labelLineHeight}em`,
       legend = null,
+      width = 500,
+      collideRadiusRatio = 1.1,
+      collideIterations = 3,
+      chargeDistanceMax = width / 2,
+      centerStrength = 0.1,
     } = {},
   ) {
     super(
@@ -1148,9 +1164,17 @@ export class WordBubbles extends Graph {
         labelMap,
         nodeLabelXOffset,
         legend,
+        width,
         ...arguments[1],
       },
     )
+    this.collideRadiusRatio = collideRadiusRatio
+    this.collideIterations = collideIterations
+    this.chargeDistanceMax = chargeDistanceMax
+    this.centerStrength = centerStrength
+
+    // replace (not run alongside) the simulation started by the Graph constructor
+    this.simulation.stop()
     this.simulation = this.createSimulation()
     Object.assign(this.svg.node(), { simulation: this.simulation })
     this.simulation.restart()
@@ -1180,17 +1204,17 @@ export class WordBubbles extends Graph {
         d3
           .forceManyBody()
           .strength(this.chargeStrength)
-          .distanceMax(this.width / 2),
+          .distanceMax(this.chargeDistanceMax),
       )
       .force(
         'collide',
         d3
           .forceCollide()
-          .radius((d) => this.r(d) * 1.1)
-          .iterations(3),
+          .radius((d) => this.r(d) * this.collideRadiusRatio)
+          .iterations(this.collideIterations),
       )
-      .force('x', d3.forceX())
-      .force('y', d3.forceY())
+      .force('x', d3.forceX().strength(this.centerStrength))
+      .force('y', d3.forceY().strength(this.centerStrength))
       .on('tick', this.handleTick())
 
   /**
