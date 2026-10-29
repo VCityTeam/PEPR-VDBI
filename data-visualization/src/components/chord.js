@@ -169,6 +169,9 @@ export function generateIntersectionMatrix(
  * @param {boolean} [options.diagonal=true] - see `generateIntersectionMatrix`
  * @param {number} [options.limit=Infinity] - keep only the groups with the largest sets
  * @param {boolean} [options.drop_empty=true] - drop groups without any values
+ * @param {Function|null} [options.sort] - comparator of `[name, set]` entries that sets the
+ *   group (matrix row) order, applied after `limit`; largest sets first by default, `null`
+ *   keeps the order in which groups appear in `data`
  * @returns {{names: string[], sets: Map<string, Set<string>>, matrix: number[][]}}
  *   the group names (matrix row order), their sets, and the intersection matrix
  */
@@ -182,14 +185,20 @@ export function columnsToIntersectionMatrix(
     diagonal = true,
     limit = Infinity,
     drop_empty = true,
+    sort = ([, a], [, b]) => d3.descending(a.size, b.size),
   } = {},
 ) {
-  const sets = new Map(
-    [...columnsToSetMap(data, group_column, value_columns, { delimiter })]
-      .filter(([, set]) => !drop_empty || set.size > 0)
+  const entries = [
+    ...columnsToSetMap(data, group_column, value_columns, { delimiter }),
+  ].filter(([, set]) => !drop_empty || set.size > 0)
+  // the limit always keeps the largest sets, whatever the display order
+  const kept = new Set(
+    [...entries]
       .sort(([, a], [, b]) => d3.descending(a.size, b.size))
       .slice(0, limit),
   )
+  const sorted = entries.filter((d) => kept.has(d))
+  const sets = new Map(sort ? sorted.sort(sort) : sorted)
 
   return {
     names: [...sets.keys()],
