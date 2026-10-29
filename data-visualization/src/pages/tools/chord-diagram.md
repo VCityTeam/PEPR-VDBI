@@ -10,7 +10,7 @@ import {
   columnsToIntersectionMatrix,
   transposeGroupsAndValues,
 } from '/components/chord.js'
-import { downloadSVGButton } from '/components/utilities.js'
+import { downloadSVGButton, formTemplate } from '/components/utilities.js'
 ```
 
 # Chord diagram generator
@@ -42,30 +42,18 @@ const csv_data = csv_file.csv()
 ```
 
 ```js
-display(Inputs.table(csv_data))
+display(Inputs.table(csv_data, { layout: 'auto' }))
 ```
 
 <!-- User parameters -->
 
-<div class="grid card grid-cols-2">
-  <div>
-    ${selected_group_column}
-    <!-- $ -->
-    ${selected_value_columns}
-    <!-- $ -->
-    ${selected_delimiter}
-    <!-- $ -->
-    ${selected_transpose}
-    <!-- $ -->
-  </div>
-  <div>
-    ${selected_measure}
-    <!-- $ -->
-    ${selected_diagonal}
-    <!-- $ -->
-    ${selected_group_limit}
-    <!-- $ -->
-  </div>
+<div class="card">
+  ${settings_form}
+  <!-- $ -->
+  ${selected_group_limit}
+  <!-- $ -->
+  ${selected_group_labels}
+  <!-- $ -->
 </div>
 <div id="chord_diagram_container" class="card">
   ${chord}
@@ -81,6 +69,7 @@ const chord = resize((width) =>
     width,
     height: width,
     margin: 100,
+    showGroupLabels: selected_group_labels_value,
     ...format_config,
   }),
 )
@@ -95,68 +84,62 @@ const copy_button = downloadSVGButton(
 ```
 
 ```js
-const selected_group_column = Inputs.select(csv_data.columns, {
-  label: 'Group column (arcs)',
-})
-
-const selected_measure = Inputs.select(
-  new Map([
-    ['Share of all distinct values', 'superset'],
-    ['Number of shared values', 'count'],
-    ['Jaccard index (shared / either)', 'jaccard'],
-  ]),
-  { label: 'Ribbon size' },
+const settings_form = Inputs.form(
+  {
+    group_column: Inputs.select(csv_data.columns, {
+      label: 'Group column (arcs)',
+    }),
+    // the group column is excluded from the value columns below
+    value_columns: Inputs.select(csv_data.columns, {
+      label: 'Value columns (ribbons)',
+      multiple: true,
+      value: csv_data.columns.slice(1, 2),
+    }),
+    delimiter: Inputs.text({
+      label: 'Value delimiter',
+      placeholder: 'none, e.g. ; or |',
+    }),
+    transpose: Inputs.toggle({
+      label: 'Transpose groups and values',
+      value: false,
+    }),
+    measure: Inputs.select(
+      new Map([
+        ['Share of all distinct values', 'superset'],
+        ['Number of shared values', 'count'],
+        ['Jaccard index (shared / either)', 'jaccard'],
+      ]),
+      { label: 'Ribbon size' },
+    ),
+    diagonal: Inputs.toggle({
+      label: 'Show self-intersections',
+      value: true,
+    }),
+  },
+  { template: formTemplate() },
 )
-
-const selected_delimiter = Inputs.text({
-  label: 'Value delimiter',
-  placeholder: 'none, e.g. ; or |',
-})
-
-const selected_diagonal = Inputs.toggle({
-  label: 'Show self-intersections',
-  value: true,
-})
-
-const selected_transpose = Inputs.toggle({
-  label: 'Transpose groups and values',
-  value: false,
-})
 ```
 
 ```js
-const selected_group_column_value = Generators.input(selected_group_column)
-const selected_measure_value = Generators.input(selected_measure)
-const selected_delimiter_value = Generators.input(selected_delimiter)
-const selected_diagonal_value = Generators.input(selected_diagonal)
-const selected_transpose_value = Generators.input(selected_transpose)
+const settings = Generators.input(settings_form)
 ```
 
 ```js
-const value_column_options = csv_data.columns.filter(
-  (d) => d !== selected_group_column_value,
+const value_columns = settings.value_columns.filter(
+  (d) => d !== settings.group_column,
 )
-
-const selected_value_columns = Inputs.select(value_column_options, {
-  label: 'Value columns (ribbons)',
-  multiple: true,
-  value: value_column_options.slice(0, 1),
-})
-```
-
-```js
-const selected_value_columns_value = Generators.input(selected_value_columns)
+const delimiter = settings.delimiter || null
 ```
 
 ```js
 // when transposed, the distinct values become the groups and the groups their values
-const chord_input = selected_transpose_value
+const chord_input = settings.transpose
   ? {
       data: transposeGroupsAndValues(
         csv_data,
-        selected_group_column_value,
-        selected_value_columns_value,
-        { delimiter: selected_delimiter_value || null },
+        settings.group_column,
+        value_columns,
+        { delimiter },
       ),
       group_column: 'group',
       value_columns: ['value'],
@@ -164,9 +147,9 @@ const chord_input = selected_transpose_value
     }
   : {
       data: csv_data,
-      group_column: selected_group_column_value,
-      value_columns: selected_value_columns_value,
-      delimiter: selected_delimiter_value || null,
+      group_column: settings.group_column,
+      value_columns,
+      delimiter,
     }
 ```
 
@@ -189,14 +172,26 @@ const selected_group_limit_value = Generators.input(selected_group_limit)
 ```
 
 ```js
+// kept out of settings_form so toggling labels only redraws the diagram
+const selected_group_labels = Inputs.toggle({
+  label: 'Show group labels',
+  value: true,
+})
+```
+
+```js
+const selected_group_labels_value = Generators.input(selected_group_labels)
+```
+
+```js
 const chord_data = columnsToIntersectionMatrix(
   chord_input.data,
   chord_input.group_column,
   chord_input.value_columns,
   {
     delimiter: chord_input.delimiter,
-    measure: selected_measure_value,
-    diagonal: selected_diagonal_value,
+    measure: settings.measure,
+    diagonal: settings.diagonal,
     limit: selected_group_limit_value,
   },
 )
@@ -219,7 +214,7 @@ const chord_colors =
 ```js
 // counts are integers, the other measures are ratios
 const format_config =
-  selected_measure_value === 'count'
+  settings.measure === 'count'
     ? {
         formatValue: d3.format(',~r'),
         tickStep: Math.max(
@@ -246,10 +241,7 @@ const nonTextualValues = (rows, column) =>
       return typed !== null && typeof typed !== 'string'
     })
 
-const non_textual_columns = [
-  selected_group_column_value,
-  ...selected_value_columns_value,
-]
+const non_textual_columns = [settings.group_column, ...value_columns]
   .map((column) => ({ column, values: nonTextualValues(csv_data, column) }))
   .filter((d) => d.values.length > 0)
 ```
@@ -298,6 +290,7 @@ display(
       count: set.size,
       values: [...set].join(', '),
     })),
+    { layout: 'auto' },
   ),
 )
 ```
@@ -317,6 +310,7 @@ display(
       format: Object.fromEntries(
         chord_data.names.map((d) => [d, format_config.formatValue]),
       ),
+      layout: 'auto',
     },
   ),
 )
