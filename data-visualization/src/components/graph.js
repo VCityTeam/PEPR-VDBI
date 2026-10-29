@@ -16,8 +16,13 @@ import { cropText, wrapText } from './utilities.js'
  * - !`null` and `undefined` properties are NOT ignored!
  * This function is useful for creating the links of a directed property graph
  * @param {Object[]} data - input table
- * @param {object} options - configuration options
- * @returns {Object<Array, Array>}
+ * @param {object} [options={}] - configuration options
+ * @param {string} [options.id_key='id'] - the key used to identify a row
+ * @param {string[]} [options.column] - the columns to compare; columns NOT in
+ *  this list are ignored. All columns are used by default
+ * @param {boolean} [options.reflexive=false] - if there is a link from A to B,
+ *  should a link be generated from B to A as well?
+ * @returns {Object<Array, Array>} an object with a `links` array
  */
 export function mapTableToPropertyGraphLinks(
   data,
@@ -109,8 +114,11 @@ export function mapTableToPropertyGraphLinks(
  * - `null` and `undefined` property values are ignored
  * This function is useful for creating the links of a directed graph
  * @param {Object[]} data - input table
- * @param {object} options - configuration options
- * @returns {Object<Array, Array>}
+ * @param {object} [options={}] - configuration options
+ * @param {string} [options.id_key='id'] - the key used to identify a row
+ * @param {string[]} [options.column] - the columns to turn into triples; columns
+ *  NOT in this list are ignored. All columns are used by default
+ * @returns {Object<Array, Array>} an object with `nodes` and `links` arrays
  */
 export function mapTableToTriples(
   data,
@@ -177,13 +185,18 @@ export function mapTableToTriples(
 /**
  * Parse tabular data to a graph object.
  * Adapted from https://observablehq.com/@d3/nike-quarterly-statement?collection=@d3/d3-sankey
- * @param {Object[]} data - input table
- * @param {string} data.source - link source
- * @param {string} data.target - link target
- * @param {string} data.value - link target
- * @param {string} data.color - link color
- * @param {object} options - configuration options
- * @returns {Object<Array, Array>}
+ * @param {Object[]} links - input table of links
+ * @param {string} links[].source - link source
+ * @param {string} links[].target - link target
+ * @param {string} links[].value - link value, summed into each endpoint node's value
+ * @param {string} links[].color - link color
+ * @param {object} [options={}] - configuration options
+ * @param {Function} [options.sourceMap] - accessor for a link's source node id
+ * @param {Function} [options.targetMap] - accessor for a link's target node id
+ * @param {Function} [options.valueMap] - accessor for a link's value
+ * @param {Function} [options.colorMap] - accessor for a link's color
+ * @returns {Object<Array, Array>} an object with the derived `nodes` array and
+ *  the input `links` array
  */
 export function parseTabularGraph(
   links,
@@ -220,6 +233,10 @@ export function parseTabularGraph(
 
 /**
  * @deprecated, use `mapTableToTriples()` instead
+ *
+ * @param {Object[]} projects - project rows to convert to triples
+ * @param {Object} [colorMap={}] - maps a triple's `type` to a node color
+ * @returns {Object<Array, Array>} an object with `nodes` and `links` arrays
  */
 export function mapProjectsToRDFGraph(projects, colorMap = {}) {
   // create triples for each project and add them to an array (representing the graph)
@@ -487,6 +504,8 @@ export class Graph {
 
   /**
    * Update the graph with new nodes and links.
+   *
+   * @returns {void}
    */
   update() {
     this.simulation.nodes(this.nodes)
@@ -614,6 +633,9 @@ export class Graph {
 
   /**
    * Create a drag effect for graph nodes within the context of a force simulation
+   *
+   * @param {d3.Simulation} simulation - the simulation to reheat while a node is
+   *  being dragged, so the rest of the graph settles around it
    * @returns {d3.drag} a D3 drag function to enable dragging nodes within the graph
    */
   handleDrag(simulation) {
@@ -656,6 +678,7 @@ export class Graph {
   /**
    * A handler function for selecting elements to transform during a zoom event
    *
+   * @returns {Function} a d3 zoom event handler
    */
   handleZoom() {
     return (event) => {
@@ -699,6 +722,8 @@ export class Graph {
 
   /**
    * A handler function for updating elements to every simulation tick
+   *
+   * @returns {Function} a d3 simulation tick handler
    */
   handleTick() {
     return () => {
@@ -723,7 +748,10 @@ export class Graph {
   // Event handlers for node interactions //
 
   /**
-   * function to handle mouseout events on nodes: highlight the hovered node and connected links
+   * function to handle pointerenter events on nodes: highlight the hovered node
+   * and connected links, dimming everything else
+   *
+   * @returns {Function} a pointerenter event handler
    */
   handleNodePointerEnter() {
     return (_event, datum) => {
@@ -773,7 +801,10 @@ export class Graph {
   }
 
   /**
-   * function to handle pointerout events on nodes
+   * function to handle pointerout events on nodes: clear every highlight set by
+   * `handleNodePointerEnter`
+   *
+   * @returns {Function} a pointerout event handler
    */
   handleNodePointerout() {
     return () => {
@@ -793,7 +824,10 @@ export class Graph {
   }
 
   /**
-   * function to handle pointerdown events on nodes
+   * function to handle pointerdown events on nodes. Returns nothing in the base
+   * class, which has no click behavior; see `MuralGraph` for an override
+   *
+   * @returns {Function|void} a pointerdown event handler, if any
    */
   handleNodePointerdown() {
     // return (event, datum) => {
@@ -803,7 +837,10 @@ export class Graph {
   }
 
   /**
-   * function to handle pointerup events on nodes
+   * function to handle pointerup events on nodes. Returns nothing in the base
+   * class, which has no click behavior
+   *
+   * @returns {Function|void} a pointerup event handler, if any
    */
   handleNodePointerup() {
     // return (event, datum) => {
@@ -815,12 +852,23 @@ export class Graph {
 
 /**
  * @deprecated, use the `Graph` class instead
+ *
+ * @param {object} data - an object with `nodes` and `links` properties
+ * @param {object} [options={}] - `Graph` constructor options
+ * @returns {SVGElement} the rendered force graph
  */
 export function forceGraph(data, options = {}) {
   const graph = new Graph(data, options)
   return graph.getSVG()
 }
 
+/**
+ * @class StaticGraph
+ * @augments Graph
+ * A `Graph` whose nodes are positioned up front (via `fx`/`fy`) rather than by
+ * a running simulation: dragging is disabled and the zoom/pan extents and
+ * viewBox are derived from the nodes' fixed coordinates.
+ */
 export class StaticGraph extends Graph {
   /**
    * Create an initially static graph with a stopped simulation and fixed nodes.
@@ -865,14 +913,23 @@ export class StaticGraph extends Graph {
   }
 
   /**
-   * An empty drag function for static graphs.
+   * An empty drag function for static graphs, overriding `Graph.handleDrag` so
+   * that fixed node positions cannot be dragged out of place.
    *
+   * @returns {d3.drag} a d3 drag behavior with no handlers attached
    */
   handleDrag() {
     return d3.drag().on('start', null).on('drag', null).on('end', null)
   }
 }
 
+/**
+ * @class ForceLayoutStaticGraph
+ * @augments StaticGraph
+ * A `StaticGraph` whose fixed node positions are computed off the main thread
+ * by a force-simulation web worker, showing a "Loading..." overlay until the
+ * worker reports its final layout.
+ */
 export class ForceLayoutStaticGraph extends StaticGraph {
   /**
    * Create a static graph variant that shows a "Loading..." overlay while
@@ -934,6 +991,8 @@ export class ForceLayoutStaticGraph extends StaticGraph {
 
   /**
    * Update the graph with new nodes and links without a simulation
+   *
+   * @returns {void}
    */
   update() {
     this.getNodes()
@@ -970,6 +1029,12 @@ export class ForceLayoutStaticGraph extends StaticGraph {
   }
 }
 
+/**
+ * @class MuralGraph
+ * @augments StaticGraph
+ * An editable `StaticGraph`: clicking one node then another prompts for a label
+ * and adds a link between them, so a graph can be drawn by hand in the browser.
+ */
 export class MuralGraph extends StaticGraph {
   /**
    * Create an initially static graph. Add links through mouse clicks
@@ -987,7 +1052,11 @@ export class MuralGraph extends StaticGraph {
   }
 
   /**
-   * Click handler for nodes to select or link them
+   * Click handler for nodes to select or link them: the first click selects a
+   * node, a second click on a different node prompts for a label and links the
+   * two, and a second click on the same node deselects it.
+   *
+   * @returns {Function} a pointerdown event handler
    */
   handleNodePointerdown() {
     return (_event, datum) => {
@@ -1028,6 +1097,13 @@ export class MuralGraph extends StaticGraph {
   }
 }
 
+/**
+ * @class WordBubbles
+ * @augments Graph
+ * A linkless `Graph` used as a word cloud alternative: each node is a circle
+ * sized by its value, packed by collision and centering forces, and labelled
+ * with wrapped text inside the circle.
+ */
 export class WordBubbles extends Graph {
   /**
    * Create a force-directed "word bubble" layout: single-node circles with
@@ -1171,13 +1247,43 @@ export function filterLinks(graph, filterFunction, keyMap = (d) => d.id) {
 }
 
 /**
-* Create an arc diagram from a graph dataset
-* Adapted from: https://observablehq.com/@d3/arc-diagram
-*
-* @param {object} - a graph object with properites `nodes` and `links`
-# @param {object} options - configuration options for the diagram 
-* @returns {d3.node} - SVG node containing the arc diagram
-*/
+ * Create an arc diagram from a graph dataset
+ * Adapted from: https://observablehq.com/@d3/arc-diagram
+ *
+ * @param {object} graph - a graph object with properties `nodes` and `links`
+ * @param {Object[]} graph.nodes - the nodes, laid out down the vertical axis
+ * @param {Object[]} graph.links - the links, drawn as arcs between node positions
+ * @param {object} [options={}] - configuration options for the diagram
+ * @param {number} [options.width=640] - width of the SVG element
+ * @param {Function} [options.keyMap] - the function for identifying a node
+ * @param {Function} [options.valueMap] - the function for categorizing/classing a node
+ * @param {number} [options.step=14] - vertical spacing between nodes, in pixels
+ * @param {number} [options.marginTop=20] - top margin, in pixels
+ * @param {number} [options.marginBottom=20] - bottom margin, in pixels
+ * @param {number} [options.marginLeft=130] - left margin, in pixels
+ * @param {number} [options.marginRight=130] - right margin, in pixels; used when placing the legend
+ * @param {number} [options.height] - height of the SVG element; derived from `step`
+ *  and the node count by default
+ * @param {number} [options.r=3] - node radius
+ * @param {number} [options.rMouseover=3.5] - node radius while hovered
+ * @param {string[]} [options.order] - the node keys in display order; defaults to
+ *  `sortNodes(...).get('by name')`
+ * @param {Function} [options.yDistribution] - scale mapping a node key to its y position
+ * @param {number} [options.fontSize=12] - label font size
+ * @param {string} [options.fontFill='black'] - label color
+ * @param {number} [options.fontMouseoverOpacity=0.3] - opacity of the labels unrelated
+ *  to the hovered node
+ * @param {number} [options.arcMouseoverOpacity=0.1] - opacity of the arcs unrelated
+ *  to the hovered node
+ * @param {number} [options.labelRotate=0] - label rotation, in degrees
+ * @param {Function} [options.color] - maps a node's `valueMap` value to an arc color;
+ *  defaults to a plasma scale over the distinct values
+ * @param {string} [options.nodeFill='GhostWhite'] - node fill color
+ * @param {string} [options.nodeStroke='grey'] - node stroke color
+ * @param {Element} [options.legend] - legend element; defaults to a `circleLegend`
+ *  built from the distinct node values
+ * @returns {d3.node} - SVG node containing the arc diagram
+ */
 export function arcDiagramVertical(
   {
     nodes, // : [
@@ -1489,8 +1595,14 @@ export function arcDiagramVertical(
  * - "by property": the nodes are sorted by a node property
  * - "by degree": the nodes are sorted by their group
  *
- * @param {object} - a graph object with properites `nodes` and `links`
- * @returns {Map} - a map of the node sort functions
+ * @param {object} graph - a graph object with properties `nodes` and `links`
+ * @param {Object[]} graph.nodes - the nodes to sort
+ * @param {Object[]} graph.links - the links, used to compute each node's degree
+ * @param {object} options - configuration options; required, as this parameter
+ *  has no default value
+ * @param {Function} [options.keyMap] - the function for identifying a node
+ * @param {Function} [options.valueMap] - the function for categorizing/classing a node
+ * @returns {Map} - a map of sort option name to the sorted array of node keys
  */
 export function sortNodes(
   {

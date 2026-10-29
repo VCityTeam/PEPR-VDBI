@@ -5,7 +5,23 @@ import * as d3 from 'd3'
  *
  * @param {Object[]} data - input dataset, by default expects an array of key (string)
  *  and value (number) pairs. Modify keyMap and valueMap in the options if this is not the case.
- * @param {object} options - configuration options for the legend
+ * @param {object} [options={}] - configuration options for the legend
+ * @param {number} [options.width] - width of the SVG element
+ * @param {Function} [options.keyMap] - accessor for a datum's label
+ * @param {Function} [options.valueMap] - accessor for a datum's numeric value
+ * @param {Function} [options.colorMap=valueMap] - accessor for the value passed to `color`
+ * @param {number} [options.radius=5] - radius of each legend circle
+ * @param {number} [options.lineSeparation=25] - vertical spacing between legend entries
+ * @param {number} [options.fontSize=14] - label font size
+ * @param {string} [options.fontWeight='normal'] - label font weight
+ * @param {string} [options.fontColor='black'] - label color
+ * @param {string} [options.strokeColor='black'] - circle stroke color
+ * @param {number} [options.strokeWidth=0.5] - circle stroke width
+ * @param {number} [options.marginTop=5] - top margin, in pixels
+ * @param {number} [options.marginLeft=5] - left margin, in pixels
+ * @param {Function} [options.color] - maps a `colorMap` value to a circle fill;
+ *   defaults to a plasma interpolation over the data's value extent
+ * @param {Function} [options.text] - accessor for a datum's legend text
  * @returns {d3.node} - SVG node containing the legend
  */
 export function circleLegend(

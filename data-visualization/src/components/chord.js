@@ -41,6 +41,18 @@ export function generateIntersectionMatrix(set_map) {
  * ribbons. Percentage values are used by default
  * @param {Array<Number>} [names=[]] - labels for each row
  * @param {Array} [colors=[]] - a list of colors for each row
+ * @param {Object} [options={}] - diagram configuration
+ * @param {string} [options.diagram_id] - id given to the SVG element, used to scope
+ *   the ribbon gradient ids; defaults to a random string
+ * @param {number} [options.width=928] - width of the SVG element
+ * @param {number} [options.height=width] - height of the SVG element
+ * @param {number} [options.margin=50] - margin around the chord circle, in pixels
+ * @param {number} [options.outerRadius] - outer radius of the group arcs
+ * @param {number} [options.innerRadius=outerRadius-30] - inner radius of the group arcs,
+ *   i.e. the radius the ribbons are drawn to
+ * @param {number} [options.opacityDefault=0.8] - ribbon opacity when no group is selected
+ * @param {number} [options.tickStep] - spacing between arc ticks, in data units
+ * @param {Function} [options.formatValue] - formats a tick/tip value; percentages by default
  * @returns {node} A D3 selection containing the SVG node that makes up the chord diagram.
  */
 export function chordDiagram(

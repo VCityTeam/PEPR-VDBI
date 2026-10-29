@@ -116,13 +116,14 @@ export function getInstitutionSheet(workbook) {
  *  }
  *
  * @param {Row[]} sheet - Extracted sheet data
- * @param {boolean} [pseudoanonymize=false] - Pseudoanonymize data or not
- * @param {Map} [pseudoacronymousDict=new Map()] - A preset dictionary of pseudoanomymized entry mappings
+ * @param {boolean} [pseudoanonymize=false] - Replace each project's acronyme, names,
+ *  institutions, labs and partners with a stable pseudonym or not
+ * @param {Map} [pseudoanonymousDict=new Map()] - A preset dictionary of pseudoanomymized entry mappings
  * @returns {Object[]} Formatted sheet data
  */
 export function resolveGeneralEntities(
   sheet,
-  anonymize = false,
+  pseudoanonymize = false,
   pseudoanonymousDict = new Map(),
 ) {
   return map(sheet, (d) => {
@@ -209,7 +210,7 @@ export function resolveGeneralEntities(
     // clean up labels
     mapped_entities.acronyme
 
-    if (anonymize) {
+    if (pseudoanonymize) {
       mapped_entities.acronyme = pseudoanonymizeEntry(
         mapped_entities.acronyme,
         pseudoanonymousDict,
@@ -260,14 +261,17 @@ export function resolveGeneralEntities(
  *
  * @param {Object[]} researcher_sheet - Extracted researcher sheet data
  * @param {Object[]} mail_sheet - Extracted mail sheet data
- * @param {boolean} [pseudoanonymize=true] - Anonymize data or not
+ * @param {boolean} [pseudoanonymize=true] - Obscure each researcher's identity or not.
+ *  Their lab and projects get a stable pseudonym, so rows stay joinable across
+ *  researchers; their directly identifying fields (name, gender, email, ORCiD,
+ *  idHAL) are instead overwritten with unrecoverable random values.
  * @param {Map} [pseudoanonymousDict=new Map()] - A preset dictionary of anomymized entry mappings
  * @returns {Object[]} Formatted sheet data
  */
 export function resolveResearcherEntities(
   researcher_sheet,
   mail_sheet,
-  anonymize = true,
+  pseudoanonymize = true,
   pseudoanonymousDict = new Map(),
 ) {
   return map(
@@ -347,7 +351,7 @@ export function resolveResearcherEntities(
               : null,
           )
         })
-        if (anonymize) {
+        if (pseudoanonymize) {
           researcher.fullname = anonymizeEntry()
           researcher.firstname = anonymizeEntry()
           researcher.lastname = anonymizeEntry()
@@ -473,10 +477,11 @@ export async function enrichSocioeconomicPartnersEntities(partners) {
  * Extract and format data from the phase 1 excel.
  *
  * @param {Workbook} workbook - The workbook to extract
- * @param {boolean} pseudoanonymize - pseudoanonymize data or not
- * @param {Map} pseudoacronymousDict - A preset dictionary of anomymized entry mappings
- * @param {boolean} onlyFinanced - Filter out non-financed projects?
- * @returns {Object[]} An object containing formatted tables
+ * @param {Object} [options={}]
+ * @param {boolean} [options.pseudoanonymize=false] - pseudoanonymize data or not
+ * @param {Map} [options.pseudoanonymousDict=new Map()] - A preset dictionary of anomymized entry mappings
+ * @param {boolean} [options.onlyFinanced=false] - Filter out non-financed projects?
+ * @returns {Object} An object containing the formatted tables
  */
 export function extractPhase1Workbook(
   workbook,

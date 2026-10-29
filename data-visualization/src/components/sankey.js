@@ -73,20 +73,21 @@ export function parallelSetToGraph(data, keys) {
  * @param {string} graph.links[].target
  * @param {number} graph.links[].value - link value, used to determine width link width
  * @param {String[]} graph.links[].path - array of node ids corresponding to the link path
- * @param {number} width - width of the SVG element
- * @param {number} height - height of the SVG element
- * @param {Function} idMap - function to map a node to its label
- * @param {Function} text - function to map a node to its label
- * @param {scaleOrdinal|Function} nodeFill - color scale for nodes
- * @param {scaleOrdinal|Function} linkStroke - color scale for links
- * @param {number} linkFillOpacity - opacity for node fill colors
- * @param {number} height - height of the SVG element
- * @param {number} font_size - font size for node labels
- * @param {null|undefined} node_sort - node_sort paramters for d3-sankey,
+ * @param {Object} [options={}] - diagram configuration
+ * @param {Function} [options.idMap] - function to map a node to its id
+ * @param {number} [options.width=928] - width of the SVG element
+ * @param {number} [options.height=720] - height of the SVG element
+ * @param {scaleOrdinal|Function|string} [options.nodeFill='black'] - color scale or color for nodes
+ * @param {scaleOrdinal|Function|string} [options.linkStroke] - color scale or color for links;
+ *  defaults to each link's own `color`, falling back to `'#ccc'`
+ * @param {number} [options.linkFillOpacity=0.7] - opacity for link colors
+ * @param {number} [options.font_size=13] - font size for node labels
+ * @param {string} [options.font_color='black'] - color for node labels
+ * @param {Function} [options.text] - function to map a node to its label
+ * @param {null|undefined} [options.node_sort=null] - node sort parameter for d3-sankey,
  *  set to undefined for default behavior
- * @param {null|undefined} link_sort - link_sort paramters for d3-sankey,
+ * @param {null|undefined} [options.link_sort=null] - link sort parameter for d3-sankey,
  *  set to undefined for default behavior
- *
  * @returns {SVGElement} - an SVG element containing the Sankey diagram
  */
 export function sankeyDiagram(
@@ -194,21 +195,21 @@ export function sankeyDiagram(
  * @param {string} graph.links[].target
  * @param {number} graph.links[].value - link value, used to determine width link width
  * @param {String[]} graph.links[].path - array of node ids corresponding to the link path
- * @param {number} width - width of the SVG element
- * @param {number} height - height of the SVG element
- * @param {Function} idMap - function to map a node to its label
- * @param {Function} pathMap - function to map a link to its path
- * @param {Function} text - function to map a node to its label
- * @param {scaleOrdinal|Function} nodeFill - color scale for nodes
- * @param {scaleOrdinal|Function} linkStroke - color scale for links
- * @param {number} link_opacity - opacity for link stroke colors
- * @param {number} height - height of the SVG element
- * @param {number} font_size - font size for node labels
- * @param {null|undefined} node_sort - node_sort paramters for d3-sankey,
+ * @param {Object} [options={}] - diagram configuration
+ * @param {Function} [options.idMap] - function to map a node to its id
+ * @param {Function} [options.pathMap] - function to map a link to its path
+ * @param {number} [options.width=928] - width of the SVG element
+ * @param {number} [options.height=720] - height of the SVG element
+ * @param {scaleOrdinal|Function|string} [options.nodeFill='black'] - color scale or color for nodes
+ * @param {scaleOrdinal|Function|string} [options.linkStroke] - color scale or color for links;
+ *  defaults to a spectral scale keyed on the first node of each link's path
+ * @param {number} [options.link_opacity=0.7] - opacity for link stroke colors
+ * @param {number} [options.font_size=12] - font size for node labels
+ * @param {Function} [options.text] - function to map a node to its label
+ * @param {null|undefined} [options.node_sort=null] - node sort parameter for d3-sankey,
  *  set to undefined for default behavior
- * @param {null|undefined} link_sort - link_sort paramters for d3-sankey,
+ * @param {null|undefined} [options.link_sort=null] - link sort parameter for d3-sankey,
  *  set to undefined for default behavior
- *
  * @returns {SVGElement} - an SVG element containing the Sankey diagram
  */
 export function parallelSet(

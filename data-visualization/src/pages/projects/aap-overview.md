@@ -1771,15 +1771,12 @@ const aap_selected = view(
         || d.aap === 'AAP 1'
         || d.aap === 'AAP 2' && d.selected
       ),
+    { width: width, height: 600 },
     {
-      width: width,
-      height: 600,
       sort: 'y',
-      x_accessor: (d) => d.count,
-      y_accessor: (d) =>
+      x_accessor: (d) =>
         cnu.cnu_section_label_map.get(Number(d.cnu)) || String(d.cnu),
       fill_accessor: (d) => String(d.aap),
-      opacity_accessor: (d) => d.selected || d.financed ? 1 : 0.7,
     }
   ))} -->
 </div>

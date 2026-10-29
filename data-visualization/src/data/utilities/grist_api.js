@@ -8,12 +8,15 @@ import { loadEnvFile } from 'node:process'
 const logger = pino(default_log_options('grist api utility'))
 
 /**
- * Queries the Grist API and formats the response. If the query fails or yields no results,
- * returns a default response matching the CSV header structure.
+ * Run a read-only SQL query against a Grist document through its REST API.
+ * The bearer token is read from `GRIST_TOKEN` in `src/data/.env`, loaded on
+ * every call.
  *
- * @param {string} query - The search query to be sent.
- * @param {string} doc_id - The Grist document ID.
- * @returns {Promise<object[]|null>} A promise resolving to an object.
+ * @param {string} query - The SQL query to run, URL-encoded internally.
+ * @param {string} doc_id - The Grist document ID to query.
+ * @returns {Promise<object|null>} A promise resolving to the API's
+ *  `{records: [{id, fields}, ...]}` response body, or null if the request
+ *  failed (errors are logged by `handleFetchJson`, not thrown).
  */
 export async function simpleGristQuery(query, doc_id) {
   loadEnvFile()

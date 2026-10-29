@@ -1,5 +1,11 @@
 import { handleFetchJson } from './data_utilities.js'
 
+/**
+ * Thin client for a Nominatim-style geocoding API, used by data loaders to
+ * resolve place names and OSM ids to coordinates. Requests go through
+ * `handleFetchJson`, which serializes them and spaces them out by
+ * `requestTimeIntervalMs` to stay within the API's rate limit.
+ */
 export class GeocodingService {
   /**
    * Instantiates a Nominatim geocoding service.
@@ -30,13 +36,12 @@ export class GeocodingService {
    * Retrieve the feature properties based on a simple search string.
    *
    * @param {string} searchString Either an address or the name of a place.
-   *   URL-encoded internally before being sent as the `query`-filled request
-   *   parameter.
-   * @returns {Promise<Array<object>>} The raw array of matching result objects
-   *   found at `result.basePath` in the parsed response.
-   * @throws {string} `'Cannot perform a request for now.'` if called again before
-   *   `requestTimeIntervalMs` has elapsed since the previous request, or
-   *   `'No result found'` if the API returned zero results.
+   *   URL-encoded internally and sent as the `q` request parameter.
+   * @param {object} [parameters] Additional request parameters, merged over
+   *   `defaultParameters` (e.g. `{limit: 5}` to widen the result set).
+   * @returns {Promise<Array<object>|null>} The parsed response body — an array of
+   *   matching results, empty when nothing matched — or null if the request
+   *   failed (errors are logged by `handleFetchJson`, not thrown).
    */
   async simpleSearch(searchString, parameters) {
     // URL parameters
@@ -64,13 +69,13 @@ export class GeocodingService {
   /**
    * Retrieve the feature properties based on OSM object IDs.
    *
-   * @param {string} osmIds The IDs of the OSM objects.
-   * @param {object} parameters Additional parameters to pass to the API.
-   * @returns {Promise<Array<object>>} The raw array of matching result objects
-   *   found at `result.basePath` in the parsed response.
-   * @throws {string} `'Cannot perform a request for now.'` if called again before
-   *   `requestTimeIntervalMs` has elapsed since the previous request, or
-   *   `'No result found'` if the API returned zero results.
+   * @param {string} osmIds A comma-separated list of prefixed OSM object ids
+   *   (e.g. `'R71525,N240109189'`); see `getOsmId`.
+   * @param {object} [parameters] Additional request parameters, merged over
+   *   `defaultParameters`.
+   * @returns {Promise<Array<object>|null>} The parsed response body — an array of
+   *   matching results, empty when nothing matched — or null if the request
+   *   failed (errors are logged by `handleFetchJson`, not thrown).
    */
   async detailedSearch(osmIds, parameters) {
     // search parameters
@@ -93,6 +98,14 @@ export class GeocodingService {
   }
 }
 
+/**
+ * Build the prefixed OSM object id that Nominatim's `lookup` endpoint expects,
+ * by prepending the uppercased first letter of the object type to its id
+ * (e.g. `{osm_type: 'relation', osm_id: 71525}` becomes `'R71525'`).
+ *
+ * @param {object} d - a Nominatim result with `osm_type` and `osm_id` properties
+ * @returns {string} the prefixed OSM id
+ */
 export function getOsmId(d) {
   return `${d.osm_type[0].toUpperCase()}${d.osm_id}`
 }

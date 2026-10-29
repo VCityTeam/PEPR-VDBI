@@ -3,6 +3,17 @@ import { nameByRace } from 'fantasy-name-generator'
 import pino from 'pino'
 import { randomBytes } from 'crypto'
 
+/**
+ * Build a pino logger configuration for a data loader, writing
+ * `pino-pretty`-formatted output to a log file rather than stdout (loader
+ * stdout is the generated data file, so logs must not go there).
+ *
+ * @param {string} name - the logger name, used to identify the loader in log lines
+ * @param {string} [destination='./data_loaders.js.log'] - path of the log file to append to
+ * @param {string} [level] - the minimum log level; defaults to `'warn'` in
+ *   production builds (`BUILD_ENV === 'production'`) and `'debug'` otherwise
+ * @returns {pino.LoggerOptions} a pino options object
+ */
 export const default_log_options = (
   name,
   destination = './data_loaders.js.log',
@@ -22,16 +33,24 @@ export const default_log_options = (
   },
 })
 
+// Promise chain used to serialize every handleFetchJson call across all
+// loaders, so that each request's `sleep` delay actually spaces requests out
+// instead of all of them sleeping concurrently (avoids API rate limiting).
 let globalFetchQueue = Promise.resolve()
 
 /**
  * Send an HTTP request to a URL API with some basic error handling and logging.
  *
+ * Requests are queued globally (see `globalFetchQueue`) so that only one is
+ * in flight at a time and `sleep` delays are applied sequentially.
+ *
  * @param {string} url - The endpoint url.
  * @param {number} [sleep=0] - The number of milliseconds to sleep before sending the request to avoid rate limiting.
- * @param {Object} [header={}] - An object containing additional headers to include in the request.
+ * @param {Object} [header] - An object containing additional headers to include in the request;
+ *   merged over the default `Accept: application/json` header.
  * @param {pino.Logger} [logger=pino(default_log_options('fetch url utility'))] - A pino logger instance.
- * @returns {Promise<Object|null>} A promise resolving to a dictionary (object) of the request response if successful, or null.
+ * @returns {Promise<Object|null>} A promise resolving to the parsed JSON response body,
+ *   or null if the request failed or returned a non-ok status (the error is logged, not thrown).
  */
 export async function handleFetchJson(
   url,

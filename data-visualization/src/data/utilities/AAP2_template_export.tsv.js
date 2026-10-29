@@ -9,7 +9,10 @@ import { readFile } from 'node:fs/promises'
 const file = await readFile('src/data/private/AAP2_template_export.csv')
 const parser = dsvFormat(';')
 const data = parser.parse(file.toString())
+const richTextFields = [] // a whitelist of text fields to parse
 
+// Collapse newlines inside every cell so that each record stays on one TSV
+// line, except for the rich-text columns, where the line breaks are content.
 data.forEach((row) => {
   Object.entries(row).forEach(([key, value]) => {
     if (typeof value !== 'string') {

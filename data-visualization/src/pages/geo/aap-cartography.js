@@ -47,6 +47,10 @@ export const inBBox = (
 ) =>
   min_x < longitude && longitude < max_x && min_y < latitude && latitude < max_y
 
+/* Bounding boxes used to route each geocoded terrain to the map it belongs on.
+ * Coordinates are in WGS84 degrees (longitude/latitude).
+ */
+
 export const europe_bbox = {
   min_x: -10,
   max_x: 30,
@@ -68,6 +72,17 @@ export const ile_de_france_bbox = {
   max_y: 49.24342474094858,
 }
 
+/**
+ * Keep the terrains that belong on the mainland France map: those inside the
+ * mainland bounding box that are also precise enough to place as a point —
+ * Nominatim results coarser than a department (`admin_level <= 6`) with a
+ * vague address rank would otherwise be drawn at the centroid of a whole
+ * region.
+ *
+ * @param {Iterable<Object>} terrain_data - geocoded terrain rows with
+ *  `longitude`, `latitude`, `admin_level` and `address_rank`
+ * @returns {Object[]} the matching terrains
+ */
 export const filterFranceTerrains = (terrain_data) => {
   return [...terrain_data].filter(
     (d) =>
@@ -76,6 +91,16 @@ export const filterFranceTerrains = (terrain_data) => {
   )
 }
 
+/**
+ * Keep the terrains that belong on the Île-de-France map: those inside the IDF
+ * bounding box, minus the region-wide entries ('Île-de-France' and 'Métropole
+ * du Grand Paris'), which cover the whole map and so carry no information at
+ * this zoom level.
+ *
+ * @param {Iterable<Object>} terrain_data - geocoded terrain rows with
+ *  `terrain`, `longitude` and `latitude`
+ * @returns {Object[]} the matching terrains
+ */
 export const filterIdfTerrains = (terrain_data) =>
   [...terrain_data].filter(
     (d) =>
@@ -84,9 +109,22 @@ export const filterIdfTerrains = (terrain_data) =>
       inBBox(d.longitude, d.latitude, ile_de_france_bbox),
   )
 
+/**
+ * Keep the terrains located in Italy, by country code rather than bounding box.
+ *
+ * @param {Object[]} terrain_data - geocoded terrain rows with a `country_code`
+ * @returns {Object[]} the matching terrains
+ */
 export const filterItalyTerrains = (terrain_data) =>
   terrain_data.filter((d) => d.country_code == 'it')
 
+/**
+ * Keep the terrains outside mainland France, i.e. those that need a map other
+ * than the French one (overseas territories included).
+ *
+ * @param {Object[]} terrain_data - geocoded terrain rows with `longitude` and `latitude`
+ * @returns {Object[]} the matching terrains
+ */
 export const filterInternationalTerrains = (terrain_data) =>
   terrain_data.filter(
     (d) =>
@@ -94,6 +132,12 @@ export const filterInternationalTerrains = (terrain_data) =>
       !inBBox(d.longitude, d.latitude, mainland_france_bbox),
   )
 
+/**
+ * Keep the terrains outside Europe, i.e. those only the world map can show.
+ *
+ * @param {Object[]} terrain_data - geocoded terrain rows with `longitude` and `latitude`
+ * @returns {Object[]} the matching terrains
+ */
 export const filterExtraEuropeanTerrains = (terrain_data) =>
   terrain_data.filter(
     (d) =>
@@ -108,11 +152,25 @@ export const filterExtraEuropeanTerrains = (terrain_data) =>
  * - latitude for label and/or symbol
  */
 
+/** `[project name, project color]` pairs for every project, the first two
+ * columns of every legend built below.
+ */
 export const base_legend = d3.zip(
   project_color_scale.domain(),
   project_color_scale.range(),
 )
 
+/**
+ * Build the legend for the mainland France map, spreading every project evenly
+ * across the top of the map (above Lille, outside the coastline) so the labels
+ * never land on a department.
+ *
+ * Each row is copied with `Object.create` before the coordinates are pushed
+ * onto it, so that `base_legend`'s own rows stay two columns wide and can be
+ * reused by the other legends.
+ *
+ * @returns {Array[]} legend rows of `[name, color, longitude, latitude]`
+ */
 export const france_terrain_legend = () => {
   const legend = base_legend.map((d) => Object.create(d))
 
@@ -126,6 +184,14 @@ export const france_terrain_legend = () => {
   return legend
 }
 
+/**
+ * Build the legend for the Île-de-France map, restricted to the projects that
+ * actually have a terrain there and stacked down the right of the region.
+ *
+ * @param {Object[]} filterIdfTerrains - the IDF terrains (output of
+ *  `filterIdfTerrains`), each with a `projects` set of project names
+ * @returns {Array[]} legend rows of `[name, color, longitude, latitude]`
+ */
 export const idf_terrain_legend = (filterIdfTerrains) => {
   const idf_terrains = new Set(
     filterIdfTerrains.flatMap((row) => [...row.projects]),
@@ -146,6 +212,14 @@ export const idf_terrain_legend = (filterIdfTerrains) => {
   return legend
 }
 
+/**
+ * Build the legend for the Italy map, restricted to the projects that have a
+ * terrain outside mainland France and stacked in the Adriatic.
+ *
+ * @param {Object[]} filterInternationalTerrains - the non-mainland terrains
+ *  (output of `filterInternationalTerrains`), each with a `projects` set
+ * @returns {Array[]} legend rows of `[name, color, longitude, latitude]`
+ */
 export const italy_terrain_legend = (filterInternationalTerrains) => {
   const international_terrains = new Set(
     filterInternationalTerrains.flatMap((row) => [...row.projects]),
@@ -165,6 +239,15 @@ export const italy_terrain_legend = (filterInternationalTerrains) => {
   return legend
 }
 
+/**
+ * Build the legend for the world map. Currently identical to
+ * `italy_terrain_legend`, as both maps show the same set of non-mainland
+ * projects; kept separate so the two can be positioned independently.
+ *
+ * @param {Object[]} filterInternationalTerrains - the non-mainland terrains
+ *  (output of `filterInternationalTerrains`), each with a `projects` set
+ * @returns {Array[]} legend rows of `[name, color, longitude, latitude]`
+ */
 export const world_terrain_legend = (filterInternationalTerrains) => {
   const international_terrains = new Set(
     filterInternationalTerrains.flatMap((row) => [...row.projects]),
@@ -184,6 +267,10 @@ export const world_terrain_legend = (filterInternationalTerrains) => {
   return legend
 }
 
+/* Per-terrain tip anchor overrides, used to push a label off its neighbours
+ * where the default anchor makes two tips overlap. Commented-out entries are
+ * terrains that no longer need nudging.
+ */
 export const terrain_anchor_map = new Map([
   // ['Saclay Cachan', 'top-right'],
   ['Lyon', 'top'],
@@ -430,7 +517,8 @@ export const italyProjection = (width, marks, caption = '') =>
  * Convenience wrapper for world-projected maps, including an global
  * landmass base layer
  *
- * @param {number} width - chart width (used for both width and height)
+ * @param {number} width - chart width
+ * @param {number} height - chart height
  * @param {Array} marks - additional Plot marks to layer on top
  * @param {string} [caption=''] - the chart caption
  * @returns {SVGElement} the rendered map
@@ -808,6 +896,15 @@ export function generateDotMapMarks(
   ]
 }
 
+/**
+ * Group terrains by the mainland France department that geographically contains
+ * them, then by project acronym. Terrains that fall outside every department
+ * (overseas or abroad) are collected under a `null` key.
+ *
+ * @param {Object[]} terrain_data - geocoded terrain rows with `longitude`,
+ *  `latitude` and `project_acronyme`
+ * @returns {d3.InternMap} a nested map of department name -> project acronym -> terrains
+ */
 export const choropleth_terrain_data = (terrain_data) =>
   d3.group(
     terrain_data,
@@ -820,6 +917,14 @@ export const choropleth_terrain_data = (terrain_data) =>
     (d) => d.project_acronyme,
   )
 
+/**
+ * Build a choropleth channel accessor that counts how many rows fall inside a
+ * given department feature, by point-in-polygon test.
+ *
+ * @param {Object[]} data - rows with `longitude` and `latitude`
+ * @returns {Function} given a GeoJSON feature, returns the number of rows it
+ *  contains, or null when it contains none (so Plot leaves it unfilled)
+ */
 export const choroplethCountByPosition = (data) => (department) => {
   const count = data.reduce(
     (acc, val) =>
@@ -829,6 +934,18 @@ export const choroplethCountByPosition = (data) => (department) => {
   return count > 0 ? count : null
 }
 
+/**
+ * Build a choropleth channel accessor that aggregates rows into a department by
+ * matching the first two digits of their postal code against the feature's
+ * `code` property. Used where rows carry a postal code but no coordinates.
+ *
+ * @param {Object[]} data - rows with a `postal_code`
+ * @param {Function} [accessor] - reducer applied to each matching row;
+ *  counts rows by default, e.g. pass `(a, v) => a + v.projects.length` to sum
+ *  a per-row quantity instead
+ * @returns {Function} given a GeoJSON feature, returns its aggregated value, or
+ *  null when no row matched (so Plot leaves it unfilled)
+ */
 export const choroplethCountByPostalCode =
   (data, accessor = (a, v) => a + 1) =>
   (d) => {
@@ -843,6 +960,14 @@ export const choroplethCountByPostalCode =
     return count > 0 ? count : null
   }
 
+/**
+ * Count partnerships per department, keyed by the first two digits of the
+ * postal code. `project_corrections` is appended first to add partnerships that
+ * are known to be missing from the source data.
+ *
+ * @param {Iterable<Object>} partner_by_project_data - partnership rows with a `code_postal`
+ * @returns {Map<string, number>} department code -> partnership count, excluding empty departments
+ */
 export const all_partners_by_code = (partner_by_project_data) =>
   new Map(
     d3
@@ -854,6 +979,17 @@ export const all_partners_by_code = (partner_by_project_data) =>
       .filter((d) => d[1] > 0),
   )
 
+/**
+ * Flatten Île-de-France into a single value: sum the counts of every IDF
+ * department and write that total back to each of them, so the region reads as
+ * one block on the map instead of eight departments whose individual counts
+ * dominate the national color scale.
+ *
+ * @param {Map<string, number>} all_partners_by_code - department code -> count
+ *  (output of `all_partners_by_code`)
+ * @returns {Map<string, number>} a copy in which every IDF department carries the
+ *  region-wide total
+ */
 export const all_partners_by_code_group_idf = (all_partners_by_code) => {
   const all_partners_by_code_group_idf = new Map(all_partners_by_code)
 
@@ -872,6 +1008,15 @@ export const all_partners_by_code_group_idf = (all_partners_by_code) => {
   return all_partners_by_code_group_idf
 }
 
+/**
+ * Count laboratories per postal code, optionally restricted to a single
+ * project.
+ *
+ * @param {Iterable<Object>} labs - laboratory rows with `code_postal` and `projet`
+ * @param {string} selected_partner_project - the project to count, or `'All'`
+ *  to count every project
+ * @returns {Map<string, number>} postal code -> lab count, excluding empty codes
+ */
 export const lab_disciplines_by_code = (labs, selected_partner_project) =>
   new Map(
     d3
@@ -891,6 +1036,9 @@ export const lab_disciplines_by_code = (labs, selected_partner_project) =>
       .filter((d) => d[1] > 0),
   )
 
+/* Partnerships missing from the source partner data, added by hand to the
+ * department counts in `all_partners_by_code`.
+ */
 export const project_corrections = [
   {
     projet: 'INTEGREEN',
@@ -918,6 +1066,9 @@ export const project_corrections = [
   },
 ]
 
+/* Shared styling for the commune dots drawn over the choropleth maps, and the
+ * scales that encode each commune's size (fill) and type (symbol).
+ */
 const choropleth_terrain_dot_default_config = {
   stroke: 'black',
   strokeWidth: 0.6,
@@ -976,6 +1127,16 @@ export const choropleth_terrain_dot_legend = html` <div style="display: flex;">
   </div>
 </div>`
 
+/**
+ * Plot.dot mark for the terrains overlaid on a choropleth map, with the commune
+ * size encoded as fill color and the commune type (ville vs. métropole or
+ * agglomeration) as the symbol. Communes of an unrecognised size are drawn grey.
+ *
+ * @param {Object[]} terrain_data - terrain rows with `longitude`, `latitude`,
+ *  `terrain`, `scale` and `city_type`
+ * @param {Object} [options={}] - Plot.dot options merged over the defaults
+ * @returns {Plot.Mark} the dot mark
+ */
 export const choropleth_terrain_dot_mark = (terrain_data, options = {}) =>
   Plot.dot(terrain_data, {
     ...choropleth_terrain_dot_default_config,
@@ -1001,6 +1162,19 @@ export const choropleth_terrain_dot_mark = (terrain_data, options = {}) =>
     ...options,
   })
 
+/**
+ * Build a tip mark that lists, at each department's centroid, the names of the
+ * partners located there — but only for the departments busy enough to be worth
+ * labelling, so that the map is not buried under text.
+ *
+ * @param {Object} geojson - the department FeatureCollection to anchor tips to
+ * @param {Object[]} data - partnership rows with `postal_code`, `partner` and `projects`
+ * @param {number} [cuttoff=10] - minimum size a department must exceed to get a tip
+ * @param {boolean} [group=true] - measure a department by its number of distinct
+ *  partners; when false, measure it by its total number of partnerships instead
+ * @param {Object} [options] - Plot.geoCentroid options merged over the defaults
+ * @returns {Plot.Mark} the tip mark
+ */
 const partnerMapTips = (geojson, data, cuttoff = 10, group = true, options) =>
   Plot.tip(
     geojson,
@@ -1026,6 +1200,15 @@ const partnerMapTips = (geojson, data, cuttoff = 10, group = true, options) =>
     }),
   )
 
+/**
+ * `partnerMapTips` preset for the mainland France department map.
+ *
+ * @param {Object[]} data - partnership rows; see `partnerMapTips`
+ * @param {number} [cuttoff] - minimum department size to label
+ * @param {boolean} [group] - count distinct partners rather than partnerships
+ * @param {Object} [options] - Plot.geoCentroid options
+ * @returns {Plot.Mark} the tip mark
+ */
 export const francePartnerMapTips = (data, cuttoff, group, options) =>
   partnerMapTips(
     mainland_france_departements_geojson,
@@ -1035,5 +1218,14 @@ export const francePartnerMapTips = (data, cuttoff, group, options) =>
     options,
   )
 
+/**
+ * `partnerMapTips` preset for the Île-de-France department map.
+ *
+ * @param {Object[]} data - partnership rows; see `partnerMapTips`
+ * @param {number} [cuttoff] - minimum department size to label
+ * @param {boolean} [group] - count distinct partners rather than partnerships
+ * @param {Object} [options] - Plot.geoCentroid options
+ * @returns {Plot.Mark} the tip mark
+ */
 export const idfPartnerMapTips = (data, cuttoff, group, options) =>
   partnerMapTips(idf_departements_geojson, data, cuttoff, group, options)

@@ -475,11 +475,14 @@ export const partnerCountPlotX = (
  * Stacked bar plot of challenge counts, stacked/colored by AAP round
  *
  * @param {Object[]} data - challenge count data, each with `defi`, `count`, `aap`, `financed`/`selected`
- * @param {Object} [options]
+ * @param {Object} options - chart configuration; required, as this parameter
+ *  has no default value
  * @param {number} [options.width] - chart width
  * @param {string} [options.fill_accessor='aap'] - data key for the fill/color channel
  * @param {Array} [options.color_range] - color scale range
  * @param {string} [options.title='Défis par AAP'] - chart title
+ * @param {string} [options.sort] - Plot sort specification applied to the y axis;
+ *  Plot's default ordering is used when undefined
  * @param {string} [options.subtitle] - chart subtitle
  * @returns {SVGElement} the rendered bar plot
  */
