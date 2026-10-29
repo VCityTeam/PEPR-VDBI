@@ -1,5 +1,5 @@
 ---
-style: /css/vdbi-page.css
+style: /css/vdbi-dashboard.css
 ---
 
 <!-- imports -->
@@ -54,6 +54,12 @@ display(Inputs.table(csv_data, { layout: 'auto' }))
   <!-- $ -->
   ${selected_group_labels}
   <!-- $ -->
+  ${selected_group_label_length}
+  <!-- $ -->
+  ${selected_size}
+  <!-- $ -->
+  ${selected_margins}
+  <!-- $ -->
 </div>
 <div id="chord_diagram_container" class="card">
   ${chord}
@@ -66,10 +72,14 @@ display(Inputs.table(csv_data, { layout: 'auto' }))
 const chord = resize((width) =>
   chordDiagram(chord_data.matrix, chord_data.names, chord_colors, {
     diagram_id: 'chord_diagram_svg',
-    width,
-    height: width,
-    margin: 100,
+    width: selected_size_value.width || width,
+    height: selected_size_value.height || selected_size_value.width || width,
+    // an emptied margin field is NaN
+    ...Object.fromEntries(
+      Object.entries(selected_margins_value).map(([k, v]) => [k, v || 0]),
+    ),
     showGroupLabels: selected_group_labels_value,
+    groupLabelMaxLength: selected_group_label_length_value,
     ...format_config,
   }),
 )
@@ -189,6 +199,67 @@ const selected_group_labels = Inputs.toggle({
 
 ```js
 const selected_group_labels_value = Generators.input(selected_group_labels)
+```
+
+```js
+// left empty, labels are not clipped; at least 4 so cropText keeps a character before '...'
+const selected_group_label_length = Inputs.number([4, Infinity], {
+  label: 'Max group label length (characters)',
+  step: 1,
+  placeholder: 'no limit',
+})
+```
+
+```js
+const selected_group_label_length_value = Generators.input(
+  selected_group_label_length,
+)
+```
+
+```js
+// left empty, the diagram fits the page width and is square
+const selected_size = Inputs.form(
+  {
+    width: Inputs.number([1, Infinity], {
+      label: 'SVG width (px)',
+      step: 1,
+      placeholder: 'fit to page',
+    }),
+    height: Inputs.number([1, Infinity], {
+      label: 'SVG height (px)',
+      step: 1,
+      placeholder: 'same as width',
+    }),
+  },
+  { template: formTemplate() },
+)
+```
+
+```js
+const selected_size_value = Generators.input(selected_size)
+```
+
+```js
+const marginInput = (side) =>
+  Inputs.number([0, Infinity], {
+    label: `${side} margin (px)`,
+    step: 1,
+    value: 100,
+  })
+
+const selected_margins = Inputs.form(
+  {
+    marginTop: marginInput('Top'),
+    marginRight: marginInput('Right'),
+    marginBottom: marginInput('Bottom'),
+    marginLeft: marginInput('Left'),
+  },
+  { template: formTemplate() },
+)
+```
+
+```js
+const selected_margins_value = Generators.input(selected_margins)
 ```
 
 ```js
