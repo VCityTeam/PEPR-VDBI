@@ -5,7 +5,11 @@ style: /css/vdbi-page.css
 <!-- imports -->
 
 ```js
-import { chordDiagram, columnsToIntersectionMatrix } from '/components/chord.js'
+import {
+  chordDiagram,
+  columnsToIntersectionMatrix,
+  transposeGroupsAndValues,
+} from '/components/chord.js'
 import { downloadSVGButton } from '/components/utilities.js'
 ```
 
@@ -50,6 +54,8 @@ display(Inputs.table(csv_data))
     ${selected_value_columns}
     <!-- $ -->
     ${selected_delimiter}
+    <!-- $ -->
+    ${selected_transpose}
     <!-- $ -->
   </div>
   <div>
@@ -111,6 +117,11 @@ const selected_diagonal = Inputs.toggle({
   label: 'Show self-intersections',
   value: true,
 })
+
+const selected_transpose = Inputs.toggle({
+  label: 'Transpose groups and values',
+  value: false,
+})
 ```
 
 ```js
@@ -118,6 +129,7 @@ const selected_group_column_value = Generators.input(selected_group_column)
 const selected_measure_value = Generators.input(selected_measure)
 const selected_delimiter_value = Generators.input(selected_delimiter)
 const selected_diagonal_value = Generators.input(selected_diagonal)
+const selected_transpose_value = Generators.input(selected_transpose)
 ```
 
 ```js
@@ -137,8 +149,32 @@ const selected_value_columns_value = Generators.input(selected_value_columns)
 ```
 
 ```js
+// when transposed, the distinct values become the groups and the groups their values
+const chord_input = selected_transpose_value
+  ? {
+      data: transposeGroupsAndValues(
+        csv_data,
+        selected_group_column_value,
+        selected_value_columns_value,
+        { delimiter: selected_delimiter_value || null },
+      ),
+      group_column: 'group',
+      value_columns: ['value'],
+      delimiter: null, // already split by transposeGroupsAndValues
+    }
+  : {
+      data: csv_data,
+      group_column: selected_group_column_value,
+      value_columns: selected_value_columns_value,
+      delimiter: selected_delimiter_value || null,
+    }
+```
+
+```js
 const group_count = new Set(
-  csv_data.map((d) => d[selected_group_column_value]?.trim()).filter((d) => d),
+  chord_input.data
+    .map((d) => d[chord_input.group_column]?.trim())
+    .filter((d) => d),
 ).size
 
 const selected_group_limit = Inputs.range([1, Math.max(group_count, 1)], {
@@ -154,11 +190,11 @@ const selected_group_limit_value = Generators.input(selected_group_limit)
 
 ```js
 const chord_data = columnsToIntersectionMatrix(
-  csv_data,
-  selected_group_column_value,
-  selected_value_columns_value,
+  chord_input.data,
+  chord_input.group_column,
+  chord_input.value_columns,
   {
-    delimiter: selected_delimiter_value || null,
+    delimiter: chord_input.delimiter,
     measure: selected_measure_value,
     diagonal: selected_diagonal_value,
     limit: selected_group_limit_value,

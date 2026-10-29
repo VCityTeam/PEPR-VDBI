@@ -69,6 +69,33 @@ export function columnsToSetMap(
 }
 
 /**
+ * Swaps the roles of the group and value columns: every distinct value of the
+ * value columns becomes a group, whose values are the groups of the rows it
+ * appears in. Returns one `{group, value}` row per (value, group) pair, ready
+ * for `columnsToSetMap(rows, 'group', 'value')`.
+ *
+ * @param {Object[]} data - the rows to process
+ * @param {string|Function} group_column - see `columnsToSetMap`
+ * @param {Array<string|Function>|string|Function} value_columns - see `columnsToSetMap`
+ * @param {Object} [options={}]
+ * @param {string|null} [options.delimiter=null] - separator for multi-valued
+ *   cells of the value columns
+ * @returns {{group: string, value: string}[]} the transposed rows
+ */
+export function transposeGroupsAndValues(
+  data,
+  group_column,
+  value_columns,
+  { delimiter = null } = {},
+) {
+  return [
+    ...columnsToSetMap(data, group_column, value_columns, { delimiter }),
+  ].flatMap(([group, set]) =>
+    [...set].map((value) => ({ group: value, value: group })),
+  )
+}
+
+/**
  * Pairwise set similarity measures used to fill an intersection matrix.
  * Each one takes the two sets and the size of the superset of all sets.
  */
