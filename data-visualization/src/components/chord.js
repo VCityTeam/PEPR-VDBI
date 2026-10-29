@@ -221,6 +221,7 @@ export function columnsToIntersectionMatrix(
  * @param {number} [options.opacityDefault=0.8] - ribbon opacity when no group is selected
  * @param {number} [options.tickStep] - spacing between arc ticks, in data units
  * @param {Function} [options.formatValue] - formats a tick/tip value; percentages by default
+ * @param {boolean} [options.showGroupLabels=true] - label each arc with its group name
  * @returns {node} A D3 selection containing the SVG node that makes up the chord diagram.
  */
 export function chordDiagram(
@@ -237,6 +238,7 @@ export function chordDiagram(
     opacityDefault = 0.8,
     tickStep = d3.tickStep(0, d3.sum(data.flat()), 100),
     formatValue = d3.format('.1~%'),
+    showGroupLabels = true,
   } = {},
 ) {
   // init chord, color, and svg objects
@@ -401,14 +403,16 @@ export function chordDiagram(
     .attr('text-anchor', (d) => (d.angle > Math.PI ? 'end' : null))
     .text((d) => formatValue(d.value))
 
-  group
-    .select('text')
-    .attr('font-weight', 'bold')
-    .text(function (d) {
-      return this.getAttribute('text-anchor') === 'end'
-        ? `↑ ${names[d.index]}`
-        : `${names[d.index]} ↓`
-    })
+  // replace each group's first tick label with the group name
+  if (showGroupLabels)
+    group
+      .select('text')
+      .attr('font-weight', 'bold')
+      .text(function (d) {
+        return this.getAttribute('text-anchor') === 'end'
+          ? `↑ ${names[d.index]}`
+          : `${names[d.index]} ↓`
+      })
 
   // add ribbons
   svg
