@@ -1,33 +1,174 @@
-import * as d3 from "d3"
+import * as d3 from 'd3'
+
+/**
+ * Wrap a column name into an accessor function; functions are returned as is.
+ *
+ * @param {string|Function} accessor - a column name or a row accessor
+ * @returns {Function} a row accessor
+ */
+const toAccessor = (accessor) =>
+  typeof accessor === 'function' ? accessor : (d) => d[accessor]
+
+/**
+ * Converts a cell value to a list of non-empty strings. Arrays are flattened,
+ * strings are split on `delimiter` (when given), and any other value
+ * (numbers, dates, booleans...) is treated as a string.
+ *
+ * @param {any} value - the cell value
+ * @param {string|null} [delimiter=null] - separator for multi-valued cells
+ * @returns {string[]} the trimmed, non-empty string values of the cell
+ */
+export function cellToStrings(value, delimiter = null) {
+  if (value == null) return []
+  if (Array.isArray(value))
+    return value.flatMap((d) => cellToStrings(d, delimiter))
+  const text = String(value)
+  return (delimiter ? text.split(delimiter) : [text])
+    .map((d) => d.trim())
+    .filter((d) => d !== '')
+}
+
+/**
+ * Groups the values of one or more columns by the value of a group column.
+ *
+ * Each row adds the (string) values of its `value_columns` to the set of its
+ * group, so that the sets can be crossed by `generateIntersectionMatrix`.
+ * Rows with an empty group are skipped.
+ *
+ * @param {Object[]} data - the rows to process
+ * @param {string|Function} group_column - column name (or accessor) of the group,
+ *   i.e. a chord diagram arc
+ * @param {Array<string|Function>|string|Function} value_columns - column name(s)
+ *   (or accessors) of the values shared between groups. Values of several columns
+ *   are merged into the same set
+ * @param {Object} [options={}]
+ * @param {string|null} [options.delimiter=null] - separator for multi-valued cells
+ * @returns {Map<string, Set<string>>} the set of values of each group
+ */
+export function columnsToSetMap(
+  data,
+  group_column,
+  value_columns,
+  { delimiter = null } = {},
+) {
+  const group_accessor = toAccessor(group_column)
+  const value_accessors = [value_columns].flat().map(toAccessor)
+  const set_map = new Map()
+
+  for (const row of data) {
+    const [group] = cellToStrings(group_accessor(row))
+    if (group === undefined) continue
+    if (!set_map.has(group)) set_map.set(group, new Set())
+    const set = set_map.get(group)
+    for (const accessor of value_accessors)
+      for (const value of cellToStrings(accessor(row), delimiter))
+        set.add(value)
+  }
+
+  return set_map
+}
+
+/**
+ * Pairwise set similarity measures used to fill an intersection matrix.
+ * Each one takes the two sets and the size of the superset of all sets.
+ */
+export const intersection_measures = {
+  // share of all distinct values found in both sets (original behavior)
+  superset: (a, b, superset_size) =>
+    superset_size ? a.intersection(b).size / superset_size : 0,
+  // raw number of values found in both sets
+  count: (a, b) => a.intersection(b).size,
+  // Jaccard index: share of the values of either set found in both
+  jaccard: (a, b) => {
+    const union_size = a.union(b).size
+    return union_size ? a.intersection(b).size / union_size : 0
+  },
+}
 
 /**
  * Generates an intersection matrix for a given dataset.
  *
- * Constructs a square matrix where each cell represents the size of the intersection
- * between two sets, normalized by the total number of unique elements across the entire dataset.
+ * Constructs a square, symmetric matrix where each cell represents the size of
+ * the intersection between two sets, measured with `options.measure`.
+ * By default the size is normalized by the total number of unique elements
+ * across the entire dataset.
  *
- * @param {Map<string, Set<any>>} set_map - The data array to process.
- * @returns {number[][]} A 2D array representing the intersection matrix, where values are between 0 and 1.
+ * @param {Map<string, Set<any>>} set_map - the sets to cross, e.g. from `columnsToSetMap`
+ * @param {Object} [options={}]
+ * @param {'superset'|'count'|'jaccard'} [options.measure='superset'] - the
+ *   similarity measure, see `intersection_measures`
+ * @param {boolean} [options.diagonal=true] - whether to keep the self-intersections
+ *   (each set with itself) or set them to 0
+ * @returns {number[][]} A 2D array representing the intersection matrix, in the
+ *   order of `set_map`
  */
-export function generateIntersectionMatrix(set_map) {
-  const superset_size = new Set(d3.merge(set_map.values())).size
+export function generateIntersectionMatrix(
+  set_map,
+  { measure = 'superset', diagonal = true } = {},
+) {
+  const measureFunction = intersection_measures[measure]
+  if (!measureFunction)
+    throw new Error(`Unknown intersection measure: ${measure}`)
 
-  const intersection_matrix = d3
-    .cross(
-      set_map.values(),
-      set_map.values(),
-      (a, b) => a.intersection(b).size / superset_size,
-    )
-    // https://stackoverflow.com/questions/4492385/convert-simple-array-into-two-dimensional-array-matrix
-    .reduce(
-      (matrix, key, index) =>
-        (index % set_map.size == 0
-          ? matrix.push([key])
-          : matrix[matrix.length - 1].push(key)) && matrix,
-      [],
-    )
+  const sets = [...set_map.values()]
+  const superset_size = new Set(d3.merge(sets)).size
+  const matrix = sets.map(() => new Array(sets.length).fill(0))
 
-  return intersection_matrix
+  // the matrix is symmetric, so only compute the upper triangle
+  for (let i = 0; i < sets.length; i++) {
+    for (let j = diagonal ? i : i + 1; j < sets.length; j++) {
+      matrix[i][j] = matrix[j][i] = measureFunction(
+        sets[i],
+        sets[j],
+        superset_size,
+      )
+    }
+  }
+
+  return matrix
+}
+
+/**
+ * Generates the intersection matrix of the values of one or more columns,
+ * grouped by a group column. Combines `columnsToSetMap` and
+ * `generateIntersectionMatrix`.
+ *
+ * @param {Object[]} data - the rows to process
+ * @param {string|Function} group_column - see `columnsToSetMap`
+ * @param {Array<string|Function>|string|Function} value_columns - see `columnsToSetMap`
+ * @param {Object} [options={}]
+ * @param {string|null} [options.delimiter=null] - see `columnsToSetMap`
+ * @param {string} [options.measure='superset'] - see `generateIntersectionMatrix`
+ * @param {boolean} [options.diagonal=true] - see `generateIntersectionMatrix`
+ * @param {number} [options.limit=Infinity] - keep only the groups with the largest sets
+ * @param {boolean} [options.drop_empty=true] - drop groups without any values
+ * @returns {{names: string[], sets: Map<string, Set<string>>, matrix: number[][]}}
+ *   the group names (matrix row order), their sets, and the intersection matrix
+ */
+export function columnsToIntersectionMatrix(
+  data,
+  group_column,
+  value_columns,
+  {
+    delimiter = null,
+    measure = 'superset',
+    diagonal = true,
+    limit = Infinity,
+    drop_empty = true,
+  } = {},
+) {
+  const sets = new Map(
+    [...columnsToSetMap(data, group_column, value_columns, { delimiter })]
+      .filter(([, set]) => !drop_empty || set.size > 0)
+      .sort(([, a], [, b]) => d3.descending(a.size, b.size))
+      .slice(0, limit),
+  )
+
+  return {
+    names: [...sets.keys()],
+    sets,
+    matrix: generateIntersectionMatrix(sets, { measure, diagonal }),
+  }
 }
 
 /**
