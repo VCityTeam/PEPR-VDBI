@@ -149,3 +149,30 @@ highlighting holds up:
    `${resize((width) => charts.someChart(data, { width }))}`. Push real logic into a JS block below the
    section, or into a sibling `.js` module (e.g. `aap-overview.md` + `aap-overview.js`). Interpolating long
    expressions into markup hurts readability and breaks editor syntax highlighting.
+
+### Structure of tool pages (`src/pages/tools/`)
+
+Data visualisation tools turn a file uploaded by the user into a downloadable chart. On top of the
+dashboard page rules above, they follow this order (see `src/pages/tools/radial-dendrogram.md`):
+
+1. **Documentation of the input data**: what the tool expects (file type, how columns and rows are
+   read) and what it produces, ideally with a small example file in a `csv` code block.
+2. **File upload and data preview**: an `Inputs.file` input in its own block, the parsed data in a
+   separate block, then an `Inputs.table` preview of it.
+3. **User parameters**, split into exactly two `Inputs.form`s laid out with `formTemplate()` and
+   displayed together in a single `div.card`:
+   - a **data-dependent** form, for parameters whose options or defaults are derived from the uploaded
+     file (e.g. a root name taken from the file name, a range bounded by the column count). It is
+     rebuilt, and so reset, whenever another file is loaded.
+   - a **data-independent** form, for parameters that do not reference the data (styling, sizes,
+     margins, sort order, …). It keeps its values when another file is loaded.
+
+   Read each form's value with `Generators.input(form)` in its own block. Avoid standalone inputs and
+   inputs whose options depend on another parameter of the same form: Observable cannot make a form
+   depend on its own value, so prefer a simpler parameter (e.g. derive levels from the column order of
+   the file rather than adding a select per level).
+
+4. **Chart/diagram view** in its own `div.card` with an id, followed by a download button (e.g.
+   `downloadSVGButton('#<id> svg', …)`).
+5. **Optional data views**, under a `## Data view` heading, displaying intermediate transformations
+   of the data (e.g. a table of tree nodes) as `Inputs.table`s to help debug them.

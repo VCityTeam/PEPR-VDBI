@@ -14,18 +14,18 @@ import { downloadSVGButton, formTemplate } from '/components/utilities.js'
 
 # Radial dendrogram generator
 
-Upload any table (.csv) to generate a radial dendrogram of its values. Choose the **levels** of the
-tree, one column per level, from the center outwards. Each row of the table adds a branch going from
-the root through its value in each level column, and rows sharing the same values are merged into the
-same branch. For example, with the file below, using `institution`, `lab` then `project` as levels
-groups projects by lab, and labs by institution:
+Upload any table (.csv) to generate a radial dendrogram of its values. Each column of the table is a
+**level** of the tree, in the order of the file, from the center outwards. Each row of the table adds
+a branch going from the root through its value in each column, and rows sharing the same values are
+merged into the same branch. For example, the file below groups projects by lab, and labs by
+institution:
 
 ```csv
-project,lab,institution
-P1,LAB-A,UNIV-1
-P1,LAB-B,UNIV-2
-P2,LAB-A,UNIV-1
-P3,LAB-C,UNIV-2
+institution,lab,project
+UNIV-1,LAB-A,P1
+UNIV-2,LAB-B,P1
+UNIV-1,LAB-A,P2
+UNIV-2,LAB-C,P3
 ```
 
 Cells that hold several values (e.g. `LAB-A; LAB-B`) can be split with the _value delimiter_: the row
@@ -50,21 +50,8 @@ display(Inputs.table(csv_data, { layout: 'auto' }))
 <div class="card">
   ${settings_form}
   <!-- $ -->
-  ${selected_level_count}
-  <!-- $ -->
-  ${selected_levels}
-  <!-- $ -->
-  ${selected_expand_depth}
-  <!-- $ -->
-  ${selected_radial_offset}
-  <!-- $ -->
-  ${selected_style}
-  <!-- $ -->
-  ${selected_label_length}
-  <!-- $ -->
-  ${selected_size}
-  <!-- $ -->
-  ${selected_margins}
+  <br>
+  ${display_form}
   <!-- $ -->
 </div>
 <div id="radial_dendrogram_container" class="card">
@@ -76,23 +63,24 @@ display(Inputs.table(csv_data, { layout: 'auto' }))
 
 ```js
 const dendrogram = resize((width) => {
-  const svg_width = selected_size_value.width || width
+  const svg_width = display_settings.width || width
   return collapsableRadialDendrogram(tree_data, {
     width: svg_width,
-    height: selected_size_value.height || svg_width,
-    // an emptied margin field is NaN
-    ...Object.fromEntries(
-      Object.entries(selected_margins_value).map(([k, v]) => [k, v || 0]),
-    ),
-    sort: settings.sort,
-    expandDepth: selected_expand_depth_value,
-    radialOffset: selected_radial_offset_value,
-    textLength: selected_label_length_value || Infinity,
-    r: selected_style_value.r || 0,
-    fontsize: selected_style_value.fontsize || 10,
-    fill: selected_style_value.fill,
-    stroke: selected_style_value.stroke,
-    expandedLabelAnchor: selected_style_value.expanded_label_anchor,
+    height: display_settings.height || svg_width,
+    // an emptied number field is NaN
+    marginTop: display_settings.marginTop || 0,
+    marginRight: display_settings.marginRight || 0,
+    marginBottom: display_settings.marginBottom || 0,
+    marginLeft: display_settings.marginLeft || 0,
+    sort: display_settings.sort,
+    expandDepth: settings.expand_depth,
+    radialOffset: display_settings.radial_offset,
+    textLength: display_settings.label_length || Infinity,
+    r: display_settings.r || 0,
+    fontsize: display_settings.fontsize || 10,
+    fill: display_settings.fill,
+    stroke: display_settings.stroke,
+    expandedLabelAnchor: display_settings.expanded_label_anchor,
   })
 })
 ```
@@ -106,6 +94,7 @@ const copy_button = downloadSVGButton(
 ```
 
 ```js
+// depends on the dataset, so these settings are reset when another file is loaded
 const settings_form = Inputs.form(
   {
     root_name: Inputs.text({
@@ -120,16 +109,14 @@ const settings_form = Inputs.form(
       label: 'Label for empty cells',
       placeholder: 'none, branch stops',
     }),
-    sort: Inputs.select(
-      new Map([
-        ['Largest first', (a, b) => d3.descending(a.data.count, b.data.count)],
-        ['Alphabetical', (a, b) => a.data.name.localeCompare(b.data.name)],
-        ['Order in file', null],
-      ]),
-      { label: 'Node order' },
-    ),
+    // depth 0 is the root and leaves are at the last level, so the maximum expands every node
+    expand_depth: Inputs.range([1, csv_data.columns.length], {
+      label: 'Initially expanded levels',
+      step: 1,
+      value: csv_data.columns.length,
+    }),
   },
-  { template: formTemplate() },
+  { template: formTemplate(3) },
 )
 ```
 
@@ -138,62 +125,29 @@ const settings = Generators.input(settings_form)
 ```
 
 ```js
-const selected_level_count = Inputs.range([1, csv_data.columns.length], {
-  label: 'Number of levels',
-  step: 1,
-  value: Math.min(csv_data.columns.length, 3),
-})
-```
+// independent of the dataset, so these settings are kept when another file is loaded
+const marginInput = (side) =>
+  Inputs.number([0, Infinity], {
+    label: `${side} margin (px)`,
+    step: 1,
+    value: 100,
+  })
 
-```js
-const selected_level_count_value = Generators.input(selected_level_count)
-```
-
-```js
-// one select per level, as a multiple select would not preserve the level order
-const selected_levels = Inputs.form(
-  d3.range(selected_level_count_value).map((i) =>
-    Inputs.select(csv_data.columns, {
-      label: `Level ${i + 1}${i === 0 ? ' (center)' : ''} column`,
-      value: csv_data.columns[i],
-    }),
-  ),
-  { template: formTemplate() },
-)
-```
-
-```js
-const selected_levels_value = Generators.input(selected_levels)
-```
-
-```js
-// depth 0 is the root, so the deepest level is selected_level_count_value
-const selected_expand_depth = Inputs.range([1, selected_level_count_value], {
-  label: 'Initially expanded levels',
-  step: 1,
-  value: 1,
-})
-```
-
-```js
-const selected_expand_depth_value = Generators.input(selected_expand_depth)
-```
-
-```js
-const selected_radial_offset = Inputs.range([0, 359], {
-  label: 'Rotation (degrees)',
-  step: 1,
-  value: 0,
-})
-```
-
-```js
-const selected_radial_offset_value = Generators.input(selected_radial_offset)
-```
-
-```js
-const selected_style = Inputs.form(
+const display_form = Inputs.form(
   {
+    sort: Inputs.select(
+      new Map([
+        ['Largest first', (a, b) => d3.descending(a.data.count, b.data.count)],
+        ['Alphabetical', (a, b) => a.data.name.localeCompare(b.data.name)],
+        ['Order in file', null],
+      ]),
+      { label: 'Node order' },
+    ),
+    radial_offset: Inputs.range([0, 359], {
+      label: 'Rotation (degrees)',
+      step: 1,
+      value: 0,
+    }),
     r: Inputs.number([0, Infinity], {
       label: 'Node radius (px)',
       step: 0.5,
@@ -214,33 +168,14 @@ const selected_style = Inputs.form(
       ]),
       { label: 'Expanded node labels' },
     ),
-  },
-  { template: formTemplate() },
-)
-```
-
-```js
-const selected_style_value = Generators.input(selected_style)
-```
-
-```js
-// left empty, labels are not clipped
-const selected_label_length = Inputs.number([1, Infinity], {
-  label: 'Max label length (characters)',
-  step: 1,
-  value: 15,
-  placeholder: 'no limit',
-})
-```
-
-```js
-const selected_label_length_value = Generators.input(selected_label_length)
-```
-
-```js
-// left empty, the diagram fits the page width and is square
-const selected_size = Inputs.form(
-  {
+    // left empty, labels are not clipped
+    label_length: Inputs.number([1, Infinity], {
+      label: 'Max label length (characters)',
+      step: 1,
+      value: 15,
+      placeholder: 'no limit',
+    }),
+    // left empty, the diagram fits the page width and is square
     width: Inputs.number([1, Infinity], {
       label: 'SVG width (px)',
       step: 1,
@@ -251,40 +186,21 @@ const selected_size = Inputs.form(
       step: 1,
       placeholder: 'same as width',
     }),
-  },
-  { template: formTemplate() },
-)
-```
-
-```js
-const selected_size_value = Generators.input(selected_size)
-```
-
-```js
-const marginInput = (side) =>
-  Inputs.number([0, Infinity], {
-    label: `${side} margin (px)`,
-    step: 1,
-    value: 100,
-  })
-
-const selected_margins = Inputs.form(
-  {
     marginTop: marginInput('Top'),
-    marginRight: marginInput('Right'),
     marginBottom: marginInput('Bottom'),
     marginLeft: marginInput('Left'),
+    marginRight: marginInput('Right'),
   },
-  { template: formTemplate() },
+  { template: formTemplate(3) },
 )
 ```
 
 ```js
-const selected_margins_value = Generators.input(selected_margins)
+const display_settings = Generators.input(display_form)
 ```
 
 ```js
-const tree_data = columnsToTree(csv_data, selected_levels_value, {
+const tree_data = columnsToTree(csv_data, csv_data.columns, {
   rootName: settings.root_name || 'root',
   delimiter: settings.delimiter || null,
   emptyLabel: settings.empty_label || null,
@@ -322,7 +238,7 @@ const treeToRows = (tree, levels) =>
 
 ```js
 display(
-  Inputs.table(treeToRows(tree_data, selected_levels_value), {
+  Inputs.table(treeToRows(tree_data, csv_data.columns), {
     layout: 'auto',
   }),
 )
