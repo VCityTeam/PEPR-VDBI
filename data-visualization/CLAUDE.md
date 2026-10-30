@@ -90,6 +90,9 @@ needs a matching change.
 - Use ES modules (import/export) syntax, not CommonJS (require)
 - Use Prettier for code formatting (see .prettierrc)
 - Use ESLint for code linting (see .eslintrc.js)
+- Components must not import functions from one another (e.g. `radial-dendrogram.js` importing from
+  `chord.js`). A function used by more than one component goes in `src/components/utilities.js`, and a
+  JS function shared by several data loaders goes in `src/data/utilities/data_utilities.js`.
 
 ### Signatures for Plot wrapper functions
 

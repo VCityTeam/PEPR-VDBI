@@ -9,7 +9,7 @@ import {
   create,
   linkRadial,
 } from 'd3';
-import { cellToStrings } from './chord.js';
+import { cellToStrings } from './utilities.js';
 
 /**
  * Convert tabular rows into a nested `{name, count, children}` tree with one
