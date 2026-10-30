@@ -89,6 +89,7 @@ const dendrogram = resize((width) => {
     fontsize: selected_style_value.fontsize || 10,
     fill: selected_style_value.fill,
     stroke: selected_style_value.stroke,
+    expandedLabelAnchor: selected_style_value.expanded_label_anchor,
   })
 })
 ```
@@ -190,6 +191,14 @@ const selected_style = Inputs.form(
     }),
     fill: Inputs.color({ label: 'Node color', value: '#999999' }),
     stroke: Inputs.color({ label: 'Link color', value: '#555555' }),
+    expanded_label_anchor: Inputs.select(
+      new Map([
+        ['Away from the center', 'outward'],
+        ['Towards the center', 'inward'],
+        ['Centered on the node', 'middle'],
+      ]),
+      { label: 'Expanded node labels' },
+    ),
   },
   { template: formTemplate() },
 )
