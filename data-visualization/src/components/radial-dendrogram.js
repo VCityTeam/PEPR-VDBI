@@ -211,7 +211,7 @@ export function mapEntitesToProductToProjectTree(projects) {
  * @param {string} [options.fill='#999'] - fill for nodes
  * @param {number} [options.fillOpacity] - fill opacity for nodes
  * @param {number} [options.fontsize=10] - font size for labels
- * @param {string} [options.expandedLabelAnchor='inward'] - where expanded nodes' labels point: 'inward' (towards the center), 'outward' (away from the center, like leaves), or 'middle' (centered on the node)
+ * @param {string} [options.expandedLabelAnchor='outward'] - where expanded nodes' labels point: 'inward' (towards the center), 'outward' (away from the center, like leaves), or 'middle' (centered on the node)
  * @param {number} [options.expandedLabelOffset=fontsize] - perpendicular offset, in pixels, of expanded nodes' labels so they don't overlap the incoming link
  * @param {string} [options.stroke='#555'] - stroke for links
  * @param {number} [options.strokeWidth=1.5] - stroke width for links
@@ -222,6 +222,7 @@ export function mapEntitesToProductToProjectTree(projects) {
  * @param {number} [options.haloWidth=3] - padding around the labels
  * @param {boolean} [options.dynamicPositioning=true] - recalculate node positions according to radius on every update
  * @param {number} [options.expandDepth=1] - nodes at this depth or deeper start collapsed (1 = only the root is expanded)
+ * @param {number} [options.radialOffset=0] - rotation of the whole dendrogram, in degrees clockwise
  * @returns {SVGElement} the rendered radial dendrogram
  */
 export function collapsableRadialDendrogram(
@@ -251,7 +252,7 @@ export function collapsableRadialDendrogram(
     fill = '#999', // fill for nodes
     fillOpacity, // fill opacity for nodes
     fontsize = 10, // font size for labels
-    expandedLabelAnchor = 'inward', // 'inward', 'outward', or 'middle' label placement for expanded nodes
+    expandedLabelAnchor = 'outward', // 'inward', 'outward', or 'middle' label placement for expanded nodes
     expandedLabelOffset = fontsize, // perpendicular offset of expanded nodes' labels, so they sit beside the incoming link
     stroke = '#555', // stroke for links
     strokeWidth = 1.5, // stroke width for links
@@ -262,6 +263,7 @@ export function collapsableRadialDendrogram(
     haloWidth = 3, // padding around the labels
     dynamicPositioning = true, // recalculate positions according to radius on update
     expandDepth = 1, // nodes at this depth or deeper start collapsed
+    radialOffset = 0, // rotation of the whole dendrogram, in degrees clockwise
   } = {},
 ) {
   // If id and parentId options are specified, or the path option, use d3.stratify
@@ -279,9 +281,7 @@ export function collapsableRadialDendrogram(
   if (sort != null) root.sort(sort)
 
   // Compute the layout.
-  tree()
-    .size([2 * Math.PI, radius])
-    .separation(separation)(root)
+  layout()
 
   root.x0 = height / 2
   root.y0 = 0
@@ -333,9 +333,7 @@ export function collapsableRadialDendrogram(
 
     if (dynamicPositioning) {
       // Recompute the layout.
-      tree()
-        .size([2 * Math.PI, radius])
-        .separation(separation)(root)
+      layout()
     }
 
     // Create a transition
@@ -478,6 +476,22 @@ export function collapsableRadialDendrogram(
   }
 
   /**
+   * Compute the tree layout, then rotate every node by radialOffset. Angles
+   * are kept within [0, 2π) so that label flipping on the left half still works
+   *
+   * @returns {void}
+   */
+  function layout() {
+    tree()
+      .size([2 * Math.PI, radius])
+      .separation(separation)(root)
+    const offset = (radialOffset * Math.PI) / 180
+    root.each((d) => {
+      d.x = (((d.x + offset) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)
+    })
+  }
+
+  /**
    * Whether a node is the root of the tree, i.e. has no parent
    *
    * @param {Object} d - the d3 hierarchy node
@@ -518,7 +532,7 @@ export function collapsableRadialDendrogram(
    * @returns {string} the label's text-anchor
    */
   function labelAnchor(d) {
-    if (isRoot(d)) return 'start'
+    if (isRoot(d)) return d.x > Math.PI ? 'start' : 'end'
     if (isExpanded(d) && expandedLabelAnchor === 'middle') return 'middle'
     return d.x < Math.PI === labelPointsOutward(d) ? 'start' : 'end'
   }
@@ -530,7 +544,7 @@ export function collapsableRadialDendrogram(
    * @returns {number} the label's x offset, in pixels
    */
   function labelX(d) {
-    if (isRoot(d)) return 6
+    if (isRoot(d)) return d.x > Math.PI ? 6 : -6
     if (isExpanded(d) && expandedLabelAnchor === 'middle') return 0
     return d.x < Math.PI === labelPointsOutward(d) ? 6 : -6
   }
