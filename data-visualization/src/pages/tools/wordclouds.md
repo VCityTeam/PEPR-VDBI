@@ -1,5 +1,5 @@
 ---
-style: /css/vdbi-page.css
+style: /css/vdbi-dashboard.css
 ---
 
 <!-- imports -->

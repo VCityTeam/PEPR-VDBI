@@ -146,7 +146,7 @@ const display_form = Inputs.form(
     radial_offset: Inputs.range([0, 359], {
       label: 'Rotation (degrees)',
       step: 1,
-      value: 0,
+      value: 90,
     }),
     r: Inputs.number([0, Infinity], {
       label: 'Node radius (px)',
@@ -156,7 +156,7 @@ const display_form = Inputs.form(
     fontsize: Inputs.number([1, Infinity], {
       label: 'Font size (px)',
       step: 1,
-      value: 12,
+      value: 10,
     }),
     fill: Inputs.color({ label: 'Node color', value: '#999999' }),
     stroke: Inputs.color({ label: 'Link color', value: '#555555' }),
