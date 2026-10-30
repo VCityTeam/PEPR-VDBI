@@ -532,7 +532,7 @@ export function collapsableRadialDendrogram(
    * @returns {string} the label's text-anchor
    */
   function labelAnchor(d) {
-    if (isRoot(d)) return d.x > Math.PI ? 'start' : 'end'
+    if (isRoot(d)) return d.x < Math.PI ? 'end' : 'start'
     if (isExpanded(d) && expandedLabelAnchor === 'middle') return 'middle'
     return d.x < Math.PI === labelPointsOutward(d) ? 'start' : 'end'
   }
@@ -544,7 +544,7 @@ export function collapsableRadialDendrogram(
    * @returns {number} the label's x offset, in pixels
    */
   function labelX(d) {
-    if (isRoot(d)) return d.x > Math.PI ? 6 : -6
+    if (isRoot(d)) return d.x < Math.PI ? -6 : 6
     if (isExpanded(d) && expandedLabelAnchor === 'middle') return 0
     return d.x < Math.PI === labelPointsOutward(d) ? 6 : -6
   }
