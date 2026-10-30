@@ -191,6 +191,10 @@ export default {
           path: 'pages/tools/chord-diagram',
         },
         {
+          name: 'Radial dendrogram generator',
+          path: 'pages/tools/radial-dendrogram',
+        },
+        {
           name: 'Gantt chart generator',
           path: 'pages/tools/gantt',
         },

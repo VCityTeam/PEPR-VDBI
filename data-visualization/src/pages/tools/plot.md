@@ -275,6 +275,7 @@ const pie_config = view(
     //   value: 50,
     //   label: "Legend text cuttoff:",
     // }),
+    sort: Inputs.select(['by x', 'by y'], {label: 'Sort'}),
   }),
 )
 ```
@@ -299,6 +300,7 @@ const pie_config = view(
           innerRadiusRatio: pie_config.innerRadiusRatio,
           outerRadiusRatio: pie_config.outerRadiusRatio,
           legendWidth: pie_config.legendWidth,
+          sort: pie_config.sort == 'by x' ? (a, b) => b[0] - a[0] : (a, b) => b[1] - a[1]
         }
       ).render()
   )}<!-- $ -->
