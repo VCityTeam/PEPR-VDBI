@@ -137,8 +137,8 @@ const display_form = Inputs.form(
   {
     sort: Inputs.select(
       new Map([
-        ['Largest first', (a, b) => d3.descending(a.data.count, b.data.count)],
         ['Alphabetical', (a, b) => a.data.name.localeCompare(b.data.name)],
+        ['Largest first', (a, b) => d3.descending(a.data.count, b.data.count)],
         ['Order in file', null],
       ]),
       { label: 'Node order' },
@@ -156,7 +156,7 @@ const display_form = Inputs.form(
     fontsize: Inputs.number([1, Infinity], {
       label: 'Font size (px)',
       step: 1,
-      value: 10,
+      value: 12,
     }),
     fill: Inputs.color({ label: 'Node color', value: '#999999' }),
     stroke: Inputs.color({ label: 'Link color', value: '#555555' }),
@@ -172,7 +172,7 @@ const display_form = Inputs.form(
     label_length: Inputs.number([1, Infinity], {
       label: 'Max label length (characters)',
       step: 1,
-      value: 15,
+      value: 35,
       placeholder: 'no limit',
     }),
     // left empty, the diagram fits the page width and is square
