@@ -56,6 +56,8 @@ display(Inputs.table(csv_data, { layout: 'auto' }))
   <!-- $ -->
   ${selected_expand_depth}
   <!-- $ -->
+  ${selected_radial_offset}
+  <!-- $ -->
   ${selected_style}
   <!-- $ -->
   ${selected_label_length}
@@ -84,6 +86,7 @@ const dendrogram = resize((width) => {
     ),
     sort: settings.sort,
     expandDepth: selected_expand_depth_value,
+    radialOffset: selected_radial_offset_value,
     textLength: selected_label_length_value || Infinity,
     r: selected_style_value.r || 0,
     fontsize: selected_style_value.fontsize || 10,
@@ -174,6 +177,18 @@ const selected_expand_depth = Inputs.range([1, selected_level_count_value], {
 
 ```js
 const selected_expand_depth_value = Generators.input(selected_expand_depth)
+```
+
+```js
+const selected_radial_offset = Inputs.range([0, 359], {
+  label: 'Rotation (degrees)',
+  step: 1,
+  value: 0,
+})
+```
+
+```js
+const selected_radial_offset_value = Generators.input(selected_radial_offset)
 ```
 
 ```js
