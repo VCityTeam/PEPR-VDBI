@@ -9,6 +9,61 @@ import {
   create,
   linkRadial,
 } from 'd3';
+import { cellToStrings } from './chord.js';
+
+/**
+ * Convert tabular rows into a nested `{name, count, children}` tree with one
+ * level per column, in the given order, beneath a single root. Rows sharing
+ * the same values along a path are merged into one branch, and `count` holds
+ * the number of rows passing through each node. A multi-valued cell (split on
+ * `delimiter`) branches the row into every one of its values.
+ *
+ * @param {Object[]} data - the rows to convert
+ * @param {string[]} columns - column names of the tree levels, from the root outwards
+ * @param {Object} [options={}]
+ * @param {string} [options.rootName='root'] - name of the root node
+ * @param {string|null} [options.delimiter=null] - separator for multi-valued cells
+ * @param {string|null} [options.emptyLabel=null] - node name given to empty cells;
+ *   when null, a row's branch stops at its first empty cell
+ * @returns {Object} a nested `{name, count, children}` tree (leaves have no `children`)
+ */
+export function columnsToTree(
+  data,
+  columns,
+  { rootName = 'root', delimiter = null, emptyLabel = null } = {}
+) {
+  const newNode = (name) => ({ name, count: 0, children: new Map() });
+  const root = newNode(rootName);
+
+  data.forEach((row) => {
+    root.count += 1;
+    let branches = [root];
+    for (const column of columns) {
+      let values = [...new Set(cellToStrings(row[column], delimiter))];
+      if (values.length === 0) {
+        if (emptyLabel == null) break;
+        values = [emptyLabel];
+      }
+      branches = branches.flatMap((parent) =>
+        values.map((value) => {
+          if (!parent.children.has(value))
+            parent.children.set(value, newNode(value));
+          const child = parent.children.get(value);
+          child.count += 1;
+          return child;
+        })
+      );
+    }
+  });
+
+  // replace child maps with arrays, dropping them from leaves
+  const toObject = ({ name, count, children }) =>
+    children.size
+      ? { name, count, children: Array.from(children.values(), toObject) }
+      : { name, count };
+
+  return toObject(root);
+}
 
 /**
  * Convert a flat list of project objects into a d3-hierarchy-compatible
@@ -165,6 +220,7 @@ export function mapEntitesToProductToProjectTree(projects) {
  * @param {string} [options.halo='#fff'] - color of the label halo
  * @param {number} [options.haloWidth=3] - padding around the labels
  * @param {boolean} [options.dynamicPositioning=true] - recalculate node positions according to radius on every update
+ * @param {number} [options.expandDepth=1] - nodes at this depth or deeper start collapsed (1 = only the root is expanded)
  * @returns {SVGElement} the rendered radial dendrogram
  */
 export function collapsableRadialDendrogram(
@@ -203,6 +259,7 @@ export function collapsableRadialDendrogram(
     halo = '#fff', // color of label halo
     haloWidth = 3, // padding around the labels
     dynamicPositioning = true, // recalculate positions according to radius on update
+    expandDepth = 1, // nodes at this depth or deeper start collapsed
   } = {}
 ) {
   // If id and parentId options are specified, or the path option, use d3.stratify
@@ -239,13 +296,13 @@ export function collapsableRadialDendrogram(
     .attr('font-family', 'sans-serif')
     .attr('font-size', fontsize);
 
-  // Do the first update to the initial configuration of the tree — where a number of nodes
-  // are open (arbitrarily selected as the root, plus nodes with 7 letters).
+  // Do the first update to the initial configuration of the tree — where nodes
+  // shallower than expandDepth are open.
   root.descendants().forEach((d, i) => {
     d.x0 = d.x;
     d.y0 = d.y;
     d.id = i;
-    if (i > 0) {
+    if (d.depth >= expandDepth) {
       d._children = d.children;
       d.children = null;
     } else {
