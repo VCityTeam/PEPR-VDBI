@@ -221,6 +221,25 @@ export function createTooltip() {
 }
 
 /**
+ * Converts a cell value to a list of non-empty strings. Arrays are flattened,
+ * strings are split on `delimiter` (when given), and any other value
+ * (numbers, dates, booleans...) is treated as a string.
+ *
+ * @param {any} value - the cell value
+ * @param {string|null} [delimiter=null] - separator for multi-valued cells
+ * @returns {string[]} the trimmed, non-empty string values of the cell
+ */
+export function cellToStrings(value, delimiter = null) {
+  if (value == null) return []
+  if (Array.isArray(value))
+    return value.flatMap((d) => cellToStrings(d, delimiter))
+  const text = String(value)
+  return (delimiter ? text.split(delimiter) : [text])
+    .map((d) => d.trim())
+    .filter((d) => d !== '')
+}
+
+/**
  * Truncate a string to maxLength, appending '...' if it was shortened
  *
  * @param {string} text - the text to crop

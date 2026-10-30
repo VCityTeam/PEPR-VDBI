@@ -1,5 +1,5 @@
 import * as d3 from 'd3'
-import { cropText } from './utilities.js'
+import { cellToStrings, cropText } from './utilities.js'
 
 /**
  * Wrap a column name into an accessor function; functions are returned as is.
@@ -9,25 +9,6 @@ import { cropText } from './utilities.js'
  */
 const toAccessor = (accessor) =>
   typeof accessor === 'function' ? accessor : (d) => d[accessor]
-
-/**
- * Converts a cell value to a list of non-empty strings. Arrays are flattened,
- * strings are split on `delimiter` (when given), and any other value
- * (numbers, dates, booleans...) is treated as a string.
- *
- * @param {any} value - the cell value
- * @param {string|null} [delimiter=null] - separator for multi-valued cells
- * @returns {string[]} the trimmed, non-empty string values of the cell
- */
-export function cellToStrings(value, delimiter = null) {
-  if (value == null) return []
-  if (Array.isArray(value))
-    return value.flatMap((d) => cellToStrings(d, delimiter))
-  const text = String(value)
-  return (delimiter ? text.split(delimiter) : [text])
-    .map((d) => d.trim())
-    .filter((d) => d !== '')
-}
 
 /**
  * Groups the values of one or more columns by the value of a group column.
