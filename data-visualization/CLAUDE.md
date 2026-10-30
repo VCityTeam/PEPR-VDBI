@@ -88,7 +88,7 @@ needs a matching change.
 ## Code style
 
 - Use ES modules (import/export) syntax, not CommonJS (require)
-- Use Prettier for code formatting (see .prettierrc)
+- Use Prettier for code and markdown formatting (see .prettierrc)
 - Use ESLint for code linting (see .eslintrc.js)
 - Components must not import functions from one another (e.g. `radial-dendrogram.js` importing from
   `chord.js`). A function used by more than one component goes in `src/components/utilities.js`, and a
@@ -116,14 +116,18 @@ spreading the caller's arguments after its own defaults, so the caller still win
 
 ```js
 chart_by_erc = (data, options = {}, accessors = {}) =>
-  chart(data, { color: erc_color_config, ...options }, { fill_accessor: ercOf, ...accessors })
+  chart(
+    data,
+    { color: erc_color_config, ...options },
+    { fill_accessor: ercOf, ...accessors },
+  )
 ```
 
 Two things to watch:
 
 - Keep accessors in the `accessors` parameter, not in `options`. Plot silently ignores unknown keys in
   `Plot.plot({...})`, so an accessor passed in `options` is dropped without any error.
-- A `color: {type: 'categorical'}` scale with no `domain`/`range` is an *ordinal* scale: Plot treats whatever
+- A `color: {type: 'categorical'}` scale with no `domain`/`range` is an _ordinal_ scale: Plot treats whatever
   the fill channel returns as a category label and assigns its own scheme colors. To get project colors, have
   the fill accessor return the category **name** and pin the scale's `domain`/`range` to the intended palette
   (see `erc_color_config` in `src/pages/researchers/aap-disciplines.js`); returning a color string from the
@@ -138,8 +142,8 @@ highlighting holds up:
    loaded once, up front, not next to the chart that happens to need it.
 2. Datasets loaded in JS code blocks should be loaded in their own block - This avoids extraneous dataloader
    calls on code updates or data cache changes.
-3. **Then, per section or subsection**: the HTML structure comes *first*, and the JS code blocks it
-   references come *after* it. The only thing an HTML block may reference ahead of its definition is data,
+3. **Then, per section or subsection**: the HTML structure comes _first_, and the JS code blocks it
+   references come _after_ it. The only thing an HTML block may reference ahead of its definition is data,
    which the top of the page has already loaded.
 4. Keep the JS inside the HTML structure minimal — ideally a single call such as
    `${resize((width) => charts.someChart(data, { width }))}`. Push real logic into a JS block below the

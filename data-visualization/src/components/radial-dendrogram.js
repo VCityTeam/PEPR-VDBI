@@ -8,8 +8,8 @@ import {
   stratify,
   create,
   linkRadial,
-} from 'd3';
-import { cellToStrings } from './utilities.js';
+} from 'd3'
+import { cellToStrings } from './utilities.js'
 
 /**
  * Convert tabular rows into a nested `{name, count, children}` tree with one
@@ -30,39 +30,39 @@ import { cellToStrings } from './utilities.js';
 export function columnsToTree(
   data,
   columns,
-  { rootName = 'root', delimiter = null, emptyLabel = null } = {}
+  { rootName = 'root', delimiter = null, emptyLabel = null } = {},
 ) {
-  const newNode = (name) => ({ name, count: 0, children: new Map() });
-  const root = newNode(rootName);
+  const newNode = (name) => ({ name, count: 0, children: new Map() })
+  const root = newNode(rootName)
 
   data.forEach((row) => {
-    root.count += 1;
-    let branches = [root];
+    root.count += 1
+    let branches = [root]
     for (const column of columns) {
-      let values = [...new Set(cellToStrings(row[column], delimiter))];
+      let values = [...new Set(cellToStrings(row[column], delimiter))]
       if (values.length === 0) {
-        if (emptyLabel == null) break;
-        values = [emptyLabel];
+        if (emptyLabel == null) break
+        values = [emptyLabel]
       }
       branches = branches.flatMap((parent) =>
         values.map((value) => {
           if (!parent.children.has(value))
-            parent.children.set(value, newNode(value));
-          const child = parent.children.get(value);
-          child.count += 1;
-          return child;
-        })
-      );
+            parent.children.set(value, newNode(value))
+          const child = parent.children.get(value)
+          child.count += 1
+          return child
+        }),
+      )
     }
-  });
+  })
 
   // replace child maps with arrays, dropping them from leaves
   const toObject = ({ name, count, children }) =>
     children.size
       ? { name, count, children: Array.from(children.values(), toObject) }
-      : { name, count };
+      : { name, count }
 
-  return toObject(root);
+  return toObject(root)
 }
 
 /**
@@ -81,8 +81,8 @@ export function mapEntitesToProjectTree(projects) {
         // filter out project ids and acronymes
         Object.entries(project),
         ([key, _values]) => {
-          return key != 'id' && key != 'acronyme';
-        }
+          return key != 'id' && key != 'acronyme'
+        },
       ).map(([key, values]) => {
         return {
           name: key,
@@ -99,19 +99,19 @@ export function mapEntitesToProjectTree(projects) {
                   return {
                     name: d,
                     children: [],
-                  };
+                  }
                 }),
-        };
-      });
+        }
+      })
       return {
         name: project.acronyme,
         // map datum values to children
         children: projectChildren,
-      };
+      }
     }),
-  };
+  }
 
-  return projectTree;
+  return projectTree
 }
 
 // col I : produit (ou resultats) de la recherche (primaire) -> J : secondaire -> H : Quelles actions pour quelles solutions -> A : acronyme
@@ -129,14 +129,14 @@ export function mapEntitesToProductToProjectTree(projects) {
     projects,
     (project) => project.produit[0],
     (project) => project.produit[1],
-    (project) => project.action
-  );
-  console.debug('projectByProduct', projectByProduct);
+    (project) => project.action,
+  )
+  console.debug('projectByProduct', projectByProduct)
 
   // this will be added to the project leaves to map all info
-  const projectTree = mapEntitesToProjectTree(projects).children;
+  const projectTree = mapEntitesToProjectTree(projects).children
 
-  console.debug('projectTree', projectTree);
+  console.debug('projectTree', projectTree)
 
   // this code could/should be made generic to work with any length of grouping ?
   const projectToProductTree = {
@@ -168,20 +168,20 @@ export function mapEntitesToProductToProjectTree(projects) {
                         (d) =>
                           d.name != 'action' &&
                           d.name != 'produit' &&
-                          d.name != 'acronyme'
+                          d.name != 'acronyme',
                       ),
-                  };
+                  }
                 }),
-              };
+              }
             }),
-          };
+          }
         }),
-      };
+      }
     }),
-  };
-  console.debug('projectToProductTree', projectToProductTree);
+  }
+  console.debug('projectToProductTree', projectToProductTree)
 
-  return projectToProductTree;
+  return projectToProductTree
 }
 
 /**
@@ -212,6 +212,8 @@ export function mapEntitesToProductToProjectTree(projects) {
  * @param {string} [options.fill='#999'] - fill for nodes
  * @param {number} [options.fillOpacity] - fill opacity for nodes
  * @param {number} [options.fontsize=10] - font size for labels
+ * @param {string} [options.expandedLabelAnchor='inward'] - where expanded nodes' labels point: 'inward' (towards the center), 'outward' (away from the center, like leaves), or 'middle' (centered on the node)
+ * @param {number} [options.expandedLabelOffset=fontsize] - perpendicular offset, in pixels, of expanded nodes' labels so they don't overlap the incoming link
  * @param {string} [options.stroke='#555'] - stroke for links
  * @param {number} [options.strokeWidth=1.5] - stroke width for links
  * @param {number} [options.strokeOpacity=0.4] - stroke opacity for links
@@ -245,12 +247,14 @@ export function collapsableRadialDendrogram(
     textLength = 15, // label cutoff length
     radius = Math.min(
       width - marginLeft - marginRight,
-      height - marginTop - marginBottom
+      height - marginTop - marginBottom,
     ) / 2, // outer radius
     r = 3, // radius of nodes
     fill = '#999', // fill for nodes
     fillOpacity, // fill opacity for nodes
     fontsize = 10, // font size for labels
+    expandedLabelAnchor = 'inward', // 'inward', 'outward', or 'middle' label placement for expanded nodes
+    expandedLabelOffset = fontsize, // perpendicular offset of expanded nodes' labels, so they sit beside the incoming link
     stroke = '#555', // stroke for links
     strokeWidth = 1.5, // stroke width for links
     strokeOpacity = 0.4, // stroke opacity for links
@@ -260,7 +264,7 @@ export function collapsableRadialDendrogram(
     haloWidth = 3, // padding around the labels
     dynamicPositioning = true, // recalculate positions according to radius on update
     expandDepth = 1, // nodes at this depth or deeper start collapsed
-  } = {}
+  } = {},
 ) {
   // If id and parentId options are specified, or the path option, use d3.stratify
   // to convert tabular data to a hierarchy; otherwise we assume that the data is
@@ -270,23 +274,23 @@ export function collapsableRadialDendrogram(
     path != null
       ? stratify().path(path)(data)
       : id != null || parentId != null
-      ? stratify().id(id).parentId(parentId)(data)
-      : hierarchy(data, children);
+        ? stratify().id(id).parentId(parentId)(data)
+        : hierarchy(data, children)
 
   // Sort the nodes.
-  if (sort != null) root.sort(sort);
+  if (sort != null) root.sort(sort)
 
   // Compute the layout.
   tree()
     .size([2 * Math.PI, radius])
-    .separation(separation)(root);
+    .separation(separation)(root)
 
-  root.x0 = height / 2;
-  root.y0 = 0;
+  root.x0 = height / 2
+  root.y0 = 0
   // root.children.forEach((d) => {
-  //   d.x0 = d.x;
-  //   d.y0 = d.y;
-  // });
+  //   d.x0 = d.x
+  //   d.y0 = d.y
+  // })
 
   const svg = create('svg')
     .attr('viewBox', [-marginLeft - radius, -marginTop - radius, width, height])
@@ -294,29 +298,29 @@ export function collapsableRadialDendrogram(
     .attr('height', height)
     .attr('style', 'max-width: 100%; height: auto; height: intrinsic;')
     .attr('font-family', 'sans-serif')
-    .attr('font-size', fontsize);
+    .attr('font-size', fontsize)
 
   // Do the first update to the initial configuration of the tree — where nodes
   // shallower than expandDepth are open.
   root.descendants().forEach((d, i) => {
-    d.x0 = d.x;
-    d.y0 = d.y;
-    d.id = i;
+    d.x0 = d.x
+    d.y0 = d.y
+    d.id = i
     if (d.depth >= expandDepth) {
-      d._children = d.children;
-      d.children = null;
+      d._children = d.children
+      d.children = null
     } else {
-      d._children = null;
+      d._children = null
     }
-  });
-  console.debug(root.descendants());
+  })
+  console.debug(root.descendants())
 
-  // const zoomF = zoom().on("zoom", handleZoom);
+  // const zoomF = zoom().on("zoom", handleZoom)
 
-  // svg.call(zoomF);
+  // svg.call(zoomF)
 
-  update(root);
-  return svg.node();
+  update(root)
+  return svg.node()
 
   /**
    * Re-render and transition the dendrogram's nodes and links from a given
@@ -326,21 +330,21 @@ export function collapsableRadialDendrogram(
    * @returns {void}
    */
   function update(source) {
-    const nodes = root.descendants();
-    const links = root.links();
+    const nodes = root.descendants()
+    const links = root.links()
 
     if (dynamicPositioning) {
       // Recompute the layout.
       tree()
         .size([2 * Math.PI, radius])
-        .separation(separation)(root);
+        .separation(separation)(root)
     }
 
     // Create a transition
-    const transition = svg.transition().duration(duration);
+    const transition = svg.transition().duration(duration)
 
     // Update the nodes
-    const node = svg.selectAll('g.node').data(nodes, (d) => d.id);
+    const node = svg.selectAll('g.node').data(nodes, (d) => d.id)
 
     // Enter any new nodes at the parent's previous position.
     const nodeEnter = node
@@ -350,41 +354,40 @@ export function collapsableRadialDendrogram(
       .attr(
         'transform',
         (_d) =>
-          `rotate(${(source.x * 180) / Math.PI - 90}) translate(${source.y},0)`
+          `rotate(${(source.x * 180) / Math.PI - 90}) translate(${source.y},0)`,
       )
       .attr('fill-opacity', 0)
       .attr('stroke-opacity', 0)
       .on('click', (_event, d) => {
-        console.debug(root.descendants());
-        click(d);
+        console.debug(root.descendants())
+        click(d)
       })
       .attr('cursor', 'pointer')
-      .attr('pointer-events', 'all');
+      .attr('pointer-events', 'all')
 
     nodeEnter
       .append('circle')
       .attr('r', r)
       .attr('fill', (d) => (d._children ? stroke : fill))
-      .attr('stroke-width', strokeWidth);
+      .attr('stroke-width', strokeWidth)
 
     nodeEnter
       .append('text')
       .attr('dy', '0.32em')
-      .attr('x', (d) => (d.x < Math.PI === !d.children ? 6 : -6))
-      .attr('text-anchor', (d) =>
-        d.x < Math.PI === !d.children ? 'start' : 'end'
-      )
+      .attr('x', labelX)
+      .attr('y', labelY)
+      .attr('text-anchor', labelAnchor)
       // crop node names longer than textLength characters
       .text((d) => {
         return d.data.name.length > textLength
           ? d.data.name.slice(0, textLength).concat('...')
-          : d.data.name;
+          : d.data.name
       })
       .attr('stroke-linejoin', 'round')
       .attr('stroke-width', haloWidth)
       .attr('stroke', halo)
       .attr('paint-order', 'stroke')
-      .attr('class', 'node_label');
+      .attr('class', 'node_label')
 
     // Transition nodes to their new position.
     const nodeUpdate = node
@@ -395,25 +398,24 @@ export function collapsableRadialDendrogram(
         (d) =>
           `rotate(${(d.x * 180) / Math.PI - 90}) translate(${d.y},0) rotate(${
             d.x >= Math.PI ? 180 : 0
-          })`
+          })`,
       )
       .attr('fill-opacity', fillOpacity)
-      .attr('stroke-opacity', strokeOpacity);
+      .attr('stroke-opacity', strokeOpacity)
 
     nodeUpdate
       .select('circle')
       .attr('r', r)
       .style('fill', function (d) {
-        return d._children ? stroke : fill;
-      });
+        return d._children ? stroke : fill
+      })
 
     nodeUpdate
       .select('text')
       .style('fill-opacity', fillOpacity)
-      .attr('x', (d) => (d.x < Math.PI === !d.children ? 6 : -6))
-      .attr('text-anchor', (d) =>
-        d.x < Math.PI === !d.children ? 'start' : 'end'
-      );
+      .attr('x', labelX)
+      .attr('y', labelY)
+      .attr('text-anchor', labelAnchor)
 
     // Transition exiting nodes to the parent's new position.
     const nodeExit = node
@@ -422,12 +424,12 @@ export function collapsableRadialDendrogram(
       .attr('fill-opacity', 0)
       .attr('stroke-opacity', 0)
       .attr('stroke-width', 0)
-      .remove();
+      .remove()
 
-    nodeExit.select('circle').attr('r', 1);
+    nodeExit.select('circle').attr('r', 1)
 
     // Update the links…
-    const link = svg.selectAll('path.link').data(links, (d) => d.target.id);
+    const link = svg.selectAll('path.link').data(links, (d) => d.target.id)
 
     // Enter any new links at the parent's previous position.
     const linkEnter = link
@@ -438,14 +440,14 @@ export function collapsableRadialDendrogram(
         'd',
         linkRadial()
           .angle((_d) => source.x)
-          .radius((_d) => source.y0)
+          .radius((_d) => source.y0),
       )
       .attr('fill', 'none')
       .attr('stroke', stroke)
       .attr('stroke-opacity', strokeOpacity)
       .attr('stroke-linecap', strokeLinecap)
       .attr('stroke-linejoin', strokeLinejoin)
-      .attr('stroke-width', strokeWidth);
+      .attr('stroke-width', strokeWidth)
 
     // Transition links to their new position.
     link
@@ -455,8 +457,8 @@ export function collapsableRadialDendrogram(
         'd',
         linkRadial()
           .angle((d) => d.x)
-          .radius((d) => d.y)
-      );
+          .radius((d) => d.y),
+      )
 
     // Transition exiting nodes to the parent's new position.
     link
@@ -467,14 +469,80 @@ export function collapsableRadialDendrogram(
         'd',
         linkRadial()
           .angle((_d) => source.x)
-          .radius((_d) => source.y)
-      );
+          .radius((_d) => source.y),
+      )
 
     // Stash the old positions for transition.
     root.descendants((d) => {
-      d.x0 = d.x;
-      d.y0 = d.y;
-    });
+      d.x0 = d.x
+      d.y0 = d.y
+    })
+  }
+
+  /**
+   * Whether a node is the root of the tree, i.e. has no parent
+   *
+   * @param {Object} d - the d3 hierarchy node
+   * @returns {boolean} true if the node is the root
+   */
+  function isRoot(d) {
+    return !d.parent
+  }
+
+  /**
+   * Whether a node is expanded, i.e. shows its children. The root is excluded:
+   * it has no incoming link, so its label is placed like a leaf's
+   *
+   * @param {Object} d - the d3 hierarchy node
+   * @returns {boolean} true if the node is a non-root expanded node
+   */
+  function isExpanded(d) {
+    return !!d.children && !isRoot(d)
+  }
+
+  /**
+   * Whether a node's label points away from the center: always for leaves and
+   * the root, and for expanded nodes when expandedLabelAnchor is 'outward'
+   *
+   * @param {Object} d - the d3 hierarchy node
+   * @returns {boolean} true if the label points outward
+   */
+  function labelPointsOutward(d) {
+    return !isExpanded(d) || expandedLabelAnchor === 'outward'
+  }
+
+  /**
+   * Compute a label's text-anchor. Nodes on the left half are rotated by 180°,
+   * so the anchor pointing outward flips from 'start' to 'end' there
+   *
+   * @param {Object} d - the d3 hierarchy node
+   * @returns {string} the label's text-anchor
+   */
+  function labelAnchor(d) {
+    if (isExpanded(d) && expandedLabelAnchor === 'middle') return 'middle'
+    return d.x < Math.PI === labelPointsOutward(d) ? 'start' : 'end'
+  }
+
+  /**
+   * Compute a label's distance from its node, along the radius
+   *
+   * @param {Object} d - the d3 hierarchy node
+   * @returns {number} the label's x offset, in pixels
+   */
+  function labelX(d) {
+    if (isExpanded(d) && expandedLabelAnchor === 'middle') return 0
+    return d.x < Math.PI === labelPointsOutward(d) ? 6 : -6
+  }
+
+  /**
+   * Compute a label's perpendicular offset: expanded nodes' labels point back
+   * along the incoming link, so shift them beside it to keep them readable
+   *
+   * @param {Object} d - the d3 hierarchy node
+   * @returns {number} the label's y offset, in pixels
+   */
+  function labelY(d) {
+    return isExpanded(d) ? -expandedLabelOffset : 0
   }
 
   /**
@@ -486,13 +554,13 @@ export function collapsableRadialDendrogram(
    */
   function click(d) {
     if (d.children) {
-      d._children = d.children;
-      d.children = null;
+      d._children = d.children
+      d.children = null
     } else {
-      d.children = d._children;
-      d._children = null;
+      d.children = d._children
+      d._children = null
     }
-    update(d);
+    update(d)
   }
 
   /**
@@ -514,8 +582,8 @@ export function collapsableRadialDendrogram(
           event.transform.y +
           ') scale(' +
           event.transform.k +
-          ')'
-      );
+          ')',
+      )
     selectAll('text.node_label')
       // .style("font-size", fontSize / event.transform.k + "px")
       .attr(
@@ -526,7 +594,7 @@ export function collapsableRadialDendrogram(
           event.transform.y +
           ') scale(' +
           event.transform.k +
-          ')'
-      );
+          ')',
+      )
   }
 }
