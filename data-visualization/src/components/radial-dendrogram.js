@@ -198,7 +198,6 @@ export function mapEntitesToProductToProjectTree(projects) {
  * @param {Function} [options.separation] - node separation function for the tree layout
  * @param {Function} [options.sort] - comparator used to sort nodes prior to layout
  * @param {number} [options.duration=500] - transition duration in ms
- * @param {number} [options.depth=100] - fixed depth setting
  * @param {number} [options.width=640] - outer width, in pixels
  * @param {number} [options.height=640] - outer height, in pixels
  * @param {number} [options.margin=60] - shorthand for all margins
@@ -236,7 +235,6 @@ export function collapsableRadialDendrogram(
     separation = (a, b) => (a.parent == b.parent ? 1 : 2) / a.depth,
     sort, // how to sort nodes prior to layout (e.g., (a, b) => d3.descending(a.height, b.height))
     duration = 500, // transition duration
-    depth = 100, // set fixed depth
     width = 640, // outer width, in pixels
     height = 640, // outer height, in pixels
     margin = 60, // shorthand for margins
@@ -501,8 +499,8 @@ export function collapsableRadialDendrogram(
   }
 
   /**
-   * Whether a node's label points away from the center: always for leaves and
-   * the root, and for expanded nodes when expandedLabelAnchor is 'outward'
+   * Whether a non-root node's label points away from the center: always for
+   * leaves, and for expanded nodes when expandedLabelAnchor is 'outward'
    *
    * @param {Object} d - the d3 hierarchy node
    * @returns {boolean} true if the label points outward
@@ -512,13 +510,15 @@ export function collapsableRadialDendrogram(
   }
 
   /**
-   * Compute a label's text-anchor. Nodes on the left half are rotated by 180°,
-   * so the anchor pointing outward flips from 'start' to 'end' there
+   * Compute a label's text-anchor. The root's is always start; other
+   * nodes on the left half are rotated by 180°, so the anchor pointing outward
+   * flips from 'start' to 'end' there
    *
    * @param {Object} d - the d3 hierarchy node
    * @returns {string} the label's text-anchor
    */
   function labelAnchor(d) {
+    if (isRoot(d)) return 'start'
     if (isExpanded(d) && expandedLabelAnchor === 'middle') return 'middle'
     return d.x < Math.PI === labelPointsOutward(d) ? 'start' : 'end'
   }
@@ -530,6 +530,7 @@ export function collapsableRadialDendrogram(
    * @returns {number} the label's x offset, in pixels
    */
   function labelX(d) {
+    if (isRoot(d)) return 6
     if (isExpanded(d) && expandedLabelAnchor === 'middle') return 0
     return d.x < Math.PI === labelPointsOutward(d) ? 6 : -6
   }
