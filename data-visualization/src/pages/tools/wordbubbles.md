@@ -1,5 +1,5 @@
 ---
-style: /css/vdbi-page.css
+style: /css/vdbi-dashboard.css
 ---
 
 <!-- imports -->
@@ -61,28 +61,23 @@ const word_count = word_count_file.csv({ typed: true })
     ${selected_charge}
     <!-- $ -->
   </div>
-</div>
-<details class="card">
-  <summary>Advanced layout options</summary>
-  <div class="grid grid-cols-2">
-    <div>
-      ${selected_wrap_ratio}
-      <!-- $ -->
-      ${selected_label_line_height}
-      <!-- $ -->
-      ${selected_collide_ratio}
-      <!-- $ -->
-    </div>
-    <div>
-      ${selected_collide_iterations}
-      <!-- $ -->
-      ${selected_charge_distance}
-      <!-- $ -->
-      ${selected_center_strength}
-      <!-- $ -->
-    </div>
+  <div>
+    ${selected_wrap_ratio}
+    <!-- $ -->
+    ${selected_label_line_height}
+    <!-- $ -->
+    ${selected_collide_ratio}
+    <!-- $ -->
   </div>
-</details>
+  <div>
+    ${selected_collide_iterations}
+    <!-- $ -->
+    ${selected_charge_distance}
+    <!-- $ -->
+    ${selected_center_strength}
+    <!-- $ -->
+  </div>
+</div>
 <div id="word_bubbles_container" class="card">
   ${bubbles}
   <!-- $ -->
