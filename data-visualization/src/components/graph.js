@@ -1120,7 +1120,7 @@ export class WordBubbles extends Graph {
    * @param {Function} [options.labelMap] - node label text accessor (wraps/crops the node's `label`)
    * @param {Function} [options.nodeLabelXOffset] - horizontal label offset, based on number of wrapped lines
    * @param {element} [options.legend=null] - legend for the graph
-   * @param {number} [options.wrapRatio=4] - radius / characters per line ratio used by the default `labelMap`
+   * @param {number} [options.wrapRatio=5] - radius / characters per line ratio used by the default `labelMap`
    * @param {number} [options.labelLineHeight=0.75] - vertical offset (in em) per wrapped line used by the
    *  default `nodeLabelXOffset` to center labels
    * @param {number} [options.collideRadiusRatio=1.1] - collision radius as a multiple of the node radius
@@ -1138,12 +1138,12 @@ export class WordBubbles extends Graph {
       color = () => 'var(--theme-foreground-focus)',
       r = (d) => d.r || 3,
       fontSize = (d) => d.r / 3.5,
-      wrapRatio = 4,
+      wrapRatio = 5,
       labelLineHeight = 0.75,
       labelMap = (d) =>
         wrapText(cropText(d.label, textLength), r(d) / wrapRatio),
       nodeLabelXOffset = (d) =>
-        `${1 - labelMap(d).split('\n').length * labelLineHeight}em`,
+        `${1 - (labelMap(d).includes('\n') ? labelMap(d).split('\n').length : 1) * labelLineHeight * 0.8}em`,
       legend = null,
       width = 500,
       collideRadiusRatio = 1.1,
