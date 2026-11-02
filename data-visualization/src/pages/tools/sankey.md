@@ -1,7 +1,5 @@
 ---
-style: /css/vdbi-page.css
-# sql:
-#   test: /data/test.csv
+style: /css/vdbi-dashboard.css
 ---
 
 # Sankey Diagram Generator
@@ -29,10 +27,25 @@ node 1,node 3,4,blue
 const csvfile = view(
   Inputs.file({ label: 'CSV file', accept: '.csv', required: true }),
 )
+```
 
-const height = view(Inputs.range([1, 1000], { label: 'Height:', step: 1 }))
+```js
+// const user_data = [...(await sql`select * from test`)].map((d) => d.toJSON())
+const user_data = await csvfile.csv()
+display(Inputs.table(user_data))
+console.debug('user_data', user_data)
+```
 
-const fill_opacity = view(Inputs.range([0, 1], { label: 'Fill Opacity:' }))
+```js
+const width = view(Inputs.range([1, 2000], { label: 'Width:', value: 1000,step: 1 }))
+
+const height = view(Inputs.range([1, 2000], { label: 'Height:', value: 500,step: 1 }))
+
+const fill_opacity = view(
+  Inputs.range([0, 1], { label: 'Fill Opacity:', step: 0.05 }),
+)
+
+const show_labels = view(Inputs.toggle({ label: 'Show labels:', value: true }))
 
 // const color_scheme = view(Inputs.select(new Map([
 //   [d3.schemeCategory10],
@@ -44,9 +57,6 @@ const fill_opacity = view(Inputs.range([0, 1], { label: 'Fill Opacity:' }))
 ```
 
 ```js
-// const user_data = [...(await sql`select * from test`)].map((d) => d.toJSON())
-const user_data = await csvfile.csv()
-
 const color_ordinal = d3
   .scaleOrdinal(new Set(user_data.map((d) => d.target)), d3.schemeObservable10)
   .unknown('grey')
@@ -55,24 +65,20 @@ user_data.forEach((d) => {
   d.color = d.color || color_ordinal(d.target)
 })
 
-display(Inputs.table(user_data))
-console.debug('user_data', user_data)
-
 const sankey_data = parseTabularGraph(user_data)
 
 console.debug('sankey_data', sankey_data)
 ```
 
 <div class="card">
-  ${resize(
-    (width) => sankeyDiagram(
-      sankey_data,
-      {
-        width: width,
-        height: height,
-        fillOpacity: fill_opacity,
-      }
-    )
+  ${sankeyDiagram(
+    sankey_data,
+    {
+      width: width,
+      height: height,
+      fillOpacity: fill_opacity,
+      show_labels: show_labels,
+    }
   )}<!-- $ -->
 
 ${downloadSVGButton(".card svg")}<!-- $ -->

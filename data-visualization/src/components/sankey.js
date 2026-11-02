@@ -84,6 +84,7 @@ export function parallelSetToGraph(data, keys) {
  * @param {number} [options.font_size=13] - font size for node labels
  * @param {string} [options.font_color='black'] - color for node labels
  * @param {Function} [options.text] - function to map a node to its label
+ * @param {boolean} [options.show_labels=true] - whether to draw node labels
  * @param {null|undefined} [options.node_sort=null] - node sort parameter for d3-sankey,
  *  set to undefined for default behavior
  * @param {null|undefined} [options.link_sort=null] - link sort parameter for d3-sankey,
@@ -102,6 +103,7 @@ export function sankeyDiagram(
     font_size = 13,
     font_color = 'black',
     text = (d) => cropText(idMap(d), 85),
+    show_labels = true,
     node_sort = null,
     link_sort = null,
   } = {},
@@ -162,22 +164,24 @@ export function sankeyDiagram(
     .append('title')
     .text((d) => d.value.toLocaleString())
 
-  svg
-    .append('g')
-    .style('font', '10px sans-serif')
-    .selectAll('text')
-    .data(nodes)
-    .join('text')
-    .attr('x', (d) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
-    .attr('y', (d) => (d.y1 + d.y0) / 2)
-    .attr('dy', '0.35em')
-    .attr('fill', font_color)
-    .attr('font-size', font_size)
-    .attr('text-anchor', (d) => (d.x0 < width / 2 ? 'start' : 'end'))
-    .text(text)
-    .append('tspan')
-    .attr('fill-opacity', 0.7)
-    .text((d) => ` ${d.value.toLocaleString()}`)
+  if (show_labels) {
+    svg
+      .append('g')
+      .style('font', '10px sans-serif')
+      .selectAll('text')
+      .data(nodes)
+      .join('text')
+      .attr('x', (d) => (d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6))
+      .attr('y', (d) => (d.y1 + d.y0) / 2)
+      .attr('dy', '0.35em')
+      .attr('fill', font_color)
+      .attr('font-size', font_size)
+      .attr('text-anchor', (d) => (d.x0 < width / 2 ? 'start' : 'end'))
+      .text(text)
+      .append('tspan')
+      .attr('fill-opacity', 0.7)
+      .text((d) => ` ${d.value.toLocaleString()}`)
+  }
 
   return svg.node()
 }
