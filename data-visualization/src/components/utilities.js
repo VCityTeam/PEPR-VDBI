@@ -261,14 +261,16 @@ export function cropText(text, maxLength = 20) {
  * @param {string} text - the text to wrap
  * @param {number} [maxWidth=20] - the maximum line width (in characters)
  * @param {string} [newlineCharter='\n'] - the character(s) used to join wrapped lines
- * @param {RegExp} [delimeter=/\s+|-|\//] - the pattern used to split text into words
+ * @param {RegExp} [delimeter=/\s+|-(?!-)|\//] - the pattern used to split text into words.
+ * The default delimeter uses spaces and the last dash in a chain of dashes
+ * (e.g., `foo--bar` returns `['foo-', 'bar']`)
  * @returns {string} the wrapped text
  */
 export function wrapText(
   text,
   maxWidth = 20,
   newlineCharter = '\n',
-  delimeter = /\s+|-|\//,
+  delimeter = /\s+|-(?!-)|\//,
 ) {
   const words = text.split(delimeter)
   // console.debug('words', words)

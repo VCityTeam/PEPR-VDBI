@@ -145,7 +145,7 @@ const display_form = Inputs.form(
     text_length: Inputs.range([3, 100], {
       label: 'Label max length',
       step: 1,
-      value: 60,
+      value: 50,
     }),
     height: Inputs.range([200, 1500], {
       label: 'Chart height',
@@ -175,12 +175,12 @@ const display_form = Inputs.form(
     wrap_ratio: Inputs.range([1, 10], {
       label: 'Radius / characters per line ratio',
       step: 0.1,
-      value: 4,
+      value: 5,
     }),
     label_line_height: Inputs.range([0, 2], {
       label: 'Label line offset (em)',
       step: 0.05,
-      value: 0.7,
+      value: 0.75,
     }),
     collide_ratio: Inputs.range([0.5, 2], {
       label: 'Bubble spacing (× radius)',
@@ -266,8 +266,8 @@ const color_config = new Map([
       legend: undefined,
     },
   ],
-  ['Orange (by value)', value_color('black')],
-  // ['Orange (by value)', value_color(d3.schemeOrRd[9])],
+  // ['Orange (by value)', value_color('black')],
+  ['Orange (by value)', value_color(d3.schemeOrRd[9])],
   ['Blue (by value)', value_color(vdbi_blue_analogic_color_scheme)],
   ['Orange', single_color('var(--theme-foreground-focus-alt)')],
   ['Blue', single_color('var(--theme-foreground-focus)')],
