@@ -6,7 +6,7 @@ style: /css/vdbi-dashboard.css
 
 ```js
 import { WordBubbles } from '/components/graph.js'
-import { downloadSVGButton } from '/components/utilities.js'
+import { downloadSVGButton, formTemplate } from '/components/utilities.js'
 import {
   vdbi_orange_analogic_color_scheme,
   vdbi_blue_analogic_color_scheme,
@@ -36,47 +36,18 @@ const word_count_file = view(Inputs.file({ accept: '.csv', required: true }))
 const word_count = word_count_file.csv({ typed: true })
 ```
 
+```js
+display(Inputs.table(word_count, { layout: 'auto' }))
+```
+
 <!-- User parameters -->
 
-<div class="grid card grid-cols-2">
-  <div>
-    ${selected_color}
-    <!-- $ -->
-    ${selected_text_color}
-    <!-- $ -->
-    ${selected_word_limit}
-    <!-- $ -->
-    ${selected_text_length}
-    <!-- $ -->
-    ${selected_height}
-    <!-- $ -->
-  </div>
-  <div>
-    ${selected_radius_min}
-    <!-- $ -->
-    ${selected_radius_max}
-    <!-- $ -->
-    ${selected_font_ratio}
-    <!-- $ -->
-    ${selected_charge}
-    <!-- $ -->
-  </div>
-  <div>
-    ${selected_wrap_ratio}
-    <!-- $ -->
-    ${selected_label_line_height}
-    <!-- $ -->
-    ${selected_collide_ratio}
-    <!-- $ -->
-  </div>
-  <div>
-    ${selected_collide_iterations}
-    <!-- $ -->
-    ${selected_charge_distance}
-    <!-- $ -->
-    ${selected_center_strength}
-    <!-- $ -->
-  </div>
+<div class="card">
+  ${settings_form}
+  <!-- $ -->
+  <br>
+  ${display_form}
+  <!-- $ -->
 </div>
 <div id="word_bubbles_container" class="card">
   ${bubbles}
@@ -86,7 +57,6 @@ const word_count = word_count_file.csv({ typed: true })
   ${copy_button}
   <!-- $ -->
 </div>
-<div class="card">${Inputs.table(bubble_nodes, {columns: table_columns})}</div>
 
 ```js
 const _invalidator_1 = refresh
@@ -94,24 +64,24 @@ const _invalidator_1 = refresh
 const bubbles = resize((width) => {
   const svg = new WordBubbles(bubble_nodes, {
     width,
-    height: selected_height_value,
+    height: display_settings.height,
     id: 'word_bubbles_svg',
     ...color_config,
-    textColor: selected_text_color_value,
-    textLength: selected_text_length_value,
-    fontSize: (d) => d.r / selected_font_ratio_value,
-    chargeStrength: (d) => d.r * selected_charge_value,
-    wrapRatio: selected_wrap_ratio_value,
-    labelLineHeight: selected_label_line_height_value,
-    collideRadiusRatio: selected_collide_ratio_value,
-    collideIterations: selected_collide_iterations_value,
-    chargeDistanceMax: width * selected_charge_distance_value,
-    centerStrength: selected_center_strength_value,
+    textColor: display_settings.text_color,
+    textLength: display_settings.text_length,
+    fontSize: (d) => d.r / display_settings.font_ratio,
+    chargeStrength: (d) => d.r * display_settings.charge,
+    wrapRatio: display_settings.wrap_ratio,
+    labelLineHeight: display_settings.label_line_height,
+    collideRadiusRatio: display_settings.collide_ratio,
+    collideIterations: display_settings.collide_iterations,
+    chargeDistanceMax: width * display_settings.charge_distance,
+    centerStrength: display_settings.center_strength,
   }).getSVG()
 
   // explicit dimensions so the downloaded SVG is not 0x0
   svg.setAttribute('width', width)
-  svg.setAttribute('height', selected_height_value)
+  svg.setAttribute('height', display_settings.height)
   return svg
 })
 ```
@@ -137,128 +107,108 @@ const flip = () => (refresh.value = !refresh.value)
 
 ```js
 const has_groups = word_count.some((d) => d.group != null && d.group !== '')
-
-const selected_color = Inputs.select(
-  [
-    ...(has_groups ? ['By group'] : []),
-    'Orange (by value)',
-    'Blue (by value)',
-    'Orange',
-    'Blue',
-  ],
-  {
-    label: 'Select color scheme',
-  },
-)
-
-const selected_text_color = Inputs.color({
-  label: 'Text color',
-  value: '#ffffff',
-})
-
-const selected_word_limit = Inputs.range([1, 200], {
-  label: 'Word limit',
-  step: 1,
-  value: 30,
-})
-
-const selected_text_length = Inputs.range([3, 100], {
-  label: 'Label max length',
-  step: 1,
-  value: 60,
-})
-
-const selected_height = Inputs.range([200, 1500], {
-  label: 'Chart height',
-  step: 10,
-  value: 600,
-})
-
-const selected_radius_min = Inputs.range([1, 200], {
-  label: 'Bubble radius minimum',
-  step: 1,
-  value: 20,
-})
-
-const selected_radius_max = Inputs.range([1, 300], {
-  label: 'Bubble radius maximum',
-  step: 1,
-  value: 80,
-})
-
-const selected_font_ratio = Inputs.range([1, 10], {
-  label: 'Radius / font size ratio',
-  step: 0.1,
-  value: 3.5,
-})
-
-const selected_charge = Inputs.range([-2, 2], {
-  label: 'Attraction (× radius)',
-  step: 0.1,
-  value: 1,
-})
-
-const selected_wrap_ratio = Inputs.range([1, 10], {
-  label: 'Radius / characters per line ratio',
-  step: 0.1,
-  value: 4,
-})
-
-const selected_label_line_height = Inputs.range([0, 2], {
-  label: 'Label line offset (em)',
-  step: 0.05,
-  value: 0.75,
-})
-
-const selected_collide_ratio = Inputs.range([0.5, 2], {
-  label: 'Bubble spacing (× radius)',
-  step: 0.01,
-  value: 1.1,
-})
-
-const selected_collide_iterations = Inputs.range([1, 10], {
-  label: 'Collision iterations',
-  step: 1,
-  value: 3,
-})
-
-const selected_charge_distance = Inputs.range([0.1, 2], {
-  label: 'Attraction max distance (× width)',
-  step: 0.05,
-  value: 0.5,
-})
-
-const selected_center_strength = Inputs.range([0, 1], {
-  label: 'Centering strength',
-  step: 0.01,
-  value: 0.1,
-})
 ```
 
 ```js
-const selected_color_value = Generators.input(selected_color)
-const selected_text_color_value = Generators.input(selected_text_color)
-const selected_word_limit_value = Generators.input(selected_word_limit)
-const selected_text_length_value = Generators.input(selected_text_length)
-const selected_height_value = Generators.input(selected_height)
-const selected_radius_min_value = Generators.input(selected_radius_min)
-const selected_radius_max_value = Generators.input(selected_radius_max)
-const selected_font_ratio_value = Generators.input(selected_font_ratio)
-const selected_charge_value = Generators.input(selected_charge)
-const selected_wrap_ratio_value = Generators.input(selected_wrap_ratio)
-const selected_label_line_height_value = Generators.input(
-  selected_label_line_height,
+// depends on the dataset, so these settings are reset when another file is loaded
+const settings_form = Inputs.form(
+  {
+    color: Inputs.select(
+      [
+        ...(has_groups ? ['By group'] : []),
+        'Orange (by value)',
+        'Blue (by value)',
+        'Orange',
+        'Blue',
+      ],
+      { label: 'Select color scheme' },
+    ),
+    word_limit: Inputs.range([1, Math.max(1, word_count.length)], {
+      label: 'Word limit',
+      step: 1,
+      value: Math.min(30, word_count.length),
+    }),
+  },
+  { template: formTemplate(2) },
 )
-const selected_collide_ratio_value = Generators.input(selected_collide_ratio)
-const selected_collide_iterations_value = Generators.input(
-  selected_collide_iterations,
+```
+
+```js
+const settings = Generators.input(settings_form)
+```
+
+```js
+// independent of the dataset, so these settings are kept when another file is loaded
+const display_form = Inputs.form(
+  {
+    text_color: Inputs.color({ label: 'Text color', value: '#ffffff' }),
+    text_length: Inputs.range([3, 100], {
+      label: 'Label max length',
+      step: 1,
+      value: 60,
+    }),
+    height: Inputs.range([200, 1500], {
+      label: 'Chart height',
+      step: 10,
+      value: 1000,
+    }),
+    radius_min: Inputs.range([1, 200], {
+      label: 'Bubble radius minimum',
+      step: 1,
+      value: 50,
+    }),
+    radius_max: Inputs.range([1, 300], {
+      label: 'Bubble radius maximum',
+      step: 1,
+      value: 100,
+    }),
+    font_ratio: Inputs.range([1, 10], {
+      label: 'Radius / font size ratio',
+      step: 0.1,
+      value: 3.5,
+    }),
+    charge: Inputs.range([-2, 2], {
+      label: 'Attraction (× radius)',
+      step: 0.1,
+      value: 1,
+    }),
+    wrap_ratio: Inputs.range([1, 10], {
+      label: 'Radius / characters per line ratio',
+      step: 0.1,
+      value: 4,
+    }),
+    label_line_height: Inputs.range([0, 2], {
+      label: 'Label line offset (em)',
+      step: 0.05,
+      value: 0.7,
+    }),
+    collide_ratio: Inputs.range([0.5, 2], {
+      label: 'Bubble spacing (× radius)',
+      step: 0.01,
+      value: 1.1,
+    }),
+    collide_iterations: Inputs.range([1, 10], {
+      label: 'Collision iterations',
+      step: 1,
+      value: 3,
+    }),
+    charge_distance: Inputs.range([0.1, 2], {
+      label: 'Attraction max distance (× width)',
+      step: 0.05,
+      value: 0.5,
+    }),
+    center_strength: Inputs.range([0, 1], {
+      label: 'Centering strength',
+      step: 0.01,
+      value: 0.1,
+    }),
+  },
+  { template: formTemplate(3) },
 )
-const selected_charge_distance_value = Generators.input(
-  selected_charge_distance,
-)
-const selected_center_strength_value = Generators.input(
-  selected_center_strength,
-)
+```
+
+```js
+const display_settings = Generators.input(display_form)
 ```
 
 ```js
@@ -266,7 +216,7 @@ const filtered_wordcount = word_count
   .filter((d) => d.text != null && d.text !== '' && Number.isFinite(+d.value))
   .map((d) => ({ ...d, text: String(d.text), value: +d.value }))
   .sort((a, b) => b.value - a.value)
-  .slice(0, selected_word_limit_value)
+  .slice(0, settings.word_limit)
 ```
 
 ```js
@@ -275,8 +225,8 @@ const radius_scale = d3
   .scaleSqrt()
   .domain(d3.extent(filtered_wordcount, (d) => d.value))
   .range([
-    Math.min(selected_radius_min_value, selected_radius_max_value),
-    Math.max(selected_radius_min_value, selected_radius_max_value),
+    Math.min(display_settings.radius_min, display_settings.radius_max),
+    Math.max(display_settings.radius_min, display_settings.radius_max),
   ])
 ```
 
@@ -316,9 +266,18 @@ const color_config = new Map([
       legend: undefined,
     },
   ],
-  ['Orange (by value)', value_color(vdbi_orange_analogic_color_scheme)],
+  ['Orange (by value)', value_color('black')],
+  // ['Orange (by value)', value_color(d3.schemeOrRd[9])],
   ['Blue (by value)', value_color(vdbi_blue_analogic_color_scheme)],
-  ['Orange', single_color('#ff6600')],
-  ['Blue', single_color('#0064b5')],
-]).get(selected_color_value)
+  ['Orange', single_color('var(--theme-foreground-focus-alt)')],
+  ['Blue', single_color('var(--theme-foreground-focus)')],
+]).get(settings.color)
+```
+
+## Data view
+
+### Bubbles
+
+```js
+display(Inputs.table(bubble_nodes, { columns: table_columns }))
 ```
