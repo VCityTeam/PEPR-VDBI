@@ -2,11 +2,11 @@ import argparse
 import csv
 import sys
 import os
-from text_mining import lemmatize_text
-from io_utils import initDefaultLogger
+from .text_mining import lemmatize_text
+from .io_utils import initDefaultLogger
 
 
-def main(input_path: str, lang: str):
+def main(input_path: str, lang: str) -> None:
 
     # read the input file
     with open(input_path, "r") as f:

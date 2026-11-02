@@ -1,5 +1,4 @@
-from utilities.io_utils import extractSheet, initDefaultLogger
-
+from .io_utils import extractSheet, initDefaultLogger
 
 def main():
     PATH = "./src/data/private/260609 VDBI Base Connaissance vdef.xlsx"

@@ -13,3 +13,9 @@ dependencies = [
     "stanza>=1.11.0",
     "tqdm>=4.67.2",
 ]
+
+[tool.pyrefly]
+project-includes = [
+    "src/data", "src/data/utilities"
+]
+python-interpreter-path = ".venv/bin/python3"
