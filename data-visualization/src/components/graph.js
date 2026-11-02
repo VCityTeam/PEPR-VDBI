@@ -328,7 +328,8 @@ export class Graph {
    * @param {number} options.strokeWidth - stroke width for links
    * @param {number} options.nodeStrokeOpacity - stroke opacity for nodes
    * @param {number} options.linkStrokeOpacity - stroke opacity for links
-   * @param {string} options.textColor - label color
+   * @param {string|Function} options.textColor - label color, or a function called with each
+   *  node (or link) datum returning its label color
    * @param {string} options.halo - color of label halo
    * @param {number} options.haloWidth - padding around the labels
    * @param {number} options.nodeLabelOpacity - default node label opacity
@@ -464,7 +465,7 @@ export class Graph {
       .style('text-anchor', 'middle')
       .style('font-family', 'Arial')
       // .style("font-size", this.fontSize)
-      .style('fill', this.textColor)
+      .style('fill', this.getLabelGroupColor())
       // .style('fill', 'white')
       // .style('visibility', 'hidden')
       .style('opacity', this.linkLabelOpacity)
@@ -476,7 +477,7 @@ export class Graph {
       .style('text-anchor', 'middle')
       .style('font-family', 'Arial')
       // .style("font-size", this.fontSize)
-      .style('fill', this.textColor)
+      .style('fill', this.getLabelGroupColor())
       .style('opacity', this.nodeLabelOpacity)
       // .style('fill', 'white')
       // .style('visibility', 'hidden')
@@ -539,6 +540,7 @@ export class Graph {
       .join('text')
       .text((d) => this.labelMap(d))
       .attr('font-size', this.fontSize)
+      .style('fill', this.getLabelColor())
     // .attr("stroke-linejoin", "round")
     // .attr("stroke-width", this.haloWidth)
     // .attr("stroke", this.halo)
@@ -549,6 +551,7 @@ export class Graph {
       .join('text')
       .text((d) => cropText(this.relationMap(d) || '', this.textLength))
       .attr('font-size', this.fontSize)
+      .style('fill', this.getLabelColor())
     // .attr("stroke-linejoin", "round")
     // .attr("stroke-width", this.haloWidth)
     // .attr("stroke", this.halo)
@@ -556,6 +559,22 @@ export class Graph {
   }
 
   // Getters for the graph elements //
+
+  /**
+   * Get the fill of the label groups: the text color when it is a constant,
+   * otherwise nothing, as the labels are then colored individually
+   * @returns {string|null} the label group fill
+   */
+  getLabelGroupColor = () =>
+    typeof this.textColor === 'function' ? null : this.textColor
+
+  /**
+   * Get the fill of individual labels: the text color function when there is
+   * one, otherwise nothing, so the labels inherit the color of their group
+   * @returns {Function|null} the label fill accessor
+   */
+  getLabelColor = () =>
+    typeof this.textColor === 'function' ? this.textColor : null
 
   /**
    * Get the SVG element of the graph
@@ -1113,7 +1132,8 @@ export class WordBubbles extends Graph {
    * @param {object} [options={}] - Same as `Graph` options, with the following defaults overridden:
    * @param {number} [options.textLength=60] - label cutoff length
    * @param {number} [options.nodeLabelOpacity=1] - default node label opacity
-   * @param {string} [options.textColor='white'] - label color
+   * @param {string|Function} [options.textColor='white'] - label color, or a function called with
+   *  each node returning its label color (e.g. `valueTextColor` from `color.js`)
    * @param {Function} [options.color] - node fill color
    * @param {Function} [options.r] - node radius accessor
    * @param {Function} [options.fontSize] - label font size accessor

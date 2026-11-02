@@ -381,3 +381,29 @@ export const keyword_color_scale = (keywords) =>
       d3.quantize(d3.interpolateSinebow, keywords.length + 1),
     )
     .unknown('grey')
+
+// text colors //
+
+/**
+ * Build a text color function that picks a dark color for low values and a light
+ * color for high values, to keep labels readable on top of a sequential color
+ * scheme going from light (low values) to dark (high values)
+ *
+ * @param {number[]} domain - the [min, max] extent of the values
+ * @param {object} [options={}] - configuration options
+ * @param {number} [options.threshold=0.5] - normalized value (between 0 and 1) from
+ *  which the light color is used
+ * @param {string} [options.dark='black'] - text color for values below the threshold
+ * @param {string} [options.light='white'] - text color for values at or above the threshold
+ * @param {string} [options.unknown='black'] - text color for missing or non-numeric values
+ * @returns {Function} a function mapping a value to a text color
+ */
+export const valueTextColor = (
+  domain,
+  { threshold = 0.5, dark = 'black', light = 'white', unknown = 'black' } = {},
+) =>
+  d3
+    .scaleThreshold()
+    .domain([d3.scaleLinear().domain(domain).invert(threshold)])
+    .range([dark, light])
+    .unknown(unknown)

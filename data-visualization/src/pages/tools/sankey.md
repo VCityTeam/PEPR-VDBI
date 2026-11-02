@@ -16,8 +16,8 @@ Upload a csv file with the following structure:
 
 ```csv
 source,target,value,color
-node 1,node 2,red,5
-node 1,node 3,blue,4
+node 1,node 2,5,red
+node 1,node 3,4,blue
 ...
 ```
 

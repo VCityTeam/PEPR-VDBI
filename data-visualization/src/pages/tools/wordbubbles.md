@@ -10,6 +10,7 @@ import { downloadSVGButton, formTemplate } from '/components/utilities.js'
 import {
   vdbi_orange_analogic_color_scheme,
   vdbi_blue_analogic_color_scheme,
+  valueTextColor,
 } from '/components/color.js'
 ```
 
@@ -67,7 +68,7 @@ const bubbles = resize((width) => {
     height: display_settings.height,
     id: 'word_bubbles_svg',
     ...color_config,
-    textColor: display_settings.text_color,
+    textColor: text_color,
     textLength: display_settings.text_length,
     fontSize: (d) => d.r / display_settings.font_ratio,
     chargeStrength: (d) => d.r * display_settings.charge,
@@ -141,7 +142,22 @@ const settings = Generators.input(settings_form)
 // independent of the dataset, so these settings are kept when another file is loaded
 const display_form = Inputs.form(
   {
-    text_color: Inputs.color({ label: 'Text color', value: '#ffffff' }),
+    text_color_mode: Inputs.select(['Fixed', 'By value'], {
+      label: 'Text color mode',
+    }),
+    text_color: Inputs.color({
+      label: 'Text color (fixed / high values)',
+      value: '#ffffff',
+    }),
+    text_color_dark: Inputs.color({
+      label: 'Text color (low values)',
+      value: '#000000',
+    }),
+    text_color_threshold: Inputs.range([0, 1], {
+      label: 'Text color threshold (normalized value)',
+      step: 0.01,
+      value: 0.5,
+    }),
     text_length: Inputs.range([3, 100], {
       label: 'Label max length',
       step: 1,
@@ -267,11 +283,29 @@ const color_config = new Map([
     },
   ],
   // ['Orange (by value)', value_color('black')],
-  ['Orange (by value)', value_color(d3.schemeOrRd[9])],
+  ['Orange (by value)', value_color(d3.schemeOrRd[3])],
   ['Blue (by value)', value_color(vdbi_blue_analogic_color_scheme)],
   ['Orange', single_color('var(--theme-foreground-focus-alt)')],
   ['Blue', single_color('var(--theme-foreground-focus)')],
 ]).get(settings.color)
+```
+
+```js
+// "By value" uses the dark color for low values and the light color for high values,
+// to stay readable on sequential schemes that go from light to dark
+const value_text_color = valueTextColor(
+  d3.extent(filtered_wordcount, (d) => d.value),
+  {
+    threshold: display_settings.text_color_threshold,
+    dark: display_settings.text_color_dark,
+    light: display_settings.text_color,
+  },
+)
+
+const text_color =
+  display_settings.text_color_mode === 'By value'
+    ? (d) => value_text_color(d.value)
+    : display_settings.text_color
 ```
 
 ## Data view
