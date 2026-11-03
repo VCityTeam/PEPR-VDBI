@@ -1,9 +1,13 @@
-# Gantt chart generator
+---
+style: /css/vdbi-dashboard.css
+---
 
 <!--
 created with code adapted from
 https://observablehq.com/@observablehq/build-your-own-gantt-chart
 -->
+
+<!-- imports -->
 
 ```js
 import {
@@ -13,8 +17,12 @@ import {
 } from '/components/utilities.js'
 ```
 
-To get started, upload a JSON file containing the gantt tasks and color settings
-using the following format:
+# Gantt chart generator
+
+Upload a JSON file (.json) of tasks and groups to generate a gantt chart. Each task is drawn as a bar
+from its `startDate` to its `endDate`, labelled with its `title` (or its `task` id when it has no
+title) and colored by its `group`. Each group sets the color, and optionally the legend `title`, of
+its tasks:
 
 ```json
 {
@@ -32,7 +40,7 @@ using the following format:
   "colors": [
     {
       "group": "group_id",
-      "group": "Group title",
+      "title": "Group title",
       "color": "(css friendly) color"
     },
     ...
@@ -40,84 +48,49 @@ using the following format:
 }
 ```
 
+Tasks and groups can be added to the chart below it, and the edited chart downloaded back as a JSON
+file.
+
 ```js
-const upload = view(Inputs.file({ accept: '.json', required: true }))
+const json_file = view(Inputs.file({ accept: '.json', required: true }))
 ```
 
 ```js
-const data = await upload.json()
-const tasks = data.tasks
-const colors = data.colors
-const width = Generators.width(document.querySelector('main'))
-const parser = d3.utcParse('%Y-%m-%d')
+const gantt_data = json_file.json()
 ```
-
-<div class="card" id="gantt-settings">
 
 ```js
-const settings = view(
-  Inputs.form(
-    {
-      plotHeight: Inputs.range([15 * tasks.length, 100 * tasks.length], {
-        label: 'Plot height',
-        step: 1,
-        value: 50 * tasks.length,
-      }),
-      plotWidth: Inputs.range([100, width], {
-        label: 'Plot width',
-        step: 1,
-        value: width,
-      }),
-      barHeight: Inputs.range([0, 20], {
-        label: 'Adjust bar height',
-        step: 1,
-        value: 1,
-      }),
-      textPositionX: Inputs.range([-50, 50], {
-        label: 'Label X dodge',
-        step: 1,
-        value: 5,
-      }),
-      textPositionY: Inputs.range([-50, 50], {
-        label: 'Label Y dodge',
-        step: 1,
-      }),
-      fontSize: Inputs.range([8, 24], {
-        label: 'Font size',
-        step: 1,
-        value: 14,
-      }),
-      barRoundness: Inputs.range([0, 20], {
-        label: 'Bar roundness',
-        step: 1,
-        value: 3,
-      }),
-      gridlines: Inputs.radio(['x', 'y', 'both', 'none'], {
-        label: 'Gridlines',
-        value: 'x',
-      }),
-      marginLeft: Inputs.range([0, 100], {
-        label: 'Left Margin',
-        value: 20,
-      }),
-      marginRight: Inputs.range([0, 100], {
-        label: 'Right Margin',
-        value: 20,
-      }),
-    },
-    { template: formTemplate() },
-  ),
-)
+display(Inputs.table(gantt_data.tasks, { layout: 'auto' }))
+display(Inputs.table(gantt_data.colors, { layout: 'auto' }))
 ```
 
+<!-- User parameters -->
+
+<div class="card">
+  ${settings_form}
+  <!-- $ -->
+  <br>
+  ${display_form}
+  <!-- $ -->
+</div>
+<div id="gantt-chart" class="card">
+  ${resize((width) => gantt(tasks, { ...settings, ...display_settings, width }))}
+  <!-- $ -->
+</div>
+<div>
+  ${png_button}
+  <!-- $ -->
+  ${json_button}
+  <!-- $ -->
 </div>
 
-<div class="card" id="gantt-chart">${gantt(tasks, settings)}</div>
+```js
+const png_button = downloadPNGButton('gantt-chart')
+```
 
 ```js
-display(downloadPNGButton('gantt-chart'))
-display(
-  downloadJSONButton(() => ({
+const json_button = downloadJSONButton(
+  () => ({
     tasks: tasks.map((d) => ({
       task: d.task ?? undefined,
       title: d.title ?? undefined,
@@ -127,71 +100,157 @@ display(
       description: d.description ?? undefined,
     })),
     colors,
-  })),
+  }),
+  { filename: 'gantt.json' },
 )
 ```
+
+```js
+// copied, so that added tasks and groups do not modify the uploaded data
+const tasks = gantt_data.tasks.map((d) => ({ ...d }))
+const colors = gantt_data.colors.map((d) => ({ ...d }))
+const parser = d3.utcParse('%Y-%m-%d')
+```
+
+```js
+// depends on the dataset, so these settings are reset when another file is loaded
+const settings_form = Inputs.form(
+  {
+    plotHeight: Inputs.range([15 * tasks.length, 100 * tasks.length], {
+      label: 'Plot height',
+      step: 1,
+      value: 50 * tasks.length,
+    }),
+  },
+  { template: formTemplate() },
+)
+```
+
+```js
+const settings = Generators.input(settings_form)
+```
+
+```js
+// independent of the dataset, so these settings are kept when another file is loaded
+const display_form = Inputs.form(
+  {
+    // left empty, the chart fits the page width
+    plotWidth: Inputs.number([100, Infinity], {
+      label: 'Plot width (px)',
+      step: 1,
+      placeholder: 'fit to page',
+    }),
+    barHeight: Inputs.range([0, 20], {
+      label: 'Adjust bar height',
+      step: 1,
+      value: 1,
+    }),
+    textPositionX: Inputs.range([-50, 50], {
+      label: 'Label X dodge',
+      step: 1,
+      value: 5,
+    }),
+    textPositionY: Inputs.range([-50, 50], {
+      label: 'Label Y dodge',
+      step: 1,
+      value: 0,
+    }),
+    fontSize: Inputs.range([8, 24], {
+      label: 'Font size',
+      step: 1,
+      value: 14,
+    }),
+    barRoundness: Inputs.range([0, 20], {
+      label: 'Bar roundness',
+      step: 1,
+      value: 3,
+    }),
+    gridlines: Inputs.radio(['x', 'y', 'both', 'none'], {
+      label: 'Gridlines',
+      value: 'x',
+    }),
+    marginLeft: Inputs.range([0, 100], {
+      label: 'Left Margin',
+      step: 1,
+      value: 20,
+    }),
+    marginRight: Inputs.range([0, 100], {
+      label: 'Right Margin',
+      step: 1,
+      value: 20,
+    }),
+  },
+  { template: formTemplate(3) },
+)
+```
+
+```js
+const display_settings = Generators.input(display_form)
+```
+
+## Edit the chart
 
 <div class="card">
-
-<h2>Add a new task</h2>
-
-```js
-const new_task = view(
-  Inputs.form(
-    {
-      task: Inputs.text({
-        value: undefined,
-        label: 'Task name',
-        required: true,
-      }),
-      title: Inputs.text({ value: undefined, label: 'Task title' }),
-      group: Inputs.select(colorMap.keys(), { label: 'Group name' }),
-      startDate: Inputs.date({
-        value: undefined,
-        label: 'Start date',
-        required: true,
-      }),
-      endDate: Inputs.date({
-        value: undefined,
-        label: 'End date',
-        required: true,
-      }),
-      description: Inputs.text({ value: undefined, label: 'Description' }),
-    },
-    { template: formTemplate() },
-  ),
-)
-```
-
-```js
-const add_task = view(Inputs.button('Add task', { reduce: update_tasks }))
-```
-
----
-
-<h2>Add a new group</h2>
-
-```js
-const new_group = view(
-  Inputs.form(
-    {
-      group: Inputs.text({
-        value: undefined,
-        label: 'Group name',
-        required: true,
-      }),
-      color: Inputs.color({ value: undefined, label: 'Group color' }),
-    },
-    { template: formTemplate() },
-  ),
-)
-```
-
-```js
-const add_group = view(Inputs.button('Add group', { reduce: update_groups }))
-```
-
+  <h2>Add a new task</h2>
+  ${new_task_form}
+  <!-- $ -->
+  ${Inputs.button('Add task', { reduce: update_tasks })}
+  <!-- $ -->
+  <hr>
+  <h2>Add a new group</h2>
+  ${new_group_form}
+  <!-- $ -->
+  ${Inputs.button('Add group', { reduce: update_groups })}
+  <!-- $ -->
 </div>
+
+```js
+const new_task_form = Inputs.form(
+  {
+    task: Inputs.text({
+      value: undefined,
+      label: 'Task name',
+      required: true,
+    }),
+    title: Inputs.text({ value: undefined, label: 'Task title' }),
+    group: Inputs.select(colorMap.keys(), { label: 'Group name' }),
+    startDate: Inputs.date({
+      value: undefined,
+      label: 'Start date',
+      required: true,
+    }),
+    endDate: Inputs.date({
+      value: undefined,
+      label: 'End date',
+      required: true,
+    }),
+    description: Inputs.text({ value: undefined, label: 'Description' }),
+  },
+  { template: formTemplate() },
+)
+```
+
+```js
+const new_task = Generators.input(new_task_form)
+```
+
+```js
+const new_group_form = Inputs.form(
+  {
+    group: Inputs.text({
+      value: undefined,
+      label: 'Group name',
+      required: true,
+    }),
+    color: Inputs.color({ value: undefined, label: 'Group color' }),
+  },
+  { template: formTemplate() },
+)
+```
+
+```js
+const new_group = Generators.input(new_group_form)
+```
 
 ```js
 const invalidator_2 = refresh
@@ -235,7 +294,8 @@ const titleFormat = (d) =>
 const gantt = (tasks, settings) =>
   Plot.plot({
     height: settings.plotHeight,
-    width: settings.plotWidth,
+    // an emptied number field is NaN
+    width: settings.plotWidth || settings.width,
     marginLeft: settings.marginLeft,
     marginRight: settings.marginRight,
     x: {

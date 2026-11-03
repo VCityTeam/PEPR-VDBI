@@ -2,85 +2,135 @@
 style: /css/vdbi-dashboard.css
 ---
 
-# Sankey Diagram Generator
+<!-- imports -->
 
 ```js
 import { parseTabularGraph } from '/components/graph.js'
 import { sankeyDiagram } from '/components/sankey.js'
-import { downloadSVGButton } from '/components/utilities.js'
+import { downloadSVGButton, formTemplate } from '/components/utilities.js'
 ```
 
-Upload a csv file with the following structure:
+# Sankey Diagram Generator
+
+Upload a table of links (.csv) to generate a sankey diagram. Each row is a link going from its
+`source` node to its `target` node, with a width proportional to its `value`. Nodes are created from
+the distinct values of the `source` and `target` columns, and the optional `color` column sets the
+color of each link:
 
 ```csv
 source,target,value,color
 node 1,node 2,5,red
 node 1,node 3,4,blue
-...
+node 2,node 4,3,
 ```
 
 <div class="tip">
-  If you leave the color field black, it will be filled automatically
+  If you leave the color field blank, it will be filled automatically based on the link target.
 </div>
 
 ```js
-const csvfile = view(
-  Inputs.file({ label: 'CSV file', accept: '.csv', required: true }),
+const csv_file = view(Inputs.file({ accept: '.csv', required: true }))
+```
+
+```js
+const csv_data = csv_file.csv()
+```
+
+```js
+display(Inputs.table(csv_data, { layout: 'auto' }))
+```
+
+<!-- User parameters -->
+
+<div class="card">
+  ${display_form}
+  <!-- $ -->
+</div>
+<div id="sankey_diagram_container" class="card">
+  ${sankey}
+  <!-- $ -->
+  ${copy_button}
+  <!-- $ -->
+</div>
+
+```js
+const sankey = resize((width) =>
+  sankeyDiagram(sankey_data, {
+    width: display_settings.width || width,
+    height: display_settings.height || 500,
+    linkFillOpacity: display_settings.link_opacity,
+    show_labels: display_settings.show_labels,
+  }),
 )
 ```
 
 ```js
-// const user_data = [...(await sql`select * from test`)].map((d) => d.toJSON())
-const user_data = await csvfile.csv()
-display(Inputs.table(user_data))
-console.debug('user_data', user_data)
+const copy_button = downloadSVGButton(
+  '#sankey_diagram_container svg',
+  'Download (.svg)',
+  'sankey-diagram.svg',
+)
 ```
 
 ```js
-const width = view(Inputs.range([1, 2000], { label: 'Width:', value: 1000,step: 1 }))
-
-const height = view(Inputs.range([1, 2000], { label: 'Height:', value: 500,step: 1 }))
-
-const fill_opacity = view(
-  Inputs.range([0, 1], { label: 'Fill Opacity:', step: 0.05 }),
+// independent of the dataset, so these settings are kept when another file is loaded
+const display_form = Inputs.form(
+  {
+    link_opacity: Inputs.range([0, 1], {
+      label: 'Link opacity',
+      step: 0.05,
+      value: 0.7,
+    }),
+    show_labels: Inputs.toggle({ label: 'Show labels', value: true }),
+    // left empty, the diagram fits the page width
+    width: Inputs.number([1, Infinity], {
+      label: 'SVG width (px)',
+      step: 1,
+      placeholder: 'fit to page',
+    }),
+    height: Inputs.number([1, Infinity], {
+      label: 'SVG height (px)',
+      step: 1,
+      value: 500,
+      placeholder: '500',
+    }),
+  },
+  { template: formTemplate(2) },
 )
+```
 
-const show_labels = view(Inputs.toggle({ label: 'Show labels:', value: true }))
-
-// const color_scheme = view(Inputs.select(new Map([
-//   [d3.schemeCategory10],
-//   [d3.schemeCategory10],
-//   [d3.schemeCategory10],
-//   [d3.schemeCategory10],
-//   [d3.schemeCategory10],
-// ]), { label: "Fill Opacity:" }))
+```js
+const display_settings = Generators.input(display_form)
 ```
 
 ```js
 const color_ordinal = d3
-  .scaleOrdinal(new Set(user_data.map((d) => d.target)), d3.schemeObservable10)
+  .scaleOrdinal(new Set(csv_data.map((d) => d.target)), d3.schemeObservable10)
   .unknown('grey')
 
-user_data.forEach((d) => {
-  d.color = d.color || color_ordinal(d.target)
-})
+// copied, so that the uploaded data is not modified
+const link_data = csv_data.map((d) => ({
+  ...d,
+  value: +d.value,
+  color: d.color || color_ordinal(d.target),
+}))
+```
 
-const sankey_data = parseTabularGraph(user_data)
-
+```js
+const sankey_data = parseTabularGraph(link_data)
 console.debug('sankey_data', sankey_data)
 ```
 
-<div class="card">
-  ${sankeyDiagram(
-    sankey_data,
-    {
-      width: width,
-      height: height,
-      fillOpacity: fill_opacity,
-      show_labels: show_labels,
-    }
-  )}<!-- $ -->
+## Data view
 
-${downloadSVGButton(".card svg")}<!-- $ -->
+### Nodes
 
-</div>
+```js
+display(Inputs.table(sankey_data.nodes, { layout: 'auto' }))
+```
+
+### Links
+
+```js
+display(Inputs.table(sankey_data.links, { layout: 'auto' }))
+```
