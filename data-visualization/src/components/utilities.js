@@ -652,26 +652,16 @@ export function writeToFile(
  * Build an Observable Inputs `form` template that lays its inputs out in
  * newspaper columns, bolding each label and appending a colon to it.
  *
+ * Styling lives in the `.form-template` rules of `src/css/vdbi-default.css`;
+ * the column count is passed through the `--form-columns` CSS variable.
+ *
  * @param {number} [columns=2] - the number of columns to flow the inputs into
- * @param {string} [id] - the id given to the wrapper div, used to scope the
- *   injected styles; defaults to a random `form_*` id
  * @returns {Function} a template function that, given Observable Inputs'
  *   `inputs` object, returns the wrapper element
  */
 export const formTemplate =
-  (columns = 2, id = `form_${Math.random().toString(36).slice(2)}`) =>
+  (columns = 2) =>
   (inputs) =>
-    html`<div id="${id}">${Object.values(inputs)}</div>
-      <style>
-        div#${id} {
-          text-align: left;
-          column-count: ${columns};
-        }
-        div#${id} label {
-          font-weight: bold;
-          line-height: 100%;
-        }
-        div#${id} label:not(div > label):after {
-          content: ':';
-        }
-      </style>`
+    html`<div class="form-template" style="--form-columns: ${columns}">
+      ${Object.values(inputs)}
+    </div>`
