@@ -50,15 +50,8 @@ display(Inputs.table(csv_data, { layout: 'auto' }))
 <div class="card">
   ${settings_form}
   <!-- $ -->
-  ${selected_group_limit}
-  <!-- $ -->
-  ${selected_group_labels}
-  <!-- $ -->
-  ${selected_group_label_length}
-  <!-- $ -->
-  ${selected_size}
-  <!-- $ -->
-  ${selected_margins}
+  <br>
+  ${display_form}
   <!-- $ -->
 </div>
 <div id="chord_diagram_container" class="card">
@@ -72,14 +65,15 @@ display(Inputs.table(csv_data, { layout: 'auto' }))
 const chord = resize((width) =>
   chordDiagram(chord_data.matrix, chord_data.names, chord_colors, {
     diagram_id: 'chord_diagram_svg',
-    width: selected_size_value.width || width,
-    height: selected_size_value.height || selected_size_value.width || width,
-    // an emptied margin field is NaN
-    ...Object.fromEntries(
-      Object.entries(selected_margins_value).map(([k, v]) => [k, v || 0]),
-    ),
-    showGroupLabels: selected_group_labels_value,
-    groupLabelMaxLength: selected_group_label_length_value,
+    width: display_settings.width || width,
+    height: display_settings.height || display_settings.width || width,
+    // an emptied number field is NaN
+    marginTop: display_settings.marginTop || 0,
+    marginRight: display_settings.marginRight || 0,
+    marginBottom: display_settings.marginBottom || 0,
+    marginLeft: display_settings.marginLeft || 0,
+    showGroupLabels: display_settings.group_labels,
+    groupLabelMaxLength: display_settings.group_label_length,
     ...format_config,
   }),
 )
@@ -94,6 +88,7 @@ const copy_button = downloadSVGButton(
 ```
 
 ```js
+// depends on the dataset, so these settings are reset when another file is loaded
 const settings_form = Inputs.form(
   {
     group_column: Inputs.select(csv_data.columns, {
@@ -113,6 +108,26 @@ const settings_form = Inputs.form(
       label: 'Transpose groups and values',
       value: false,
     }),
+  },
+  { template: formTemplate() },
+)
+```
+
+```js
+const settings = Generators.input(settings_form)
+```
+
+```js
+// independent of the dataset, so these settings are kept when another file is loaded
+const marginInput = (side) =>
+  Inputs.number([0, Infinity], {
+    label: `${side} margin (px)`,
+    step: 1,
+    value: 100,
+  })
+
+const display_form = Inputs.form(
+  {
     measure: Inputs.select(
       new Map([
         ['Number of shared values', 'count'],
@@ -133,13 +148,45 @@ const settings_form = Inputs.form(
       ]),
       { label: 'Group order' },
     ),
+    // left empty, every group is kept
+    group_limit: Inputs.number([1, Infinity], {
+      label: 'Max groups (largest first)',
+      step: 1,
+      value: 30,
+      placeholder: 'no limit',
+    }),
+    group_labels: Inputs.toggle({
+      label: 'Show group labels',
+      value: true,
+    }),
+    // left empty, labels are not clipped; at least 4 so cropText keeps a character before '...'
+    group_label_length: Inputs.number([4, Infinity], {
+      label: 'Max group label length (characters)',
+      step: 1,
+      placeholder: 'no limit',
+    }),
+    // left empty, the diagram fits the page width and is square
+    width: Inputs.number([1, Infinity], {
+      label: 'SVG width (px)',
+      step: 1,
+      placeholder: 'fit to page',
+    }),
+    height: Inputs.number([1, Infinity], {
+      label: 'SVG height (px)',
+      step: 1,
+      placeholder: 'same as width',
+    }),
+    marginTop: marginInput('Top'),
+    marginBottom: marginInput('Bottom'),
+    marginLeft: marginInput('Left'),
+    marginRight: marginInput('Right'),
   },
-  { template: formTemplate() },
+  { template: formTemplate(3) },
 )
 ```
 
 ```js
-const settings = Generators.input(settings_form)
+const display_settings = Generators.input(display_form)
 ```
 
 ```js
@@ -172,107 +219,17 @@ const chord_input = settings.transpose
 ```
 
 ```js
-const group_count = new Set(
-  chord_input.data
-    .map((d) => d[chord_input.group_column]?.trim())
-    .filter((d) => d),
-).size
-
-const selected_group_limit = Inputs.range([1, Math.max(group_count, 1)], {
-  label: 'Max groups (largest first)',
-  step: 1,
-  value: Math.min(group_count, 30),
-})
-```
-
-```js
-const selected_group_limit_value = Generators.input(selected_group_limit)
-```
-
-```js
-// kept out of settings_form so toggling labels only redraws the diagram
-const selected_group_labels = Inputs.toggle({
-  label: 'Show group labels',
-  value: true,
-})
-```
-
-```js
-const selected_group_labels_value = Generators.input(selected_group_labels)
-```
-
-```js
-// left empty, labels are not clipped; at least 4 so cropText keeps a character before '...'
-const selected_group_label_length = Inputs.number([4, Infinity], {
-  label: 'Max group label length (characters)',
-  step: 1,
-  placeholder: 'no limit',
-})
-```
-
-```js
-const selected_group_label_length_value = Generators.input(
-  selected_group_label_length,
-)
-```
-
-```js
-// left empty, the diagram fits the page width and is square
-const selected_size = Inputs.form(
-  {
-    width: Inputs.number([1, Infinity], {
-      label: 'SVG width (px)',
-      step: 1,
-      placeholder: 'fit to page',
-    }),
-    height: Inputs.number([1, Infinity], {
-      label: 'SVG height (px)',
-      step: 1,
-      placeholder: 'same as width',
-    }),
-  },
-  { template: formTemplate() },
-)
-```
-
-```js
-const selected_size_value = Generators.input(selected_size)
-```
-
-```js
-const marginInput = (side) =>
-  Inputs.number([0, Infinity], {
-    label: `${side} margin (px)`,
-    step: 1,
-    value: 100,
-  })
-
-const selected_margins = Inputs.form(
-  {
-    marginTop: marginInput('Top'),
-    marginRight: marginInput('Right'),
-    marginBottom: marginInput('Bottom'),
-    marginLeft: marginInput('Left'),
-  },
-  { template: formTemplate() },
-)
-```
-
-```js
-const selected_margins_value = Generators.input(selected_margins)
-```
-
-```js
 const chord_data = columnsToIntersectionMatrix(
   chord_input.data,
   chord_input.group_column,
   chord_input.value_columns,
   {
     delimiter: chord_input.delimiter,
-    measure: settings.measure,
-    diagonal: settings.diagonal,
-    limit: selected_group_limit_value,
-    sort: settings.sort,
+    measure: display_settings.measure,
+    diagonal: display_settings.diagonal,
+    // an emptied number field is NaN
+    limit: display_settings.group_limit || Infinity,
+    sort: display_settings.sort,
   },
 )
 console.debug('chord_data', chord_data)
@@ -294,7 +251,7 @@ const chord_colors =
 ```js
 // counts are integers, the other measures are ratios
 const format_config =
-  settings.measure === 'count'
+  display_settings.measure === 'count'
     ? {
         formatValue: d3.format(',~r'),
         tickStep: Math.max(

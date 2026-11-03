@@ -33,6 +33,10 @@ export class DonutChart {
    * @param {string} options.fontFamily - font family of the labels
    * @param {string} options.sliceStrokeColor - color of the slice stroke shown on hover
    * @param {number} options.labelCuttoff - minimum arc angle (radians) below which a slice is considered "minor"
+   * @param {number} options.startAngle - angle (radians, clockwise from 12 o'clock) at which the arcs start
+   * @param {number} options.endAngle - angle (radians, clockwise from 12 o'clock) at which the arcs end;
+   *  e.g. `startAngle: -Math.PI / 2, endAngle: Math.PI / 2` draws a half donut "gauge". When the arcs
+   *  do not span a full circle, the SVG is cropped vertically to the drawn arcs.
    */
   constructor(
     data,
@@ -49,6 +53,8 @@ export class DonutChart {
       fontFamily = 'sans-serif',
       sliceStrokeColor = 'black',
       labelCuttoff = 0.25,
+      startAngle = 0,
+      endAngle = 2 * Math.PI,
       color = d3
         .scaleOrdinal(d3.schemeObservable10)
         .domain(new Set(data.map(keyMap)))
@@ -68,6 +74,8 @@ export class DonutChart {
     this.fontFamily = fontFamily
     this.sliceStrokeColor = sliceStrokeColor
     this.labelCuttoff = labelCuttoff
+    this.startAngle = startAngle
+    this.endAngle = endAngle
     this.color = color
 
     this.radius = Math.min(width, height) / 2
@@ -90,6 +98,8 @@ export class DonutChart {
       .padAngle(1 / this.radius)
       .value(valueMap)
       .sort(sort)
+      .startAngle(startAngle)
+      .endAngle(endAngle)
     this.pieData = this.pie(data)
     this.cuttoffData = this.pieData
       .filter((d) => !this.isMajorArc(d))
@@ -105,21 +115,87 @@ export class DonutChart {
   }
 
   /**
+   * Total width of the SVG: the donut's own width, plus whatever extensions
+   * draw to its right (overridden by `DonutChartWithLegend`).
+   *
+   * @returns {number}
+   */
+  svgWidth() {
+    return this.width
+  }
+
+  /**
+   * @returns {boolean} whether the arcs span less than a full circle
+   */
+  isPartial() {
+    return Math.abs(this.endAngle - this.startAngle) < 2 * Math.PI - 1e-6
+  }
+
+  /**
+   * Vertical extent of the area covered by the arcs, i.e. of the ring sector
+   * between `startAngle` and `endAngle`. Per-datum (function) radii are
+   * approximated by the chart's full radius.
+   *
+   * @returns {number[]} the `[yMin, yMax]` extent, in SVG user units
+   */
+  arcsExtentY() {
+    const radiusOf = (ratio, fallback) =>
+      typeof ratio === 'function' ? fallback : this.radius * ratio
+    const outer = radiusOf(this.outerRadiusRatio, this.radius)
+    const inner = radiusOf(this.innerRadiusRatio, 0)
+    const [a0, a1] = d3.extent([this.startAngle, this.endAngle])
+    // d3 angles run clockwise from 12 o'clock, so y = -r * cos(angle)
+    const ys = [a0, a1].flatMap((a) => [
+      -outer * Math.cos(a),
+      -inner * Math.cos(a),
+    ])
+    // the top (angle 0 mod 2π) and bottom (angle π mod 2π) of the outer circle
+    for (let k = Math.ceil(a0 / Math.PI); k * Math.PI <= a1; k++) {
+      ys.push(k % 2 === 0 ? -outer : outer)
+    }
+    return d3.extent(ys)
+  }
+
+  /**
+   * Crop the SVG vertically to `[y0, y1]` plus a margin, keeping its width.
+   * Only applies when the arcs do not span a full circle, so full donuts keep
+   * their square layout.
+   *
+   * @param {d3.Selection} svg - the chart's root SVG selection
+   * @param {number} y0 - top of the content, in SVG user units
+   * @param {number} y1 - bottom of the content, in SVG user units
+   * @returns {void}
+   */
+  fitHeight(svg, y0, y1) {
+    if (!this.isPartial()) return
+    const margin =
+      typeof this.outerRadiusRatio === 'function'
+        ? 0
+        : Math.max(0, this.radius * (1 - this.outerRadiusRatio))
+    const height = Math.min(this.height, y1 - y0 + 2 * margin)
+    svg
+      .attr('height', height)
+      .attr('viewBox', [-this.width / 2, y0 - margin, this.svgWidth(), height])
+  }
+
+  /**
    * @returns {d3.Selection} a blank SVG root sized/viewboxed for this chart
    */
   createSvg() {
-    return d3
+    const svg = d3
       .create('svg')
       .classed('donut-chart', true)
-      .attr('width', this.width)
+      .attr('width', this.svgWidth())
       .attr('height', this.height)
       .attr('viewBox', [
         -this.width / 2,
         -this.height / 2,
-        this.width,
+        this.svgWidth(),
         this.height,
       ])
       .attr('style', 'max-width: 100%; height: auto;')
+    this.fitHeight(svg, ...this.arcsExtentY())
+    return svg
   }
 
   /**
@@ -228,6 +304,8 @@ export class DonutChartWithLegend extends DonutChart {
       fontFamily = 'sans-serif',
       sliceStrokeColor = 'black',
       labelCuttoff = 0.25,
+      startAngle = 0,
+      endAngle = 2 * Math.PI,
       color = d3
         .scaleOrdinal(d3.schemeObservable10)
         .domain(new Set(data.map(keyMap)))
@@ -252,6 +330,8 @@ export class DonutChartWithLegend extends DonutChart {
       fontFamily,
       sliceStrokeColor,
       labelCuttoff,
+      startAngle,
+      endAngle,
       color,
     })
     const total = d3.sum(data.map(this.valueMap))
@@ -267,6 +347,15 @@ export class DonutChartWithLegend extends DonutChart {
         ).toFixed(1)}% ${cropText(this.keyMap(d), this.legendTextLength)}`)
     this.legendFontSize = legendFontSize
     this.legendLineSeparation = legendLineSeparation
+  }
+
+  /**
+   * The SVG spans the donut and the legend drawn to its right.
+   *
+   * @returns {number}
+   */
+  svgWidth() {
+    return this.width + this.legendWidth
   }
 
   /**
@@ -294,10 +383,19 @@ export class DonutChartWithLegend extends DonutChart {
     svg
       .selectAll('g')
       .attr('transform', `translate(${-this.width / 2 + this.radius} 0)`)
+    const legendTop = -this.radius * 0.9
     svg
       .append('g')
-      .attr('transform', `translate(${this.width / 2} ${-this.radius * 0.9})`)
+      .attr('transform', `translate(${this.width / 2} ${legendTop})`)
       .append(() => legend)
+
+    // a partial donut is cropped to its arcs, make sure the legend still fits
+    const [y0, y1] = this.arcsExtentY()
+    this.fitHeight(
+      svg,
+      Math.min(y0, legendTop),
+      Math.max(y1, legendTop + Number(legend.getAttribute('height'))),
+    )
   }
 }
 
@@ -328,6 +426,8 @@ export class DonutChartWithLabels extends DonutChart {
       fontFamily = 'sans-serif',
       sliceStrokeColor = 'black',
       labelCuttoff = 0.25,
+      startAngle = 0,
+      endAngle = 2 * Math.PI,
       color = d3
         .scaleOrdinal(d3.schemeObservable10)
         .domain(new Set(data.map(keyMap)))
@@ -356,6 +456,8 @@ export class DonutChartWithLabels extends DonutChart {
       fontFamily,
       sliceStrokeColor,
       labelCuttoff,
+      startAngle,
+      endAngle,
       color,
     })
     this.labelTextLength = labelTextLength
@@ -484,6 +586,15 @@ export class DonutChartWithLabels extends DonutChart {
           : -this.labelTextPadding,
       )
       .text(this.labelText)
+
+    // a partial donut is cropped to its arcs, make sure the labels still fit
+    const [y0, y1] = this.arcsExtentY()
+    const labelYs = this.pieData.map((d) => this.labelTextAnchor(d)[1])
+    this.fitHeight(
+      svg,
+      Math.min(y0, d3.min(labelYs) - this.fontSize),
+      Math.max(y1, d3.max(labelYs) + this.fontSize),
+    )
   }
 }
 
