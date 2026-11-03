@@ -12,7 +12,8 @@
       "span",
       "code",
       "figcaption",
-      "br"
+      "br",
+      "hr"
     ]
   },
   "first-line-h1": false,

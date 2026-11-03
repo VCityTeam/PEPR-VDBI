@@ -63,13 +63,14 @@ display(Inputs.table(data, { layout: 'auto' }))
 <div class="card">
   ${plot_settings_form}
   <!-- $ -->
-  <br>
+  <hr>
   ${plot_display_form}
   <!-- $ -->
 </div>
 <div id="plot_container" class="card">
   ${plot}
   <!-- $ -->
+  <hr>
   ${plot_download_button}
   <!-- $ -->
 </div>
@@ -200,9 +201,10 @@ console.debug('plot_options', plot_options)
 <div class="card">
   ${pie_settings_form}
   <!-- $ -->
-  <br>
+  <hr>
   ${pie_display_form}
   <!-- $ -->
+  <hr>
   ${pie_legend_form}
   <!-- $ -->
   ${pie_labels_form}
@@ -211,6 +213,7 @@ console.debug('plot_options', plot_options)
 <div id="pie_container" class="card">
   ${pie}
   <!-- $ -->
+  <hr>
   ${pie_download_button}
   <!-- $ -->
 </div>
