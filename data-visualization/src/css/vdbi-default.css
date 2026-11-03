@@ -48,6 +48,27 @@ svg {
   font-family: var(--sans-serif);
 }
 
+/* Multi-column layout for Inputs.form, used by formTemplate() in components/utilities.js. */
+.form-template {
+  text-align: left;
+  column-count: var(--form-columns, 2);
+}
+
+/* Keep each input (label + control) together in a single column. */
+.form-template > * {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.form-template label {
+  font-weight: bold;
+  line-height: 100%;
+}
+
+.form-template label:not(div > label)::after {
+  content: ':';
+}
+
 /* Render Inputs.toggle() checkboxes as toggle switches instead of native checkboxes. */
 form[class*='-toggle'] input[type='checkbox'] {
   appearance: none;
