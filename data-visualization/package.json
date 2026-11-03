@@ -7,6 +7,7 @@
     "clean-cache": "rm -rf src/.observablehq/cache/data",
     "clean-dist": "rm -rf dist",
     "clean-dependencies": "rm -rf .venv && rm -rf node_modules",
+    "lint": "npx eslint src",
     "build": "rm -rf dist && BUILD_ENV=production observable build",
     "jsdoc": "jsdoc ./src/components/* -d jsdoc/",
     "dev": "BUILD_ENV=development observable preview",
