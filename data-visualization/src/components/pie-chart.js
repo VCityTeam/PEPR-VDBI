@@ -488,6 +488,20 @@ export class DonutChartWithLabels extends DonutChart {
   }
 
   /**
+   * Whether a slice's label floats right of the donut, i.e. whether its
+   * mid-angle falls in the right half of the circle. The angle is normalized
+   * to `[0, 2π)` first, so arc ranges with negative angles (e.g. a top half
+   * from `-π/2` to `π/2`) put their left-hand slices' labels on the left.
+   *
+   * @param {object} d - a datum produced by d3.pie()
+   * @returns {boolean}
+   */
+  isLabelOnRight(d) {
+    const tau = 2 * Math.PI
+    return ((this.midAngle(d) % tau) + tau) % tau < Math.PI
+  }
+
+  /**
    * The outer radius in effect for a given pie datum, resolving the
    * function-or-ratio form of `outerRadiusRatio`.
    *
@@ -514,7 +528,7 @@ export class DonutChartWithLabels extends DonutChart {
       .innerRadius(labelRadius)
       .outerRadius(labelRadius)
       .centroid(d)
-    pos[0] = labelRadius * (this.midAngle(d) < Math.PI ? 1 : -1)
+    pos[0] = labelRadius * (this.isLabelOnRight(d) ? 1 : -1)
     return pos
   }
 
@@ -532,7 +546,7 @@ export class DonutChartWithLabels extends DonutChart {
       .innerRadius(labelRadius)
       .outerRadius(labelRadius)
       .centroid(d)
-    pos[0] = labelRadius * (this.midAngle(d) < Math.PI ? 1 : -1)
+    pos[0] = labelRadius * (this.isLabelOnRight(d) ? 1 : -1)
     return pos
   }
 
@@ -576,14 +590,10 @@ export class DonutChartWithLabels extends DonutChart {
       .data(this.pieData)
       .join('text')
       .attr('transform', (d) => `translate(${this.labelTextAnchor(d)})`)
-      .attr('text-anchor', (d) =>
-        this.midAngle(d) < Math.PI ? 'start' : 'end',
-      )
+      .attr('text-anchor', (d) => (this.isLabelOnRight(d) ? 'start' : 'end'))
       .attr('dy', '0.35em')
       .attr('dx', (d) =>
-        this.midAngle(d) < Math.PI
-          ? this.labelTextPadding
-          : -this.labelTextPadding,
+        this.isLabelOnRight(d) ? this.labelTextPadding : -this.labelTextPadding,
       )
       .text(this.labelText)
 
