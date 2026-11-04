@@ -32,6 +32,71 @@ export const vdbi_blue_analogic_color_scheme = [
   '#13107b',
 ]
 
+/**
+ * Named sequential color schemes, as continuous interpolators mapping [0, 1]
+ * to a color (d3-scale-chromatic, plus the VDBI palettes).
+ * @type {Map<string, (t: number) => string>}
+ */
+export const sequential_color_schemes = new Map([
+  [
+    'Orange (VDBI)',
+    d3.piecewise(d3.interpolateRgb, vdbi_orange_analogic_color_scheme),
+  ],
+  [
+    'Blue (VDBI)',
+    d3.piecewise(d3.interpolateRgb, vdbi_blue_analogic_color_scheme),
+  ],
+  ['Blues', d3.interpolateBlues],
+  ['Greens', d3.interpolateGreens],
+  ['Greys', d3.interpolateGreys],
+  ['Oranges', d3.interpolateOranges],
+  ['Purples', d3.interpolatePurples],
+  ['Reds', d3.interpolateReds],
+  ['Blue-Green', d3.interpolateBuGn],
+  ['Blue-Purple', d3.interpolateBuPu],
+  ['Green-Blue', d3.interpolateGnBu],
+  ['Orange-Red', d3.interpolateOrRd],
+  ['Purple-Blue', d3.interpolatePuBu],
+  ['Purple-Blue-Green', d3.interpolatePuBuGn],
+  ['Purple-Red', d3.interpolatePuRd],
+  ['Red-Purple', d3.interpolateRdPu],
+  ['Yellow-Green', d3.interpolateYlGn],
+  ['Yellow-Green-Blue', d3.interpolateYlGnBu],
+  ['Yellow-Orange-Brown', d3.interpolateYlOrBr],
+  ['Yellow-Orange-Red', d3.interpolateYlOrRd],
+  ['Viridis', d3.interpolateViridis],
+  ['Inferno', d3.interpolateInferno],
+  ['Magma', d3.interpolateMagma],
+  ['Plasma', d3.interpolatePlasma],
+  ['Cividis', d3.interpolateCividis],
+  ['Turbo', d3.interpolateTurbo],
+  ['Cubehelix', d3.interpolateCubehelixDefault],
+])
+
+/**
+ * A helper function for building a continuous sequential color scale over
+ * a numeric domain, optionally using only a sub-range of the interpolator
+ * (e.g. to avoid near-white or near-black extremes).
+ * @param {(t: number) => string} interpolator - maps [0, 1] to a color
+ * @param {number[]} domain - [min, max] of the values to color
+ * @param {Object} [options]
+ * @param {number} [options.start=0] - interpolator position of the domain minimum
+ * @param {number} [options.end=1] - interpolator position of the domain maximum
+ * @param {boolean} [options.reverse=false] - swap the scheme direction
+ * @param {string} [options.unknown='grey'] - color for missing values
+ * @returns {Function} a d3 sequential scale
+ */
+export const sequentialColorScale = (
+  interpolator,
+  domain,
+  { start = 0, end = 1, reverse = false, unknown = 'grey' } = {},
+) => {
+  const [from, to] = reverse ? [end, start] : [start, end]
+  return d3
+    .scaleSequential(domain, (t) => interpolator(from + t * (to - from)))
+    .unknown(unknown)
+}
+
 export const vdbi_analogic_color_scale = d3
   .scaleQuantize()
   .range(

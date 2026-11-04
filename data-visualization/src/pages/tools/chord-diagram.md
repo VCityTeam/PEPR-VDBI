@@ -149,6 +149,20 @@ const display_form = Inputs.form(
       { label: 'Group order' },
     ),
     // left empty, every group is kept
+    color_scheme: Inputs.select(
+      new Map([
+        ['Automatic (Tableau 10, else Rainbow)', null],
+        ['Tableau 10', d3.schemeTableau10],
+        ['Observable 10', d3.schemeObservable10],
+        ['Category 10', d3.schemeCategory10],
+        ['Set 3', d3.schemeSet3],
+        ['Rainbow', d3.interpolateRainbow],
+        ['Sinebow', d3.interpolateSinebow],
+        ['Turbo', d3.interpolateTurbo],
+        ['Viridis', d3.interpolateViridis],
+      ]),
+      { label: 'Color scheme' },
+    ),
     group_limit: Inputs.number([1, Infinity], {
       label: 'Max groups (largest first)',
       step: 1,
@@ -236,16 +250,17 @@ console.debug('chord_data', chord_data)
 ```
 
 ```js
-const chord_colors =
-  chord_data.names.length <= 10
+// a scheme is either a fixed list of colors (repeated when there are more groups)
+// or an interpolator, sampled once per group
+const chord_colors = (() => {
+  const n = chord_data.names.length
+  const scheme = display_settings.color_scheme
+  if (Array.isArray(scheme)) return scheme
+  if (typeof scheme === 'function') return d3.quantize(scheme, n)
+  return n <= 10
     ? d3.schemeTableau10
-    : d3.quantize(
-        (t) =>
-          d3.interpolateRainbow(
-            (t * chord_data.names.length) / (chord_data.names.length + 1),
-          ),
-        chord_data.names.length,
-      )
+    : d3.quantize((t) => d3.interpolateRainbow((t * n) / (n + 1)), n)
+})()
 ```
 
 ```js
