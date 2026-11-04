@@ -8,8 +8,8 @@ style: /css/vdbi-dashboard.css
 import { WordBubbles } from '/components/graph.js'
 import { downloadSVGButton, formTemplate } from '/components/utilities.js'
 import {
-  vdbi_orange_analogic_color_scheme,
-  vdbi_blue_analogic_color_scheme,
+  sequential_color_schemes,
+  sequentialColorScale,
   valueTextColor,
 } from '/components/color.js'
 ```
@@ -117,10 +117,7 @@ const settings_form = Inputs.form(
     color: Inputs.select(
       [
         ...(has_groups ? ['By group'] : []),
-        'Orange (by value)',
-        'Blue (by value)',
-        'Orange',
-        'Blue',
+        ...sequential_color_schemes.keys(),
       ],
       { label: 'Select color scheme' },
     ),
@@ -142,6 +139,17 @@ const settings = Generators.input(settings_form)
 // independent of the dataset, so these settings are kept when another file is loaded
 const display_form = Inputs.form(
   {
+    color_start: Inputs.range([0, 1], {
+      label: 'Color scheme start (low values)',
+      step: 0.01,
+      value: 0,
+    }),
+    color_end: Inputs.range([0, 1], {
+      label: 'Color scheme end (high values)',
+      step: 0.01,
+      value: 1,
+    }),
+    color_reverse: Inputs.toggle({ label: 'Reverse color scheme' }),
     text_color_mode: Inputs.select(['Fixed', 'By value'], {
       label: 'Text color mode',
     }),
@@ -256,13 +264,17 @@ const bubble_nodes = filtered_wordcount.map((d, i) => ({
 ```
 
 ```js
-const value_color = (scheme) => ({
+const value_color = (interpolator) => ({
   valueMap: (d) => d.value,
-  color: d3
-    .scaleQuantize()
-    .domain(d3.extent(filtered_wordcount, (d) => d.value))
-    .range(scheme)
-    .unknown('grey'),
+  color: sequentialColorScale(
+    interpolator,
+    d3.extent(filtered_wordcount, (d) => d.value),
+    {
+      start: display_settings.color_start,
+      end: display_settings.color_end,
+      reverse: display_settings.color_reverse,
+    },
+  ),
   legend: null,
 })
 
@@ -274,6 +286,10 @@ const single_color = (color) => ({
 
 // `legend: undefined` falls back to the Graph default legend
 const color_config = new Map([
+  ...[...sequential_color_schemes].map(([name, scheme]) => [
+    name,
+    value_color(scheme),
+  ]),
   [
     'By group',
     {
@@ -282,9 +298,6 @@ const color_config = new Map([
       legend: undefined,
     },
   ],
-  // ['Orange (by value)', value_color('black')],
-  ['Orange (by value)', value_color(d3.schemeOrRd[3])],
-  ['Blue (by value)', value_color(vdbi_blue_analogic_color_scheme)],
   ['Orange', single_color('var(--theme-foreground-focus-alt)')],
   ['Blue', single_color('var(--theme-foreground-focus)')],
 ]).get(settings.color)
