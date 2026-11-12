@@ -8,6 +8,8 @@ const logger = pino(default_log_options('siret api utility'))
 const defaultResponse = {
   siret: null,
   siren: null,
+  est_siege: null,
+  siege: null,
   nom_complet: null,
   nature_juridique: null,
   latitude: null,
@@ -81,6 +83,8 @@ export async function queryAndFormatRE(query, source, useSiege = true) {
   formattedResponse.nom_complet = result.nom_complet
   formattedResponse.nature_juridique = result.nature_juridique
   formattedResponse.siret = result.siege.siret
+  formattedResponse.est_siege = result.siege.est_siege
+  formattedResponse.siege = result.siege.siret
   formattedResponse.latitude = result.siege.latitude
   formattedResponse.longitude = result.siege.longitude
   formattedResponse.libelle_commune = result.siege.libelle_commune
@@ -92,7 +96,8 @@ export async function queryAndFormatRE(query, source, useSiege = true) {
   if (!useSiege && result.matching_etablissements?.length > 0) {
     const matchingEtablissement = result.matching_etablissements[0]
 
-    formattedResponse.siret = matchingEtablissement.siret
+    formattedResponse.siret = matchingEtablissement.siret  
+    formattedResponse.est_siege = matchingEtablissement.est_siege
     formattedResponse.latitude = matchingEtablissement.latitude
     formattedResponse.longitude = matchingEtablissement.longitude
     formattedResponse.libelle_commune = matchingEtablissement.libelle_commune
