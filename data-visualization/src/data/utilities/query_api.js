@@ -7,26 +7,39 @@
 
 import { queryAndFormatRE } from './siret_api.js'
 import { GeocodingService } from './geocoding.js'
+import { csvFormat, tsvFormat } from 'd3-dsv'
 
 const args = process.argv.slice(2)
 
-if (args.length == 0 || args.length > 2) {
-  console.error('Usage: node query_api.js <api> <query>\napi: geocoding | siret\nquery: the query string to search for')
+if (args.length == 0 || args.length > 3) {
+  console.error(`Usage: node query_api.js <api> <query> <format>
+    api: geocoding | siret
+    query: the query string to search for
+    format: (optional) the format of the response; 'csv', 'tsv' or 'json' (default: json)`)
   process.exit(1)
 }
 
 const api = args[0]
 const query = args[1]
+const format = args[2] || 'json'
+let response = undefined
 
 if (api === 'geocoding') {
   const geocodingService = new GeocodingService()
-  const results = await geocodingService.simpleSearch(query)
-  process.stdout.write(JSON.stringify(results))
+  response = await geocodingService.simpleSearch(query)
 } else if (api === 'siret') {
-  const response = await queryAndFormatRE(query, 'cli', false)
-  process.stdout.write(JSON.stringify(response))
+  response = await queryAndFormatRE(query, 'cli', false)
 } else {
   console.error(`Unknown API: ${api}`)
   process.exit(1)
 }
+
+if (format === 'tsv') {
+  process.stdout.write(tsvFormat([response]))
+} else if (format === 'csv') {
+  process.stdout.write(csvFormat([response]))
+} else if (format === 'json') {
+  process.stdout.write(JSON.stringify(response))
+}
+
 process.exit(0)

@@ -35,7 +35,11 @@ const defaultResponse = {
  *   `defaultResponse` keys (all null when nothing matched) plus
  *   `source_label` and `source`.
  */
-export async function queryAndFormatRE(query, source, useSiege = true) {
+export async function queryAndFormatRE(
+  query,
+  source,
+  useSiege = true,
+) {
   const formattedResponse = {
     ...defaultResponse,
     source_label: query,
@@ -96,7 +100,7 @@ export async function queryAndFormatRE(query, source, useSiege = true) {
   if (!useSiege && result.matching_etablissements?.length > 0) {
     const matchingEtablissement = result.matching_etablissements[0]
 
-    formattedResponse.siret = matchingEtablissement.siret  
+    formattedResponse.siret = matchingEtablissement.siret
     formattedResponse.est_siege = matchingEtablissement.est_siege
     formattedResponse.latitude = matchingEtablissement.latitude
     formattedResponse.longitude = matchingEtablissement.longitude
